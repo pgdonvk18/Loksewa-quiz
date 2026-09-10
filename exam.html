@@ -156,29 +156,37 @@
         };
 
         async function startExam() {
-            const input = document.getElementById('candidate-name').value.trim();
-            if (!input) {
-                alert('कृपया आफ्नो नाम लेख्नुहोस्!');
-                return;
+            try {
+                const input = document.getElementById('candidate-name').value.trim();
+                if (!input) {
+                    alert('कृपया आफ्नो नाम लेख्नुहोस्!');
+                    return;
+                }
+                candidateName = input;
+
+                let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'Set-1');
+                
+                if (error) {
+                    alert('डेटाबेस एरर: ' + error.message);
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    alert('डेटाबेसमा Set-1 का प्रश्नहरू भेटिएनन्!');
+                    return;
+                }
+
+                examQuestions = data;
+
+                document.getElementById('reg-screen').classList.add('hidden');
+                document.getElementById('exam-screen').classList.remove('hidden');
+                document.getElementById('timer-box').classList.remove('hidden');
+
+                startTimer();
+                loadExamQuestion();
+            } catch (err) {
+                alert('केही प्राविधिक समस्या आयो: ' + err.message);
             }
-            candidateName = input;
-
-            // ilike प्रयोग गरिएको छ जसले गर्दा case-insensitive रूपमा 'Set-1', 'set-1' वा 'Set 1' फेला पार्छ
-            let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'Set-1');
-            
-            if (error || !data || data.length === 0) {
-                alert('डेटाबेसमा Set-1 का प्रश्नहरू भेटिएनन्! कृपया Supabase मा 'topic' को भ्यालु 'Set-1' राखेर प्रश्नहरू इन्सर्ट गर्नुहोस्।');
-                return;
-            }
-
-            examQuestions = data;
-
-            document.getElementById('reg-screen').classList.add('hidden');
-            document.getElementById('exam-screen').classList.remove('hidden');
-            document.getElementById('timer-box').classList.remove('hidden');
-
-            startTimer();
-            loadExamQuestion();
         }
 
         function startTimer() {
