@@ -60,9 +60,9 @@
                 परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀
             </button>
 
-            <!-- REGISTRATION PAGE LEADERBOARD -->
+            <!-- REGISTRATION PAGE LEADERBOARD (Set 1 Only) -->
             <div class="border-t border-slate-800 pt-4 mt-6">
-                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड (सबै परीक्षार्थीहरू)</h3>
+                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड</h3>
                 <div id="home-leaderboard" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
             </div>
         </div>
@@ -128,9 +128,9 @@
                 </button>
             </div>
 
-            <!-- RESULT PAGE LEADERBOARD -->
+            <!-- RESULT PAGE LEADERBOARD (Set 1 Only) -->
             <div class="border-t border-slate-800 pt-4 no-print">
-                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड (सबै परीक्षार्थीहरू)</h3>
+                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड</h3>
                 <div id="result-leaderboard" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
             </div>
         </div>
@@ -151,9 +151,9 @@
         let timerInterval;
         let timeLeftSeconds = 45 * 60; // 45 minutes
 
-        // Page load hune bittikai leaderboard load garne
+        // Page load hune bittikai Set 1 ko leaderboard load garne
         window.onload = () => {
-            fetchSetLeaderboard();
+            fetchSet1Leaderboard();
         };
 
         async function startExam() {
@@ -276,16 +276,18 @@
             document.getElementById('rep-score').innerText = totalScore.toFixed(1);
             document.getElementById('review-container').innerHTML = reviewHTML;
 
-            await supabaseClient.from('leaderboard').insert([
-                { username: `${candidateName} (Set-1)`, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
+            // Set 1 को छुट्टै टेबल (leaderboard_set1) मा डाटा सेभ गर्ने
+            await supabaseClient.from('leaderboard_set1').insert([
+                { username: candidateName, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
             ]);
 
-            fetchSetLeaderboard();
+            fetchSet1Leaderboard();
         }
 
-        async function fetchSetLeaderboard() {
+        async function fetchSet1Leaderboard() {
+            // केवल Set 1 को टेबलबाट मात्र डाटा तानेर देखाउने
             const { data, error } = await supabaseClient
-                .from('leaderboard')
+                .from('leaderboard_set1')
                 .select('*')
                 .order('score', { ascending: false });
 
@@ -299,7 +301,7 @@
                 lbContainer.innerHTML = '';
                 
                 if (error || !data || data.length === 0) {
-                    lbContainer.innerHTML = '<p class="text-slate-500 text-center py-1">यो सेटमा कुनै रेकर्ड छैन।</p>';
+                    lbContainer.innerHTML = '<p class="text-slate-500 text-center py-1">यो सेटमा हाल कुनै रेकर्ड छैन।</p>';
                     return;
                 }
                 
