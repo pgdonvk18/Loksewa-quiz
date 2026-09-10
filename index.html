@@ -33,11 +33,11 @@
             <div class="space-y-3">
                 <label class="block text-sm font-medium text-slate-300">तयारी गर्ने कोर्स वा सेट रोज्नुहोस्:</label>
                 
-                <!-- Professional Grid Cards -->
+                <!-- Professional Grid Cards with Direct onclick -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1">
                     
                     <!-- Card 1: Kharidar / Nasu -->
-                    <div data-topic="Kharidar-Nasu" class="topic-card cursor-pointer bg-indigo-950/30 border border-indigo-500 p-3.5 rounded-xl transition duration-200 flex flex-col justify-between group">
+                    <div data-topic="Kharidar-Nasu" onclick="selectTopicCard(this, 'Kharidar-Nasu')" class="topic-card cursor-pointer bg-indigo-950/30 border border-indigo-500 p-3.5 rounded-xl transition duration-200 flex flex-col justify-between group">
                         <div class="flex items-center gap-2 mb-1 pointer-events-none">
                             <span class="text-xl">📚</span>
                             <h4 class="font-bold text-slate-200 group-hover:text-indigo-400 text-sm">खरिदार / नायब सुब्बा</h4>
@@ -46,7 +46,7 @@
                     </div>
 
                     <!-- Card 2: Sangathit Sanstha -->
-                    <div data-topic="Sangathit Sanstha" class="topic-card cursor-pointer bg-slate-950 border border-slate-800 hover:border-indigo-500 p-3.5 rounded-xl transition duration-200 flex flex-col justify-between group">
+                    <div data-topic="Sangathit Sanstha" onclick="selectTopicCard(this, 'Sangathit Sanstha')" class="topic-card cursor-pointer bg-slate-950 border border-slate-800 hover:border-indigo-500 p-3.5 rounded-xl transition duration-200 flex flex-col justify-between group">
                         <div class="flex items-center gap-2 mb-1 pointer-events-none">
                             <span class="text-xl">🏢</span>
                             <h4 class="font-bold text-slate-200 group-hover:text-indigo-400 text-sm">संगठित संस्था</h4>
@@ -55,7 +55,7 @@
                     </div>
 
                     <!-- Card 3: Pre Qualifying Exam -->
-                    <div data-topic="Pre-Qualifying" class="topic-card cursor-pointer bg-slate-950 border border-slate-800 hover:border-indigo-500 p-3.5 rounded-xl transition duration-200 flex flex-col justify-between group">
+                    <div data-topic="Pre-Qualifying" onclick="selectTopicCard(this, 'Pre-Qualifying')" class="topic-card cursor-pointer bg-slate-950 border border-slate-800 hover:border-indigo-500 p-3.5 rounded-xl transition duration-200 flex flex-col justify-between group">
                         <div class="flex items-center gap-2 mb-1 pointer-events-none">
                             <span class="text-xl">⚡</span>
                             <h4 class="font-bold text-slate-200 group-hover:text-indigo-400 text-sm">Pre Qualifying Exam</h4>
@@ -64,7 +64,7 @@
                     </div>
 
                     <!-- Card 4: Random -->
-                    <div data-topic="All" class="topic-card cursor-pointer bg-slate-950 border border-slate-800 hover:border-indigo-500 p-3.5 rounded-xl transition duration-200 flex flex-col justify-between group">
+                    <div data-topic="All" onclick="selectTopicCard(this, 'All')" class="topic-card cursor-pointer bg-slate-950 border border-slate-800 hover:border-indigo-500 p-3.5 rounded-xl transition duration-200 flex flex-col justify-between group">
                         <div class="flex items-center gap-2 mb-1 pointer-events-none">
                             <span class="text-xl">🌟</span>
                             <h4 class="font-bold text-slate-200 group-hover:text-indigo-400 text-sm">Random (मिस्रित सेट)</h4>
@@ -188,18 +188,16 @@
         let mistakenQuestions = [];
         let isReviewMode = false;
 
-        // Guaranteed click listener for topic selection cards
-        document.querySelectorAll('.topic-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('.topic-card').forEach(c => {
-                    c.classList.remove('border-indigo-500', 'bg-indigo-950/30');
-                    c.classList.add('border-slate-800', 'bg-slate-950');
-                });
-                this.classList.remove('border-slate-800', 'bg-slate-950');
-                this.classList.add('border-indigo-500', 'bg-indigo-950/30');
-                selectedTopic = this.getAttribute('data-topic');
+        // Guaranteed click function for topic selection cards
+        function selectTopicCard(element, topicName) {
+            document.querySelectorAll('.topic-card').forEach(c => {
+                c.classList.remove('border-indigo-500', 'bg-indigo-950/30');
+                c.classList.add('border-slate-800', 'bg-slate-950');
             });
-        });
+            element.classList.remove('border-slate-800', 'bg-slate-950');
+            element.classList.add('border-indigo-500', 'bg-indigo-950/30');
+            selectedTopic = topicName;
+        }
 
         async function startQuiz() {
             const input = document.getElementById('username-input').value.trim();
