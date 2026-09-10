@@ -6,9 +6,28 @@
     <title>Loksewa Pro - Set 1 Mock Exam</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- PDF Generation Libraries (Fixed versions) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #pdf-report-content, #pdf-report-content * {
+                visibility: visible;
+            }
+            #pdf-report-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white !important;
+                color: black !important;
+                border: none !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-4 flex flex-col items-center justify-between">
 
@@ -37,7 +56,7 @@
                 </div>
             </div>
 
-            <button onclick="startExam()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-2">
+            <button onclick="startExam()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-2 cursor-pointer">
                 परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀
             </button>
         </div>
@@ -54,8 +73,8 @@
             <div id="exam-options" class="space-y-3"></div>
 
             <div class="flex justify-between pt-4">
-                <button onclick="prevExamQuestion()" id="prev-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition">⬅️ अघिल्लो</button>
-                <button onclick="nextExamQuestion()" id="next-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition">अर्को ➡️</button>
+                <button onclick="prevExamQuestion()" id="prev-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer">⬅️ अघिल्लो</button>
+                <button onclick="nextExamQuestion()" id="next-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition cursor-pointer">अर्को ➡️</button>
             </div>
         </div>
 
@@ -94,9 +113,9 @@
                 </div>
             </div>
 
-            <div class="flex gap-3">
+            <div class="flex gap-3 no-print">
                 <button onclick="downloadPDF()" class="w-1/2 bg-emerald-600 hover:bg-emerald-500 font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20 cursor-pointer">
-                    📥 PDF डाउनलोड गर्नुहोस्
+                    📥 PDF डाउनलोड / प्रिन्ट गर्नुहोस्
                 </button>
                 <button onclick="location.reload()" class="w-1/2 bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-xl transition text-sm shadow-lg cursor-pointer">
                     🔄 अर्को परीक्षा
@@ -104,15 +123,15 @@
             </div>
 
             <!-- SET 1 LEADERBOARD -->
-            <div class="border-t border-slate-800 pt-4">
-                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड (Top Contestants)</h3>
-                <div id="exam-leaderboard" class="space-y-1.5 max-h-36 overflow-y-auto text-xs"></div>
+            <div class="border-t border-slate-800 pt-4 no-print">
+                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड (सबै परीक्षार्थीहरू)</h3>
+                <div id="exam-leaderboard" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
             </div>
         </div>
 
     </main>
 
-    <footer class="mt-4 text-xs text-slate-500 text-center">&copy; 2026 Loksewa Pro Mock Exam System</footer>
+    <footer class="mt-4 text-xs text-slate-500 text-center no-print">&copy; 2026 Loksewa Pro Mock Exam System</footer>
 
     <script>
         const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
@@ -176,7 +195,7 @@
             q.options.forEach(opt => {
                 const isSelected = userAnswers[currentIdx] === opt;
                 const btn = document.createElement('button');
-                btn.className = `w-full text-left p-3.5 rounded-xl border text-sm font-medium transition ${isSelected ? 'bg-indigo-950/60 border-indigo-500 text-indigo-200' : 'bg-slate-950 border-slate-800 text-slate-200 hover:border-indigo-500'}`;
+                btn.className = `w-full text-left p-3.5 rounded-xl border text-sm font-medium transition cursor-pointer ${isSelected ? 'bg-indigo-950/60 border-indigo-500 text-indigo-200' : 'bg-slate-950 border-slate-800 text-slate-200 hover:border-indigo-500'}`;
                 btn.innerText = opt;
                 btn.onclick = () => {
                     userAnswers[currentIdx] = opt;
@@ -254,45 +273,32 @@
         }
 
         async function fetchSetLeaderboard() {
-            const { data } = await supabaseClient.from('leaderboard').select('*').ilike('username', '%(Set-1)%').order('score', { ascending: false }).limit(5);
+            // परीक्षा दिने सबै परीक्षार्थीहरूको नाम स्कोरको आधारमा देखाउने (कुनै लिमिट छैन)
+            const { data, error } = await supabaseClient
+                .from('leaderboard')
+                .select('*')
+                .order('score', { ascending: false });
+
             const lbContainer = document.getElementById('exam-leaderboard');
             lbContainer.innerHTML = '';
-            if (!data || data.length === 0) {
+            
+            if (error || !data || data.length === 0) {
                 lbContainer.innerHTML = '<p class="text-slate-500 text-center py-1">यो सेटमा कुनै रेकर्ड छैन।</p>';
                 return;
             }
+            
             data.forEach((item, i) => {
-                lbContainer.innerHTML += `<div class="flex justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800"><span class="font-semibold text-slate-200">${i+1}. ${item.username}</span><span class="text-indigo-400 font-bold">${item.score} अंक</span></div>`;
+                lbContainer.innerHTML += `
+                    <div class="flex justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
+                        <span class="font-semibold text-slate-200">${i+1}. ${item.username}</span>
+                        <span class="text-indigo-400 font-bold">${item.score} अंक</span>
+                    </div>
+                `;
             });
         }
 
         function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const element = document.getElementById('pdf-report-content');
-            
-            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const imgWidth = 190; 
-                const pageHeight = 295;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 10;
-
-                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-                pdf.save(`Loksewa_Set-1_Report_${candidateName}.pdf`);
-            }).catch(err => {
-                console.error("PDF Error: ", err);
-                alert("PDF डाउनलोड गर्नमा समस्या आयो। कृपया फेरि प्रयास गर्नुहोस्।");
-            });
+            window.print();
         }
     </script>
 </body>
