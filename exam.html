@@ -6,9 +6,9 @@
     <title>Loksewa Pro - Set 1 Mock Exam</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- PDF Generation Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- PDF Generation Libraries (Fixed versions) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-4 flex flex-col items-center justify-between">
 
@@ -33,7 +33,7 @@
             <div>
                 <label class="block text-xs text-slate-400 mb-1">परीक्षा सेट रोज्नुहोस्:</label>
                 <div class="grid grid-cols-1 gap-2">
-                    <button type="button" onclick="selectExamSet('Set-1', this)" class="set-card bg-indigo-950/60 border border-indigo-500 p-3.5 rounded-xl text-center font-bold text-sm text-indigo-200 transition shadow-lg">🎯 Set 1 (Model Exam)</button>
+                    <button type="button" class="set-card bg-indigo-950/60 border border-indigo-500 p-3.5 rounded-xl text-center font-bold text-sm text-indigo-200 transition shadow-lg">🎯 Set 1 (Model Exam)</button>
                 </div>
             </div>
 
@@ -61,7 +61,7 @@
 
         <!-- REPORT CARD & RESULT SCREEN -->
         <div id="result-screen" class="hidden space-y-6">
-            <div id="pdf-report-content" class="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-4">
+            <div id="pdf-report-content" class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
                 <div class="text-center border-b border-slate-800 pb-3">
                     <h2 class="text-xl font-black text-emerald-400">📊 परीक्षा प्रतिवेदन (Exam Report Card)</h2>
                     <p id="rep-name" class="text-sm text-slate-300 font-semibold mt-1"></p>
@@ -69,19 +69,19 @@
                 </div>
 
                 <div class="grid grid-cols-4 gap-2 text-center py-2">
-                    <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
+                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
                         <p class="text-[10px] text-slate-400">सही</p>
                         <p id="rep-correct" class="text-base font-bold text-emerald-400">0</p>
                     </div>
-                    <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
+                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
                         <p class="text-[10px] text-slate-400">गलत (-20%)</p>
                         <p id="rep-wrong" class="text-base font-bold text-rose-400">0</p>
                     </div>
-                    <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
+                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
                         <p class="text-[10px] text-slate-400">छोडेको</p>
                         <p id="rep-skipped" class="text-base font-bold text-amber-400">0</p>
                     </div>
-                    <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
+                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
                         <p class="text-[10px] text-slate-400">कुल अंक (100 मा)</p>
                         <p id="rep-score" class="text-base font-bold text-indigo-400">0</p>
                     </div>
@@ -95,10 +95,10 @@
             </div>
 
             <div class="flex gap-3">
-                <button onclick="downloadPDF()" class="w-1/2 bg-emerald-600 hover:bg-emerald-500 font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20">
+                <button onclick="downloadPDF()" class="w-1/2 bg-emerald-600 hover:bg-emerald-500 font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20 cursor-pointer">
                     📥 PDF डाउनलोड गर्नुहोस्
                 </button>
-                <button onclick="location.reload()" class="w-1/2 bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-xl transition text-sm shadow-lg">
+                <button onclick="location.reload()" class="w-1/2 bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-xl transition text-sm shadow-lg cursor-pointer">
                     🔄 अर्को परीक्षा
                 </button>
             </div>
@@ -120,16 +120,11 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let candidateName = '';
-        let selectedSet = 'Set-1';
         let examQuestions = [];
         let currentIdx = 0;
         let userAnswers = {}; 
         let timerInterval;
         let timeLeftSeconds = 45 * 60; // 45 minutes
-
-        function selectExamSet(setName, btnElement) {
-            selectedSet = setName;
-        }
 
         async function startExam() {
             const input = document.getElementById('candidate-name').value.trim();
@@ -139,7 +134,6 @@
             }
             candidateName = input;
 
-            // Fetch questions specifically matching Set-1 from Supabase
             let { data, error } = await supabaseClient.from('quizzes').select('*').eq('topic', 'Set-1');
             
             if (error || !data || data.length === 0) {
@@ -233,7 +227,7 @@
                 else wrong++;
 
                 reviewHTML += `
-                    <div class="bg-slate-900 p-3 rounded-xl border ${isCorrect ? 'border-emerald-800/60' : 'border-rose-800/60'}">
+                    <div class="bg-slate-950 p-3 rounded-xl border ${isCorrect ? 'border-emerald-800/60' : 'border-rose-800/60'}">
                         <p class="font-bold text-slate-200">Q${idx+1}: ${q.question}</p>
                         <p class="text-slate-400">तपाईंको उत्तर: <span class="${isCorrect ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}">${userAns || 'छोडेको'}</span></p>
                         <p class="text-emerald-400">सही उत्तर: ${q.answer}</p>
@@ -252,7 +246,6 @@
             document.getElementById('rep-score').innerText = totalScore.toFixed(1);
             document.getElementById('review-container').innerHTML = reviewHTML;
 
-            // Save to Supabase leaderboard with Set-1 tag
             await supabaseClient.from('leaderboard').insert([
                 { username: `${candidateName} (Set-1)`, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
             ]);
@@ -261,7 +254,6 @@
         }
 
         async function fetchSetLeaderboard() {
-            // Fetch records for Set-1 from leaderboard
             const { data } = await supabaseClient.from('leaderboard').select('*').ilike('username', '%(Set-1)%').order('score', { ascending: false }).limit(5);
             const lbContainer = document.getElementById('exam-leaderboard');
             lbContainer.innerHTML = '';
@@ -277,10 +269,11 @@
         function downloadPDF() {
             const { jsPDF } = window.jspdf;
             const element = document.getElementById('pdf-report-content');
-            html2canvas(element, { scale: 2 }).then(canvas => {
+            
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                const imgWidth = 190;
+                const imgWidth = 190; 
                 const pageHeight = 295;
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 let heightLeft = imgHeight;
@@ -296,6 +289,9 @@
                     heightLeft -= pageHeight;
                 }
                 pdf.save(`Loksewa_Set-1_Report_${candidateName}.pdf`);
+            }).catch(err => {
+                console.error("PDF Error: ", err);
+                alert("PDF डाउनलोड गर्नमा समस्या आयो। कृपया फेरि प्रयास गर्नुहोस्।");
             });
         }
     </script>
