@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loksewa & TSC Pro Exam Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 selection:bg-indigo-500 selection:text-white">
+
+    <!-- TOP HEADER -->
+    <header class="w-full max-w-3xl text-center py-6 border-b border-slate-800 mb-6">
+        <div class="inline-block bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-full text-xs font-semibold mb-2 tracking-wide uppercase">
+            🇳🇵 Loksewa & TSC Pro Examination Center
+        </div>
+        <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight">ज्ञान-गुण लोकसेवा प्रदायक पोर्टल</h1>
+        <p class="text-sm md:text-base text-slate-400 mt-1">मार्किङ प्रणाली: सहीको (+2), गलतको (-0.4 वा 20%) | दैनिक, साप्ताहिक तथा मासिक अभ्यास 🚀</p>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="w-full max-w-xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 md:p-8">
+        
+        <!-- SCREEN 1: LOGIN & TOPIC / SET SELECTION CARDS -->
+        <div id="login-screen" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-1">तपाईको पूरा नाम (Full Name)</label>
+                <input type="text" id="username-input" placeholder="जस्तै: रमेश शर्मा" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500 text-white placeholder-slate-600">
+            </div>
+
+            <div class="space-y-3">
+                <label class="block text-sm font-medium text-slate-300">तयारी गर्ने सेट वा विषय रोज्नुहोस्:</label>
+                
+                <div class="grid grid-cols-1 gap-3">
+                    <div onclick="selectTopicCard('Sangathit Sanstha', this)" class="topic-card cursor-pointer bg-slate-950 border border-indigo-500 bg-indigo-950/30 p-4 rounded-xl transition duration-200 flex items-center justify-between group">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🏢</span>
+                            <div>
+                                <h4 class="font-bold text-slate-200 group-hover:text-indigo-400 transition">संगठित संस्थासम्बन्धी महत्वपूर्ण प्रश्नहरू</h4>
+                                <p class="text-xs text-slate-400">बैंक, संस्थान तथा लोकसेवा उपयोगी सेट</p>
+                            </div>
+                        </div>
+                        <span class="text-indigo-400 font-bold text-lg">→</span>
+                    </div>
+
+                    <div onclick="selectTopicCard('Geography', this)" class="topic-card cursor-pointer bg-slate-950 border border-slate-800 hover:border-indigo-500 p-4 rounded-xl transition duration-200 flex items-center justify-between group">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🇳🇵</span>
+                            <div>
+                                <h4 class="font-bold text-slate-200 group-hover:text-indigo-400 transition">नेपालको भूगोल (Geography)</h4>
+                                <p class="text-xs text-slate-400">नदी, हिमाल, पर्वत र धरातलीय स्वरूप</p>
+                            </div>
+                        </div>
+                        <span class="text-indigo-400 font-bold text-lg">→</span>
+                    </div>
+
+                    <div onclick="selectTopicCard('Constitution', this)" class="topic-card cursor-pointer bg-slate-950 border border-slate-800 hover:border-indigo-500 p-4 rounded-xl transition duration-200 flex items-center justify-between group">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">⚖️</span>
+                            <div>
+                                <h4 class="font-bold text-slate-200 group-hover:text-indigo-400 transition">नेपालको संविधान र ऐन नियम</h4>
+                                <p class="text-xs text-slate-400">मौलिक हक, राज्यका निर्देशक सिद्धान्त</p>
+                            </div>
+                        </div>
+                        <span class="text-indigo-400 font-bold text-lg">→</span>
+                    </div>
+
+                    <div onclick="selectTopicCard('All', this)" class="topic-card cursor-pointer bg-slate-950 border border-slate-800 hover:border-indigo-500 p-4 rounded-xl transition duration-200 flex items-center justify-between group">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🌟</span>
+                            <div>
+                                <h4 class="font-bold text-slate-200 group-hover:text-indigo-400 transition">सबै विषयबाट मिस्रित (Mixed Set)</h4>
+                                <p class="text-xs text-slate-400">सम्पूर्ण क्षेत्र समेटिएको मोडल टेस्ट</p>
+                            </div>
+                        </div>
+                        <span class="text-indigo-400 font-bold text-lg">→</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="startQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3.5 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/30 tracking-wide mt-2">
+                क्विज सुरु गर्नुहोस् 🚀
+            </button>
+        </div>
+
+        <!-- SCREEN 2: QUIZ ARENA -->
+        <div id="quiz-screen" class="hidden space-y-6">
+            <div class="flex justify-between items-center text-xs md:text-sm text-slate-400 font-medium border-b border-slate-800 pb-3">
+                <span id="question-tracker" class="bg-slate-800 px-3 py-1 rounded-full text-slate-300">Question 1 of X</span>
+                <span id="player-display" class="text-indigo-400 font-bold"></span>
+            </div>
+            
+            <h2 id="question-text" class="text-lg md:text-xl font-semibold text-white leading-relaxed">Loading question...</h2>
+
+            <div id="options-container" class="space-y-3">
+                <!-- Options injected dynamically -->
+            </div>
+
+            <!-- EXPLANATION BOX -->
+            <div id="explanation-box" class="hidden bg-slate-950/80 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 space-y-1">
+                <span class="font-bold text-indigo-400 block">📌 स्पष्टीकरण (Explanation):</span>
+                <p id="explanation-text" class="text-xs md:text-sm text-slate-300"></p>
+            </div>
+
+            <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-3.5 rounded-xl transition duration-200 shadow-lg shadow-emerald-600/20">
+                अर्को प्रश्न ➡️
+            </button>
+        </div>
+
+        <!-- SCREEN 3: SCORE & ADVANCED LEADERBOARD -->
+        <div id="score-screen" class="hidden space-y-6">
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl font-black text-emerald-400">क्विज सम्पन्न भयो! 🎉</h2>
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 grid grid-cols-3 gap-2 text-center my-3">
+                    <div>
+                        <p class="text-xs text-slate-400">सही उत्तर</p>
+                        <p id="res-correct" class="text-lg font-bold text-emerald-400">0</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400">गलत उत्तर</p>
+                        <p id="res-wrong" class="text-lg font-bold text-rose-400">0</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400">कुल अंक (+2 / -0.4)</p>
+                        <p id="res-score" class="text-lg font-bold text-indigo-400">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons for mistaken questions if any -->
+            <div id="mistake-action-container" class="hidden">
+                <button onclick="startMistakesReview()" class="w-full bg-amber-600 hover:bg-amber-500 font-bold py-3 rounded-xl transition duration-200 text-sm shadow-lg shadow-amber-600/20">
+                    ✍️ बिगारेका प्रश्नहरू पुनः अभ्यास गर्ने (Retake Mistakes)
+                </button>
+            </div>
+
+            <!-- LEADERBOARD SECTION WITH TABS -->
+            <div class="border-t border-slate-800 pt-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-sm font-bold text-indigo-400 flex items-center gap-1">🏆 लिडरबोर्ड</h3>
+                    <!-- Filter Tabs -->
+                    <div class="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+                        <button onclick="switchLeaderboard('daily', this)" class="lb-tab px-2.5 py-1 rounded-md font-semibold bg-indigo-600 text-white transition">दैनिक</button>
+                        <button onclick="switchLeaderboard('weekly', this)" class="lb-tab px-2.5 py-1 rounded-md font-semibold text-slate-400 transition">साता</button>
+                        <button onclick="switchLeaderboard('monthly', this)" class="lb-tab px-2.5 py-1 rounded-md font-semibold text-slate-400 transition">महिना</button>
+                    </div>
+                </div>
+                <div id="leaderboard-list" class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                    <!-- Leaderboard items -->
+                </div>
+            </div>
+
+            <button onclick="location.reload()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3.5 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/30">
+                फेरी खेल्नुहोस् 🔄
+            </button>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-8 text-xs text-slate-500 text-center">
+        &copy; 2026 Loksewa & TSC Pro Quiz Portal. All rights reserved.
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+        
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = '';
+        let selectedTopic = 'Sangathit Sanstha';
+        let questions = [];
+        let currentIndex = 0;
+        
+        // Stats tracking
+        let correctCount = 0;
+        let wrongCount = 0;
+        let mistakenQuestions = []; // stores objects of wrong questions for retake
+        let isReviewMode = false;
+
+        function selectTopicCard(topicValue, element) {
+            selectedTopic = topicValue;
+            const cards = document.querySelectorAll('.topic-card');
+            cards.forEach(card => {
+                card.classList.remove('border-indigo-500', 'bg-indigo-950/30');
+                card.classList.add('border-slate-800', 'bg-slate-950');
+            });
+            element.classList.remove('border-slate-800', 'bg-slate-950');
+            element.classList.add('border-indigo-500', 'bg-indigo-950/30');
+        }
+
+        async function startQuiz() {
+            const input = document.getElementById('username-input').value.trim();
+            if (!input) {
+                alert('कृपया आफ्नो नाम लेख्नुहोस्!');
+                return;
+            }
+            currentUser = input;
+            document.getElementById('player-display').innerText = `विद्यार्थी: ${currentUser}`;
+
+            let query = supabaseClient.from('quizzes').select('*');
+            if (selectedTopic !== 'All') {
+                query = query.eq('topic', selectedTopic);
+            }
+
+            const { data, error } = await query;
+            if (error || !data || data.length === 0) {
+                alert(`यो विषय ('${selectedTopic}') मा हाल प्रश्नहरू उपलब्ध छैनन्!`);
+                return;
+            }
+            questions = data;
+            
+            // Reset stats
+            correctCount = 0;
+            wrongCount = 0;
+            mistakenQuestions = [];
+            currentIndex = 0;
+            isReviewMode = false;
+
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentIndex >= questions.length) {
+                finishQuiz();
+                return;
+            }
+
+            const q = questions[currentIndex];
+            const prefix = isReviewMode ? "[पुनरावलोकन] " : "";
+            document.getElementById('question-tracker').innerText = `${prefix}प्रश्न ${currentIndex + 1} / ${questions.length}`;
+            document.getElementById('question-text').innerText = q.question;
+
+            document.getElementById('explanation-box').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left bg-slate-950 border border-slate-800 hover:border-indigo-500 p-4 rounded-xl transition duration-200 font-medium text-slate-200 text-sm md:text-base';
+                btn.innerText = option;
+                btn.onclick = () => selectOption(btn, option, q.answer, q.explanation, q);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedBtn, chosen, correct, explanation, currentQ) {
+            const buttons = document.getElementById('options-container').querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+
+            if (chosen === correct) {
+                selectedBtn.classList.remove('bg-slate-950', 'border-slate-800');
+                selectedBtn.classList.add('bg-emerald-950/60', 'border-emerald-500', 'text-emerald-200');
+                if (!isReviewMode) correctCount++;
+            } else {
+                selectedBtn.classList.remove('bg-slate-950', 'border-slate-800');
+                selectedBtn.classList.add('bg-rose-950/60', 'border-rose-500', 'text-rose-200');
+                
+                if (!isReviewMode) {
+                    wrongCount++;
+                    // Save to mistake list if not already present
+                    if (!mistakenQuestions.some(item => item.id === currentQ.id)) {
+                        mistakenQuestions.push(currentQ);
+                    }
+                }
+
+                buttons.forEach(b => {
+                    if (b.innerText === correct) {
+                        b.classList.remove('bg-slate-950', 'border-slate-800');
+                        b.classList.add('bg-emerald-950/60', 'border-emerald-500', 'text-emerald-200');
+                    }
+                });
+            }
+
+            if (explanation) {
+                document.getElementById('explanation-text').innerText = explanation;
+                document.getElementById('explanation-box').classList.remove('hidden');
+            }
+
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            loadQuestion();
+        }
+
+        async function finishQuiz() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('score-screen').classList.remove('hidden');
+
+            // Calculation: +2 for each correct, -0.4 (20% negative marking of 2) for each wrong
+            let finalCalculatedScore = (correctCount * 2) - (wrongCount * 0.4);
+            if (finalCalculatedScore < 0) finalCalculatedScore = 0; // Don't drop below 0
+
+            document.getElementById('res-correct').innerText = correctCount;
+            document.getElementById('res-wrong').innerText = wrongCount;
+            document.getElementById('res-score').innerText = finalCalculatedScore.toFixed(1);
+
+            // Show retake mistake button if there are mistakes and not already in review mode
+            if (mistakenQuestions.length > 0 && !isReviewMode) {
+                document.getElementById('mistake-action-container').classList.remove('hidden');
+            } else {
+                document.getElementById('mistake-action-container').classList.add('hidden');
+            }
+
+            // Save score only if it's the first main run (not a review session)
+            if (!isReviewMode) {
+                await supabaseClient.from('leaderboard').insert([
+                    { 
+                        username: `${currentUser} (${selectedTopic})`, 
+                        score: Number(finalCalculatedScore.toFixed(1)), 
+                        total_questions: questions.length 
+                    }
+                ]);
+            }
+
+            fetchLeaderboard('daily');
+        }
+
+        function startMistakesReview() {
+            questions = [...mistakenQuestions];
+            currentIndex = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            mistakenQuestions = [];
+            isReviewMode = true;
+
+            document.getElementById('score-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // Leaderboard switching tabs (Daily, Weekly, Monthly)
+        async function switchLeaderboard(period, btnElement) {
+            // Update active tab style
+            document.querySelectorAll('.lb-tab').forEach(tab => {
+                tab.classList.remove('bg-indigo-600', 'text-white');
+                tab.classList.add('text-slate-400');
+            });
+            btnElement.classList.remove('text-slate-400');
+            btnElement.classList.add('bg-indigo-600', 'text-white');
+
+            fetchLeaderboard(period);
+        }
+
+        async function fetchLeaderboard(period) {
+            let query = supabaseClient.from('leaderboard').select('*');
+
+            const now = new Date();
+            if (period === 'daily') {
+                const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+                query = query.gte('created_at', startOfDay);
+            } else if (period === 'weekly') {
+                const startOfWeek = new Date(now.setDate(now.getDate() - 7)).toISOString();
+                query = query.gte('created_at', startOfWeek);
+            } else if (period === 'monthly') {
+                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+                query = query.gte('created_at', startOfMonth);
+            }
+
+            const { data, error } = await query.order('score', { ascending: false }).limit(5);
+
+            const listContainer = document.getElementById('leaderboard-list');
+            listContainer.innerHTML = '';
+
+            if (error || !data || data.length === 0) {
+                listContainer.innerHTML = '<p class="text-xs text-slate-500 text-center py-2">यो समयसीमामा कुनै रेकर्ड छैन।</p>';
+                return;
+            }
+
+            data.forEach((entry, index) => {
+                const row = document.createElement8 ? document.createElement('div') : document.createElement('div');
+                row.className = 'flex justify-between items-center bg-slate-950 px-4 py-2 rounded-xl text-xs md:text-sm border border-slate-800/60';
+                row.innerHTML = `<span class="font-semibold text-slate-200">${index + 1}. ${entry.username}</span> <span class="text-indigo-400 font-bold">${entry.score} अंक</span>`;
+                listContainer.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
