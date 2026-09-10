@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loksewa Pro - 45 Min Mock Exam</title>
+    <title>Loksewa Pro - Set 1 Mock Exam</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- PDF Generation Libraries -->
@@ -14,7 +14,7 @@
 
     <!-- HEADER -->
     <header class="w-full max-w-3xl text-center py-4 border-b border-slate-800 mb-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold text-indigo-400">🇳🇵 Loksewa Model Exam (50 Qs | 45 Min)</h1>
+        <h1 class="text-xl font-bold text-indigo-400">🇳🇵 Loksewa Model Exam (Set 1 | 45 Min)</h1>
         <div id="timer-box" class="hidden bg-rose-950/80 border border-rose-800 text-rose-300 px-3 py-1 rounded-xl font-mono font-bold text-sm">
             ⏳ <span id="time-left">45:00</span>
         </div>
@@ -22,11 +22,22 @@
 
     <main class="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
         
-        <!-- REGISTRATION SCREEN -->
+        <!-- REGISTRATION & SET 1 SELECTION SCREEN -->
         <div id="reg-screen" class="space-y-4">
-            <h2 class="text-lg font-bold text-white">परीक्षा दिनको लागि आफ्नो विवरण भर्नुहोस्:</h2>
-            <input type="text" id="candidate-name" placeholder="पूरा नाम (Full Name)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none">
-            <button onclick="startExam()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30">
+            <h2 class="text-lg font-bold text-white">परीक्षा विवरण र सेट छान्नुहोस्:</h2>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">पूरा नाम</label>
+                <input type="text" id="candidate-name" placeholder="जस्तै: रमेश शर्मा" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">परीक्षा सेट रोज्नुहोस्:</label>
+                <div class="grid grid-cols-1 gap-2">
+                    <button type="button" onclick="selectExamSet('Set-1', this)" class="set-card bg-indigo-950/60 border border-indigo-500 p-3.5 rounded-xl text-center font-bold text-sm text-indigo-200 transition shadow-lg">🎯 Set 1 (Model Exam)</button>
+                </div>
+            </div>
+
+            <button onclick="startExam()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-2">
                 परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀
             </button>
         </div>
@@ -35,7 +46,7 @@
         <div id="exam-screen" class="hidden space-y-5">
             <div class="flex justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-2">
                 <span id="q-tracker" class="bg-slate-800 px-3 py-1 rounded-full text-slate-200">Question 1 of 50</span>
-                <span class="text-indigo-400 font-bold">+2 Marks | -0.4 Negative</span>
+                <span id="active-set-badge" class="bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded border border-indigo-800 font-bold">Set-1</span>
             </div>
 
             <h3 id="exam-question" class="text-lg font-semibold text-white leading-relaxed">Loading...</h3>
@@ -54,6 +65,7 @@
                 <div class="text-center border-b border-slate-800 pb-3">
                     <h2 class="text-xl font-black text-emerald-400">📊 परीक्षा प्रतिवेदन (Exam Report Card)</h2>
                     <p id="rep-name" class="text-sm text-slate-300 font-semibold mt-1"></p>
+                    <p id="rep-set" class="text-xs text-indigo-400 font-bold mt-0.5">परीक्षा सेट: Set-1</p>
                 </div>
 
                 <div class="grid grid-cols-4 gap-2 text-center py-2">
@@ -78,9 +90,7 @@
                 <!-- Answer Review Section -->
                 <div>
                     <h4 class="text-xs font-bold text-indigo-400 mb-2">📝 प्रश्नहरूको उत्तर तथा समीक्षा:</h4>
-                    <div id="review-container" class="space-y-2 max-h-60 overflow-y-auto pr-2 text-xs">
-                        <!-- Injected reviews -->
-                    </div>
+                    <div id="review-container" class="space-y-2 max-h-60 overflow-y-auto pr-2 text-xs"></div>
                 </div>
             </div>
 
@@ -93,9 +103,9 @@
                 </button>
             </div>
 
-            <!-- LEADERBOARD -->
+            <!-- SET 1 LEADERBOARD -->
             <div class="border-t border-slate-800 pt-4">
-                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 परीक्षा लिडरबोर्ड (Top Contestants)</h3>
+                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड (Top Contestants)</h3>
                 <div id="exam-leaderboard" class="space-y-1.5 max-h-36 overflow-y-auto text-xs"></div>
             </div>
         </div>
@@ -110,11 +120,16 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let candidateName = '';
+        let selectedSet = 'Set-1';
         let examQuestions = [];
         let currentIdx = 0;
-        let userAnswers = {}; // stores index -> selected option
+        let userAnswers = {}; 
         let timerInterval;
         let timeLeftSeconds = 45 * 60; // 45 minutes
+
+        function selectExamSet(setName, btnElement) {
+            selectedSet = setName;
+        }
 
         async function startExam() {
             const input = document.getElementById('candidate-name').value.trim();
@@ -124,15 +139,15 @@
             }
             candidateName = input;
 
-            // Fetch 50 random questions from Supabase quizzes table
-            let { data, error } = await supabaseClient.from('quizzes').select('*');
+            // Fetch questions specifically matching Set-1 from Supabase
+            let { data, error } = await supabaseClient.from('quizzes').select('*').eq('topic', 'Set-1');
+            
             if (error || !data || data.length === 0) {
-                alert('डेटाबेसमा प्रश्नहरू उपलब्ध छैनन्!');
+                alert('डेटाबेसमा Set-1 का प्रश्नहरू भेटिएनन्!');
                 return;
             }
 
-            // Shuffle and pick up to 50 questions
-            examQuestions = data.sort(() => 0.5 - Math.random()).slice(0, 50);
+            examQuestions = data;
 
             document.getElementById('reg-screen').classList.add('hidden');
             document.getElementById('exam-screen').classList.remove('hidden');
@@ -213,13 +228,9 @@
                 const userAns = userAnswers[idx];
                 const isCorrect = userAns === q.answer;
 
-                if (!userAns) {
-                    skipped++;
-                } else if (isCorrect) {
-                    correct++;
-                } else {
-                    wrong++;
-                }
+                if (!userAns) skipped++;
+                else if (isCorrect) correct++;
+                else wrong++;
 
                 reviewHTML += `
                     <div class="bg-slate-900 p-3 rounded-xl border ${isCorrect ? 'border-emerald-800/60' : 'border-rose-800/60'}">
@@ -231,7 +242,6 @@
                 `;
             });
 
-            // Score calculation: +2 for correct, -0.4 for wrong (20% negative marking)
             let totalScore = (correct * 2) - (wrong * 0.4);
             if (totalScore < 0) totalScore = 0;
 
@@ -242,19 +252,23 @@
             document.getElementById('rep-score').innerText = totalScore.toFixed(1);
             document.getElementById('review-container').innerHTML = reviewHTML;
 
-            // Save to Leaderboard table in Supabase
+            // Save to Supabase leaderboard with Set-1 tag
             await supabaseClient.from('leaderboard').insert([
-                { username: `${candidateName} (Exam)`, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
+                { username: `${candidateName} (Set-1)`, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
             ]);
 
-            fetchExamLeaderboard();
+            fetchSetLeaderboard();
         }
 
-        async function fetchExamLeaderboard() {
-            const { data } = await supabaseClient.from('leaderboard').select('*').order('score', { ascending: false }).limit(5);
+        async function fetchSetLeaderboard() {
+            // Fetch records for Set-1 from leaderboard
+            const { data } = await supabaseClient.from('leaderboard').select('*').ilike('username', '%(Set-1)%').order('score', { ascending: false }).limit(5);
             const lbContainer = document.getElementById('exam-leaderboard');
             lbContainer.innerHTML = '';
-            if (!data) return;
+            if (!data || data.length === 0) {
+                lbContainer.innerHTML = '<p class="text-slate-500 text-center py-1">यो सेटमा कुनै रेकर्ड छैन।</p>';
+                return;
+            }
             data.forEach((item, i) => {
                 lbContainer.innerHTML += `<div class="flex justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800"><span class="font-semibold text-slate-200">${i+1}. ${item.username}</span><span class="text-indigo-400 font-bold">${item.score} अंक</span></div>`;
             });
@@ -281,7 +295,7 @@
                     pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
                     heightLeft -= pageHeight;
                 }
-                pdf.save(`Loksewa_Exam_Report_${candidateName}.pdf`);
+                pdf.save(`Loksewa_Set-1_Report_${candidateName}.pdf`);
             });
         }
     </script>
