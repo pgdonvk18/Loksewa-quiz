@@ -151,7 +151,6 @@
         let timerInterval;
         let timeLeftSeconds = 45 * 60; // 45 minutes
 
-        // Page load hune bittikai Set 1 ko leaderboard load garne
         window.onload = () => {
             fetchSet1Leaderboard();
         };
@@ -164,10 +163,11 @@
             }
             candidateName = input;
 
-            let { data, error } = await supabaseClient.from('quizzes').select('*').eq('topic', 'Set-1');
+            // ilike प्रयोग गरिएको छ जसले गर्दा case-insensitive रूपमा 'Set-1', 'set-1' वा 'Set 1' फेला पार्छ
+            let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'Set-1');
             
             if (error || !data || data.length === 0) {
-                alert('डेटाबेसमा Set-1 का प्रश्नहरू भेटिएनन्!');
+                alert('डेटाबेसमा Set-1 का प्रश्नहरू भेटिएनन्! कृपया Supabase मा 'topic' को भ्यालु 'Set-1' राखेर प्रश्नहरू इन्सर्ट गर्नुहोस्।');
                 return;
             }
 
@@ -276,7 +276,6 @@
             document.getElementById('rep-score').innerText = totalScore.toFixed(1);
             document.getElementById('review-container').innerHTML = reviewHTML;
 
-            // Set 1 को छुट्टै टेबल (leaderboard_set1) मा डाटा सेभ गर्ने
             await supabaseClient.from('leaderboard_set1').insert([
                 { username: candidateName, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
             ]);
@@ -285,7 +284,6 @@
         }
 
         async function fetchSet1Leaderboard() {
-            // केवल Set 1 को टेबलबाट मात्र डाटा तानेर देखाउने
             const { data, error } = await supabaseClient
                 .from('leaderboard_set1')
                 .select('*')
