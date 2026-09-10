@@ -59,6 +59,12 @@
             <button onclick="startExam()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-2 cursor-pointer">
                 परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀
             </button>
+
+            <!-- REGISTRATION PAGE LEADERBOARD -->
+            <div class="border-t border-slate-800 pt-4 mt-6">
+                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड (सबै परीक्षार्थीहरू)</h3>
+                <div id="home-leaderboard" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
+            </div>
         </div>
 
         <!-- EXAM SCREEN -->
@@ -122,10 +128,10 @@
                 </button>
             </div>
 
-            <!-- SET 1 LEADERBOARD -->
+            <!-- RESULT PAGE LEADERBOARD -->
             <div class="border-t border-slate-800 pt-4 no-print">
                 <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड (सबै परीक्षार्थीहरू)</h3>
-                <div id="exam-leaderboard" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
+                <div id="result-leaderboard" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
             </div>
         </div>
 
@@ -144,6 +150,11 @@
         let userAnswers = {}; 
         let timerInterval;
         let timeLeftSeconds = 45 * 60; // 45 minutes
+
+        // Page load hune bittikai leaderboard load garne
+        window.onload = () => {
+            fetchSetLeaderboard();
+        };
 
         async function startExam() {
             const input = document.getElementById('candidate-name').value.trim();
@@ -273,27 +284,33 @@
         }
 
         async function fetchSetLeaderboard() {
-            // परीक्षा दिने सबै परीक्षार्थीहरूको नाम स्कोरको आधारमा देखाउने (कुनै लिमिट छैन)
             const { data, error } = await supabaseClient
                 .from('leaderboard')
                 .select('*')
                 .order('score', { ascending: false });
 
-            const lbContainer = document.getElementById('exam-leaderboard');
-            lbContainer.innerHTML = '';
-            
-            if (error || !data || data.length === 0) {
-                lbContainer.innerHTML = '<p class="text-slate-500 text-center py-1">यो सेटमा कुनै रेकर्ड छैन।</p>';
-                return;
-            }
-            
-            data.forEach((item, i) => {
-                lbContainer.innerHTML += `
-                    <div class="flex justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
-                        <span class="font-semibold text-slate-200">${i+1}. ${item.username}</span>
-                        <span class="text-indigo-400 font-bold">${item.score} अंक</span>
-                    </div>
-                `;
+            const containers = [
+                document.getElementById('home-leaderboard'),
+                document.getElementById('result-leaderboard')
+            ];
+
+            containers.forEach(lbContainer => {
+                if (!lbContainer) return;
+                lbContainer.innerHTML = '';
+                
+                if (error || !data || data.length === 0) {
+                    lbContainer.innerHTML = '<p class="text-slate-500 text-center py-1">यो सेटमा कुनै रेकर्ड छैन।</p>';
+                    return;
+                }
+                
+                data.forEach((item, i) => {
+                    lbContainer.innerHTML += `
+                        <div class="flex justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
+                            <span class="font-semibold text-slate-200">${i+1}. ${item.username}</span>
+                            <span class="text-indigo-400 font-bold">${item.score} अंक</span>
+                        </div>
+                    `;
+                });
             });
         }
 
