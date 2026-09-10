@@ -149,8 +149,8 @@
                     <h3 class="text-xs font-bold text-indigo-400">🏆 लिडरबोर्ड</h3>
                     <div class="flex bg-slate-950 p-1 rounded-lg border border-slate-800 text-[10px]">
                         <button onclick="switchLeaderboard('daily', this)" class="lb-tab px-2 py-0.5 rounded font-semibold bg-indigo-600 text-white transition">दैनिक</button>
-                        <button onclick="switchAlignment('weekly', this)" class="lb-tab px-2 py-0.5 rounded font-semibold text-slate-400 transition">साता</button>
-                        <button onclick="switchAlignment('monthly', this)" class="lb-tab px-2 py-0.5 rounded font-semibold text-slate-400 transition">महिना</button>
+                        <button onclick="switchLeaderboard('weekly', this)" class="lb-tab px-2 py-0.5 rounded font-semibold text-slate-400 transition">साता</button>
+                        <button onclick="switchLeaderboard('monthly', this)" class="lb-tab px-2 py-0.5 rounded font-semibold text-slate-400 transition">महिना</button>
                     </div>
                 </div>
                 <div id="leaderboard-list" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
@@ -188,7 +188,7 @@
         let mistakenQuestions = [];
         let isReviewMode = false;
 
-        // Event listener for topic cards to ensure click works smoothly
+        // Guaranteed click listener for topic selection cards
         document.querySelectorAll('.topic-card').forEach(card => {
             card.addEventListener('click', function() {
                 document.querySelectorAll('.topic-card').forEach(c => {
@@ -361,8 +361,7 @@
             loadQuestion();
         }
 
-        // Leaderboard tab switching helper
-        function switchAlignment(period, btnElement) {
+        async function switchLeaderboard(period, btnElement) {
             document.querySelectorAll('.lb-tab').forEach(tab => {
                 tab.classList.remove('bg-indigo-600', 'text-white');
                 tab.classList.add('text-slate-400');
@@ -371,10 +370,6 @@
             btnElement.classList.add('bg-indigo-600', 'text-white');
 
             fetchLeaderboard(period);
-        }
-
-        async function switchLeaderboard(period, btnElement) {
-            switchAlignment(period, btnElement);
         }
 
         async function fetchLeaderboard(period) {
