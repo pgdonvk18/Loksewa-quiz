@@ -340,18 +340,35 @@
     let timerInterval;
     let timeLeftSeconds = 45 * 60;
 
-    window.onload = () => {
-      checkLoginAndLoadName();
+    window.onload = async () => {
+      await checkLoginAndLoadName();
       fetchSet1Leaderboard();
     };
 
-    // लगइन भए नभएको जाँच गर्ने र नभए सुन्दर Modal देखाउने फंक्सन
-    function checkLoginAndLoadName() {
-      let savedName = localStorage.getItem('user_name') || localStorage.getItem('profile_name');
-      
+    // व्यापक (Robust) तरिकाले लगइन सेशन पत्ता लगाउने फंक्सन
+    async function checkLoginAndLoadName() {
+      // १. विभिन्न सम्भावित LocalStorage Keys हरू चेक गर्ने
+      let savedName = localStorage.getItem('user_name') || 
+                      localStorage.getItem('profile_name') || 
+                      localStorage.getItem('username') || 
+                      localStorage.getItem('logged_user');
+
+      // २. यदि लोकल स्टोरेजमा भेटिएन भने Supabase को built-in session वा local session बाट तान्ने प्रयास गर्ने
+      if (!savedName) {
+        try {
+          const { data: { session } } = await supabaseClient.auth.getSession();
+          if (session && session.user) {
+            savedName = session.user.user_metadata?.full_name || session.user.email;
+          }
+        } catch (e) {
+          console.log("Supabase session check error:", e);
+        }
+      }
+
+      // ३. अझै पनि फेला परेन भने Modal देखाउने
       if (!savedName || savedName.trim() === '') {
-        // आकर्षक Modal देखाउने
         document.getElementById('login-modal').classList.add('active');
+        document.getElementById('profile-display-name').innerText = 'लगइन गरिएको छैन';
         return;
       }
       
@@ -359,9 +376,9 @@
       document.getElementById('profile-display-name').innerText = candidateName;
     }
 
-    // लगइन पेजमा रिडाइरेक्ट गर्ने फंक्सन
+    // लगइन पेजमा रिडाइरेक्ट गर्ने फंक्सन (तपाईंको लगइन पेजको फाइलको नाम यहाँ मिलाउन सक्नुहुन्छ जस्तै login.html)
     function redirectToLogin() {
-      window.location.href = 'login.html'; // यहाँ आफ्नो लगइन पेजको नाम राख्नुहोला
+      window.location.href = 'login.html'; 
     }
 
     async function startExam() {
@@ -487,7 +504,7 @@
       document.getElementById('rep-name').innerText = `परीक्षार्थी: ${candidateName}`;
       document.getElementById('rep-correct').innerText = correct;
       document.getElementById('rep-wrong').innerText = wrong;
-      document.getElementById('rep-skipped').innerText = skipped;
+      document.getElementById('rep-skipped').innerText, skipped;
       document.getElementById('rep-score').innerText = totalScore.toFixed(1);
       document.getElementById('review-container').innerHTML = reviewHTML;
 
@@ -505,8 +522,8 @@
         localStorage.setItem('solved_questions_count', prevSolved + examQuestions.length);
         localStorage.setItem('correct_answers_count', prevCorrect + correct);
         localStorage.setItem('completed_tests_count', prevTests + 1);
-      } catch (e) {
-        console.error("Storage error:", e);
+      } code_err => {
+        console.error("Storage error:", code_err);
       }
 
       fetchSet1Leaderboard();
