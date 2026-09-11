@@ -385,11 +385,12 @@
     document.addEventListener("DOMContentLoaded", () => {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
-          candidateName = user.displayName || user.email;
+          // युजरको नाम लिने (यदि displayName छैन भने इमेलको अगाडिको भाग नामको रूपमा लिने)
+          candidateName = user.displayName || user.email.split('@')[0];
           userEmail = user.email;
           document.getElementById('profile-display-name').innerText = candidateName;
           
-          // इमेलको आधारमा चेक गर्ने कि परीक्षा दिसकेको छ वा छैन
+          // परीक्षा दिएको छ कि छैन चेक गर्न इमेल प्रयोग गर्ने (ताकी दुवै म्याच होस्)
           await checkIfExamAlreadyGiven(userEmail);
         } else {
           document.getElementById('login-modal').classList.add('active');
@@ -410,19 +411,26 @@
       const { data, error } = await supabaseClient
         .from('leaderboard_set1')
         .select('*')
-        .eq('username', email);
+        .eq('email', email); // यदि इमेल स्तम्भ छ भने वा username मा इमेल म्याच गर्ने
 
       if (error) {
-        console.error("Error checking exam status:", error);
+        // यदि इमेल स्तम्भ छैन भने username मा चेक गर्ने
+        const { data: altData } = await supabaseClient
+          .from('leaderboard_set1')
+          .select('*')
+          .eq('username', email);
+          
+        if (altData && altData.length > 0) {
+          document.getElementById('start-exam-btn').classList.add('hidden');
+          document.getElementById('already-given-box').classList.remove('hidden');
+        }
         return;
       }
 
       if (data && data.length > 0) {
-        // परीक्षा दिसकेको छ भने मुख्य बटन लुकाउने र अभ्यास विकल्प देखाउने
         document.getElementById('start-exam-btn').classList.add('hidden');
         document.getElementById('already-given-box').classList.remove('hidden');
       } else {
-        // पहिलोपटक हो भने परीक्षा बटन मात्र देखाउने
         document.getElementById('start-exam-btn').classList.remove('hidden');
         document.getElementById('already-given-box').classList.add('hidden');
       }
@@ -431,7 +439,7 @@
     window.startExam = async function(practice = false) {
       isPracticeMode = practice;
       try {
-        if (!candidateName) {
+        if (!userEmail) {
           document.getElementById('login-modal').classList.add('active');
           return;
         }
@@ -562,9 +570,9 @@
         document.getElementById('report-main-title').innerText = '📊 परीक्षा प्रतिवेदन (Exam Report Card)';
         document.getElementById('rep-set').innerText = 'परीक्षा सेट: Set-1 (Live Exam)';
         
-        // वास्तविक परीक्षा मात्र लिडरबोर्डमा सेभ हुने
+        // लिडरबोर्डमा जिमेलको सट्टा युजरको नाम (candidateName) सेभ गर्ने
         await supabaseClient.from('leaderboard_set1').insert([
-          { username: userEmail, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
+          { username: candidateName, email: userEmail, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
         ]);
       }
 
@@ -586,7 +594,7 @@
 
       const containers = [
         document.getElementById('home-leaderboard'),
-        document.getElementById('result-leaderboard')
+        document.getElementById('result-leaderboard']
       ];
 
       containers.forEach(lbContainer => {
@@ -599,6 +607,7 @@
         }
         
         data.forEach((item, i) => {
+          // लिडरबोर्डमा देखिएको username (जसमा अब नाम देखा पर्नेछ)
           lbContainer.innerHTML += `
             <div class="lb-row">
               <span style="font-weight: 700; color: #1e293b;">${i+1}. ${item.username}</span>
