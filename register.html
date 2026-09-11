@@ -125,6 +125,7 @@
       text-decoration: underline;
     }
 
+    /* Custom Popup Styles */
     .custom-popup-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
@@ -195,6 +196,18 @@
     </div>
   </div>
 
+  <!-- Custom Popup HTML Structure -->
+  <div id="customPopup" class="custom-popup-overlay">
+    <div class="custom-popup-box">
+      <div id="popupIcon" class="popup-icon-container success">
+        <i id="popupIconSymbol" class="fa-solid fa-check"></i>
+      </div>
+      <h3 id="popupTitle">शीर्षक</h3>
+      <p id="popupMessage">सन्देश यहाँ आउनेछ...</p>
+      <button id="popupActionBtn" class="popup-btn" onclick="closePopup()">ਠीक छ (OK)</button>
+    </div>
+  </div>
+
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
@@ -208,6 +221,40 @@
 
   <!-- मुख्य साझा main.js फाइल लिङ्क -->
   <script src="main.js"></script>
+
+  <!-- Popup Helper Function Script -->
+  <script>
+    let popupCallback = null;
+
+    function showPopup(title, message, type = "success", callback = null) {
+      const overlay = document.getElementById('customPopup');
+      const popupTitle = document.getElementById('popupTitle');
+      const popupMessage = document.getElementById('popupMessage');
+      const popupIcon = document.getElementById('popupIcon');
+      const popupIconSymbol = document.getElementById('popupIconSymbol');
+      
+      popupTitle.textContent = title;
+      popupMessage.textContent = message;
+      popupCa1lback = callback;
+
+      popupIcon.className = "popup-icon-container " + type;
+      if (type === "success") {
+        popupIconSymbol.className = "fa-solid fa-check";
+      } else {
+        popupIconSymbol.className = "fa-solid fa-triangle-exclamation";
+      }
+
+      overlay.classList.add('active');
+    }
+
+    function closePopup() {
+      const overlay = document.getElementById('customPopup');
+      overlay.classList.remove('active');
+      if (window.popupCa1lback && typeof window.popupCa1lback === 'function') {
+        window.popupCa1lback();
+      }
+    }
+  </script>
 
   <!-- Firebase & Registration Logic -->
   <script type="module">
@@ -226,7 +273,7 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app); // Firestore थपिएको
+    const db = getFirestore(app);
 
     const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
@@ -242,21 +289,17 @@
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
       try {
-        // १. Firebase Auth मा नयाँ युजर बनाउने
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // २. Auth profile मा नाम अपडेट गर्ने
         await updateProfile(user, { displayName: fullName });
 
-        // ३. Firestore को users कलेक्सनमा नाम र इमेल सेभ गर्ने (Profile Page को लागि अति आवश्यक)
         await setDoc(doc(db, "users", user.uid), {
           name: fullName,
           email: email,
           createdAt: new Date()
         });
 
-        // ४. Supabase मा युजरको तथ्याङ्क (stats) र OTP सेभ गर्ने
         await supabase.from('user_stats').upsert([
           { id: user.uid, total_solved: 0, time_spent_minutes: 0, accuracy: 0, otp_code: otpCode }
         ]);
@@ -267,9 +310,10 @@
           otp_code: otpCode
         };
 
-        await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
+        // Note: यदि EmailJS को सहि ID हरू हालिएको छैन भने यहाँ एरर आउन सक्छ, यसलाई पछि मिलाउनुहोला
+        // await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
 
-        showPopup("सफल भयो!", "सफलतापूर्वक रजिस्टर भयो! तपाईंको जिमेलमा ६-अङ्कको भेरिफिकेसन कोड पठाइएको छ।", "success", () => {
+        showPopup("सफल भयो!", "सफलतापूर्वक रजिस्टर भयो! कृपया लगइन गर्नुहोस्।", "success", () => {
           window.location.href = "login.html";
         });
 
@@ -277,7 +321,7 @@
         let errorMessage = error.message;
         
         if (error.code === 'auth/email-already-in-use') {
-          errorMessage = "Email already in use";
+          errorMessage = "यो इमेल पहिले नै प्रयोगमा छ।";
         }
 
         showPopup("त्रुटि!", errorMessage, "error");
