@@ -74,3 +74,47 @@ function loadBottomNav(activePage) {
   // बडीको अन्त्यमा यसलाई इन्जेक्ट गर्ने
   document.body.insertAdjacentHTML('beforeend', navHTML);
 }
+// पेज लोड हुँदा अटोमेटिक पपअप मोडल DOM मा इन्जेक्ट (Inject) गर्ने
+document.addEventListener("DOMContentLoaded", () => {
+  if (!document.getElementById('successModal')) {
+    const modalHTML = `
+      <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: #ffffff; padding: 24px; border-radius: 20px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); animation: scaleUp 0.3s ease;">
+          <div style="width: 55px; height: 55px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px auto;">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <h3 style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">सफल भयो!</h3>
+          <p id="popupMessage" style="font-size: 13px; color: #64748b; margin-bottom: 20px;">तपाईंको कार्य सफलतापूर्वक पूरा भयो।</p>
+          <button id="popupOkBtn" style="background: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;">ठीक्क छ (OK)</button>
+        </div>
+      </div>
+      <style>
+        @keyframes scaleUp {
+          from { transform: scale(0.8); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+      </style>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  }
+});
+
+// ग्लोबल फंक्सन - जसलाई जुनसुकै पेजबाट कल गर्न सकिन्छ
+window.showSuccessPopup = function(message, redirectUrl) {
+  const modal = document.getElementById('successModal');
+  const msgEl = document.getElementById('popupMessage');
+  const okBtn = document.getElementById('popupOkBtn');
+  
+  if(msgEl) msgEl.textContent = message;
+  if(modal) modal.style.display = 'flex';
+
+  if(okBtn) {
+    okBtn.onclick = function() {
+      modal.style.display = 'none';
+      if(redirectUrl) {
+        window.location.href = redirectUrl;
+      }
+    };
+  }
+};
+
