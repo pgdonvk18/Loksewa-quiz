@@ -180,8 +180,8 @@
       <!-- प्रोफाइलबाट तानेको नाम देखाउने ठाउँ -->
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
         <div>
-          <p style="font-size: 11px; color: #64748b; font-weight: 600;">परीक्षार्थी (Candidate)</p>
-          <p id="profile-display-name" style="font-size: 15px; font-weight: 800; color: #1e293b;">লোড हुँदैछ...</p>
+          <p style="font-size: 11px; color: #64748b; font-weight: 600;">लगइन गरिएको प्रयोगकर्ता</p>
+          <p id="profile-display-name" style="font-size: 15px; font-weight: 800; color: #1e293b;">चेक गर्दैछ...</p>
         </div>
         <i class="fa-solid fa-user-check" style="color: #2563eb; font-size: 20px;"></i>
       </div>
@@ -286,17 +286,20 @@
     let timeLeftSeconds = 45 * 60;
 
     window.onload = () => {
-      loadProfileName();
+      checkLoginAndLoadName();
       fetchSet1Leaderboard();
     };
 
-    // प्रोफाइल वा लोकल स्टोरेजबाट नाम लोड गर्ने फंक्सन
-    function loadProfileName() {
-      // तपाईंले प्रोफाइल पेजमा प्रयोग गर्ने key जस्तै 'user_name' वा 'candidate_name' यहाँ मिलाउन सक्नुहुन्छ
+    // लगइन भए नभएको जाँच गर्ने र नभए Login Page मा पठाउने फंक्सन
+    function checkLoginAndLoadName() {
+      // तपाईंको प्रोजेक्टमा लगइनको लागि प्रयोग हुने key ('user_name', 'profile_name', वा 'logged_in_user') राख्न सक्नुहुन्छ
       let savedName = localStorage.getItem('user_name') || localStorage.getItem('profile_name');
       
       if (!savedName || savedName.trim() === '') {
-        savedName = 'अज्ञात परीक्षार्थी (Guest User)';
+        alert('कृपया पहिले लगइन (Login) गर्नुहोस्!');
+        // 'login.html' लाई आफ्नो लगइन पेजको नामले फेर्न सक्नुहुन्छ
+        window.location.href = 'login.html'; 
+        return;
       }
       
       candidateName = savedName;
@@ -305,16 +308,10 @@
 
     async function startExam() {
       try {
-        if (!candidateName || candidateName === 'अज्ञात परीक्षार्थी (Guest User)') {
-          let promptName = prompt('कृपया आफ्नो प्रोफाइल नाम प्रविष्ट गर्नुहोस्:', 'रमेश शर्मा');
-          if (promptName && promptName.trim() !== '') {
-            candidateName = promptName.trim();
-            localStorage.setItem('user_name', candidateName);
-            document.getElementById('profile-display-name').innerText = candidateName;
-          } else {
-            alert('परीक्षा दिनको लागि नाम आवश्यक छ!');
-            return;
-          }
+        if (!candidateName) {
+          alert('लगइन नभएको हुनाले परीक्षा सुरु गर्न सकिएन!');
+          window.location.href = 'login.html';
+          return;
         }
 
         let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'Set-1');
