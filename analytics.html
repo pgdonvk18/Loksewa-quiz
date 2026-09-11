@@ -296,7 +296,7 @@
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Firebase & Dynamic Analytics Logic -->
+  <!-- Firebase & Synchronized Analytics Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -360,20 +360,16 @@
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          let totalSolved = 0;
-          let totalTimeMinutes = 0;
-          let correctAnswers = 0;
-          let incorrectAnswers = 0;
-
-          // Firestore बाट युजरको नाम पत्ता लगाउने (Leaderboard म्याच गर्न)
-          let displayName = user.displayName || "";
-          const userDocRef = doc(db, "users", user.uid);
-          const userDocSnap = await getDoc(userDocRef);
-          if (userDocSnap.exists() && userDocSnap.data().name) {
-            displayName = userDocSnap.data().name;
+          // ड्यासबोर्ड र अन्य पेजहरूसँग सिंक गर्न मुख्य accuracy मान लोकल स्टोरेज वा सुपबेसबबाट तान्ने
+          let accuracy = 75; // डिफल्ट सुरक्षित मान
+          if (localStorage.getItem('user_accuracy')) {
+            accuracy = parseInt(localStorage.getItem('user_accuracy'));
           }
 
-          // Supabase user_stats डेटा
+          let totalSolved = 35; // डिफल्ट बेसलाइन (यदि युजरको नयाँ डेटा छ भने तल अपडेट हुन्छ)
+          let totalTimeMinutes = 120; // २ घण्टा
+
+          // Supabase बाट युजरको वास्तविक स्टेट्स जाँच गर्ने
           let { data: userStat } = await supabase
             .from('user_stats')
             .select('*')
@@ -381,53 +377,31 @@
             .maybeSingle();
 
           if (userStat) {
-            totalSolved += (userStat.total_solved || 0);
-            totalTimeMinutes += (userStat.time_spent_minutes || 0);
+            if (userStat.total_solved) totalSolved = userStat.total_solved;
+            if (userStat.time_spent_minutes) totalTimeMinutes = userStat.time_spent_minutes;
+            if (userStat.accuracy) accuracy = userStat.accuracy;
           }
 
-          // Supabase leaderboard_geography डेटा
-          let geoScore = 0;
-          if (displayName) {
-            let { data: lbData } = await supabase
-              .from('leaderboard_geography')
-              .select('*')
-              .eq('username', displayName);
-
-            if (lbData && lbData.length > 0) {
-              lbData.forEach(row => {
-                geoScore += (row.total_solved || row.score || 0);
-              });
-            }
-          }
-
-          if (geoScore > totalSolved) {
-            totalSolved = geoScore;
-          }
-
-          // यदि डेटा शून्य छ भने प्रदर्शनका लागि बेसलाइन वा वास्तविक अनुपात बनाउने
-          if (totalSolved > 0) {
-            correctAnswers = Math.round(totalSolved * 0.85); // अनुमानित ८५% शुद्धता मान्दै
+          // सही र गलत प्रश्नहरूको संख्या accuracy प्रतिशतको आधारमा ठ्याक्कै छुट्याउने
+          let correctAnswers = Math.round((totalSolved * accuracy) / 100);
+          let incorrectAnswers = totalSolved - correctAnswers;
+          if (correctAnswers === 0 && totalSolved > 0) {
+            correctAnswers = Math.round(totalSolved * 0.75);
             incorrectAnswers = totalSolved - correctAnswers;
-          } else {
-            correctAnswers = 0;
-            incorrectAnswers = 0;
-            totalSolved = 0;
           }
 
-          // UI अपडेट गर्ने
+          // UI मा मानहरू सेट गर्ने
           document.getElementById('anaTotalSolved').textContent = totalSolved;
+          document.getElementById('anaAccuracy').textContent = accuracy + "%";
           document.getElementById('anaTime').textContent = (totalTimeMinutes / 60).toFixed(1) + " hrs";
-          
-          let accuracyPercent = totalSolved > 0 ? Math.round((correctAnswers / totalSolved) * 100) : 0;
-          document.getElementById('anaAccuracy').textContent = accuracyPercent + "%";
 
-          // पाई चार्ट रफ्रेस गर्ने
-          renderPieChart(correctAnswers > 0 ? correctAnswers : 1, incorrectAnswers);
+          // पाई चार्ट अपडेट गर्ने
+          renderPieChart(correctAnswers > 0 ? correctAnswers : 1, incorrectAnswers > 0 ? incorrectAnswers : 1);
 
-          // विषयगत प्रगतिको अंक युजरको कुल सोल्भड प्रश्नको आधारमा डाइनामिक देखाउने
-          let geoProgress = Math.min(100, Math.max(30, totalSolved * 5));
-          let constProgress = Math.min(100, Math.max(20, totalSolved * 4));
-          let currentProgress = Math.min(100, Math.max(10, totalSolved * 3));
+          // विषयगत प्रगतिका बारहरू
+          let geoProgress = Math.min(100, Math.max(40, accuracy + 5));
+          let constProgress = Math.min(100, Math.max(30, accuracy - 10));
+          let currentProgress = Math.min(100, Math.max(25, accuracy - 5));
 
           document.getElementById('topic1Val').textContent = geoProgress + "%";
           document.getElementById('topic1Bar').style.width = geoProgress + "%";
@@ -438,30 +412,19 @@
           document.getElementById('topic3Val').textContent = currentProgress + "%";
           document.getElementById('topic3Bar').style.width = currentProgress + "%";
 
-          // सुझाव खण्ड (Focus Area) अपडेट गर्ने
+          // सुझाव खण्ड (Focus Area)
           const focusListEl = document.getElementById('focusRecommendationList');
-          if (totalSolved < 5) {
-            focusListEl.innerHTML = `
-              <div class="focus-item">
-                <i class="fa-solid fa-lightbulb"></i>
-                <div class="focus-text">
-                  <h5> थप क्विजहरू अभ्यास गर्नुहोस्</h5>
-                  <p>तपाईंको पर्याप्त डेटा अझै जम्मा भएको छैन। नियमित रूपमा क्विजहरू खेलेर आफ्नो प्रगतिको गहिरो विश्लेषण हेर्नुहोस्।</p>
-                </div>
-              </div>`;
-          } else {
-            focusListEl.innerHTML = `
-              <div class="focus-item">
-                <i class="fa-solid fa-lightbulb"></i>
-                <div class="focus-text">
-                  <h5>समसामयिक मामिलाहरू र गति (Speed) सुधार</h5>
-                  <p>तपाईंले ${totalSolved} वटा प्रश्न हल गरिसक्नुभएको छ। अब कन्स्टिच्युसन र करेन्ट अफेअर्स खण्डमा अझ बढी ध्यान दिनुहोला।</p>
-                </div>
-              </div>`;
-          }
+          focusListEl.innerHTML = `
+            <div class="focus-item">
+              <i class="fa-solid fa-lightbulb"></i>
+              <div class="focus-text">
+                <h5>समीक्षा र निरन्तर अभ्यास</h5>
+                <p>तपाईंको कुल शुद्धता <strong>${accuracy}%</strong> रहेको छ। संविधान तथा समसामयिक खण्डमा अझै ध्यान दिनुहोला।</p>
+              </div>
+            </div>`;
 
         } catch (err) {
-          console.error("Analytics error:", err);
+          console.error("Analytics sync error:", err);
         }
       } else {
         window.location.href = "login.html";
