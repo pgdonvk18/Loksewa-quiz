@@ -25,12 +25,11 @@ document.addEventListener("DOMContentLoaded", function() {
         box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
         border-radius: 20px 20px 0 0;
         z-index: 1000;
-        /* तल लुक्दा र माथि आउँदा सहज तरिकाले ट्रान्जिसन हुने */
-        transition: transform 0.3s ease-in-out;
+        /* सहज रूपमा ट्रान्जिसन हुनका लागि */
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      /* जब यो class थपिन्छ, बार तलतिर लुक्छ */
       .bottom-nav.nav-hidden {
-        transform: translateY(100%);
+        transform: translateY(110%);
       }
       .nav-link {
         display: flex;
@@ -83,20 +82,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
   document.body.insertAdjacentHTML('beforeend', navHTML);
 
-  // स्क्रोल गर्दा लुक्ने र देखिने लजिक
+  // भरपर्दो स्क्रोल डिटेक्टर
   let lastScrollTop = 0;
   const bottomNav = document.getElementById('mainBottomNav');
+  const delta = 5; // कम्तिमा कति पिक्सेल स्क्रोल हुँदा पत्ता लगाउने
 
   window.addEventListener('scroll', function() {
-    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    let st = window.pageYOffset || document.documentElement.scrollTop;
 
-    if (scrollTop > lastScrollTop && scrollTop > 50) {
-      // तल स्क्रोल (Scroll Down) गर्दा बार लुकाउने
+    // यदि स्क्रोल धेरै सानो छ भने इग्नोर गर्ने
+    if (Math.abs(lastScrollTop - st) <= delta) return;
+
+    if (st > lastScrollTop && st > 20) {
+      // तल जाँदा (Scroll Down) लुकाउने
       bottomNav.classList.add('nav-hidden');
     } else {
-      // माथि स्क्रोल (Scroll Up) गर्दा बार देखाउने
+      // माथि आउँदा (Scroll Up) देखाउने
       bottomNav.classList.remove('nav-hidden');
     }
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    lastScrollTop = st <= 0 ? 0 : st;
   }, false);
 });
