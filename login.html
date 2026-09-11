@@ -173,7 +173,8 @@
       <p>लोकसेवा आयोग तयारीका लागि भरपर्दो डिजिटल चौतारी</p>
     </div>
 
-    <form id="loginForm" onsubmit="handleLogin(event)">
+    <!-- onsubmit हटाएर सिधै id राखिएको छ -->
+    <form id="loginForm">
       <div class="form-group">
         <label>इमेल (Email)</label>
         <div class="input-box">
@@ -210,7 +211,7 @@
     </div>
   </div>
 
-  <!-- Popup Helper Script -->
+  <!-- Popup Control Script -->
   <script>
     let popupCallback = null;
 
@@ -244,10 +245,7 @@
     }
   </script>
 
-  <!-- मुख्य साझा main.js फाइल लिङ्क -->
-  <script src="main.js"></script>
-
-  <!-- Firebase & Login Logic -->
+  <!-- Firebase & Login Logic (Module Script) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -264,12 +262,12 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    setPersistence(auth, browserSessionPersistence)
-      .catch((error) => {
-        console.error("Persistence Error: ", error);
-      });
+    setPersistence(auth, browserSessionPersistence).catch((error) => {
+      console.error("Persistence Error: ", error);
+    });
 
-    window.handleLogin = async function(event) {
+    // Form submit हुँदा काम गर्ने इभेन्ट लistener
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       
       const email = document.getElementById('loginEmail').value;
@@ -280,7 +278,6 @@
         window.location.href = "dashboard.html";
 
       } catch (error) {
-        // Firebase का एरर कोडहरूलाई नेपालीमा रूपान्तरण गरी पपअपमा देखाउने
         let errorMessage = "लगइन गर्न सकिएन। कृपया विवरण जाँच गर्नुहोस्।";
         
         if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
@@ -293,7 +290,7 @@
 
         showPopup("लगइन असफल!", errorMessage, "error");
       }
-    };
+    });
   </script>
 
 </body>
