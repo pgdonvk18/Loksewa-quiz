@@ -61,6 +61,12 @@
       align-items: center;
       gap: 16px;
     }
+    
+    /* प्रोफाइल फोटो र पेन्सिल आइकनको लागि स्टाइल */
+    .avatar-wrapper {
+      position: relative;
+      flex-shrink: 0;
+    }
     .avatar-container {
       width: 76px;
       height: 76px;
@@ -68,7 +74,6 @@
       background: #ffffff;
       padding: 3px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      flex-shrink: 0;
     }
     .avatar-container img {
       width: 100%;
@@ -76,6 +81,27 @@
       border-radius: 50%;
       object-fit: cover;
     }
+    .avatar-edit-btn {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: #2563eb;
+      color: #ffffff;
+      border: 2px solid #ffffff;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .avatar-edit-btn:hover {
+      background: #1d4ed8;
+    }
+
     .user-meta {
       flex: 1;
     }
@@ -147,7 +173,7 @@
     }
     .save-name-btn {
       background: #16a34a;
-      display: none; /* सुरुमा लुकाइएको */
+      display: none;
     }
     .save-name-btn:hover {
       background: #15803d;
@@ -303,11 +329,19 @@
     </div>
 
     <div class="user-profile-card">
-      <div class="avatar-container">
-        <img id="userAvatar" src="https://www.svgrepo.com/show/382109/male-avatar-boy-face-man-user-9.svg" alt="Profile Photo">
+      <!-- प्रोफाइल फोटो र पेन्सिल आइकन -->
+      <div class="avatar-wrapper">
+        <div class="avatar-container">
+          <img id="userAvatar" src="https://www.svgrepo.com/show/382109/male-avatar-boy-face-man-user-9.svg" alt="Profile Photo">
+        </div>
+        <button type="button" class="avatar-edit-btn" onclick="triggerPhotoUpload()" title="फोटो परिवर्तन गर्नुहोस्">
+          <i class="fa-solid fa-pen"></i>
+        </button>
+        <!-- लुकेको फाइल इनपुट जसले फोटो छान्ने अनुमति दिन्छ -->
+        <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="handlePhotoChange(event)">
       </div>
+
       <div class="user-meta">
-        <!-- नामको बक्स र पेन्सिल/सेभ आइकन -->
         <div class="name-edit-wrapper">
           <input type="text" id="userNameInput" class="name-input-box" value="Loading..." disabled>
           <button type="button" class="edit-name-btn" id="editNameBtn" onclick="enableNameEdit()" title="सम्पादन गर्नुहोस्">
@@ -382,7 +416,7 @@
     <a href="profile.html" class="nav-link active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
   </div>
 
-  <!-- मुख्य साझा main.js फाइल लिङ्क (showPopup को लागि) -->
+  <!-- मुख्य साझा main.js फाइल लिङ्क -->
   <script src="main.js"></script>
 
   <!-- Supabase JS Client -->
@@ -391,7 +425,7 @@
   <!-- Firebase र Supabase एकीकृत गरिएको स्क्रिप्ट -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -425,7 +459,6 @@
         }
 
         try {
-          // Firestore को 'users' कलेक्सनबाट नाम तान्ने
           const userDocRef = doc(db, "users", user.uid);
           const userDocSnap = await getDoc(userDocRef);
 
@@ -434,7 +467,6 @@
           } else {
             const defaultName = user.displayName || userEmail.split('@')[0];
             document.getElementById('userNameInput').value = defaultName;
-            // यदि Firestore मा छैन भने सेभ गरिदिने
             await setDoc(userDocRef, { name: defaultName, email: userEmail }, { merge: true });
           }
         } catch (err) {
@@ -474,12 +506,11 @@
       nameInput.disabled = false;
       nameInput.focus();
       
-      // पेन्सिल लुकाएर सेभ (राइट) बटन देखाउने
       document.getElementById('editNameBtn').style.display = 'none';
       document.getElementById('saveNameBtn').style.display = 'flex';
     };
 
-    // नाम अपडेट गरेर Firebase मा सेभ गर्ने फंक्शन
+    // नाम अपडेट गरेर Firebase Firestore मा सेभ गर्ने फंक्शन
     window.saveNameUpdate = async function() {
       const newName = document.getElementById('userNameInput').value.trim();
       if (!newName) {
@@ -490,14 +521,18 @@
       if (!currentUserId) return;
 
       try {
+        // १. Firebase Auth मा नाम अपडेट गर्ने
+        if (auth.currentUser) {
+          await updateProfile(auth.currentUser, { displayName: newName });
+        }
+
+        // २. Firestore को users कलेक्सनमा नाम अपडेट गर्ने
         const userDocRef = doc(db, "users", currentUserId);
         await updateDoc(userDocRef, { name: newName });
 
-        // इनपुट फेरि बन्द (disabled) गर्ने
         const nameInput = document.getElementById('userNameInput');
         nameInput.disabled = true;
 
-        // सेभ बटन लुकाएर पेन्सिल बटन देखाउने
         document.getElementById('saveNameBtn').style.display = 'none';
         document.getElementById('editNameBtn').style.display = 'flex';
 
@@ -506,6 +541,47 @@
         console.error("नाम अपडेट गर्दा त्रुटि:", error);
         showPopup("त्रुटि!", "नाम अपडेट गर्न सकिएन।", "error");
       }
+    };
+
+    // प्रोफाइल फोटोको पेन्सिल आइकन थिच्दा फाइल पिकर खोल्ने
+    window.triggerPhotoUpload = function() {
+      document.getElementById('avatarFileInput').click();
+    };
+
+    // युजरले फोटो छान्दा त्यसलाई Base64 मा रूपान्तरण गरी Firebase मा सेभ गर्ने
+    window.handlePhotoChange = async function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.size > 2 * 1024 * 1024) {
+        showPopup("त्रुटि!", "तस्वीरको साइज २ MB भन्दा कम हुनुपर्छ।", "error");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64Image = e.target.result;
+        
+        // स्क्रिनमा तुरुन्तै फोटो देखाउने
+        document.getElementById('userAvatar').src = base64Image;
+
+        if (auth.currentUser) {
+          try {
+            // Firebase Auth को photoURL मा सेभ गर्ने
+            await updateProfile(auth.currentUser, { photoURL: base64Image });
+
+            // Firestore मा पनि फोटो URL सेभ गर्ने (optional)
+            const userDocRef = doc(db, "users", currentUserId);
+            await updateDoc(userDocRef, { photoURL: base64Image });
+
+            showPopup("सफल भयो!", "प्रोफाइल तस्वीर सफलतापूर्वक परिवर्तन भयो!", "success");
+          } catch (err) {
+            console.error("फोटो सेभ गर्दा त्रुटि:", err);
+            showPopup("त्रुटि!", "तस्वीर सेभ गर्न सकिएन।", "error");
+          }
+        }
+      };
+      reader.readAsDataURL(file);
     };
 
     document.getElementById('logoutBtn').addEventListener('click', (e) => {
