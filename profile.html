@@ -62,7 +62,6 @@
       gap: 16px;
     }
     
-    /* प्रोफाइल फोटो र पेन्सिल आइकनको लागि स्टाइल */
     .avatar-wrapper {
       position: relative;
       flex-shrink: 0;
@@ -124,7 +123,6 @@
       color: #fbbf24;
     }
 
-    /* नामको लागि इनपुट बक्स र एडिट/सेभ बटनको डिजाइन */
     .name-edit-wrapper {
       display: flex;
       align-items: center;
@@ -329,7 +327,6 @@
     </div>
 
     <div class="user-profile-card">
-      <!-- प्रोफाइल फोटो र पेन्सिल आइकन -->
       <div class="avatar-wrapper">
         <div class="avatar-container">
           <img id="userAvatar" src="https://www.svgrepo.com/show/382109/male-avatar-boy-face-man-user-9.svg" alt="Profile Photo">
@@ -337,7 +334,6 @@
         <button type="button" class="avatar-edit-btn" onclick="triggerPhotoUpload()" title="फोटो परिवर्तन गर्नुहोस्">
           <i class="fa-solid fa-pen"></i>
         </button>
-        <!-- लुकेको फाइल इनपुट जसले फोटो छान्ने अनुमति दिन्छ -->
         <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="handlePhotoChange(event)">
       </div>
 
@@ -500,7 +496,7 @@
       }
     });
 
-    // नाम सम्पादन सुरु गर्ने फंक्शन
+    // नाम सम्पादन सुरु गर्ने
     window.enableNameEdit = function() {
       const nameInput = document.getElementById('userNameInput');
       nameInput.disabled = false;
@@ -510,7 +506,7 @@
       document.getElementById('saveNameBtn').style.display = 'flex';
     };
 
-    // नाम अपडेट गरेर Firebase Firestore मा सेभ गर्ने फंक्शन
+    // नाम अपडेट गरेर सेभ गर्ने र 'Edited successfully' पपअप देखाउने
     window.saveNameUpdate = async function() {
       const newName = document.getElementById('userNameInput').value.trim();
       if (!newName) {
@@ -521,12 +517,10 @@
       if (!currentUserId) return;
 
       try {
-        // १. Firebase Auth मा नाम अपडेट गर्ने
         if (auth.currentUser) {
           await updateProfile(auth.currentUser, { displayName: newName });
         }
 
-        // २. Firestore को users कलेक्सनमा नाम अपडेट गर्ने
         const userDocRef = doc(db, "users", currentUserId);
         await updateDoc(userDocRef, { name: newName });
 
@@ -536,7 +530,8 @@
         document.getElementById('saveNameBtn').style.display = 'none';
         document.getElementById('editNameBtn').style.display = 'flex';
 
-        showPopup("सफल भयो!", "तपाईंको नाम सफलतापूर्वक अपडेट भयो!", "success");
+        // नाम परिवर्तन सफलतापूर्वक हुँदा आउने पपअप
+        showPopup("सफल भयो!", "Edited successfully", "success");
       } catch (error) {
         console.error("नाम अपडेट गर्दा त्रुटि:", error);
         showPopup("त्रुटि!", "नाम अपडेट गर्न सकिएन।", "error");
@@ -548,7 +543,7 @@
       document.getElementById('avatarFileInput').click();
     };
 
-    // युजरले फोटो छान्दा त्यसलाई Base64 मा रूपान्तरण गरी Firebase मा सेभ गर्ने
+    // युजरले फोटो छान्दा Base64 मा रूपान्तरण गरी सेभ गर्ने र 'Edited successfully' पपअप देखाउने
     window.handlePhotoChange = async function(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -562,19 +557,17 @@
       reader.onload = async function(e) {
         const base64Image = e.target.result;
         
-        // स्क्रिनमा तुरुन्तै फोटो देखाउने
         document.getElementById('userAvatar').src = base64Image;
 
         if (auth.currentUser) {
           try {
-            // Firebase Auth को photoURL मा सेभ गर्ने
             await updateProfile(auth.currentUser, { photoURL: base64Image });
 
-            // Firestore मा पनि फोटो URL सेभ गर्ने (optional)
             const userDocRef = doc(db, "users", currentUserId);
             await updateDoc(userDocRef, { photoURL: base64Image });
 
-            showPopup("सफल भयो!", "प्रोफाइल तस्वीर सफलतापूर्वक परिवर्तन भयो!", "success");
+            // फोटो परिवर्तन सफलतापूर्वक हुँदा आउने पपअप
+            showPopup("सफल भयो!", "Edited successfully", "success");
           } catch (err) {
             console.error("फोटो सेभ गर्दा त्रुटि:", err);
             showPopup("त्रुटि!", "तस्वीर सेभ गर्न सकिएन।", "error");
