@@ -68,6 +68,7 @@
       background: #ffffff;
       padding: 3px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      flex-shrink: 0;
     }
     .avatar-container img {
       width: 100%;
@@ -75,16 +76,14 @@
       border-radius: 50%;
       object-fit: cover;
     }
-    .user-meta h3 {
-      font-size: 18px;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 4px;
+    .user-meta {
+      flex: 1;
     }
     .user-meta p {
       font-size: 13px;
       color: #cbd5e1;
       font-weight: 500;
+      margin-bottom: 6px;
     }
     .user-meta .address-badge {
       display: inline-flex;
@@ -97,6 +96,61 @@
       font-weight: 600;
       margin-top: 6px;
       color: #fbbf24;
+    }
+
+    /* नामको लागि इनपुट बक्स र एडिट/सेभ बटनको डिजाइन */
+    .name-edit-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .name-input-box {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      padding: 6px 12px;
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 800;
+      width: 100%;
+      outline: none;
+      backdrop-filter: blur(5px);
+    }
+    .name-input-box:disabled {
+      background: transparent;
+      border-color: transparent;
+      padding: 0;
+    }
+    .name-input-box:focus:not(:disabled) {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: #ffffff;
+    }
+    
+    .edit-name-btn, .save-name-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .edit-name-btn:hover, .save-name-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .save-name-btn {
+      background: #16a34a;
+      display: none; /* सुरुमा लुकाइएको */
+    }
+    .save-name-btn:hover {
+      background: #15803d;
     }
 
     .container {
@@ -208,6 +262,35 @@
     }
     .nav-link i { font-size: 18px; }
     .nav-link.active { color: #2563eb; }
+
+    /* पपअपको डिजाइन */
+    .custom-popup-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 99999; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+    }
+    .custom-popup-overlay.active { opacity: 1; visibility: visible; }
+    .custom-popup-box {
+      background: #ffffff; width: 90%; max-width: 380px; border-radius: 24px;
+      padding: 26px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      transform: scale(0.9); transition: transform 0.3s ease;
+    }
+    .custom-popup-overlay.active .custom-popup-box { transform: scale(1); }
+    .popup-icon-container {
+      width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 16px auto;
+      display: flex; align-items: center; justify-content: center; font-size: 24px;
+    }
+    .popup-icon-container.success { background: #dcfce7; color: #16a34a; }
+    .popup-icon-container.error { background: #fee2e2; color: #dc2626; }
+    .custom-popup-box h3 { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+    .custom-popup-box p { font-size: 14px; color: #64748b; margin-bottom: 24px; line-height: 1.5; }
+    .popup-btn {
+      background: #2563eb; color: white; border: none; width: 100%;
+      padding: 12px; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .popup-btn:hover { background: #1d4ed8; }
   </style>
 </head>
 <body>
@@ -224,10 +307,19 @@
         <img id="userAvatar" src="https://www.svgrepo.com/show/382109/male-avatar-boy-face-man-user-9.svg" alt="Profile Photo">
       </div>
       <div class="user-meta">
-        <h3 id="userName">Loading...</h3>
+        <!-- नामको बक्स र पेन्सिल/सेभ आइकन -->
+        <div class="name-edit-wrapper">
+          <input type="text" id="userNameInput" class="name-input-box" value="Loading..." disabled>
+          <button type="button" class="edit-name-btn" id="editNameBtn" onclick="enableNameEdit()" title="सम्पादन गर्नुहोस्">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button type="button" class="save-name-btn" id="saveNameBtn" onclick="saveNameUpdate()" title="सेभ गर्नुहोस्">
+            <i class="fa-solid fa-check"></i>
+          </button>
+        </div>
         <p id="userEmail">fetching...</p>
         <div class="address-badge">
-          <i class="fa-solid fa-location-dot"></i> <span>नेपाल</span>
+          <i class="fa-solid fa-location-dot"><span>नेपाल</span></i>
         </div>
       </div>
     </div>
@@ -269,9 +361,9 @@
     </div>
 
     <div class="menu-card">
-      <a href="#" class="menu-item">
+      <a href="#" class="menu-item" onclick="enableNameEdit(); return false;">
         <div class="menu-item-left"><i class="fa-solid fa-user-pen"></i><span>Edit Profile</span></div>
-        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;">x</i>
+        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
       </a>
       <a href="#" class="menu-item">
         <div class="menu-item-left"><i class="fa-solid fa-shield-halved"></i><span>Change Password</span></div>
@@ -290,13 +382,17 @@
     <a href="profile.html" class="nav-link active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
   </div>
 
+  <!-- मुख्य साझा main.js फाइल लिङ्क (showPopup को लागि) -->
+  <script src="main.js"></script>
+
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Firebase र Supabase दुवै एकीकृत गरिएको स्क्रिप्ट -->
+  <!-- Firebase र Supabase एकीकृत गरिएको स्क्रिप्ट -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -309,23 +405,41 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    let currentUserId = null;
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Register गर्दा दिएको नाम (displayName) यहाँ सिधै तान्नेछ
+        currentUserId = user.uid;
         const userEmail = user.email || "No Email";
-        const displayName = user.displayName || userEmail.split('@')[0];
-        
-        document.getElementById('userName').textContent = displayName;
         document.getElementById('userEmail').textContent = userEmail;
 
         if (user.photoURL) {
           document.getElementById('userAvatar').src = user.photoURL;
+        }
+
+        try {
+          // Firestore को 'users' कलेक्सनबाट नाम तान्ने
+          const userDocRef = doc(db, "users", user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+
+          if (userDocSnap.exists() && userDocSnap.data().name) {
+            document.getElementById('userNameInput').value = userDocSnap.data().name;
+          } else {
+            const defaultName = user.displayName || userEmail.split('@')[0];
+            document.getElementById('userNameInput').value = defaultName;
+            // यदि Firestore मा छैन भने सेभ गरिदिने
+            await setDoc(userDocRef, { name: defaultName, email: userEmail }, { merge: true });
+          }
+        } catch (err) {
+          console.error("Firestore error:", err);
+          document.getElementById('userNameInput').value = user.displayName || "User";
         }
 
         try {
@@ -353,6 +467,46 @@
         window.location.href = "login.html";
       }
     });
+
+    // नाम सम्पादन सुरु गर्ने फंक्शन
+    window.enableNameEdit = function() {
+      const nameInput = document.getElementById('userNameInput');
+      nameInput.disabled = false;
+      nameInput.focus();
+      
+      // पेन्सिल लुकाएर सेभ (राइट) बटन देखाउने
+      document.getElementById('editNameBtn').style.display = 'none';
+      document.getElementById('saveNameBtn').style.display = 'flex';
+    };
+
+    // नाम अपडेट गरेर Firebase मा सेभ गर्ने फंक्शन
+    window.saveNameUpdate = async function() {
+      const newName = document.getElementById('userNameInput').value.trim();
+      if (!newName) {
+        showPopup("त्रुटि!", "नाम खाली राख्न पाइँदैन।", "error");
+        return;
+      }
+
+      if (!currentUserId) return;
+
+      try {
+        const userDocRef = doc(db, "users", currentUserId);
+        await updateDoc(userDocRef, { name: newName });
+
+        // इनपुट फेरि बन्द (disabled) गर्ने
+        const nameInput = document.getElementById('userNameInput');
+        nameInput.disabled = true;
+
+        // सेभ बटन लुकाएर पेन्सिल बटन देखाउने
+        document.getElementById('saveNameBtn').style.display = 'none';
+        document.getElementById('editNameBtn').style.display = 'flex';
+
+        showPopup("सफल भयो!", "तपाईंको नाम सफलतापूर्वक अपडेट भयो!", "success");
+      } catch (error) {
+        console.error("नाम अपडेट गर्दा त्रुटि:", error);
+        showPopup("त्रुटि!", "नाम अपडेट गर्न सकिएन।", "error");
+      }
+    };
 
     document.getElementById('logoutBtn').addEventListener('click', (e) => {
       e.preventDefault();
