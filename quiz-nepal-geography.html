@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LoksewaQuest - Nepal Geography Practice</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    body {
+      background-color: #0f172a;
+      color: #0f172a;
+      margin: 0;
+      padding-bottom: 70px;
+    }
+
+    /* Header */
+    .app-header {
+      background: #1e3a8a;
+      color: #ffffff;
+      padding: 20px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e40af;
+    }
+    .app-header h1 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .back-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Main Container */
+    .main-wrapper {
+      background-color: #ffffff;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      padding: 20px 16px;
+      min-height: 85vh;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+      margin-top: 10px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: #2563eb;
+      color: white;
+      font-weight: 700;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+    .btn-primary:active {
+      background: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .option-card {
+      width: 100%;
+      text-align: left;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #1e293b;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .option-card.selected {
+      background: #eff6ff;
+      border-color: #2563eb;
+      color: #1d4ed8;
+    }
+    .option-card.correct {
+      background: #f0fdf4 !important;
+      border-color: #22c55e !important;
+      color: #15803d !important;
+    }
+    .option-card.wrong {
+      background: #fef2f2 !important;
+      border-color: #ef4444 !important;
+      color: #b91c1c !important;
+    }
+
+    .lb-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #f1f5f9;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    /* Bottom Navigation Footer */
+    .app-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      z-index: 1000;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+    }
+    .footer-item {
+      text-align: center;
+      text-decoration: none;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .footer-item.active {
+      color: #2563eb;
+    }
+    .footer-item i {
+      font-size: 18px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-card {
+      background: #ffffff;
+      width: 90%;
+      max-width: 340px;
+      border-radius: 24px;
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN WARNING MODAL -->
+  <div id="login-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="width: 56px; height: 56px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">लगइन आवश्यक छ!</h3>
+      <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px;">
+        प्रैक्टिस गर्न र रेकर्ड सेभ गर्न पहिले लगइन गर्नुहोस्।
+      </p>
+      <button onclick="window.location.href='login.html'" class="btn-primary" style="margin-bottom: 8px;">
+        लगइन पेजमा जानुहोस् 🚀
+      </button>
+      <a href="dashboard.html" style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none; padding: 6px;">
+        ड्यासबोर्डमा फर्कनुहोस्
+      </a>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1>🇳🇵 नेपालको भूगोल - अभ्यास</h1>
+    <div style="width: 36px;"></div>
+  </header>
+
+  <main class="main-wrapper">
+    
+    <!-- SETUP SCREEN -->
+    <div id="setup-screen" class="card space-y-4">
+      <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 12px;">अभ्यास सेट छनौट गर्नुहोस्:</h2>
+      
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <p style="font-size: 11px; color: #64748b; font-weight: 600;">प्रयोगकर्ता</p>
+          <p id="profile-display-name" style="font-size: 15px; font-weight: 800; color: #1e293b;">चेक गर्दैछ...</p>
+        </div>
+        <i class="fa-solid fa-user-check" style="color: #2563eb; font-size: 20px;"></i>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 6px;">कति वटा प्रश्नहरूको अभ्यास गर्ने?</label>
+        <select id="question-count-select" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #cbd5e1; font-size: 14px; font-weight: 700; background: #fff; color: #1e293b;">
+          <option value="10">१० वटा प्रश्नहरू</option>
+          <option value="20">२० वटा प्रश्नहरू</option>
+          <option value="30">३० वटा प्रश्नहरू</option>
+          <option value="50" selected>५० वटा प्रश्नहरू (सबै)</option>
+        </select>
+      </div>
+
+      <button onclick="startPractice()" class="btn-primary">
+        अभ्यास सुरु गर्नुहोस् (Start Practice) 🚀
+      </button>
+
+      <!-- LEADERBOARD PREVIEW -->
+      <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 16px;">
+        <h3 style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">🏆 भूगोल लिडरबोर्ड (शीर्ष स्कोर)</h3>
+        <div id="geo-leaderboard" class="max-h-48 overflow-y-auto"></div>
+      </div>
+    </div>
+
+    <!-- QUIZ PLAY SCREEN -->
+    <div id="quiz-screen" class="card hidden space-y-4">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+        <span id="q-tracker" style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">Question 1 of 50</span>
+        <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">Practice Mode</span>
+      </div>
+
+      <h3 id="quiz-question" style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.5;">Loading...</h3>
+
+      <div id="quiz-options"></div>
+
+      <div id="explanation-box" class="hidden" style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 10px; font-size: 12px; color: #334155; margin-top: 10px;">
+        <p style="font-weight: 800; color: #1e3a8a; margin-bottom: 4px;"><i class="fa-solid fa-circle-info"></i> स्पष्टीकरण:</p>
+        <p id="explanation-text"></p>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; padding-top: 10px;">
+        <button onclick="prevQuestion()" id="prev-btn" class="btn-secondary">⬅️ अघिल्लो</button>
+        <button onclick="nextQuestion()" id="next-btn" class="btn-primary" style="width: auto; padding: 10px 20px;">अर्को ➡️</button>
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden space-y-4">
+      <div class="card space-y-4" style="background: #ffffff;">
+        <div style="text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+          <h2 style="font-size: 16px; font-weight: 800; color: #059669;">📊 अभ्यास प्रतिवेदन (Practice Report)</h2>
+          <p id="rep-name" style="font-size: 13px; color: #334155; font-weight: 700; margin-top: 2px;"></p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
+          <div style="background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid #f1f5f9;">
+            <p style="font-size: 11px; color: #64748b;">मिलाएको</p>
+            <p id="rep-correct" style="font-size: 16px; font-weight: 800; color: #059669;">0</p>
+          </div>
+          <div style="background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid #f1f5f9;">
+            <p style="font-size: 11px; color: #64748b;">बिग्रिएको</p>
+            <p id="rep-wrong" style="font-size: 16px; font-weight: 800; color: #dc2626;">0</p>
+          </div>
+          <div style="background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid #f1f5f9;">
+            <p style="font-size: 11px; color: #64748b;">कुल हल गरियो</p>
+            <p id="rep-solved" style="font-size: 16px; font-weight: 800; color: #2563eb;">0</p>
+          </div>
+        </div>
+
+        <!-- RE-PLAY MISTAKES BUTTON -->
+        <div id="mistake-retry-container" class="hidden" style="margin-top: 10px;">
+          <button onclick="startMistakeRetry()" class="btn-primary" style="background: #d97706; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);">
+            🔁 बिग्रिएका प्रश्नहरू मात्र फेरि खेल्नुहोस् (Retry Mistakes)
+          </button>
+        </div>
+
+        <div>
+          <h4 style="font-size: 12px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">📝 उत्तरहरूको समीक्षा:</h4>
+          <div id="review-container" class="space-y-2 max-h-56 overflow-y-auto pr-1" style="font-size: 11px;"></div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button onclick="location.reload()" class="btn-primary" style="width: 100%;">
+          🔄 फेरि सुरु गर्नुहोस् (Home)
+        </button>
+      </div>
+
+      <!-- RESULT LEADERBOARD -->
+      <div class="card">
+        <h3 style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">🏆 भूगोल लिडरबोर्ड</h3>
+        <div id="geo-leaderboard-result" class="max-h-48 overflow-y-auto"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM FOOTER NAVIGATION -->
+  <footer class="app-footer">
+    <a href="dashboard.html" class="footer-item">
+      <i class="fa-solid fa-house"></i> गृहपृष्ठ
+    </a>
+    <a href="quiz-nepal-geography.html" class="footer-item active">
+      <i class="fa-solid fa-earth-asia"></i> भूगोल क्विज
+    </a>
+    <a href="leaderboard.html" class="footer-item">
+      <i class="fa-solid fa-trophy"></i> लिडरबोर्ड
+    </a>
+    <a href="profile.html" class="footer-item">
+      <i class="fa-solid fa-user"></i> प्रोफाइल
+    </a>
+  </footer>
+
+  <!-- Firebase & Quiz Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    setPersistence(auth, browserSessionPersistence).catch((error) => {
+      console.error("Persistence Error: ", error);
+    });
+
+    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let candidateName = '';
+    let userEmail = '';
+    let allQuestions = [];
+    let activeQuestions = [];
+    let currentIdx = 0;
+    let userAnswers = {}; 
+    let wrongQuestionsList = [];
+    let isMistakeRetry = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          candidateName = user.displayName || user.email.split('@')[0];
+          userEmail = user.email;
+          document.getElementById('profile-display-name').innerText = candidateName;
+        } else {
+          document.getElementById('login-modal').classList.add('active');
+          document.getElementById('profile-display-name').innerText = 'लगइन गरिएको छैन';
+        }
+      });
+
+      fetchLeaderboard();
+    });
+
+    window.startPractice = async function() {
+      if (!userEmail) {
+        document.getElementById('login-modal').classList.add('active');
+        return;
+      }
+
+      const count = parseInt(document.getElementById('question-count-select').value);
+
+      try {
+        let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'Nepal Geography');
+        
+        if (error || !data || data.length === 0) {
+          alert('डेटाबेसमा नेपालको भूगोलसम्बन्धी प्रश्नहरू भेटिएनन्!');
+          return;
+        }
+
+        // Shuffle and slice requested count
+        allQuestions = data.sort(() => 0.5 - Math.random());
+        activeQuestions = allQuestions.slice(0, count);
+
+        currentIdx = 0;
+        userAnswers = {};
+        wrongQuestionsList = [];
+        isMistakeRetry = false;
+
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+
+        loadQuestion();
+      } catch (err) {
+        alert('केही प्राविधिक समस्या आयो: ' + err.message);
+      }
+    }
+
+    window.startMistakeRetry = function() {
+      if (wrongQuestionsList.length === 0) return;
+      activeQuestions = [...wrongQuestionsList];
+      currentIdx = 0;
+      userAnswers = {};
+      wrongQuestionsList = [];
+      isMistakeRetry = true;
+
+      document.getElementById('result-screen').classList.add('hidden');
+      document.getElementById('quiz-screen').classList.remove('hidden');
+      loadQuestion();
+    }
+
+    window.loadQuestion = function() {
+      const q = activeQuestions[currentIdx];
+      document.getElementById('q-tracker').innerText = `Question ${currentIdx + 1} of ${activeQuestions.length}`;
+      document.getElementById('quiz-question').innerText = q.question;
+
+      const container = document.getElementById('quiz-options');
+      container.innerHTML = '';
+      
+      const expBox = document.getElementById('explanation-box');
+      expBox.classList.add('hidden');
+
+      const savedAnswer = userAnswers[currentIdx];
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        let btnClass = 'option-card';
+        let iconHtml = '<i class="fa-regular fa-square"></i>';
+
+        if (savedAnswer) {
+          // Already answered view (showing right/wrong feedback)
+          if (opt === q.answer) {
+            btnClass += ' correct';
+            iconHtml = '<i class="fa-solid fa-square-check"></i>';
+          } else if (opt === savedAnswer) {
+            btnClass += ' wrong';
+            iconHtml = '<i class="fa-solid fa-square-xmark"></i>';
+          }
+        } else if (savedAnswer === opt) {
+          btnClass += ' selected';
+        }
+
+        btn.className = btnClass;
+        btn.innerHTML = `${iconHtml} ${opt}`;
+        
+        // If not answered yet, allow clicking
+        if (!savedAnswer) {
+          btn.onclick = () => {
+            userAnswers[currentIdx] = opt;
+            loadQuestion(); // reload to show correct/wrong state instantly
+          };
+        } else {
+          btn.style.cursor = 'default';
+        }
+
+        container.appendChild(btn);
+      });
+
+      // Show explanation if answered
+      if (savedAnswer) {
+        expBox.classList.remove('hidden');
+        document.getElementById('explanation-text').innerText = q.explanation || 'कुनै स्पष्टीकरण उपलब्ध छैन।';
+      }
+
+      document.getElementById('prev-btn').style.display = currentIdx === 0 ? 'none' : 'block';
+      document.getElementById('next-btn').innerText = currentIdx === activeQuestions.length - 1 ? 'तिन नतिजा हेर्नुहोस् (Finish)' : 'अर्को ➡️';
+    }
+
+    window.prevQuestion = function() {
+      if (currentIdx > 0) {
+        currentIdx--;
+        loadQuestion();
+      }
+    }
+
+    window.nextQuestion = function() {
+      if (currentIdx < activeQuestions.length - 1) {
+        currentIdx++;
+        loadQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    async function finishQuiz() {
+      document.getElementById('quiz-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('hidden');
+
+      let correct = 0;
+      let wrong = 0;
+      let solvedCount = 0;
+      let reviewHTML = '';
+
+      activeQuestions.forEach((q, idx) => {
+        const userAns = userAnswers[idx];
+        const isCorrect = userAns === q.answer;
+
+        if (userAns) {
+          solvedCount++;
+          if (isCorrect) correct++;
+          else {
+            wrong++;
+            wrongQuestionsList.push(q);
+          }
+        }
+
+        reviewHTML += `
+          <div style="background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; margin-bottom: 6px;">
+            <p style="font-weight: 700; color: #0f172a; margin-bottom: 2px;">Q${idx+1}: ${q.question}</p>
+            <p style="color: #64748b;">तपाईंको उत्तर: <span style="font-weight: 700; color: ${isCorrect ? '#059669' : '#dc2626'};">${userAns || 'छोडेको'}</span></p>
+            <p style="color: #059669; font-weight: 600;">सही उत्तर: ${q.answer}</p>
+            ${q.explanation ? `<p style="font-size: 10px; color: #475569; margin-top: 2px; font-style: italic;">📌 ${q.explanation}</p>` : ''}
+          </div>
+        `;
+      });
+
+      document.getElementById('rep-name').innerText = `परीक्षार्थी: ${candidateName}`;
+      document.getElementById('rep-correct').innerText = correct;
+      document.getElementById('rep-wrong').innerText = wrong;
+      document.getElementById('rep-solved').innerText = solvedCount;
+      document.getElementById('review-container').innerHTML = reviewHTML;
+
+      if (wrongQuestionsList.length > 0 && !isMistakeRetry) {
+        document.getElementById('mistake-retry-container').classList.remove('hidden');
+      } else {
+        document.getElementById('mistake-retry-container').classList.add('hidden');
+      }
+
+      // Save score to leaderboard & update user profile solved count
+      if (!isMistakeRetry && solvedCount > 0) {
+        await saveLeaderboardAndProfile(correct, solvedCount);
+      }
+
+      fetchLeaderboard();
+    }
+
+    async function saveLeaderboardAndProfile(score, solvedCount) {
+      try {
+        // 1. Update/Insert into Leaderboard table (using email as unique identifier for geo leaderboard)
+        const { data: existing } = await supabaseClient
+          .from('leaderboard_geography')
+          .select('*')
+          .eq('username', userEmail);
+
+        if (existing && existing.length > 0) {
+          if (score > existing[0].score) {
+            await supabaseClient
+              .from('leaderboard_geography')
+              .update({ score: score, total_solved: solvedCount })
+              .eq('username', userEmail);
+          }
+        } else {
+          await supabaseClient.from('leaderboard_geography').insert([
+            { username: userEmail, score: score, total_solved: solvedCount }
+          ]);
+        }
+
+        // 2. Increment total solved in user profile metadata or profile table if applicable
+        // Keeping track via user local stats or profile table update
+      } catch (err) {
+        console.error("Error saving score:", err);
+      }
+    }
+
+    async function fetchLeaderboard() {
+      const { data, error } = await supabaseClient
+        .from('leaderboard_geography')
+        .select('*')
+        .order('score', { ascending: false });
+
+      const containers = [
+        document.getElementById('geo-leaderboard'),
+        document.getElementById('geo-leaderboard-result')
+      ];
+
+      containers.forEach(lbContainer => {
+        if (!lbContainer) return;
+        lbContainer.innerHTML = '';
+        
+        if (error || !data || data.length === 0) {
+          lbContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 12px; padding: 4px;">हाल कुनै रेकर्ड छैन।</p>';
+          return;
+        }
+        
+        data.forEach((item, i) => {
+          let displayName = item.username;
+          if (displayName && displayName.includes('@')) {
+            displayName = displayName.split('@')[0];
+          }
+
+          lbContainer.innerHTML += `
+            <div class="lb-row">
+              <span style="font-weight: 700; color: #1e293b;">${i+1}. ${displayName}</span>
+              <span style="color: #2563eb; font-weight: 800;">${item.score} अंक (${item.total_solved || 0} हल)</span>
+            </div>
+          `;
+        });
+      });
+    }
+  </script>
+</body>
+</html>
