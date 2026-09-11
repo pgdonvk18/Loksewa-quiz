@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LoksewaQuest - Set 1 Mock Exam</title>
+  <title>LoksewaQuest - Set 1 Mock Exam & Practice</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -49,7 +49,7 @@
       text-decoration: none;
     }
 
-    /* Main Container (White Background) */
+    /* Main Container */
     .main-wrapper {
       background-color: #ffffff;
       border-top-left-radius: 28px;
@@ -60,7 +60,6 @@
       margin-top: 10px;
     }
 
-    /* Card styling */
     .card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -70,7 +69,6 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
     }
 
-    /* Buttons */
     .btn-primary {
       width: 100%;
       background: #2563eb;
@@ -87,6 +85,23 @@
       background: #1d4ed8;
     }
 
+    .btn-practice {
+      width: 100%;
+      background: #10b981;
+      color: white;
+      font-weight: 700;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+      margin-top: 10px;
+    }
+    .btn-practice:active {
+      background: #059669;
+    }
+
     .btn-secondary {
       background: #f1f5f9;
       color: #475569;
@@ -98,7 +113,6 @@
       font-size: 13px;
     }
 
-    /* Option item */
     .option-card {
       width: 100%;
       text-align: left;
@@ -122,7 +136,6 @@
       color: #1d4ed8;
     }
 
-    /* Timer */
     .timer-badge {
       background: #fef2f2;
       border: 1px solid #fecaca;
@@ -134,7 +147,6 @@
       font-size: 13px;
     }
 
-    /* Leaderboard list item */
     .lb-row {
       display: flex;
       justify-content: space-between;
@@ -147,7 +159,6 @@
       margin-bottom: 8px;
     }
 
-    /* Custom Attractive Modal Overlay */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -175,7 +186,7 @@
       border-radius: 24px;
       padding: 24px 20px;
       text-align: center;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
       transform: scale(0.9);
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
@@ -198,7 +209,7 @@
 </head>
 <body>
 
-  <!-- ATTRACTIVE LOGIN WARNING MODAL -->
+  <!-- LOGIN WARNING MODAL -->
   <div id="login-modal" class="modal-overlay">
     <div class="modal-card">
       <div style="width: 56px; height: 56px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">
@@ -220,7 +231,7 @@
   <!-- HEADER -->
   <header class="app-header">
     <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1>🇳🇵 LoksewaQuest - Set 1</h1>
+    <h1 id="header-title">🇳🇵 LoksewaQuest - Set 1</h1>
     <div id="timer-box" class="timer-badge hidden">
       ⏳ <span id="time-left">45:00</span>
     </div>
@@ -232,7 +243,6 @@
     <div id="reg-screen" class="card space-y-4">
       <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">परीक्षा विवरण:</h2>
       
-      <!-- Firebase बाट तानिएको युजरको नाम वा इमेल देखाउने ठाउँ -->
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
         <div>
           <p style="font-size: 11px; color: #64748b; font-weight: 600;">लगइन गरिएको प्रयोगकर्ता</p>
@@ -248,7 +258,17 @@
         </div>
       </div>
 
-      <button onclick="startExam()" class="btn-primary">
+      <!-- परीक्षा दिइसकेको अवस्थामा देखिने सन्देश र अभ्यास बटन -->
+      <div id="already-given-box" class="hidden" style="background: #fef2f2; border: 1px solid #fecaca; padding: 14px; border-radius: 12px; margin-bottom: 16px; text-align: center;">
+        <p style="color: #dc2626; font-weight: 800; font-size: 13px; margin-bottom: 4px;">🚫 तपाईंले यो परीक्षा पहिले नै दििसक्नुभएको छ!</p>
+        <p style="color: #7f1d1d; font-size: 11px;">तपाईंले अब आधिकारिक रूपमा फेरि यो परीक्षा दिन पाउनुहुन्न (लिडरबोर्डमा पनि जोडिने छैन)। तर ज्ञानको लागि अभ्यास गर्न सक्नुहुन्छ।</p>
+        <button onclick="startPracticeMode()" class="btn-practice">
+          तुरुन्त अभ्यास गर्नुहोस् (Practice Mode) 💡
+        </button>
+      </div>
+
+      <!-- पहिलोपटक परीक्षा दिनेका लागि बटन -->
+      <button id="start-exam-btn" onclick="startExam(false)" class="btn-primary">
         परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀
       </button>
 
@@ -263,7 +283,7 @@
     <div id="exam-screen" class="card hidden space-y-4">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
         <span id="q-tracker" style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">Question 1 of 50</span>
-        <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">Set-1</span>
+        <span id="mode-badge" style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">Set-1 Exam</span>
       </div>
 
       <h3 id="exam-question" style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.5;">Loading...</h3>
@@ -280,7 +300,7 @@
     <div id="result-screen" class="hidden space-y-4">
       <div id="pdf-report-content" class="card space-y-4" style="background: #ffffff;">
         <div style="text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
-          <h2 style="font-size: 16px; font-weight: 800; color: #059669;">📊 परीक्षा प्रतिवेदन (Exam Report Card)</h2>
+          <h2 id="report-main-title" style="font-size: 16px; font-weight: 800; color: #059669;">📊 परीक्षा प्रतिवेदन (Exam Report Card)</h2>
           <p id="rep-name" style="font-size: 13px; color: #334155; font-weight: 700; margin-top: 2px;"></p>
           <p id="rep-set" style="font-size: 11px; color: #2563eb; font-weight: 700;">परीक्षा सेट: Set-1</p>
         </div>
@@ -315,7 +335,7 @@
           📥 प्रिन्ट / PDF
         </button>
         <button onclick="location.reload()" class="btn-primary" style="width: 50%;">
-          🔄 अर्को परीक्षा
+          🔄 होमपेजमा फर्कनुहोस्
         </button>
       </div>
 
@@ -349,27 +369,29 @@
       console.error("Persistence Error: ", error);
     });
 
-    // Supabase client for quizzes & leaderboard
     const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let candidateName = '';
+    let userEmail = '';
     let examQuestions = [];
     let currentIdx = 0;
     let userAnswers = {}; 
     let timerInterval;
     let timeLeftSeconds = 45 * 60;
+    let isPracticeMode = false;
 
-    // पेज लोड हुँदा Firebase को session डिटेक्ट गर्ने
     document.addEventListener("DOMContentLoaded", () => {
-      onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
-          // युजर लगइन छ भने नाम वा इमेल तान्ने
           candidateName = user.displayName || user.email;
+          userEmail = user.email;
           document.getElementById('profile-display-name').innerText = candidateName;
+          
+          // चेक गर्ने कि युजरले यो परीक्षा पहिले दिइसकेको छ वा छैन
+          await checkIfExamAlreadyGiven(userEmail);
         } else {
-          // लगइन छैन भने आकर्षक पपअप देखाउने
           document.getElementById('login-modal').classList.add('active');
           document.getElementById('profile-display-name').innerText = 'लगइन गरिएको छैन';
         }
@@ -382,7 +404,26 @@
       window.location.href = 'login.html';
     }
 
-    window.startExam = async function() {
+    // युजरले यो सेट पहिले नै दिएको छ कि छैन जाँच्ने function
+    async function checkIfExamAlreadyGiven(email) {
+      const { data, error } = await supabaseClient
+        .from('leaderboard_set1')
+        .select('*')
+        .eq('username', email); // वा username कोठामा email/name सेभ भएको आधारमा
+
+      if (data && data.length > 0) {
+        // परीक्षा दिइसकेको छ -> मुख्य परीक्षा बटन लुकाउने, अभ्यास विकल्प देखाउने
+        document.getElementById('start-exam-btn').classList.add('hidden');
+        document.getElementById('already-given-box').classList.remove('hidden');
+      } else {
+        // दिएको छैन -> परीक्षा बटन देखाउने
+        document.getElementById('start-exam-btn').classList.remove('hidden');
+        document.getElementById('already-given-box').classList.add('hidden');
+      }
+    }
+
+    window.startExam = async function(practice = false) {
+      isPracticeMode = practice;
       try {
         if (!candidateName) {
           document.getElementById('login-modal').classList.add('active');
@@ -391,12 +432,7 @@
 
         let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'Set-1');
         
-        if (error) {
-          alert('डेटाबेस एरर: ' + error.message);
-          return;
-        }
-
-        if (!data || data.length === 0) {
+        if (error || !data || data.length === 0) {
           alert('डेटाबेसमा Set-1 का प्रश्नहरू भेटिएनन्!');
           return;
         }
@@ -405,13 +441,24 @@
 
         document.getElementById('reg-screen').classList.add('hidden');
         document.getElementById('exam-screen').classList.remove('hidden');
-        document.getElementById('timer-box').classList.remove('hidden');
+        
+        if (!isPracticeMode) {
+          document.getElementById('timer-box').classList.remove('hidden');
+          document.getElementById('mode-badge').innerText = 'Set-1 Live Exam';
+          startTimer();
+        } else {
+          document.getElementById('timer-box').classList.add('hidden');
+          document.getElementById('mode-badge').innerText = 'Set-1 Practice Mode';
+        }
 
-        startTimer();
         loadExamQuestion();
       } catch (err) {
         alert('केही प्राविधिक समस्या आयो: ' + err.message);
       }
+    }
+
+    window.startPracticeMode = function() {
+      startExam(true); // practice mode true पठाउने
     }
 
     function startTimer() {
@@ -465,7 +512,7 @@
         loadExamQuestion();
       } else {
         if (confirm('के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?')) {
-          clearInterval(timerInterval);
+          if (!isPracticeMode) clearInterval(timerInterval);
           submitExam();
         }
       }
@@ -502,17 +549,25 @@
       let totalScore = (correct * 2) - (wrong * 0.4);
       if (totalScore < 0) totalScore = 0;
 
+      if (isPracticeMode) {
+        document.getElementById('report-main-title').innerText = '📊 अभ्यास प्रतिवेदन (Practice Report Card)';
+        document.getElementById('rep-set').innerText = 'परीक्षा सेट: Set-1 (अभ्यास मोड - लिडरबोर्डमा राखिएको छैन)';
+      } else {
+        document.getElementById('report-main-title').innerText = '📊 परीक्षा प्रतिवेदन (Exam Report Card)';
+        document.getElementById('rep-set').innerText = 'परीक्षा सेट: Set-1 (Live Exam)';
+        
+        // केवल वास्तविक परीक्षा (Live Exam) दिएको अवस्थामा मात्र लिडरबोर्डमा सेभ गर्ने
+        await supabaseClient.from('leaderboard_set1').insert([
+          { username: userEmail || candidateName, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
+        ]);
+      }
+
       document.getElementById('rep-name').innerText = `परीक्षार्थी: ${candidateName}`;
       document.getElementById('rep-correct').innerText = correct;
       document.getElementById('rep-wrong').innerText = wrong;
       document.getElementById('rep-skipped').innerText = skipped;
       document.getElementById('rep-score').innerText = totalScore.toFixed(1);
       document.getElementById('review-container').innerHTML = reviewHTML;
-
-      // लिडरबोर्डमा सेभ गर्ने
-      await supabaseClient.from('leaderboard_set1').insert([
-        { username: candidateName, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
-      ]);
 
       fetchSet1Leaderboard();
     }
