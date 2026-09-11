@@ -147,6 +147,42 @@
       margin-bottom: 8px;
     }
 
+    /* Custom Attractive Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-card {
+      background: #ffffff;
+      width: 90%;
+      max-width: 340px;
+      border-radius: 24px;
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
     @media print {
       body * { visibility: hidden; }
       #pdf-report-content, #pdf-report-content * { visibility: visible; }
@@ -161,6 +197,25 @@
   </style>
 </head>
 <body>
+
+  <!-- ATTRACTIVE LOGIN WARNING MODAL -->
+  <div id="login-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="width: 56px; height: 56px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">लगइन आवश्यक छ!</h3>
+      <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px;">
+        तपाईंले परीक्षा दिन वा लिडरबोर्डमा नाम राख्नको लागि पहिले लगइन गर्नुपर्ने हुन्छ।
+      </p>
+      <button onclick="redirectToLogin()" class="btn-primary" style="margin-bottom: 8px;">
+        लगइन पेजमा जानुहोस् 🚀
+      </button>
+      <a href="index.html" style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none; padding: 6px;">
+        गृहपृष्ठमा फर्कनुहोस्
+      </a>
+    </div>
+  </div>
 
   <!-- HEADER -->
   <header class="app-header">
@@ -290,15 +345,13 @@
       fetchSet1Leaderboard();
     };
 
-    // लगइन भए नभएको जाँच गर्ने र नभए Login Page मा पठाउने फंक्सन
+    // लगइन भए नभएको जाँच गर्ने र नभए सुन्दर Modal देखाउने फंक्सन
     function checkLoginAndLoadName() {
-      // तपाईंको प्रोजेक्टमा लगइनको लागि प्रयोग हुने key ('user_name', 'profile_name', वा 'logged_in_user') राख्न सक्नुहुन्छ
       let savedName = localStorage.getItem('user_name') || localStorage.getItem('profile_name');
       
       if (!savedName || savedName.trim() === '') {
-        alert('कृपया पहिले लगइन (Login) गर्नुहोस्!');
-        // 'login.html' लाई आफ्नो लगइन पेजको नामले फेर्न सक्नुहुन्छ
-        window.location.href = 'login.html'; 
+        // आकर्षक Modal देखाउने
+        document.getElementById('login-modal').classList.add('active');
         return;
       }
       
@@ -306,11 +359,15 @@
       document.getElementById('profile-display-name').innerText = candidateName;
     }
 
+    // लगइन पेजमा रिडाइरेक्ट गर्ने फंक्सन
+    function redirectToLogin() {
+      window.location.href = 'login.html'; // यहाँ आफ्नो लगइन पेजको नाम राख्नुहोला
+    }
+
     async function startExam() {
       try {
         if (!candidateName) {
-          alert('लगइन नभएको हुनाले परीक्षा सुरु गर्न सकिएन!');
-          window.location.href = 'login.html';
+          document.getElementById('login-modal').classList.add('active');
           return;
         }
 
