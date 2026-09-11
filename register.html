@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Custom Popup CSS -->
   <style>
     * {
       box-sizing: border-box;
@@ -15,9 +14,11 @@
       padding: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
+    
+    /* आकर्षक ब्याकग्राउन्ड र थेम */
     body {
-      background: #f8fafc;
-      color: #1e293b;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: #f8fafc;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -27,39 +28,41 @@
     }
 
     .register-card {
-      background: #ffffff;
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       width: 100%;
-      max-width: 400px;
-      padding: 30px;
-      border-radius: 24px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-      border: 1px solid #f1f5f9;
+      max-width: 420px;
+      padding: 35px;
+      border-radius: 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .register-header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
     .register-header h2 {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 6px;
+      color: #ffffff;
+      margin-bottom: 8px;
     }
     .register-header p {
       font-size: 14px;
-      color: #64748b;
+      color: #94a3b8;
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
     .form-group label {
       display: block;
       font-size: 13px;
-      font-weight: 700;
-      color: #334155;
-      margin-bottom: 6px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 8px;
     }
     .input-box {
       position: relative;
@@ -68,67 +71,76 @@
     }
     .input-box i {
       position: absolute;
-      left: 14px;
-      color: #94a3b8;
-      font-size: 15px;
+      left: 16px;
+      color: #64748b;
+      font-size: 16px;
     }
     .input-box input {
       width: 100%;
-      padding: 12px 14px 12px 42px;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
+      padding: 14px 16px 14px 46px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
       font-size: 14px;
       outline: none;
-      background: #f8fafc;
-      color: #0f172a;
-      transition: all 0.2s;
+      background: rgba(15, 23, 42, 0.6);
+      color: #ffffff;
+      transition: all 0.3s;
+    }
+    .input-box input::placeholder {
+      color: #64748b;
     }
     .input-box input:focus {
-      border-color: #2563eb;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      border-color: #3b82f6;
+      background: rgba(15, 23, 42, 0.9);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
     }
 
     .submit-btn {
       width: 100%;
-      background: #2563eb;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
       color: white;
       border: none;
-      padding: 14px;
-      border-radius: 12px;
+      padding: 15px;
+      border-radius: 14px;
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.3s;
       margin-top: 10px;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
     }
     .submit-btn:hover {
-      background: #1d4ed8;
+      transform: translateY(-2px);
+      box-shadow: 0 15px 25px rgba(37, 99, 235, 0.4);
     }
 
     .login-redirect {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 24px;
       font-size: 13px;
-      color: #64748b;
+      color: #94a3b8;
     }
     .login-redirect a {
-      color: #2563eb;
+      color: #60a5fa;
       font-weight: 700;
       text-decoration: none;
     }
+    .login-redirect a:hover {
+      text-decoration: underline;
+    }
 
-    /* Custom Popup Overlay Styles */
+    /* main.js ले कन्ट्रोल गर्ने पपअपको डिजाइन (CSS) */
     .custom-popup-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+      background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px);
       display: flex; align-items: center; justify-content: center;
       z-index: 99999; opacity: 0; visibility: hidden; transition: all 0.3s ease;
     }
     .custom-popup-overlay.active { opacity: 1; visibility: visible; }
     .custom-popup-box {
-      background: #ffffff; width: 90%; max-width: 380px; border-radius: 24px;
-      padding: 24px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      background: #1e293b; width: 90%; max-width: 380px; border-radius: 24px;
+      padding: 26px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       transform: scale(0.9); transition: transform 0.3s ease;
     }
     .custom-popup-overlay.active .custom-popup-box { transform: scale(1); }
@@ -136,14 +148,16 @@
       width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 16px auto;
       display: flex; align-items: center; justify-content: center; font-size: 24px;
     }
-    .popup-icon-container.success { background: #dcfce7; color: #16a34a; }
-    .popup-icon-container.error { background: #fee2e2; color: #dc2626; }
-    .custom-popup-box h3 { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
-    .custom-popup-box p { font-size: 14px; color: #64748b; margin-bottom: 24px; line-height: 1.5; }
+    .popup-icon-container.success { background: rgba(22, 163, 74, 0.2); color: #4ade80; }
+    .popup-icon-container.error { background: rgba(220, 38, 38, 0.2); color: #f87171; }
+    .custom-popup-box h3 { font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 8px; }
+    .custom-popup-box p { font-size: 14px; color: #94a3b8; margin-bottom: 24px; line-height: 1.5; }
     .popup-btn {
       background: #2563eb; color: white; border: none; width: 100%;
       padding: 12px; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: background 0.2s;
     }
+    .popup-btn:hover { background: #1d4ed8; }
   </style>
 </head>
 <body>
@@ -187,18 +201,6 @@
     </div>
   </div>
 
-  <!-- Custom Popup HTML Structure -->
-  <div id="globalPopup" class="custom-popup-overlay">
-    <div class="custom-popup-box">
-      <div id="popupIcon" class="popup-icon-container success">
-        <i id="popupIconClass" class="fa-solid fa-check"></i>
-      </div>
-      <h3 id="popupTitle">सुचना</h3>
-      <p id="popupMessage">म्यासेज...</p>
-      <button class="popup-btn" onclick="closePopup()">ठीक छ (OK)</button>
-    </div>
-  </div>
-
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
@@ -210,33 +212,8 @@
     })();
   </script>
 
-  <!-- Popup Functions -->
-  <script>
-    window.showPopup = function(title, message, type = 'success', callback = null) {
-      const popup = document.getElementById('globalPopup');
-      document.getElementById('popupTitle').textContent = title;
-      document.getElementById('popupMessage').textContent = message;
-
-      const popupIcon = document.getElementById('popupIcon');
-      const popupIconClass = document.getElementById('popupIconClass');
-
-      popupIcon.className = "popup-icon-container " + type;
-      popupIconClass.className = (type === 'success') ? "fa-solid fa-check" : "fa-solid fa-triangle-exclamation";
-
-      popup.classList.add('active');
-      window.popupCallback = callback;
-    };
-
-    window.closePopup = function() {
-      const popup = document.getElementById('globalPopup');
-      popup.classList.remove('active');
-
-      if (typeof window.popupCallback === 'function') {
-        window.popupCallback();
-        window.popupCallback = null;
-      }
-    };
-  </script>
+  <!-- मुख्य साझा main.js फाइल लिङ्क (यसले पपअप चलाउँछ) -->
+  <script src="main.js"></script>
 
   <!-- Firebase & Registration Logic -->
   <script type="module">
@@ -291,7 +268,7 @@
 
         await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
 
-        // ५. कस्टम पपअप देखाएर लगइन पेजमा पठाउने
+        // ५. main.js को showPopup मार्फत राम्रो पपअप देखाउने
         showPopup("सफल भयो!", "सफलतापूर्वक रजिस्टर भयो! तपाईंको जिमेलमा ६-अङ्कको भेरिफिकेसन कोड पठाइएको छ।", "success", () => {
           window.location.href = "login.html";
         });
