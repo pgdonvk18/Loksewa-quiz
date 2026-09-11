@@ -511,6 +511,7 @@
 
     let candidateName = '';
     let userEmail = '';
+    let currentUserId = '';
     let allQuestions = [];
     let activeQuestions = [];
     let currentIdx = 0;
@@ -521,6 +522,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
+          currentUserId = user.uid;
           candidateName = user.displayName ? user.displayName : "नाम छैन";
           userEmail = user.email;
           document.getElementById('profile-display-name').innerText = candidateName;
@@ -713,9 +715,44 @@
 
       if (!isMistakeRetry && solvedCount > 0) {
         await saveLeaderboardAndProfile(correct, solvedCount);
+        // Supabase को user_stats टेबलमा रियल डेटा अपडेट गर्ने कोड
+        await saveUserStatsToSupabase(solvedCount, correct);
       }
 
       fetchLeaderboard();
+    }
+
+    async function saveUserStatsToSupabase(solvedCount, correctCount) {
+      if (!currentUserId) return;
+      try {
+        let { data: existingStat } = await supabaseClient
+          .from('user_stats')
+          .select('*')
+          .eq('id', currentUserId)
+          .maybeSingle();
+
+        let newTotalSolved = solvedCount;
+        let newCorrect = correctCount;
+
+        if (existingStat) {
+          newTotalSolved = (existingStat.total_solved || 0) + solvedCount;
+          newCorrect = (existingStat.correct_answers || 0) + correctCount;
+        }
+
+        let newAccuracy = newTotalSolved > 0 ? Math.round((newCorrect / newTotalSolved) * 100) : 0;
+
+        await supabaseClient
+          .from('user_stats')
+          .upsert({
+            id: currentUserId,
+            total_solved: newTotalSolved,
+            correct_answers: newCorrect,
+            accuracy: newAccuracy,
+            updated_at: new Date()
+          });
+      } catch (err) {
+        console.error("Error updating user stats:", err);
+      }
     }
 
     async function saveLeaderboardAndProfile(score, solvedCount) {
