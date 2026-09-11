@@ -134,7 +134,7 @@
       text-decoration: underline;
     }
 
-    /* main.js ले कन्ट्रोल गर्ने पपअपको डिजाइन (त्रुटि देखाउन मात्र प्रयोग हुन्छ) */
+    /* Custom Popup Styles */
     .custom-popup-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
@@ -198,6 +198,52 @@
     </div>
   </div>
 
+  <!-- Custom Popup HTML Structure -->
+  <div id="customPopup" class="custom-popup-overlay">
+    <div class="custom-popup-box">
+      <div id="popupIcon" class="popup-icon-container error">
+        <i id="popupIconSymbol" class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 id="popupTitle">त्रुटि</h3>
+      <p id="popupMessage">सन्देश यहाँ आउनेछ...</p>
+      <button id="popupActionBtn" class="popup-btn" onclick="closePopup()">ਠीक छ (OK)</button>
+    </div>
+  </div>
+
+  <!-- Popup Helper Script -->
+  <script>
+    let popupCallback = null;
+
+    function showPopup(title, message, type = "error", callback = null) {
+      const overlay = document.getElementById('customPopup');
+      const popupTitle = document.getElementById('popupTitle');
+      const popupMessage = document.getElementById('popupMessage');
+      const popupIcon = document.getElementById('popupIcon');
+      const popupIconSymbol = document.getElementById('popupIconSymbol');
+      
+      popupTitle.textContent = title;
+      popupMessage.textContent = message;
+      popupCallback = callback;
+
+      popupIcon.className = "popup-icon-container " + type;
+      if (type === "success") {
+        popupIconSymbol.className = "fa-solid fa-check";
+      } else {
+        popupIconSymbol.className = "fa-solid fa-triangle-exclamation";
+      }
+
+      overlay.classList.add('active');
+    }
+
+    function closePopup() {
+      const overlay = document.getElementById('customPopup');
+      overlay.classList.remove('active');
+      if (popupCallback && typeof popupCallback === 'function') {
+        popupCallback();
+      }
+    }
+  </script>
+
   <!-- मुख्य साझा main.js फाइल लिङ्क -->
   <script src="main.js"></script>
 
@@ -231,17 +277,21 @@
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-
-        // सफलताको पपअप नदेखाएर सिधै dashboard.html मा रिडाइरेक्ट गर्ने
         window.location.href = "dashboard.html";
 
       } catch (error) {
-        let errorMessage = "इमेल वा पासवर्ड मिलेन।";
+        // Firebase का एरर कोडहरूलाई नेपालीमा रूपान्तरण गरी पपअपमा देखाउने
+        let errorMessage = "लगइन गर्न सकिएन। कृपया विवरण जाँच गर्नुहोस्।";
+        
         if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-          errorMessage = "Invalid email or password";
+          errorMessage = "तपाईंले राख्नुभएको इमेल वा पासवर्ड मिलेन।";
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = "अमान्य इमेल ठेगाना (Invalid email format)।";
+        } else if (error.code === 'auth/too-many-requests') {
+          errorMessage = "धेरैपटक गलत प्रयास गरियो। कृपया केही समयपछि फेरि प्रयास गर्नुहोस्।";
         }
-        // गलत हुँदा मात्र पपअप देखाउने
-        showPopup("त्रुटि!", errorMessage, "error");
+
+        showPopup("लगइन असफल!", errorMessage, "error");
       }
     };
   </script>
