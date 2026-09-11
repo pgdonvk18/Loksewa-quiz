@@ -184,32 +184,6 @@
       color: #b45309;
       font-weight: 500;
     }
-
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: #ffffff;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0 14px 0;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-      border-radius: 20px 20px 0 0;
-      z-index: 100;
-    }
-    .nav-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-decoration: none;
-      color: #94a3b8;
-      font-size: 11px;
-      font-weight: 600;
-      gap: 3px;
-    }
-    .nav-link i { font-size: 18px; }
-    .nav-link.active { color: #2563eb; }
   </style>
 </head>
 <body>
@@ -286,9 +260,8 @@
 
   </div>
 
-
-<script src="components.js"></script>
-<script>loadBottomNav('analytics');</script>
+  <script src="components.js"></script>
+  <script>loadBottomNav('analytics');</script>
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -297,7 +270,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -357,16 +330,19 @@
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          // ड्यासबोर्ड र अन्य पेजहरूसँग सिंक गर्न मुख्य accuracy मान लोकल स्टोरेज वा सुपबेसबबाट तान्ने
-          let accuracy = 75; // डिफल्ट सुरक्षित मान
-          if (localStorage.getItem('user_accuracy')) {
+          // लोकल स्टोरेजबाट वास्तविक तथ्याङ्क तान्ने (शुरुमा 0 हुनेछ)
+          let totalSolved = parseInt(localStorage.getItem('total_questions_solved')) || 0;
+          let correctAnswers = parseInt(localStorage.getItem('total_correct_answers')) || 0;
+          let totalTimeMinutes = parseInt(localStorage.getItem('total_time_spent_minutes')) || 0;
+          
+          let accuracy = 0;
+          if (totalSolved > 0) {
+            accuracy = Math.round((correctAnswers / totalSolved) * 100);
+          } else if (localStorage.getItem('user_accuracy')) {
             accuracy = parseInt(localStorage.getItem('user_accuracy'));
           }
 
-          let totalSolved = 35; // डिफल्ट बेसलाइन (यदि युजरको नयाँ डेटा छ भने तल अपडेट हुन्छ)
-          let totalTimeMinutes = 120; // २ घण्टा
-
-          // Supabase बाट युजरको वास्तविक स्टेट्स जाँच गर्ने
+          // Supabase बाट युजरको वास्तविक रेकर्ड जाँच गर्ने
           let { data: userStat } = await supabase
             .from('user_stats')
             .select('*')
@@ -374,31 +350,28 @@
             .maybeSingle();
 
           if (userStat) {
-            if (userStat.total_solved) totalSolved = userStat.total_solved;
-            if (userStat.time_spent_minutes) totalTimeMinutes = userStat.time_spent_minutes;
-            if (userStat.accuracy) accuracy = userStat.accuracy;
+            if (userStat.total_solved !== undefined) totalSolved = userStat.total_solved;
+            if (userStat.correct_answers !== undefined) correctAnswers = userStat.correct_answers;
+            if (userStat.time_spent_minutes !== undefined) totalTimeMinutes = userStat.time_spent_minutes;
+            if (userStat.accuracy !== undefined) accuracy = userStat.accuracy;
+            else if (totalSolved > 0) accuracy = Math.round((correctAnswers / totalSolved) * 100);
           }
 
-          // सही र गलत प्रश्नहरूको संख्या accuracy प्रतिशतको आधारमा ठ्याक्कै छुट्याउने
-          let correctAnswers = Math.round((totalSolved * accuracy) / 100);
           let incorrectAnswers = totalSolved - correctAnswers;
-          if (correctAnswers === 0 && totalSolved > 0) {
-            correctAnswers = Math.round(totalSolved * 0.75);
-            incorrectAnswers = totalSolved - correctAnswers;
-          }
+          if (incorrectAnswers < 0) incorrectAnswers = 0;
 
           // UI मा मानहरू सेट गर्ने
           document.getElementById('anaTotalSolved').textContent = totalSolved;
           document.getElementById('anaAccuracy').textContent = accuracy + "%";
           document.getElementById('anaTime').textContent = (totalTimeMinutes / 60).toFixed(1) + " hrs";
 
-          // पाई चार्ट अपडेट गर्ने
-          renderPieChart(correctAnswers > 0 ? correctAnswers : 1, incorrectAnswers > 0 ? incorrectAnswers : 1);
+          // पाई चार्ट अपडेट गर्ने (यदि शून्य छ भने ग्राफमा खाली नदेखियोस् भन्नका लागि खाली डेटा ह्यान्डल गरिएको)
+          renderPieChart(totalSolved > 0 ? correctAnswers : 1, totalSolved > 0 ? incorrectAnswers : 1);
 
           // विषयगत प्रगतिका बारहरू
-          let geoProgress = Math.min(100, Math.max(40, accuracy + 5));
-          let constProgress = Math.min(100, Math.max(30, accuracy - 10));
-          let currentProgress = Math.min(100, Math.max(25, accuracy - 5));
+          let geoProgress = Math.min(100, Math.max(10, accuracy));
+          let constProgress = Math.min(100, Math.max(10, accuracy - 5));
+          let currentProgress = Math.min(100, Math.max(10, accuracy - 10));
 
           document.getElementById('topic1Val').textContent = geoProgress + "%";
           document.getElementById('topic1Bar').style.width = geoProgress + "%";
@@ -416,7 +389,7 @@
               <i class="fa-solid fa-lightbulb"></i>
               <div class="focus-text">
                 <h5>समीक्षा र निरन्तर अभ्यास</h5>
-                <p>तपाईंको कुल शुद्धता <strong>${accuracy}%</strong> रहेको छ। संविधान तथा समसामयिक खण्डमा अझै ध्यान दिनुहोला।</p>
+                <p>तपाईंको कुल शुद्धता <strong>${accuracy}%</strong> रहेको छ। यसलाई अझै बढाउन नियमित रूपमा क्विजहरू अभ्यास गर्दै जानुहोला।</p>
               </div>
             </div>`;
 
