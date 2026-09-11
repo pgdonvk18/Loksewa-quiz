@@ -15,6 +15,7 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
     
+    /* स्क्रिनसटमा जस्तै निलो र आकर्षक थिम */
     body {
       background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #3b82f6 100%);
       color: #1e293b;
@@ -36,19 +37,29 @@
       border: 1px solid #e2e8f0;
     }
 
-    .login-header {
+    /* ब्यानर (लोगो, नाम र विवरण) को डिजाइन */
+    .app-banner {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
-    .login-header h2 {
-      font-size: 26px;
+    .app-logo {
+      width: 75px;
+      height: 75px;
+      border-radius: 20px;
+      object-fit: cover;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
+    }
+    .app-banner h1 {
+      font-size: 24px;
       font-weight: 800;
       color: #0f172a;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
-    .login-header p {
-      font-size: 14px;
+    .app-banner p {
+      font-size: 13px;
       color: #64748b;
+      line-height: 1.4;
     }
 
     .form-group {
@@ -158,9 +169,11 @@
 <body>
 
   <div class="login-card">
-    <div class="login-header">
-      <h2>स्वागत छ</h2>
-      <p>LoksewaQuest मा लगइन गर्नुहोस्</p>
+    <!-- एपको लोगो, नाम र विवरणसहितको ब्यानर -->
+    <div class="app-banner">
+      <img src="launchericon-512x512.png" alt="LoksewaQuest Logo" class="app-logo">
+      <h1>LoksewaQuest</h1>
+      <p>लोकसेवा आयोग तयारीका लागि भरपर्दो डिजिटल चौतारी</p>
     </div>
 
     <form id="loginForm" onsubmit="handleLogin(event)">
@@ -208,10 +221,11 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // ब्राउजर वा ट्याब खुला रहुन्जेल मात्र सेसन कायम राख्ने
-    setPersistence(auth, browserSessionPersistence).catch((error) => {
-      console.error("Persistence Error: ", error);
-    });
+    // ब्राउजर वा ट्याब खुला रहुन्जेल मात्र सेसन कायम राख्ने (Session Storage)
+    setPersistence(auth, browserSessionPersistence)
+      .catch((error) => {
+        console.error("Persistence Error: ", error);
+      });
 
     window.handleLogin = async function(event) {
       event.preventDefault();
@@ -222,12 +236,17 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
 
+        // main.js को showPopup मार्फत सफलता सन्देश देखाएर home.html मा लाने
         showPopup("सफल भयो!", "सफलतापूर्वक लगइन भयो!", "success", () => {
           window.location.href = "home.html";
         });
 
       } catch (error) {
-        showPopup("त्रुटि!", "इमेल वा पासवर्ड मिलेन।", "error");
+        let errorMessage = "इमेल یا पासवर्ड मिलेन।";
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+          errorMessage = "Invalid email or password";
+        }
+        showPopup("त्रुटि!", errorMessage, "error");
       }
     };
   </script>
