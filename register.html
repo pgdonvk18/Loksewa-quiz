@@ -144,7 +144,6 @@
     .divider::before { margin-right: 10px; }
     .divider::after { margin-left: 10px; }
 
-    /* Gmail बाट रजिस्टर गर्ने बटन */
     .btn-google {
       background: #ffffff;
       color: #1e293b;
@@ -196,7 +195,7 @@
 
   <div class="register-card-container">
     
-    <!-- इमेल र पासवर्डबाट रजिस्टर गर्ने फर्म -->
+    <!-- इमेल रजिस्टर फर्म -->
     <form id="registerForm">
       <div class="form-group">
         <label>Full Name</label>
@@ -227,7 +226,7 @@
 
     <div class="divider">OR</div>
 
-    <!-- वास्तविक गुगल पपअप खुल्ने बटन -->
+    <!-- गुगल पपअप खुल्ने बटन -->
     <button type="button" id="googleSignInBtn" class="btn-google">
       <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo">
       Sign up with Google
@@ -239,62 +238,61 @@
     Already have an account? <a href="login.html">Login</a>
   </div>
 
-  <!-- Firebase को JavaScript SDK हरू -->
-  
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  <!-- Firebase JavaScript SDK र Authentication को कोड -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+    import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-    authDomain: "loksewaquest-227b6.firebaseapp.com",
-    projectId: "loksewaquest-227b6",
-    storageBucket: "loksewaquest-227b6.firebasestorage.app",
-    messagingSenderId: "779234903809",
-    appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00",
-    measurementId: "G-1FHRQJYW5P"
-  };
+    // तपाईंको आफ्नै कन्फिगरेसन
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00",
+      measurementId: "G-1FHRQJYW5P"
+    };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
 
     // १. इमेल र पासवर्डमार्फत रजिस्टर गर्ने प्रणाली
     const registerForm = document.getElementById('registerForm');
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('signupEmail').value;
-      const password = document.getElementById('signupPassword').value;
+    if (registerForm) {
+      registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        alert("सफल रूपमा खाता सिर्जना भयो!");
-        window.location.href = "dashboard.html"; // सफल भएपछि ड्यासबोर्डमा पठाउने
-      } catch (error) {
-        alert("त्रुटि: " + error.message);
-      }
-    });
+        try {
+          await createUserWithEmailAndPassword(auth, email, password);
+          alert("सफल रूपमा खाता सिर्जना भयो!");
+          window.location.href = "dashboard.html";
+        } catch (error) {
+          alert("त्रुटि: " + error.message);
+        }
+      });
+    }
 
-    // २. "Sign up with Google" थिच्दा गुगलको पपअप खुल्ने प्रणाली
+    // २. "Sign up with Google" थिच्दा गुगल पपअप खुल्ने प्रणाली
     const googleSignInBtn = document.getElementById('googleSignInBtn');
-    googleSignInBtn.addEventListener('click', async () => {
-      const provider = new GoogleAuthProvider();
-      try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        // प्रयोगकर्ता प्रमाणीकरण सफल भयो
-        alert("स्वागत छ, " + user.displayName + "!");
-        window.location.href = "dashboard.html"; // ड्यासबोर्डमा रिडाइरेक्ट हुने
-      } catch (error) {
-        alert("गुगल लगइन रद्द भयो वा समस्या आयो: " + error.message);
-      }
-    });
+    if (googleSignInBtn) {
+      googleSignInBtn.addEventListener('click', async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+          alert("स्वागत छ, " + (user.displayName || "User") + "!");
+          window.location.href = "dashboard.html";
+        } catch (error) {
+          alert("गुगल लगइन रद्द भयो वा समस्या आयो: " + error.message);
+        }
+      });
+    }
   </script>
 
 </body>
