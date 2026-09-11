@@ -20,7 +20,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding-bottom: 80px; /* तलको नेभिगेसन बारले छोप्न नदिन प्याडिङ राखिएको */
+      padding-bottom: 80px;
     }
 
     .profile-header {
@@ -183,7 +183,6 @@
     .menu-item.logout { color: #dc2626; }
     .menu-item.logout i { color: #dc2626; }
 
-    /* मिलान गरिएको तलको नेभिगेसन बार (Bottom Nav) स्टायल */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -206,7 +205,6 @@
       font-size: 11px;
       font-weight: 600;
       gap: 3px;
-      transition: color 0.2s;
     }
     .nav-link i { font-size: 18px; }
     .nav-link.active { color: #2563eb; }
@@ -273,7 +271,7 @@
     <div class="menu-card">
       <a href="#" class="menu-item">
         <div class="menu-item-left"><i class="fa-solid fa-user-pen"></i><span>Edit Profile</span></div>
-        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
+        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;">x</i>
       </a>
       <a href="#" class="menu-item">
         <div class="menu-item-left"><i class="fa-solid fa-shield-halved"></i><span>Change Password</span></div>
@@ -285,7 +283,6 @@
     </div>
   </div>
 
-  <!-- `home.html` सँग ठ ακ्कै मिलेको Bottom Navigation Bar -->
   <div class="bottom-nav">
     <a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
     <a href="study.html" class="nav-link"><i class="fa-solid fa-book-open"></i><span>Study</span></a>
@@ -293,11 +290,10 @@
     <a href="profile.html" class="nav-link active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
   </div>
 
-  <!-- Supabase JS Client CDN -->
-  <script src="https://cdn.jsdelivr.5net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Firebase र Supabase एकीकृत गरिएको स्क्रिप्ट -->
+  <!-- Firebase र Supabase दुवै एकीकृत गरिएको स्क्रिप्ट -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -321,6 +317,7 @@
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        // Register गर्दा दिएको नाम (displayName) यहाँ सिधै तान्नेछ
         const userEmail = user.email || "No Email";
         const displayName = user.displayName || userEmail.split('@')[0];
         
@@ -349,7 +346,7 @@
             ]);
           }
         } catch (dbError) {
-          console.log("Supabase connection notice: ", dbError.message);
+          console.log("Supabase error: ", dbError.message);
         }
 
       } else {
@@ -361,8 +358,6 @@
       e.preventDefault();
       signOut(auth).then(() => {
         window.location.href = "login.html";
-      }).catch((error) => {
-        alert("Logout failed: " + error.message);
       });
     });
   </script>
