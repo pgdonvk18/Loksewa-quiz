@@ -4,55 +4,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>LoksewaQuest - Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- प्रिमियम आधुनिक फन्ट (Plus Jakarta Sans) -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- व्यावसायिक आइकनहरूको लागि FontAwesome Pro/Free CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
     body {
-      background-color: #1e3c72; /* माथिल्लो नीलो भागको ब्याकग्राउन्ड */
+      background-color: #0f2a4a;
       color: #1e293b;
       margin: 0;
-      padding-bottom: 70px; /* तलको नेभिगेसन बारको लागि ठाउँ छोडेको */
+      padding-bottom: 75px;
       overflow-x: hidden;
     }
 
     /* टप हेडर सेक्सन */
     .app-header {
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
       color: white;
-      padding: 20px 20px 30px 20px;
+      padding: 22px 20px 32px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .app-header h1 {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
     }
     .app-header h1 span {
       color: #fbbf24;
     }
     .icon-btn {
-      background: none;
+      background: rgba(255, 255, 255, 0.1);
       border: none;
       color: white;
-      font-size: 20px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+    .icon-btn:active {
+      background: rgba(255, 255, 255, 0.2);
     }
 
-    /* मुख्य सेतो कन्टेनर (तलतिर गोलो आकार भएको) */
+    /* मुख्य सेतो कन्टेनर */
     .main-container {
-      background-color: #f4f6f9;
-      border-top-left-radius: 30px;
-      border-top-right-radius: 30px;
+      background-color: #f8fafc;
+      border-top-left-radius: 32px;
+      border-top-right-radius: 32px;
       padding: 24px 16px;
       min-height: calc(100vh - 80px);
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+      box-shadow: 0 -6px 25px rgba(0,0,0,0.08);
     }
 
     /* अभिवादन खण्ड */
@@ -61,29 +74,32 @@
     }
     .greeting-section h2 {
       font-size: 20px;
-      font-weight: 700;
+      font-weight: 800;
       color: #0f172a;
+      letter-spacing: -0.5px;
       margin-bottom: 4px;
     }
     .greeting-section p {
       font-size: 13px;
       color: #64748b;
+      font-weight: 500;
     }
 
-    /* तयारी प्रगति (Progress Card) */
+    /* तयारी प्रगति कार्ड */
     .progress-card {
       background: #ffffff;
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 20px;
+      padding: 18px;
       display: flex;
       align-items: center;
       gap: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      margin-bottom: 22px;
+      border: 1px solid #f1f5f9;
     }
     .circular-progress {
-      width: 55px;
-      height: 55px;
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
       background: conic-gradient(#2563eb 35%, #e2e8f0 0deg);
       display: flex;
@@ -94,73 +110,80 @@
     .circular-progress::before {
       content: "";
       position: absolute;
-      width: 43px;
-      height: 43px;
+      width: 46px;
+      height: 46px;
       background: #ffffff;
       border-radius: 50%;
     }
     .progress-value {
       position: relative;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       color: #1e3c72;
     }
     .progress-info h3 {
-      font-size: 14px;
-      font-weight: 600;
-      color: #1e293b;
-      margin-bottom: 2px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 3px;
     }
     .progress-info p {
       font-size: 12px;
       color: #64748b;
       line-height: 1.4;
+      font-weight: 500;
     }
 
     /* २x२ ग्रिड बटनहरू */
     .action-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 24px;
+      gap: 14px;
+      margin-bottom: 26px;
     }
     .action-card {
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 20px;
+      padding: 18px;
       color: white;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      height: 110px;
+      height: 120px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
       text-decoration: none;
+      transition: transform 0.2s;
+    }
+    .action-card:active {
+      transform: scale(0.97);
     }
     .card-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
     .card-green { background: linear-gradient(135deg, #10b981, #059669); }
-    .card-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
-    .card-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+    .card-orange { background: linear-gradient(135deg, #f97316, #c2410c); }
+    .card-pink { background: linear-gradient(135deg, #ec4899, #be185d); }
 
     .action-card .card-icon {
-      font-size: 20px;
+      font-size: 16px;
       background: rgba(255,255,255,0.2);
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .action-card h4 {
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: -0.2px;
     }
     .action-card p {
       font-size: 11px;
       opacity: 0.9;
+      font-weight: 500;
     }
 
-    /* हालको गतिविधि (Recent Activity) */
+    /* हालको गतिविधि खण्ड */
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -168,70 +191,75 @@
       margin-bottom: 12px;
     }
     .section-header h3 {
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 16px;
+      font-weight: 800;
       color: #0f172a;
+      letter-spacing: -0.3px;
     }
     .section-header a {
       font-size: 12px;
       color: #2563eb;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .activity-card {
       background: #ffffff;
-      border-radius: 14px;
-      padding: 14px 16px;
+      border-radius: 16px;
+      padding: 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      border: 1px solid #f1f5f9;
     }
     .activity-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
     .activity-icon {
       background: #eff6ff;
       color: #2563eb;
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 18px;
     }
     .activity-details h4 {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       color: #1e293b;
+      letter-spacing: -0.2px;
     }
     .activity-details p {
-      font-size: 11px;
+      font-size: 12px;
       color: #64748b;
-      margin-top: 2px;
+      margin-top: 3px;
+      font-weight: 500;
     }
     .arrow-icon {
       color: #94a3b8;
-      font-size: 14px;
+      font-size: 13px;
     }
 
-    /* तल्लो नेभिगेसन बार (Bottom Navigation Bar) */
+    /* तल्लो नेभिगेसन बार */
     .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 60px;
+      height: 65px;
       background: #ffffff;
       display: flex;
       justify-content: space-around;
       align-items: center;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
       z-index: 1000;
+      border-top: 1px solid #f1f5f9;
     }
     .nav-item {
       display: flex;
@@ -239,15 +267,16 @@
       align-items: center;
       text-decoration: none;
       color: #94a3b8;
-      font-size: 10px;
-      font-weight: 500;
+      font-size: 11px;
+      font-weight: 600;
+      transition: color 0.2s;
     }
     .nav-item.active {
       color: #2563eb;
     }
-    .nav-item span.icon {
+    .nav-item i {
       font-size: 18px;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
   </style>
 </head>
@@ -255,9 +284,9 @@
 
   <!-- टप हेडर -->
   <div class="app-header">
-    <button class="icon-btn">☰</button>
+    <button class="icon-btn"><i class="fa-solid fa-bars-staggered"></i></button>
     <h1>Loksewa<span>Quest</span></h1>
-    <button class="icon-btn">🔔</button>
+    <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
   </div>
 
   <!-- मुख्य सेतो इन्टरफेस -->
@@ -276,35 +305,35 @@
       </div>
       <div class="progress-info">
         <h3>Your Preparation</h3>
-        <p>Keep going!<br>You're doing great.</p>
+        <p>Keep going! You're doing great.</p>
       </div>
     </div>
 
-    <!-- २x२ ग्रिडका बटनहरू (Take Quiz, Practice Set, आदि) -->
+    <!-- २x२ ग्रिडका व्यावसायिक बटनहरू -->
     <div class="action-grid">
       <a href="quiz.html" class="action-card card-blue">
-        <div class="card-icon">📝</div>
+        <div class="card-icon"><i class="fa-solid fa-pen-to-square"></i></div>
         <div>
           <h4>Take Quiz</h4>
           <p>Test your knowledge</p>
         </div>
       </a>
       <a href="practice.html" class="action-card card-green">
-        <div class="card-icon">📚</div>
+        <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
         <div>
           <h4>Practice Set</h4>
           <p>Topic-wise questions</p>
         </div>
       </a>
       <a href="mock.html" class="action-card card-orange">
-        <div class="card-icon">⏱️</div>
+        <div class="card-icon"><i class="fa-solid fa-stopwatch"></i></div>
         <div>
           <h4>Mock Test</h4>
           <p>Simulate real exam</p>
         </div>
       </a>
       <a href="performance.html" class="action-card card-pink">
-        <div class="card-icon">📊</div>
+        <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
         <div>
           <h4>Performance</h4>
           <p>Track your progress</p>
@@ -320,37 +349,37 @@
 
     <div class="activity-card">
       <div class="activity-left">
-        <div class="activity-icon">📖</div>
+        <div class="activity-icon"><i class="fa-solid fa-graduation-cap"></i></div>
         <div class="activity-details">
           <h4>General Knowledge Quiz</h4>
           <p>Score: 12/20 (60%)</p>
         </div>
       </div>
-      <div class="arrow-icon">➔</div>
+      <div class="arrow-icon"><i class="fa-solid fa-chevron-right"></i></div>
     </div>
 
   </div>
 
-  <!-- फिक्स गरिएको नेभिगेसन बार -->
+  <!-- व्यावसायिक फिक्स गरिएको नेभिगेसन बार -->
   <nav class="bottom-nav">
     <a href="dashboard.html" class="nav-item active">
-      <span class="icon">🏠</span>
+      <i class="fa-solid fa-house"></i>
       <span>Home</span>
     </a>
     <a href="exams.html" class="nav-item">
-      <span class="icon">📋</span>
+      <i class="fa-solid fa-book-bookmark"></i>
       <span>Exams</span>
     </a>
     <a href="practice.html" class="nav-item">
-      <span class="icon">✍️</span>
+      <i class="fa-solid fa-layer-group"></i>
       <span>Practice</span>
     </a>
     <a href="analytics.html" class="nav-item">
-      <span class="icon">📈</span>
+      <i class="fa-solid fa-chart-pie"></i>
       <span>Analytics</span>
     </a>
     <a href="profile.html" class="nav-item">
-      <span class="icon">👤</span>
+      <i class="fa-regular fa-user"></i>
       <span>Profile</span>
     </a>
   </nav>
