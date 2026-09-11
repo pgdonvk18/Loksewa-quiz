@@ -521,7 +521,8 @@
     document.addEventListener("DOMContentLoaded", () => {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
-          candidateName = user.displayName || user.email.split('@')[0];
+          // Firebase बाट वास्तविक नाम लिने, यदि नाम छैन भने "नाम छैन" देखाउने
+          candidateName = user.displayName ? user.displayName : "नाम छैन";
           userEmail = user.email;
           document.getElementById('profile-display-name').innerText = candidateName;
         } else {
@@ -720,21 +721,24 @@
 
     async function saveLeaderboardAndProfile(score, solvedCount) {
       try {
+        // जिमेलको सट्टा क्यान्डिडेटको नाम सेभ गर्ने
+        const saveName = candidateName && candidateName !== "नाम छैन" ? candidateName : "नाम छैन";
+
         const { data: existing } = await supabaseClient
           .from('leaderboard_geography')
           .select('*')
-          .eq('username', userEmail);
+          .eq('username', saveName);
 
         if (existing && existing.length > 0) {
           if (score > existing[0].score) {
             await supabaseClient
               .from('leaderboard_geography')
               .update({ score: score, total_solved: solvedCount })
-              .eq('username', userEmail);
+              .eq('username', saveName);
           }
         } else {
           await supabaseClient.from('leaderboard_geography').insert([
-            { username: userEmail, score: score, total_solved: solvedCount }
+            { username: saveName, score: score, total_solved: solvedCount }
           ]);
         }
       } catch (err) {
@@ -763,10 +767,8 @@
         }
         
         data.forEach((item, i) => {
-          let displayName = item.username;
-          if (displayName && displayName.includes('@')) {
-            displayName = displayName.split('@')[0];
-          }
+          // लिडरबोर्डमा नाम वा "नाम छैन" मात्र देखाउने
+          let displayName = item.username ? item.username : "नाम छैन";
 
           lbContainer.innerHTML += `
             <div class="lb-row">
