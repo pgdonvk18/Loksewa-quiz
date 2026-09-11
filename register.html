@@ -15,7 +15,6 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
     
-    /* स्क्रिनसटमा जस्तै निलो र आकर्षक थिम (Blue & Professional Theme) */
     body {
       background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #3b82f6 100%);
       color: #1e293b;
@@ -126,7 +125,6 @@
       text-decoration: underline;
     }
 
-    /* main.js ले कन्ट्रोल गर्ने पपअपको डिजाइन (CSS) */
     .custom-popup-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
@@ -204,7 +202,7 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
     (function() {
-      emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); // यहाँ आफ्नो EmailJS Public Key राख्नुहोला
+      emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
     })();
   </script>
 
@@ -215,6 +213,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -227,6 +226,7 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app); // Firestore थपिएको
 
     const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
@@ -242,11 +242,21 @@
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
       try {
+        // १. Firebase Auth मा नयाँ युजर बनाउने
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
+        // २. Auth profile मा नाम अपडेट गर्ने
         await updateProfile(user, { displayName: fullName });
 
+        // ३. Firestore को users कलेक्सनमा नाम र इमेल सेभ गर्ने (Profile Page को लागि अति आवश्यक)
+        await setDoc(doc(db, "users", user.uid), {
+          name: fullName,
+          email: email,
+          createdAt: new Date()
+        });
+
+        // ४. Supabase मा युजरको तथ्याङ्क (stats) र OTP सेभ गर्ने
         await supabase.from('user_stats').upsert([
           { id: user.uid, total_solved: 0, time_spent_minutes: 0, accuracy: 0, otp_code: otpCode }
         ]);
@@ -266,7 +276,6 @@
       } catch (error) {
         let errorMessage = error.message;
         
-        // यदि इमेल पहिल्यै प्रयोगमा छ भने सरल सन्देश देखाउने
         if (error.code === 'auth/email-already-in-use') {
           errorMessage = "Email already in use";
         }
