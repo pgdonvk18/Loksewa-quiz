@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Loksewa Pro - Set 1 Mock Exam</title>
+  <title>LoksewaQuest - Set 1 Mock Exam</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -211,16 +211,16 @@
       <button onclick="redirectToLogin()" class="btn-primary" style="margin-bottom: 8px;">
         लगइन पेजमा जानुहोस् 🚀
       </button>
-      <a href="index.html" style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none; padding: 6px;">
-        गृहपृष्ठमा फर्कनुहोस्
+      <a href="dashboard.html" style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none; padding: 6px;">
+        ड्यासबोर्डमा फर्कनुहोस्
       </a>
     </div>
   </div>
 
   <!-- HEADER -->
   <header class="app-header">
-    <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1>🇳🇵 Loksewa Model Exam (Set 1)</h1>
+    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1>🇳🇵 LoksewaQuest - Set 1</h1>
     <div id="timer-box" class="timer-badge hidden">
       ⏳ <span id="time-left">45:00</span>
     </div>
@@ -232,7 +232,7 @@
     <div id="reg-screen" class="card space-y-4">
       <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">परीक्षा विवरण:</h2>
       
-      <!-- प्रोफाइलबाट तानेको नाम देखाउने ठाउँ -->
+      <!-- Firebase बाट तानिएको युजरको नाम वा इमेल देखाउने ठाउँ -->
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
         <div>
           <p style="font-size: 11px; color: #64748b; font-weight: 600;">लगइन गरिएको प्रयोगकर्ता</p>
@@ -328,7 +328,28 @@
 
   </main>
 
-  <script>
+  <!-- Firebase & Exam Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    setPersistence(auth, browserSessionPersistence).catch((error) => {
+      console.error("Persistence Error: ", error);
+    });
+
+    // Supabase client for quizzes & leaderboard
     const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -340,48 +361,28 @@
     let timerInterval;
     let timeLeftSeconds = 45 * 60;
 
-    window.onload = async () => {
-      await checkLoginAndLoadName();
-      fetchSet1Leaderboard();
-    };
-
-    // व्यापक (Robust) तरिकाले लगइन सेशन पत्ता लगाउने फंक्सन
-    async function checkLoginAndLoadName() {
-      // १. विभिन्न सम्भावित LocalStorage Keys हरू चेक गर्ने
-      let savedName = localStorage.getItem('user_name') || 
-                      localStorage.getItem('profile_name') || 
-                      localStorage.getItem('username') || 
-                      localStorage.getItem('logged_user');
-
-      // २. यदि लोकल स्टोरेजमा भेटिएन भने Supabase को built-in session वा local session बाट तान्ने प्रयास गर्ने
-      if (!savedName) {
-        try {
-          const { data: { session } } = await supabaseClient.auth.getSession();
-          if (session && session.user) {
-            savedName = session.user.user_metadata?.full_name || session.user.email;
-          }
-        } catch (e) {
-          console.log("Supabase session check error:", e);
+    // पेज लोड हुँदा Firebase को session डिटेक्ट गर्ने
+    document.addEventListener("DOMContentLoaded", () => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // युजर लगइन छ भने नाम वा इमेल तान्ने
+          candidateName = user.displayName || user.email;
+          document.getElementById('profile-display-name').innerText = candidateName;
+        } else {
+          // लगइन छैन भने आकर्षक पपअप देखाउने
+          document.getElementById('login-modal').classList.add('active');
+          document.getElementById('profile-display-name').innerText = 'लगइन गरिएको छैन';
         }
-      }
+      });
 
-      // ३. अझै पनि फेला परेन भने Modal देखाउने
-      if (!savedName || savedName.trim() === '') {
-        document.getElementById('login-modal').classList.add('active');
-        document.getElementById('profile-display-name').innerText = 'लगइन गरिएको छैन';
-        return;
-      }
-      
-      candidateName = savedName;
-      document.getElementById('profile-display-name').innerText = candidateName;
+      fetchSet1Leaderboard();
+    });
+
+    window.redirectToLogin = function() {
+      window.location.href = 'login.html';
     }
 
-    // लगइन पेजमा रिडाइरेक्ट गर्ने फंक्सन (तपाईंको लगइन पेजको फाइलको नाम यहाँ मिलाउन सक्नुहुन्छ जस्तै login.html)
-    function redirectToLogin() {
-      window.location.href = 'login.html'; 
-    }
-
-    async function startExam() {
+    window.startExam = async function() {
       try {
         if (!candidateName) {
           document.getElementById('login-modal').classList.add('active');
@@ -427,7 +428,7 @@
       }, 1000);
     }
 
-    function loadExamQuestion() {
+    window.loadExamQuestion = function() {
       const q = examQuestions[currentIdx];
       document.getElementById('q-tracker').innerText = `Question ${currentIdx + 1} of ${examQuestions.length}`;
       document.getElementById('exam-question').innerText = q.question;
@@ -451,14 +452,14 @@
       document.getElementById('next-btn').innerText = currentIdx === examQuestions.length - 1 ? 'परीक्षा बुझाउने (Submit)' : 'अर्को ➡️';
     }
 
-    function prevExamQuestion() {
+    window.prevExamQuestion = function() {
       if (currentIdx > 0) {
         currentIdx--;
         loadExamQuestion();
       }
     }
 
-    function nextExamQuestion() {
+    window.nextExamQuestion = function() {
       if (currentIdx < examQuestions.length - 1) {
         currentIdx++;
         loadExamQuestion();
@@ -504,7 +505,7 @@
       document.getElementById('rep-name').innerText = `परीक्षार्थी: ${candidateName}`;
       document.getElementById('rep-correct').innerText = correct;
       document.getElementById('rep-wrong').innerText = wrong;
-      document.getElementById('rep-skipped').innerText, skipped;
+      document.getElementById('rep-skipped').innerText = skipped;
       document.getElementById('rep-score').innerText = totalScore.toFixed(1);
       document.getElementById('review-container').innerHTML = reviewHTML;
 
@@ -512,19 +513,6 @@
       await supabaseClient.from('leaderboard_set1').insert([
         { username: candidateName, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
       ]);
-
-      // प्रोफाइलका लागि LocalStorage मा solved questions / stats update गर्ने
-      try {
-        let prevSolved = parseInt(localStorage.getItem('solved_questions_count') || '0', 10);
-        let prevCorrect = parseInt(localStorage.getItem('correct_answers_count') || '0', 10);
-        let prevTests = parseInt(localStorage.getItem('completed_tests_count') || '0', 10);
-
-        localStorage.setItem('solved_questions_count', prevSolved + examQuestions.length);
-        localStorage.setItem('correct_answers_count', prevCorrect + correct);
-        localStorage.setItem('completed_tests_count', prevTests + 1);
-      } code_err => {
-        console.error("Storage error:", code_err);
-      }
 
       fetchSet1Leaderboard();
     }
@@ -560,7 +548,7 @@
       });
     }
 
-    function downloadPDF() {
+    window.downloadPDF = function() {
       window.print();
     }
   </script>
