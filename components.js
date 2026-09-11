@@ -80,6 +80,12 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   `;
 
+  // यदि स्क्रिनको चौडाइ ७६८px भन्दा सानो (मोबाइल) छ भने मात्र Bottom Nav देखाउने
+if (window.innerWidth <= 768) {
+  document.body.insertAdjacentHTML('beforeend', navHTML);
+}
+
+
   document.body.insertAdjacentHTML('beforeend', navHTML);
 
   // भरपर्दो स्क्रोल डिटेक्टर
