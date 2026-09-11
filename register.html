@@ -259,13 +259,19 @@
 
         await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
 
-        // main.js को showPopup मार्फत पपअप देखाउने
         showPopup("सफल भयो!", "सफलतापूर्वक रजिस्टर भयो! तपाईंको जिमेलमा ६-अङ्कको भेरिफिकेसन कोड पठाइएको छ।", "success", () => {
           window.location.href = "login.html";
         });
 
       } catch (error) {
-        showPopup("त्रुटि!", error.message, "error");
+        let errorMessage = error.message;
+        
+        // यदि इमेल पहिल्यै प्रयोगमा छ भने सरल सन्देश देखाउने
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = "Email already in use";
+        }
+
+        showPopup("त्रुटि!", errorMessage, "error");
       }
     };
   </script>
