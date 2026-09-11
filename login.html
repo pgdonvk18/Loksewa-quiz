@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>LoksewaQuest - Login</title>
-  <!-- प्रिमियम आधुनिक फन्ट -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- व्यावसायिक आइकनहरूको लागि FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
@@ -26,7 +24,6 @@
       overflow: hidden;
     }
 
-    /* माथिल्लो भाग (लोगो र स्वागत म्यासेज) */
     .login-header {
       text-align: center;
       margin-top: 40px;
@@ -60,7 +57,6 @@
       font-weight: 500;
     }
 
-    /* बीचको कार्ड र लगइन बटनहरू */
     .login-card-container {
       background: #ffffff;
       border-radius: 28px;
@@ -112,7 +108,6 @@
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
     }
 
-    /* मुख्य लगइन बटन */
     .btn-login {
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: white;
@@ -148,7 +143,6 @@
     .divider::before { margin-right: 10px; }
     .divider::after { margin-left: 10px; }
 
-    /* Gmail बाट लगइन गर्ने बटन */
     .btn-google {
       background: #ffffff;
       color: #1e293b;
@@ -165,7 +159,6 @@
       gap: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.03);
       transition: background 0.2s;
-      text-decoration: none;
     }
     .btn-google:hover {
       background: #f8fafc;
@@ -175,7 +168,6 @@
       height: 20px;
     }
 
-    /* तलको रजिस्टर सेक्सन */
     .signup-link {
       text-align: center;
       margin-top: 25px;
@@ -192,7 +184,6 @@
 </head>
 <body>
 
-  <!-- हेडर सेक्सन -->
   <div class="login-header">
     <div class="app-logo">
       <i class="fa-solid fa-graduation-cap"></i>
@@ -201,16 +192,15 @@
     <p>Login to continue your preparation</p>
   </div>
 
-  <!-- लगइन कार्ड (फर्म र गुगल लगइन) -->
   <div class="login-card-container">
     
-    <!-- इमेल लगइन फर्म -->
-    <form action="dashboard.html" method="GET">
+    <!-- सहि इमेल र पासवर्ड मिले मात्र लगइन हुने फर्म -->
+    <form id="loginForm">
       <div class="form-group">
         <label>Email Address</label>
         <div class="input-box">
           <i class="fa-regular fa-envelope"></i>
-          <input type="email" placeholder="name@example.com" required>
+          <input type="email" id="loginEmail" placeholder="name@example.com" required>
         </div>
       </div>
 
@@ -218,7 +208,7 @@
         <label>Password</label>
         <div class="input-box">
           <i class="fa-solid fa-lock"></i>
-          <input type="password" placeholder="••••••••" required>
+          <input type="password" id="loginPassword" placeholder="••••••••" required>
         </div>
       </div>
 
@@ -227,18 +217,65 @@
 
     <div class="divider">OR</div>
 
-    <!-- Gmail (Google) लगइन बटन -->
-    <a href="dashboard.html" class="btn-google">
+    <button type="button" id="googleLoginBtn" class="btn-google">
       <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo">
       Continue with Google
-    </a>
+    </button>
 
   </div>
 
-  <!-- खाता नभएकाहरूको लागि -->
   <div class="signup-link">
     Don't have an account? <a href="register.html">Sign Up</a>
   </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // १. इमेल र पासवर्ड भेरिफाइड भएर मात्र ड्यासबोर्डमा जाने कोड
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        try {
+          // Firebase मार्फत डाटाबेस चेक गर्ने (मिलेमा मात्र अगाडि बढ्छ)
+          await signInWithEmailAndPassword(auth, email, password);
+          window.location.href = "dashboard.html";
+        } catch (error) {
+          alert("लगइन असफल भयो: इमेल वा पासवर्ड मिलेन!");
+        }
+      });
+    }
+
+    // २. गुगल लगइन
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    if (googleLoginBtn) {
+      googleLoginBtn.addEventListener('click', async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+          await signInWithPopup(auth, provider);
+          window.location.href = "dashboard.html";
+        } catch (error) {
+          alert("गुगल लगइनमा समस्या आयो: " + error.message);
+        }
+      });
+    }
+  </script>
 
 </body>
 </html>
