@@ -24,7 +24,7 @@
       overflow-x: hidden;
     }
 
-    /* टप हेडर सेक्सन (Profile Page सँग मिल्दो Gradient र Radius) */
+    /* टप हेडर सेक्सन */
     .app-header {
       background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
       color: white;
@@ -59,6 +59,196 @@
     }
     .icon-btn:active {
       background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* साइडबार ड्रअर (Sidebar Drawer Styling) */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100%;
+      background: #ffffff;
+      z-index: 2100;
+      box-shadow: 5px 0 25px rgba(0,0,0,0.1);
+      transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .sidebar.active {
+      left: 0;
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .sidebar-user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sidebar-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1e40af;
+      font-weight: 700;
+      font-size: 18px;
+      border: 2px solid #2563eb;
+    }
+    .sidebar-text h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .sidebar-text p {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+      word-break: break-all;
+    }
+    .close-sidebar {
+      background: #f1f5f9;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      color: #64748b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* साइडबार मेनु लिंक्स */
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .menu-item:hover, .menu-item:active {
+      background: #f8fafc;
+      color: #2563eb;
+    }
+    .menu-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .menu-item-left i {
+      font-size: 16px;
+      color: #64748b;
+      width: 20px;
+    }
+    .menu-item:hover .menu-item-left i {
+      color: #2563eb;
+    }
+    
+    /* टगल स्विच (Dark Mode / Language आदिका लागि) */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+    }
+    .switch input { 
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #cbd5e1;
+      transition: .3s;
+      border-radius: 22px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #2563eb;
+    }
+    input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid #f1f5f9;
+      padding-top: 15px;
+      margin-top: 10px;
+    }
+    .logout-btn {
+      background: #fef2f2;
+      color: #dc2626;
+      width: 100%;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+    .logout-btn:active {
+      background: #fee2e2;
     }
 
     /* मुख्य कन्टेनर */
@@ -350,7 +540,7 @@
       font-size: 12px;
     }
 
-    /* प्रोफाइल पेजसँग मेल खाने आधुनिक फ्लोटिङ तल्लो नेभिगेसन बार */
+    /* तल्लो नेभिगेसन बार */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -388,9 +578,77 @@
 
   <!-- टप हेडर -->
   <div class="app-header">
-    <button class="icon-btn"><i class="fa-solid fa-bars-staggered"></i></button>
+    <button class="icon-btn" id="menuBtn"><i class="fa-solid fa-bars-staggered"></i></button>
     <h1>Loksewa<span>Quest</span></h1>
     <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+  </div>
+
+  <!-- साइडबार ड्रअर (Sidebar Drawer) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="sidebar" id="sidebar">
+    <div>
+      <div class="sidebar-header">
+        <div class="sidebar-user-info">
+          <div class="sidebar-avatar" id="sidebarAvatar">LK</div>
+          <div class="sidebar-text">
+            <h4 id="sidebarName">युजर लोड हुँदैछ...</h4>
+            <p id="sidebarEmail">email@example.com</p>
+          </div>
+        </div>
+        <button class="close-sidebar" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="sidebar-menu">
+        <a href="courses.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-book-bookmark"></i>
+            <span>Active Course</span>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+        </a>
+        <a href="syllabus.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Syllabus</span>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+        </a>
+        <a href="notes.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-note-sticky"></i>
+            <span>Notes</span>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+        </a>
+        
+        <!-- Language Switcher Option -->
+        <div class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-language"></i>
+            <span>Language (नेपाली)</span>
+          </div>
+          <span style="font-size: 11px; font-weight: 700; color: #2563eb;">नेपा</span>
+        </div>
+
+        <!-- Dark Mode Toggle Option -->
+        <div class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-moon"></i>
+            <span>Dark Mode</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logoutBtn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
   </div>
 
   <!-- मुख्य कन्टेनर -->
@@ -486,7 +744,7 @@
 
   </div>
 
-  <!-- तल्लो नेभिगेसन बार (profile.html सँग १००% म्याच हुने गरी सुधार गरिएको) -->
+  <!-- तल्लो नेभिगेसन बार -->
   <div class="bottom-nav">
     <a href="dashboard.html" class="nav-link active">
       <i class="fa-solid fa-house"></i>
@@ -506,7 +764,94 @@
     </a>
   </div>
 
-  <!-- Auth Guard र युजरको नाम देखाउने स्क्रिप्ट -->
-  <script type="module" src="auth-guard.js"></script>
+  <!-- Firebase र साइडबार नियन्त्रण गर्ने JavaScript कोड -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // साइडबार खुलाउने र बन्द गर्ने लजिक
+    const menuBtn = document.getElementById('menuBtn');
+    const closeSidebar = document.getElementById('closeSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('active');
+      sidebarOverlay.classList.toggle('active');
+    }
+
+    menuBtn.addEventListener('click', toggleSidebar);
+    closeSidebar.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    // युजरको डेटा फेच गर्ने र साइडबारमा देखाउने
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const email = user.email || "No Email";
+        let name = user.displayName || "Officer";
+        
+        // Firestore बाट थप विवरण लिने
+        try {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists() && docSnap.data().name) {
+            name = docSnap.data().name;
+          }
+        } catch (err) {
+          console.error("Error fetching user data:", err);
+        }
+
+        // साइडबार र ड्यासबोर्डका टेक्स्टहरू अपडेट गर्ने
+        document.getElementById('sidebarName').textContent = name;
+        document.getElementById('sidebarEmail').textContent = email;
+
+        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) || "LK";
+        document.getElementById('sidebarAvatar').textContent = initials;
+        document.getElementById('userInitial').textContent = initials;
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    // Logout Functionality
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "login.html";
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
+    });
+
+    // Dark Mode Toggle Logic (उदाहरणका लागि स्थानीय भण्डारण / LocalStorage प्रयोग गरिएको)
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (localStorage.getItem('theme') === 'dark') {
+      darkModeToggle.checked = true;
+      document.body.style.background = '#0f172a';
+    }
+
+    darkModeToggle.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        localStorage.setItem('theme', 'dark');
+        alert("डार्क मोड सक्रिय गरियो (थप स्टाइल मिलाउन सकिन्छ)।");
+      } else {
+        localStorage.setItem('theme', 'light');
+      }
+    });
+  </script>
 </body>
 </html>
