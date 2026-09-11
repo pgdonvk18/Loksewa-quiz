@@ -260,8 +260,8 @@
 
       <!-- परीक्षा दिइसकेको अवस्थामा देखिने सन्देश र अभ्यास बटन -->
       <div id="already-given-box" class="hidden" style="background: #fef2f2; border: 1px solid #fecaca; padding: 14px; border-radius: 12px; margin-bottom: 16px; text-align: center;">
-        <p style="color: #dc2626; font-weight: 800; font-size: 13px; margin-bottom: 4px;">🚫 तपाईंले यो परीक्षा पहिले नै दििसक्नुभएको छ!</p>
-        <p style="color: #7f1d1d; font-size: 11px;">तपाईंले अब आधिकारिक रूपमा फेरि यो परीक्षा दिन पाउनुहुन्न (लिडरबोर्डमा पनि जोडिने छैन)। तर ज्ञानको लागि अभ्यास गर्न सक्नुहुन्छ।</p>
+        <p style="color: #dc2626; font-weight: 800; font-size: 13px; margin-bottom: 4px;">🚫 तपाईंले यो परीक्षा पहिले नै दिसक्नुभएको छ!</p>
+        <p style="color: #7f1d1d; font-size: 11px; margin-bottom: 10px;">तपाईंले आधिकारिक रूपमा फेरि परीक्षा दिन पाउनुहुन्न (लिडरबोर्डमा पनि जोडिने छैन)। तर ज्ञानको लागि अभ्यास गर्न सक्नुहुन्छ।</p>
         <button onclick="startPracticeMode()" class="btn-practice">
           तुरुन्त अभ्यास गर्नुहोस् (Practice Mode) 💡
         </button>
@@ -389,7 +389,7 @@
           userEmail = user.email;
           document.getElementById('profile-display-name').innerText = candidateName;
           
-          // चेक गर्ने कि युजरले यो परीक्षा पहिले दिइसकेको छ वा छैन
+          // इमेलको आधारमा चेक गर्ने कि परीक्षा दिसकेको छ वा छैन
           await checkIfExamAlreadyGiven(userEmail);
         } else {
           document.getElementById('login-modal').classList.add('active');
@@ -404,19 +404,25 @@
       window.location.href = 'login.html';
     }
 
-    // युजरले यो सेट पहिले नै दिएको छ कि छैन जाँच्ने function
     async function checkIfExamAlreadyGiven(email) {
+      if (!email) return;
+
       const { data, error } = await supabaseClient
         .from('leaderboard_set1')
         .select('*')
-        .eq('username', email); // वा username कोठामा email/name सेभ भएको आधारमा
+        .eq('username', email);
+
+      if (error) {
+        console.error("Error checking exam status:", error);
+        return;
+      }
 
       if (data && data.length > 0) {
-        // परीक्षा दिइसकेको छ -> मुख्य परीक्षा बटन लुकाउने, अभ्यास विकल्प देखाउने
+        // परीक्षा दिसकेको छ भने मुख्य बटन लुकाउने र अभ्यास विकल्प देखाउने
         document.getElementById('start-exam-btn').classList.add('hidden');
         document.getElementById('already-given-box').classList.remove('hidden');
       } else {
-        // दिएको छैन -> परीक्षा बटन देखाउने
+        // पहिलोपटक हो भने परीक्षा बटन मात्र देखाउने
         document.getElementById('start-exam-btn').classList.remove('hidden');
         document.getElementById('already-given-box').classList.add('hidden');
       }
@@ -458,7 +464,7 @@
     }
 
     window.startPracticeMode = function() {
-      startExam(true); // practice mode true पठाउने
+      startExam(true);
     }
 
     function startTimer() {
@@ -556,9 +562,9 @@
         document.getElementById('report-main-title').innerText = '📊 परीक्षा प्रतिवेदन (Exam Report Card)';
         document.getElementById('rep-set').innerText = 'परीक्षा सेट: Set-1 (Live Exam)';
         
-        // केवल वास्तविक परीक्षा (Live Exam) दिएको अवस्थामा मात्र लिडरबोर्डमा सेभ गर्ने
+        // वास्तविक परीक्षा मात्र लिडरबोर्डमा सेभ हुने
         await supabaseClient.from('leaderboard_set1').insert([
-          { username: userEmail || candidateName, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
+          { username: userEmail, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
         ]);
       }
 
