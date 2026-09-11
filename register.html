@@ -25,7 +25,6 @@
       padding: 30px 24px;
     }
 
-    /* माथिल्लो भाग (लोगो र स्वागत म्यासेज) */
     .register-header {
       text-align: center;
       margin-top: 20px;
@@ -59,7 +58,6 @@
       font-weight: 500;
     }
 
-    /* बीचको कार्ड र फर्म कन्टेनर */
     .register-card-container {
       background: #ffffff;
       border-radius: 28px;
@@ -111,7 +109,6 @@
       box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
     }
 
-    /* मुख्य रजिस्टर बटन */
     .btn-register {
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: white;
@@ -163,7 +160,6 @@
       justify-content: center;
       gap: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-      text-decoration: none;
       transition: background 0.2s;
     }
     .btn-google:hover {
@@ -174,7 +170,6 @@
       height: 18px;
     }
 
-    /* तलको लगइन लिङ्क */
     .login-link {
       text-align: center;
       margin-top: 15px;
@@ -191,7 +186,6 @@
 </head>
 <body>
 
-  <!-- हेडर सेक्सन -->
   <div class="register-header">
     <div class="app-logo">
       <i class="fa-solid fa-user-plus"></i>
@@ -200,16 +194,15 @@
     <p>Join LoksewaQuest to start learning</p>
   </div>
 
-  <!-- रजिस्टर कार्ड -->
   <div class="register-card-container">
     
-    <!-- इमेल रजिस्टर फर्म -->
-    <form action="dashboard.html" method="GET">
+    <!-- इमेल र पासवर्डबाट रजिस्टर गर्ने फर्म -->
+    <form id="registerForm">
       <div class="form-group">
         <label>Full Name</label>
         <div class="input-box">
           <i class="fa-regular fa-user"></i>
-          <input type="text" placeholder="Your Name" required>
+          <input type="text" id="fullName" placeholder="Your Name" required>
         </div>
       </div>
 
@@ -217,7 +210,7 @@
         <label>Email Address</label>
         <div class="input-box">
           <i class="fa-regular fa-envelope"></i>
-          <input type="email" placeholder="name@example.com" required>
+          <input type="email" id="signupEmail" placeholder="name@example.com" required>
         </div>
       </div>
 
@@ -225,7 +218,7 @@
         <label>Password</label>
         <div class="input-box">
           <i class="fa-solid fa-lock"></i>
-          <input type="password" placeholder="Create password" required>
+          <input type="password" id="signupPassword" placeholder="Create password" required>
         </div>
       </div>
 
@@ -234,18 +227,68 @@
 
     <div class="divider">OR</div>
 
-    <!-- Gmail (Google) बाट रजिस्टर गर्ने बटन -->
-    <a href="dashboard.html" class="btn-google">
+    <!-- वास्तविक गुगल पपअप खुल्ने बटन -->
+    <button type="button" id="googleSignInBtn" class="btn-google">
       <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo">
       Sign up with Google
-    </a>
+    </button>
 
   </div>
 
-  <!-- पहिले नै खाता भएकाहरूको लागि -->
   <div class="login-link">
     Already have an account? <a href="login.html">Login</a>
   </div>
+
+  <!-- Firebase को JavaScript SDK हरू -->
+  <script type="module">
+    // Firebase कन्फिगरेसन (तपाईंको Firebase Console बाट ल्याएर यहाँ राख्नु पर्छ)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Firebase Initialize गर्ने
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // १. इमेल र पासवर्डमार्फत रजिस्टर गर्ने प्रणाली
+    const registerForm = document.getElementById('registerForm');
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        alert("सफल रूपमा खाता सिर्जना भयो!");
+        window.location.href = "dashboard.html"; // सफल भएपछि ड्यासबोर्डमा पठाउने
+      } catch (error) {
+        alert("त्रुटि: " + error.message);
+      }
+    });
+
+    // २. "Sign up with Google" थिच्दा गुगलको पपअप खुल्ने प्रणाली
+    const googleSignInBtn = document.getElementById('googleSignInBtn');
+    googleSignInBtn.addEventListener('click', async () => {
+      const provider = new GoogleAuthProvider();
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        // प्रयोगकर्ता प्रमाणीकरण सफल भयो
+        alert("स्वागत छ, " + user.displayName + "!");
+        window.location.href = "dashboard.html"; // ड्यासबोर्डमा रिडाइरेक्ट हुने
+      } catch (error) {
+        alert("गुगल लगइन रद्द भयो वा समस्या आयो: " + error.message);
+      }
+    });
+  </script>
 
 </body>
 </html>
