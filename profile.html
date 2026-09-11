@@ -286,9 +286,30 @@
     }
     .nav-link i { font-size: 18px; }
     .nav-link.active { color: #2563eb; }
+
+    /* Toast Notification Design */
+    #toastMessage {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 9999;
+      display: none;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Toast Notification Div -->
+  <div id="toastMessage">Edited successfully</div>
 
   <div class="profile-header">
     <div class="nav-bar">
@@ -363,15 +384,15 @@
 
     <div class="menu-card">
       <a href="#" class="menu-item" onclick="enableNameEdit(); return false;">
-        <div class="menu-item-left"><i class="fa-solid fa-user-pen"></i><span>Edit Profile</span></div>
+        <div class="menu-item-left"><i class="fa-solid fa-user-pen"><span>Edit Profile</span></i></div>
         <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
       </a>
       <a href="#" class="menu-item">
-        <div class="menu-item-left"><i class="fa-solid fa-shield-halved"></i><span>Change Password</span></div>
+        <div class="menu-item-left"><i class="fa-solid fa-shield-halved"><span>Change Password</span></i></div>
         <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
       </a>
       <a href="#" id="logoutBtn" class="menu-item logout">
-        <div class="menu-item-left"><i class="fa-solid fa-right-from-bracket"></i><span>Log Out</span></div>
+        <div class="menu-item-left"><i class="fa-solid fa-right-from-bracket"><span>Log Out</span></i></div>
       </a>
     </div>
   </div>
@@ -415,6 +436,17 @@
 
     let currentUserId = null;
 
+    // Toast मसेज देखाउने फंक्सन
+    function showToast(message) {
+      const toast = document.getElementById('toastMessage');
+      toast.textContent = message;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2500);
+    }
+    window.showToast = showToast;
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUserId = user.uid;
@@ -454,7 +486,6 @@
           let totalSolvedCount = 0;
           let totalTimeMinutes = 0;
 
-          // १. user_stats टेबलबाट डेटा तान्ने
           let { data: userStatData } = await supabase
             .from('user_stats')
             .select('*')
@@ -466,7 +497,6 @@
             totalTimeMinutes += (userStatData.time_spent_minutes || 0);
           }
 
-          // २. leaderboard_geography टेबलबाट युजरको नाम म्याच गरी कुल हल प्रश्न तान्ने
           let { data: lbData } = await supabase
             .from('leaderboard_geography')
             .select('*')
@@ -509,11 +539,7 @@
     window.saveNameUpdate = async function() {
       const newName = document.getElementById('userNameInput').value.trim();
       if (!newName) {
-        if (typeof showPopup === 'function') {
-          showPopup("त्रुटि!", "नाम खाली राख्न पाइँदैन।", "error");
-        } else {
-          alert("नाम खाली राख्न पाइँदैन।");
-        }
+        showToast("नाम खाली राख्न पाइँदैन।");
         return;
       }
 
@@ -533,18 +559,10 @@
         document.getElementById('saveNameBtn').style.display = 'none';
         document.getElementById('editNameBtn').style.display = 'flex';
 
-        if (typeof showPopup === 'function') {
-          showPopup("सफल भयो!", "Edited successfully", "success");
-        } else {
-          alert("Edited successfully");
-        }
+        showToast("Edited successfully");
       } catch (error) {
         console.error("नाम अपडेट गर्दा त्रुटि:", error);
-        if (typeof showPopup === 'function') {
-          showPopup("त्रुटि!", "नाम अपडेट गर्न सकिएन।", "error");
-        } else {
-          alert("नाम अपडेट गर्न सकिएन।");
-        }
+        showToast("नाम अपडेट गर्न सकिएन।");
       }
     };
 
@@ -592,11 +610,10 @@
               const userDocRef = doc(db, "users", currentUserId);
               await updateDoc(userDocRef, { photoURL: compressedBase64 });
 
-              if (typeof showPopup === 'function') {
-                showPopup("सफल भयो!", "Edited successfully", "success");
-              }
+              showToast("Edited successfully");
             } catch (err) {
               console.error("फोटो सेभ गर्दा त्रुटि:", err);
+              showToast("तस्वीर सेभ गर्न सकिएन।");
             }
           }
         };
