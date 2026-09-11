@@ -20,7 +20,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding-bottom: 20px;
+      padding-bottom: 80px; /* तलको नेभिगेसन बारले छोप्न नदिन प्याडिङ राखिएको */
     }
 
     .profile-header {
@@ -183,6 +183,7 @@
     .menu-item.logout { color: #dc2626; }
     .menu-item.logout i { color: #dc2626; }
 
+    /* मिलान गरिएको तलको नेभिगेसन बार (Bottom Nav) स्टायल */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -191,9 +192,9 @@
       background: #ffffff;
       display: flex;
       justify-content: space-around;
-      padding: 12px 0;
+      padding: 10px 0 14px 0;
       box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-      border-radius: 24px 24px 0 0;
+      border-radius: 20px 20px 0 0;
       z-index: 100;
     }
     .nav-link {
@@ -204,7 +205,8 @@
       color: #94a3b8;
       font-size: 11px;
       font-weight: 600;
-      gap: 4px;
+      gap: 3px;
+      transition: color 0.2s;
     }
     .nav-link i { font-size: 18px; }
     .nav-link.active { color: #2563eb; }
@@ -214,7 +216,7 @@
 
   <div class="profile-header">
     <div class="nav-bar">
-      <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+      <a href="home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
       <h2>My Profile</h2>
       <div style="width: 40px;"></div>
     </div>
@@ -283,22 +285,23 @@
     </div>
   </div>
 
+  <!-- `home.html` सँग ठ ακ्कै मिलेको Bottom Navigation Bar -->
   <div class="bottom-nav">
-    <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
-    <a href="#" class="nav-link"><i class="fa-solid fa-book-open"></i><span>Study</span></a>
-    <a href="#" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Stats</span></a>
+    <a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="study.html" class="nav-link"><i class="fa-solid fa-book-open"></i><span>Study</span></a>
+    <a href="stats.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Stats</span></a>
     <a href="profile.html" class="nav-link active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
   </div>
 
   <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.5net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Firebase र Supabase दुवै एकीकृत गरिएको स्क्रिप्ट -->
+  <!-- Firebase र Supabase एकीकृत गरिएको स्क्रिप्ट -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // Firebase कन्फिगरेसन
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
       authDomain: "loksewaquest-227b6.firebaseapp.com",
@@ -311,7 +314,6 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // तपाईंले उपलब्ध गराउनुभएको Supabase URL र Anon Key
     const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
     
@@ -319,7 +321,6 @@
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // १. युजरको नाम र इमेल तुरुन्त सेट गर्ने
         const userEmail = user.email || "No Email";
         const displayName = user.displayName || userEmail.split('@')[0];
         
@@ -331,7 +332,6 @@
         }
 
         try {
-          // २. Supabase बाट युजरको stats डेटा तानेर ल्याउने
           let { data, error } = await supabase
             .from('user_stats')
             .select('*')
@@ -344,7 +344,6 @@
             document.getElementById('spentTime').textContent = hours + " hrs";
             document.getElementById('accuracyRate').textContent = (data.accuracy || 0) + "%";
           } else {
-            // डेटा नभएमा नयाँ रेकर्ड इन्सर्ट गर्ने
             await supabase.from('user_stats').insert([
               { id: user.uid, total_solved: 0, time_spent_minutes: 0, accuracy: 0 }
             ]);
@@ -354,12 +353,10 @@
         }
 
       } else {
-        // लगइन छैन भने लगइन पेजमा फर्काउने
         window.location.href = "login.html";
       }
     });
 
-    // Logout function
     document.getElementById('logoutBtn').addEventListener('click', (e) => {
       e.preventDefault();
       signOut(auth).then(() => {
