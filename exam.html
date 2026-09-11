@@ -70,22 +70,7 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
     }
 
-    /* Inputs & Buttons */
-    .input-box {
-      width: 100%;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 14px;
-      color: #0f172a;
-      outline: none;
-    }
-    .input-box:focus {
-      border-color: #2563eb;
-      background: #ffffff;
-    }
-
+    /* Buttons */
     .btn-primary {
       width: 100%;
       background: #2563eb;
@@ -190,11 +175,15 @@
     
     <!-- REGISTRATION & SET 1 SELECTION SCREEN -->
     <div id="reg-screen" class="card space-y-4">
-      <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">परीक्षा विवरण र नाम प्रविष्ट गर्नुहोस्:</h2>
+      <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">परीक्षा विवरण:</h2>
       
-      <div style="margin-bottom: 12px;">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 4px;">पूरा नाम</label>
-        <input type="text" id="candidate-name" placeholder="जस्तै: रमेश शर्मा" class="input-box">
+      <!-- प्रोफाइलबाट तानेको नाम देखाउने ठाउँ -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <p style="font-size: 11px; color: #64748b; font-weight: 600;">परीक्षार्थी (Candidate)</p>
+          <p id="profile-display-name" style="font-size: 15px; font-weight: 800; color: #1e293b;">লোড हुँदैछ...</p>
+        </div>
+        <i class="fa-solid fa-user-check" style="color: #2563eb; font-size: 20px;"></i>
       </div>
 
       <div style="margin-bottom: 16px;">
@@ -297,17 +286,36 @@
     let timeLeftSeconds = 45 * 60;
 
     window.onload = () => {
+      loadProfileName();
       fetchSet1Leaderboard();
     };
 
+    // प्रोफाइल वा लोकल स्टोरेजबाट नाम लोड गर्ने फंक्सन
+    function loadProfileName() {
+      // तपाईंले प्रोफाइल पेजमा प्रयोग गर्ने key जस्तै 'user_name' वा 'candidate_name' यहाँ मिलाउन सक्नुहुन्छ
+      let savedName = localStorage.getItem('user_name') || localStorage.getItem('profile_name');
+      
+      if (!savedName || savedName.trim() === '') {
+        savedName = 'अज्ञात परीक्षार्थी (Guest User)';
+      }
+      
+      candidateName = savedName;
+      document.getElementById('profile-display-name').innerText = candidateName;
+    }
+
     async function startExam() {
       try {
-        const input = document.getElementById('candidate-name').value.trim();
-        if (!input) {
-          alert('कृपया आफ्नो नाम लेख्नुहोस्!');
-          return;
+        if (!candidateName || candidateName === 'अज्ञात परीक्षार्थी (Guest User)') {
+          let promptName = prompt('कृपया आफ्नो प्रोफाइल नाम प्रविष्ट गर्नुहोस्:', 'रमेश शर्मा');
+          if (promptName && promptName.trim() !== '') {
+            candidateName = promptName.trim();
+            localStorage.setItem('user_name', candidateName);
+            document.getElementById('profile-display-name').innerText = candidateName;
+          } else {
+            alert('परीक्षा दिनको लागि नाम आवश्यक छ!');
+            return;
+          }
         }
-        candidateName = input;
 
         let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'Set-1');
         
