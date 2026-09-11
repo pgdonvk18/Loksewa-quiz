@@ -173,7 +173,6 @@
       <p>लोकसेवा आयोग तयारीका लागि भरपर्दो डिजिटल चौतारी</p>
     </div>
 
-    <!-- onsubmit हटाएर सिधै id राखिएको छ -->
     <form id="loginForm">
       <div class="form-group">
         <label>इमेल (Email)</label>
@@ -211,40 +210,6 @@
     </div>
   </div>
 
-  <!-- Popup Control Script -->
-  <script>
-    let popupCallback = null;
-
-    function showPopup(title, message, type = "error", callback = null) {
-      const overlay = document.getElementById('customPopup');
-      const popupTitle = document.getElementById('popupTitle');
-      const popupMessage = document.getElementById('popupMessage');
-      const popupIcon = document.getElementById('popupIcon');
-      const popupIconSymbol = document.getElementById('popupIconSymbol');
-      
-      popupTitle.textContent = title;
-      popupMessage.textContent = message;
-      popupCallback = callback;
-
-      popupIcon.className = "popup-icon-container " + type;
-      if (type === "success") {
-        popupIconSymbol.className = "fa-solid fa-check";
-      } else {
-        popupIconSymbol.className = "fa-solid fa-triangle-exclamation";
-      }
-
-      overlay.classList.add('active');
-    }
-
-    function closePopup() {
-      const overlay = document.getElementById('customPopup');
-      overlay.classList.remove('active');
-      if (popupCallback && typeof popupCallback === 'function') {
-        popupCallback();
-      }
-    }
-  </script>
-
   <!-- Firebase & Login Logic (Module Script) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -266,7 +231,39 @@
       console.error("Persistence Error: ", error);
     });
 
-    // Form submit हुँदा काम गर्ने इभेन्ट लistener
+    // पपअप नियन्त्रण गर्ने फंक्सनहरूलाई यही module भित्र राखिएको छ
+    let popupCallback = null;
+
+    window.showPopup = function(title, message, type = "error", callback = null) {
+      const overlay = document.getElementById('customPopup');
+      const popupTitle = document.getElementById('popupTitle');
+      const popupMessage = document.getElementById('popupMessage');
+      const popupIcon = document.getElementById('popupIcon');
+      const popupIconSymbol = document.getElementById('popupIconSymbol');
+      
+      popupTitle.textContent = title;
+      popupMessage.textContent = message;
+      popupCallback = callback;
+
+      popupIcon.className = "popup-icon-container " + type;
+      if (type === "success") {
+        popupIconSymbol.className = "fa-solid fa-check";
+      } else {
+        popupIconSymbol.className = "fa-solid fa-triangle-exclamation";
+      }
+
+      overlay.classList.add('active');
+    }
+
+    window.closePopup = function() {
+      const overlay = document.getElementById('customPopup');
+      overlay.classList.remove('active');
+      if (popupCallback && typeof popupCallback === 'function') {
+        popupCallback();
+      }
+    }
+
+    // Form submit event
     document.getElementById('loginForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       
