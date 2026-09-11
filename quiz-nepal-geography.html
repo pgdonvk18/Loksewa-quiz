@@ -1,822 +1,460 @@
 <!DOCTYPE html>
-<html lang="ne">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <title>LoksewaQuest - Nepal Geography Practice</title>
+<title>LoksewaQuest - Nepal Geography Quiz</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
+<style>
     body {
-      background-color: #f8fafc;
-      color: #0f172a;
-      padding-bottom: 40px;
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
     }
 
-    .app-header {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      color: white;
-      padding: 18px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    .option {
+        transition: .2s;
     }
 
-    .app-header h1 {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: .5px;
+    .option:hover {
+        transform: translateY(-1px);
     }
 
-    .back-btn {
-      background: rgba(255,255,255,.15);
-      color: white;
-      border: none;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 14px;
+    .correct {
+        border-color: #16a34a !important;
+        background: #dcfce7 !important;
     }
 
-    .main-wrapper {
-      max-width: 500px;
-      margin: auto;
-      padding: 20px 16px;
+    .wrong {
+        border-color: #dc2626 !important;
+        background: #fee2e2 !important;
     }
 
-    .card {
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 22px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,.04);
+    .disabled {
+        pointer-events: none;
     }
 
-    .progress-section {
-      margin-bottom: 22px;
+    .hide {
+        display: none !important;
     }
 
-    .progress-info-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
+    .loader {
+        width: 45px;
+        height: 45px;
+        border: 5px solid #ddd;
+        border-top-color: #2563eb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: auto;
     }
 
-    .progress-text {
-      font-size: 13px;
-      font-weight: 700;
-      color: #475569;
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
     }
-
-    .topic-badge {
-      background: #eff6ff;
-      color: #1d4ed8;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      border: 1px solid #dbeafe;
-    }
-
-    .progress-bar-bg {
-      width: 100%;
-      height: 10px;
-      background: #e2e8f0;
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg,#2563eb,#3b82f6);
-      border-radius: 6px;
-      width: 0;
-      transition: width .4s ease;
-    }
-
-    .slider-container {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      padding: 16px;
-      border-radius: 14px;
-      margin-bottom: 20px;
-    }
-
-    .slider-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .slider-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: #334155;
-    }
-
-    .slider-value-badge {
-      background: #2563eb;
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    input[type=range] {
-      width: 100%;
-      height: 8px;
-      background: #cbd5e1;
-      border-radius: 4px;
-      outline: none;
-      appearance: none;
-    }
-
-    input[type=range]::-webkit-slider-thumb {
-      appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #2563eb;
-      cursor: pointer;
-    }
-
-    .option-card {
-      width: 100%;
-      text-align: left;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1.5px solid #e2e8f0;
-      background: white;
-      color: #1e293b;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .option-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .option-circle {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #f1f5f9;
-      color: #475569;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .option-card.selected {
-      background: #eff6ff;
-      border-color: #2563eb;
-    }
-
-    .option-card.selected .option-circle {
-      background: #2563eb;
-      color: white;
-    }
-
-    .option-card.correct {
-      background: #f0fdf4 !important;
-      border-color: #22c55e !important;
-      color: #15803d !important;
-    }
-
-    .option-card.correct .option-circle {
-      background: #22c55e !important;
-      color: white !important;
-    }
-
-    .option-card.wrong {
-      background: #fef2f2 !important;
-      border-color: #ef4444 !important;
-      color: #b91c1c !important;
-    }
-
-    .option-card.wrong .option-circle {
-      background: #ef4444 !important;
-      color: white !important;
-    }
-
-    .explanation-box {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      padding: 14px;
-      border-radius: 14px;
-      margin-top: 16px;
-    }
-
-    .explanation-header {
-      color: #15803d;
-      font-weight: 800;
-      font-size: 13px;
-      margin-bottom: 4px;
-    }
-
-    .explanation-text {
-      font-size: 12px;
-      color: #166534;
-      line-height: 1.5;
-    }
-
-    .btn-primary {
-      background: #2563eb;
-      color: white;
-      font-weight: 700;
-      padding: 14px;
-      border-radius: 14px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      flex-grow: 1;
-    }
-
-    .btn-secondary {
-      background: #f1f5f9;
-      color: #334155;
-      font-weight: 700;
-      padding: 14px;
-      border-radius: 14px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      width: 120px;
-    }
-
-    .lb-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #f8fafc;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #f1f5f9;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,.75);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      opacity: 0;
-      visibility: hidden;
-      transition: .3s;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-card {
-      background: white;
-      width: 90%;
-      max-width: 340px;
-      border-radius: 24px;
-      padding: 24px 20px;
-      text-align: center;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .timer-box {
-      background: #eff6ff;
-      color: #1d4ed8;
-      border-radius: 12px;
-      padding: 7px 11px;
-      font-size: 12px;
-      font-weight: 800;
-    }
-  </style>
+</style>
 </head>
 
 <body>
 
-<!-- LOGIN MODAL -->
-<div id="login-modal" class="modal-overlay">
-  <div class="modal-card">
+<!-- ================= HEADER ================= -->
 
-    <div style="
-      width:56px;
-      height:56px;
-      background:#eff6ff;
-      color:#2563eb;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:24px;
-      margin:0 auto 16px;">
-      <i class="fa-solid fa-lock"></i>
+<header class="bg-blue-700 text-white shadow">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+
+        <div>
+            <h1 class="text-xl font-bold">
+                <i class="fa-solid fa-earth-asia mr-2"></i>
+                Nepal Geography
+            </h1>
+
+            <p class="text-blue-100 text-sm">
+                LoksewaQuest
+            </p>
+        </div>
+
+        <div id="timerBox"
+             class="bg-blue-800 px-4 py-2 rounded-xl font-bold hide">
+            <i class="fa-regular fa-clock mr-1"></i>
+            <span id="timer">00:00</span>
+        </div>
+
     </div>
-
-    <h3 style="font-size:18px;font-weight:800;margin-bottom:8px;">
-      लगइन आवश्यक छ!
-    </h3>
-
-    <p style="font-size:13px;color:#64748b;line-height:1.5;margin-bottom:20px;">
-      अभ्यास गर्न र रेकर्ड सेभ गर्न पहिले लगइन गर्नुहोस्।
-    </p>
-
-    <button onclick="window.location.href='login.html'"
-            class="btn-primary"
-            style="width:100%;margin-bottom:8px;">
-      लगइन पेजमा जानुहोस् 🚀
-    </button>
-
-    <a href="dashboard.html"
-       style="font-size:12px;color:#64748b;font-weight:700;text-decoration:none;">
-      ड्यासबोर्डमा फर्कनुहोस्
-    </a>
-
-  </div>
-</div>
-
-
-<header class="app-header">
-
-  <a href="dashboard.html" class="back-btn">
-    <i class="fa-solid fa-arrow-left"></i>
-  </a>
-
-  <h1>LoksewaQuest</h1>
-
-  <div style="width:38px;"></div>
-
 </header>
 
 
-<main class="main-wrapper">
+<!-- ================= MAIN ================= -->
 
-<!-- SETUP -->
-<div id="setup-screen" class="card">
+<main class="max-w-4xl mx-auto px-4 py-6">
 
-  <h2 style="font-size:16px;font-weight:800;margin-bottom:12px;">
-    नेपालको भूगोल - अभ्यास सेट
-  </h2>
+    <!-- LOGIN / START -->
 
-  <div style="
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    padding:14px;
-    border-radius:14px;
-    margin-bottom:16px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;">
+    <section id="startScreen"
+             class="bg-white rounded-2xl shadow p-6">
 
-    <div>
-      <p style="font-size:11px;color:#64748b;font-weight:600;">
-        प्रयोगकर्ता
-      </p>
+        <div class="text-center">
 
-      <p id="profile-display-name"
-         style="font-size:14px;font-weight:800;">
-        चेक गर्दैछ...
-      </p>
-    </div>
+            <div class="text-blue-600 text-5xl mb-4">
+                <i class="fa-solid fa-mountain-sun"></i>
+            </div>
 
-    <i class="fa-solid fa-user-check"
-       style="color:#2563eb;font-size:20px;"></i>
+            <h2 class="text-2xl font-bold text-gray-800">
+                Nepal Geography Quiz
+            </h2>
 
-  </div>
+            <p class="text-gray-500 mt-2">
+                Test your Nepal Geography knowledge.
+            </p>
 
+        </div>
 
-  <div class="slider-container">
+        <div class="mt-6">
 
-    <div class="slider-header">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                Your Name
+            </label>
 
-      <span class="slider-label">
-        प्रश्न संख्या छनौट गर्नुहोस्
-      </span>
+            <input
+                id="nameInput"
+                type="text"
+                placeholder="Enter your name"
+                class="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+            >
 
-      <span id="slider-val-display"
-            class="slider-value-badge">
-        20
-      </span>
+        </div>
 
-    </div>
+        <button
+            onclick="startPractice()"
+            class="w-full mt-5 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
 
-    <input
-      type="range"
-      id="question-count-slider"
-      min="5"
-      max="50"
-      step="5"
-      value="20"
-      oninput="updateSliderVal(this.value)"
-    >
+            <i class="fa-solid fa-play mr-2"></i>
+            Start Quiz
 
-  </div>
+        </button>
 
+        <div id="startError"
+             class="text-red-600 text-sm mt-4 text-center hide">
+        </div>
 
-  <button onclick="startPractice()"
-          class="btn-primary"
-          style="width:100%;">
-    अभ्यास सुरु गर्नुहोस् 🚀
-  </button>
+    </section>
 
 
-  <div style="
-    border-top:1px solid #f1f5f9;
-    padding-top:16px;
-    margin-top:20px;">
+    <!-- ================= LOADING ================= -->
 
-    <h3 style="
-      font-size:13px;
-      font-weight:800;
-      color:#2563eb;
-      margin-bottom:10px;">
-      🏆 भूगोल लिडरबोर्ड
-    </h3>
+    <section id="loadingScreen"
+             class="bg-white rounded-2xl shadow p-10 text-center hide">
 
-    <div id="geo-leaderboard"></div>
+        <div class="loader"></div>
 
-  </div>
+        <p class="mt-5 text-gray-600">
+            Loading Nepal Geography questions...
+        </p>
 
-</div>
+    </section>
 
 
-<!-- QUIZ -->
-<div id="quiz-screen" class="card hidden">
+    <!-- ================= QUIZ ================= -->
 
-  <div class="progress-section">
+    <section id="quizScreen" class="hide">
 
-    <div class="progress-info-row">
+        <div class="bg-white rounded-2xl shadow p-5">
 
-      <span id="q-tracker"
-            class="progress-text">
-        1 / 20
-      </span>
+            <!-- Progress -->
 
-      <div style="display:flex;gap:7px;align-items:center;">
+            <div class="flex justify-between text-sm text-gray-500 mb-3">
 
-        <span class="topic-badge">
-          Nepal Geography
-        </span>
+                <span id="questionNumber">
+                    Question 1
+                </span>
 
-        <span id="quiz-timer"
-              class="timer-box">
-          00:00
-        </span>
+                <span id="progressText">
+                    1 / 0
+                </span>
 
-      </div>
+            </div>
 
-    </div>
+            <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+                <div id="progressBar"
+                     class="bg-blue-600 h-2 rounded-full"
+                     style="width:0%">
+                </div>
+            </div>
 
-    <div class="progress-bar-bg">
-      <div id="progress-fill"
-           class="progress-bar-fill">
-      </div>
-    </div>
 
-  </div>
+            <!-- Question -->
 
+            <h2 id="questionText"
+                class="text-lg md:text-xl font-bold text-gray-800 leading-relaxed">
+            </h2>
 
-  <h3 id="quiz-question"
-      style="
-      font-size:16px;
-      font-weight:700;
-      line-height:1.5;
-      margin-bottom:20px;">
-    Loading...
-  </h3>
 
+            <!-- Options -->
 
-  <div id="quiz-options"></div>
+            <div id="optionsContainer"
+                 class="mt-6 space-y-3">
+            </div>
 
 
-  <div id="explanation-box"
-       class="explanation-box hidden">
+            <!-- Explanation -->
 
-    <div class="explanation-header">
-      <i class="fa-solid fa-circle-check"></i>
-      स्पष्टीकरण
-    </div>
+            <div id="explanationBox"
+                 class="mt-5 p-4 rounded-xl bg-blue-50 border border-blue-200 hide">
 
-    <p id="explanation-text"
-       class="explanation-text">
-    </p>
+                <div class="font-bold text-blue-700 mb-1">
+                    <i class="fa-solid fa-lightbulb mr-1"></i>
+                    Explanation
+                </div>
 
-  </div>
+                <div id="explanationText"
+                     class="text-gray-700 text-sm leading-relaxed">
+                </div>
 
+            </div>
 
-  <div style="
-    display:flex;
-    gap:12px;
-    margin-top:24px;">
 
-    <button onclick="prevQuestion()"
-            id="prev-btn"
-            class="btn-secondary">
-      <i class="fa-solid fa-arrow-left"></i>
-      Previous
-    </button>
+            <!-- Navigation -->
 
-    <button onclick="nextQuestion()"
-            id="next-btn"
-            class="btn-primary">
-      Next
-      <i class="fa-solid fa-arrow-right"></i>
-    </button>
+            <div class="flex gap-3 mt-6">
 
-  </div>
+                <button
+                    id="nextBtn"
+                    onclick="nextQuestion()"
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
 
-</div>
+                    Next
+                    <i class="fa-solid fa-arrow-right ml-1"></i>
 
+                </button>
 
-<!-- RESULT -->
-<div id="result-screen" class="card hidden">
+                <button
+                    id="finishBtn"
+                    onclick="finishQuiz()"
+                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl hide">
 
-  <div style="
-    text-align:center;
-    border-bottom:1px solid #f1f5f9;
-    padding-bottom:14px;
-    margin-bottom:16px;">
+                    <i class="fa-solid fa-flag-checkered mr-1"></i>
+                    Finish
 
-    <h2 style="
-      font-size:18px;
-      font-weight:800;
-      color:#059669;">
-      📊 अभ्यास प्रतिवेदन
-    </h2>
+                </button>
 
-    <p id="rep-name"
-       style="
-       font-size:13px;
-       color:#334155;
-       font-weight:700;
-       margin-top:4px;">
-    </p>
+            </div>
 
-    <p id="rep-time"
-       style="
-       font-size:12px;
-       color:#64748b;
-       margin-top:5px;">
-    </p>
+        </div>
 
-  </div>
+    </section>
 
 
-  <div style="
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    text-align:center;
-    margin-bottom:16px;">
+    <!-- ================= RESULT ================= -->
 
-    <div style="
-      background:#f8fafc;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid #e2e8f0;">
+    <section id="resultScreen"
+             class="bg-white rounded-2xl shadow p-6 hide">
 
-      <p style="font-size:11px;color:#64748b;">
-        मिलाएको
-      </p>
+        <div class="text-center">
 
-      <p id="rep-correct"
-         style="font-size:18px;font-weight:800;color:#059669;">
-        0
-      </p>
+            <div class="text-green-600 text-5xl mb-3">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
 
-    </div>
+            <h2 class="text-2xl font-bold">
+                Quiz Completed
+            </h2>
 
+            <p id="resultName"
+               class="text-gray-500 mt-1">
+            </p>
 
-    <div style="
-      background:#f8fafc;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid #e2e8f0;">
+        </div>
 
-      <p style="font-size:11px;color:#64748b;">
-        बिग्रिएको
-      </p>
 
-      <p id="rep-wrong"
-         style="font-size:18px;font-weight:800;color:#dc2626;">
-        0
-      </p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
 
-    </div>
+            <div class="bg-blue-50 rounded-xl p-4 text-center">
+                <div class="text-gray-500 text-sm">
+                    Solved
+                </div>
+                <div id="resultSolved"
+                     class="text-2xl font-bold text-blue-600">
+                    0
+                </div>
+            </div>
 
+            <div class="bg-green-50 rounded-xl p-4 text-center">
+                <div class="text-gray-500 text-sm">
+                    Correct
+                </div>
+                <div id="resultCorrect"
+                     class="text-2xl font-bold text-green-600">
+                    0
+                </div>
+            </div>
 
-    <div style="
-      background:#f8fafc;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid #e2e8f0;">
+            <div class="bg-red-50 rounded-xl p-4 text-center">
+                <div class="text-gray-500 text-sm">
+                    Wrong
+                </div>
+                <div id="resultWrong"
+                     class="text-2xl font-bold text-red-600">
+                    0
+                </div>
+            </div>
 
-      <p style="font-size:11px;color:#64748b;">
-        कुल हल
-      </p>
+            <div class="bg-purple-50 rounded-xl p-4 text-center">
+                <div class="text-gray-500 text-sm">
+                    Accuracy
+                </div>
+                <div id="resultAccuracy"
+                     class="text-2xl font-bold text-purple-600">
+                    0%
+                </div>
+            </div>
 
-      <p id="rep-solved"
-         style="font-size:18px;font-weight:800;color:#2563eb;">
-        0
-      </p>
+        </div>
 
-    </div>
 
-  </div>
+        <div class="bg-gray-50 rounded-xl p-4 mt-5 text-center">
 
+            <span class="text-gray-500">
+                Time Spent:
+            </span>
 
-  <div style="
-    text-align:center;
-    background:#eff6ff;
-    border-radius:14px;
-    padding:12px;
-    margin-bottom:16px;">
+            <strong id="resultTime">
+                00:00
+            </strong>
 
-    <span style="font-size:12px;color:#64748b;">
-      Accuracy
-    </span>
+        </div>
 
-    <strong id="rep-accuracy"
-            style="font-size:20px;color:#2563eb;margin-left:6px;">
-      0%
-    </strong>
 
-  </div>
+        <div class="flex flex-col md:flex-row gap-3 mt-6">
 
+            <button
+                onclick="showReview()"
+                class="flex-1 bg-gray-800 text-white py-3 rounded-xl font-bold">
 
-  <div id="mistake-retry-container"
-       class="hidden"
-       style="margin-bottom:16px;">
+                <i class="fa-solid fa-list-check mr-1"></i>
+                Review Answers
 
-    <button onclick="startMistakeRetry()"
-            class="btn-primary"
-            style="
-            width:100%;
-            background:#d97706;">
+            </button>
 
-      🔁 बिग्रिएका प्रश्नहरू फेरि खेल्नुहोस्
+            <button
+                id="retryMistakesBtn"
+                onclick="startMistakeRetry()"
+                class="flex-1 bg-orange-500 text-white py-3 rounded-xl font-bold hide">
 
-    </button>
+                <i class="fa-solid fa-rotate-right mr-1"></i>
+                Retry Mistakes
 
-  </div>
+            </button>
 
+            <button
+                onclick="location.reload()"
+                class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold">
 
-  <div style="margin-bottom:16px;">
+                <i class="fa-solid fa-rotate mr-1"></i>
+                New Quiz
 
-    <h4 style="
-      font-size:13px;
-      font-weight:800;
-      margin-bottom:8px;">
-      📝 उत्तरहरूको समीक्षा
-    </h4>
+            </button>
 
-    <div id="review-container"
-         style="font-size:12px;">
-    </div>
+        </div>
 
-  </div>
 
+        <div id="saveStatus"
+             class="text-center text-sm mt-4">
+        </div>
 
-  <button onclick="location.reload()"
-          class="btn-primary"
-          style="width:100%;margin-bottom:20px;">
+    </section>
 
-    🔄 फेरि सुरु गर्नुहोस्
 
-  </button>
+    <!-- ================= REVIEW ================= -->
 
+    <section id="reviewScreen"
+             class="bg-white rounded-2xl shadow p-5 mt-5 hide">
 
-  <div style="
-    border-top:1px solid #e2e8f0;
-    padding-top:16px;">
+        <div class="flex justify-between items-center mb-5">
 
-    <h3 style="
-      font-size:13px;
-      font-weight:800;
-      color:#2563eb;
-      margin-bottom:10px;">
-      🏆 भूगोल लिडरबोर्ड
-    </h3>
+            <h2 class="text-xl font-bold">
+                Answer Review
+            </h2>
 
-    <div id="geo-leaderboard-result"></div>
+            <button
+                onclick="backToResult()"
+                class="text-blue-600 font-semibold">
 
-  </div>
+                Back
 
-</div>
+            </button>
+
+        </div>
+
+        <div id="reviewContainer"
+             class="space-y-5">
+        </div>
+
+    </section>
 
 </main>
 
 
-<script type="module">
+<script>
 
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-import {
-  getAuth,
-  onAuthStateChanged,
-  setPersistence,
-  browserSessionPersistence
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-
-/* =========================
+/* =====================================================
    FIREBASE
-========================= */
+===================================================== */
 
 const firebaseConfig = {
-
-  apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-
-  authDomain: "loksewaquest-227b6.firebaseapp.com",
-
-  projectId: "loksewaquest-227b6",
-
-  storageBucket: "loksewaquest-227b6.firebasestorage.app",
-
-  messagingSenderId: "779234903809",
-
-  appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-
+    apiKey: "AIzaSyCkKCU1re5b9MtdAF1F4xI6rGxmxhGZak",
+    authDomain: "loksewaquest-227b6.firebaseapp.com",
+    projectId: "loksewaquest-227b6",
+    storageBucket: "loksewaquest-227b6.firebasestorage.app",
+    messagingSenderId: "779234903809",
+    appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
 };
 
+firebase.initializeApp(firebaseConfig);
 
-const app = initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
-const auth = getAuth(app);
-
-setPersistence(
-  auth,
-  browserSessionPersistence
-).catch(console.error);
+auth.setPersistence(
+    firebase.auth.Auth.Persistence.SESSION
+);
 
 
-/* =========================
+/* =====================================================
    SUPABASE
-========================= */
+===================================================== */
 
 const SUPABASE_URL =
-  "https://edyirdedkiarguvurpxq.supabase.co";
+    "https://edyirdedkiarguvurpxq.supabase.co";
+
+/*
+ IMPORTANT:
+ Paste the EXACT Supabase anon/public key
+ from your existing working HTML here.
+*/
 
 const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeXJpZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
-
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
 
 const supabaseClient =
-  window.supabase.createClient(
+    supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+        SUPABASE_ANON_KEY
+    );
 
 
-/* =========================
+/* =====================================================
    VARIABLES
-========================= */
+===================================================== */
 
 let candidateName = "";
 let userEmail = "";
@@ -834,1209 +472,1175 @@ let wrongQuestionsList = [];
 let isMistakeRetry = false;
 
 let quizStartTime = null;
-
 let quizTimerInterval = null;
 
 
-/* =========================
-   DOM READY
-========================= */
+/* =====================================================
+   AUTH
+===================================================== */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
+auth.onAuthStateChanged((user) => {
 
-    onAuthStateChanged(
-      auth,
-      async (user) => {
+    if (!user) {
 
-        if (user) {
+        document.getElementById("startError").textContent =
+            "Please login first to start the quiz.";
 
-          currentUserId = user.uid;
+        document.getElementById("startError")
+            .classList.remove("hide");
 
-          candidateName =
-            user.displayName ||
-            "नाम छैन";
+        return;
+    }
 
-          userEmail =
-            user.email || "";
+    currentUserId = user.uid;
+    userEmail = user.email || "";
 
-          document
-            .getElementById(
-              "profile-display-name"
-            )
-            .innerText =
-            candidateName;
+    console.log("Logged in user:", user.uid);
 
-        } else {
-
-          document
-            .getElementById(
-              "login-modal"
-            )
-            .classList
-            .add("active");
-
-          document
-            .getElementById(
-              "profile-display-name"
-            )
-            .innerText =
-            "लगइन गरिएको छैन";
-        }
-
-      }
-    );
-
-    fetchLeaderboard();
-
-  }
-);
+});
 
 
-/* =========================
-   SLIDER
-========================= */
+/* =====================================================
+   START QUIZ
+===================================================== */
 
-window.updateSliderVal =
-function(val) {
+async function startPractice() {
 
-  document
-    .getElementById(
-      "slider-val-display"
-    )
-    .innerText = val;
+    const name =
+        document.getElementById("nameInput").value.trim();
 
-};
+    if (!name) {
 
+        document.getElementById("startError").textContent =
+            "Please enter your name.";
 
-/* =========================
-   START PRACTICE
-========================= */
+        document.getElementById("startError")
+            .classList.remove("hide");
 
-window.startPractice =
-async function() {
-
-  if (!currentUserId) {
-
-    document
-      .getElementById("login-modal")
-      .classList
-      .add("active");
-
-    return;
-  }
-
-
-  const count =
-    parseInt(
-      document
-        .getElementById(
-          "question-count-slider"
-        )
-        .value
-    );
-
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-    await supabaseClient
-      .from("quizzes")
-      .select("*")
-      .ilike(
-        "topic",
-        "Nepal Geography"
-      );
-
-
-    if (
-      error ||
-      !data ||
-      data.length === 0
-    ) {
-
-      alert(
-        "डेटाबेसमा नेपालको भूगोलसम्बन्धी प्रश्नहरू भेटिएनन्!"
-      );
-
-      return;
+        return;
     }
 
 
-    allQuestions =
-      data.sort(
-        () => 0.5 - Math.random()
-      );
+    if (!currentUserId) {
+
+        document.getElementById("startError").textContent =
+            "Login session भेटिएन। पहिले login गर्नुहोस्.";
+
+        document.getElementById("startError")
+            .classList.remove("hide");
+
+        return;
+    }
+
+
+    candidateName = name;
+
+
+    /* Show loading */
+
+    document.getElementById("startScreen")
+        .classList.add("hide");
+
+    document.getElementById("loadingScreen")
+        .classList.remove("hide");
+
+
+    try {
+
+        console.log(
+            "Fetching topic: Nepal Geography"
+        );
+
+
+        /* =================================================
+           IMPORTANT FETCH
+        ================================================= */
+
+        const { data, error } =
+            await supabaseClient
+                .from("quizzes")
+                .select("*")
+                .ilike("topic", "Nepal Geography");
+
+
+        console.log(
+            "Supabase data:",
+            data
+        );
+
+        console.log(
+            "Supabase error:",
+            error
+        );
+
+
+        if (error) {
+
+            throw new Error(
+                "Supabase error: " +
+                error.message
+            );
+
+        }
+
+
+        if (!data || data.length === 0) {
+
+            throw new Error(
+                "Nepal Geography का questions भेटिएनन्।"
+            );
+
+        }
+
+
+        allQuestions = data;
+
+
+        console.log(
+            "Total questions found:",
+            allQuestions.length
+        );
+
+
+        /* Randomize */
+
+        activeQuestions =
+            [...allQuestions]
+                .sort(() => Math.random() - 0.5);
+
+
+        currentIdx = 0;
+
+        userAnswers = {};
+
+        wrongQuestionsList = [];
+
+        isMistakeRetry = false;
+
+
+        /* Start timer */
+
+        quizStartTime = Date.now();
+
+        startTimer();
+
+
+        document.getElementById("loadingScreen")
+            .classList.add("hide");
+
+        document.getElementById("quizScreen")
+            .classList.remove("hide");
+
+        document.getElementById("timerBox")
+            .classList.remove("hide");
+
+
+        loadQuestion();
+
+
+    } catch (err) {
+
+        console.error(
+            "QUIZ START ERROR:",
+            err
+        );
+
+
+        document.getElementById("loadingScreen")
+            .classList.add("hide");
+
+        document.getElementById("startScreen")
+            .classList.remove("hide");
+
+
+        document.getElementById("startError").textContent =
+            err.message;
+
+        document.getElementById("startError")
+            .classList.remove("hide");
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD QUESTION
+===================================================== */
+
+function loadQuestion() {
+
+    const q =
+        activeQuestions[currentIdx];
+
+
+    if (!q) {
+        return;
+    }
+
+
+    document.getElementById("questionNumber")
+        .textContent =
+        `Question ${currentIdx + 1}`;
+
+
+    document.getElementById("progressText")
+        .textContent =
+        `${currentIdx + 1} / ${activeQuestions.length}`;
+
+
+    const percentage =
+        ((currentIdx + 1) /
+        activeQuestions.length) * 100;
+
+
+    document.getElementById("progressBar")
+        .style.width =
+        percentage + "%";
+
+
+    document.getElementById("questionText")
+        .textContent =
+        q.question || q.Question || "Question unavailable";
+
+
+    const optionsContainer =
+        document.getElementById("optionsContainer");
+
+    optionsContainer.innerHTML = "";
+
+
+    document.getElementById("explanationBox")
+        .classList.add("hide");
+
+
+    document.getElementById("explanationText")
+        .textContent = "";
+
+
+    /*
+      Support different possible
+      Supabase option formats.
+    */
+
+    let options = getOptions(q);
+
+
+    if (!options.length) {
+
+        optionsContainer.innerHTML = `
+            <div class="p-4 bg-red-50 text-red-600 rounded-xl">
+                Options भेटिएनन्।
+            </div>
+        `;
+
+        return;
+    }
+
+
+    options.forEach((option, index) => {
+
+        const value =
+            getOptionValue(option);
+
+        const button =
+            document.createElement("button");
+
+
+        button.className =
+            "option w-full text-left border-2 border-gray-200 rounded-xl p-4 bg-white hover:border-blue-400";
+
+
+        button.innerHTML = `
+            <span class="font-bold text-blue-600 mr-2">
+                ${String.fromCharCode(65 + index)}.
+            </span>
+            ${escapeHTML(String(value))}
+        `;
+
+
+        button.onclick = () =>
+            selectAnswer(value, button);
+
+
+        optionsContainer.appendChild(button);
+
+    });
+
+
+    /* If already answered */
+
+    if (
+        userAnswers[currentIdx] !== undefined
+    ) {
+
+        const saved =
+            userAnswers[currentIdx];
+
+        const buttons =
+            optionsContainer.querySelectorAll("button");
+
+        buttons.forEach(btn => {
+
+            const text =
+                btn.textContent
+                    .replace(/^[A-D]\.\s*/, "")
+                    .trim();
+
+            if (String(text) === String(saved)) {
+
+                btn.classList.add("border-blue-600");
+
+            }
+
+        });
+
+    }
+
+
+    /* Navigation */
+
+    if (
+        currentIdx ===
+        activeQuestions.length - 1
+    ) {
+
+        document.getElementById("nextBtn")
+            .classList.add("hide");
+
+        document.getElementById("finishBtn")
+            .classList.remove("hide");
+
+    } else {
+
+        document.getElementById("nextBtn")
+            .classList.remove("hide");
+
+        document.getElementById("finishBtn")
+            .classList.add("hide");
+
+    }
+
+}
+
+
+/* =====================================================
+   GET OPTIONS
+===================================================== */
+
+function getOptions(q) {
+
+    /*
+      Format 1:
+      options = ["A", "B", "C", "D"]
+    */
+
+    if (Array.isArray(q.options)) {
+        return q.options;
+    }
+
+
+    /*
+      Format 2:
+      options stored as JSON string
+    */
+
+    if (typeof q.options === "string") {
+
+        try {
+
+            const parsed =
+                JSON.parse(q.options);
+
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+
+            if (
+                parsed &&
+                typeof parsed === "object"
+            ) {
+
+                return Object.values(parsed);
+
+            }
+
+        } catch (e) {
+
+            console.warn(
+                "Could not parse options JSON",
+                e
+            );
+
+        }
+
+    }
+
+
+    /*
+      Format 3:
+      option_a / option_b / option_c / option_d
+    */
+
+    const result = [];
+
+    [
+        "option_a",
+        "option_b",
+        "option_c",
+        "option_d"
+    ].forEach(key => {
+
+        if (
+            q[key] !== undefined &&
+            q[key] !== null
+        ) {
+
+            result.push(q[key]);
+
+        }
+
+    });
+
+
+    return result;
+
+}
+
+
+/* =====================================================
+   OPTION VALUE
+===================================================== */
+
+function getOptionValue(option) {
+
+    if (
+        typeof option === "object" &&
+        option !== null
+    ) {
+
+        return (
+            option.text ??
+            option.label ??
+            option.value ??
+            option.option ??
+            ""
+        );
+
+    }
+
+    return option;
+
+}
+
+
+/* =====================================================
+   SELECT ANSWER
+===================================================== */
+
+function selectAnswer(selected, clickedButton) {
+
+    const q =
+        activeQuestions[currentIdx];
+
+
+    const correctAnswer =
+        getCorrectAnswer(q);
+
+
+    userAnswers[currentIdx] =
+        selected;
+
+
+    const buttons =
+        document
+            .getElementById("optionsContainer")
+            .querySelectorAll("button");
+
+
+    buttons.forEach(btn =>
+        btn.classList.add("disabled")
+    );
+
+
+    const selectedCorrect =
+        normalize(selected) ===
+        normalize(correctAnswer);
+
+
+    if (selectedCorrect) {
+
+        clickedButton.classList.add("correct");
+
+    } else {
+
+        clickedButton.classList.add("wrong");
+
+
+        buttons.forEach(btn => {
+
+            const visibleText =
+                btn.textContent
+                    .replace(/^[A-D]\.\s*/, "")
+                    .trim();
+
+
+            if (
+                normalize(visibleText) ===
+                normalize(correctAnswer)
+            ) {
+
+                btn.classList.add("correct");
+
+            }
+
+        });
+
+    }
+
+
+    /* Explanation */
+
+    const explanation =
+        q.explanation ||
+        q.Explanation ||
+        q.explain ||
+        "No explanation available.";
+
+
+    document.getElementById("explanationText")
+        .textContent =
+        explanation;
+
+
+    document.getElementById("explanationBox")
+        .classList.remove("hide");
+
+}
+
+
+/* =====================================================
+   CORRECT ANSWER
+===================================================== */
+
+function getCorrectAnswer(q) {
+
+    return (
+        q.answer ??
+        q.correct_answer ??
+        q.correctAnswer ??
+        q.correct_option ??
+        q.correct ??
+        ""
+    );
+
+}
+
+
+/* =====================================================
+   NORMALIZE
+===================================================== */
+
+function normalize(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .trim()
+        .toLowerCase();
+
+}
+
+
+/* =====================================================
+   NEXT
+===================================================== */
+
+function nextQuestion() {
+
+    if (
+        currentIdx <
+        activeQuestions.length - 1
+    ) {
+
+        currentIdx++;
+
+        loadQuestion();
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+}
+
+
+/* =====================================================
+   FINISH QUIZ
+===================================================== */
+
+async function finishQuiz() {
+
+    stopTimer();
+
+
+    let correct = 0;
+    let wrong = 0;
+    let solved = 0;
+
+
+    wrongQuestionsList = [];
+
+
+    activeQuestions.forEach((q, index) => {
+
+        const userAnswer =
+            userAnswers[index];
+
+
+        if (
+            userAnswer === undefined ||
+            userAnswer === null ||
+            userAnswer === ""
+        ) {
+
+            return;
+
+        }
+
+
+        solved++;
+
+
+        const correctAnswer =
+            getCorrectAnswer(q);
+
+
+        if (
+            normalize(userAnswer) ===
+            normalize(correctAnswer)
+        ) {
+
+            correct++;
+
+        } else {
+
+            wrong++;
+
+            wrongQuestionsList.push(q);
+
+        }
+
+    });
+
+
+    const totalQuestions =
+        activeQuestions.length;
+
+
+    const accuracy =
+        solved > 0
+            ? ((correct / solved) * 100)
+            : 0;
+
+
+    const timeSeconds =
+        getElapsedSeconds();
+
+
+    /* Result */
+
+    document.getElementById("quizScreen")
+        .classList.add("hide");
+
+    document.getElementById("timerBox")
+        .classList.add("hide");
+
+    document.getElementById("resultScreen")
+        .classList.remove("hide");
+
+
+    document.getElementById("resultName")
+        .textContent =
+        candidateName;
+
+
+    document.getElementById("resultSolved")
+        .textContent =
+        solved;
+
+
+    document.getElementById("resultCorrect")
+        .textContent =
+        correct;
+
+
+    document.getElementById("resultWrong")
+        .textContent =
+        wrong;
+
+
+    document.getElementById("resultAccuracy")
+        .textContent =
+        accuracy.toFixed(1) + "%";
+
+
+    document.getElementById("resultTime")
+        .textContent =
+        formatTime(timeSeconds);
+
+
+    /* Retry button */
+
+    if (wrongQuestionsList.length > 0) {
+
+        document.getElementById("retryMistakesBtn")
+            .classList.remove("hide");
+
+    } else {
+
+        document.getElementById("retryMistakesBtn")
+            .classList.add("hide");
+
+    }
+
+
+    /*
+      IMPORTANT:
+      Mistake retry is NOT counted
+      in cumulative analytics.
+    */
+
+    if (
+        !isMistakeRetry &&
+        solved > 0
+    ) {
+
+        await saveQuizAttempt({
+
+            totalQuestions,
+            solved,
+            correct,
+            wrong,
+            accuracy,
+            timeSeconds
+
+        });
+
+    }
+
+}
+
+
+/* =====================================================
+   SAVE QUIZ ATTEMPT
+===================================================== */
+
+async function saveQuizAttempt(stats) {
+
+    const status =
+        document.getElementById("saveStatus");
+
+
+    status.textContent =
+        "Saving your quiz statistics...";
+
+    status.className =
+        "text-center text-sm mt-4 text-blue-600";
+
+
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from("quiz_attempts")
+                .insert({
+
+                    user_id:
+                        currentUserId,
+
+                    user_email:
+                        userEmail,
+
+                    username:
+                        candidateName,
+
+                    topic:
+                        "Nepal Geography",
+
+                    total_questions:
+                        stats.totalQuestions,
+
+                    solved:
+                        stats.solved,
+
+                    correct:
+                        stats.correct,
+
+                    wrong:
+                        stats.wrong,
+
+                    accuracy:
+                        Number(stats.accuracy.toFixed(2)),
+
+                    time_spent_seconds:
+                        stats.timeSeconds,
+
+                    is_retry:
+                        false
+
+                })
+                .select();
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        console.log(
+            "Quiz attempt saved:",
+            data
+        );
+
+
+        status.textContent =
+            "✓ Quiz statistics saved successfully.";
+
+        status.className =
+            "text-center text-sm mt-4 text-green-600";
+
+
+    } catch (error) {
+
+        console.error(
+            "SAVE ATTEMPT ERROR:",
+            error
+        );
+
+
+        status.textContent =
+            "Statistics save हुन सकेन: " +
+            error.message;
+
+        status.className =
+            "text-center text-sm mt-4 text-red-600";
+
+    }
+
+}
+
+
+/* =====================================================
+   REVIEW
+===================================================== */
+
+function showReview() {
+
+    document.getElementById("resultScreen")
+        .classList.add("hide");
+
+    document.getElementById("reviewScreen")
+        .classList.remove("hide");
+
+
+    const container =
+        document.getElementById("reviewContainer");
+
+    container.innerHTML = "";
+
+
+    activeQuestions.forEach((q, index) => {
+
+        const userAnswer =
+            userAnswers[index];
+
+        const correctAnswer =
+            getCorrectAnswer(q);
+
+
+        const isCorrect =
+            userAnswer !== undefined &&
+            normalize(userAnswer) ===
+            normalize(correctAnswer);
+
+
+        const card =
+            document.createElement("div");
+
+
+        card.className =
+            "border rounded-xl p-4";
+
+
+        card.innerHTML = `
+
+            <div class="flex justify-between gap-3 mb-3">
+
+                <h3 class="font-bold text-gray-800">
+                    Q${index + 1}. ${escapeHTML(
+                        q.question || ""
+                    )}
+                </h3>
+
+                <span class="${
+                    isCorrect
+                        ? "text-green-600"
+                        : "text-red-600"
+                }">
+
+                    ${
+                        isCorrect
+                            ? "✓"
+                            : "✗"
+                    }
+
+                </span>
+
+            </div>
+
+            <div class="text-sm space-y-2">
+
+                <div>
+                    <strong>Your answer:</strong>
+                    ${
+                        userAnswer !== undefined
+                            ? escapeHTML(String(userAnswer))
+                            : "Not answered"
+                    }
+                </div>
+
+                <div class="text-green-700">
+                    <strong>Correct answer:</strong>
+                    ${escapeHTML(String(correctAnswer))}
+                </div>
+
+                <div class="bg-blue-50 p-3 rounded-lg">
+                    <strong>Explanation:</strong>
+                    ${escapeHTML(
+                        q.explanation ||
+                        q.Explanation ||
+                        q.explain ||
+                        "No explanation available."
+                    )}
+                </div>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+function backToResult() {
+
+    document.getElementById("reviewScreen")
+        .classList.add("hide");
+
+    document.getElementById("resultScreen")
+        .classList.remove("hide");
+
+}
+
+
+/* =====================================================
+   MISTAKE RETRY
+===================================================== */
+
+function startMistakeRetry() {
+
+    if (
+        !wrongQuestionsList.length
+    ) {
+
+        return;
+
+    }
 
 
     activeQuestions =
-      allQuestions.slice(
-        0,
-        Math.min(
-          count,
-          allQuestions.length
-        )
-      );
+        [...wrongQuestionsList];
 
 
     currentIdx = 0;
 
     userAnswers = {};
 
+    isMistakeRetry = true;
+
     wrongQuestionsList = [];
 
-    isMistakeRetry = false;
+
+    document.getElementById("resultScreen")
+        .classList.add("hide");
+
+    document.getElementById("reviewScreen")
+        .classList.add("hide");
+
+    document.getElementById("quizScreen")
+        .classList.remove("hide");
+
+    document.getElementById("timerBox")
+        .classList.remove("hide");
 
 
-    /* START TIMER */
-
-    quizStartTime =
-      Date.now();
+    quizStartTime = Date.now();
 
     startTimer();
 
-
-    document
-      .getElementById(
-        "setup-screen"
-      )
-      .classList
-      .add("hidden");
-
-
-    document
-      .getElementById(
-        "quiz-screen"
-      )
-      .classList
-      .remove("hidden");
-
-
     loadQuestion();
 
-  }
 
-  catch(err) {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 
-    console.error(err);
-
-    alert(
-      "केही प्राविधिक समस्या आयो: " +
-      err.message
-    );
-
-  }
-
-};
+}
 
 
-/* =========================
+/* =====================================================
    TIMER
-========================= */
+===================================================== */
 
 function startTimer() {
 
-  clearInterval(
-    quizTimerInterval
-  );
+    stopTimer();
 
-  quizTimerInterval =
-    setInterval(
-      () => {
 
-        if (!quizStartTime)
-          return;
+    updateTimer();
 
-        const seconds =
-          Math.floor(
-            (
-              Date.now() -
-              quizStartTime
-            ) / 1000
-          );
 
-        document
-          .getElementById(
-            "quiz-timer"
-          )
-          .innerText =
-          formatTime(seconds);
-
-      },
-      1000
-    );
+    quizTimerInterval =
+        setInterval(
+            updateTimer,
+            1000
+        );
 
 }
 
 
 function stopTimer() {
 
-  clearInterval(
-    quizTimerInterval
-  );
+    if (quizTimerInterval) {
+
+        clearInterval(
+            quizTimerInterval
+        );
+
+        quizTimerInterval = null;
+
+    }
+
+}
+
+
+function updateTimer() {
+
+    const seconds =
+        getElapsedSeconds();
+
+
+    document.getElementById("timer")
+        .textContent =
+        formatTime(seconds);
 
 }
 
 
 function getElapsedSeconds() {
 
-  if (!quizStartTime)
-    return 0;
+    if (!quizStartTime) {
+        return 0;
+    }
 
-  return Math.max(
-    0,
-    Math.floor(
-      (
-        Date.now() -
-        quizStartTime
-      ) / 1000
-    )
-  );
+
+    return Math.floor(
+        (Date.now() - quizStartTime) /
+        1000
+    );
 
 }
 
 
-function formatTime(seconds) {
+function formatTime(totalSeconds) {
 
-  const h =
-    Math.floor(
-      seconds / 3600
-    );
-
-  const m =
-    Math.floor(
-      (seconds % 3600) / 60
-    );
-
-  const s =
-    seconds % 60;
-
-
-  if (h > 0) {
-
-    return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-
-  }
-
-
-  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-
-}
-
-
-/* =========================
-   LOAD QUESTION
-========================= */
-
-window.loadQuestion =
-function() {
-
-  const q =
-    activeQuestions[
-      currentIdx
-    ];
-
-  if (!q) return;
-
-
-  document
-    .getElementById(
-      "q-tracker"
-    )
-    .innerText =
-    `${currentIdx + 1} / ${activeQuestions.length}`;
-
-
-  const progress =
-    (
-      (currentIdx + 1) /
-      activeQuestions.length
-    ) * 100;
-
-
-  document
-    .getElementById(
-      "progress-fill"
-    )
-    .style
-    .width =
-    `${progress}%`;
-
-
-  document
-    .getElementById(
-      "quiz-question"
-    )
-    .innerText =
-    q.question;
-
-
-  const container =
-    document.getElementById(
-      "quiz-options"
-    );
-
-  container.innerHTML = "";
-
-
-  const savedAnswer =
-    userAnswers[currentIdx];
-
-
-  const letters =
-    ["A","B","C","D"];
-
-
-  q.options.forEach(
-    (opt,index) => {
-
-      const btn =
-        document.createElement(
-          "button"
+    totalSeconds =
+        Math.max(
+            0,
+            Number(totalSeconds) || 0
         );
 
 
-      let cls =
-        "option-card";
+    const hours =
+        Math.floor(
+            totalSeconds / 3600
+        );
 
 
-      if (savedAnswer) {
-
-        if (
-          opt === q.answer
-        ) {
-
-          cls += " correct";
-
-        }
-        else if (
-          opt === savedAnswer
-        ) {
-
-          cls += " wrong";
-
-        }
-
-      }
-      else if (
-        savedAnswer === opt
-      ) {
-
-        cls += " selected";
-
-      }
+    const minutes =
+        Math.floor(
+            (totalSeconds % 3600) / 60
+        );
 
 
-      btn.className = cls;
+    const seconds =
+        totalSeconds % 60;
 
 
-      btn.innerHTML = `
+    if (hours > 0) {
 
-        <div class="option-left">
-
-          <div class="option-circle">
-            ${letters[index]}
-          </div>
-
-          <span>${escapeHTML(opt)}</span>
-
-        </div>
-
-      `;
-
-
-      if (!savedAnswer) {
-
-        btn.onclick =
-        () => {
-
-          userAnswers[
-            currentIdx
-          ] = opt;
-
-          loadQuestion();
-
-        };
-
-      }
-      else {
-
-        btn.style.cursor =
-          "default";
-
-      }
-
-
-      container.appendChild(btn);
+        return [
+            String(hours).padStart(2, "0"),
+            String(minutes).padStart(2, "0"),
+            String(seconds).padStart(2, "0")
+        ].join(":");
 
     }
-  );
 
 
-  if (savedAnswer) {
-
-    document
-      .getElementById(
-        "explanation-box"
-      )
-      .classList
-      .remove("hidden");
-
-
-    document
-      .getElementById(
-        "explanation-text"
-      )
-      .innerText =
-      q.explanation ||
-      "कुनै स्पष्टीकरण उपलब्ध छैन।";
-
-  }
-  else {
-
-    document
-      .getElementById(
-        "explanation-box"
-      )
-      .classList
-      .add("hidden");
-
-  }
-
-
-  document
-    .getElementById(
-      "prev-btn"
-    )
-    .style
-    .display =
-    currentIdx === 0
-      ? "none"
-      : "block";
-
-
-  const nextBtn =
-    document.getElementById(
-      "next-btn"
-    );
-
-
-  if (
-    currentIdx ===
-    activeQuestions.length - 1
-  ) {
-
-    nextBtn.innerHTML =
-      `Finish <i class="fa-solid fa-check"></i>`;
-
-  }
-  else {
-
-    nextBtn.innerHTML =
-      `Next <i class="fa-solid fa-arrow-right"></i>`;
-
-  }
-
-};
-
-
-/* =========================
-   PREVIOUS
-========================= */
-
-window.prevQuestion =
-function() {
-
-  if (currentIdx > 0) {
-
-    currentIdx--;
-
-    loadQuestion();
-
-  }
-
-};
-
-
-/* =========================
-   NEXT
-========================= */
-
-window.nextQuestion =
-function() {
-
-  if (
-    currentIdx <
-    activeQuestions.length - 1
-  ) {
-
-    currentIdx++;
-
-    loadQuestion();
-
-  }
-  else {
-
-    finishQuiz();
-
-  }
-
-};
-
-
-/* =========================
-   FINISH QUIZ
-========================= */
-
-async function finishQuiz() {
-
-  stopTimer();
-
-
-  const elapsedSeconds =
-    getElapsedSeconds();
-
-
-  let correct = 0;
-
-  let wrong = 0;
-
-  let solvedCount = 0;
-
-  let reviewHTML = "";
-
-
-  wrongQuestionsList = [];
-
-
-  activeQuestions.forEach(
-    (q,idx) => {
-
-      const userAns =
-        userAnswers[idx];
-
-
-      const isCorrect =
-        userAns === q.answer;
-
-
-      if (userAns) {
-
-        solvedCount++;
-
-
-        if (isCorrect) {
-
-          correct++;
-
-        }
-        else {
-
-          wrong++;
-
-          wrongQuestionsList
-            .push(q);
-
-        }
-
-      }
-
-
-      reviewHTML += `
-
-        <div style="
-          background:#f8fafc;
-          padding:12px;
-          border-radius:12px;
-          border:1px solid ${
-            isCorrect
-              ? "#bbf7d0"
-              : "#fecaca"
-          };
-          margin-bottom:8px;">
-
-          <p style="
-            font-weight:700;
-            margin-bottom:4px;">
-            Q${idx + 1}: ${escapeHTML(q.question)}
-          </p>
-
-          <p style="
-            color:#64748b;
-            margin-bottom:2px;">
-
-            तपाईंको उत्तर:
-            <span style="
-              font-weight:700;
-              color:${
-                isCorrect
-                  ? "#059669"
-                  : "#dc2626"
-              };">
-
-              ${userAns
-                ? escapeHTML(userAns)
-                : "छोडेको"}
-
-            </span>
-
-          </p>
-
-          <p style="
-            color:#059669;
-            font-weight:700;
-            margin-bottom:4px;">
-
-            सही उत्तर:
-            ${escapeHTML(q.answer)}
-
-          </p>
-
-          ${
-            q.explanation
-            ? `
-              <p style="
-                font-size:11px;
-                color:#475569;
-                font-style:italic;">
-
-                📌 ${escapeHTML(q.explanation)}
-
-              </p>
-            `
-            : ""
-          }
-
-        </div>
-
-      `;
-
-    }
-  );
-
-
-  const accuracy =
-    solvedCount > 0
-      ? Math.round(
-          (correct /
-          solvedCount) * 100
-        )
-      : 0;
-
-
-  document
-    .getElementById(
-      "quiz-screen"
-    )
-    .classList
-    .add("hidden");
-
-
-  document
-    .getElementById(
-      "result-screen"
-    )
-    .classList
-    .remove("hidden");
-
-
-  document
-    .getElementById(
-      "rep-name"
-    )
-    .innerText =
-    `परीक्षार्थी: ${candidateName}`;
-
-
-  document
-    .getElementById(
-      "rep-correct"
-    )
-    .innerText =
-    correct;
-
-
-  document
-    .getElementById(
-      "rep-wrong"
-    )
-    .innerText =
-    wrong;
-
-
-  document
-    .getElementById(
-      "rep-solved"
-    )
-    .innerText =
-    solvedCount;
-
-
-  document
-    .getElementById(
-      "rep-accuracy"
-    )
-    .innerText =
-    accuracy + "%";
-
-
-  document
-    .getElementById(
-      "rep-time"
-    )
-    .innerText =
-    `समय: ${formatTime(elapsedSeconds)}`;
-
-
-  document
-    .getElementById(
-      "review-container"
-    )
-    .innerHTML =
-    reviewHTML;
-
-
-  if (
-    wrongQuestionsList.length > 0 &&
-    !isMistakeRetry
-  ) {
-
-    document
-      .getElementById(
-        "mistake-retry-container"
-      )
-      .classList
-      .remove("hidden");
-
-  }
-  else {
-
-    document
-      .getElementById(
-        "mistake-retry-container"
-      )
-      .classList
-      .add("hidden");
-
-  }
-
-
-  /*
-    IMPORTANT:
-    Retry attempt database मा
-    save हुँदैन।
-  */
-
-  if (
-    !isMistakeRetry &&
-    solvedCount > 0
-  ) {
-
-    await saveQuizAttempt({
-
-      totalQuestions:
-        activeQuestions.length,
-
-      solved:
-        solvedCount,
-
-      correct,
-
-      wrong,
-
-      accuracy,
-
-      timeSeconds:
-        elapsedSeconds
-
-    });
-
-    await saveLeaderboard(
-      correct,
-      solvedCount
-    );
-
-  }
-
-
-  fetchLeaderboard();
+    return [
+        String(minutes).padStart(2, "0"),
+        String(seconds).padStart(2, "0")
+    ].join(":");
 
 }
 
 
-/* =========================
-   SAVE ANALYTICS DATA
-========================= */
-
-async function saveQuizAttempt(stats) {
-
-  try {
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("quiz_attempts")
-      .insert({
-
-        user_id:
-          currentUserId,
-
-        user_email:
-          userEmail,
-
-        username:
-          candidateName,
-
-        topic:
-          "Nepal Geography",
-
-        total_questions:
-          stats.totalQuestions,
-
-        solved:
-          stats.solved,
-
-        correct:
-          stats.correct,
-
-        wrong:
-          stats.wrong,
-
-        accuracy:
-          stats.accuracy,
-
-        time_spent_seconds:
-          stats.timeSeconds,
-
-        is_retry:
-          false
-
-      });
-
-
-    if (error) {
-
-      console.error(
-        "Analytics save error:",
-        error
-      );
-
-    }
-
-  }
-  catch(err) {
-
-    console.error(
-      "Analytics exception:",
-      err
-    );
-
-  }
-
-}
-
-
-/* =========================
-   LEADERBOARD
-========================= */
-
-async function saveLeaderboard(
-  score,
-  solvedCount
-) {
-
-  try {
-
-    const saveName =
-      candidateName &&
-      candidateName !== "नाम छैन"
-        ? candidateName
-        : "नाम छैन";
-
-
-    const {
-      data: existing
-    } =
-    await supabaseClient
-      .from(
-        "leaderboard_geography"
-      )
-      .select("*")
-      .eq(
-        "username",
-        saveName
-      );
-
-
-    if (
-      existing &&
-      existing.length > 0
-    ) {
-
-      if (
-        score >
-        Number(existing[0].score || 0)
-      ) {
-
-        await supabaseClient
-          .from(
-            "leaderboard_geography"
-          )
-          .update({
-
-            score: score,
-
-            total_solved:
-              solvedCount
-
-          })
-          .eq(
-            "username",
-            saveName
-          );
-
-      }
-
-    }
-    else {
-
-      await supabaseClient
-        .from(
-          "leaderboard_geography"
-        )
-        .insert([{
-
-          username:
-            saveName,
-
-          score:
-            score,
-
-          total_solved:
-            solvedCount
-
-        }]);
-
-    }
-
-  }
-  catch(err) {
-
-    console.error(
-      "Leaderboard error:",
-      err
-    );
-
-  }
-
-}
-
-
-/* =========================
-   FETCH LEADERBOARD
-========================= */
-
-async function fetchLeaderboard() {
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from(
-      "leaderboard_geography"
-    )
-    .select("*")
-    .order(
-      "score",
-      {
-        ascending:false
-      }
-    );
-
-
-  const containers = [
-
-    document.getElementById(
-      "geo-leaderboard"
-    ),
-
-    document.getElementById(
-      "geo-leaderboard-result"
-    )
-
-  ];
-
-
-  containers.forEach(
-    container => {
-
-      if (!container)
-        return;
-
-
-      container.innerHTML = "";
-
-
-      if (
-        error ||
-        !data ||
-        data.length === 0
-      ) {
-
-        container.innerHTML =
-          `<p style="
-            color:#64748b;
-            text-align:center;
-            font-size:12px;
-            padding:4px;">
-            हाल कुनै रेकर्ड छैन।
-          </p>`;
-
-        return;
-
-      }
-
-
-      data.forEach(
-        (item,i) => {
-
-          const name =
-            item.username ||
-            "नाम छैन";
-
-
-          container.innerHTML += `
-
-            <div class="lb-row">
-
-              <span style="
-                font-weight:700;">
-
-                ${i + 1}.
-                ${escapeHTML(name)}
-
-              </span>
-
-              <span style="
-                color:#2563eb;
-                font-weight:800;">
-
-                ${item.score || 0}
-                अंक
-                (${item.total_solved || 0} हल)
-
-              </span>
-
-            </div>
-
-          `;
-
-        }
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================
-   RETRY MISTAKES
-========================= */
-
-window.startMistakeRetry =
-function() {
-
-  if (
-    wrongQuestionsList.length === 0
-  )
-    return;
-
-
-  activeQuestions =
-    [...wrongQuestionsList];
-
-
-  currentIdx = 0;
-
-  userAnswers = {};
-
-  wrongQuestionsList = [];
-
-
-  isMistakeRetry = true;
-
-
-  quizStartTime =
-    Date.now();
-
-
-  startTimer();
-
-
-  document
-    .getElementById(
-      "result-screen"
-    )
-    .classList
-    .add("hidden");
-
-
-  document
-    .getElementById(
-      "quiz-screen"
-    )
-    .classList
-    .remove("hidden");
-
-
-  loadQuestion();
-
-};
-
-
-/* =========================
+/* =====================================================
    ESCAPE HTML
-========================= */
+===================================================== */
 
 function escapeHTML(value) {
 
-  if (
-    value === null ||
-    value === undefined
-  )
-    return "";
-
-
-  return String(value)
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
+
+
+/* =====================================================
+   DEBUG
+===================================================== */
+
+console.log(
+    "LoksewaQuest Nepal Geography loaded."
+);
 
 </script>
 
