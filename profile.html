@@ -379,7 +379,7 @@
   <div class="bottom-nav">
     <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
     <a href="study.html" class="nav-link"><i class="fa-solid fa-book-open"></i><span>Study</span></a>
-    <a href="stats.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Stats</span></a>
+    <a href="analytics.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i><span>Stats</span></a>
     <a href="profile.html" class="nav-link active"><i class="fa-solid fa-user"></i><span>Profile</span></a>
   </div>
 
@@ -389,7 +389,7 @@
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Firebase र Supabase एकीकृत गरिएको स्क्रिप्ट -->
+  <!-- Firebase र Supabase एकीकृत गरिएको स्क्रिप्ट (सिंक गरिएको) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -452,6 +452,12 @@
         try {
           let totalSolvedCount = 0;
           let totalTimeMinutes = 0;
+          let accuracy = 75; // डिफल्ट सुरक्षित मान
+
+          // ड्यासबोर्ड र एनालिटिक्ससँग मिलाउन पहिले localStorage वा Supabase बाट accuracy तान्ने
+          if (localStorage.getItem('user_accuracy')) {
+            accuracy = parseInt(localStorage.getItem('user_accuracy'));
+          }
 
           let { data: userStatData } = await supabase
             .from('user_stats')
@@ -462,6 +468,7 @@
           if (userStatData) {
             totalSolvedCount += (userStatData.total_solved || 0);
             totalTimeMinutes += (userStatData.time_spent_minutes || 0);
+            if (userStatData.accuracy) accuracy = userStatData.accuracy;
           }
 
           let { data: lbData } = await supabase
@@ -479,11 +486,8 @@
           let hours = (totalTimeMinutes / 60).toFixed(1);
           document.getElementById('spentTime').textContent = hours + " hrs";
           
-          if (totalSolvedCount > 0) {
-            document.getElementById('accuracyRate').textContent = "85%";
-          } else {
-            document.getElementById('accuracyRate').textContent = "0%";
-          }
+          // अब सबै पेजमा एउटै accuracy प्रतिशत देखिनेछ
+          document.getElementById('accuracyRate').textContent = accuracy + "%";
 
         } catch (dbError) {
           console.log("Supabase error: ", dbError.message);
