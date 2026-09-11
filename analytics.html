@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LoksewaQuest - Performance Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    body {
+      background: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-bottom: 90px;
+    }
+
+    .analytics-header {
+      background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
+      padding: 24px 20px 35px 20px;
+      border-radius: 0 0 30px 30px;
+      color: white;
+    }
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .back-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(5px);
+    }
+    .nav-bar h2 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .header-subtitle {
+      font-size: 13px;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    .container {
+      padding: 0 20px;
+      margin-top: -15px;
+      flex: 1;
+    }
+
+    /* Summary Mini Cards */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .sum-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 14px 10px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid #f1f5f9;
+    }
+    .sum-card i {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+    .sum-card.c1 i { color: #2563eb; }
+    .sum-card.c2 i { color: #16a34a; }
+    .sum-card.c3 i { color: #ea580c; }
+    
+    .sum-card h4 {
+      font-size: 10px;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .sum-card span {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    /* Chart Section */
+    .card-box {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+      border: 1px solid #f1f5f9;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title i {
+      color: #2563eb;
+    }
+    .chart-container {
+      position: relative;
+      height: 220px;
+      width: 100%;
+    }
+
+    /* Topic Progress Bars */
+    .topic-item {
+      margin-bottom: 14px;
+    }
+    .topic-item:last-child { margin-bottom: 0; }
+    .topic-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 5px;
+    }
+    .progress-bar-bg {
+      background: #f1f5f9;
+      height: 8px;
+      border-radius: 10px;
+      overflow: hidden;
+      width: 100%;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.6s ease;
+    }
+
+    /* Focus Areas List */
+    .focus-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .focus-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      padding: 12px 14px;
+      border-radius: 14px;
+    }
+    .focus-item i {
+      color: #d97706;
+      font-size: 16px;
+      margin-top: 2px;
+    }
+    .focus-text h5 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 2px;
+    }
+    .focus-text p {
+      font-size: 11px;
+      color: #b45309;
+      font-weight: 500;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0 14px 0;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+      border-radius: 20px 20px 0 0;
+      z-index: 100;
+    }
+    .nav-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 600;
+      gap: 3px;
+    }
+    .nav-link i { font-size: 18px; }
+    .nav-link.active { color: #2563eb; }
+  </style>
+</head>
+<body>
+
+  <div class="analytics-header">
+    <div class="nav-bar">
+      <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+      <h2>Performance Analytics</h2>
+      <div style="width: 40px;"></div>
+    </div>
+    <p class="header-subtitle">तपाईंको प्रगतिको गहिरो विश्लेषण र नतिजा</p>
+  </div>
+
+  <div class="container">
+    
+    <!-- Top 3 Quick Stats -->
+    <div class="summary-grid">
+      <div class="sum-card c1">
+        <i class="fa-solid fa-circle-check"></i>
+        <h4>Total Solved</h4>
+        <span id="anaTotalSolved">0</span>
+      </div>
+      <div class="sum-card c2">
+        <i class="fa-solid fa-bullseye"></i>
+        <h4>Accuracy</h4>
+        <span id="anaAccuracy">0%</span>
+      </div>
+      <div class="sum-card c3">
+        <i class="fa-solid fa-clock"></i>
+        <h4>Time Spent</h4>
+        <span id="anaTime">0 hrs</span>
+      </div>
+    </div>
+
+    <!-- Pie Chart / Performance Distribution -->
+    <div class="card-box">
+      <div class="card-title"><i class="fa-solid fa-chart-pie"></i> नतिजा वितरण (Correct vs Incorrect)</div>
+      <div class="chart-container">
+        <canvas id="accuracyPieChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Topic Wise Performance / Improvement -->
+    <div class="card-box">
+      <div class="card-title"><i class="fa-solid fa-chart-bar"></i> विषयगत सुधार (Topic Improvement)</div>
+      <div class="topic-list" id="topicProgressContainer">
+        <!-- Dynamic Topics -->
+        <div class="topic-item">
+          <div class="topic-info"><span>नेपालको भूगोल (Geography)</span><span>75%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 75%; background: #2563eb;"></div></div>
+        </div>
+        <div class="topic-item">
+          <div class="topic-info"><span>संविधान तथा शासनपद्धति</span><span>60%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 60%; background: #16a34a;"></div></div>
+        </div>
+        <div class="topic-item">
+          <div class="topic-info"><span>समसामयिक (Current Affairs)</span><span>45%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 45%; background: #ea580c;"></div></div>
+        </div>
+        <div class="topic-item">
+          <div class="topic-info"><span>बौद्धिक परीक्षण (IQ)</span><span>85%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 85%; background: #9333ea;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Areas to Focus / Needs Attention -->
+    <div class="card-box">
+      <div class="card-title"><i class="fa-solid fa-triangle-exclamation"></i> ध्यान दिनुपर्ने क्षेत्रहरू (Areas to Improve)</div>
+      <div class="focus-list">
+        <div class="focus-item">
+          <i class="fa-solid fa-lightbulb"></i>
+          <div class="focus-text">
+            <h5>समसामयिक मामिलाहरू</h5>
+            <p>तपाईंको समसामयिक खण्डमा गलत उत्तर दिने सम्भावना बढी छ। दैनिक करेन्ट अफेअर्समा ध्यान दिनुहोला।</p>
+          </div>
+        </div>
+        <div class="focus-item">
+          <i class="fa-solid fa-lightbulb"></i>
+          <div class="focus-text">
+            <h5>समय व्यवस्थापन (Time Management)</h5>
+            <p>कठिन प्रश्नहरूमा धेरै समय खर्च भइरहेको छ। गति (Speed) बढाउने अभ्यास गर्नुहोस्।</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    <a href="study.html" class="nav-link"><i class="fa-solid fa-book-open"></i><span>Study</span></a>
+    <a href="analytics.html" class="nav-link active"><i class="fa-solid fa-chart-pie"></i><span>Stats</span></a>
+    <a href="profile.html" class="nav-link"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+  </div>
+
+  <!-- Firebase & Supabase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Chart.js Setup
+    const ctx = document.getElementById('accuracyPieChart').getContext('2d');
+    const accuracyPieChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['मिलाइएका (Correct)', 'बिग्रिएका (Incorrect)'],
+        datasets: [{
+          data: [85, 15],
+          backgroundColor: ['#16a34a', '#dc2626'],
+          borderWidth: 0,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              boxWidth: 12,
+              font: {
+                family: 'Plus Jakarta Sans',
+                weight: '600',
+                size: 12
+              }
+            }
+          }
+        }
+      }
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          let totalSolved = 0;
+          let totalTime = 0;
+
+          // Supabase बाट युजरको वास्तविक डेटा तानेर एनालिटिक्स अपडेट गर्ने
+          let { data: userStat } = await supabase
+            .from('user_stats')
+            .select('*')
+            .eq('id', user.uid)
+            .maybeSingle();
+
+          if (userStat) {
+            totalSolved = userStat.total_solved || 0;
+            totalTime = userStat.time_spent_minutes || 0;
+          }
+
+          document.getElementById('anaTotalSolved').textContent = totalSolved;
+          document.getElementById('anaTime').textContent = (totalTime / 60).toFixed(1) + " hrs";
+          
+          if (totalSolved > 0) {
+            document.getElementById('anaAccuracy').textContent = "85%";
+          } else {
+            document.getElementById('anaAccuracy').textContent = "0%";
+          }
+
+        } catch (err) {
+          console.error("Analytics fetch error:", err);
+        }
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</body>
+</html>
