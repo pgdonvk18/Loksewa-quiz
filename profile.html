@@ -543,36 +543,57 @@
       document.getElementById('avatarFileInput').click();
     };
 
-    // युजरले फोटो छान्दा Base64 मा रूपान्तरण गरी सेभ गर्ने र 'Edited successfully' पपअप देखाउने
+    // युजरले फोटो छान्दा साइज कम्प्रेस गरेर Firebase मा सेभ गर्ने र पपअप देखाउने
     window.handlePhotoChange = async function(event) {
       const file = event.target.files[0];
       if (!file) return;
 
-      if (file.size > 2 * 1024 * 1024) {
-        showPopup("त्रुटि!", "तस्वीरको साइज २ MB भन्दा कम हुनुपर्छ।", "error");
-        return;
-      }
-
       const reader = new FileReader();
-      reader.onload = async function(e) {
-        const base64Image = e.target.result;
-        
-        document.getElementById('userAvatar').src = base64Image;
+      reader.onload = function(e) {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = async function() {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 300;
+          const MAX_HEIGHT = 300;
+          let width = img.width;
+          let height = img.height;
 
-        if (auth.currentUser) {
-          try {
-            await updateProfile(auth.currentUser, { photoURL: base64Image });
-
-            const userDocRef = doc(db, "users", currentUserId);
-            await updateDoc(userDocRef, { photoURL: base64Image });
-
-            // फोटो परिवर्तन सफलतापूर्वक हुँदा आउने पपअप
-            showPopup("सफल भयो!", "Edited successfully", "success");
-          } catch (err) {
-            console.error("फोटो सेभ गर्दा त्रुटि:", err);
-            showPopup("त्रुटि!", "तस्वीर सेभ गर्न सकिएन।", "error");
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
           }
-        }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+          document.getElementById('userAvatar').src = compressedBase64;
+
+          if (auth.currentUser) {
+            try {
+              await updateProfile(auth.currentUser, { photoURL: compressedBase64 });
+
+              const userDocRef = doc(db, "users", currentUserId);
+              await updateDoc(userDocRef, { photoURL: compressedBase64 });
+
+              showPopup("सफल भयो!", "Edited successfully", "success");
+            } catch (err) {
+              console.error("फोटो सेभ गर्दा त्रुटि:", err);
+              showPopup("त्रुटि!", "तस्वीर सेभ गर्न सकिएन।", "error");
+            }
+          }
+        };
       };
       reader.readAsDataURL(file);
     };
