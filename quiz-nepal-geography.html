@@ -111,6 +111,55 @@
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    /* Range Slider Styling */
+    .slider-container {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .slider-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+    }
+    .slider-value-badge {
+      background: #2563eb;
+      color: #ffffff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    input[type=range] {
+      width: 100%;
+      height: 8px;
+      background: #cbd5e1;
+      border-radius: 4px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #2563eb;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+      transition: transform 0.1s;
+    }
+    input[type=range]::-webkit-slider-thumb:active {
+      transform: scale(1.2);
+    }
+
     /* Option Card Style */
     .option-card {
       width: 100%;
@@ -333,14 +382,13 @@
         <i class="fa-solid fa-user-check" style="color: #2563eb; font-size: 20px;"></i>
       </div>
 
-      <div style="margin-bottom: 20px;">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 6px;">कति वटा प्रश्नहरूको अभ्यास गर्ने?</label>
-        <select id="question-count-select" style="width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid #cbd5e1; font-size: 14px; font-weight: 700; background: #fff; color: #1e293b;">
-          <option value="10">१० वटा प्रश्नहरू</option>
-          <option value="20">२० वटा प्रश्नहरू</option>
-          <option value="30">३० वटा प्रश्नहरू</option>
-          <option value="50" selected>५० वटा प्रश्नहरू (सबै)</option>
-        </select>
+      <!-- SLIDING BAR FOR QUESTION COUNT -->
+      <div class="slider-container">
+        <div class="slider-header">
+          <span class="slider-label">प्रश्न संख्या छनौट गर्नुहोस्</span>
+          <span id="slider-val-display" class="slider-value-badge">20</span>
+        </div>
+        <input type="range" id="question-count-slider" min="5" max="50" step="5" value="20" oninput="updateSliderVal(this.value)">
       </div>
 
       <button onclick="startPractice()" class="btn-primary" style="width: 100%;">
@@ -485,13 +533,17 @@
       fetchLeaderboard();
     });
 
+    window.updateSliderVal = function(val) {
+      document.getElementById('slider-val-display').innerText = val;
+    }
+
     window.startPractice = async function() {
       if (!userEmail) {
         document.getElementById('login-modal').classList.add('active');
         return;
       }
 
-      const count = parseInt(document.getElementById('question-count-select').value);
+      const count = parseInt(document.getElementById('question-count-slider').value);
 
       try {
         let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'Nepal Geography');
@@ -535,7 +587,6 @@
       const q = activeQuestions[currentIdx];
       document.getElementById('q-tracker').innerText = `${currentIdx + 1} / ${activeQuestions.length}`;
       
-      // Dynamic Smooth Sliding Progress Fill
       const progressPercent = ((currentIdx + 1) / activeQuestions.length) * 100;
       document.getElementById('progress-fill').style.width = `${progressPercent}%`;
 
