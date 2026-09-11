@@ -15,7 +15,6 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
     
-    /* स्क्रिनसटमा जस्तै निलो र आकर्षक थिम */
     body {
       background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #3b82f6 100%);
       color: #1e293b;
@@ -37,7 +36,6 @@
       border: 1px solid #e2e8f0;
     }
 
-    /* ब्यानर (लोगो, नाम र विवरण) को डिजाइन */
     .app-banner {
       text-align: center;
       margin-bottom: 24px;
@@ -136,7 +134,7 @@
       text-decoration: underline;
     }
 
-    /* main.js ले कन्ट्रोल गर्ने पपअपको डिजाइन (CSS) */
+    /* main.js ले कन्ट्रोल गर्ने पपअपको डिजाइन (त्रुटि देखाउन मात्र प्रयोग हुन्छ) */
     .custom-popup-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
@@ -169,7 +167,6 @@
 <body>
 
   <div class="login-card">
-    <!-- एपको लोगो, नाम र विवरणसहितको ब्यानर -->
     <div class="app-banner">
       <img src="launchericon-512x512.png" alt="LoksewaQuest Logo" class="app-logo">
       <h1>LoksewaQuest</h1>
@@ -221,7 +218,6 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // ब्राउजर वा ट्याब खुला रहुन्जेल मात्र सेसन कायम राख्ने (Session Storage)
     setPersistence(auth, browserSessionPersistence)
       .catch((error) => {
         console.error("Persistence Error: ", error);
@@ -236,16 +232,15 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
 
-        // सफलता सन्देश देखाएर dashboard.html मा लाने
-        showPopup("सफल भयो!", "सफलतापूर्वक लगइन भयो!", "success", () => {
-          window.location.href = "dashboard.html";
-        });
+        // सफलताको पपअप नदेखाएर सिधै dashboard.html मा रिडाइरेक्ट गर्ने
+        window.location.href = "dashboard.html";
 
       } catch (error) {
         let errorMessage = "इमेल वा पासवर्ड मिलेन।";
         if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
           errorMessage = "Invalid email or password";
         }
+        // गलत हुँदा मात्र पपअप देखाउने
         showPopup("त्रुटि!", errorMessage, "error");
       }
     };
