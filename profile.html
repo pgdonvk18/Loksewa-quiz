@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LoksewaQuest - User Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    body {
+      background: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-bottom: 20px;
+    }
+
+    /* Top Navigation Header */
+    .profile-header {
+      background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
+      padding: 24px 20px 40px 20px;
+      border-radius: 0 0 30px 30px;
+      color: white;
+      position: relative;
+    }
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 25px;
+    }
+    .back-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(5px);
+    }
+    .nav-bar h2 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    /* User Info Card inside Header */
+    .user-profile-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .avatar-container {
+      position: relative;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: #ffffff;
+      padding: 3px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .avatar-container img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .user-meta h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .user-meta p {
+      font-size: 13px;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+    .user-meta .address-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 6px;
+      color: #fbbf24;
+    }
+
+    /* Main Container */
+    .container {
+      padding: 0 20px;
+      margin-top: -20px;
+      flex: 1;
+    }
+
+    /* Stats Grid Layout */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      border: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .stat-icon.solved { background: #eff6ff; color: #2563eb; }
+    .stat-icon.time { background: #fff7ed; color: #ea580c; }
+    .stat-icon.accuracy { background: #f0fdf4; color: #16a34a; }
+    .stat-icon.rank { background: #fdf4ff; color: #c084fc; }
+
+    .stat-info h4 {
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+    .stat-info span {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    /* Account Menu Options */
+    .menu-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 8px 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      border: 1px solid #f1f5f9;
+      margin-bottom: 20px;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 4px;
+      text-decoration: none;
+      border-bottom: 1px solid #f8fafc;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+    .menu-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .menu-item-left i {
+      font-size: 16px;
+      color: #64748b;
+      width: 24px;
+      text-align: center;
+    }
+    .menu-item.logout {
+      color: #dc2626;
+    }
+    .menu-item.logout i {
+      color: #dc2626;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+      border-radius: 24px 24px 0 0;
+      z-index: 100;
+    }
+    .nav-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 600;
+      gap: 4px;
+    }
+    .nav-link i {
+      font-size: 18px;
+    }
+    .nav-link.active {
+      color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header with User Profile Preview -->
+  <div class="profile-header">
+    <div class="nav-bar">
+      <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+      <h2>My Profile</h2>
+      <div style="width: 40px;"></div>
+    </div>
+
+    <div class="user-profile-card">
+      <div class="avatar-container">
+        <img id="userAvatar" src="https://www.svgrepo.com/show/382109/male-avatar-boy-face-man-user-9.svg" alt="Profile Photo">
+      </div>
+      <div class="user-meta">
+        <h3 id="userName">Loading...</h3>
+        <p id="userEmail">fetching...</p>
+        <div class="address-badge">
+          <i class="fa-solid fa-location-dot"></i> <span id="userAddress">नेपाल</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Stats Section -->
+  <div class="container">
+    <div class="stats-grid">
+      <!-- Total Solved Questions -->
+      <div class="stat-card">
+        <div class="stat-icon solved">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="stat-info">
+          <h4>Solved Questions</h4>
+          <span id="totalSolved">142</span>
+        </div>
+      </div>
+
+      <!-- Spent Time -->
+      <div class="stat-card">
+        <div class="stat-icon time">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </div>
+        <div class="stat-info">
+          <h4>Spent Time</h4>
+          <span id="spentTime">24 hrs</span>
+        </div>
+      </div>
+
+      <!-- Accuracy Rate -->
+      <div class="stat-card">
+        <div class="stat-icon accuracy">
+          <i class="fa-solid fa-bullseye"></i>
+        </div>
+        <div class="stat-info">
+          <h4>Accuracy</h4>
+          <span id="accuracyRate">78%</span>
+        </div>
+      </div>
+
+      <!-- Rank / Level -->
+      <div class="stat-card">
+        <div class="stat-icon rank">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <div class="stat-info">
+          <h4>Quiz Level</h4>
+          <span id="userRank">Pro Aspirant</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Settings / Menu Options -->
+    <div class="menu-card">
+      <a href="#" class="menu-item">
+        <div class="menu-item-left">
+          <i class="fa-solid fa-user-pen"></i>
+          <span>Edit Profile</span>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
+      </a>
+      <a href="#" class="menu-item">
+        <div class="menu-item-left">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Change Password</span>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
+      </a>
+      <a href="#" class="menu-item">
+        <div class="menu-item-left">
+          <i class="fa-solid fa-circle-question"></i>
+          <span>Help & Support</span>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
+      </a>
+      <a href="#" id="logoutBtn" class="menu-item logout">
+        <div class="menu-item-left">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Log Out</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Menu -->
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-link">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="#" class="nav-link">
+      <i class="fa-solid fa-book-open"></i>
+      <span>Study</span>
+    </a>
+    <a href="#" class="nav-link">
+      <i class="fa-solid fa-chart-pie"></i>
+      <span>Stats</span>
+    </a>
+    <a href="profile.html" class="nav-link active">
+      <i class="fa-solid fa-user"></i>
+      <span>Profile</span>
+    </a>
+  </div>
+
+  <!-- Firebase Script integration to fetch user details -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // युजर लगइन छ कि छैन चेक गर्ने र प्रोफाइलको डेटा सेट गर्ने
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // युजरको नाम वा इमेल सेट गर्ने
+        const displayName = user.displayName || user.email.split('@')[0];
+        document.getElementById('userName').textContent = displayName;
+        document.getElementById('userEmail').textContent = user.email;
+
+        // यदि गुगलबाट फोटो छ भने प्रोफाइल पिक्चर अपडेट गर्ने
+        if (user.photoURL) {
+          document.getElementById('userAvatar').src = user.photoURL;
+        }
+
+        // हल गरेका प्रश्न र समय लोकल स्टोरेजबाट वा डिफल्ट देखाउने
+        const solvedCount = localStorage.getItem('totalSolved') || '142';
+        const timeSpent = localStorage.getItem('spentTime') || '24 hrs';
+        
+        document.getElementById('totalSolved').textContent = solvedCount;
+        document.getElementById('spentTime').textContent = timeSpent;
+      } else {
+        // लगइन छैन भने लगइन पेजमा पठाउने
+        window.location.href = "login.html";
+      }
+    });
+
+    // Logout function
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      }).catch((error) => {
+        alert("Logout failed: " + error.message);
+      });
+    });
+  </script>
+
+</body>
+</html>
