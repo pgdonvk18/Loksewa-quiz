@@ -1,6 +1,13 @@
-// यो फंक्सन्सले स्वतः ५ वटा bottom navigation bar लाई पेजको अन्त्यमा थपिदिन्छ र active पेजलाई हाइलाइट गर्छ
-function loadBottomNav(activePage) {
-  // नेभिगेसन बारको लागि आवश्यक CSS स्टाइल स्वतः इन्जेक्ट गर्ने
+document.addEventListener("DOMContentLoaded", function() {
+  const path = window.location.pathname;
+  let activePage = 'home';
+
+  if (path.includes('study')) activePage = 'study';
+  else if (path.includes('practice')) activePage = 'practice';
+  else if (path.includes('analytics') || path.includes('stats')) activePage = 'analytics';
+  else if (path.includes('profile')) activePage = 'profile';
+  else if (path.includes('dashboard') || path.includes('home')) activePage = 'home';
+
   if (!document.getElementById('bottom-nav-style')) {
     const styleElem = document.createElement('style');
     styleElem.id = 'bottom-nav-style';
@@ -18,6 +25,12 @@ function loadBottomNav(activePage) {
         box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
         border-radius: 20px 20px 0 0;
         z-index: 1000;
+        /* तल लुक्दा र माथि आउँदा सहज तरिकाले ट्रान्जिसन हुने */
+        transition: transform 0.3s ease-in-out;
+      }
+      /* जब यो class थपिन्छ, बार तलतिर लुक्छ */
+      .bottom-nav.nav-hidden {
+        transform: translateY(100%);
       }
       .nav-link {
         display: flex;
@@ -31,9 +44,7 @@ function loadBottomNav(activePage) {
         flex: 1;
         transition: color 0.2s ease;
       }
-      .nav-link i { 
-        font-size: 18px; 
-      }
+      .nav-link i { font-size: 18px; }
       .nav-link.active { 
         color: #2563eb !important; 
         font-weight: 700;
@@ -45,9 +56,8 @@ function loadBottomNav(activePage) {
     document.head.appendChild(styleElem);
   }
 
-  // ५ वटै बटनहरूलाई एकै किसिमको संरचना दिइएको HTML
   const navHTML = `
-    <div class="bottom-nav">
+    <div class="bottom-nav" id="mainBottomNav">
       <a href="dashboard.html" class="nav-link ${activePage === 'home' ? 'active' : ''}">
         <i class="fa-solid fa-house"></i>
         <span>Home</span>
@@ -71,6 +81,22 @@ function loadBottomNav(activePage) {
     </div>
   `;
 
-  // बडीको अन्त्यमा यसलाई इन्जेक्ट गर्ने
   document.body.insertAdjacentHTML('beforeend', navHTML);
-}
+
+  // स्क्रोल गर्दा लुक्ने र देखिने लजिक
+  let lastScrollTop = 0;
+  const bottomNav = document.getElementById('mainBottomNav');
+
+  window.addEventListener('scroll', function() {
+    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollTop > lastScrollTop && scrollTop > 50) {
+      // तल स्क्रोल (Scroll Down) गर्दा बार लुकाउने
+      bottomNav.classList.add('nav-hidden');
+    } else {
+      // माथि स्क्रोल (Scroll Up) गर्दा बार देखाउने
+      bottomNav.classList.remove('nav-hidden');
+    }
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+  }, false);
+});
