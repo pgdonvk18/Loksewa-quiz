@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LoksewaQuest - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background-color: #1e3c72; /* माथिल्लो नीलो भागको ब्याकग्राउन्ड */
+      color: #1e293b;
+      margin: 0;
+      padding-bottom: 70px; /* तलको नेभिगेसन बारको लागि ठाउँ छोडेको */
+      overflow-x: hidden;
+    }
+
+    /* टप हेडर सेक्सन */
+    .app-header {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      padding: 20px 20px 30px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .app-header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .app-header h1 span {
+      color: #fbbf24;
+    }
+    .icon-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* मुख्य सेतो कन्टेनर (तलतिर गोलो आकार भएको) */
+    .main-container {
+      background-color: #f4f6f9;
+      border-top-left-radius: 30px;
+      border-top-right-radius: 30px;
+      padding: 24px 16px;
+      min-height: calc(100vh - 80px);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+    }
+
+    /* अभिवादन खण्ड */
+    .greeting-section {
+      margin-bottom: 20px;
+    }
+    .greeting-section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+    .greeting-section p {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    /* तयारी प्रगति (Progress Card) */
+    .progress-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      margin-bottom: 20px;
+    }
+    .circular-progress {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: conic-gradient(#2563eb 35%, #e2e8f0 0deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .circular-progress::before {
+      content: "";
+      position: absolute;
+      width: 43px;
+      height: 43px;
+      background: #ffffff;
+      border-radius: 50%;
+    }
+    .progress-value {
+      position: relative;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e3c72;
+    }
+    .progress-info h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 2px;
+    }
+    .progress-info p {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    /* २x२ ग्रिड बटनहरू */
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .action-card {
+      border-radius: 16px;
+      padding: 16px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 110px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      text-decoration: none;
+    }
+    .card-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .card-green { background: linear-gradient(135deg, #10b981, #059669); }
+    .card-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+    .card-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+
+    .action-card .card-icon {
+      font-size: 20px;
+      background: rgba(255,255,255,0.2);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .action-card h4 {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .action-card p {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    /* हालको गतिविधि (Recent Activity) */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .section-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .section-header a {
+      font-size: 12px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .activity-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+    }
+    .activity-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .activity-icon {
+      background: #eff6ff;
+      color: #2563eb;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .activity-details h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+    .activity-details p {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    .arrow-icon {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    /* तल्लो नेभिगेसन बार (Bottom Navigation Bar) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+      z-index: 1000;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 10px;
+      font-weight: 500;
+    }
+    .nav-item.active {
+      color: #2563eb;
+    }
+    .nav-item span.icon {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- टप हेडर -->
+  <div class="app-header">
+    <button class="icon-btn">☰</button>
+    <h1>Loksewa<span>Quest</span></h1>
+    <button class="icon-btn">🔔</button>
+  </div>
+
+  <!-- मुख्य सेतो इन्टरफेस -->
+  <div class="main-container">
+    
+    <!-- अभिवादन -->
+    <div class="greeting-section">
+      <h2>Good Morning, Future Officer! 👋</h2>
+      <p>Small steps every day lead to big dreams.</p>
+    </div>
+
+    <!-- तयारी प्रतिशत कार्ड -->
+    <div class="progress-card">
+      <div class="circular-progress">
+        <div class="progress-value">35%</div>
+      </div>
+      <div class="progress-info">
+        <h3>Your Preparation</h3>
+        <p>Keep going!<br>You're doing great.</p>
+      </div>
+    </div>
+
+    <!-- २x२ ग्रिडका बटनहरू (Take Quiz, Practice Set, आदि) -->
+    <div class="action-grid">
+      <a href="quiz.html" class="action-card card-blue">
+        <div class="card-icon">📝</div>
+        <div>
+          <h4>Take Quiz</h4>
+          <p>Test your knowledge</p>
+        </div>
+      </a>
+      <a href="practice.html" class="action-card card-green">
+        <div class="card-icon">📚</div>
+        <div>
+          <h4>Practice Set</h4>
+          <p>Topic-wise questions</p>
+        </div>
+      </a>
+      <a href="mock.html" class="action-card card-orange">
+        <div class="card-icon">⏱️</div>
+        <div>
+          <h4>Mock Test</h4>
+          <p>Simulate real exam</p>
+        </div>
+      </a>
+      <a href="performance.html" class="action-card card-pink">
+        <div class="card-icon">📊</div>
+        <div>
+          <h4>Performance</h4>
+          <p>Track your progress</p>
+        </div>
+      </a>
+    </div>
+
+    <!-- हालको गतिविधि खण्ड -->
+    <div class="section-header">
+      <h3>Recent Activity</h3>
+      <a href="history.html">View All</a>
+    </div>
+
+    <div class="activity-card">
+      <div class="activity-left">
+        <div class="activity-icon">📖</div>
+        <div class="activity-details">
+          <h4>General Knowledge Quiz</h4>
+          <p>Score: 12/20 (60%)</p>
+        </div>
+      </div>
+      <div class="arrow-icon">➔</div>
+    </div>
+
+  </div>
+
+  <!-- फिक्स गरिएको नेभिगेसन बार -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="nav-item active">
+      <span class="icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="exams.html" class="nav-item">
+      <span class="icon">📋</span>
+      <span>Exams</span>
+    </a>
+    <a href="practice.html" class="nav-item">
+      <span class="icon">✍️</span>
+      <span>Practice</span>
+    </a>
+    <a href="analytics.html" class="nav-item">
+      <span class="icon">📈</span>
+      <span>Analytics</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <span class="icon">👤</span>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+</body>
+</html>
