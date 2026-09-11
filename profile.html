@@ -450,16 +450,20 @@
         const userEmail = user.email || "No Email";
         document.getElementById('userEmail').textContent = userEmail;
 
-        if (user.photoURL) {
-          document.getElementById('userAvatar').src = user.photoURL;
-        }
-
         try {
           const userDocRef = doc(db, "users", user.uid);
           const userDocSnap = await getDoc(userDocRef);
 
-          if (userDocSnap.exists() && userDocSnap.data().name) {
-            document.getElementById('userNameInput').value = userDocSnap.data().name;
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            if (userData.name) {
+              document.getElementById('userNameInput').value = userData.name;
+            }
+            if (userData.photoURL) {
+              document.getElementById('userAvatar').src = userData.photoURL;
+            } else if (user.photoURL) {
+              document.getElementById('userAvatar').src = user.photoURL;
+            }
           } else {
             const defaultName = user.displayName || userEmail.split('@')[0];
             document.getElementById('userNameInput').value = defaultName;
@@ -530,7 +534,6 @@
         document.getElementById('saveNameBtn').style.display = 'none';
         document.getElementById('editNameBtn').style.display = 'flex';
 
-        // नाम परिवर्तन सफलतापूर्वक हुँदा आउने पपअप
         showPopup("सफल भयो!", "Edited successfully", "success");
       } catch (error) {
         console.error("नाम अपडेट गर्दा त्रुटि:", error);
@@ -543,7 +546,7 @@
       document.getElementById('avatarFileInput').click();
     };
 
-    // युजरले फोटो छान्दा साइज कम्प्रेस गरेर Firebase मा सेभ गर्ने र पपअप देखाउने
+    // युजरले फोटो छान्दा फोटोलाई सानो बनाएर सिधै Firestore मा मात्र सेभ गर्ने
     window.handlePhotoChange = async function(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -554,8 +557,8 @@
         img.src = e.target.result;
         img.onload = async function() {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 300;
-          const MAX_HEIGHT = 300;
+          const MAX_WIDTH = 200;
+          const MAX_HEIGHT = 200;
           let width = img.width;
           let height = img.height;
 
@@ -576,14 +579,13 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          // गुणस्तर (Quality) ०.६ मा राखेर Base64 मा बदल्ने
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
 
           document.getElementById('userAvatar').src = compressedBase64;
 
-          if (auth.currentUser) {
+          if (currentUserId) {
             try {
-              await updateProfile(auth.currentUser, { photoURL: compressedBase64 });
-
               const userDocRef = doc(db, "users", currentUserId);
               await updateDoc(userDocRef, { photoURL: compressedBase64 });
 
