@@ -31,7 +31,9 @@ function loadBottomNav(activePage) {
         flex: 1;
         transition: color 0.2s ease;
       }
-      .nav-link i { font-size: 18px; }
+      .nav-link i { 
+        font-size: 18px; 
+      }
       .nav-link.active { 
         color: #2563eb !important; 
         font-weight: 700;
@@ -39,38 +41,11 @@ function loadBottomNav(activePage) {
       .nav-link.active i {
         transform: translateY(-2px);
       }
-
-      /* बीचको Practice बटनको लागि विशेष आकर्षक डिजाइन */
-      .nav-link.practice-btn i {
-        background: #eff6ff;
-        color: #2563eb;
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-        margin-top: -8px;
-        transition: all 0.2s ease;
-      }
-      .nav-link.practice-btn.active i {
-        background: #2563eb !important;
-        color: #ffffff !important;
-        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
-      }
-      .nav-link.practice-btn span {
-        color: #64748b;
-      }
-      .nav-link.practice-btn.active span {
-        color: #2563eb !important;
-      }
     `;
     document.head.appendChild(styleElem);
   }
 
-  // ५ वटा बटनसहितको HTML संरचना
+  // ५ वटै बटनहरूलाई एकै किसिमको संरचना दिइएको HTML
   const navHTML = `
     <div class="bottom-nav">
       <a href="dashboard.html" class="nav-link ${activePage === 'home' ? 'active' : ''}">
@@ -81,7 +56,7 @@ function loadBottomNav(activePage) {
         <i class="fa-solid fa-book-open"></i>
         <span>Study</span>
       </a>
-      <a href="practice.html" class="nav-link practice-btn ${activePage === 'practice' ? 'active' : ''}">
+      <a href="practice.html" class="nav-link ${activePage === 'practice' ? 'active' : ''}">
         <i class="fa-solid fa-brain"></i>
         <span>Practice</span>
       </a>
