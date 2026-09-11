@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ne">
-<head><script src="components.js"></script>
-
+<head>
+  <script src="components.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>LoksewaQuest - Dashboard</title>
   <!-- प्रिमियम आधुनिक फन्ट (Plus Jakarta Sans) -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- व्यावसायिक आइकनहरूको लागि FontAwesome Pro/Free CDN -->
+  <!-- व्यावसायिक आइकनहरूको लागि FontAwesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
@@ -17,24 +17,25 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
     body {
-      background-color: #0f2a4a;
+      background-color: #f8fafc;
       color: #1e293b;
       margin: 0;
-      padding-bottom: 75px;
+      padding-bottom: 90px;
       overflow-x: hidden;
     }
 
-    /* टप हेडर सेक्सन */
+    /* टप हेडर सेक्सन (Profile Page सँग मिल्दो Gradient र Radius) */
     .app-header {
       background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
       color: white;
-      padding: 22px 20px 32px 20px;
+      padding: 24px 20px 35px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-radius: 0 0 30px 30px;
     }
     .app-header h1 {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 700;
       letter-spacing: -0.3px;
     }
@@ -42,48 +43,66 @@
       color: #fbbf24;
     }
     .icon-btn {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.15);
       border: none;
       color: white;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 16px;
       cursor: pointer;
+      backdrop-filter: blur(5px);
       transition: background 0.2s;
     }
     .icon-btn:active {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.25);
     }
 
-    /* मुख्य सेतो कन्टेनर */
+    /* मुख्य कन्टेनर */
     .main-container {
-      background-color: #f8fafc;
-      border-top-left-radius: 32px;
-      border-top-right-radius: 32px;
-      padding: 24px 16px;
-      min-height: calc(100vh - 80px);
-      box-shadow: 0 -6px 25px rgba(0,0,0,0.08);
+      padding: 0 20px;
+      margin-top: -15px;
     }
 
     /* अभिवादन खण्ड */
     .greeting-section {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid #f1f5f9;
       margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     .greeting-section h2 {
-      font-size: 20px;
+      font-size: 17px;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: -0.5px;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     .greeting-section p {
-      font-size: 13px;
+      font-size: 12px;
       color: #64748b;
       font-weight: 500;
+    }
+    .user-avatar-small {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1e40af;
+      font-weight: 700;
+      font-size: 18px;
+      border: 2px solid #2563eb;
     }
 
     /* आकर्षक लाइभ एक्जाम ब्यानर कार्ड */
@@ -95,27 +114,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
-      margin-bottom: 22px;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+      margin-bottom: 20px;
       text-decoration: none;
       transition: all 0.25s ease;
       position: relative;
       overflow: hidden;
-      border: 1.5px solid rgba(255, 255, 255, 0.25);
-    }
-    .live-exam-card::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(0deg, transparent, rgba(255,255,255,0.08), transparent);
-      transform: rotate(30deg);
-      pointer-events: none;
-    }
-    .live-exam-card:active {
-      transform: scale(0.97);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     .live-exam-left {
       display: flex;
@@ -124,8 +129,8 @@
       z-index: 1;
     }
     .live-exam-img-box {
-      width: 56px;
-      height: 56px;
+      width: 52px;
+      height: 52px;
       border-radius: 14px;
       background: #ffffff;
       padding: 4px;
@@ -133,7 +138,7 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     .live-exam-img-box img {
       width: 100%;
@@ -142,37 +147,29 @@
       border-radius: 10px;
     }
     .live-exam-info h3 {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
       color: #ffffff;
       margin-bottom: 4px;
       letter-spacing: -0.2px;
     }
     
-    /* ब्लिङ्क हुने लाइभ ब्याज (Live Badge) */
     .live-badge-wrapper {
       display: flex;
       align-items: center;
       gap: 6px;
     }
     .live-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       background-color: #ef4444;
       border-radius: 50%;
-      box-shadow: 0 0 0 rgba(239, 68, 68, 0.4);
       animation: pulse-dot 1.5s infinite;
     }
     @keyframes pulse-dot {
-      0% {
-        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-      }
-      70% {
-        box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-      }
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
     .live-text {
       font-size: 11px;
@@ -183,18 +180,17 @@
     }
 
     .live-exam-right {
-      background: rgba(255, 255, 255, 0.25);
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 13px;
       color: #ffffff;
       backdrop-filter: blur(4px);
       z-index: 1;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     /* तयारी प्रगति कार्ड */
@@ -205,13 +201,13 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-      margin-bottom: 22px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
       border: 1px solid #f1f5f9;
     }
     .circular-progress {
-      width: 58px;
-      height: 58px;
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
       background: conic-gradient(#2563eb 35%, #e2e8f0 0deg);
       display: flex;
@@ -222,27 +218,26 @@
     .circular-progress::before {
       content: "";
       position: absolute;
-      width: 46px;
-      height: 46px;
+      width: 42px;
+      height: 42px;
       background: #ffffff;
       border-radius: 50%;
     }
     .progress-value {
       position: relative;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       color: #1e3c72;
     }
     .progress-info h3 {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       color: #0f172a;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
     .progress-info p {
       font-size: 12px;
       color: #64748b;
-      line-height: 1.4;
       font-weight: 500;
     }
 
@@ -250,19 +245,19 @@
     .action-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 26px;
+      gap: 12px;
+      margin-bottom: 24px;
     }
     .action-card {
-      border-radius: 20px;
-      padding: 18px;
+      border-radius: 18px;
+      padding: 16px;
       color: white;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      height: 120px;
+      height: 115px;
       cursor: pointer;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       text-decoration: none;
       transition: transform 0.2s;
     }
@@ -275,19 +270,18 @@
     .card-pink { background: linear-gradient(135deg, #ec4899, #be185d); }
 
     .action-card .card-icon {
-      font-size: 16px;
+      font-size: 15px;
       background: rgba(255,255,255,0.2);
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .action-card h4 {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
-      letter-spacing: -0.2px;
     }
     .action-card p {
       font-size: 11px;
@@ -300,13 +294,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .section-header h3 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: #0f172a;
-      letter-spacing: -0.3px;
     }
     .section-header a {
       font-size: 12px;
@@ -318,7 +311,7 @@
     .activity-card {
       background: #ffffff;
       border-radius: 16px;
-      padding: 16px;
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -333,47 +326,46 @@
     .activity-icon {
       background: #eff6ff;
       color: #2563eb;
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 16px;
     }
     .activity-details h4 {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       color: #1e293b;
-      letter-spacing: -0.2px;
     }
     .activity-details p {
-      font-size: 12px;
+      font-size: 11px;
       color: #64748b;
-      margin-top: 3px;
+      margin-top: 2px;
       font-weight: 500;
     }
     .arrow-icon {
       color: #94a3b8;
-      font-size: 13px;
+      font-size: 12px;
     }
 
-    /* तल्लो नेभिगेसन बार */
+    /* प्रोफाइल पेजसँग मेल खाने आधुनिक फ्लोटिङ तल्लो नेभिगेसन बार */
     .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 65px;
       background: #ffffff;
       display: flex;
       justify-content: space-around;
-      align-items: center;
+      padding: 10px 0 14px 0;
       box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-      z-index: 1000;
+      border-radius: 20px 20px 0 0;
+      z-index: 100;
       border-top: 1px solid #f1f5f9;
     }
-    .nav-item {
+    .nav-link {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -381,14 +373,14 @@
       color: #94a3b8;
       font-size: 11px;
       font-weight: 600;
+      gap: 3px;
       transition: color 0.2s;
     }
-    .nav-item.active {
-      color: #2563eb;
-    }
-    .nav-item i {
+    .nav-link i {
       font-size: 18px;
-      margin-bottom: 3px;
+    }
+    .nav-link.active {
+      color: #2563eb;
     }
   </style>
 </head>
@@ -401,16 +393,19 @@
     <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
   </div>
 
-  <!-- मुख्य सेतो इन्टरफेस -->
-  <div class="main-container">
+  <!-- मुख्य कन्टेनर -->
+  <div class="main-container" style="margin-top: -20px;">
     
-    <!-- अभिवादन -->
+    <!-- अभिवादन तथा युजर प्रिमियम कार्ड -->
     <div class="greeting-section">
-      <h2>Good Morning, Future Officer! 👋</h2>
-      <p>Small steps every day lead to big dreams.</p>
+      <div>
+        <h2>शुभ प्रभात, अधिकृतज्यू! 👋</h2>
+        <p>साना प्रयासहरूले ठूला सपना पूरा गर्छन्।</p>
+      </div>
+      <div class="user-avatar-small" id="userInitial">LK</div>
     </div>
 
-    <!-- PRE TEST QUALIFYING EXAM (Live Exam) आकर्षक लाइभ ब्यानर कार्ड -->
+    <!-- PRE TEST QUALIFYING EXAM (Live Exam) ब्यानर -->
     <a href="setlist.html" class="live-exam-card">
       <div class="live-exam-left">
         <div class="live-exam-img-box">
@@ -435,47 +430,47 @@
         <div class="progress-value">35%</div>
       </div>
       <div class="progress-info">
-        <h3>Your Preparation</h3>
-        <p>Keep going! You're doing great.</p>
+        <h3>तपाईंको तयारी</h3>
+        <p>प्रगति सन्तोषजनक छ, निरन्तरता दिनुहोस्।</p>
       </div>
     </div>
 
-    <!-- २x२ ग्रिडका व्यावसायिक बटनहरू -->
+    <!-- २x२ ग्रिड बटनहरू -->
     <div class="action-grid">
       <a href="quiz.html" class="action-card card-blue">
         <div class="card-icon"><i class="fa-solid fa-pen-to-square"></i></div>
         <div>
           <h4>Take Quiz</h4>
-          <p>Test your knowledge</p>
+          <p>ज्ञान परीक्षण गर्नुहोस्</p>
         </div>
       </a>
       <a href="practice.html" class="action-card card-green">
         <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
         <div>
           <h4>Practice Set</h4>
-          <p>Topic-wise questions</p>
+          <p>विषयगत प्रश्नहरू</p>
         </div>
       </a>
       <a href="mock.html" class="action-card card-orange">
         <div class="card-icon"><i class="fa-solid fa-stopwatch"></i></div>
         <div>
           <h4>Mock Test</h4>
-          <p>Simulate real exam</p>
+          <p>वास्तविक परीक्षा अभ्यास</p>
         </div>
       </a>
       <a href="performance.html" class="action-card card-pink">
         <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
         <div>
           <h4>Performance</h4>
-          <p>Track your progress</p>
+          <p>प्रगतिको विश्लेषण</p>
         </div>
       </a>
     </div>
 
     <!-- हालको गतिविधि खण्ड -->
     <div class="section-header">
-      <h3>Recent Activity</h3>
-      <a href="history.html">View All</a>
+      <h3>हालको गतिविधि</h3>
+      <a href="history.html">सबै हेर्नुहोस्</a>
     </div>
 
     <div class="activity-card">
@@ -483,42 +478,35 @@
         <div class="activity-icon"><i class="fa-solid fa-graduation-cap"></i></div>
         <div class="activity-details">
           <h4>General Knowledge Quiz</h4>
-          <p>Score: 12/20 (60%)</p>
+          <p>प्राप्त अंक: 12/20 (60%)</p>
         </div>
       </div>
       <div class="arrow-icon"><i class="fa-solid fa-chevron-right"></i></div>
     </div>
 
   </div>
-<!-- Auth Guard स्क्रिप्ट (लगइन भए नभएको चेक गर्ने) -->
-<script type="module" src="auth-guard.js"></script>
 
-<!-- Footer देखाउने स्क्रिप्ट (अघि बनाएको) -->
-<script src="components.js"></script>
-
-  <!-- व्यावसायिक फिक्स गरिएको नेभिगेसन बार -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="nav-item active">
+  <!-- तल्लो नेभिगेसन बार (profile.html सँग १००% म्याच हुने गरी सुधार गरिएको) -->
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-link active">
       <i class="fa-solid fa-house"></i>
       <span>Home</span>
     </a>
-    <a href="exams.html" class="nav-item">
-      <i class="fa-solid fa-book-bookmark"></i>
-      <span>Exams</span>
+    <a href="study.html" class="nav-link">
+      <i class="fa-solid fa-book-open"></i>
+      <span>Study</span>
     </a>
-    <a href="practice.html" class="nav-item">
-      <i class="fa-solid fa-layer-group"></i>
-      <span>Practice</span>
-    </a>
-    <a href="analytics.html" class="nav-item">
+    <a href="analytics.html" class="nav-link">
       <i class="fa-solid fa-chart-pie"></i>
-      <span>Analytics</span>
+      <span>Stats</span>
     </a>
-    <a href="profile.html" class="nav-item">
-      <i class="fa-regular fa-user"></i>
+    <a href="profile.html" class="nav-link">
+      <i class="fa-solid fa-user"></i>
       <span>Profile</span>
     </a>
-  </nav>
+  </div>
 
+  <!-- Auth Guard र युजरको नाम देखाउने स्क्रिप्ट -->
+  <script type="module" src="auth-guard.js"></script>
 </body>
 </html>
