@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LoksewaQuest - Practice Topics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/footer.css">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation / Header */
+    .top-nav {
+      background: #ffffff;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .back-btn {
+      font-size: 18px;
+      color: #0f172a;
+      text-decoration: none;
+    }
+
+    .nav-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 16px;
+      flex: 1;
+    }
+
+    /* Top Banner Card */
+    .exam-info-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .exam-icon-box {
+      width: 50px;
+      height: 50px;
+      background: #2563eb;
+      color: white;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .exam-details h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .exam-details span {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    /* Tabs (Topics, Syllabus, Tips) */
+    .tabs-container {
+      display: flex;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 30px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #64748b;
+      background: transparent;
+      border: none;
+      border-radius: 26px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: #2563eb;
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Topic List Cards */
+    .topic-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .topic-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .topic-card:hover {
+      border-color: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(37, 99, 235, 0.08);
+    }
+
+    .topic-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .topic-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: white;
+    }
+
+    /* Different Colors for Icons */
+    .bg-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    .bg-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .bg-green { background: linear-gradient(135deg, #10b981, #059669); }
+    .bg-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .bg-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+    .bg-teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+
+    .topic-info h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 3px;
+    }
+
+    .topic-info p {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .arrow-icon {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    /* Bottom Navigation Bar (Mobile App Style) */
+    .bottom-nav {
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+
+    .nav-item {
+      text-align: center;
+      text-decoration: none;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .nav-item i {
+      font-size: 18px;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .nav-item.active {
+      color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <div class="top-nav">
+    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+    <span class="nav-title">Practice Topics</span>
+    <div style="width: 18px;"></div> <!-- Alignment placeholder -->
+  </div>
+
+  <div class="container">
+    
+    <!-- Top Info Card -->
+    <div class="exam-info-card">
+      <div class="exam-icon-box">
+        <i class="fa-solid fa-pen-to-square"></i>
+      </div>
+      <div class="exam-details">
+        <h2>Chapter-wise Practice</h2>
+        <span>लोकसेवा तयारी • विषयगत अभ्यास</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+      <button class="tab-btn active">Topics</button>
+      <button class="tab-btn">Syllabus</button>
+      <button class="tab-btn">Tips</button>
+    </div>
+
+    <!-- Topics List -->
+    <div class="topic-list">
+      
+      <!-- 1. Nepal ko Bhugol -->
+      <a href="quiz-nepal-geography.html" class="topic-card">
+        <div class="topic-left">
+          <div class="topic-icon bg-blue">
+            <i class="fa-solid fa-mountain-sun"></i>
+          </div>
+          <div class="topic-info">
+            <h3>नेपालको भूगोल</h3>
+            <p>12 topics • 250+ questions</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </a>
+
+      <!-- 2. Biswa Bhugol -->
+      <a href="quiz-world-geography.html" class="topic-card">
+        <div class="topic-left">
+          <div class="topic-icon bg-orange">
+            <i class="fa-solid fa-globe"></i>
+          </div>
+          <div class="topic-info">
+            <h3>विश्वको भूगोल</h3>
+            <p>10 topics • 180+ questions</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </a>
+
+      <!-- 3. Nepal ko Itihas -->
+      <a href="quiz-nepal-history.html" class="topic-card">
+        <div class="topic-left">
+          <div class="topic-icon bg-green">
+            <i class="fa-solid fa-monument"></i>
+          </div>
+          <div class="topic-info">
+            <h3>नेपालको इतिहास</h3>
+            <p>15 topics • 300+ questions</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </a>
+
+      <!-- 4. Biswa Itihas -->
+      <a href="quiz-world-history.html" class="topic-card">
+        <div class="topic-left">
+          <div class="topic-icon bg-purple">
+            <i class="fa-solid fa-landmark-dome"></i>
+          </div>
+          <div class="topic-info">
+            <h3>विश्व इतिहास</h3>
+            <p>8 topics • 150+ questions</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </a>
+
+      <!-- 5. Samajik ra Sanskritik -->
+      <a href="quiz-social-culture.html" class="topic-card">
+        <div class="topic-left">
+          <div class="topic-icon bg-pink">
+            <i class="fa-solid fa-users-rectangle"></i>
+          </div>
+          <div class="topic-info">
+            <h3>सामाजिक र सांस्कृतिक</h3>
+            <p>10 topics • 200+ questions</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </a>
+
+      <!-- 6. Arthik (Economic) -->
+      <a href="quiz-economic.html" class="topic-card">
+        <div class="topic-left">
+          <div class="topic-icon bg-teal">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <div class="topic-info">
+            <h3>आर्थिक अवस्था</h3>
+            <p>9 topics • 170+ questions</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </a>
+
+      <!-- 7. IQ (General Mental Ability) -->
+      <a href="quiz-iq.html" class="topic-card">
+        <div class="topic-left">
+          <div class="topic-icon bg-blue">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <div class="topic-info">
+            <h3>बौद्धिक परीक्षण (IQ)</h3>
+            <p>14 topics • 280+ questions</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <i class="fa-solid fa-house"></i> Home
+    </a>
+    <a href="exam-topics.html" class="nav-item">
+      <i class="fa-solid fa-book-open"></i> Exams
+    </a>
+    <a href="practice.html" class="nav-item active">
+      <i class="fa-solid fa-pen-to-square"></i> Practice
+    </a>
+    <a href="analytics.html" class="nav-item">
+      <i class="fa-solid fa-chart-pie"></i> Analytics
+    </a>
+    <a href="profile.html" class="nav-item">
+      <i class="fa-solid fa-user"></i> Profile
+    </a>
+  </div>
+
+  <!-- Footer Script (components.js ले footer र auth guard स्वचालित रूपमा थप्नेछ) -->
+  <script src="components.js"></script>
+</body>
+</html>
