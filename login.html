@@ -180,6 +180,83 @@
       text-decoration: none;
       font-weight: 700;
     }
+
+    /* --- प्रिमियम एनिमेटेड पपअप बक्स (Modal) को डिजाइन --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-box {
+      background: #ffffff;
+      width: 85%;
+      max-width: 320px;
+      border-radius: 24px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      transform: scale(0.8);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-overlay.active .modal-box {
+      transform: scale(1);
+    }
+    .modal-icon-container {
+      width: 56px;
+      height: 56px;
+      background: #eff6ff;
+      color: #2563eb;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin: 0 auto 16px auto;
+    }
+    .modal-box h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .modal-box p {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .modal-btn {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      transition: transform 0.2s;
+    }
+    .modal-btn:active {
+      transform: scale(0.97);
+    }
   </style>
 </head>
 <body>
@@ -194,7 +271,6 @@
 
   <div class="login-card-container">
     
-    <!-- सहि इमेल र पासवर्ड मिले मात्र लगइन हुने फर्म -->
     <form id="loginForm">
       <div class="form-group">
         <label>Email Address</label>
@@ -228,6 +304,18 @@
     Don't have an account? <a href="register.html">Sign Up</a>
   </div>
 
+  <!-- प्रिमियम कस्टम पपअप मोडल (Custom Error Modal) -->
+  <div id="customModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-icon-container">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 id="modalTitle">Login Failed</h3>
+      <p id="modalMessage">इमेल वा पासवर्ड मिलेन। कृपया सही विवरण राखेर फेरि प्रयास गर्नुहोस्।</p>
+      <button type="button" id="modalCloseBtn" class="modal-btn">Try Again</button>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -244,7 +332,21 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // १. इमेल र पासवर्ड भेरिफाइड भएर मात्र ड्यासबोर्डमा जाने कोड
+    // पपअप कन्ट्रोल गर्ने फंक्सनहरू
+    const modal = document.getElementById('customModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+    function showError(message) {
+      modalMessage.textContent = message;
+      modal.classList.add('active');
+    }
+
+    modalCloseBtn.addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+
+    // इमेल र पासवर्ड भेरिफिकेसन
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
       loginForm.addEventListener('submit', async (e) => {
@@ -253,16 +355,15 @@
         const password = document.getElementById('loginPassword').value;
 
         try {
-          // Firebase मार्फत डाटाबेस चेक गर्ने (मिलेमा मात्र अगाडि बढ्छ)
           await signInWithEmailAndPassword(auth, email, password);
           window.location.href = "dashboard.html";
         } catch (error) {
-          alert("लगइन असफल भयो: इमेल वा पासवर्ड मिलेन!");
+          showError("इमेल वा पासवर्ड मिलेन। कृपया आफ्नो विवरण जाँच गरी पुन: प्रयास गर्नुहोस्।");
         }
       });
     }
 
-    // २. गुगल लगइन
+    // गुगल लगइन
     const googleLoginBtn = document.getElementById('googleLoginBtn');
     if (googleLoginBtn) {
       googleLoginBtn.addEventListener('click', async () => {
@@ -271,7 +372,7 @@
           await signInWithPopup(auth, provider);
           window.location.href = "dashboard.html";
         } catch (error) {
-          alert("गुगल लगइनमा समस्या आयो: " + error.message);
+          showError("गुगल लगइन रद्द भयो वा समस्या आयो। कृपया फेरि प्रयास गर्नुहोस्।");
         }
       });
     }
