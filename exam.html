@@ -1,330 +1,534 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ne">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loksewa Pro - Set 1 Mock Exam</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #pdf-report-content, #pdf-report-content * {
-                visibility: visible;
-            }
-            #pdf-report-content {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                background: white !important;
-                color: black !important;
-                border: none !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Set 1 Mock Exam - LoksewaQuest</title>
+  <!-- प्रिमियम आधुनिक फन्ट (Plus Jakarta Sans) -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- व्यावसायिक आइकनहरूको लागि FontAwesome Pro/Free CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    body {
+      background-color: #0f2a4a;
+      color: #1e293b;
+      margin: 0;
+      padding-bottom: 75px;
+      overflow-x: hidden;
+    }
+
+    /* टप हेडर सेक्सन */
+    .app-header {
+      background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
+      color: white;
+      padding: 22px 20px 32px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .app-header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .app-header h1 span {
+      color: #fbbf24;
+    }
+    .icon-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .icon-btn:active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* मुख्य सेतो कन्टेनर */
+    .main-container {
+      background-color: #f8fafc;
+      border-top-left-radius: 32px;
+      border-top-right-radius: 32px;
+      padding: 24px 16px;
+      min-height: calc(100vh - 80px);
+      box-shadow: 0 -6px 25px rgba(0,0,0,0.08);
+    }
+
+    /* टाइमर बक्स */
+    .timer-badge {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-mono: monospace;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* कार्ड डिजाइनहरू */
+    .card-box {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      border: 1px solid #f1f5f9;
+      margin-bottom: 20px;
+    }
+
+    /* इनपुट र बटनहरू */
+    .input-field {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 14px 16px;
+      color: #0f172a;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-field:focus {
+      border-color: #2563eb;
+      background: #ffffff;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      font-weight: 700;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(37, 99, 235, 0.25);
+      transition: transform 0.2s;
+      font-size: 14px;
+    }
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .btn-secondary:active {
+      background: #e2e8f0;
+    }
+
+    /* विकल्प बटनहरू */
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #1e293b;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .option-btn:hover {
+      border-color: #93c5fd;
+      background: #f8fafc;
+    }
+    .option-btn.selected {
+      background: #eff6ff;
+      border-color: #2563eb;
+      color: #1d4ed8;
+    }
+
+    /* लिडरबोर्ड आइटम */
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #f1f5f9;
+      font-size: 13px;
+    }
+
+    /* प्रिन्ट कन्फिगरेसन */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #pdf-report-content, #pdf-report-content * {
+        visibility: visible;
+      }
+      #pdf-report-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        border: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    .hidden-element {
+      display: none !important;
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-4 flex flex-col items-center justify-between">
+<body>
 
-    <!-- HEADER -->
-    <header class="w-full max-w-3xl text-center py-4 border-b border-slate-800 mb-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold text-indigo-400">🇳🇵 Loksewa Model Exam (Set 1 | 45 Min)</h1>
-        <div id="timer-box" class="hidden bg-rose-950/80 border border-rose-800 text-rose-300 px-3 py-1 rounded-xl font-mono font-bold text-sm">
-            ⏳ <span id="time-left">45:00</span>
+  <!-- टप हेडर -->
+  <div class="app-header">
+    <a href="setlist.html" class="icon-btn"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1>Loksewa<span>Quest</span> (Set 1)</h1>
+    <div id="timer-box" class="timer-badge hidden-element">
+      <i class="fa-regular fa-clock"></i> <span id="time-left">45:00</span>
+    </div>
+  </div>
+
+  <!-- मुख्य सेतो इन्टरफेस -->
+  <div class="main-container">
+    
+    <!-- REGISTRATION & SET 1 SELECTION SCREEN -->
+    <div id="reg-screen" class="card-box space-y-4">
+      <div>
+        <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">परीक्षा विवरण र नाम प्रविष्ट गर्नुहोस्</h2>
+        <p style="font-size: 12px; color: #64748b;">सेट १ मोडल परीक्षाको लागि आफ्नो नाम लेख्नुहोस्।</p>
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">पूरा नाम</label>
+        type="text" id="candidate-name" placeholder="जस्तै: रमेश शर्मा" class="input-field">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">छानिएको सेट:</label>
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px 16px; border-radius: 14px; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-circle-check"></i> 🎯 Set 1 (Model Exam - 50 Questions)
         </div>
-    </header>
+      </div>
 
-    <main class="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
+      <button onclick="startExam()" class="btn-primary">
+        परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀
+      </button>
+
+      <!-- REGISTRATION PAGE LEADERBOARD -->
+      <div style="border-top: 1px solid #f1f5f9; padding-top: 16px; margin-top: 16px;">
+        <h3 style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-trophy text-amber-500"></i> Set 1 लिडरबोर्ड
+        </h3>
+        <div id="home-leaderboard" class="space-y-2 max-h-48 overflow-y-auto"></div>
+      </div>
+    </div>
+
+    <!-- EXAM SCREEN -->
+    <div id="exam-screen" class="card-box hidden-element space-y-5">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+        <span id="q-tracker" style="background: #f1f5f9; color: #475569; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700;">Question 1 of 50</span>
+        <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; border: 1px solid #bfdbfe;">Set-1</span>
+      </div>
+
+      <h3 id="exam-question" style="font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.5;">Loading...</h3>
+
+      <div id="exam-options" class="space-y-3"></div>
+
+      <div style="display: flex; justify-content: space-between; padding-top: 12px;">
+        <button onclick="prevExamQuestion()" id="prev-btn" class="btn-secondary">⬅️ अघिल्लो</button>
+        <button onclick="nextExamQuestion()" id="next-btn" class="btn-primary" style="width: auto; padding: 10px 24px;">अर्को ➡️</button>
+      </div>
+    </div>
+
+    <!-- REPORT CARD & RESULT SCREEN -->
+    <div id="result-screen" class="hidden-element space-y-6">
+      <div id="pdf-report-content" class="card-box space-y-4">
+        <div style="text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px;">
+          <h2 style="font-size: 18px; font-weight: 800; color: #059669;">📊 परीक्षा प्रतिवेदन (Exam Report Card)</h2>
+          <p id="rep-name" style="font-size: 13px; color: #334155; font-weight: 700; margin-top: 4px;"></p>
+          <p id="rep-set" style="font-size: 12px; color: #2563eb; font-weight: 700; margin-top: 2px;">परीक्षा सेट: Set-1</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center;">
+          <div style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #f1f5f9;">
+            <p style="font-size: 11px; color: #64748b; font-weight: 600;">सही</p>
+            <p id="rep-correct" style="font-size: 15px; font-weight: 800; color: #059669;">0</p>
+          </div>
+          <div style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #f1f5f9;">
+            <p style="font-size: 11px; color: #64748b; font-weight: 600;">गलत (-20%)</p>
+            <p id="rep-wrong" style="font-size: 15px; font-weight: 800; color: #dc2626;">0</p>
+          </div>
+          <div style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #f1f5f9;">
+            <p style="font-size: 11px; color: #64748b; font-weight: 600;">छोडेको</p>
+            <p id="rep-skipped" style="font-size: 15px; font-weight: 800; color: #d97706;">0</p>
+          </div>
+          <div style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #f1f5f9;">
+            <p style="font-size: 11px; color: #64748b; font-weight: 600;">कुल अंक</p>
+            <p id="rep-score" style="font-size: 15px; font-weight: 800; color: #2563eb;">0</p>
+          </div>
+        </div>
+
+        <!-- Answer Review Section -->
+        <div>
+          <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 10px;">📝 प्रश्नहरूको उत्तर तथा समीक्षा:</h4>
+          <div id="review-container" class="space-y-2 max-h-60 overflow-y-auto pr-1" style="font-size: 12px;"></div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;" class="no-print">
+        <button onclick="downloadPDF()" style="width: 50%; background: #059669; color: white; font-weight: 700; padding: 14px; border-radius: 14px; border: none; cursor: pointer; font-size: 13px;">
+          📥 प्रिन्ट / PDF
+        </button>
+        <button onclick="location.reload()" class="btn-primary" style="width: 50%;">
+          🔄 अर्को परीक्षा
+        </button>
+      </div>
+
+      <!-- RESULT PAGE LEADERBOARD -->
+      <div class="card-box no-print" style="margin-top: 16px;">
+        <h3 style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-trophy text-amber-500"></i> Set 1 लिडरबोर्ड
+        </h3>
+        <div id="result-leaderboard" class="space-y-2 max-h-48 overflow-y-auto"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let candidateName = '';
+    let examQuestions = [];
+    let currentIdx = 0;
+    let userAnswers = {}; 
+    let timerInterval;
+    let timeLeftSeconds = 45 * 60; // 45 minutes
+
+    window.onload = () => {
+      fetchSet1Leaderboard();
+    };
+
+    async function startExam() {
+      try {
+        const input = document.getElementById('candidate-name').value.trim();
+        if (!input) {
+          alert('कृपया आफ्नो नाम लेख्नुहोस्!');
+          return;
+        }
+        candidateName = input;
+
+        let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'Set-1');
         
-        <!-- REGISTRATION & SET 1 SELECTION SCREEN -->
-        <div id="reg-screen" class="space-y-4">
-            <h2 class="text-lg font-bold text-white">परीक्षा विवरण र सेट छान्नुहोस्:</h2>
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">पूरा नाम</label>
-                <input type="text" id="candidate-name" placeholder="जस्तै: रमेश शर्मा" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none">
-            </div>
+        if (error) {
+          alert('डेटाबेस एरर: ' + error.message);
+          return;
+        }
 
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">परीक्षा सेट रोज्नुहोस्:</label>
-                <div class="grid grid-cols-1 gap-2">
-                    <button type="button" class="set-card bg-indigo-950/60 border border-indigo-500 p-3.5 rounded-xl text-center font-bold text-sm text-indigo-200 transition shadow-lg">🎯 Set 1 (Model Exam)</button>
-                </div>
-            </div>
+        if (!data || data.length === 0) {
+          alert('डेटाबेसमा Set-1 का प्रश्नहरू भेटिएनन्!');
+          return;
+        }
 
-            <button onclick="startExam()" class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-2 cursor-pointer">
-                परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀
-            </button>
+        examQuestions = data;
 
-            <!-- REGISTRATION PAGE LEADERBOARD (Set 1 Only) -->
-            <div class="border-t border-slate-800 pt-4 mt-6">
-                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड</h3>
-                <div id="home-leaderboard" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
-            </div>
-        </div>
+        document.getElementById('reg-screen').classList.add('hidden-element');
+        document.getElementById('exam-screen').classList.remove('hidden-element');
+        document.getElementById('timer-box').classList.remove('hidden-element');
 
-        <!-- EXAM SCREEN -->
-        <div id="exam-screen" class="hidden space-y-5">
-            <div class="flex justify-between items-center text-xs text-slate-400 border-b border-slate-800 pb-2">
-                <span id="q-tracker" class="bg-slate-800 px-3 py-1 rounded-full text-slate-200">Question 1 of 50</span>
-                <span id="active-set-badge" class="bg-indigo-950 text-indigo-300 px-2.5 py-0.5 rounded border border-indigo-800 font-bold">Set-1</span>
-            </div>
+        startTimer();
+        loadExamQuestion();
+      } catch (err) {
+        alert('केही प्राविधिक समस्या आयो: ' + err.message);
+      }
+    }
 
-            <h3 id="exam-question" class="text-lg font-semibold text-white leading-relaxed">Loading...</h3>
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        if (timeLeftSeconds <= 0) {
+          clearInterval(timerInterval);
+          submitExam();
+          return;
+        }
+        timeLeftSeconds--;
+        let m = Math.floor(timeLeftSeconds / 60);
+        let s = timeLeftSeconds % 60;
+        document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+      }, 1000);
+    }
 
-            <div id="exam-options" class="space-y-3"></div>
+    function loadExamQuestion() {
+      const q = examQuestions[currentIdx];
+      document.getElementById('q-tracker').innerText = `Question ${currentIdx + 1} of ${examQuestions.length}`;
+      document.getElementById('exam-question').innerText = q.question;
 
-            <div class="flex justify-between pt-4">
-                <button onclick="prevExamQuestion()" id="prev-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer">⬅️ अघिल्लो</button>
-                <button onclick="nextExamQuestion()" id="next-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition cursor-pointer">अर्को ➡️</button>
-            </div>
-        </div>
+      const container = document.getElementById('exam-options');
+      container.innerHTML = '';
 
-        <!-- REPORT CARD & RESULT SCREEN -->
-        <div id="result-screen" class="hidden space-y-6">
-            <div id="pdf-report-content" class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
-                <div class="text-center border-b border-slate-800 pb-3">
-                    <h2 class="text-xl font-black text-emerald-400">📊 परीक्षा प्रतिवेदन (Exam Report Card)</h2>
-                    <p id="rep-name" class="text-sm text-slate-300 font-semibold mt-1"></p>
-                    <p id="rep-set" class="text-xs text-indigo-400 font-bold mt-0.5">परीक्षा सेट: Set-1</p>
-                </div>
-
-                <div class="grid grid-cols-4 gap-2 text-center py-2">
-                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
-                        <p class="text-[10px] text-slate-400">सही</p>
-                        <p id="rep-correct" class="text-base font-bold text-emerald-400">0</p>
-                    </div>
-                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
-                        <p class="text-[10px] text-slate-400">गलत (-20%)</p>
-                        <p id="rep-wrong" class="text-base font-bold text-rose-400">0</p>
-                    </div>
-                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
-                        <p class="text-[10px] text-slate-400">छोडेको</p>
-                        <p id="rep-skipped" class="text-base font-bold text-amber-400">0</p>
-                    </div>
-                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
-                        <p class="text-[10px] text-slate-400">कुल अंक (100 मा)</p>
-                        <p id="rep-score" class="text-base font-bold text-indigo-400">0</p>
-                    </div>
-                </div>
-
-                <!-- Answer Review Section -->
-                <div>
-                    <h4 class="text-xs font-bold text-indigo-400 mb-2">📝 प्रश्नहरूको उत्तर तथा समीक्षा:</h4>
-                    <div id="review-container" class="space-y-2 max-h-60 overflow-y-auto pr-2 text-xs"></div>
-                </div>
-            </div>
-
-            <div class="flex gap-3 no-print">
-                <button onclick="downloadPDF()" class="w-1/2 bg-emerald-600 hover:bg-emerald-500 font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-600/20 cursor-pointer">
-                    📥 PDF डाउनलोड / प्रिन्ट गर्नुहोस्
-                </button>
-                <button onclick="location.reload()" class="w-1/2 bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-xl transition text-sm shadow-lg cursor-pointer">
-                    🔄 अर्को परीक्षा
-                </button>
-            </div>
-
-            <!-- RESULT PAGE LEADERBOARD (Set 1 Only) -->
-            <div class="border-t border-slate-800 pt-4 no-print">
-                <h3 class="text-xs font-bold text-indigo-400 mb-2">🏆 Set 1 लिडरबोर्ड</h3>
-                <div id="result-leaderboard" class="space-y-1.5 max-h-48 overflow-y-auto text-xs"></div>
-            </div>
-        </div>
-
-    </main>
-
-    <footer class="mt-4 text-xs text-slate-500 text-center no-print">&copy; 2026 Loksewa Pro Mock Exam System</footer>
-
-    <script>
-        const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let candidateName = '';
-        let examQuestions = [];
-        let currentIdx = 0;
-        let userAnswers = {}; 
-        let timerInterval;
-        let timeLeftSeconds = 45 * 60; // 45 minutes
-
-        window.onload = () => {
-            fetchSet1Leaderboard();
+      q.options.forEach(opt => {
+        const isSelected = userAnswers[currentIdx] === opt;
+        const btn = document.createElement('button');
+        btn.className = `option-btn ${isSelected ? 'selected' : ''}`;
+        btn.innerHTML = `<i class="fa-regular ${isSelected ? 'fa-square-check' : 'fa-square'}"></i> ${opt}`;
+        btn.onclick = () => {
+          userAnswers[currentIdx] = opt;
+          loadExamQuestion();
         };
+        container.appendChild(btn);
+      });
 
-        async function startExam() {
-            try {
-                const input = document.getElementById('candidate-name').value.trim();
-                if (!input) {
-                    alert('कृपया आफ्नो नाम लेख्नुहोस्!');
-                    return;
-                }
-                candidateName = input;
+      document.getElementById('prev-btn').style.display = currentIdx === 0 ? 'none' : 'block';
+      document.getElementById('next-btn').innerText = currentIdx === examQuestions.length - 1 ? 'परीक्षा समाप्त गर्ने (Submit)' : 'अर्को ➡️';
+    }
 
-                let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'Set-1');
-                
-                if (error) {
-                    alert('डेटाबेस एरर: ' + error.message);
-                    return;
-                }
+    function prevExamQuestion() {
+      if (currentIdx > 0) {
+        currentIdx--;
+        loadExamQuestion();
+      }
+    }
 
-                if (!data || data.length === 0) {
-                    alert('डेटाबेसमा Set-1 का प्रश्नहरू भेटिएनन्!');
-                    return;
-                }
-
-                examQuestions = data;
-
-                document.getElementById('reg-screen').classList.add('hidden');
-                document.getElementById('exam-screen').classList.remove('hidden');
-                document.getElementById('timer-box').classList.remove('hidden');
-
-                startTimer();
-                loadExamQuestion();
-            } catch (err) {
-                alert('केही प्राविधिक समस्या आयो: ' + err.message);
-            }
+    function nextExamQuestion() {
+      if (currentIdx < examQuestions.length - 1) {
+        currentIdx++;
+        loadExamQuestion();
+      } else {
+        if (confirm('के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?')) {
+          clearInterval(timerInterval);
+          submitExam();
         }
+      }
+    }
 
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                if (timeLeftSeconds <= 0) {
-                    clearInterval(timerInterval);
-                    submitExam();
-                    return;
-                }
-                timeLeftSeconds--;
-                let m = Math.floor(timeLeftSeconds / 60);
-                let s = timeLeftSeconds % 60;
-                document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-            }, 1000);
+    async function submitExam() {
+      document.getElementById('exam-screen').classList.add('hidden-element');
+      document.getElementById('timer-box').classList.add('hidden-element');
+      document.getElementById('result-screen').classList.remove('hidden-element');
+
+      let correct = 0;
+      let wrong = 0;
+      let skipped = 0;
+      let reviewHTML = '';
+
+      examQuestions.forEach((q, idx) => {
+        const userAns = userAnswers[idx];
+        const isCorrect = userAns === q.answer;
+
+        if (!userAns) skipped++;
+        else if (isCorrect) correct++;
+        else wrong++;
+
+        reviewHTML += `
+          <div style="background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'};">
+            <p style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">Q${idx+1}: ${q.question}</p>
+            <p style="color: #64748b;">तपाईंको उत्तर: <span style="font-weight: 700; color: ${isCorrect ? '#059669' : '#dc2626'};">${userAns || 'छोडेको'}</span></p>
+            <p style="color: #059669; font-weight: 600;">सही उत्तर: ${q.answer}</p>
+            ${q.explanation ? `<p style="font-size: 11px; color: #475569; margin-top: 4px; font-style: italic;">📌 ${q.explanation}</p>` : ''}
+          </div>
+        `;
+      });
+
+      let totalScore = (correct * 2) - (wrong * 0.4);
+      if (totalScore < 0) totalScore = 0;
+
+      document.getElementById('rep-name').innerText = `परीक्षार्थी: ${candidateName}`;
+      document.getElementById('rep-correct').innerText = correct;
+      document.getElementById('rep-wrong').innerText = wrong;
+      document.getElementById('rep-skipped').innerText = skipped;
+      document.getElementById('rep-score').innerText = totalScore.toFixed(1);
+      document.getElementById('review-container').innerHTML = reviewHTML;
+
+      // लिडरबोर्डमा सेभ गर्ने
+      await supabaseClient.from('leaderboard_set1').insert([
+        { username: candidateName, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
+      ]);
+
+      // प्रोफाइलका लागि LocalStorage मा सॉल्व्ड प्रश्नहरूको स्ट्याट्स अपडेट गर्ने
+      try {
+        let currentSolved = parseInt(localStorage.getItem('solved_questions_count') || '0', 10);
+        let currentCorrect = parseInt(localStorage.getItem('correct_answers_count') || '0', 10);
+        let currentTests = parseInt(localStorage.getItem('completed_tests_count') || '0', 10);
+
+        localStorage.setItem('solved_questions_count', currentSolved + examQuestions.length);
+        localStorage.setItem('correct_answers_count', currentCorrect + correct);
+        localStorage.setItem('completed_tests_count', currentTests + 1);
+      } catch (e) {
+        console.error("Storage update error:", e);
+      }
+
+      fetchSet1Leaderboard();
+    }
+
+    async function fetchSet1Leaderboard() {
+      const { data, error } = await supabaseClient
+        .from('leaderboard_set1')
+        .select('*')
+        .order('score', { ascending: false });
+
+      const containers = [
+        document.getElementById('home-leaderboard'),
+        document.getElementById('result-leaderboard')
+      ];
+
+      containers.forEach(lbContainer => {
+        if (!lbContainer) return;
+        lbContainer.innerHTML = '';
+        
+        if (error || !data || data.length === 0) {
+          lbContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 12px; padding: 6px;">यो सेटमा हाल कुनै रेकर्ड छैन।</p>';
+          return;
         }
+        
+        data.forEach((item, i) => {
+          lbContainer.innerHTML += `
+            <div class="leaderboard-item">
+              <span style="font-weight: 700; color: #1e293b;">${i+1}. ${item.username}</span>
+              <span style="color: #2563eb; font-weight: 800;">${item.score} अंक</span>
+            </div>
+          `;
+        });
+      });
+    }
 
-        function loadExamQuestion() {
-            const q = examQuestions[currentIdx];
-            document.getElementById('q-tracker').innerText = `Question ${currentIdx + 1} of ${examQuestions.length}`;
-            document.getElementById('exam-question').innerText = q.question;
-
-            const container = document.getElementById('exam-options');
-            container.innerHTML = '';
-
-            q.options.forEach(opt => {
-                const isSelected = userAnswers[currentIdx] === opt;
-                const btn = document.createElement('button');
-                btn.className = `w-full text-left p-3.5 rounded-xl border text-sm font-medium transition cursor-pointer ${isSelected ? 'bg-indigo-950/60 border-indigo-500 text-indigo-200' : 'bg-slate-950 border-slate-800 text-slate-200 hover:border-indigo-500'}`;
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    userAnswers[currentIdx] = opt;
-                    loadExamQuestion();
-                };
-                container.appendChild(btn);
-            });
-
-            document.getElementById('prev-btn').style.display = currentIdx === 0 ? 'none' : 'block';
-            document.getElementById('next-btn').innerText = currentIdx === examQuestions.length - 1 ? 'परीक्षा समाप्त गर्ने (Submit)' : 'अर्को ➡️';
-        }
-
-        function prevExamQuestion() {
-            if (currentIdx > 0) {
-                currentIdx--;
-                loadExamQuestion();
-            }
-        }
-
-        function nextExamQuestion() {
-            if (currentIdx < examQuestions.length - 1) {
-                currentIdx++;
-                loadExamQuestion();
-            } else {
-                if (confirm('के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?')) {
-                    clearInterval(timerInterval);
-                    submitExam();
-                }
-            }
-        }
-
-        async function submitExam() {
-            document.getElementById('exam-screen').classList.add('hidden');
-            document.getElementById('timer-box').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
-
-            let correct = 0;
-            let wrong = 0;
-            let skipped = 0;
-            let reviewHTML = '';
-
-            examQuestions.forEach((q, idx) => {
-                const userAns = userAnswers[idx];
-                const isCorrect = userAns === q.answer;
-
-                if (!userAns) skipped++;
-                else if (isCorrect) correct++;
-                else wrong++;
-
-                reviewHTML += `
-                    <div class="bg-slate-950 p-3 rounded-xl border ${isCorrect ? 'border-emerald-800/60' : 'border-rose-800/60'}">
-                        <p class="font-bold text-slate-200">Q${idx+1}: ${q.question}</p>
-                        <p class="text-slate-400">तपाईंको उत्तर: <span class="${isCorrect ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}">${userAns || 'छोडेको'}</span></p>
-                        <p class="text-emerald-400">सही उत्तर: ${q.answer}</p>
-                        ${q.explanation ? `<p class="text-[11px] text-slate-400 mt-1 italic">📌 ${q.explanation}</p>` : ''}
-                    </div>
-                `;
-            });
-
-            let totalScore = (correct * 2) - (wrong * 0.4);
-            if (totalScore < 0) totalScore = 0;
-
-            document.getElementById('rep-name').innerText = `परीक्षार्थी: ${candidateName}`;
-            document.getElementById('rep-correct').innerText = correct;
-            document.getElementById('rep-wrong').innerText = wrong;
-            document.getElementById('rep-skipped').innerText = skipped;
-            document.getElementById('rep-score').innerText = totalScore.toFixed(1);
-            document.getElementById('review-container').innerHTML = reviewHTML;
-
-            await supabaseClient.from('leaderboard_set1').insert([
-                { username: candidateName, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
-            ]);
-
-            fetchSet1Leaderboard();
-        }
-
-        async function fetchSet1Leaderboard() {
-            const { data, error } = await supabaseClient
-                .from('leaderboard_set1')
-                .select('*')
-                .order('score', { ascending: false });
-
-            const containers = [
-                document.getElementById('home-leaderboard'),
-                document.getElementById('result-leaderboard')
-            ];
-
-            containers.forEach(lbContainer => {
-                if (!lbContainer) return;
-                lbContainer.innerHTML = '';
-                
-                if (error || !data || data.length === 0) {
-                    lbContainer.innerHTML = '<p class="text-slate-500 text-center py-1">यो सेटमा हाल कुनै रेकर्ड छैन।</p>';
-                    return;
-                }
-                
-                data.forEach((item, i) => {
-                    lbContainer.innerHTML += `
-                        <div class="flex justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
-                            <span class="font-semibold text-slate-200">${i+1}. ${item.username}</span>
-                            <span class="text-indigo-400 font-bold">${item.score} अंक</span>
-                        </div>
-                    `;
-                });
-            });
-        }
-
-        function downloadPDF() {
-            window.print();
-        }
-    </script>
+    function downloadPDF() {
+      window.print();
+    }
+  </script>
 </body>
 </html>
