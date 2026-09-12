@@ -362,13 +362,11 @@
         currentUserId = session.user.id;
         currentUserEmail = session.user.email;
         
-        // युजरको metadata वा email बाट वास्तविक नाम निकाल्ने
         if (session.user.user_metadata && session.user.user_metadata.full_name) {
           currentUserSessionName = session.user.user_metadata.full_name;
         } else if (session.user.user_metadata && session.user.user_metadata.name) {
           currentUserSessionName = session.user.user_metadata.name;
         } else if (currentUserEmail) {
-          // इमेलको अगाडिको भागलाई क्यापिटल गरेर नाम बनाउने
           let emailPrefix = currentUserEmail.split('@')[0];
           currentUserSessionName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
         }
@@ -403,43 +401,42 @@
         for (const tableName of tables) {
           const { data, error } = await supabaseClient
             .from(tableName)
-            .select(`username, name, ${scoreColumn}`);
+            .select(`user_id, username, name, ${scoreColumn}`);
 
           if (!error && data) {
             data.forEach(row => {
-              const uId = row.username;
-              let uName = row.name;
+              // युजर छुट्याउन युनिभर्सल आइडी (user_id वा username) प्रयोग गर्ने
+              const uKey = row.user_id || row.username || row.name;
+              
+              // डेटाबेसमा भएको 'username' वा 'name' मध्ये जुन छ त्यसलाई प्राथमिकता दिने
+              let displayName = row.username || row.name;
 
-              // यदि डेटाबेसमा नाम खाली छ, "aspirant" छ, वा "Aspirant" छ भने
-              if (!uName || uName.trim() === "" || uName.toLowerCase() === "aspirant") {
-                // यदि यो हालको लगइन गरेको युजर हो भने सेसनको नाम प्रयोग गर्ने
-                if (uId === currentUserId && currentUserSessionName) {
-                  uName = currentUserSessionName;
+              if (!displayName || displayName.trim() === "" || displayName.toLowerCase() === "aspirant") {
+                if (row.user_id === currentUserId && currentUserSessionName) {
+                  displayName = currentUserSessionName;
                 } else {
-                  uName = "Loksewa Aspirant";
+                  displayName = "Loksewa Aspirant";
                 }
               }
 
               const score = Number(row[scoreColumn]) || Number(row.solved_questions) || 0;
 
-              if (!userScoresMap[uId]) {
-                userScoresMap[uId] = { id: uId, name: uName, totalScore: 0 };
+              if (!userScoresMap[uKey]) {
+                userScoresMap[uKey] = { id: uKey, name: displayName, totalScore: 0 };
               } else {
-                // यदि पहिले जेनेरिक नाम थियो र पछि राम्रो नाम भेटियो भने अपडेट गर्ने
-                if ((userScoresMap[uId].name === "Loksewa Aspirant" || userScoresMap[uId].name === "Loksewa Candidate") && 
-                    uName !== "Loksewa Aspirant" && uName !== "Loksewa Candidate") {
-                  userScoresMap[uId].name = uName;
+                if ((userScoresMap[uKey].name === "Loksewa Aspirant" || userScoresMap[uKey].name === "Loksewa Candidate") && 
+                    displayName !== "Loksewa Aspirant" && displayName !== "Loksewa Candidate") {
+                  userScoresMap[uKey].name = displayName;
                 }
               }
 
-              userScoresMap[uId].totalScore += score;
+              userScoresMap[uKey].totalScore += score;
             });
           }
         }
 
         let combinedUsers = Object.values(userScoresMap);
 
-        // विशेष केस: यदि हालको लगइन युजरको डेटाबेसमा कुनै रेकर्ड छैन तर सेसन अवस्थित छ भने उसलाई पनि लिडरबोर्डमा ० स्कोरसहित देखाउन सकिन्छ
         if (currentUserId && !userScoresMap[currentUserId] && currentUserSessionName) {
           combinedUsers.push({
             id: currentUserId,
@@ -512,7 +509,7 @@
 
         // Current User Rank Card
         if (currentUserId) {
-          const userIndex = combinedUsers.findIndex(u => u.id === currentUserId);
+          const userIndex = combinedUsers.findIndex(u => u.id === currentUserId || u.id === currentUserSessionName);
           if (userIndex !== -1) {
             const loggedUser = combinedUsers[userIndex];
             const myRank = userIndex + 1;
