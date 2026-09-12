@@ -523,8 +523,17 @@
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           currentUserId = user.uid;
-          candidateName = user.displayName ? user.displayName : "नाम छैन";
           userEmail = user.email;
+          
+          if (user.displayName) {
+            candidateName = user.displayName;
+          } else if (userEmail) {
+            let emailPrefix = userEmail.split('@')[0];
+            candidateName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+          } else {
+            candidateName = "Loksewa Aspirant";
+          }
+          
           document.getElementById('profile-display-name').innerText = candidateName;
         } else {
           document.getElementById('login-modal').classList.add('active');
@@ -715,7 +724,6 @@
 
       if (!isMistakeRetry && solvedCount > 0) {
         await saveLeaderboardAndProfile(correct, solvedCount);
-        // Supabase को user_stats टेबलमा रियल डेटा अपडेट गर्ने कोड
         await saveUserStatsToSupabase(solvedCount, correct);
       }
 
@@ -756,28 +764,47 @@
     }
 
     async function saveLeaderboardAndProfile(score, solvedCount) {
+      if (!currentUserId) return;
       try {
-        const saveName = candidateName && candidateName !== "नाम छैन" ? candidateName : "नाम छैन";
+        const saveName = candidateName && candidateName !== "नाम छैन" ? candidateName : "Loksewa Aspirant";
 
         const { data: existing } = await supabaseClient
           .from('leaderboard_world_geography')
           .select('*')
-          .eq('username', saveName);
+          .eq('user_id', currentUserId)
+          .maybeSingle();
 
-        if (existing && existing.length > 0) {
-          if (score > existing[0].score) {
+        if (existing) {
+          if (score >= (existing.score || existing.solved_questions || 0)) {
             await supabaseClient
               .from('leaderboard_world_geography')
-              .update({ score: score, total_solved: solvedCount })
-              .eq('username', saveName);
+              .update({ 
+                name: saveName,
+                username: saveName, 
+                score: score, 
+                solved_questions: solvedCount,
+                solved_daily: solvedCount,
+                solved_weekly: solvedCount,
+                solved_monthly: solvedCount
+              })
+              .eq('user_id', currentUserId);
           }
         } else {
           await supabaseClient.from('leaderboard_world_geography').insert([
-            { username: saveName, score: score, total_solved: solvedCount }
+            { 
+              user_id: currentUserId,
+              name: saveName,
+              username: saveName, 
+              score: score, 
+              solved_questions: solvedCount,
+              solved_daily: solvedCount,
+              solved_weekly: solvedCount,
+              solved_monthly: solvedCount
+            }
           ]);
         }
       } catch (err) {
-        console.error("Error saving score:", err);
+        console.error("Error saving score to leaderboard:", err);
       }
     }
 
@@ -802,12 +829,18 @@
         }
         
         data.forEach((item, i) => {
-          let displayName = item.username ? item.username : "नाम छैन";
+          let displayName = item.name || item.username;
+          if (!displayName || displayName.trim() === "" || displayName.toLowerCase() === "aspirant") {
+            displayName = "Loksewa Aspirant";
+          }
+
+          let scoreVal = item.score !== undefined ? item.score : (item.solved_questions || 0);
+          let solvedVal = item.solved_questions || scoreVal;
 
           lbContainer.innerHTML += `
             <div class="lb-row">
               <span style="font-weight: 700; color: #1e293b;">${i+1}. ${displayName}</span>
-              <span style="color: #2563eb; font-weight: 800;">${item.score} अंक (${item.total_solved || 0} हल)</span>
+              <span style="color: #2563eb; font-weight: 800;">${scoreVal} अंक (${solvedVal} हल)</span>
             </div>
           `;
         });
