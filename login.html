@@ -434,6 +434,7 @@
         }
       } catch (error) {
         console.error("Google Redirect Result Error:", error);
+        handleGoogleError(error);
       }
     });
 
@@ -522,6 +523,27 @@
       }
     }
 
+    // Google Error Handler फङ्सन (एउटै इमेलबाट विभिन्न माध्यम प्रयोग भएको केस ह्यान्डल गर्न)
+    function handleGoogleError(error) {
+      googleLoginBtn.disabled = false;
+      googleLoginBtn.style.opacity = "1";
+
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        const email = error.customData ? error.customData.email : "";
+        showPopup(
+          "अकाउन्ट पहिले नै अवस्थित छ!",
+          `यो इमेल (${email}) बाट पहिले नै इमेल/पासवर्ड विधिबाट अकाउन्ट बनिसकेको छ। कृपया माथि इमेल र पासवर्ड राखेर लगइन गर्नुहोस्।`,
+          "warning"
+        );
+      } else if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+        // युजरले आफैँ पपअप बन्द गरेको हो भने केही नगर्ने
+        return;
+      } else {
+        console.error("Google Login Error:", error);
+        showPopup("गुगल लगइन असफल", "Google बाट लगइन गर्दा समस्या आयो: " + error.message, "error");
+      }
+    }
+
     // Email/Password Login
     loginForm.addEventListener("submit", async function(event) {
       event.preventDefault();
@@ -593,7 +615,7 @@
       }
     });
 
-    // Google Login Handler (पहिले पपअपबाट ट्राइ गर्ने, पपअप ब्लक भएमा स्वतः रिडाइरेक्ट विधि अपनाउने)
+    // Google Login Handler
     googleLoginBtn.addEventListener("click", async function() {
       try {
         googleLoginBtn.disabled = true;
@@ -602,25 +624,17 @@
         await signInWithPopup(auth, googleProvider);
         window.location.href = "dashboard.html";
       } catch (error) {
-        console.warn("Popup login failed or blocked, trying redirect method:", error.code);
-        
-        // यदि मोबाइल ब्राउजर वा पपअप ब्लक भएको कारणले पपअप फेल भयो भने रिडाइरेक्ट प्रयोग गर्ने
-        if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request' || error.code === 'auth/popup-closed-by-user') {
-          if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
-            googleLoginBtn.disabled = false;
-            googleLoginBtn.style.opacity = "1";
+        if (error.code === 'auth/popup-blocked') {
+          // यदि पपअप ब्लक भयो भने रिडाइरेक्ट प्रयोग गर्ने
+          try {
+            await signInWithRedirect(auth, googleProvider);
+            return;
+          } catch (redirectError) {
+            handleGoogleError(redirectError);
             return;
           }
         }
-        
-        try {
-          await signInWithRedirect(auth, googleProvider);
-        } catch (redirectError) {
-          console.error("Google Redirect Error:", redirectError);
-          showPopup("गुगल लगइन असफल", "Google बाट लगइन गर्दा समस्या आयो: " + redirectError.message, "error");
-          googleLoginBtn.disabled = false;
-          googleLoginBtn.style.opacity = "1";
-        }
+        handleGoogleError(error);
       }
     });
 
