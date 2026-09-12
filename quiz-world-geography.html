@@ -775,20 +775,25 @@
           .maybeSingle();
 
         if (existing) {
-          if (score >= (existing.score || existing.solved_questions || 0)) {
-            await supabaseClient
-              .from('leaderboard_world_geography')
-              .update({ 
-                name: saveName,
-                username: saveName, 
-                score: score, 
-                solved_questions: solvedCount,
-                solved_daily: solvedCount,
-                solved_weekly: solvedCount,
-                solved_monthly: solvedCount
-              })
-              .eq('user_id', currentUserId);
-          }
+          // पुरानो मानमा नयाँ मान जोडिने (Accumulate हुने) गरी मिलाइएको कोड
+          const updatedSolved = (existing.solved_questions || 0) + solvedCount;
+          const updatedDaily = (existing.solved_daily || 0) + solvedCount;
+          const updatedWeekly = (existing.solved_weekly || 0) + solvedCount;
+          const updatedMonthly = (existing.solved_monthly || 0) + solvedCount;
+          const bestScore = Math.max(score, existing.score || 0);
+
+          await supabaseClient
+            .from('leaderboard_world_geography')
+            .update({ 
+              name: saveName,
+              username: saveName, 
+              score: bestScore, 
+              solved_questions: updatedSolved,
+              solved_daily: updatedDaily,
+              solved_weekly: updatedWeekly,
+              solved_monthly: updatedMonthly
+            })
+            .eq('user_id', currentUserId);
         } else {
           await supabaseClient.from('leaderboard_world_geography').insert([
             { 
