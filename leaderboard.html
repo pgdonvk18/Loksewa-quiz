@@ -335,7 +335,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // तपाईंले दिएको Supabase Credentials
     const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     
@@ -343,6 +342,8 @@
 
     let currentPeriod = "daily";
     let currentUserId = null;
+    let currentUserSessionName = null;
+    let currentUserEmail = null;
 
     const tabButtons = document.querySelectorAll(".tab-btn");
     tabButtons.forEach(btn => {
@@ -356,10 +357,21 @@
     });
 
     document.addEventListener("DOMContentLoaded", async () => {
-      // यदि Supabase मार्फत लगइन छ भने युजर पत्ता लगाउने
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session) {
+      if (session && session.user) {
         currentUserId = session.user.id;
+        currentUserEmail = session.user.email;
+        
+        // युजरको metadata वा email बाट वास्तविक नाम निकाल्ने
+        if (session.user.user_metadata && session.user.user_metadata.full_name) {
+          currentUserSessionName = session.user.user_metadata.full_name;
+        } else if (session.user.user_metadata && session.user.user_metadata.name) {
+          currentUserSessionName = session.user.user_metadata.name;
+        } else if (currentUserEmail) {
+          // इमेलको अगाडिको भागलाई क्यापिटल गरेर नाम बनाउने
+          let emailPrefix = currentUserEmail.split('@')[0];
+          currentUserSessionName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+        }
       }
       fetchCombinedLeaderboard(currentPeriod);
     });
@@ -374,7 +386,6 @@
       currentUserCard.style.display = "none";
 
       try {
-        // सबै ४ वटा लिडरबोर्ड टेबलहरू
         const tables = [
           'leaderboard',
           'leaderboard_geography',
@@ -382,7 +393,6 @@
           'leaderboard_world_geography'
         ];
 
-        // अवधिको आधारमा स्तम्भ (Column) छान्ने वा फिल्टर गर्ने 
         let scoreColumn = 'solved_questions';
         if (period === 'daily') scoreColumn = 'solved_daily';
         else if (period === 'weekly') scoreColumn = 'solved_weekly';
@@ -398,11 +408,16 @@
           if (!error && data) {
             data.forEach(row => {
               const uId = row.user_id;
-              
-              // नाम प्रमाणीकरण र "Aspirant" समस्या समाधान
               let uName = row.name;
-              if (!uName || uName.toLowerCase() === "aspirant" || uName.trim() === "") {
-                uName = "Loksewa Candidate";
+
+              // यदि डेटाबेसमा नाम खाली छ, "aspirant" छ, वा "Aspirant" छ भने
+              if (!uName || uName.trim() === "" || uName.toLowerCase() === "aspirant") {
+                // यदि यो हालको लगइन गरेको युजर हो भने सेसनको नाम प्रयोग गर्ने
+                if (uId === currentUserId && currentUserSessionName) {
+                  uName = currentUserSessionName;
+                } else {
+                  uName = "Loksewa Aspirant";
+                }
               }
 
               const score = Number(row[scoreColumn]) || Number(row.solved_questions) || 0;
@@ -410,18 +425,29 @@
               if (!userScoresMap[uId]) {
                 userScoresMap[uId] = { id: uId, name: uName, totalScore: 0 };
               } else {
-                // यदि पहिले 'Loksewa Candidate' थियो र पछि वास्तविक नाम भेटियो भने अपडेट गर्ने
-                if (userScoresMap[uId].name === "Loksewa Candidate" && uName !== "Loksewa Candidate") {
+                // यदि पहिले जेनेरिक नाम थियो र पछि राम्रो नाम भेटियो भने अपडेट गर्ने
+                if ((userScoresMap[uId].name === "Loksewa Aspirant" || userScoresMap[uId].name === "Loksewa Candidate") && 
+                    uName !== "Loksewa Aspirant" && uName !== "Loksewa Candidate") {
                   userScoresMap[uId].name = uName;
                 }
               }
-              
+
               userScoresMap[uId].totalScore += score;
             });
           }
         }
 
         let combinedUsers = Object.values(userScoresMap);
+
+        // विशेष केस: यदि हालको लगइन युजरको डेटाबेसमा कुनै रेकर्ड छैन तर सेसन अवस्थित छ भने उसलाई पनि लिडरबोर्डमा ० स्कोरसहित देखाउन सकिन्छ
+        if (currentUserId && !userScoresMap[currentUserId] && currentUserSessionName) {
+          combinedUsers.push({
+            id: currentUserId,
+            name: currentUserSessionName,
+            totalScore: 0
+          });
+        }
+
         combinedUsers.sort((a, b) => b.totalScore - a.totalScore);
 
         if (combinedUsers.length === 0) {
@@ -443,7 +469,7 @@
         orderedPodium.forEach(item => {
           const name = item.user.name;
           const score = item.user.totalScore;
-          const initials = name.charAt(0).toUpperCase();
+          const initials = name ? name.charAt(0).toUpperCase() : "L";
 
           podiumHTML += `
             <div class="podium-card ${item.cls}">
@@ -467,7 +493,7 @@
             const rank = index + 4;
             const name = user.name;
             const score = user.totalScore;
-            const initials = name.charAt(0).toUpperCase();
+            const initials = name ? name.charAt(0).toUpperCase() : "L";
 
             listHTML += `
               <div class="leaderboard-item">
@@ -490,7 +516,7 @@
           if (userIndex !== -1) {
             const loggedUser = combinedUsers[userIndex];
             const myRank = userIndex + 1;
-            const myInitials = loggedUser.name.charAt(0).toUpperCase();
+            const myInitials = loggedUser.name ? loggedUser.name.charAt(0).toUpperCase() : "L";
 
             currentUserCard.style.display = "flex";
             currentUserCard.innerHTML = `
