@@ -335,13 +335,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // आफ्नो Supabase credentials राख्नुहोला
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    // तपाईंले दिएको Supabase Credentials
+    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+    
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentPeriod = "daily";
-    let currentUserId = null; // यदि युजर लगइन छ भने यहाँ युजरको ID राख्न सक्नुहुन्छ
+    let currentUserId = null;
 
     const tabButtons = document.querySelectorAll(".tab-btn");
     tabButtons.forEach(btn => {
@@ -354,9 +355,8 @@
       });
     });
 
-    // पेज लोड हुँदा पहिलो पटक डाटा तान्ने
     document.addEventListener("DOMContentLoaded", async () => {
-      // यदि Supabase Auth प्रयोग गर्नुभएको छ भने हालको युजर पत्ता लगाउने कोड:
+      // यदि Supabase मार्फत लगइन छ भने युजर पत्ता लगाउने
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
         currentUserId = session.user.id;
@@ -374,7 +374,7 @@
       currentUserCard.style.display = "none";
 
       try {
-        // तस्बिरमा देखिएका सबै लिडरबोर्ड टेबलहरूको सूची
+        // सबै ४ वटा लिडरबोर्ड टेबलहरू
         const tables = [
           'leaderboard',
           'leaderboard_geography',
@@ -382,34 +382,36 @@
           'leaderboard_world_geography'
         ];
 
-        // प्रत्येक टेबलबाट डाटा फेच गर्ने
-        let userScoresMap = {}; // { userId: { name, totalScore } }
+        // अवधिको आधारमा स्तम्भ (Column) छान्ने वा फिल्टर गर्ने 
+        // (यदि तपाईंको टेबलमा solved_daily, solved_weekly, solved_monthly छुट्टै छ भने तलको नाम मिलाउनुहोला)
+        let scoreColumn = 'solved_questions';
+        if (period === 'daily') scoreColumn = 'solved_daily'; // वा 'solved_questions'
+        else if (period === 'weekly') scoreColumn = 'solved_weekly';
+        else if (period === 'monthly') scoreColumn = 'solved_monthly';
+
+        let userScoresMap = {};
 
         for (const tableName of tables) {
-          // नोट: यदि तपाइँको टेबलमा period अनुसार छुट्टै स्तम्भ (column) छ भने 
-          // जस्तै: solved_daily, solved_weekly, solved_monthly, 
-          // वा सबै प्रश्न एउटैमा छ भने स्तम्भको नाम यहाँ मिलाउनुहोला। 
-          // तल उदाहरणको लागि 'solved_questions' प्रयोग गरिएको छ।
+          // नोट: यदि तपाईंको टेबलमा प्रत्येक पिरियडको लागि छुट्टै स्तम्भ छैन र एउटै 'solved_questions' छ भने 
+          // माथिको `scoreColumn` लाई परिवर्तन गरेर सिधै 'solved_questions' राख्न सक्नुहुन्छ।
           const { data, error } = await supabaseClient
             .from(tableName)
-            .select('user_id, name, solved_questions');
+            .select(`user_id, name, ${scoreColumn}`);
 
           if (!error && data) {
             data.forEach(row => {
               const uId = row.user_id;
               const uName = row.name || "Aspirant";
-              const score = Number(row.solved_questions) || 0;
+              const score = Number(row[scoreColumn]) || Number(row.solved_questions) || 0;
 
               if (!userScoresMap[uId]) {
                 userScoresMap[uId] = { id: uId, name: uName, totalScore: 0 };
               }
-              // सबै टेबलको स्कोर जोड्ने
               userScoresMap[uId].totalScore += score;
             });
           }
         }
 
-        // Map लाई Array मा बदल्ने र स्कोरको आधारमा ठूलोदेखि सानो (Descending) क्रममा मिलाउने
         let combinedUsers = Object.values(userScoresMap);
         combinedUsers.sort((a, b) => b.totalScore - a.totalScore);
 
@@ -421,7 +423,7 @@
 
         podiumSection.style.display = "flex";
 
-        // शीर्ष ३ (Podium) तयार पार्ने
+        // Podium (Top 3)
         let podiumHTML = "";
         const top3 = combinedUsers.slice(0, 3);
         const orderedPodium = [];
@@ -445,7 +447,7 @@
         });
         podiumSection.innerHTML = podiumHTML;
 
-        // बाँकी लिडरबोर्ड सूची तयार पार्ने
+        // Remaining List
         let listHTML = "";
         const remainingUsers = combinedUsers.slice(3);
 
@@ -473,7 +475,7 @@
           leaderboardList.innerHTML = listHTML;
         }
 
-        // हाल लगइन गरेको युजरको स्थान देखाउने
+        // Current User Rank Card
         if (currentUserId) {
           const userIndex = combinedUsers.findIndex(u => u.id === currentUserId);
           if (userIndex !== -1) {
