@@ -317,9 +317,7 @@
 
   <div class="container">
     <!-- Podium for Top 3 -->
-    <div id="podiumSection" class="podium-section">
-      <!-- Dynamic Podium Content will load here -->
-    </div>
+    <div id="podiumSection" class="podium-section"></div>
 
     <!-- Rest of the List -->
     <div class="leaderboard-list" id="leaderboardList">
@@ -329,49 +327,44 @@
       </div>
     </div>
 
-    <!-- Current User's Rank Card (Fixed at bottom) -->
+    <!-- Current User's Rank Card -->
     <div id="currentUserCard" style="display: none;" class="current-user-card"></div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-      authDomain: "loksewaquest-227b6.firebaseapp.com",
-      projectId: "loksewaquest-227b6",
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",
-      messagingSenderId: "779234903809",
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  <script>
+    // आफ्नो Supabase credentials राख्नुहोला
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentPeriod = "daily";
-    let currentUser = null;
+    let currentUserId = null; // यदि युजर लगइन छ भने यहाँ युजरको ID राख्न सक्नुहुन्छ
 
     const tabButtons = document.querySelectorAll(".tab-btn");
-    
     tabButtons.forEach(btn => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         tabButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         currentPeriod = btn.getAttribute("data-period");
-        fetchLeaderboard(currentPeriod);
+        fetchCombinedLeaderboard(currentPeriod);
       });
     });
 
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      fetchLeaderboard(currentPeriod);
+    // पेज लोड हुँदा पहिलो पटक डाटा तान्ने
+    document.addEventListener("DOMContentLoaded", async () => {
+      // यदि Supabase Auth प्रयोग गर्नुभएको छ भने हालको युजर पत्ता लगाउने कोड:
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        currentUserId = session.user.id;
+      }
+      fetchCombinedLeaderboard(currentPeriod);
     });
 
-    async function fetchLeaderboard(period) {
+    async function fetchCombinedLeaderboard(period) {
       const leaderboardList = document.getElementById("leaderboardList");
       const podiumSection = document.getElementById("podiumSection");
       const currentUserCard = document.getElementById("currentUserCard");
@@ -381,17 +374,46 @@
       currentUserCard.style.display = "none";
 
       try {
-        const scoreField = period === "daily" ? "solvedDaily" : period === "weekly" ? "solvedWeekly" : "solvedMonthly";
-        
-        const q = query(collection(db, "users"), orderBy(scoreField, "desc"), limit(50));
-        const querySnapshot = await getDocs(q);
+        // तस्बिरमा देखिएका सबै लिडरबोर्ड टेबलहरूको सूची
+        const tables = [
+          'leaderboard',
+          'leaderboard_geography',
+          'leaderboard_set1',
+          'leaderboard_world_geography'
+        ];
 
-        let users = [];
-        querySnapshot.forEach((docSnap) => {
-          users.push({ id: docSnap.id, ...docSnap.data() });
-        });
+        // प्रत्येक टेबलबाट डाटा फेच गर्ने
+        let userScoresMap = {}; // { userId: { name, totalScore } }
 
-        if (users.length === 0) {
+        for (const tableName of tables) {
+          // नोट: यदि तपाइँको टेबलमा period अनुसार छुट्टै स्तम्भ (column) छ भने 
+          // जस्तै: solved_daily, solved_weekly, solved_monthly, 
+          // वा सबै प्रश्न एउटैमा छ भने स्तम्भको नाम यहाँ मिलाउनुहोला। 
+          // तल उदाहरणको लागि 'solved_questions' प्रयोग गरिएको छ।
+          const { data, error } = await supabaseClient
+            .from(tableName)
+            .select('user_id, name, solved_questions');
+
+          if (!error && data) {
+            data.forEach(row => {
+              const uId = row.user_id;
+              const uName = row.name || "Aspirant";
+              const score = Number(row.solved_questions) || 0;
+
+              if (!userScoresMap[uId]) {
+                userScoresMap[uId] = { id: uId, name: uName, totalScore: 0 };
+              }
+              // सबै टेबलको स्कोर जोड्ने
+              userScoresMap[uId].totalScore += score;
+            });
+          }
+        }
+
+        // Map लाई Array मा बदल्ने र स्कोरको आधारमा ठूलोदेखि सानो (Descending) क्रममा मिलाउने
+        let combinedUsers = Object.values(userScoresMap);
+        combinedUsers.sort((a, b) => b.totalScore - a.totalScore);
+
+        if (combinedUsers.length === 0) {
           leaderboardList.innerHTML = `<div class="empty-state">अहिले कुनै डाटा उपलब्ध छैन।</div>`;
           podiumSection.style.display = "none";
           return;
@@ -399,17 +421,17 @@
 
         podiumSection.style.display = "flex";
 
+        // शीर्ष ३ (Podium) तयार पार्ने
         let podiumHTML = "";
-        const top3 = users.slice(0, 3);
-        
+        const top3 = combinedUsers.slice(0, 3);
         const orderedPodium = [];
         if (top3[1]) orderedPodium.push({ user: top3[1], rank: 2, cls: "second" });
         if (top3[0]) orderedPodium.push({ user: top3[0], rank: 1, cls: "first" });
         if (top3[2]) orderedPodium.push({ user: top3[2], rank: 3, cls: "third" });
 
         orderedPodium.forEach(item => {
-          const name = item.user.name || item.user.displayName || "User";
-          const score = item.user[scoreField] || 0;
+          const name = item.user.name;
+          const score = item.user.totalScore;
           const initials = name.charAt(0).toUpperCase();
 
           podiumHTML += `
@@ -423,16 +445,17 @@
         });
         podiumSection.innerHTML = podiumHTML;
 
+        // बाँकी लिडरबोर्ड सूची तयार पार्ने
         let listHTML = "";
-        const remainingUsers = users.slice(3);
+        const remainingUsers = combinedUsers.slice(3);
 
-        if (remainingUsers.length === 0 && users.length <= 3) {
+        if (remainingUsers.length === 0 && combinedUsers.length <= 3) {
           leaderboardList.innerHTML = `<div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 13px;">अन्य सहभागीहरू छैनन्</div>`;
         } else {
           remainingUsers.forEach((user, index) => {
             const rank = index + 4;
-            const name = user.name || user.displayName || "User";
-            const score = user[scoreField] || 0;
+            const name = user.name;
+            const score = user.totalScore;
             const initials = name.charAt(0).toUpperCase();
 
             listHTML += `
@@ -450,30 +473,29 @@
           leaderboardList.innerHTML = listHTML;
         }
 
-        if (currentUser) {
-          const userIndex = users.findIndex(u => u.id === currentUser.uid);
+        // हाल लगइन गरेको युजरको स्थान देखाउने
+        if (currentUserId) {
+          const userIndex = combinedUsers.findIndex(u => u.id === currentUserId);
           if (userIndex !== -1) {
-            const loggedUser = users[userIndex];
-            const myName = loggedUser.name || loggedUser.displayName || "तपाईं";
-            const myScore = loggedUser[scoreField] || 0;
+            const loggedUser = combinedUsers[userIndex];
             const myRank = userIndex + 1;
-            const myInitials = myName.charAt(0).toUpperCase();
+            const myInitials = loggedUser.name.charAt(0).toUpperCase();
 
             currentUserCard.style.display = "flex";
             currentUserCard.innerHTML = `
               <div class="item-rank" style="color: #2563eb;">#${myRank}</div>
               <div class="item-avatar" style="background: #2563eb; color: white;">${myInitials}</div>
               <div class="item-info">
-                <div class="item-name">${myName} (तपाईं)</div>
-                <div class="item-sub">तपाईँको स्थान</div>
+                <div class="item-name">${loggedUser.name} (तपाईं)</div>
+                <div class="item-sub">तपाईँको समग्र स्थान</div>
               </div>
-              <div class="item-score">${myScore} प्रश्न</div>
+              <div class="item-score">${loggedUser.totalScore} प्रश्न</div>
             `;
           }
         }
 
       } catch (error) {
-        console.error("Leaderboard fetch error:", error);
+        console.error("Combined Leaderboard error:", error);
         leaderboardList.innerHTML = `<div class="empty-state">डाटा लोड गर्न असफल भयो।</div>`;
       }
     }
