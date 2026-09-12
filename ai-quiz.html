@@ -11,7 +11,16 @@
 
 <div id="aiQuizContainer" style="max-width: 600px; margin: 0 auto;"></div>
 
+<!-- Load Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+  // Initialized with your provided Supabase credentials
+  const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
+  const SUPABASE_ANON_KEY = "AIzaSyBQR-v3w6y4xnNdAGcPFgYITSwFDId63hs";
+  
+  const localSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
   async function generateAIQuiz() {
     const topic = document.getElementById("aiTopicInput").value.trim();
     const container = document.getElementById("aiQuizContainer");
@@ -28,14 +37,7 @@
     container.innerHTML = `<div style="background: white; padding: 20px; border-radius: 16px; text-align: center; color: #64748b; font-size: 13px;">कृपया प्रतीक्षा गर्नुहोस्...</div>`;
 
     try {
-      // Automatically detect whether 'supabaseClient' or 'supabase' is used on your page
-      const client = window.supabaseClient || window.supabase;
-      
-      if (!client) {
-        throw new Error("Supabase client फेला परेन। कृपया आफ्नो मुख्य स्क्रिप्ट चेक गर्नुहोस्।");
-      }
-
-      const { data, error } = await client.functions.invoke('generate-ai-quiz', {
+      const { data, error } = await localSupabase.functions.invoke('generate-ai-quiz', {
         body: { topic: topic }
       });
 
@@ -45,7 +47,6 @@
       renderAIQuiz(data.questions);
     } catch (err) {
       console.error(err);
-      // Showing the exact error on mobile screen so you can see it easily
       container.innerHTML = `
         <div style="background: #fef2f2; border: 1px solid #fca5a5; padding: 15px; border-radius: 14px; color: #991b1b; font-size: 12px; word-break: break-all;">
           <b>एरर आयो:</b> ${err.message || JSON.stringify(err)}
