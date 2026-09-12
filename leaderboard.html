@@ -383,17 +383,14 @@
         ];
 
         // अवधिको आधारमा स्तम्भ (Column) छान्ने वा फिल्टर गर्ने 
-        // (यदि तपाईंको टेबलमा solved_daily, solved_weekly, solved_monthly छुट्टै छ भने तलको नाम मिलाउनुहोला)
         let scoreColumn = 'solved_questions';
-        if (period === 'daily') scoreColumn = 'solved_daily'; // वा 'solved_questions'
+        if (period === 'daily') scoreColumn = 'solved_daily';
         else if (period === 'weekly') scoreColumn = 'solved_weekly';
         else if (period === 'monthly') scoreColumn = 'solved_monthly';
 
         let userScoresMap = {};
 
         for (const tableName of tables) {
-          // नोट: यदि तपाईंको टेबलमा प्रत्येक पिरियडको लागि छुट्टै स्तम्भ छैन र एउटै 'solved_questions' छ भने 
-          // माथिको `scoreColumn` लाई परिवर्तन गरेर सिधै 'solved_questions' राख्न सक्नुहुन्छ।
           const { data, error } = await supabaseClient
             .from(tableName)
             .select(`user_id, name, ${scoreColumn}`);
@@ -401,12 +398,24 @@
           if (!error && data) {
             data.forEach(row => {
               const uId = row.user_id;
-              const uName = row.name || "Aspirant";
+              
+              // नाम प्रमाणीकरण र "Aspirant" समस्या समाधान
+              let uName = row.name;
+              if (!uName || uName.toLowerCase() === "aspirant" || uName.trim() === "") {
+                uName = "Loksewa Candidate";
+              }
+
               const score = Number(row[scoreColumn]) || Number(row.solved_questions) || 0;
 
               if (!userScoresMap[uId]) {
                 userScoresMap[uId] = { id: uId, name: uName, totalScore: 0 };
+              } else {
+                // यदि पहिले 'Loksewa Candidate' थियो र पछि वास्तविक नाम भेटियो भने अपडेट गर्ने
+                if (userScoresMap[uId].name === "Loksewa Candidate" && uName !== "Loksewa Candidate") {
+                  userScoresMap[uId].name = uName;
+                }
               }
+              
               userScoresMap[uId].totalScore += score;
             });
           }
