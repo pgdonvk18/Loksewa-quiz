@@ -71,29 +71,41 @@
 
     .filter-tabs {
       display: flex;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 5px;
       border-radius: 14px;
-      gap: 4px;
+      gap: 6px;
     }
 
     .tab-btn {
       flex: 1;
       background: transparent;
       border: none;
-      padding: 10px;
-      color: rgba(255, 255, 255, 0.8);
+      padding: 11px 8px;
+      color: rgba(255, 255, 255, 0.75);
       font-size: 13px;
       font-weight: 700;
       border-radius: 10px;
       cursor: pointer;
-      transition: 0.2s;
+      transition: all 0.25s ease;
+      text-align: center;
+      outline: none;
+    }
+
+    .tab-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-btn:active {
+      transform: scale(0.96);
     }
 
     .tab-btn.active {
       background: #ffffff;
       color: #1d4ed8;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
     }
 
     .container {
@@ -295,10 +307,11 @@
       <div style="width: 40px;"></div>
     </div>
 
+    <!-- Filter Tabs -->
     <div class="filter-tabs">
-      <button class="tab-btn active" data-period="daily">दैनिक (Daily)</button>
-      <button class="tab-btn" data-period="weekly">साता dai (Weekly)</button>
-      <button class="tab-btn" data-period="monthly">मासिक (Monthly)</button>
+      <button class="tab-btn active" data-period="daily" type="button">दैनिक (Daily)</button>
+      <button class="tab-btn" data-period="weekly" type="button">साताको (Weekly)</button>
+      <button class="tab-btn" data-period="monthly" type="button">मासिक (Monthly)</button>
     </div>
   </div>
 
@@ -317,13 +330,13 @@
     </div>
 
     <!-- Current User's Rank Card (Fixed at bottom) -->
-    <div id="currentUserCard" style="display: none;"></div>
+    <div id="currentUserCard" style="display: none;" class="current-user-card"></div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, query, orderBy, limit, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -334,7 +347,7 @@
       appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
     };
 
-    const app = initializeUp ? initializeApp(firebaseConfig) : initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
@@ -342,8 +355,10 @@
     let currentUser = null;
 
     const tabButtons = document.querySelectorAll(".tab-btn");
+    
     tabButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
         tabButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         currentPeriod = btn.getAttribute("data-period");
@@ -366,8 +381,6 @@
       currentUserCard.style.display = "none";
 
       try {
-        // नोट: तपाईंको Firestore संरचना अनुसार field नाम (जस्तै solvedDaily, solvedWeekly, solvedMonthly वा कुल प्रश्न संख्या) मिलाउन सक्नुहुन्छ।
-        // यहाँ उदाहरणका लागि solvedDaily, solvedWeekly, solvedMonthly प्रयोग गरिएको छ।
         const scoreField = period === "daily" ? "solvedDaily" : period === "weekly" ? "solvedWeekly" : "solvedMonthly";
         
         const q = query(collection(db, "users"), orderBy(scoreField, "desc"), limit(50));
@@ -386,11 +399,9 @@
 
         podiumSection.style.display = "flex";
 
-        // Render Podium (Top 3)
         let podiumHTML = "";
         const top3 = users.slice(0, 3);
         
-        // Podium order second, first, third for visual layout
         const orderedPodium = [];
         if (top3[1]) orderedPodium.push({ user: top3[1], rank: 2, cls: "second" });
         if (top3[0]) orderedPodium.push({ user: top3[0], rank: 1, cls: "first" });
@@ -412,7 +423,6 @@
         });
         podiumSection.innerHTML = podiumHTML;
 
-        // Render Remaining List (From index 3 onwards)
         let listHTML = "";
         const remainingUsers = users.slice(3);
 
@@ -440,7 +450,6 @@
           leaderboardList.innerHTML = listHTML;
         }
 
-        // Handle Current Logged-in User Rank Display if available
         if (currentUser) {
           const userIndex = users.findIndex(u => u.id === currentUser.uid);
           if (userIndex !== -1) {
