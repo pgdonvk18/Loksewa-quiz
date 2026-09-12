@@ -634,7 +634,7 @@
         } else {  
           btn.style.cursor = 'default';  
         }  
-  
+
         container.appendChild(btn);  
       });  
   
@@ -714,13 +714,13 @@
       }  
   
       if (!isMistakeRetry && solvedCount > 0) {  
-        await saveLeaderboardAndProfile(correct, activeQuestions.length);  
+        await saveLeaderboardAndProfile(correct, solvedCount);  
       }  
   
       fetchLeaderboard();  
     }  
   
-    async function saveLeaderboardAndProfile(score, totalQ) {  
+    async function saveLeaderboardAndProfile(score, solvedCount) {  
       try {  
         const saveName = candidateName && candidateName !== "नाम छैन" ? candidateName : "नाम छैन";  
         const currentUserId = userId ? userId : '00000000-0000-0000-0000-000000000000';  
@@ -731,21 +731,27 @@
           .eq('username', saveName);  
   
         if (existing && existing.length > 0) {  
-          const oldScore = existing[0].score || 0;  
-          if (score >= oldScore) {  
-            await supabaseClient  
-              .from('leaderboard_geography')  
-              .update({   
-                score: score,   
-                total_questions: totalQ,  
-                solved_questions: score,  
-                solved_daily: score,  
-                solved_weekly: score,  
-                solved_monthly: score,  
-                updated_at: new Date()  
-              })  
-              .eq('username', saveName);  
-          }  
+          const oldRecord = existing[0];  
+          const oldScore = oldRecord.score || 0;  
+          
+          const newDaily = (oldRecord.solved_daily || 0) + solvedCount;  
+          const newWeekly = (oldRecord.solved_weekly || 0) + solvedCount;  
+          const newMonthly = (oldRecord.solved_monthly || 0) + solvedCount;  
+          const newSolvedTotal = (oldRecord.solved_questions || 0) + solvedCount;  
+          const bestScore = Math.max(score, oldScore);  
+
+          await supabaseClient  
+            .from('leaderboard_geography')  
+            .update({   
+              score: bestScore,   
+              total_questions: newSolvedTotal,  
+              solved_questions: newSolvedTotal,  
+              solved_daily: newDaily,  
+              solved_weekly: newWeekly,  
+              solved_monthly: newMonthly,  
+              updated_at: new Date()  
+            })  
+            .eq('username', saveName);  
         } else {  
           await supabaseClient.from('leaderboard_geography').insert([  
             {   
@@ -753,11 +759,11 @@
               name: saveName,  
               username: saveName,   
               score: score,   
-              total_questions: totalQ,  
-              solved_questions: score,  
-              solved_daily: score,  
-              solved_weekly: score,  
-              solved_monthly: score,  
+              total_questions: solvedCount,  
+              solved_questions: solvedCount,  
+              solved_daily: solvedCount,  
+              solved_weekly: solvedCount,  
+              solved_monthly: solvedCount,  
               updated_at: new Date()  
             }  
           ]);  
@@ -789,11 +795,12 @@
           
         data.forEach((item, i) => {  
           let displayName = item.username ? item.username : (item.name ? item.name : "नाम छैन");  
+          let totalSolved = item.solved_questions !== undefined && item.solved_questions !== null ? item.solved_questions : (item.total_questions || 0);  
   
           lbContainer.innerHTML += `  
             <div class="lb-row">  
               <span style="font-weight: 700; color: #1e293b;">${i+1}. ${displayName}</span>  
-              <span style="color: #2563eb; font-weight: 800;">${item.score} अंक (${item.solved_questions || item.total_questions || 0} हल)</span>  
+              <span style="color: #2563eb; font-weight: 800;">${item.score} अंक (${totalSolved} हल)</span>  
             </div>  
           `;  
         });  
