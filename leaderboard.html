@@ -401,49 +401,34 @@
         for (const tableName of tables) {
           const { data, error } = await supabaseClient
             .from(tableName)
-            .select(`user_id, username, name, ${scoreColumn}`);
+            .select(`username, name, ${scoreColumn}`);
 
           if (!error && data) {
             data.forEach(row => {
-              // युजर छुट्याउन युनिभर्सल आइडी (user_id वा username) प्रयोग गर्ने
-              const uKey = row.user_id || row.username || row.name;
-              
-              // डेटाबेसमा भएको 'username' वा 'name' मध्ये जुन छ त्यसलाई प्राथमिकता दिने
-              let displayName = row.username || row.name;
+              // username मा नै नाम सेभ हुने भएकोले यसलाई मुख्य पहिचान र नामको रूपमा प्रयोग गरिएको छ
+              let userName = row.username || row.name;
 
-              if (!displayName || displayName.trim() === "" || displayName.toLowerCase() === "aspirant") {
-                if (row.user_id === currentUserId && currentUserSessionName) {
-                  displayName = currentUserSessionName;
+              if (!userName || userName.trim() === "" || userName.toLowerCase() === "aspirant") {
+                if (currentUserSessionName) {
+                  userName = currentUserSessionName;
                 } else {
-                  displayName = "Loksewa Aspirant";
+                  userName = "Loksewa Aspirant";
                 }
               }
 
               const score = Number(row[scoreColumn]) || Number(row.solved_questions) || 0;
 
-              if (!userScoresMap[uKey]) {
-                userScoresMap[uKey] = { id: uKey, name: displayName, totalScore: 0 };
-              } else {
-                if ((userScoresMap[uKey].name === "Loksewa Aspirant" || userScoresMap[uKey].name === "Loksewa Candidate") && 
-                    displayName !== "Loksewa Aspirant" && displayName !== "Loksewa Candidate") {
-                  userScoresMap[uKey].name = displayName;
-                }
+              // युजरनेमलाई नै कुञ्जी (Key) बनाएर स्कोर जोड्ने
+              if (!userScoresMap[userName]) {
+                userScoresMap[userName] = { name: userName, totalScore: 0 };
               }
 
-              userScoresMap[uKey].totalScore += score;
+              userScoresMap[userName].totalScore += score;
             });
           }
         }
 
         let combinedUsers = Object.values(userScoresMap);
-
-        if (currentUserId && !userScoresMap[currentUserId] && currentUserSessionName) {
-          combinedUsers.push({
-            id: currentUserId,
-            name: currentUserSessionName,
-            totalScore: 0
-          });
-        }
 
         combinedUsers.sort((a, b) => b.totalScore - a.totalScore);
 
@@ -508,8 +493,8 @@
         }
 
         // Current User Rank Card
-        if (currentUserId) {
-          const userIndex = combinedUsers.findIndex(u => u.id === currentUserId || u.id === currentUserSessionName);
+        if (currentUserSessionName) {
+          const userIndex = combinedUsers.findIndex(u => u.name.toLowerCase() === currentUserSessionName.toLowerCase());
           if (userIndex !== -1) {
             const loggedUser = combinedUsers[userIndex];
             const myRank = userIndex + 1;
