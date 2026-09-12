@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#2563eb">
+  <title>LoksewaQuest - Leaderboard</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f8fafc;
+      color: #1e293b;
+      padding-bottom: 90px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%);
+      color: white;
+      padding: 24px 20px 30px;
+      border-bottom-left-radius: 28px;
+      border-bottom-right-radius: 28px;
+      box-shadow: 0 10px 25px rgba(29, 78, 216, 0.2);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .filter-tabs {
+      display: flex;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 4px;
+      border-radius: 14px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 10px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: #1d4ed8;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: -15px auto 0;
+      padding: 0 16px;
+    }
+
+    .podium-section {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 25px;
+      padding-top: 10px;
+    }
+
+    .podium-card {
+      background: #ffffff;
+      flex: 1;
+      border-radius: 20px;
+      padding: 18px 10px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      position: relative;
+      border: 1px solid #e2e8f0;
+    }
+
+    .podium-card.first {
+      transform: translateY(-15px);
+      border-color: #f59e0b;
+      background: linear-gradient(to bottom, #fffbeb, #ffffff);
+    }
+
+    .podium-rank {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .first .podium-rank { background: #f59e0b; }
+    .second .podium-rank { background: #94a3b8; }
+    .third .podium-rank { background: #d97706; }
+
+    .podium-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      margin: 8px auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #475569;
+      font-size: 16px;
+      border: 2px solid white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .podium-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .podium-score {
+      font-size: 12px;
+      color: #2563eb;
+      font-weight: 800;
+    }
+
+    .leaderboard-list {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid #f1f5f9;
+      transition: 0.2s;
+    }
+
+    .leaderboard-item:last-child {
+      border-bottom: none;
+    }
+
+    .leaderboard-item:hover {
+      background: #f8fafc;
+    }
+
+    .item-rank {
+      width: 30px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #64748b;
+      text-align: center;
+    }
+
+    .item-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      margin-left: 10px;
+      margin-right: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #475569;
+      font-size: 14px;
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+
+    .item-sub {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .item-score {
+      font-size: 14px;
+      font-weight: 800;
+      color: #2563eb;
+      text-align: right;
+    }
+
+    .current-user-card {
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border: 1px solid #bfdbfe;
+      border-radius: 16px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.08);
+    }
+
+    .loading-state, .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid #cbd5e1;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="header-top">
+      <button class="back-btn" onclick="history.back()" aria-label="Go back">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h1>लिडरबोर्ड (Leaderboard)</h1>
+      <div style="width: 40px;"></div>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="tab-btn active" data-period="daily">दैनिक (Daily)</button>
+      <button class="tab-btn" data-period="weekly">साता dai (Weekly)</button>
+      <button class="tab-btn" data-period="monthly">मासिक (Monthly)</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Podium for Top 3 -->
+    <div id="podiumSection" class="podium-section">
+      <!-- Dynamic Podium Content will load here -->
+    </div>
+
+    <!-- Rest of the List -->
+    <div class="leaderboard-list" id="leaderboardList">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        डाटा लोड हुँदैछ...
+      </div>
+    </div>
+
+    <!-- Current User's Rank Card (Fixed at bottom) -->
+    <div id="currentUserCard" style="display: none;"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, query, orderBy, limit, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeUp ? initializeApp(firebaseConfig) : initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentPeriod = "daily";
+    let currentUser = null;
+
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentPeriod = btn.getAttribute("data-period");
+        fetchLeaderboard(currentPeriod);
+      });
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      fetchLeaderboard(currentPeriod);
+    });
+
+    async function fetchLeaderboard(period) {
+      const leaderboardList = document.getElementById("leaderboardList");
+      const podiumSection = document.getElementById("podiumSection");
+      const currentUserCard = document.getElementById("currentUserCard");
+
+      leaderboardList.innerHTML = `<div class="loading-state"><div class="spinner"></div>डाटा लोड हुँदैछ...</div>`;
+      podiumSection.innerHTML = "";
+      currentUserCard.style.display = "none";
+
+      try {
+        // नोट: तपाईंको Firestore संरचना अनुसार field नाम (जस्तै solvedDaily, solvedWeekly, solvedMonthly वा कुल प्रश्न संख्या) मिलाउन सक्नुहुन्छ।
+        // यहाँ उदाहरणका लागि solvedDaily, solvedWeekly, solvedMonthly प्रयोग गरिएको छ।
+        const scoreField = period === "daily" ? "solvedDaily" : period === "weekly" ? "solvedWeekly" : "solvedMonthly";
+        
+        const q = query(collection(db, "users"), orderBy(scoreField, "desc"), limit(50));
+        const querySnapshot = await getDocs(q);
+
+        let users = [];
+        querySnapshot.forEach((docSnap) => {
+          users.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        if (users.length === 0) {
+          leaderboardList.innerHTML = `<div class="empty-state">अहिले कुनै डाटा उपलब्ध छैन।</div>`;
+          podiumSection.style.display = "none";
+          return;
+        }
+
+        podiumSection.style.display = "flex";
+
+        // Render Podium (Top 3)
+        let podiumHTML = "";
+        const top3 = users.slice(0, 3);
+        
+        // Podium order second, first, third for visual layout
+        const orderedPodium = [];
+        if (top3[1]) orderedPodium.push({ user: top3[1], rank: 2, cls: "second" });
+        if (top3[0]) orderedPodium.push({ user: top3[0], rank: 1, cls: "first" });
+        if (top3[2]) orderedPodium.push({ user: top3[2], rank: 3, cls: "third" });
+
+        orderedPodium.forEach(item => {
+          const name = item.user.name || item.user.displayName || "User";
+          const score = item.user[scoreField] || 0;
+          const initials = name.charAt(0).toUpperCase();
+
+          podiumHTML += `
+            <div class="podium-card ${item.cls}">
+              <div class="podium-rank">${item.rank}</div>
+              <div class="podium-avatar">${initials}</div>
+              <div class="podium-name">${name}</div>
+              <div class="podium-score">${score} प्रश्न</div>
+            </div>
+          `;
+        });
+        podiumSection.innerHTML = podiumHTML;
+
+        // Render Remaining List (From index 3 onwards)
+        let listHTML = "";
+        const remainingUsers = users.slice(3);
+
+        if (remainingUsers.length === 0 && users.length <= 3) {
+          leaderboardList.innerHTML = `<div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 13px;">अन्य सहभागीहरू छैनन्</div>`;
+        } else {
+          remainingUsers.forEach((user, index) => {
+            const rank = index + 4;
+            const name = user.name || user.displayName || "User";
+            const score = user[scoreField] || 0;
+            const initials = name.charAt(0).toUpperCase();
+
+            listHTML += `
+              <div class="leaderboard-item">
+                <div class="item-rank">${rank}</div>
+                <div class="item-avatar">${initials}</div>
+                <div class="item-info">
+                  <div class="item-name">${name}</div>
+                  <div class="item-sub">Loksewa Aspirant</div>
+                </div>
+                <div class="item-score">${score} <span style="font-size: 11px; font-weight: 500; color: #64748b;">प्र.</span></div>
+              </div>
+            `;
+          });
+          leaderboardList.innerHTML = listHTML;
+        }
+
+        // Handle Current Logged-in User Rank Display if available
+        if (currentUser) {
+          const userIndex = users.findIndex(u => u.id === currentUser.uid);
+          if (userIndex !== -1) {
+            const loggedUser = users[userIndex];
+            const myName = loggedUser.name || loggedUser.displayName || "तपाईं";
+            const myScore = loggedUser[scoreField] || 0;
+            const myRank = userIndex + 1;
+            const myInitials = myName.charAt(0).toUpperCase();
+
+            currentUserCard.style.display = "flex";
+            currentUserCard.innerHTML = `
+              <div class="item-rank" style="color: #2563eb;">#${myRank}</div>
+              <div class="item-avatar" style="background: #2563eb; color: white;">${myInitials}</div>
+              <div class="item-info">
+                <div class="item-name">${myName} (तपाईं)</div>
+                <div class="item-sub">तपाईँको स्थान</div>
+              </div>
+              <div class="item-score">${myScore} प्रश्न</div>
+            `;
+          }
+        }
+
+      } catch (error) {
+        console.error("Leaderboard fetch error:", error);
+        leaderboardList.innerHTML = `<div class="empty-state">डाटा लोड गर्न असफल भयो।</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
