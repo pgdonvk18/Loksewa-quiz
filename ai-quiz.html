@@ -1,0 +1,90 @@
+<!-- Topic Selection Container -->
+<div id="aiQuizSetup" style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px;">
+  <h2 style="font-size: 16px; margin-bottom: 12px; color: #0f172a;">🤖 AI Topic Quiz जेनेरेटर</h2>
+  <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">तपाईंलाई कुन टपिकमा प्रश्न अभ्यास गर्न मन छ, यहाँ लेख्नुहोस्:</p>
+  
+  <input type="text" id="aiTopicInput" placeholder="जस्तै: नेपालको भूगोल, Constitution of Nepal..." style="width: 100%; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 14px; margin-bottom: 12px; outline: none;">
+  
+  <button onclick="generateAIQuiz()" id="generateBtn" style="width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer;">
+    प्रश्नहरू जेनेरेट गर्नुहोस् (Generate)
+  </button>
+</div>
+
+<!-- Quiz Display Container -->
+<div id="aiQuizContainer" style="display: none;"></div>
+
+<script>
+  async function generateAIQuiz() {
+    const topic = document.getElementById("aiTopicInput").value.trim();
+    const container = document.getElementById("aiQuizContainer");
+    const btn = document.getElementById("generateBtn");
+
+    if (!topic) {
+      alert("कृपया टपिक लेख्नुहोस्!");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "AI ले प्रश्न बनाउँदैछ...";
+    container.style.display = "block";
+    container.innerHTML = `<div class="loading-state"><div class="spinner"></div>कृपया प्रतीक्षा गर्नुहोस्...</div>`;
+
+    try {
+      // Calling Supabase Edge Function securely
+      const { data, error } = await supabaseClient.functions.invoke('generate-ai-quiz', {
+        body: { topic: topic }
+      });
+
+      if (error) throw error;
+
+      renderAIQuiz(data.questions);
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = `<div class="empty-state">प्रश्न जेनेरेट गर्न सकिएन। फेरि प्रयास गर्नुहोस्।</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "प्रश्नहरू जेनेरेट गर्नुहोस् (Generate)";
+    }
+  }
+
+  function renderAIQuiz(questions) {
+    const container = document.getElementById("aiQuizContainer");
+    let html = `<div style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">`;
+    
+    questions.forEach((q, index) => {
+      html.innerHTML += `
+        <div style="margin-bottom: 20px;">
+          <p style="font-weight: 700; font-size: 14px; margin-bottom: 10px;">${index + 1}. ${q.question}</p>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${q.options.map((opt, i) => `
+              <button onclick="checkAnswer(this, ${i}, ${q.correct})" style="padding: 10px 14px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 10px; text-align: left; cursor: pointer; font-size: 13px;">
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+  }
+
+  function checkAnswer(btn, selected, correct) {
+    const parent = btn.parentElement;
+    const buttons = parent.querySelectorAll('button');
+    
+    buttons.forEach((b, idx) => {
+      b.disabled = true;
+      if (idx === correct) {
+        b.style.background = "#dcfce7";
+        b.style.borderColor = "#22c55e";
+        b.style.color = "#166534";
+      } else if (idx === selected) {
+        b.style.background = "#fee2e2";
+        b.style.borderColor = "#ef4444";
+        b.style.color = "#991b1b";
+      }
+    });
+  }
+</script>
