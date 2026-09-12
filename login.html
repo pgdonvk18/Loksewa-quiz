@@ -170,6 +170,50 @@
       transform: none;
     }
 
+    /* Google Sign-in Button Styles */
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .divider::before { margin-right: 10px; }
+    .divider::after { margin-left: 10px; }
+
+    .google-btn {
+      width: 100%;
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 13px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      transition: 0.2s;
+    }
+    .google-btn:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+    .google-icon {
+      width: 18px;
+      height: 18px;
+    }
+
     .loading-content {
       display: flex;
       justify-content: center;
@@ -327,6 +371,19 @@
       </button>
     </form>
 
+    <div class="divider">अथवा</div>
+
+    <!-- GOOGLE LOGIN BUTTON -->
+    <button type="button" id="googleLoginBtn" class="google-btn">
+      <svg class="google-icon" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.19v3.14C3.21 21.35 7.3 24 12 24z"/>
+        <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.19C.43 8.15 0 9.89 0 11.7s.43 3.55 1.19 5.08l4.08-2.54z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.3 0 3.21 2.65 1.19 6.62l4.08 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
+      </svg>
+      Google बाट लगइन गर्नुहोस्
+    </button>
+
     <div class="register-redirect">
       अकाउन्ट छैन? <a href="register.html">रजिस्टर गर्नुहोस्</a>
     </div>
@@ -347,7 +404,7 @@
   <!-- FIREBASE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -360,6 +417,7 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
 
     try {
       await setPersistence(auth, browserSessionPersistence);
@@ -367,12 +425,25 @@
       console.error("Persistence Error:", error);
     }
 
+    // पेज लोड हुँदा यदि Google बाट redirect भएर आएको छ भने त्यसलाई प्रमाणित गर्ने
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result && result.user) {
+          window.location.href = "dashboard.html";
+        }
+      } catch (error) {
+        console.error("Google Redirect Result Error:", error);
+      }
+    });
+
     const loginForm = document.getElementById("loginForm");
     const emailInput = document.getElementById("loginEmail");
     const passwordInput = document.getElementById("loginPassword");
     const loginButton = document.getElementById("loginButton");
     const passwordToggle = document.getElementById("passwordToggle");
     const passwordIcon = document.getElementById("passwordIcon");
+    const googleLoginBtn = document.getElementById("googleLoginBtn");
 
     const popup = document.getElementById("customPopup");
     const popupTitle = document.getElementById("popupTitle");
@@ -451,6 +522,7 @@
       }
     }
 
+    // Email/Password Login
     loginForm.addEventListener("submit", async function(event) {
       event.preventDefault();
 
@@ -518,6 +590,37 @@
         showPopup("लगइन असफल!", message, "error");
       } finally {
         setLoading(false);
+      }
+    });
+
+    // Google Login Handler (पहिले पपअपबाट ट्राइ गर्ने, पपअप ब्लक भएमा स्वतः रिडाइरेक्ट विधि अपनाउने)
+    googleLoginBtn.addEventListener("click", async function() {
+      try {
+        googleLoginBtn.disabled = true;
+        googleLoginBtn.style.opacity = "0.7";
+        
+        await signInWithPopup(auth, googleProvider);
+        window.location.href = "dashboard.html";
+      } catch (error) {
+        console.warn("Popup login failed or blocked, trying redirect method:", error.code);
+        
+        // यदि मोबाइल ब्राउजर वा पपअप ब्लक भएको कारणले पपअप फेल भयो भने रिडाइरेक्ट प्रयोग गर्ने
+        if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request' || error.code === 'auth/popup-closed-by-user') {
+          if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+            googleLoginBtn.disabled = false;
+            googleLoginBtn.style.opacity = "1";
+            return;
+          }
+        }
+        
+        try {
+          await signInWithRedirect(auth, googleProvider);
+        } catch (redirectError) {
+          console.error("Google Redirect Error:", redirectError);
+          showPopup("गुगल लगइन असफल", "Google बाट लगइन गर्दा समस्या आयो: " + redirectError.message, "error");
+          googleLoginBtn.disabled = false;
+          googleLoginBtn.style.opacity = "1";
+        }
       }
     });
 
