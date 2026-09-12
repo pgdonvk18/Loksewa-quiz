@@ -1,16 +1,11 @@
-<div style="background: #ffffff; padding: 24px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; margin: 20px auto; max-width: 600px;">
-  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-    <div style="width: 36px; height: 36px; background: #eff6ff; color: #2563eb; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px;">
-      <i class="fa-solid fa-robot"></i>
-    </div>
-    <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">AI टपिक क्विज जेनेरेटर</h2>
-  </div>
-  <p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">तपाईंलाई जुन विषय वा टपिकमा प्रश्न अभ्यास गर्न मन छ, तल लेख्नुहोस्:</p>
+<div style="background: #ffffff; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; margin: 20px auto; max-width: 600px;">
+  <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">🤖 AI टपिक क्विज जेनेरेटर</h2>
+  <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">तपाईंलाई कुन टपिकमा प्रश्न अभ्यास गर्न मन छ, तल लेख्नुहोस्:</p>
   
-  <input type="text" id="aiTopicInput" placeholder="जस्तै: नेपालको भूगोल, Constitution of Nepal..." style="width: 100%; padding: 13px 16px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 14px; margin-bottom: 14px; outline: none; transition: 0.2s;" onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#cbd5e1'">
+  <input type="text" id="aiTopicInput" placeholder="जस्तै: नेपालको भूगोल, Constitution..." style="width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 14px; margin-bottom: 12px; outline: none;">
   
-  <button onclick="generateAIQuiz()" id="generateBtn" style="width: 100%; background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%); color: white; border: none; padding: 13px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(29, 78, 216, 0.2); transition: 0.2s;">
-    प्रश्नहरू जेनेरेट गर्नुहोस् (Generate)
+  <button onclick="generateAIQuiz()" id="generateBtn" style="width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;">
+    प्रश्नहरू जेनेरेट गर्नुहोस्
   </button>
 </div>
 
@@ -30,46 +25,49 @@
     btn.disabled = true;
     btn.innerText = "AI ले प्रश्न बनाउँदैछ...";
     container.style.display = "block";
-    container.innerHTML = `
-      <div style="background: white; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-        <div class="spinner" style="width: 30px; height: 30px; border: 3px solid #cbd5e1; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px;"></div>
-        <div style="color: #64748b; font-size: 14px; font-weight: 600;">कृपया प्रतीक्षा गर्नुहोस्, AI ले प्रश्न तयार गर्दैछ...</div>
-      </div>
-    `;
+    container.innerHTML = `<div style="background: white; padding: 20px; border-radius: 16px; text-align: center; color: #64748b; font-size: 13px;">कृपया प्रतीक्षा गर्नुहोस्...</div>`;
 
     try {
-      const { data, error } = await supabaseClient.functions.invoke('generate-ai-quiz', {
+      // Automatically detect whether 'supabaseClient' or 'supabase' is used on your page
+      const client = window.supabaseClient || window.supabase;
+      
+      if (!client) {
+        throw new Error("Supabase client फेला परेन। कृपया आफ्नो मुख्य स्क्रिप्ट चेक गर्नुहोस्।");
+      }
+
+      const { data, error } = await client.functions.invoke('generate-ai-quiz', {
         body: { topic: topic }
       });
 
       if (error) throw error;
-      if (!data || !data.questions) throw new Error("Invalid response format");
+      if (!data || !data.questions) throw new Error("डेटा सहि आएन");
       
       renderAIQuiz(data.questions);
     } catch (err) {
       console.error(err);
+      // Showing the exact error on mobile screen so you can see it easily
       container.innerHTML = `
-        <div style="background: #fef2f2; border: 1px solid #fca5a5; padding: 20px; border-radius: 16px; text-align: center; color: #991b1b; font-size: 13px; font-weight: 600;">
-          प्रश्न जेनेरेट गर्न सकिएन। फेरि प्रयास गर्नुहोस्।
+        <div style="background: #fef2f2; border: 1px solid #fca5a5; padding: 15px; border-radius: 14px; color: #991b1b; font-size: 12px; word-break: break-all;">
+          <b>एरर आयो:</b> ${err.message || JSON.stringify(err)}
         </div>
       `;
     } finally {
       btn.disabled = false;
-      btn.innerText = "प्रश्नहरू जेनेरेट गर्नुहोस् (Generate)";
+      btn.innerText = "प्रश्नहरू जेनेरेट गर्नुहोस्";
     }
   }
 
   function renderAIQuiz(questions) {
     const container = document.getElementById("aiQuizContainer");
-    let html = `<div style="background: white; padding: 20px 24px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">`;
+    let html = `<div style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">`;
     
     questions.forEach((q, index) => {
       html += `
-        <div style="margin-bottom: 22px; border-bottom: 1px solid #f1f5f9; padding-bottom: 18px;">
-          <p style="font-weight: 700; font-size: 14px; margin-bottom: 12px; color: #0f172a; line-height: 1.5;">${index + 1}. ${q.question}</p>
+        <div style="margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
+          <p style="font-weight: 700; font-size: 14px; margin-bottom: 10px; color: #0f172a;">${index + 1}. ${q.question}</p>
           <div style="display: flex; flex-direction: column; gap: 8px;">
             ${q.options.map((opt, i) => `
-              <button onclick="checkAIAnswer(this, ${i}, ${q.correct})" style="padding: 11px 14px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 10px; text-align: left; cursor: pointer; font-size: 13px; color: #334155; font-weight: 500; transition: 0.2s;">
+              <button onclick="checkAIAnswer(this, ${i}, ${q.correct})" style="padding: 10px 14px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 10px; text-align: left; cursor: pointer; font-size: 13px; color: #334155;">
                 ${opt}
               </button>
             `).join('')}
@@ -88,7 +86,6 @@
     
     buttons.forEach((b, idx) => {
       b.disabled = true;
-      b.style.cursor = "default";
       if (idx === correct) {
         b.style.background = "#dcfce7";
         b.style.borderColor = "#22c55e";
@@ -102,9 +99,3 @@
     });
   }
 </script>
-
-<style>
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-</style>
