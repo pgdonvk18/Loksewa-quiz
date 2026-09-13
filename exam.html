@@ -514,10 +514,10 @@
         currentIdx++;
         loadExamQuestion();
       } else {
-        if (confirm('के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?')) {
+        showConfirmPopup("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?", function() {
           if (!isPracticeMode) clearInterval(timerInterval);
           submitExam();
-        }
+        }, "परीक्षा बुझाउने 📝");
       }
     }
 
@@ -559,7 +559,6 @@
         document.getElementById('report-main-title').innerText = '📊 परीक्षा प्रतिवेदन (Exam Report Card)';
         document.getElementById('rep-set').innerText = 'परीक्षा सेट: Set-1 (Live Exam)';
         
-        // चेक गर्न र रोक्नको लागि इमेल नै username मा सेभ हुन्छ
         await supabaseClient.from('leaderboard_set1').insert([
           { username: userEmail, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
         ]);
@@ -596,7 +595,6 @@
         }
         
         data.forEach((item, i) => {
-          // यदि database मा username मा इमेल छ भने त्यसलाई काटेर नाम/Username मात्र देखाउने
           let displayName = item.username;
           if (displayName && displayName.includes('@')) {
             displayName = displayName.split('@')[0];
@@ -615,7 +613,10 @@
     window.downloadPDF = function() {
       window.print();
     }
-  </script><script src="components.js"></script>
+  </script>
+  
+  <!-- components.js फाइल इन्क्लुड गरिएको (जसमा showConfirmPopup र अरू पपअप फंक्सनहरू छन्) -->
+  <script src="components.js"></script>
 
 </body>
 </html>
