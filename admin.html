@@ -170,7 +170,6 @@
   </div>
 
   <div class="admin-header">
-    <!-- यहाँ href लाई dashboard.html बनाइएको छ -->
     <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
     <h1><i class="fa-solid fa-shield-halved" style="color: #fbbf24;"></i> SQL Insert Admin Panel</h1>
     <div style="width: 38px;"></div>
@@ -180,20 +179,21 @@
     <div id="alertBox"></div>
 
     <div class="form-card">
-      <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू हाल्नुहोस्</h3>
+      <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू हाल्नुहोस् (Explanation सहित)</h3>
       <form id="sqlForm">
         <div class="form-group">
           <label>तपाईंको INSERT INTO SQL Query यहाँ राख्नुहोस्:</label>
-          <textarea id="sqlInput" class="form-control" placeholder="INSERT INTO public.quizzes (topic, question, options, answer) 
+          <textarea id="sqlInput" class="form-control" placeholder="INSERT INTO public.quizzes (topic, question, options, answer, explanation) 
 VALUES 
 (
   'World_geography', 
   'नेपाल राष्ट्र बैंकको स्थापना कहिले भएको हो?', 
   '[\"वि.सं. २०१३ वैशाख १४\", \"वि.सं. २०१२ बैशाख २६\", \"वि.सं. २०२० साल\", \"वि.सं. २००७ साल\"]', 
-  'वि.सं. २०१३ वैशाख १४'
+  'वि.सं. २०१३ वैशाख १४',
+  'नेपाल राष्ट्र बैंक ऐन, २०१२ अन्तर्गत वि.सं. २०१३ वैशाख १४ गते स्थापना भएको हो।'
 );" required></textarea>
           <div class="help-text">
-            💡 <b>निर्देशन:</b> `INSERT INTO public.quizzes (...) VALUES (...)` फॉर्मेटमा राख्नुहोला। बहुसंख्यक रेकर्डहरू हुँदा कोमा (,) ले छुट्याउनुहोला।
+            💡 <b>निर्देशन:</b> `topic`, `question`, `options`, `answer`, `explanation` गरी जम्मा ५ वटा स्तम्भहरू समावेश गर्नुहोला।
           </div>
         </div>
 
@@ -229,7 +229,7 @@ VALUES
     onAuthStateChanged(auth, async (user) => {
       if (!user || !user.email || !adminEmails.includes(user.email.toLowerCase())) {
         alert("तपाईंलाई यो प्यानल पहुँच गर्ने अनुमति छैन!");
-        window.location.href = "dashboard.html"; // अनाधिकृत युजरलाई पनि ड्यासबोर्ड वा होमपेजमा फर्काउने
+        window.location.href = "dashboard.html";
         return;
       }
 
@@ -336,6 +336,7 @@ VALUES
           let question = fields[1] || '';
           let optionsStr = fields[2] || '[]';
           let answer = fields[3] || '';
+          let explanation = fields[4] || '';
 
           let optionsParsed;
           try {
@@ -348,7 +349,8 @@ VALUES
             topic: topic,
             question: question,
             options: optionsParsed,
-            answer: answer
+            answer: answer,
+            explanation: explanation
           };
         });
 
@@ -359,7 +361,7 @@ VALUES
         const { error } = await supabase.from('quizzes').insert(parsedRecords);
         if (error) throw error;
 
-        showAlert(`सफलतापूर्वक ${parsedRecords.length} वटा प्रश्नहरू quizzes टेबलमा सेभ भए!`, "success");
+        showAlert(`सफलतापूर्वक ${parsedRecords.length} वटा प्रश्नहरू explanation सहित सेभ भए!`, "success");
         sqlForm.reset();
       } catch (err) {
         showAlert("त्रुटि: " + err.message, "error");
