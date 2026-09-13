@@ -298,7 +298,7 @@
   {
     "question": "सगरमाथाको उचाइ कति छ?",
     "options": ["८८४८.८६ मि", "८,००० मि", "९,००० मि", "८,५०० मि"],
-    "correct": 0
+    "answer": 0
   }
 ]' style="font-size: 12px;"></textarea>
 
@@ -572,7 +572,7 @@
           topic: topic,
           question: q.question,
           options: q.options,
-          correct_option: q.correct
+          answer: q.answer ?? q.correct ?? q.correct_option ?? 0
         }));
 
         const { error } = await supabaseClient.from('quizzes').insert(rowsToInsert);
@@ -615,7 +615,7 @@
         battleData = selectedQuestions.map(q => ({
           question: q.question,
           options: q.options,
-          correct: q.correct_option ?? q.correct
+          correct: q.answer !== undefined ? q.answer : (q.correct !== undefined ? q.correct : (q.correct_option !== undefined ? q.correct_option : 0))
         }));
 
         const { error: roomError } = await supabaseClient.from('battle_rooms').insert([{
@@ -676,9 +676,8 @@
 
     function subscribeToRoom() {
       supabaseClient.channel('room_' + currentRoomId)
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'battle_rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'battle_rooms', filter: `room_id=eq.${currentRoomId}` }, async payload => {
           const newData = payload.new;
-          latestRoomRecord = newData;
           
           if (isHost && newData.guest_name && document.getElementById("waitingView").classList.contains("hidden") === false) {
             document.getElementById("waitingGuestName").innerText = newData.guest_name;
@@ -694,7 +693,8 @@
 
           if (newData.status === 'completed') {
             if (pollingInterval) clearInterval(pollingInterval);
-            showFinalResults(newData);
+            const { data: freshRoom } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
+            showFinalResults(freshRoom || newData);
           }
         })
         .subscribe();
@@ -705,7 +705,6 @@
       pollingInterval = setInterval(async () => {
         const { data, error } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
         if (!error && data) {
-          latestRoomRecord = data;
           if (isHost && data.guest_name) {
             document.getElementById("waitingGuestName").innerText = data.guest_name;
             document.getElementById("guestStatusBadge").innerText = "तयार";
@@ -789,14 +788,13 @@
         await supabaseClient.from('battle_rooms').update(updateField).eq('room_id', currentRoomId);
 
         const { data: roomData } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
-        latestRoomRecord = roomData;
         
         const hostAns = roomData.host_answers;
         const guestAns = roomData.guest_answers;
 
         if (hostAns && guestAns && Object.keys(hostAns).length > 0 && Object.keys(guestAns).length > 0) {
-          const hostScore = calculateScore(hostAns);
-          const guestScore = calculateScore(guestAns);
+          const hostScore = calculateScore(hostAns, roomData.quiz_data);
+          const guestScore = calculateScore(guestAns, roomData.quiz_data);
           let winnerName = hostScore > guestScore ? roomData.host_name : (guestScore > hostScore ? roomData.guest_name : "Tie");
           
           await supabaseClient.from('battle_rooms').update({
@@ -804,7 +802,8 @@
             status: 'completed'
           }).eq('room_id', currentRoomId);
 
-          showFinalResults({ ...roomData, winner: winnerName });
+          const { data: finalRoomData } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
+          showFinalResults(finalRoomData || { ...roomData, winner: winnerName });
         } else {
           startPollingForRoom();
         }
@@ -814,11 +813,12 @@
       }
     }
 
-    function calculateScore(answersObj) {
+    function calculateScore(answersObj, questionsList) {
       let score = 0;
-      if (!answersObj) return 0;
-      battleData.forEach((q, idx) => {
-        if (answersObj[idx] === q.correct) score++;
+      if (!answersObj || !questionsList) return 0;
+      questionsList.forEach((q, idx) => {
+        let correctIdx = q.correct !== undefined ? q.correct : (q.answer !== undefined ? q.answer : q.correct_option);
+        if (answersObj[idx] === correctIdx) score++;
       });
       return score;
     }
@@ -833,8 +833,8 @@
       document.getElementById("waitingView").classList.add("hidden");
       document.getElementById("resultView").classList.remove("hidden");
 
-      const hostScore = calculateScore(roomData.host_answers || {});
-      const guestScore = calculateScore(roomData.guest_answers || {});
+      const hostScore = calculateScore(roomData.host_answers || {}, battleData);
+      const guestScore = calculateScore(roomData.guest_answers || {}, battleData);
 
       const isWinner = roomData.winner === playerName;
       const isTie = roomData.winner === "Tie";
@@ -901,8 +901,8 @@
       let reviewHtml = "<h4 style='font-size: 12px; font-weight: 800; margin-bottom: 10px; color: #0f172a;'>📝 प्रश्नोत्तर समीक्षा (Answer Review)</h4>";
 
       battleData.forEach((q, idx) => {
-        const correctOptIdx = q.correct;
-        const correctOptText = q.options[correctOptIdx];
+        const correctOptIdx = q.correct !== undefined ? q.correct : (q.answer !== undefined ? q.answer : q.correct_option);
+        const correctOptText = q.options[correctOptIdx] ?? "अज्ञात";
 
         const hAnsIdx = hostAns[idx];
         const hAnsText = hAnsIdx !== undefined ? q.options[hAnsIdx] : "उत्तर दिएन";
