@@ -61,6 +61,57 @@
       background: rgba(255, 255, 255, 0.25);
     }
 
+    /* ⚡ Marquee Notification Ticker Styles (सरर चल्ने सूचना पट्टी) */
+    .ticker-container {
+      background: #fef3c7;
+      border-bottom: 1px solid #fde68a;
+      border-top: 1px solid #fde68a;
+      color: #92400e;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+    .ticker-badge-tag {
+      background: #d97706;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      margin-right: 12px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ticker-text-wrap {
+      overflow: hidden;
+      width: 100%;
+      display: inline-block;
+    }
+    .ticker-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 25s linear infinite;
+    }
+    .ticker-text:hover {
+      animation-play-state: paused; /* माउस राख्दा रोकिने */
+    }
+    @keyframes marquee {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-100%, 0); }
+    }
+
     /* साइडबार ड्रअर (Sidebar Drawer Styling) */
     .sidebar-overlay {
       position: fixed;
@@ -254,7 +305,6 @@
     /* मुख्य कन्टेनर */
     .main-container {
       padding: 0 20px;
-      margin-top: -15px;
     }
 
     /* अभिवादन खण्ड */
@@ -551,6 +601,16 @@
     <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
   </div>
 
+  <!-- ⚡ HORIZONTAL TICKER NOTIFICATION BAR (सुचना सरर चल्ने पट्टी) -->
+  <div class="ticker-container">
+    <span class="ticker-badge-tag">
+      <i class="fa-solid fa-bullhorn" style="font-size: 9px;"></i> सूचना
+    </span>
+    <div class="ticker-text-wrap">
+      <span id="live-ticker-text" class="ticker-text">LoksewaQuest मा स्वागत छ! नयाँ सेटहरू अपडेट गरिएको छ।</span>
+    </div>
+  </div>
+
   <!-- साइडबार ड्रअर (Sidebar Drawer) -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
   <div class="sidebar" id="sidebar">
@@ -638,7 +698,7 @@
   </div>
 
   <!-- मुख्य कन्टेनर -->
-  <div class="main-container" style="margin-top: -20px;">
+  <div class="main-container">
     
     <!-- अभिवादन तथा युजर प्रिमियम कार्ड -->
     <div class="greeting-section">
@@ -783,12 +843,31 @@
     closeSidebar.addEventListener('click', toggleSidebar);
     sidebarOverlay.addEventListener('click', toggleSidebar);
 
+    // सुपाबेसबाट पछिल्लो लाइभ सूचना तान्ने फंक्सन
+    async function fetchLatestNotification() {
+      try {
+        const { data, error } = await supabase
+          .from('notifications')
+          .select('message')
+          .order('id', { ascending: false })
+          .limit(1);
+
+        if (data && data.length > 0) {
+          document.getElementById('live-ticker-text').textContent = data[0].message;
+        }
+      } catch (err) {
+        console.error("Notification fetch error:", err);
+      }
+    }
+
+    // पेज लोड हुँदा सूचना कल गर्ने
+    fetchLatestNotification();
+
     // इमेलको आधारमा एड्मिन प्यानल देखाउने फंक्सन
     async function checkAdminRole(user) {
       try {
         if (!user || !user.email) return;
 
-        // 👇 यहाँ आफ्नो वास्तविक एड्मिन इमेल राख्नुहोस्
         const adminEmails = ["pgprajwal11@gmail.com"]; 
 
         if (adminEmails.includes(user.email.toLowerCase())) {
