@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoksewaQuest - 1v1 Live Quiz Battle</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .battle-wrapper {
+      width: 100%;
+      max-width: 500px;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      border: 1px solid #f1f5f9;
+      box-sizing: border-box;
+      margin: 15px;
+    }
+    .hidden { display: none !important; }
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+      transition: 0.2s;
+    }
+    .btn-primary:active { transform: scale(0.98); }
+    input[type="text"], select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 14px;
+      margin-bottom: 14px;
+      outline: none;
+      box-sizing: border-box;
+      transition: 0.2s;
+    }
+    input[type="text"]:focus, select:focus { border-color: #2563eb; }
+    .topic-chip {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .topic-chip:hover { background: #eff6ff; border-color: #2563eb; color: #2563eb; }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #cbd5e1;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .animate-bounce { animation: bounce 0.6s ease infinite; }
+  </style>
+</head>
+<body>
+
+<div class="battle-wrapper">
+
+  <!-- VIEW 1: SETUP/CREATE BATTLE -->
+  <div id="setupView">
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+      <div style="width: 40px; height: 40px; background: #eff6ff; color: #2563eb; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+        <i class="fa-solid fa-swords"></i>
+      </div>
+      <div>
+        <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">1v1 लाइभ क्विज ब्याटल</h2>
+        <p style="font-size: 11px; color: #64748b; margin: 2px 0 0 0;">साथीसँग च्यालेन्ज खेल गर्नुहोस्</p>
+      </div>
+    </div>
+
+    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">तपाईंको नाम:</label>
+    <input type="text" id="hostNameInput" placeholder="जस्तै: रमेश अधिकारी">
+
+    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">विषय वा टपिक छान्नुहोस्:</label>
+    <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
+      <button type="button" onclick="setTopic('नेपालको भूगोल')" class="topic-chip">नेपालको भूगोल</button>
+      <button type="button" onclick="setTopic('विश्वको भूगोल')" class="topic-chip">विश्वको भूगोल</button>
+      <button type="button" onclick="setTopic('नेपालको इतिहास')" class="topic-chip">नेपालको इतिहास</button>
+      <button type="button" onclick="setTopic('संविधान')" class="topic-chip">संविधान</button>
+    </div>
+    <input type="text" id="topicInput" placeholder="वा आफैं लेख्नुहोस्...">
+
+    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">प्रश्न संख्या:</label>
+    <select id="questionCountSelect">
+      <option value="3">३ वटा प्रश्न</option>
+      <option value="5" selected>५ वटा प्रश्न</option>
+      <option value="10">१० वटा प्रश्न</option>
+    </select>
+
+    <button onclick="createBattle()" class="btn-primary" style="margin-top: 6px;">ब्याटल लिङ्क सिर्जना गर्नुहोस्</button>
+  </div>
+
+  <!-- VIEW 2: WAITING FOR GUEST OR JOINING -->
+  <div id="waitingView" class="hidden" style="text-align: center; padding: 10px 0;">
+    <div class="spinner"></div>
+    <h3 id="waitingTitle" style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">साथीको प्रतीक्षा गर्दैछ...</h3>
+    <p style="font-size: 12px; color: #64748b; margin-bottom: 16px;">यो लिङ्क कपी गरेर साथीलाई पठाउनुहोस्:</p>
+    
+    <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+      <input type="text" id="shareLinkBox" readonly style="margin: 0; background: #f8fafc;">
+      <button onclick="copyShareLink()" style="background: #e2e8f0; border: none; padding: 0 14px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer;">कपी</button>
+    </div>
+    
+    <div id="joinGuestBox" class="hidden">
+      <input type="text" id="guestNameInput" placeholder="तपाईंको नाम (Guest)...">
+      <button onclick="joinBattle()" class="btn-primary">ब्याटलमा जोइन हुनुहोस्</button>
+    </div>
+  </div>
+
+  <!-- VIEW 3: LIVE BATTLE QUIZ -->
+  <div id="quizView" class="hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; background: #f8fafc; padding: 10px 14px; border-radius: 12px; border: 1px solid #e2e8f0;">
+      <span id="playerVsIndicator" style="font-size: 12px; font-weight: 700; color: #334155;">Battle</span>
+      <span id="liveScoreCounter" style="font-size: 12px; font-weight: 800; color: #2563eb;">Score: 0</span>
+    </div>
+    <div id="battleQuestionContainer"></div>
+  </div>
+
+  <!-- VIEW 4: RESULT ANIMATION -->
+  <div id="resultView" class="hidden" style="text-align: center; padding: 15px 0;">
+    <div id="resultEmoji" class="animate-bounce" style="font-size: 55px; margin-bottom: 10px;">🏆</div>
+    <h2 id="resultHeading" style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">नतिजा</h2>
+    <p id="resultDescription" style="font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.5;"></p>
+    <button onclick="location.href='live-quiz.html'" class="btn-primary">नयाँ ब्याटल खेल्नुहोस्</button>
+  </div>
+
+</div>
+
+<!-- Load Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentRoomId = null;
+  let isHost = false;
+  let playerName = "";
+  let battleData = null;
+  let currentAnswers = {};
+  let realtimeChannel = null;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const roomIdFromUrl = urlParams.get('room');
+
+  if (roomIdFromUrl) {
+    currentRoomId = roomIdFromUrl;
+    isHost = false;
+    document.getElementById("setupView").classList.add("hidden");
+    document.getElementById("waitingView").classList.remove("hidden");
+    document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
+    document.getElementById("shareLinkBox").parentElement.style.display = "none";
+    document.getElementById("joinGuestBox").classList.remove("hidden");
+  }
+
+  function setTopic(topicName) {
+    document.getElementById("topicInput").value = topicName;
+  }
+
+  async function createBattle() {
+    const host = document.getElementById("hostNameInput").value.trim();
+    const topic = document.getElementById("topicInput").value.trim();
+    const count = parseInt(document.getElementById("questionCountSelect").value);
+
+    if (!host || !topic) {
+      alert("कृपया आफ्नो नाम र टपिक लेख्नुहोस्!");
+      return;
+    }
+
+    playerName = host;
+    isHost = true;
+    currentRoomId = 'room_' + Math.random().toString(36.substring(2, 9));
+
+    document.getElementById("setupView").classList.add("hidden");
+    document.getElementById("waitingView").classList.remove("hidden");
+
+    const shareUrl = window.location.origin + window.location.pathname + "?room=" + currentRoomId;
+    document.getElementById("shareLinkBox").value = shareUrl;
+
+    try {
+      // Generate AI Quiz questions using existing edge function
+      const { data: aiData, error: aiError } = await supabaseClient.functions.invoke('generate-ai-quiz', {
+        body: { topic: topic, count: count }
+      });
+
+      if (aiError) throw aiError;
+      battleData = aiData.questions;
+
+      // Insert room into Supabase
+      const { error: dbError } = await supabaseClient.from('battle_rooms').insert([{
+        room_id: currentRoomId,
+        host_name: host,
+        topic: topic,
+        question_count: count,
+        status: 'waiting',
+        quiz_data: battleData
+      }]);
+
+      if (dbError) throw dbError;
+
+      // Listen for Guest joining
+      subscribeToRoom();
+
+    } catch (err) {
+      console.error(err);
+      alert("रुम बनाउन सकिएन। पुनः प्रयास गर्नुहोस्।");
+      location.reload();
+    }
+  }
+
+  function copyShareLink() {
+    const copyText = document.getElementById("shareLinkBox");
+    copyText.select();
+    navigator.clipboard.writeText(copyText.value);
+    alert("लिङ्क कपी भयो! अब साथीलाई पठाउनुहोस्।");
+  }
+
+  async function joinBattle() {
+    const guest = document.getElementById("guestNameInput").value.trim();
+    if (!guest) {
+      alert("कृपया आफ्नो नाम लेख्नुहोस्!");
+      return;
+    }
+
+    playerName = guest;
+    document.getElementById("joinGuestBox").innerHTML = `<div class="spinner"></div><p style="font-size:12px; color:#64748b;">ब्याटलमा जोडिदैछ...</p>`;
+
+    try {
+      const { data, error } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
+      if (error || !data) throw new Error("रुम फेला परेन!");
+
+      battleData = data.quiz_data;
+
+      // Update room with guest name and status active
+      await supabaseClient.from('battle_rooms').update({
+        guest_name: guest,
+        status: 'active'
+      }).eq('room_id', currentRoomId);
+
+      startQuizInterface();
+      subscribeToRoom();
+
+    } catch (err) {
+      console.error(err);
+      alert("ब्याटलमा जोइन हुन असफल भयो।");
+    }
+  }
+
+  function subscribeToRoom() {
+    realtimeChannel = supabaseClient.channel('room_' + currentRoomId)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'battle_rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
+        const newData = payload.new;
+        if (isHost && newData.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
+          startQuizInterface();
+        }
+        if (newData.status === 'completed') {
+          showFinalResults(newData);
+        }
+      })
+      .subscribe();
+  }
+
+  function startQuizInterface() {
+    document.getElementById("waitingView").classList.add("hidden");
+    document.getElementById("quizView").classList.remove("hidden");
+
+    const indicator = document.getElementById("playerVsIndicator");
+    indicator.innerText = isHost ? `Host: ${playerName}` : `Challenger: ${playerName}`;
+
+    let html = "";
+    battleData.forEach((q, qIndex) => {
+      html += `
+        <div style="margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
+          <p style="font-weight: 700; font-size: 13px; margin-bottom: 10px; color: #0f172a; line-height: 1.4;">${qIndex + 1}. ${q.question}</p>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${q.options.map((opt, optIndex) => `
+              <button type="button" onclick="selectOption(${qIndex}, ${optIndex})" id="battle-btn-${qIndex}-${optIndex}" style="padding: 10px 12px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 10px; text-align: left; cursor: pointer; font-size: 12px; color: #334155; font-weight: 500;">
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `<button onclick="submitBattleQuiz()" class="btn-primary" style="background: #16a34a; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">मेरो उत्तर सबमिट गर्नुहोस्</button>`;
+    document.getElementById("battleQuestionContainer").innerHTML = html;
+  }
+
+  function selectOption(qIndex, optIndex) {
+    currentAnswers[qIndex] = optIndex;
+    const parent = document.getElementById(`battle-btn-${qIndex}-0`).parentElement;
+    const buttons = parent.querySelectorAll('button');
+    buttons.forEach((b, idx) => {
+      if (idx === optIndex) {
+        b.style.background = "#eff6ff";
+        b.style.borderColor = "#2563eb";
+        b.style.color = "#1e40af";
+        b.style.fontWeight = "700";
+      } else {
+        b.style.background = "#f8fafc";
+        b.style.borderColor = "#e2e8f0";
+        b.style.color = "#334155";
+        b.style.fontWeight = "500";
+      }
+    });
+  }
+
+  async function submitBattleQuiz() {
+    if (Object.keys(currentAnswers).length === 0) {
+      alert("कम्तिमा एउटा उत्तर छान्नुहोस्!");
+      return;
+    }
+
+    document.getElementById("quizView").innerHTML = `
+      <div style="text-align: center; padding: 30px;">
+        <div class="spinner"></div>
+        <h3 style="font-size: 15px; color: #0f172a; margin-top: 10px;">उत्तर सबमिट भयो! साथीको प्रतीक्षा गर्दैछ...</h3>
+      </div>
+    `;
+
+    try {
+      const updateField = isHost ? { host_answers: currentAnswers } : { guest_answers: currentAnswers };
+      
+      // Fetch latest row to check if opponent already submitted
+      const { data: roomData } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
+      
+      let updatePayload = { ...updateField };
+      const opponentAnswers = isHost ? roomData.guest_answers : roomData.host_answers;
+
+      // If opponent already submitted, calculate winner right now
+      if (opponentAnswers && Object.keys(opponentAnswers).length > 0) {
+        const hostScore = calculateScore(isHost ? currentAnswers : opponentAnswers);
+        const guestScore = calculateScore(isHost ? opponentAnswers : currentAnswers);
+        let winnerName = hostScore > guestScore ? roomData.host_name : (guestScore > hostScore ? roomData.guest_name : "Tie");
+        updatePayload.winner = winnerName;
+        updatePayload.status = 'completed';
+      }
+
+      await supabaseClient.from('battle_rooms').update(updatePayload).eq('room_id', currentRoomId);
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function calculateScore(answersObj) {
+    let score = 0;
+    battleData.forEach((q, idx) => {
+      if (answersObj[idx] === q.correct) score++;
+    });
+    return score;
+  }
+
+  async function showFinalResults(roomData) {
+    document.getElementById("quizView").classList.add("hidden");
+    document.getElementById("resultView").classList.remove("hidden");
+
+    const hostScore = calculateScore(roomData.host_answers || {});
+    const guestScore = calculateScore(roomData.guest_answers || {});
+
+    const isWinner = roomData.winner === playerName;
+    const isTie = roomData.winner === "Tie";
+
+    const emojiEl = document.getElementById("resultEmoji");
+    const headingEl = document.getElementById("resultHeading");
+    const descEl = document.getElementById("resultDescription");
+
+    if (isTie) {
+      emojiEl.innerText = "🤝";
+      headingEl.innerText = "बराबर भयो!";
+      headingEl.style.color = "#d97706";
+    } else if (isWinner) {
+      emojiEl.innerText = "🎉";
+      headingEl.innerText = "बधाई छ, तपाईंले जित्नुभयो!";
+      headingEl.style.color = "#16a34a";
+    } else {
+      emojiEl.innerText = "😢";
+      headingEl.innerText = "तपाईं पराजित हुनुभयो!";
+      headingEl.style.color = "#dc2626";
+    }
+
+    descEl.innerHTML = `
+      <b>${roomData.host_name}</b> स्कोर: <b>${hostScore} / ${battleData.length}</b><br>
+      <b>${roomData.guest_name || 'Guest'}</b> स्कोर: <b>${guestScore} / ${battleData.length}</b>
+    `;
+  }
+</script>
+
+</body>
+</html>
