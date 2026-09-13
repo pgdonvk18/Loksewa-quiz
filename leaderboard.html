@@ -374,6 +374,13 @@
       fetchCombinedLeaderboard(currentPeriod);
     });
 
+    // नेपालको समय (NPT = UTC + 5:45) अनुसार हालको मिति र समय निकाल्ने फंक्सन
+    function getNepalTime() {
+      const now = new Date();
+      const nptOffset = 345 * 60 * 1000; 
+      return new Date(now.getTime() + (now.getTimezoneOffset() * 60 * 1000) + nptOffset);
+    }
+
     async function fetchCombinedLeaderboard(period) {
       const leaderboardList = document.getElementById("leaderboardList");
       const podiumSection = document.getElementById("podiumSection");
@@ -391,21 +398,40 @@
           'leaderboard_world_geography'
         ];
 
-        let scoreColumn = 'solved_questions';
-        if (period === 'daily') scoreColumn = 'solved_daily';
-        else if (period === 'weekly') scoreColumn = 'solved_weekly';
-        else if (period === 'monthly') scoreColumn = 'solved_monthly';
+        // नेपालको समय अनुसार समय सीमा (Time Boundary) निर्धारण
+        const nepalNow = getNepalTime();
+        let startDate = new Date(nepalNow);
+
+        if (period === 'daily') {
+          // आज राति १२:०० बजे (00:00:00) बाट सुरु
+          startDate.setHours(0, 0, 0, 0);
+        } else if (period === 'weekly') {
+          // यो हप्ताको सोमबार राति १२:०० बजेबाट सुरु (आइतबारबाट भए day === 0 ? -6 : 1 लाई मिलाउन सकिन्छ)
+          const day = startDate.getDay();
+          const diff = startDate.getDate() - day + (day === 0 ? -6 : 1);
+          startDate.setDate(diff);
+          startDate.setHours(0, 0, 0, 0);
+        } else if (period === 'monthly')  {
+          // यो महिनाको १ गते राति १२:०० बजेबाट सुरु
+          startDate.setDate(1);
+          startDate.setHours(0, 0, 0, 0);
+        }
 
         let userScoresMap = {};
 
         for (const tableName of tables) {
-          const { data, error } = await supabaseClient
-            .from(tableName)
-            .select(`username, name, ${scoreColumn}`);
+          let query = supabaseClient.from(tableName).select(`username, name, solved_questions, solved_daily, solved_weekly, solved_monthly, created_at`);
+
+          const { data, error } = await query;
 
           if (!error && data) {
             data.forEach(row => {
-              // username मा नै नाम सेभ हुने भएकोले यसलाई मुख्य पहिचान र नामको रूपमा प्रयोग गरिएको छ
+              // यदि टेबलमा created_at छ भने, तोकिएको समयावधि पछिको मात्र रेकर्ड लिने
+              if (row.created_at) {
+                const rowDate = new Date(row.created_at);
+                if (rowDate < startDate) return; // पुरानो डाटालाई यो अवधिको लागि छोड्ने
+              }
+
               let userName = row.username || row.name;
 
               if (!userName || userName.trim() === "" || userName.toLowerCase() === "aspirant") {
@@ -416,9 +442,18 @@
                 }
               }
 
-              const score = Number(row[scoreColumn]) || Number(row.solved_questions) || 0;
+              // अवधिको आधारमा स्कोर छान्ने
+              let score = 0;
+              if (period === 'daily') {
+                score = Number(row.solved_daily) || Number(row.solved_questions) || 0;
+              } else if (period === 'weekly') {
+                score = Number(row.solved_weekly) || Number(row.solved_questions) || 0;
+              } else if (period === 'monthly') {
+                score = Number(row.solved_monthly) || Number(row.solved_questions) || 0;
+              } else {
+                score = Number(row.solved_questions) || 0;
+              }
 
-              // युजरनेमलाई नै कुञ्जी (Key) बनाएर स्कोर जोड्ने
               if (!userScoresMap[userName]) {
                 userScoresMap[userName] = { name: userName, totalScore: 0 };
               }
@@ -429,11 +464,10 @@
         }
 
         let combinedUsers = Object.values(userScoresMap);
-
         combinedUsers.sort((a, b) => b.totalScore - a.totalScore);
 
-        if (combinedUsers.length === 0) {
-          leaderboardList.innerHTML = `<div class="empty-state">अहिले कुनै डाटा उपलब्ध छैन।</div>`;
+        if (combinedUsers.length === 0 || combinedUsers.every(u => u.totalScore === 0)) {
+          leaderboardList.innerHTML = `<div class="empty-state">यो समयावधिमा (Period) अहिलेसम्म कुनै डाटा उपलब्ध छैन।</div>`;
           podiumSection.style.display = "none";
           return;
         }
