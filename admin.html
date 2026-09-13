@@ -79,31 +79,6 @@
       padding: 0 20px;
     }
 
-    .tab-container {
-      display: flex;
-      background: #e2e8f0;
-      border-radius: 14px;
-      padding: 4px;
-      margin-bottom: 20px;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      background: transparent;
-      font-size: 13px;
-      font-weight: 700;
-      color: #64748b;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .tab-btn.active {
-      background: #ffffff;
-      color: #2563eb;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
     .form-card {
       background: #ffffff;
       border-radius: 20px;
@@ -147,7 +122,7 @@
     }
     textarea.form-control {
       resize: vertical;
-      min-height: 120px;
+      min-height: 250px;
       font-family: monospace;
       font-size: 12px;
     }
@@ -185,9 +160,6 @@
     }
     .alert-success { background: #d1fae5; color: #065f46; }
     .alert-error { background: #fee2e2; color: #991b1b; }
-    
-    .section-content { display: none; }
-    .section-content.active { display: block; }
   </style>
 </head>
 <body style="display: none;" id="adminBody">
@@ -199,84 +171,21 @@
 
   <div class="admin-header">
     <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1><i class="fa-solid fa-shield-halved" style="color: #fbbf24;"></i> Admin Question Panel</h1>
+    <h1><i class="fa-solid fa-shield-halved" style="color: #fbbf24;"></i> Admin Bulk Question Panel</h1>
     <div style="width: 38px;"></div>
   </div>
 
   <div class="container">
     <div id="alertBox"></div>
 
-    <div class="tab-container">
-      <button class="tab-btn active" id="singleTabBtn" onclick="switchTab('single')">एक्लो प्रश्न (Single)</button>
-      <button class="tab-btn" id="bulkTabBtn" onclick="switchTab('bulk')">धेरै प्रश्न (Bulk Import)</button>
-    </div>
-
-    <!-- 1. Single Question Form -->
-    <div class="form-card section-content active" id="singleSection">
-      <h3><i class="fa-solid fa-circle-plus" style="color: #2563eb;"></i> सेटमा नयाँ प्रश्न थप्नुहोस्</h3>
-      <form id="questionForm">
-        <div class="form-group">
-          <label>कुन सेट (Set) मा हाल्ने हो छान्नुहोस्:</label>
-          <select id="setSelect" class="form-control setDropdown" required>
-            <option value="">सेटहरू लोड हुँदैछ...</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>प्रश्न (Question):</label>
-          <textarea id="questionText" class="form-control" placeholder="प्रश्न यहाँ लेख्नुहोस्..." style="min-height: 80px; font-family: inherit;" required></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>अप्सन क (Option A):</label>
-          <input type="text" id="optA" class="form-control" placeholder="अप्सन क" required>
-        </div>
-
-        <div class="form-group">
-          <label>अप्सन ख (Option B):</label>
-          <input type="text" id="optB" class="form-control" placeholder="अप्सन ख" required>
-        </div>
-
-        <div class="form-group">
-          <label>अप्सन ग (Option C):</label>
-          <input type="text" id="optC" class="form-control" placeholder="अप्सन ग" required>
-        </div>
-
-        <div class="form-group">
-          <label>अप्सन घ (Option D):</label>
-          <input type="text" id="optD" class="form-control" placeholder="अप्सन घ" required>
-        </div>
-
-        <div class="form-group">
-          <label>सही उत्तर (Correct Answer):</label>
-          <select id="correctAnswer" class="form-control" required>
-            <option value="">सही उत्तर छान्नुहोस्</option>
-            <option value="A">अप्सन क (A)</option>
-            <option value="B">अप्सन ख (B)</option>
-            <option value="C">अप्सन ग (C)</option>
-            <option value="D">अप्सन घ (D)</option>
-          </select>
-        </div>
-
-        <button type="submit" class="submit-btn" id="saveBtn">प्रश्न सेभ गर्नुहोस्</button>
-      </form>
-    </div>
-
-    <!-- 2. Bulk Questions Form -->
-    <div class="form-card section-content" id="bulkSection">
-      <h3><i class="fa-solid fa-file-arrow-up" style="color: #10b981;"></i> एकैपटक धेरै प्रश्नहरू हाल (Bulk Upload)</h3>
+    <div class="form-card">
+      <h3><i class="fa-solid fa-file-arrow-up" style="color: #10b981;"></i> JSON मार्फत प्रश्नहरू अपलोड गर्नुहोस्</h3>
       <form id="bulkForm">
         <div class="form-group">
-          <label>कुन सेट (Set) मा हाल्ने हो छान्नुहोस्:</label>
-          <select id="bulkSetSelect" class="form-control setDropdown" required>
-            <option value="">सेटहरू लोड हुँदैछ...</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>JSON Format मा प्रश्नहरू राख्नुहोस्:</label>
+          <label>JSON Format मा प्रश्नहरू र Set ID राख्नुहोस्:</label>
           <textarea id="bulkJsonInput" class="form-control" placeholder='[
   {
+    "set_id": "तपाईको_सेटको_UUID_वा_ID",
     "question": "नेपालको राजधानी कहाँ हो?",
     "option_a": "पोखरा",
     "option_b": "काठमाडौं",
@@ -286,14 +195,13 @@
   }
 ]' required></textarea>
           <div class="help-text">
-            💡 <b>निर्देशन:</b> स्क्वायर ब्रकेट `[...]` भित्र कर्ली ब्रेसिस `{...}` मा प्रश्नहरू कोमा (,) ले छुट्याएर राख्नुहोला। `correct_answer` मा A, B, C वा D मध्ये एक राख्नुपर्छ।
+            💡 <b>निर्देशन:</b> प्रत्येक अब्जेक्टभित्र `set_id` अनिवार्य रूपमा राख्नुपर्छ। यसले गर्दा तपाईंले एउटै JSON मा फरक-फरक सेटका प्रश्नहरू पठाउन सक्नुहुन्छ। `correct_answer` मा A, B, C वा D लेख्नुहोला।
           </div>
         </div>
 
         <button type="submit" class="submit-btn" id="bulkSaveBtn" style="background: #10b981;">सबै प्रश्नहरू एकैपटक सेभ गर्नुहोस्</button>
       </form>
     </div>
-
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -318,7 +226,6 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // तपाईंको जिमेल यहाँ सेटअप गरिसकिएको छ
     const adminEmails = ["pgprajwal11@gmail.com"];
 
     onAuthStateChanged(auth, async (user) => {
@@ -330,94 +237,17 @@
 
       document.getElementById('loadingScreen').style.display = 'none';
       document.getElementById('adminBody').style.display = 'block';
-
-      loadSets();
-    });
-
-    async function loadSets() {
-      try {
-        const { data, error } = await supabase.from('sets').select('*');
-        if (error) throw error;
-
-        const dropdowns = document.querySelectorAll('.setDropdown');
-        dropdowns.forEach(dropdown => {
-          dropdown.innerHTML = '<option value="">सेट छान्नुहोस्</option>';
-          if (data && data.length > 0) {
-            data.forEach(set => {
-              let option = document.createElement('option');
-              option.value = set.id;
-              option.textContent = set.title || set.name || `Set ID: ${set.id}`;
-              dropdown.appendChild(option.cloneNode(true));
-            });
-          } else {
-            dropdown.innerHTML = '<option value="">कुनै सेट फेला परेन</option>';
-          }
-        });
-      } catch (err) {
-        console.error("Set load error:", err);
-      }
-    }
-
-    window.switchTab = function(type) {
-      const singleTab = document.getElementById('singleTabBtn');
-      const bulkTab = document.getElementById('bulkTabBtn');
-      const singleSec = document.getElementById('singleSection');
-      const bulkSec = document.getElementById('bulkSection');
-
-      if (type === 'single') {
-        singleTab.classList.add('active');
-        bulkTab.classList.remove('active');
-        singleSec.classList.add('active');
-        bulkSec.classList.remove('active');
-      } else {
-        bulkTab.classList.add('active');
-        singleTab.classList.remove('active');
-        bulkSec.classList.add('active');
-        singleSec.classList.remove('active');
-      }
-    };
-
-    const questionForm = document.getElementById('questionForm');
-    const alertBox = document.getElementById('alertBox');
-
-    questionForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const saveBtn = document.getElementById('saveBtn');
-      saveBtn.disabled = true;
-      saveBtn.textContent = "सेभ हुँदैछ...";
-
-      const setId = document.getElementById('setSelect').value;
-      const question = document.getElementById('questionText').value;
-      const option_a = document.getElementById('optA').value;
-      const option_b = document.getElementById('optB').value;
-      const option_c = document.getElementById('optC').value;
-      const option_d = document.getElementById('optD').value;
-      const correct_answer = document.getElementById('correctAnswer').value;
-
-      try {
-        const { error } = await supabase.from('questions').insert([
-          { set_id: setId, question, option_a, option_b, option_c, option_d, correct_answer }
-        ]);
-
-        if (error) throw error;
-        showAlert("प्रश्न सफलतापूर्वक सेभ भयो!", "success");
-        questionForm.reset();
-      } catch (err) {
-        showAlert("त्रुटि: " + err.message, "error");
-      } finally {
-        saveBtn.disabled = false;
-        saveBtn.textContent = "प्रश्न सेभ गर्नुहोस्";
-      }
     });
 
     const bulkForm = document.getElementById('bulkForm');
+    const alertBox = document.getElementById('alertBox');
+
     bulkForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const bulkSaveBtn = document.getElementById('bulkSaveBtn');
       bulkSaveBtn.disabled = true;
       bulkSaveBtn.textContent = "अपलोड हुँदैछ...";
 
-      const setId = document.getElementById('bulkSetSelect').value;
       const jsonInput = document.getElementById('bulkJsonInput').value;
 
       try {
@@ -427,15 +257,20 @@
           throw new Error("अमान्य JSON format! कृप्या सहि तरिकाले राख्नुहोला।");
         }
 
-        const formattedQuestions = questionsArray.map(q => ({
-          set_id: setId,
-          question: q.question,
-          option_a: q.option_a,
-          option_b: q.option_b,
-          option_c: q.option_c,
-          option_d: q.option_d,
-          correct_answer: q.correct_answer ? q.correct_answer.toUpperCase() : 'A'
-        }));
+        const formattedQuestions = questionsArray.map(q => {
+          if (!q.set_id) {
+            throw new Error("प्रत्येक प्रश्नमा 'set_id' हुन अनिवार्य छ!");
+          }
+          return {
+            set_id: q.set_id,
+            question: q.question,
+            option_a: q.option_a,
+            option_b: q.option_b,
+            option_c: q.option_c,
+            option_d: q.option_d,
+            correct_answer: q.correct_answer ? q.correct_answer.toUpperCase() : 'A'
+          };
+        });
 
         const { error } = await supabase.from('questions').insert(formattedQuestions);
         if (error) throw error;
