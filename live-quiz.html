@@ -101,6 +101,25 @@
       margin-top: 8px;
     }
 
+    .btn-google {
+      width: 100%;
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: background 0.2s;
+    }
+    .btn-google:hover { background: #f8fafc; }
+
     input[type="text"], select, textarea {
       width: 100%;
       padding: 11px 14px;
@@ -129,25 +148,6 @@
       50% { transform: translateY(-6px); }
     }
     .animate-bounce { animation: bounce 0.6s ease infinite; }
-
-    /* Modal Styles for Direct Login */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal-card {
-      background: #ffffff;
-      padding: 24px;
-      border-radius: 16px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
   </style>
 </head>
 <body>
@@ -173,8 +173,13 @@
           </div>
         </div>
 
-        <div id="authPrompt" class="hidden" style="background: #fffbeb; border: 1px solid #fde68a; padding: 12px; border-radius: 12px; margin-bottom: 14px; font-size: 12px; color: #92400e; text-align: center;">
-          ब्याटल खेल्नको लागि कृपया पहिले लगइन गर्नुहोस्!
+        <div id="authPrompt" class="hidden" style="margin-bottom: 14px;">
+          <div style="background: #fffbeb; border: 1px solid #fde68a; padding: 12px; border-radius: 12px; margin-bottom: 10px; font-size: 12px; color: #92400e; text-align: center;">
+            ब्याटल खेल्नको लागि कृपया पहिले Google बाट लगइन गर्नुहोस्!
+          </div>
+          <button onclick="loginWithGoogle()" class="btn-google">
+            <i class="fa-brands fa-google" style="color: #ea4335;">></i> Google बाट लगइन गर्नुहोस्
+          </button>
         </div>
 
         <button onclick="showCreateBattle()" class="btn-primary" style="margin-bottom: 10px;">⚔️ नयाँ ब्याटल सुरु गर्नुहोस्</button>
@@ -260,25 +265,29 @@
     </div>
   </div>
 
-  <!-- Built-in Direct Login Modal (Removes components.js dependency issues) -->
-  <div id="authModal" class="modal-overlay hidden">
-    <div class="modal-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3 style="font-size: 15px; font-weight: 800; color: #0f172a;">लगइन गर्नुहोस्</h3>
-        <button onclick="closeAuthModal()" style="background:none; border:none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <label style="display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 4px;">इमेल (Email):</label>
-      <input type="text" id="loginEmail" placeholder="example@gmail.com">
-      
-      <label style="display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 4px;">पासवर्ड (Password):</label>
-      <input type="password" id="loginPassword" placeholder="********" style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; margin-bottom: 12px; outline: none; font-family: inherit;">
-
-      <button onclick="performLogin()" class="btn-primary" style="margin-top: 4px;">लगइन गर्नुहोस्</button>
-    </div>
-  </div>
-
-  <!-- Load Supabase SDK -->
+  <!-- Load Supabase & Firebase SDKs -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // ** आफ्नो Firebase को कन्फिगरेसन यहाँ राख्नुहोला **
+    const firebaseConfig = {
+      apiKey: "YOUR_FIREBASE_API_KEY",
+      authDomain: "YOUR_FIREBASE_AUTH_DOMAIN",
+      projectId: "YOUR_FIREBASE_PROJECT_ID",
+      storageBucket: "YOUR_FIREBASE_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_FIREBASE_MESSAGING_SENDER_ID",
+      appId: "YOUR_FIREBASE_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    window.firebaseAuth = auth;
+    window.GoogleAuthProvider = GoogleAuthProvider;
+    window.signInWithPopup = signInWithPopup;
+    window.onAuthStateChanged = onAuthStateChanged;
+  </script>
 
   <script>
     const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
@@ -295,112 +304,63 @@
     const urlParams = new URLSearchParams(window.location.search);
     const roomIdFromUrl = urlParams.get('room');
 
-    // Initialize Session & User Data on Load
-    window.addEventListener('DOMContentLoaded', async () => {
-      let session = null;
-      try {
-        const res = await supabaseClient.auth.getSession();
-        session = res.data.session;
-      } catch (err) {
-        console.error("Session get error:", err);
-      }
-
-      if (!session) {
-        try {
-          for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.includes('supabase.auth.token')) {
-              const item = localStorage.getItem(key);
-              if (item) {
-                const parsed = JSON.parse(item);
-                const token = parsed.access_token || (parsed.currentSession && parsed.currentSession.access_token);
-                const refresh = parsed.refresh_token || (parsed.currentSession && parsed.currentSession.refresh_token);
-                
-                if (token) {
-                  const { data } = await supabaseClient.auth.setSession({
-                    access_token: token,
-                    refresh_token: refresh
-                  });
-                  session = data.session;
-                  break;
-                }
+    // Initialize Session & Firebase Auth State
+    window.addEventListener('DOMContentLoaded', () => {
+      const checkFirebaseReady = setInterval(() => {
+        if (window.firebaseAuth) {
+          clearInterval(checkFirebaseReady);
+          window.onAuthStateChanged(window.firebaseAuth, async (user) => {
+            if (user) {
+              currentUser = user;
+              playerName = user.displayName || user.email.split('@')[0];
+              
+              if (roomIdFromUrl) {
+                currentRoomId = roomIdFromUrl;
+                isHost = false;
+                document.getElementById("homeView").classList.add("hidden");
+                document.getElementById("waitingView").classList.remove("hidden");
+                document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
+                document.getElementById("shareLinkBox").parentElement.style.display = "none";
+                document.getElementById("displayGuestName").innerText = playerName;
+                document.getElementById("joinGuestBox").classList.remove("hidden");
+              }
+            } else {
+              currentUser = null;
+              if (roomIdFromUrl) {
+                currentRoomId = roomIdFromUrl;
+                document.getElementById("homeView").classList.add("hidden");
+                document.getElementById("waitingView").classList.remove("hidden");
+                document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
+                document.getElementById("shareLinkBox").parentElement.style.display = "none";
+                document.getElementById("waitingView").innerHTML += `
+                  <div style="margin-top: 12px;">
+                    <p style="color: #dc2626; font-size: 11px; margin-bottom: 8px;">ब्याटल जोइन गर्न पहिले लगइन गर्नुहोस्।</p>
+                    <button onclick="loginWithGoogle()" class="btn-google"><i class="fa-brands fa-google" style="color: #ea4335;"></i> Google बाट लगइन गर्नुहोस्</button>
+                  </div>`;
+              } else {
+                document.getElementById("authPrompt").classList.remove("hidden");
               }
             }
-          }
-        } catch (e) {
-          console.error("LocalStorage session restoration failed:", e);
+          });
         }
-      }
-
-      if (session && session.user) {
-        currentUser = session.user;
-        
-        const { data: profile } = await supabaseClient
-          .from('profiles')
-          .select('full_name, name')
-          .eq('id', currentUser.id)
-          .single();
-        
-        playerName = profile?.full_name || profile?.name || currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
-      } else {
-        currentUser = null;
-      }
-
-      if (roomIdFromUrl) {
-        currentRoomId = roomIdFromUrl;
-        isHost = false;
-        document.getElementById("homeView").classList.add("hidden");
-        document.getElementById("waitingView").classList.remove("hidden");
-        document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
-        document.getElementById("shareLinkBox").parentElement.style.display = "none";
-        
-        if (currentUser) {
-          document.getElementById("displayGuestName").innerText = playerName;
-          document.getElementById("joinGuestBox").classList.remove("hidden");
-        } else {
-          document.getElementById("waitingView").innerHTML += `
-            <div style="margin-top: 12px;">
-              <p style="color: #dc2626; font-size: 11px; margin-bottom: 8px;">ब्याटल जोइन गर्न पहिले लगइन गर्नुहोस्।</p>
-              <button onclick="openAuthModal()" class="btn-primary">लगइन गर्नुहोस्</button>
-            </div>`;
-        }
-      } else if (!currentUser) {
-        document.getElementById("authPrompt").classList.remove("hidden");
-      }
+      }, 100);
     });
 
-    function openAuthModal() {
-      document.getElementById("authModal").classList.remove("hidden");
-    }
-
-    function closeAuthModal() {
-      document.getElementById("authModal").classList.add("hidden");
-    }
-
-    async function performLogin() {
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value.trim();
-
-      if (!email || !password) {
-        alert("कृपया इमेल र पासवर्ड दुवै भर्नुहोस्!");
-        return;
-      }
-
+    async function loginWithGoogle() {
       try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        
+        const provider = new window.GoogleAuthProvider();
+        await window.signInWithPopup(window.firebaseAuth, provider);
         alert("लगइन सफल भयो! 🎉");
         location.reload();
       } catch (err) {
         console.error(err);
-        alert("लगइन असफल भयो: " + (err.message || "इमेल वा पासवर्ड मिलेन।"));
+        alert("लगइन असफल भयो: " + err.message);
       }
     }
 
     function showCreateBattle() {
       if (!currentUser) {
-        openAuthModal();
+        loginWithGoogle();
         return;
       }
       document.getElementById("homeView").classList.add("hidden");
@@ -410,14 +370,15 @@
 
     async function showBulkAdminPanel() {
       if (!currentUser) {
-        openAuthModal();
+        loginWithGoogle();
         return;
       }
 
+      // Check admin status in Supabase profiles (using email matching)
       const { data: profile, error } = await supabaseClient
         .from('profiles')
         .select('role')
-        .eq('id', currentUser.id)
+        .eq('email', currentUser.email)
         .single();
 
       if (error || !profile || profile.role !== 'admin') {
@@ -520,7 +481,7 @@
 
     async function joinBattle() {
       if (!currentUser) {
-        openAuthModal();
+        loginWithGoogle();
         return;
       }
 
