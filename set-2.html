@@ -207,6 +207,12 @@
       border-radius: 14px;
       border: 1px solid #e2e8f0;
       box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cert-stat-box:active {
+      transform: scale(0.97);
+      background: #f1f5f9;
     }
     .cert-stat-box p {
       font-size: 11px;
@@ -219,6 +225,7 @@
       font-weight: 800;
     }
 
+    /* Review Modal */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -242,10 +249,12 @@
     .modal-card {
       background: #ffffff;
       width: 90%;
-      max-width: 340px;
+      max-width: 380px;
+      max-height: 80vh;
       border-radius: 24px;
-      padding: 24px 20px;
-      text-align: center;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
       transform: scale(0.9);
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -273,7 +282,7 @@
 
   <!-- LOGIN WARNING MODAL -->
   <div id="login-modal" class="modal-overlay">
-    <div class="modal-card">
+    <div class="modal-card" style="text-align: center; max-width: 340px;">
       <div style="width: 56px; height: 56px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">
         <i class="fa-solid fa-lock"></i>
       </div>
@@ -287,6 +296,19 @@
       <a href="exams.html" style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none; padding: 6px;">
         परीक्षा हबमा फर्कनुहोस्
       </a>
+    </div>
+  </div>
+
+  <!-- REVIEW DETAILS MODAL -->
+  <div id="review-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 12px;">
+        <h3 id="review-modal-title" style="font-size: 15px; font-weight: 800; color: #0f172a;">समीक्षा</h3>
+        <button onclick="closeReviewModal()" style="background: #f1f5f9; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: 700; color: #64748b;">✕</button>
+      </div>
+      <div id="review-modal-body" style="overflow-y: auto; flex-grow: 1; padding-right: 4px;" class="space-y-3">
+        <!-- Dynamic Content -->
+      </div>
     </div>
   </div>
 
@@ -378,20 +400,20 @@
         </div>
 
         <div class="cert-stats-grid">
-          <div class="cert-stat-box">
-            <p>सही उत्तर (Correct)</p>
+          <div class="cert-stat-box" onclick="openReviewModal('correct')" title="सही उत्तरहरू हेर्न क्लिक गर्नुहोस्">
+            <p>सही उत्तर (Correct) 🔍</p>
             <h3 id="rep-correct" style="color: #059669;">0</h3>
           </div>
-          <div class="cert-stat-box">
-            <p>गलत उत्तर (Wrong)</p>
+          <div class="cert-stat-box" onclick="openReviewModal('wrong')" title="गलत उत्तरहरू हेर्न क्लिक गर्नुहोस्">
+            <p>गलत उत्तर (Wrong) 🔍</p>
             <h3 id="rep-wrong" style="color: #dc2626;">0</h3>
           </div>
-          <div class="cert-stat-box">
-            <p>छोडेको (Skipped)</p>
+          <div class="cert-stat-box" onclick="openReviewModal('skipped')" title="छोडेका प्रश्नहरू हेर्न क्लिक गर्नुहोस्">
+            <p>छोडेको (Skipped) 🔍</p>
             <h3 id="rep-skipped" style="color: #d97706;">0</h3>
           </div>
-          <div class="cert-stat-box">
-            <p>जम्मा प्रश्न</p>
+          <div class="cert-stat-box" onclick="openReviewModal('all')" title="सबै प्रश्नहरू हेर्न क्लिक गर्नुहोस्">
+            <p>जम्मा प्रश्न 🔍</p>
             <h3 id="rep-total" style="color: #1e293b;">50</h3>
           </div>
         </div>
@@ -644,6 +666,54 @@
       document.getElementById('rep-score').innerText = totalScore.toFixed(1);
 
       fetchSet2Leaderboard();
+    }
+
+    // Modal Review Functions
+    window.openReviewModal = function(type) {
+      const modal = document.getElementById('review-modal');
+      const titleEl = document.getElementById('review-modal-title');
+      const bodyEl = document.getElementById('review-modal-body');
+      
+      bodyEl.innerHTML = '';
+      let count = 0;
+
+      if (type === 'correct') titleEl.innerText = '✅ सही उत्तर भएका प्रश्नहरू';
+      else if (type === 'wrong') titleEl.innerText = '❌ गलत उत्तर भएका प्रश्नहरू';
+      else if (type === 'skipped') titleEl.innerText = '⚠️ छोडेका प्रश्नहरू';
+      else titleEl.innerText = '📝 सबै प्रश्नहरूको सूची';
+
+      examQuestions.forEach((q, idx) => {
+        const userAns = userAnswers[idx];
+        const isCorrect = userAns === q.answer;
+
+        let match = false;
+        if (type === 'correct' && userAns && isCorrect) match = true;
+        else if (type === 'wrong' && userAns && !isCorrect) match = true;
+        else if (type === 'skipped' && !userAns) match = true;
+        else if (type === 'all') match = true;
+
+        if (match) {
+          count++;
+          bodyEl.innerHTML += `
+            <div style="background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid ${!userAns ? '#cbd5e1' : (isCorrect ? '#bbf7d0' : '#fecaca')};">
+              <p style="font-weight: 700; font-size: 13px; color: #0f172a; margin-bottom: 4px;">Q${idx+1}: ${q.question}</p>
+              <p style="font-size: 12px; color: #64748b;">तपाईंको उत्तर: <span style="font-weight: 700; color: ${!userAns ? '#d97706' : (isCorrect ? '#059669' : '#dc2626')};">${userAns || 'छोडेको'}</span></p>
+              <p style="font-size: 12px; color: #059669; font-weight: 600;">सही उत्तर: ${q.answer}</p>
+              ${q.explanation ? `<p style="font-size: 11px; color: #475569; margin-top: 4px; font-style: italic;">📌 ${q.explanation}</p>` : ''}
+            </div>
+          `;
+        }
+      });
+
+      if (count === 0) {
+        bodyEl.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 13px; padding: 20px;">यस श्रेणीमा कुनै प्रश्न छैनन्।</p>';
+      }
+
+      modal.classList.add('active');
+    }
+
+    window.closeReviewModal = function() {
+      document.getElementById('review-modal').classList.remove('active');
     }
 
     async function fetchSet2Leaderboard() {
