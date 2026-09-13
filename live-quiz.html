@@ -65,17 +65,6 @@
       font-family: inherit;
     }
     input[type="text"]:focus, select:focus, textarea:focus { border-color: #2563eb; }
-    .topic-chip {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #475569;
-      cursor: pointer;
-    }
-    .topic-chip:hover { background: #eff6ff; border-color: #2563eb; color: #2563eb; }
     .spinner {
       width: 32px;
       height: 32px;
@@ -109,6 +98,10 @@
       </div>
     </div>
 
+    <div id="authPrompt" class="hidden" style="background: #fffbeb; border: 1px solid #fde68a; padding: 12px; border-radius: 12px; margin-bottom: 14px; font-size: 12px; color: #92400e; text-align: center;">
+      ब्याटल खेल्नको लागि कृपया पहिले लगइन गर्नुहोस्!
+    </div>
+
     <button onclick="showCreateBattle()" class="btn-primary" style="margin-bottom: 10px;">⚔️ नयाँ ब्याटल सुरु गर्नुहोस्</button>
     <button onclick="showBulkAdminPanel()" class="btn-secondary">📦 एकैचोटि धेरै प्रश्न थप्नुहोस् (Bulk Admin)</button>
   </div>
@@ -117,17 +110,9 @@
   <div id="setupView" class="hidden">
     <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 12px; color: #0f172a;">ब्याटल रुम सेट गर्नुहोस्</h3>
     
-    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">तपाईंको नाम:</label>
-    <input type="text" id="hostNameInput" placeholder="जस्तै: रमेश अधिकारी">
-
-    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">विषय वा टपिक छान्नुहोस्:</label>
-    <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
-      <button type="button" onclick="setTopic('नेपालको भूगोल')" class="topic-chip">नेपालको भूगोल</button>
-      <button type="button" onclick="setTopic('विश्वको भूगोल')" class="topic-chip">विश्वको भूगोल</button>
-      <button type="button" onclick="setTopic('नेपालको इतिहास')" class="topic-chip">नेपालको इतिहास</button>
-      <button type="button" onclick="setTopic('संविधान')" class="topic-chip">संविधान</button>
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 12px; margin-bottom: 14px; font-size: 13px; color: #334155;">
+      खेलाडी (Host): <b id="displayHostName" style="color: #2563eb;">लोड हुँदैछ...</b>
     </div>
-    <input type="text" id="topicInput" placeholder="वा आफैं लेख्नुहोस्...">
 
     <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">प्रश्न संख्या:</label>
     <select id="questionCountSelect">
@@ -154,11 +139,6 @@
     "question": "सगरमाथाको उचाइ कति छ?",
     "options": ["८८४८.८६ मि", "८,००० मि", "९,००० मि", "८,५०० मि"],
     "correct": 0
-  },
-  {
-    "question": "लुम्बिनी कहाँ पर्छ?",
-    "options": ["काठमाडौं", "रुपन्देही", "पोखरा", "चितवन"],
-    "correct": 1
   }
 ]' style="font-size: 12px;"></textarea>
 
@@ -178,7 +158,9 @@
     </div>
     
     <div id="joinGuestBox" class="hidden">
-      <input type="text" id="guestNameInput" placeholder="तपाईंको नाम (Guest)...">
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 12px; margin-bottom: 12px; font-size: 13px; color: #334155;">
+        खेलाडी (Challenger): <b id="displayGuestName" style="color: #2563eb;">लोड हुँदैछ...</b>
+      </div>
       <button onclick="joinBattle()" class="btn-primary">ब्याटलमा जोइन हुनुहोस्</button>
     </div>
   </div>
@@ -197,14 +179,11 @@
     <div id="resultEmoji" class="animate-bounce" style="font-size: 55px; margin-bottom: 10px;">🏆</div>
     <h2 id="resultHeading" style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">नतिजा</h2>
     <p id="resultDescription" style="font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.5;"></p>
-    <button onclick="location.href='live-quiz.html'" class="btn-primary">नयाँ ब्याटल खेल्नुहोस्</button>
+    <button onclick="location.href=window.location.pathname" class="btn-primary">नयाँ ब्याटल खेल्नुहोस्</button>
   </div>
 
 </div>
 
-
-
-  
 <!-- Load Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -215,6 +194,7 @@
 
   let currentRoomId = null;
   let isHost = false;
+  let currentUser = null;
   let playerName = "";
   let battleData = null;
   let currentAnswers = {};
@@ -222,95 +202,71 @@
   const urlParams = new URLSearchParams(window.location.search);
   const roomIdFromUrl = urlParams.get('room');
 
-  if (roomIdFromUrl) {
-    currentRoomId = roomIdFromUrl;
-    isHost = false;
-    document.getElementById("homeView").classList.add("hidden");
-    document.getElementById("waitingView").classList.remove("hidden");
-    document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
-    document.getElementById("shareLinkBox").parentElement.style.display = "none";
-    document.getElementById("joinGuestBox").classList.remove("hidden");
-  }
+  // Initialize Session & User Data on Load
+  window.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session && session.user) {
+      currentUser = session.user;
+      // Fetch display name from profiles table or metadata
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('full_name, name')
+        .eq('id', currentUser.id)
+        .single();
+      
+      playerName = profile?.full_name || profile?.name || currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
+    } else {
+      document.getElementById("authPrompt").classList.remove("hidden");
+    }
+
+    if (roomIdFromUrl) {
+      currentRoomId = roomIdFromUrl;
+      isHost = false;
+      document.getElementById("homeView").classList.add("hidden");
+      document.getElementById("waitingView").classList.remove("hidden");
+      document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
+      document.getElementById("shareLinkBox").parentElement.style.display = "none";
+      
+      if (currentUser) {
+        document.getElementById("displayGuestName").innerText = playerName;
+        document.getElementById("joinGuestBox").classList.remove("hidden");
+      } else {
+        document.getElementById("waitingView").innerHTML += `<p style="color: #dc2626; font-size: 12px; margin-top: 10px;">ब्याटल जोइन गर्न पहिले लगइन गर्नुहोस्।</p>`;
+      }
+    }
+  });
 
   function showCreateBattle() {
+    if (!currentUser) {
+      alert("पहिले लगइन (Login) गर्नुहोस्!");
+      return;
+    }
     document.getElementById("homeView").classList.add("hidden");
     document.getElementById("setupView").classList.remove("hidden");
+    document.getElementById("displayHostName").innerText = playerName;
   }
 
-  function showBulkAdminPanel() {
+  async function showBulkAdminPanel() {
+    if (!currentUser) {
+      alert("पहिले लगइन (Login) गर्नुहोस्!");
+      return;
+    }
+
+    const { data: profile, error } = await supabaseClient
+      .from('profiles')
+      .select('role')
+      .eq('id', currentUser.id)
+      .single();
+
+    if (error || !profile || profile.role !== 'admin') {
+      alert("Access Denied! यो प्यानलमा केवल एडमिन मात्र जान मिल्छ। ❌");
+      return;
+    }
+
     document.getElementById("homeView").classList.add("hidden");
     document.getElementById("bulkAdminView").classList.remove("hidden");
   }
 
-  function setTopic(topicName) {
-    document.getElementById("topicInput").value = topicName;
-  }
-// बल्क एडमिन प्यानल खोल्नु अघि एडमिन हो कि होइन चेक गर्ने
-async function showBulkAdminPanel() {
-  const { data: { user } } = await supabaseClient.auth.getUser();
-
-  if (!user) {
-    alert("पहिले लगइन (Login) गर्नुहोस्!");
-    // यदि लगइन पेज छ भने त्यहाँ रिडाइरेक्ट गर्नुहोस्
-    return;
-  }
-
-  // Database बाट युजरको रोल चेक गर्ने
-  const { data: profile, error } = await supabaseClient
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  if (error || !profile || profile.role !== 'admin') {
-    alert("Access Denied! यो प्यानलमा केवल एडमिन मात्र जान मिल्छ। ❌");
-    return;
-  }
-
-  // यदि एडमिन हो भने मात्र प्यानल देखाउने
-  document.getElementById("homeView").classList.add("hidden");
-  document.getElementById("bulkAdminView").classList.remove("hidden");
-}
-
-// बल्क प्रश्नहरू सेभ गर्ने फंक्सन
-async function saveBulkQuestionsToDB() {
-  const topic = document.getElementById("bulkTopic").value.trim();
-  const jsonText = document.getElementById("bulkJsonInput").value.trim();
-
-  if (!topic || !jsonText) {
-    alert("कृपया टपिक र JSON डाटा दुवै भर्नुहोस्!");
-    return;
-  }
-
-  try {
-    const parsedQuestions = JSON.parse(jsonText);
-    if (!Array.isArray(parsedQuestions) || parsedQuestions.length === 0) {
-      throw new Error("मान्य JSON एरे फेला परेन।");
-    }
-
-    const rowsToInsert = parsedQuestions.map(q => ({
-      topic: topic,
-      question: q.question,
-      options: q.options,
-      correct_option: q.correct
-    }));
-
-    // Data insert गर्दा Supabase ले आफैं RLS चेक गर्छ (Non-admin भए Error फाल्छ)
-    const { error } = await supabaseClient.from('questions').insert(rowsToInsert);
-    if (error) throw error;
-
-    alert(`सफलतापूर्वक ${rowsToInsert.length} वटा प्रश्नहरू सेभ भए! 🎉`);
-    location.reload();
-
-  } catch (err) {
-    console.error(err);
-    alert("सेभ असफल भयो! सम्भवतः तपाईं एडमिन हुनुहुन्न वा JSON फर्मट मिलेन।");
-  }
-}
-
-
-  
-  // Bulk save questions into database
   async function saveBulkQuestionsToDB() {
     const topic = document.getElementById("bulkTopic").value.trim();
     const jsonText = document.getElementById("bulkJsonInput").value.trim();
@@ -323,7 +279,7 @@ async function saveBulkQuestionsToDB() {
     try {
       const parsedQuestions = JSON.parse(jsonText);
       if (!Array.isArray(parsedQuestions) || parsedQuestions.length === 0) {
-        throw new Error("मान्य एरे (Array) डाटा फेला परेन।");
+        throw new Error("मान्य JSON एरे फेला परेन।");
       }
 
       const rowsToInsert = parsedQuestions.map(q => ({
@@ -336,26 +292,17 @@ async function saveBulkQuestionsToDB() {
       const { error } = await supabaseClient.from('questions').insert(rowsToInsert);
       if (error) throw error;
 
-      alert(`सफलतापूर्वक ${rowsToInsert.length} वटा प्रश्नहरू डाटाबेसमा सेभ भए! 🎉`);
+      alert(`सफलतापूर्वक ${rowsToInsert.length} वटा प्रश्नहरू सेभ भए! 🎉`);
       location.reload();
 
     } catch (err) {
       console.error(err);
-      alert("JSON फर्मट मिलेन वा सेभ गर्दा समस्या आयो। कृपया सही JSON लेख्नुहोला।");
+      alert("सेभ असफल भयो! JSON फर्मट वा अनुमति मिलेन।");
     }
   }
 
   async function createBattle() {
-    const host = document.getElementById("hostNameInput").value.trim();
-    const topic = document.getElementById("topicInput").value.trim();
     const count = parseInt(document.getElementById("questionCountSelect").value);
-
-    if (!host || !topic) {
-      alert("कृपया आफ्नो नाम र टपिक लेख्नुहोस्!");
-      return;
-    }
-
-    playerName = host;
     isHost = true;
     currentRoomId = 'room_' + Math.random().toString(36).substring(2, 9);
 
@@ -366,17 +313,20 @@ async function saveBulkQuestionsToDB() {
     document.getElementById("shareLinkBox").value = shareUrl;
 
     try {
+      // Fetch random questions from database using PostgreSQL random ordering or general fetch
       const { data: dbQuestions, error: dbError } = await supabaseClient
         .from('questions')
-        .select('*')
-        .ilike('topic', `%${topic}%`)
-        .limit(count);
+        .select('*');
 
       if (dbError || !dbQuestions || dbQuestions.length === 0) {
-        throw new Error("यो टपिकमा डाटाबेसमा प्रश्नहरू फेला परेनन्। कृपया पहिले 'बल्क एडमिन' बाट प्रश्न थप्नुहोस्!");
+        throw new Error("डाटाबेसमा प्रश्नहरू फेला परेनन्। कृपया पहिले प्रश्नहरू थप्नुहोस्!");
       }
 
-      battleData = dbQuestions.map(q => ({
+      // Shuffle and pick requested count randomly
+      const shuffled = dbQuestions.sort(() => 0.5 - Math.random());
+      const selectedQuestions = shuffled.slice(0, count);
+
+      battleData = selectedQuestions.map(q => ({
         question: q.question,
         options: q.options,
         correct: q.correct_option
@@ -384,8 +334,8 @@ async function saveBulkQuestionsToDB() {
 
       const { error: roomError } = await supabaseClient.from('battle_rooms').insert([{
         room_id: currentRoomId,
-        host_name: host,
-        topic: topic,
+        host_name: playerName,
+        topic: "Random Mix",
         question_count: count,
         status: 'waiting',
         quiz_data: battleData
@@ -409,13 +359,11 @@ async function saveBulkQuestionsToDB() {
   }
 
   async function joinBattle() {
-    const guest = document.getElementById("guestNameInput").value.trim();
-    if (!guest) {
-      alert("कृपया आफ्नो नाम लेख्नुहोस्!");
+    if (!currentUser) {
+      alert("पहिले लगइन गर्नुहोस्!");
       return;
     }
 
-    playerName = guest;
     document.getElementById("joinGuestBox").innerHTML = `<div class="spinner"></div><p style="font-size:12px; color:#64748b;">ब्याटलमा जोडिदैछ...</p>`;
 
     try {
@@ -425,7 +373,7 @@ async function saveBulkQuestionsToDB() {
       battleData = data.quiz_data;
 
       await supabaseClient.from('battle_rooms').update({
-        guest_name: guest,
+        guest_name: playerName,
         status: 'active'
       }).eq('room_id', currentRoomId);
 
@@ -564,7 +512,7 @@ async function saveBulkQuestionsToDB() {
       headingEl.innerText = "बधाई छ, तपाईंले जित्नुभयो!";
       headingEl.style.color = "#16a34a";
     } else {
-      emojiEl.innerText = "😢";
+      emojiEl.innerText, emojiEl.innerText = "😢";
       headingEl.innerText = "तपाईं पराजित हुनुभयो!";
       headingEl.style.color = "#dc2626";
     }
