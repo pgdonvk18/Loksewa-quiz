@@ -1,6 +1,5 @@
-// यो फंक्सन्सले स्वतः ५ वटा bottom navigation bar लाई पेजको अन्त्यमा थपिदिन्छ र active पेजलाई हाइलाइट गर्छ
+// १. अटोमेटिक Bottom Navigation Bar इन्जेक्ट गर्ने फंक्सन
 function loadBottomNav(activePage) {
-  // नेभिगेसन बारको लागि आवश्यक CSS स्टाइल स्वतः इन्जेक्ट गर्ने
   if (!document.getElementById('bottom-nav-style')) {
     const styleElem = document.createElement('style');
     styleElem.id = 'bottom-nav-style';
@@ -45,7 +44,6 @@ function loadBottomNav(activePage) {
     document.head.appendChild(styleElem);
   }
 
-  // ५ वटै बटनहरूलाई एकै किसिमको संरचना दिइएको HTML
   const navHTML = `
     <div class="bottom-nav">
       <a href="dashboard.html" class="nav-link ${activePage === 'home' ? 'active' : ''}">
@@ -70,28 +68,104 @@ function loadBottomNav(activePage) {
       </a>
     </div>
   `;
-
-  // बडीको अन्त्यमा यसलाई इन्जेक्ट गर्ने
   document.body.insertAdjacentHTML('beforeend', navHTML);
 }
-// पेज लोड हुँदा अटोमेटिक पपअप मोडल DOM मा इन्जेक्ट (Inject) गर्ने
+
+// २. पेज लोड हुँदा आकर्षक पपअप मोडल DOM मा इन्जेक्ट (Inject) गर्ने
 document.addEventListener("DOMContentLoaded", () => {
-  if (!document.getElementById('successModal')) {
+  if (!document.getElementById('customGlobalModal')) {
     const modalHTML = `
-      <div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
-        <div style="background: #ffffff; padding: 24px; border-radius: 20px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); animation: scaleUp 0.3s ease;">
-          <div style="width: 55px; height: 55px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px auto;">
-            <i class="fa-solid fa-check"></i>
+      <div id="customGlobalModal" class="cg-modal-overlay">
+        <div class="cg-modal-card">
+          <div id="cgModalIconBox" class="cg-icon-box success">
+            <i id="cgModalIcon" class="fa-solid fa-check"></i>
           </div>
-          <h3 style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">सफल भयो!</h3>
-          <p id="popupMessage" style="font-size: 13px; color: #64748b; margin-bottom: 20px;">तपाईंको कार्य सफलतापूर्वक पूरा भयो।</p>
-          <button id="popupOkBtn" style="background: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;">ठीक्क छ (OK)</button>
+          <h3 id="cgModalTitle" class="cg-title">सफल भयो!</h3>
+          <p id="cgModalMessage" class="cg-message">तपाईंको कार्य सफलतापूर्वक पूरा भयो।</p>
+          <button id="cgModalBtn" class="cg-btn">ठीक्क छ (OK)</button>
         </div>
       </div>
       <style>
-        @keyframes scaleUp {
-          from { transform: scale(0.8); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
+        .cg-modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          z-index: 99999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .cg-modal-overlay.active {
+          opacity: 1;
+          visibility: visible;
+        }
+        .cg-modal-card {
+          background: #ffffff;
+          width: 88%;
+          max-width: 340px;
+          border-radius: 24px;
+          padding: 28px 24px;
+          text-align: center;
+          box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
+          transform: scale(0.85) translateY(20px);
+          transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+          border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .cg-modal-overlay.active .cg-modal-card {
+          transform: scale(1) translateY(0);
+        }
+        .cg-icon-box {
+          width: 65px;
+          height: 65px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 26px;
+          margin: 0 auto 18px auto;
+          box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+        .cg-icon-box.success { background: #dcfce7; color: #16a34a; }
+        .cg-icon-box.error { background: #fee2e2; color: #dc2626; }
+        .cg-icon-box.warning { background: #fef3c7; color: #d97706; }
+        
+        .cg-title {
+          font-size: 20px;
+          font-weight: 800;
+          color: #0f172a;
+          margin-bottom: 8px;
+          letter-spacing: -0.3px;
+        }
+        .cg-message {
+          font-size: 13.5px;
+          color: #64748b;
+          line-height: 1.5;
+          margin-bottom: 24px;
+        }
+        .cg-btn {
+          width: 100%;
+          background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+          color: white;
+          border: none;
+          padding: 13px;
+          border-radius: 14px;
+          font-weight: 700;
+          font-size: 14px;
+          cursor: pointer;
+          box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+          transition: transform 0.1s ease, box-shadow 0.2s ease;
+        }
+        .cg-btn:active {
+          transform: scale(0.97);
+          box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
         }
       </style>
     `;
@@ -99,22 +173,39 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ग्लोबल फंक्सन - जसलाई जुनसुकै पेजबाट कल गर्न सकिन्छ
-window.showSuccessPopup = function(message, redirectUrl) {
-  const modal = document.getElementById('successModal');
-  const msgEl = document.getElementById('popupMessage');
-  const okBtn = document.getElementById('popupOkBtn');
+// ३. ग्लोबल पपअप फंक्सन (Success, Error, Warning सबै प्रकारको लागि)
+window.showSuccessPopup = function(message, redirectUrl, type = 'success', titleText = '') {
+  const modal = document.getElementById('customGlobalModal');
+  const msgEl = document.getElementById('cgModalMessage');
+  const titleEl = document.getElementById('cgModalTitle');
+  const iconBox = document.getElementById('cgModalIconBox');
+  const iconEl = document.getElementById('cgModalIcon');
+  const okBtn = document.getElementById('cgModalBtn');
   
-  if(msgEl) msgEl.textContent = message;
-  if(modal) modal.style.display = 'flex';
+  if (msgEl) msgEl.textContent = message;
+  
+  // पपअपको प्रकार अनुसार आइकन र शीर्षक मिलाउने
+  iconBox.className = `cg-icon-box ${type}`;
+  if (type === 'success') {
+    if(!titleText) titleText = 'सफल भयो! 🎉';
+    iconEl.className = 'fa-solid fa-check';
+  } else if (type === 'error') {
+    if(!titleText) titleText = 'त्रुटि (Error)! ❌';
+    iconEl.className = 'fa-solid fa-triangle-exclamation';
+  } else if (type === 'warning') {
+    if(!titleText) titleText = 'सचेत गराइएको छ! ⚠️';
+    iconEl.className = 'fa-solid fa-circle-exclamation';
+  }
+  if (titleEl) titleEl.textContent = titleText;
 
-  if(okBtn) {
+  if (modal) modal.classList.add('active');
+
+  if (okBtn) {
     okBtn.onclick = function() {
-      modal.style.display = 'none';
-      if(redirectUrl) {
-        window.location.href = redirectUrl;
+      modal.classList.remove('active');
+      if (redirectUrl) {
+        setTimeout(() => { window.location.href = redirectUrl; }, 200);
       }
     };
   }
 };
-
