@@ -129,6 +129,25 @@
       50% { transform: translateY(-6px); }
     }
     .animate-bounce { animation: bounce 0.6s ease infinite; }
+
+    /* Modal Styles for Direct Login */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
@@ -241,10 +260,25 @@
     </div>
   </div>
 
+  <!-- Built-in Direct Login Modal (Removes components.js dependency issues) -->
+  <div id="authModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: #0f172a;">लगइन गर्नुहोस्</h3>
+        <button onclick="closeAuthModal()" style="background:none; border:none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <label style="display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 4px;">इमेल (Email):</label>
+      <input type="text" id="loginEmail" placeholder="example@gmail.com">
+      
+      <label style="display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 4px;">पासवर्ड (Password):</label>
+      <input type="password" id="loginPassword" placeholder="********" style="width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; margin-bottom: 12px; outline: none; font-family: inherit;">
+
+      <button onclick="performLogin()" class="btn-primary" style="margin-top: 4px;">लगइन गर्नुहोस्</button>
+    </div>
+  </div>
+
   <!-- Load Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Load Project Components (Popup modals, common helpers) -->
-  <script src="components.js"></script>
 
   <script>
     const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
@@ -263,7 +297,6 @@
 
     // Initialize Session & User Data on Load
     window.addEventListener('DOMContentLoaded', async () => {
-      // Robust Session Retrieval from Supabase or LocalStorage Sync
       let session = null;
       try {
         const res = await supabaseClient.auth.getSession();
@@ -273,28 +306,35 @@
       }
 
       if (!session) {
-        const keys = Object.keys(localStorage);
-        const sbKey = keys.find(k => k.includes('supabase.auth.token'));
-        if (sbKey) {
-          try {
-            const sessionData = JSON.parse(localStorage.getItem(sbKey));
-            if (sessionData && sessionData.access_token) {
-              const { data } = await supabaseClient.auth.setSession({
-                access_token: sessionData.access_token,
-                refresh_token: sessionData.refresh_token
-              });
-              session = data.session;
+        try {
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.includes('supabase.auth.token')) {
+              const item = localStorage.getItem(key);
+              if (item) {
+                const parsed = JSON.parse(item);
+                const token = parsed.access_token || (parsed.currentSession && parsed.currentSession.access_token);
+                const refresh = parsed.refresh_token || (parsed.currentSession && parsed.currentSession.refresh_token);
+                
+                if (token) {
+                  const { data } = await supabaseClient.auth.setSession({
+                    access_token: token,
+                    refresh_token: refresh
+                  });
+                  session = data.session;
+                  break;
+                }
+              }
             }
-          } catch(e) {
-            console.error("LocalStorage session restoration failed:", e);
           }
+        } catch (e) {
+          console.error("LocalStorage session restoration failed:", e);
         }
       }
 
       if (session && session.user) {
         currentUser = session.user;
         
-        // Fetch display name from profiles table or metadata
         const { data: profile } = await supabaseClient
           .from('profiles')
           .select('full_name, name')
@@ -321,7 +361,7 @@
           document.getElementById("waitingView").innerHTML += `
             <div style="margin-top: 12px;">
               <p style="color: #dc2626; font-size: 11px; margin-bottom: 8px;">ब्याटल जोइन गर्न पहिले लगइन गर्नुहोस्।</p>
-              <button onclick="if(typeof openAuthModal === 'function') { openAuthModal(); } else { alert('कृपया पहिले लगइन गर्नुहोस्!'); }" class="btn-primary">लगइन गर्नुहोस्</button>
+              <button onclick="openAuthModal()" class="btn-primary">लगइन गर्नुहोस्</button>
             </div>`;
         }
       } else if (!currentUser) {
@@ -329,13 +369,38 @@
       }
     });
 
+    function openAuthModal() {
+      document.getElementById("authModal").classList.remove("hidden");
+    }
+
+    function closeAuthModal() {
+      document.getElementById("authModal").classList.add("hidden");
+    }
+
+    async function performLogin() {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+
+      if (!email || !password) {
+        alert("कृपया इमेल र पासवर्ड दुवै भर्नुहोस्!");
+        return;
+      }
+
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        
+        alert("लगइन सफल भयो! 🎉");
+        location.reload();
+      } catch (err) {
+        console.error(err);
+        alert("लगइन असफल भयो: " + (err.message || "इमेल वा पासवर्ड मिलेन।"));
+      }
+    }
+
     function showCreateBattle() {
       if (!currentUser) {
-        if (typeof openAuthModal === 'function') {
-          openAuthModal();
-        } else {
-          alert("पहिले लगइन (Login) गर्नुहोस्!");
-        }
+        openAuthModal();
         return;
       }
       document.getElementById("homeView").classList.add("hidden");
@@ -345,11 +410,7 @@
 
     async function showBulkAdminPanel() {
       if (!currentUser) {
-        if (typeof openAuthModal === 'function') {
-          openAuthModal();
-        } else {
-          alert("पहिले लगइन (Login) गर्नुहोस्!");
-        }
+        openAuthModal();
         return;
       }
 
@@ -360,11 +421,7 @@
         .single();
 
       if (error || !profile || profile.role !== 'admin') {
-        if (typeof showToast === 'function') {
-          showToast("Access Denied! यो प्यानलमा केवल एडमिन मात्र जान मिल्छ। ❌", "error");
-        } else {
-          alert("Access Denied! यो प्यानलमा केवल एडमिन मात्र जान मिल्छ। ❌");
-        }
+        alert("Access Denied! यो प्यानलमा केवल एडमिन मात्र जान मिल्छ। ❌");
         return;
       }
 
@@ -463,11 +520,7 @@
 
     async function joinBattle() {
       if (!currentUser) {
-        if (typeof openAuthModal === 'function') {
-          openAuthModal();
-        } else {
-          alert("पहिले लगइन गर्नुहोस्!");
-        }
+        openAuthModal();
         return;
       }
 
