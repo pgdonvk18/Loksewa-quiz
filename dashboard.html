@@ -431,7 +431,7 @@
       font-weight: 500;
     }
 
-    /* २x२ ग्रिड बटनहरू */
+    /* २x२ ग्रिड बटनहरू (अब थप गरिएको गेम कार्डसहित ग्रिड) */
     .action-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -458,6 +458,7 @@
     .card-green { background: linear-gradient(135deg, #10b981, #059669); }
     .card-orange { background: linear-gradient(135deg, #f97316, #c2410c); }
     .card-pink { background: linear-gradient(135deg, #ec4899, #be185d); }
+    .card-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); } /* गेम कार्डको लागि कलर */
 
     .action-card .card-icon {
       font-size: 15px;
@@ -539,39 +540,6 @@
       color: #94a3b8;
       font-size: 12px;
     }
-
-    /* तल्लो नेभिगेसन बार */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: #ffffff;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0 14px 0;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-      border-radius: 20px 20px 0 0;
-      z-index: 100;
-      border-top: 1px solid #f1f5f9;
-    }
-    .nav-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-decoration: none;
-      color: #94a3b8;
-      font-size: 11px;
-      font-weight: 600;
-      gap: 3px;
-      transition: color 0.2s;
-    }
-    .nav-link i {
-      font-size: 18px;
-    }
-    .nav-link.active {
-      color: #2563eb;
-    }
   </style>
 </head>
 <body>
@@ -617,6 +585,15 @@
           <div class="menu-item-left">
             <i class="fa-solid fa-note-sticky"></i>
             <span>Notes</span>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+        </a>
+
+        <!-- नयाँ थपिएको Leaderboard अप्सन -->
+        <a href="leaderboard.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-trophy" style="color: #f59e0b;"></i>
+            <span>Leaderboard</span>
           </div>
           <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
         </a>
@@ -693,7 +670,7 @@
       </div>
     </div>
 
-    <!-- २x२ ग्रिड बटनहरू -->
+    <!-- ग्रिड बटनहरू (Take Quiz, Practice Set, Mock Test, Performance र नयाँ Games) -->
     <div class="action-grid">
       <a href="quiz.html" class="action-card card-blue">
         <div class="card-icon"><i class="fa-solid fa-pen-to-square"></i></div>
@@ -723,6 +700,14 @@
           <p>प्रगतिको विश्लेषण</p>
         </div>
       </a>
+      <!-- नयाँ थपिएको Game Section कार्ड -->
+      <a href="games.html" class="action-card card-purple" style="grid-column: span 2;">
+        <div class="card-icon"><i class="fa-solid fa-gamepad"></i></div>
+        <div>
+          <h4>Quiz Games</h4>
+          <p>रमाइलो खेलमार्फत ज्ञान बढाउनुहोस्</p>
+        </div>
+      </a>
     </div>
 
     <!-- हालको गतिविधि खण्ड -->
@@ -746,8 +731,7 @@
 
   <!-- तल्लो नेभिगेसन बार -->
   <script src="components.js"></script>
-<script>loadBottomNav('home');</script>
-
+  <script>loadBottomNav('home');</script>
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -825,7 +809,6 @@
             .maybeSingle();
 
           if (userStat && userStat.total_solved > 0) {
-            // अनुमानित वा वास्तविक हिसाबले शुद्धتا देखाउने
             accuracy = Math.min(100, Math.max(40, Math.round((userStat.total_solved * 4) % 45 + 55)));
           }
         } catch (e) {
