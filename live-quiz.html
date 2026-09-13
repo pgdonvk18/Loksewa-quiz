@@ -242,7 +242,8 @@
           </button>
         </div>
 
-        <button onclick="showCreateBattle()" class="btn-primary" style="margin-bottom: 10px;">⚔️ नयाँ ब्याटल सुरु गर्नुहोस्</button>
+        <button onclick="showCreateBattle()" class="btn-primary" style="margin-bottom: 10px;">⚔️ नयाँ ब्याटल सिर्जना गर्नुहोस् (Create Room)</button>
+        <button onclick="showJoinBattleModal()" class="btn-secondary" style="background: #eff6ff; color: #2563eb; border-color: #bfdbfe; margin-bottom: 10px;">🔑 रुम कोड हालेर जोइन हुनुहोस् (Join Room)</button>
         <button onclick="showBulkAdminPanel()" class="btn-secondary">📦 एकैचोटि धेरै प्रश्न थप्नुहोस् (Bulk Admin)</button>
       </div>
 
@@ -270,7 +271,19 @@
           </div>
         </div>
 
-        <button onclick="createBattle()" class="btn-primary" style="margin-top: 4px;">लिङ्क जेनेरेट गर्नुहोस्</button>
+        <button onclick="createBattle()" class="btn-primary" style="margin-top: 4px;">रुम सिर्जना गर्नुहोस्</button>
+        <button onclick="location.reload()" class="btn-secondary">पछाडि जानुहोस्</button>
+      </div>
+
+      <!-- VIEW 2.5: JOIN ROOM BY CODE MODAL/VIEW -->
+      <div id="joinModalView" class="hidden">
+        <h3 style="font-size: 14px; font-weight: 800; margin-bottom: 6px; color: #0f172a;">🔑 रुम कोडद्वारा जोइन हुनुहोस्</h3>
+        <p style="font-size: 11px; color: #64748b; margin-bottom: 14px;">तपाईंका साथीले दिएको ६ वा ७ डिजिटको रुम कोड वा लिङ्क यहाँ राख्नुहोस्:</p>
+
+        <label style="display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 6px;">रुम कोड (Room Code):</label>
+        <input type="text" id="manualRoomCodeInput" placeholder="जस्तै: ab39xyz" style="text-transform: lowercase;">
+
+        <button onclick="joinByManualCode()" class="btn-primary" style="margin-top: 4px;">ब्याटलमा प्रवेश गर्नुहोस्</button>
         <button onclick="location.reload()" class="btn-secondary">पछाडि जानुहोस्</button>
       </div>
 
@@ -299,8 +312,13 @@
       <div id="waitingView" class="hidden" style="text-align: center; padding: 10px 0;">
         <div class="spinner"></div>
         <h3 id="waitingTitle" style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">साथीको प्रतीक्षा गर्दैछ...</h3>
-        <p style="font-size: 11px; color: #64748b; margin-bottom: 14px;">यो लिङ्क कपी गरेर साथीलाई पठाउनुहोस्:</p>
+        <p style="font-size: 11px; color: #64748b; margin-bottom: 10px;">यो रुम कोड वा लिङ्क साथीलाई पठाउनुहोस्:</p>
         
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 12px; margin-bottom: 14px;">
+          <span style="font-size: 11px; color: #1e40af; font-weight: 700; display: block; margin-bottom: 4px;">तपाईंको रुम कोड:</span>
+          <b id="displayRoomCode" style="font-size: 18px; color: #2563eb; letter-spacing: 1px;">---</b>
+        </div>
+
         <div style="display: flex; gap: 8px; margin-bottom: 14px;">
           <input type="text" id="shareLinkBox" readonly style="margin: 0; background: #f8fafc; font-size: 12px;">
           <button onclick="copyShareLink()" style="background: #e2e8f0; border: none; padding: 0 12px; border-radius: 12px; font-weight: 700; font-size: 11px; cursor: pointer;">कपी</button>
@@ -382,14 +400,7 @@
               playerName = user.displayName || user.email.split('@')[0];
               
               if (roomIdFromUrl) {
-                currentRoomId = roomIdFromUrl;
-                isHost = false;
-                document.getElementById("homeView").classList.add("hidden");
-                document.getElementById("waitingView").classList.remove("hidden");
-                document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
-                document.getElementById("shareLinkBox").parentElement.style.display = "none";
-                document.getElementById("displayGuestName").innerText = playerName;
-                document.getElementById("joinGuestBox").classList.remove("hidden");
+                handleRoomEntry(roomIdFromUrl);
               }
             } else {
               currentUser = null;
@@ -399,6 +410,7 @@
                 document.getElementById("waitingView").classList.remove("hidden");
                 document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
                 document.getElementById("shareLinkBox").parentElement.style.display = "none";
+                document.getElementById("displayRoomCode").innerText = currentRoomId;
                 document.getElementById("waitingView").innerHTML += `
                   <div style="margin-top: 12px;">
                     <p style="color: #dc2626; font-size: 11px; margin-bottom: 8px;">ब्याटल जोइन गर्न पहिले लगइन गर्नुहोस्।</p>
@@ -412,6 +424,20 @@
         }
       }, 100);
     });
+
+    async function handleRoomEntry(rId) {
+      currentRoomId = rId;
+      isHost = false;
+      document.getElementById("homeView").classList.add("hidden");
+      document.getElementById("setupView").classList.add("hidden");
+      document.getElementById("joinModalView").classList.add("hidden");
+      document.getElementById("waitingView").classList.remove("hidden");
+      document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
+      document.getElementById("shareLinkBox").parentElement.style.display = "none";
+      document.getElementById("displayRoomCode").innerText = currentRoomId;
+      document.getElementById("displayGuestName").innerText = playerName;
+      document.getElementById("joinGuestBox").classList.remove("hidden");
+    }
 
     async function loginWithGoogle() {
       try {
@@ -433,6 +459,35 @@
       document.getElementById("homeView").classList.add("hidden");
       document.getElementById("setupView").classList.remove("hidden");
       document.getElementById("displayHostName").innerText = playerName;
+    }
+
+    function showJoinBattleModal() {
+      if (!currentUser) {
+        loginWithGoogle();
+        return;
+      }
+      document.getElementById("homeView").classList.add("hidden");
+      document.getElementById("joinModalView").classList.remove("hidden");
+    }
+
+    function joinByManualCode() {
+      let codeInput = document.getElementById("manualRoomCodeInput").value.trim();
+      if (!codeInput) {
+        alert("कृपया रुम कोड राख्नुहोस्!");
+        return;
+      }
+      // If user pasted full url containing ?room=
+      if (codeInput.includes("room=")) {
+        try {
+          const urlObj = new URL(codeInput);
+          codeInput = urlObj.searchParams.get("room") || codeInput;
+        } catch(e) {
+          // fallback if it's text
+          const parts = codeInput.split("room=");
+          if (parts.length > 1) codeInput = parts[1].split("&")[0];
+        }
+      }
+      handleRoomEntry(codeInput);
     }
 
     function updateRangeDisplay(val) {
@@ -497,16 +552,16 @@
     async function createBattle() {
       const count = parseInt(document.getElementById("questionRangeSlider").value);
       isHost = true;
-      currentRoomId = 'room_' + Math.random().toString(36).substring(2, 9);
+      currentRoomId = Math.random().toString(36).substring(2, 8); // e.g. 6-char code
 
       document.getElementById("setupView").classList.add("hidden");
       document.getElementById("waitingView").classList.remove("hidden");
 
+      document.getElementById("displayRoomCode").innerText = currentRoomId;
       const shareUrl = window.location.origin + window.location.pathname + "?room=" + currentRoomId;
       document.getElementById("shareLinkBox").value = shareUrl;
 
       try {
-        // Fetching randomly from 'quizzes' table
         const { data: dbQuizzes, error: dbError } = await supabaseClient
           .from('quizzes')
           .select('*');
@@ -547,7 +602,7 @@
       const copyText = document.getElementById("shareLinkBox");
       copyText.select();
       navigator.clipboard.writeText(copyText.value);
-      alert("लिङ्क कपी भयो! साथीलाई पठाउनुहोस्।");
+      alert("लिङ्क वा कोड कपी भयो! साथीलाई पठाउनुहोस्।");
     }
 
     async function joinBattle() {
@@ -574,7 +629,8 @@
 
       } catch (err) {
         console.error(err);
-        alert("ब्याटलमा जोइन हुन असफल भयो।");
+        alert("ब्याटलमा जोइन हुन असफल भयो। रुम कोड गलत हुन सक्छ।");
+        location.reload();
       }
     }
 
@@ -583,6 +639,7 @@
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'battle_rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
           const newData = payload.new;
           if (isHost && newData.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
+            battleData = newData.quiz_data;
             startQuizInterface();
           }
           if (newData.status === 'completed') {
