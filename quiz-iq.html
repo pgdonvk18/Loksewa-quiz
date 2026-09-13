@@ -263,18 +263,6 @@
       width: 120px;  
     }  
   
-    .lb-row {  
-      display: flex;  
-      justify-content: space-between;  
-      align-items: center;  
-      background: #f8fafc;  
-      padding: 10px 12px;  
-      border-radius: 10px;  
-      border: 1px solid #f1f5f9;  
-      font-size: 13px;  
-      margin-bottom: 8px;  
-    }  
-  
     .modal-overlay {  
       position: fixed;  
       top: 0;  
@@ -357,11 +345,6 @@
       <button onclick="startPractice()" class="btn-primary" style="width: 100%;">  
         अभ्यास सुरु गर्नुहोस् 🚀  
       </button>  
-  
-      <div style="border-top: 1px solid #f1f5f9; padding-top: 16px; margin-top: 20px;">  
-        <h3 style="font-size: 13px; font-weight: 800; color: #2563eb; margin-bottom: 10px;">🏆 IQ लिडरबोर्ड (शीर्ष स्कोर)</h3>  
-        <div id="iq-leaderboard" class="max-h-48 overflow-y-auto"></div>  
-      </div>  
     </div>  
   
     <div id="quiz-screen" class="card hidden">  
@@ -428,14 +411,9 @@
         <div id="review-container" class="space-y-2 max-h-56 overflow-y-auto pr-1" style="font-size: 12px;"></div>  
       </div>  
   
-      <button onclick="location.reload()" class="btn-primary" style="width: 100%; margin-bottom: 20px;">  
+      <button onclick="location.reload()" class="btn-primary" style="width: 100%;">  
         🔄 फेरि सुरु गर्नुहोस् (Home)  
       </button>  
-  
-      <div style="border-top: 1px solid #e2e8f0; padding-top: 16px;">  
-        <h3 style="font-size: 13px; font-weight: 800; color: #2563eb; margin-bottom: 10px;">🏆 IQ लिडरबोर्ड</h3>  
-        <div id="iq-leaderboard-result" class="max-h-48 overflow-y-auto"></div>  
-      </div>  
     </div>  
   
   </main>  
@@ -472,7 +450,7 @@
     let userAnswers = {};   
     let wrongQuestionsList = [];  
     let isMistakeRetry = false;  
-    let seenQuestionIds = new Set(); // दोहोरो प्रश्न नआओस् भनेर ट्र्याक गर्ने सेट
+    let seenQuestionIds = new Set();  
 
     document.addEventListener("DOMContentLoaded", () => {  
       onAuthStateChanged(auth, async (user) => {  
@@ -486,7 +464,6 @@
           document.getElementById('profile-display-name').innerText = 'लगइन गरिएको छैन';  
         }  
       });  
-      fetchLeaderboard();  
     });  
   
     window.updateSliderVal = function(val) {  
@@ -509,20 +486,16 @@
           return;  
         }  
   
-        // भर्खरै देखाइसकेका प्रश्नहरू छाडेर नयाँ प्रश्नहरू प्राथमिकतामा पार्ने
         let availableData = data.filter(q => !seenQuestionIds.has(q.id));
         if (availableData.length < count) {
-          // यदि धेरै प्रश्न खुलिसकेका छन् भने लिस्ट रिसेट गर्ने
           seenQuestionIds.clear();
           availableData = [...data];
         }
 
-        // प्रश्नहरूलाई पूर्ण रूपमा Random Shuffle गर्ने
         availableData.sort(() => 0.5 - Math.random());  
         
         activeQuestions = availableData.slice(0, count).map(q => {
           seenQuestionIds.add(q.id);
-          // अप्सनहरूलाई पनि Random Shuffle गर्ने ताकि उत्तर सधैँ एउटै स्थानमा नपरोस्
           let shuffledOptions = [...q.options].sort(() => 0.5 - Math.random());
           return { ...q, options: shuffledOptions };
         });  
@@ -686,8 +659,6 @@
       if (!isMistakeRetry && solvedCount > 0) {  
         await saveLeaderboardAndProfile(correct, solvedCount);  
       }  
-  
-      fetchLeaderboard();  
     }  
   
     async function saveLeaderboardAndProfile(score, solvedCount) {  
@@ -695,9 +666,9 @@
         const saveName = candidateName && candidateName !== "नाम छैन" ? candidateName : "नाम छैन";  
         const currentUserId = userId ? userId : '00000000-0000-0000-0000-000000000000';  
   
-        // टिप्पणी: यदि छुट्टै table छ भने 'leaderboard_iq' प्रयोग गर्न सक्नुहुन्छ, हाललाई साझा वा भूगोल जस्तै मिल्दोजुल्दो बनाइएको छ
+        // नोट: यहाँ 'leaderboard_iq' वा तपाईंले लिडरबोर्डको लागि प्रयोग गरिरहेको टेबलको नाम राख्नुहोला
         const { data: existing } = await supabaseClient  
-          .from('leaderboard_geography')  
+          .from('leaderboard_iq')  
           .select('*')  
           .eq('username', saveName);  
   
@@ -712,7 +683,7 @@
           const bestScore = Math.max(score, oldScore);  
 
           await supabaseClient  
-            .from('leaderboard_geography')  
+            .from('leaderboard_iq')  
             .update({   
               score: bestScore,   
               total_questions: newSolvedTotal,  
@@ -724,7 +695,7 @@
             })  
             .eq('username', saveName);  
         } else {  
-          await supabaseClient.from('leaderboard_geography').insert([  
+          await supabaseClient.from('leaderboard_iq').insert([  
             {   
               user_id: currentUserId,  
               name: saveName,  
@@ -742,40 +713,6 @@
       } catch (err) {  
         console.error("Error saving score:", err);  
       }  
-    }  
-  
-    async function fetchLeaderboard() {  
-      const { data, error } = await supabaseClient  
-        .from('leaderboard_geography')  
-        .select('*')  
-        .order('score', { ascending: false });  
-  
-      const containers = [  
-        document.getElementById('iq-leaderboard'),  
-        document.getElementById('iq-leaderboard-result')  
-      ];  
-  
-      containers.forEach(lbContainer => {  
-        if (!lbContainer) return;  
-        lbContainer.innerHTML = '';  
-          
-        if (error || !data || data.length === 0) {  
-          lbContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 12px; padding: 4px;">हाल कुनै रेकर्ड छैन।</p>';  
-          return;  
-        }  
-          
-        data.forEach((item, i) => {  
-          let displayName = item.username ? item.username : (item.name ? item.name : "नाम छैन");  
-          let totalSolved = item.solved_questions !== undefined && item.solved_questions !== null ? item.solved_questions : (item.total_questions || 0);  
-  
-          lbContainer.innerHTML += `  
-            <div class="lb-row">  
-              <span style="font-weight: 700; color: #1e293b;">${i+1}. ${displayName}</span>  
-              <span style="color: #2563eb; font-weight: 800;">${item.score} अंक (${totalSolved} हल)</span>  
-            </div>  
-          `;  
-        });  
-      });  
     }  
   </script>  
 </body>  
