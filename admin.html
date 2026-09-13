@@ -195,6 +195,52 @@
     }
     .alert-success { background: #d1fae5; color: #065f46; }
     .alert-error { background: #fee2e2; color: #991b1b; }
+
+    /* प्रश्न इडिट गर्ने सेक्सनको लागि थप स्टाइल */
+    .q-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .q-item:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    .options-container {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+      display: none;
+    }
+    .options-container.active {
+      display: block;
+    }
+    .opt-btn {
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #1e293b;
+    }
+    .opt-btn.correct-ans {
+      background: #dcfce7;
+      border-color: #22c55e;
+      color: #166534;
+      font-weight: 800;
+    }
+    .opt-btn:active {
+      background: #eff6ff;
+    }
   </style>
 </head>
 <body style="display: none;" id="adminBody">
@@ -225,6 +271,24 @@
       </div>
     </div>
 
+    <!-- ⚡ ३. सेट अनुसार प्रश्न हेरेर उत्तर सच्याउने (Question Correction Tool) -->
+    <div class="form-card" style="border-left: 4px solid #059669;">
+      <h3><i class="fa-solid fa-pen-to-square" style="color: #059669;"></i> सेट अनुसार प्रश्न हेर्ने र उत्तर सच्याउने</h3>
+      <div class="form-group">
+        <label>परीक्षण सेट छान्नुहोस्:</label>
+        <select id="admin-set-selector" class="form-control" onchange="loadAdminQuestionsBySet()">
+          <option value="">-- सेट छान्नुहोस् --</option>
+          <option value="Set-1">Set 1</option>
+          <option value="Set-2">Set 2</option>
+          <option value="Set-3">Set 3</option>
+        </select>
+      </div>
+
+      <div id="admin-questions-list" style="margin-top: 15px;">
+        <p style="text-align: center; color: #64748b; font-size: 13px;">कृपया माथिबाट सेट छान्नुहोस्।</p>
+      </div>
+    </div>
+
     <!-- ⚡ १. लाइभ मकी सूचना (Notification Ticker) पठाउने फर्म -->
     <div class="form-card" style="border-left: 4px solid #d97706;">
       <h3><i class="fa-solid fa-bullhorn" style="color: #d97706;"></i> लाइभ सूचना पट्टी (Ticker) अपडेट गर्नुहोस्</h3>
@@ -249,7 +313,7 @@
           <textarea id="sqlInput" class="form-control" placeholder="INSERT INTO public.quizzes (topic, question, options, answer, explanation) 
 VALUES 
 (
-  'World_geography', 
+  'Set-1', 
   'नेपाल राष्ट्र बैंकको स्थापना कहिले भएको हो?', 
   '[\"वि.सं. २०१३ वैशाख १४\", \"वि.सं. २०१२ बैशाख २६\", \"वि.सं. २०२० साल\", \"वि.सं. २००७ साल\"]', 
   'वि.सं. २०१३ वैशाख १४',
@@ -319,13 +383,98 @@ VALUES
     }
 
     const alertBox = document.getElementById('alertBox');
-    function showAlert(message, type) {
+    window.showAlert = function(message, type) {
       alertBox.textContent = message;
       alertBox.className = type === 'success' ? 'alert-success' : 'alert-error';
       alertBox.style.display = 'block';
       setTimeout(() => {
         alertBox.style.display = 'none';
       }, 5000);
+    }
+
+    // सेट अनुसार प्रश्नहरू एडमिन प्यानलमा लोड गर्ने
+    window.loadAdminQuestionsBySet = async function() {
+      const selectedSet = document.getElementById('admin-set-selector').value;
+      const listContainer = document.getElementById('admin-questions-list');
+      
+      if (!selectedSet) {
+        listContainer.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 13px;">कृपया सेट छान्नुहोस्।</p>';
+        return;
+      }
+
+      listContainer.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 13px;">प्रश्नहरू लोड हुँदैछ...</p>';
+
+      const { data, error } = await supabase
+        .from('quizzes')
+        .select('*')
+        .ilike('topic', selectedSet);
+
+      if (error) {
+        listContainer.innerHTML = '<p style="color: #dc2626; text-align: center;">डेटा लोड गर्न समस्या भयो!</p>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        listContainer.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 13px;">यो सेटमा कुनै प्रश्न भेटिएन।</p>';
+        return;
+      }
+
+      listContainer.innerHTML = '';
+      data.forEach((q, index) => {
+        let optionsHTML = '';
+        if (q.options && Array.isArray(q.options)) {
+          q.options.forEach(opt => {
+            const isCorrect = (opt.trim() === q.answer.trim());
+            optionsHTML += `
+              <button type="button" class="opt-btn ${isCorrect ? 'correct-ans' : ''}" onclick="updateCorrectAnswer('${q.id}', '${encodeURIComponent(opt)}', '${selectedSet}')">
+                ${opt} ${isCorrect ? ' ⭐ (हालको सही उत्तर)' : ''}
+              </button>
+            `;
+          });
+        }
+
+        listContainer.innerHTML += `
+          <div class="q-item" onclick="toggleAdminOptions('${q.id}')">
+            <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Q${index + 1}: ${q.question}</p>
+            <p style="font-size: 11px; color: #059669; margin-top: 4px; font-weight: 600;">सही उत्तर: ${q.answer}</p>
+            
+            <div id="admin-opt-box-${q.id}" class="options-container" onclick="event.stopPropagation()">
+              <p style="font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px;">कुन अप्सन सही हो त्यसमा क्लिक गर्नुहोस्:</p>
+              ${optionsHTML}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // प्रश्न क्लिक गर्दा अप्सनहरू देखाउने/लुकाउने
+    window.toggleAdminOptions = function(qId) {
+      const box = document.getElementById(`admin-opt-box-${qId}`);
+      if (box) {
+        box.classList.toggle('active');
+      }
+    }
+
+    // अप्सन क्लिक गरेर सही उत्तर अपडेट गर्ने
+    window.updateCorrectAnswer = async function(qId, encodedOpt, currentSet) {
+      const selectedOption = decodeURIComponent(encodedOpt);
+      
+      if (!confirm(`के तपाईं यो प्रश्नको सही उत्तर "${selectedOption}" राख्न चाहनुहुन्छ?`)) {
+        return;
+      }
+
+      const { error } = await supabase
+        .from('quizzes')
+        .update({ answer: selectedOption })
+        .eq('id', qId);
+
+      if (error) {
+        showAlert('अपडेट गर्न असफल भयो: ' + error.message, 'error');
+      } else {
+        showAlert('सफलतापूर्वक नयाँ सही उत्तर अपडेट गरियो! 🎉', 'success');
+        document.getElementById('admin-set-selector').value = currentSet;
+        loadAdminQuestionsBySet();
+      }
     }
 
     // ⚡ Notification Ticker Form Handler
@@ -480,7 +629,7 @@ VALUES
 
         showAlert(`सफलतापूर्वक ${parsedRecords.length} वटा प्रश्नहरू explanation सहित सेभ भए!`, "success");
         sqlForm.reset();
-        fetchDatabaseStats(); // Refresh stats
+        fetchDatabaseStats();
       } catch (err) {
         showAlert("त्रुटि: " + err.message, "error");
       } finally {
