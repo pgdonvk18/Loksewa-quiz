@@ -431,7 +431,7 @@
       font-weight: 500;
     }
 
-    /* २x२ ग्रिड बटनहरू (अब थप गरिएको गेम कार्डसहित ग्रिड) */
+    /* २x२ ग्रिड बटनहरू */
     .action-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -458,7 +458,7 @@
     .card-green { background: linear-gradient(135deg, #10b981, #059669); }
     .card-orange { background: linear-gradient(135deg, #f97316, #c2410c); }
     .card-pink { background: linear-gradient(135deg, #ec4899, #be185d); }
-    .card-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); } /* गेम कार्डको लागि कलर */
+    .card-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
 
     .action-card .card-icon {
       font-size: 15px;
@@ -589,11 +589,20 @@
           <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
         </a>
 
-        <!-- नयाँ थपिएको Leaderboard अप्सन -->
+        <!-- Leaderboard अप्सन -->
         <a href="leaderboard.html" class="menu-item">
           <div class="menu-item-left">
             <i class="fa-solid fa-trophy" style="color: #f59e0b;"></i>
             <span>Leaderboard</span>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+        </a>
+
+        <!-- Admin Panel Menu Item (Initially Hidden) -->
+        <a href="admin.html" class="menu-item" id="adminSidebarLink" style="display: none;">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-shield-halved" style="color: #2563eb;"></i>
+            <span>Admin Panel</span>
           </div>
           <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
         </a>
@@ -631,7 +640,7 @@
   <!-- मुख्य कन्टेनर -->
   <div class="main-container" style="margin-top: -20px;">
     
-    <!-- अभिवादन (शुभ प्रभात, [नाम]) तथा युजर प्रिमियम कार्ड -->
+    <!-- अभिवादन तथा युजर प्रिमियम कार्ड -->
     <div class="greeting-section">
       <div>
         <h2 id="greetingName">शुभ प्रभात! 👋</h2>
@@ -670,7 +679,7 @@
       </div>
     </div>
 
-    <!-- ग्रिड बटनहरू (Take Quiz, Practice Set, Mock Test, Performance र नयाँ Games) -->
+    <!-- ग्रिड बटनहरू -->
     <div class="action-grid">
       <a href="quiz.html" class="action-card card-blue">
         <div class="card-icon"><i class="fa-solid fa-pen-to-square"></i></div>
@@ -700,7 +709,7 @@
           <p>प्रगतिको विश्लेषण</p>
         </div>
       </a>
-      <!-- नयाँ थपिएको Game Section कार्ड -->
+      <!-- Game Section कार्ड -->
       <a href="games.html" class="action-card card-purple" style="grid-column: span 2;">
         <div class="card-icon"><i class="fa-solid fa-gamepad"></i></div>
         <div>
@@ -774,6 +783,32 @@
     closeSidebar.addEventListener('click', toggleSidebar);
     sidebarOverlay.addEventListener('click', toggleSidebar);
 
+    // Check if the user has an admin role
+    async function checkAdminRole(user) {
+      try {
+        // Method 1: Check Firestore user document for admin role
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && (docSnap.data().role === 'admin' || docSnap.data().is_admin === true)) {
+          document.getElementById('adminSidebarLink').style.display = 'flex';
+          return;
+        }
+
+        // Method 2: Check Supabase profiles table for admin role
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.uid)
+          .maybeSingle();
+
+        if (!error && data && data.role === 'admin') {
+          document.getElementById('adminSidebarLink').style.display = 'flex';
+        }
+      } catch (err) {
+        console.error("Admin verification error:", err);
+      }
+    }
+
     // युजरको डेटा फेच गर्ने र नाम तथा Accuracy देखाउने
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -798,6 +833,9 @@
         const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) || "LK";
         document.getElementById('sidebarAvatar').textContent = initials;
         document.getElementById('userInitial').textContent = initials;
+
+        // Check admin privilege
+        checkAdminRole(user);
 
         // Supabase बाट युजरको वास्तविक accuracy वा total solved निकाल्ने
         let accuracy = 75; // डिफल्ट बेसलाइन
