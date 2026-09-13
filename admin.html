@@ -19,7 +19,6 @@
       color: #1e293b;
       padding-bottom: 50px;
     }
-    /* सुरक्षा चेक गर्दा देखाउने लोडिङ स्क्रिन */
     #loadingScreen {
       position: fixed;
       top: 0;
@@ -46,7 +45,6 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* मुख्य एड्मिन प्यानल डिजाइन */
     .admin-header {
       background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
       color: white;
@@ -79,6 +77,31 @@
       max-width: 600px;
       margin: 0 auto;
       padding: 0 20px;
+    }
+
+    .tab-container {
+      display: flex;
+      background: #e2e8f0;
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 700;
+      color: #64748b;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: #ffffff;
+      color: #2563eb;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     .form-card {
@@ -124,7 +147,9 @@
     }
     textarea.form-control {
       resize: vertical;
-      min-height: 80px;
+      min-height: 120px;
+      font-family: monospace;
+      font-size: 12px;
     }
 
     .submit-btn {
@@ -143,7 +168,13 @@
       background: #1d4ed8;
     }
 
-    /* मेसेज अलर्ट */
+    .help-text {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
     #alertBox {
       padding: 12px;
       border-radius: 10px;
@@ -154,17 +185,18 @@
     }
     .alert-success { background: #d1fae5; color: #065f46; }
     .alert-error { background: #fee2e2; color: #991b1b; }
+    
+    .section-content { display: none; }
+    .section-content.active { display: block; }
   </style>
 </head>
 <body style="display: none;" id="adminBody">
 
-  <!-- सेक्युरिटी लोडिङ स्क्रिन -->
   <div id="loadingScreen">
     <div class="spinner"></div>
     <span>एड्मिन अधिकार प्रमाणीकरण हुँदैछ...</span>
   </div>
 
-  <!-- हेडर -->
   <div class="admin-header">
     <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
     <h1><i class="fa-solid fa-shield-halved" style="color: #fbbf24;"></i> Admin Question Panel</h1>
@@ -174,20 +206,25 @@
   <div class="container">
     <div id="alertBox"></div>
 
-    <div class="form-card">
+    <div class="tab-container">
+      <button class="tab-btn active" id="singleTabBtn" onclick="switchTab('single')">एक्लो प्रश्न (Single)</button>
+      <button class="tab-btn" id="bulkTabBtn" onclick="switchTab('bulk')">धेरै प्रश्न (Bulk Import)</button>
+    </div>
+
+    <!-- 1. Single Question Form -->
+    <div class="form-card section-content active" id="singleSection">
       <h3><i class="fa-solid fa-circle-plus" style="color: #2563eb;"></i> सेटमा नयाँ प्रश्न थप्नुहोस्</h3>
-      
       <form id="questionForm">
         <div class="form-group">
           <label>कुन सेट (Set) मा हाल्ने हो छान्नुहोस्:</label>
-          <select id="setSelect" class="form-control" required>
+          <select id="setSelect" class="form-control setDropdown" required>
             <option value="">सेटहरू लोड हुँदैछ...</option>
           </select>
         </div>
 
         <div class="form-group">
           <label>प्रश्न (Question):</label>
-          <textarea id="questionText" class="form-control" placeholder="प्रश्न यहाँ लेख्नुहोस्..." required></textarea>
+          <textarea id="questionText" class="form-control" placeholder="प्रश्न यहाँ लेख्नुहोस्..." style="min-height: 80px; font-family: inherit;" required></textarea>
         </div>
 
         <div class="form-group">
@@ -224,12 +261,43 @@
         <button type="submit" class="submit-btn" id="saveBtn">प्रश्न सेभ गर्नुहोस्</button>
       </form>
     </div>
+
+    <!-- 2. Bulk Questions Form -->
+    <div class="form-card section-content" id="bulkSection">
+      <h3><i class="fa-solid fa-file-arrow-up" style="color: #10b981;"></i> एकैपटक धेरै प्रश्नहरू हाल (Bulk Upload)</h3>
+      <form id="bulkForm">
+        <div class="form-group">
+          <label>कुन सेट (Set) मा हाल्ने हो छान्नुहोस्:</label>
+          <select id="bulkSetSelect" class="form-control setDropdown" required>
+            <option value="">सेटहरू लोड हुँदैछ...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>JSON Format मा प्रश्नहरू राख्नुहोस्:</label>
+          <textarea id="bulkJsonInput" class="form-control" placeholder='[
+  {
+    "question": "नेपालको राजधानी कहाँ हो?",
+    "option_a": "पोखरा",
+    "option_b": "काठमाडौं",
+    "option_c": "विराटनगर",
+    "option_d": "बुटवल",
+    "correct_answer": "B"
+  }
+]' required></textarea>
+          <div class="help-text">
+            💡 <b>निर्देशन:</b> स्क्वायर ब्रकेट `[...]` भित्र कर्ली ब्रेसिस `{...}` मा प्रश्नहरू कोमा (,) ले छुट्याएर राख्नुहोला। `correct_answer` मा A, B, C वा D मध्ये एक राख्नुपर्छ।
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="bulkSaveBtn" style="background: #10b981;">सबै प्रश्नहरू एकैपटक सेभ गर्नुहोस्</button>
+      </form>
+    </div>
+
   </div>
 
-  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Firebase र एड्मिन स्क्रिप्ट -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -250,58 +318,70 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // एड्मिनको इमेल लिस्ट (यहाँ आफ्नो जिमेल राख्नुहोला)
+    // तपाईंको जिमेल यहाँ सेटअप गरिसकिएको छ
     const adminEmails = ["pgprajwal11@gmail.com"];
 
-    // 1. सुरक्षा जाँच (Authentication & Role Verification)
     onAuthStateChanged(auth, async (user) => {
       if (!user || !user.email || !adminEmails.includes(user.email.toLowerCase())) {
         alert("तपाईंलाई यो प्यानल पहुँच गर्ने अनुमति छैन!");
-        window.location.href = "index.html"; // साधारण युजर भए होमपेजमा फर्काउने
+        window.location.href = "index.html";
         return;
       }
 
-      // एड्मिन प्रमाणित भएपछि मात्र पेज देखाउने
       document.getElementById('loadingScreen').style.display = 'none';
       document.getElementById('adminBody').style.display = 'block';
 
-      // Supabase बाट सेटहरूको सूची लोड गर्ने
       loadSets();
     });
 
-    // 2. डेटाबेसमा भएका सेटहरू ड्रपडाउनमा लोड गर्ने फंक्सन
     async function loadSets() {
-      const setSelect = document.getElementById('setSelect');
       try {
-        // नोट: यदि तपाईंको सेटहरूको टेबलको नाम अर्कै छ भने यहाँ परिवर्तन गर्नुहोला (जस्तै: 'sets' वा 'exam_sets')
         const { data, error } = await supabase.from('sets').select('*');
-        
         if (error) throw error;
 
-        setSelect.innerHTML = '<option value="">सेट छान्नुहोस्</option>';
-        if (data && data.length > 0) {
-          data.forEach(set => {
-            let option = document.createElement('option');
-            option.value = set.id; // सेटको ID
-            option.textContent = set.title || set.name || `Set ID: ${set.id}`;
-            setSelect.appendChild(option);
-          });
-        } else {
-          setSelect.innerHTML = '<option value="">कुनै सेट फेला परेन</option>';
-        }
+        const dropdowns = document.querySelectorAll('.setDropdown');
+        dropdowns.forEach(dropdown => {
+          dropdown.innerHTML = '<option value="">सेट छान्नुहोस्</option>';
+          if (data && data.length > 0) {
+            data.forEach(set => {
+              let option = document.createElement('option');
+              option.value = set.id;
+              option.textContent = set.title || set.name || `Set ID: ${set.id}`;
+              dropdown.appendChild(option.cloneNode(true));
+            });
+          } else {
+            dropdown.innerHTML = '<option value="">कुनै सेट फेला परेन</option>';
+          }
+        });
       } catch (err) {
         console.error("Set load error:", err);
-        setSelect.innerHTML = '<option value="">सेट लोड गर्न असफल भयो</option>';
       }
     }
 
-    // 3. प्रश्न सेभ गर्ने ल직
+    window.switchTab = function(type) {
+      const singleTab = document.getElementById('singleTabBtn');
+      const bulkTab = document.getElementById('bulkTabBtn');
+      const singleSec = document.getElementById('singleSection');
+      const bulkSec = document.getElementById('bulkSection');
+
+      if (type === 'single') {
+        singleTab.classList.add('active');
+        bulkTab.classList.remove('active');
+        singleSec.classList.add('active');
+        bulkSec.classList.remove('active');
+      } else {
+        bulkTab.classList.add('active');
+        singleTab.classList.remove('active');
+        bulkSec.classList.add('active');
+        singleSec.classList.remove('active');
+      }
+    };
+
     const questionForm = document.getElementById('questionForm');
     const alertBox = document.getElementById('alertBox');
 
     questionForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
       const saveBtn = document.getElementById('saveBtn');
       saveBtn.disabled = true;
       saveBtn.textContent = "सेभ हुँदैछ...";
@@ -315,21 +395,58 @@
       const correct_answer = document.getElementById('correctAnswer').value;
 
       try {
-        // प्रश्नहरू सेभ हुने Supabase टेबलको नाम (तपाईंको टेबल अनुसार 'questions' राखिएको छ)
         const { error } = await supabase.from('questions').insert([
           { set_id: setId, question, option_a, option_b, option_c, option_d, correct_answer }
         ]);
 
         if (error) throw error;
-
         showAlert("प्रश्न सफलतापूर्वक सेभ भयो!", "success");
         questionForm.reset();
       } catch (err) {
-        console.error("Error inserting question:", err);
-        showAlert("प्रश्न सेभ गर्न असफल: " + err.message, "error");
+        showAlert("त्रुटि: " + err.message, "error");
       } finally {
         saveBtn.disabled = false;
         saveBtn.textContent = "प्रश्न सेभ गर्नुहोस्";
+      }
+    });
+
+    const bulkForm = document.getElementById('bulkForm');
+    bulkForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const bulkSaveBtn = document.getElementById('bulkSaveBtn');
+      bulkSaveBtn.disabled = true;
+      bulkSaveBtn.textContent = "अपलोड हुँदैछ...";
+
+      const setId = document.getElementById('bulkSetSelect').value;
+      const jsonInput = document.getElementById('bulkJsonInput').value;
+
+      try {
+        let questionsArray = JSON.parse(jsonInput);
+        
+        if (!Array.isArray(questionsArray) || questionsArray.length === 0) {
+          throw new Error("अमान्य JSON format! कृप्या सहि तरिकाले राख्नुहोला।");
+        }
+
+        const formattedQuestions = questionsArray.map(q => ({
+          set_id: setId,
+          question: q.question,
+          option_a: q.option_a,
+          option_b: q.option_b,
+          option_c: q.option_c,
+          option_d: q.option_d,
+          correct_answer: q.correct_answer ? q.correct_answer.toUpperCase() : 'A'
+        }));
+
+        const { error } = await supabase.from('questions').insert(formattedQuestions);
+        if (error) throw error;
+
+        showAlert(`सफलतापूर्वक ${formattedQuestions.length} वटा प्रश्नहरू थपिए!`, "success");
+        bulkForm.reset();
+      } catch (err) {
+        showAlert("बल्क अपलोड असफल: " + err.message, "error");
+      } finally {
+        bulkSaveBtn.disabled = false;
+        bulkSaveBtn.textContent = "सबै प्रश्नहरू एकैपटक सेभ गर्नुहोस्";
       }
     });
 
@@ -339,7 +456,7 @@
       alertBox.style.display = 'block';
       setTimeout(() => {
         alertBox.style.display = 'none';
-      }, 4000);
+      }, 5000);
     }
   </script>
 </body>
