@@ -242,8 +242,7 @@
         </div>
 
         <button onclick="showCreateBattle()" class="btn-primary" style="margin-bottom: 10px;">⚔️ नयाँ ब्याटल सिर्जना गर्नुहोस् (Create Room)</button>
-        <button onclick="showJoinBattleModal()" class="btn-secondary" style="background: #eff6ff; color: #2563eb; border-color: #bfdbfe; margin-bottom: 10px;">🔑 रुम कोड हालेर जोइन हुनुहोस् (Join Room)</button>
-        <button onclick="showBulkAdminPanel()" class="btn-secondary">📦 एकैचोटि धेरै प्रश्न थप्नुहोस् (Bulk Admin)</button>
+        <button onclick="showJoinBattleModal()" class="btn-secondary" style="background: #eff6ff; color: #2563eb; border-color: #bfdbfe;">🔑 रुम कोड हालेर जोइन हुनुहोस् (Join Room)</button>
       </div>
 
       <!-- VIEW 2: SETUP / CREATE BATTLE -->
@@ -285,27 +284,6 @@
         <button onclick="location.reload()" class="btn-secondary">पछाडि जानुहोस्</button>
       </div>
 
-      <!-- VIEW 3: BULK ADMIN PANEL -->
-      <div id="bulkAdminView" class="hidden">
-        <h3 style="font-size: 14px; font-weight: 800; margin-bottom: 4px; color: #0f172a;">📦 बल्क प्रश्न अपलोड प्यानल</h3>
-        <p style="font-size: 11px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">तलको बक्समा JSON ढाँचामा एकैचोटि धेरै प्रश्नहरू राखेर सेभ गर्नुहोस्।</p>
-
-        <label style="display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 4px;">विषय (Topic):</label>
-        <input type="text" id="bulkTopic" placeholder="जस्तै: नेपालको भूगोल">
-
-        <label style="display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 4px;">प्रश्नहरूको JSON डाटा:</label>
-        <textarea id="bulkJsonInput" rows="7" placeholder='[
-  {
-    "question": "सगरमाथाको उचाइ कति छ?",
-    "options": ["८८४८.८६ मि", "८,००० मि", "९,००० मि", "८,५०० मि"],
-    "answer": 0
-  }
-]' style="font-size: 12px;"></textarea>
-
-        <button onclick="saveBulkQuestionsToDB()" class="btn-primary">सबै प्रश्नहरू एकैचोटि सेभ गर्नुहोस्</button>
-        <button onclick="location.reload()" class="btn-secondary">गृहपृष्ठमा फर्कनुहोस्</button>
-      </div>
-
       <!-- VIEW 4: WAITING FOR GUEST OR JOINING -->
       <div id="waitingView" class="hidden" style="text-align: center; padding: 10px 0;">
         <div class="spinner"></div>
@@ -331,7 +309,7 @@
           </div>
         </div>
 
-        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+        <div style="display: flex; gap: 8px; margin-bottom: 14px;" id="shareLinkContainer">
           <input type="text" id="shareLinkBox" readonly style="margin: 0; background: #f8fafc; font-size: 12px;">
           <button onclick="copyShareLink()" style="background: #e2e8f0; border: none; padding: 0 12px; border-radius: 12px; font-weight: 700; font-size: 11px; cursor: pointer;">कपी</button>
         </div>
@@ -435,7 +413,7 @@
                 document.getElementById("homeView").classList.add("hidden");
                 document.getElementById("waitingView").classList.remove("hidden");
                 document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
-                document.getElementById("shareLinkBox").parentElement.style.display = "none";
+                document.getElementById("shareLinkContainer").style.display = "none";
                 document.getElementById("displayRoomCode").innerText = currentRoomId;
                 document.getElementById("waitingView").innerHTML += `
                   <div style="margin-top: 12px;">
@@ -451,7 +429,6 @@
       }, 100);
     });
 
-    // Helper to robustly extract correct option index whether stored as number, string, or text
     function getCorrectIndex(q) {
       let rawAns = q.correct !== undefined ? q.correct : (q.answer !== undefined ? q.answer : q.correct_option);
       if (typeof rawAns === 'number') return rawAns;
@@ -460,7 +437,7 @@
         const foundIdx = q.options.indexOf(rawAns);
         if (foundIdx !== -1) return foundIdx;
       }
-      return 0; // Fallback
+      return 0;
     }
 
     async function setupGuestRoomView(rId) {
@@ -471,7 +448,7 @@
       document.getElementById("joinModalView").classList.add("hidden");
       document.getElementById("waitingView").classList.remove("hidden");
       document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
-      document.getElementById("shareLinkBox").parentElement.style.display = "none";
+      document.getElementById("shareLinkContainer").style.display = "none";
       document.getElementById("displayRoomCode").innerText = currentRoomId;
       document.getElementById("waitingGuestName").innerText = playerName;
       document.getElementById("guestStatusBadge").innerText = "तयार";
@@ -479,9 +456,12 @@
       document.getElementById("guestStatusBadge").style.color = "#16a34a";
       document.getElementById("joinGuestBox").classList.remove("hidden");
 
-      const { data } = await supabaseClient.from('battle_rooms').select('host_name, quiz_data, status').eq('room_id', currentRoomId).single();
+      const { data } = await supabaseClient.from('battle_rooms').select('host_name, guest_name, quiz_data, status').eq('room_id', currentRoomId).single();
       if (data) {
         document.getElementById("waitingHostName").innerText = data.host_name;
+        if (data.guest_name) {
+          document.getElementById("waitingGuestName").innerText = data.guest_name;
+        }
         battleData = data.quiz_data;
         if (data.status === 'active') {
           startQuizInterface();
@@ -544,61 +524,6 @@
       document.getElementById("rangeValueDisplay").innerText = val + " वटा";
     }
 
-    async function showBulkAdminPanel() {
-      if (!currentUser) {
-        loginWithGoogle();
-        return;
-      }
-
-      const { data: profile, error } = await supabaseClient
-        .from('profiles')
-        .select('role')
-        .eq('email', currentUser.email)
-        .single();
-
-      if (error || !profile || profile.role !== 'admin') {
-        alert("Access Denied! यो प्यानलमा केवल एडमिन मात्र जान मिल्छ। ❌");
-        return;
-      }
-
-      document.getElementById("homeView").classList.add("hidden");
-      document.getElementById("bulkAdminView").classList.remove("hidden");
-    }
-
-    async function saveBulkQuestionsToDB() {
-      const topic = document.getElementById("bulkTopic").value.trim();
-      const jsonText = document.getElementById("bulkJsonInput").value.trim();
-
-      if (!topic || !jsonText) {
-        alert("कृपया टपिक र JSON डाटा दुवै भर्नुहोस्!");
-        return;
-      }
-
-      try {
-        const parsedQuestions = JSON.parse(jsonText);
-        if (!Array.isArray(parsedQuestions) || parsedQuestions.length === 0) {
-          throw new Error("मान्य JSON एरे फेला परेन।");
-        }
-
-        const rowsToInsert = parsedQuestions.map(q => ({
-          topic: topic,
-          question: q.question,
-          options: q.options,
-          answer: q.answer !== undefined ? q.answer : (q.correct !== undefined ? q.correct : 0)
-        }));
-
-        const { error } = await supabaseClient.from('quizzes').insert(rowsToInsert);
-        if (error) throw error;
-
-        alert(`सफलतापूर्वक ${rowsToInsert.length} वटा प्रश्नहरू quizzes टेबलमा सेभ भए! 🎉`);
-        location.reload();
-
-      } catch (err) {
-        console.error(err);
-        alert("सेभ असफल भयो! JSON फर्मट वा अनुमति मिलेन।");
-      }
-    }
-
     async function createBattle() {
       const count = parseInt(document.getElementById("questionRangeSlider").value);
       isHost = true;
@@ -618,7 +543,7 @@
           .select('*');
 
         if (dbError || !dbQuizzes || dbQuizzes.length === 0) {
-          throw new Error("quizzes टेबलमा प्रश्नहरू फेला परेनन्। कृपया पहिले बल्क प्यानलबाट प्रश्नहरू थप्नुहोस्!");
+          throw new Error("quizzes टेबलमा प्रश्नहरू फेला परेनन्।");
         }
 
         const shuffled = dbQuizzes.sort(() => 0.5 - Math.random());
@@ -691,14 +616,14 @@
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'battle_rooms', filter: `room_id=eq.${currentRoomId}` }, async payload => {
           const newData = payload.new;
           
-          if (isHost && newData.guest_name && document.getElementById("waitingView").classList.contains("hidden") === false) {
+          if (newData.guest_name) {
             document.getElementById("waitingGuestName").innerText = newData.guest_name;
             document.getElementById("guestStatusBadge").innerText = "तयार";
             document.getElementById("guestStatusBadge").style.background = "#dcfce7";
             document.getElementById("guestStatusBadge").style.color = "#16a34a";
           }
 
-          if (isHost && newData.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
+          if (newData.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
             battleData = newData.quiz_data;
             startQuizInterface();
           }
@@ -717,13 +642,13 @@
       pollingInterval = setInterval(async () => {
         const { data, error } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
         if (!error && data) {
-          if (isHost && data.guest_name) {
+          if (data.guest_name) {
             document.getElementById("waitingGuestName").innerText = data.guest_name;
             document.getElementById("guestStatusBadge").innerText = "तयार";
             document.getElementById("guestStatusBadge").style.background = "#dcfce7";
             document.getElementById("guestStatusBadge").style.color = "#16a34a";
           }
-          if (isHost && data.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
+          if (data.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
             battleData = data.quiz_data;
             startQuizInterface();
           }
