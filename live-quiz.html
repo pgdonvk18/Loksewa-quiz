@@ -286,7 +286,7 @@
 
       <!-- VIEW 4: WAITING FOR GUEST OR JOINING -->
       <div id="waitingView" class="hidden" style="text-align: center; padding: 10px 0;">
-        <div class="spinner"></div>
+        <div class="spinner" id="waitingSpinner"></div>
         <h3 id="waitingTitle" style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">साथीको प्रतीक्षा गर्दैछ...</h3>
         <p style="font-size: 11px; color: #64748b; margin-bottom: 10px;">यो रुम कोड वा लिङ्क साथीलाई पठाउनुहोस्:</p>
         
@@ -314,6 +314,11 @@
           <button onclick="copyShareLink()" style="background: #e2e8f0; border: none; padding: 0 12px; border-radius: 12px; font-weight: 700; font-size: 11px; cursor: pointer;">कपी</button>
         </div>
         
+        <!-- Host Start Button (Initially hidden until guest joins) -->
+        <div id="hostStartBox" class="hidden" style="margin-bottom: 10px;">
+          <button onclick="hostStartBattle()" class="btn-primary" style="background: #16a34a; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">🚀 ब्याटल सुरु गर्नुहोस् (Start Battle)</button>
+        </div>
+
         <div id="joinGuestBox" class="hidden">
           <button onclick="joinBattle()" class="btn-primary">ब्याटलमा जोइन हुनुहोस्</button>
         </div>
@@ -447,25 +452,19 @@
       document.getElementById("setupView").classList.add("hidden");
       document.getElementById("joinModalView").classList.add("hidden");
       document.getElementById("waitingView").classList.remove("hidden");
-      document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
+      document.getElementById("waitingTitle").innerText = "ब्याटल रुममा जोडिनुहोस्!";
       document.getElementById("shareLinkContainer").style.display = "none";
       document.getElementById("displayRoomCode").innerText = currentRoomId;
       document.getElementById("waitingGuestName").innerText = playerName;
-      document.getElementById("guestStatusBadge").innerText = "तयार";
-      document.getElementById("guestStatusBadge").style.background = "#dcfce7";
-      document.getElementById("guestStatusBadge").style.color = "#16a34a";
+      document.getElementById("guestStatusBadge").innerText = "जोडिदैछ...";
+      document.getElementById("guestStatusBadge").style.background = "#fef3c7";
+      document.getElementById("guestStatusBadge").style.color = "#d97706";
       document.getElementById("joinGuestBox").classList.remove("hidden");
 
       const { data } = await supabaseClient.from('battle_rooms').select('host_name, guest_name, quiz_data, status').eq('room_id', currentRoomId).single();
       if (data) {
         document.getElementById("waitingHostName").innerText = data.host_name;
-        if (data.guest_name) {
-          document.getElementById("waitingGuestName").innerText = data.guest_name;
-        }
         battleData = data.quiz_data;
-        if (data.status === 'active') {
-          startQuizInterface();
-        }
       }
       subscribeToRoom();
       startPollingForRoom();
@@ -598,16 +597,31 @@
         battleData = data.quiz_data;
 
         await supabaseClient.from('battle_rooms').update({
-          guest_name: playerName,
-          status: 'active'
+          guest_name: playerName
         }).eq('room_id', currentRoomId);
 
-        startQuizInterface();
+        document.getElementById("waitingTitle").innerText = "होस्टले खेल सुरु गर्ने प्रतीक्षा गर्दैछ...";
+        document.getElementById("joinGuestBox").innerHTML = `<p style="font-size: 12px; font-weight: 700; color: #16a34a;">✔ सफलतापूर्वक जोडिइसक्नुभयो! होस्टले क्विज सुरु गर्दैछ...</p>`;
+
+        startPollingForRoom();
 
       } catch (err) {
         console.error(err);
         alert("ब्याटलमा जोइन हुन असफल भयो। रुम कोड गलत हुन सक्छ।");
         location.reload();
+      }
+    }
+
+    async function hostStartBattle() {
+      try {
+        await supabaseClient.from('battle_rooms').update({
+          status: 'active'
+        }).eq('room_id', currentRoomId);
+
+        startQuizInterface();
+      } catch (err) {
+        console.error(err);
+        alert("क्विज सुरु गर्न सकिएन।");
       }
     }
 
@@ -638,14 +652,17 @@
         document.getElementById("guestStatusBadge").innerText = "तयार";
         document.getElementById("guestStatusBadge").style.background = "#dcfce7";
         document.getElementById("guestStatusBadge").style.color = "#16a34a";
+
+        // यदि होस्ट हो भने पाहुना जोडिएपछि 'Start Battle' बटन देखाउने
+        if (isHost && roomData.status === 'waiting') {
+          document.getElementById("hostStartBox").classList.remove("hidden");
+          document.getElementById("waitingSpinner").style.display = "none";
+          document.getElementById("waitingTitle").innerText = "साथी जोडिनुभयो! अब ब्याटल सुरु गर्नुहोस्:";
+        }
       }
 
-      // यदि होस्ट हो र पाहुना जोडिसकेको छ भने होस्टको स्क्रिनमा पनि status लाई active बनाउने
-      if (isHost && roomData.guest_name && roomData.status === 'waiting') {
-        supabaseClient.from('battle_rooms').update({ status: 'active' }).eq('room_id', currentRoomId);
-      }
-
-      if ((roomData.status === 'active' || roomData.guest_name) && document.getElementById("waitingView").classList.contains("hidden") === false) {
+      // यदि स्टेटस active भयो भने दुवैको स्क्रिनमा क्विज सुरु हुनेछ
+      if (roomData.status === 'active' && document.getElementById("quizView").classList.contains("hidden")) {
         if (roomData.quiz_data) battleData = roomData.quiz_data;
         startQuizInterface();
       }
