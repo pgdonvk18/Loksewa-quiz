@@ -36,7 +36,6 @@
     .cert-stat-box p { font-size: 11px; color: #64748b; font-weight: 600; margin-bottom: 4px; }
     .cert-stat-box h3 { font-size: 18px; font-weight: 800; }
     
-    /* Attractive Component Modal Design */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .modal-overlay.active { opacity: 1; visibility: visible; }
     .modal-card { background: #ffffff; width: 90%; max-width: 400px; max-height: 85vh; border-radius: 28px; padding: 24px; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: scale(0.92) translateY(10px); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -48,7 +47,7 @@
 </head>
 <body>
 
-  <!-- LOGIN WARNING MODAL (Components Style) -->
+  <!-- LOGIN WARNING MODAL -->
   <div id="login-modal" class="modal-overlay">
     <div class="modal-card" style="text-align: center; max-width: 360px;">
       <div style="width: 64px; height: 64px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 18px; box-shadow: 0 8px 16px rgba(37,99,235,0.15);">
@@ -61,7 +60,7 @@
     </div>
   </div>
 
-  <!-- REVIEW DETAILS MODAL (Components Style) -->
+  <!-- REVIEW DETAILS MODAL -->
   <div id="review-modal" class="modal-overlay">
     <div class="modal-card">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 14px;">
@@ -223,7 +222,6 @@
     let timeLeftSeconds = 45 * 60;
     let isPracticeMode = false;
 
-    // युजरनेम सफा गर्ने फंक्सन (जिमेल हटाएर नाम मात्र देखाउने)
     function formatUsername(emailOrName) {
       if (!emailOrName) return 'Guest User';
       let cleanStr = emailOrName.includes('@') ? emailOrName.split('@')[0] : emailOrName;
@@ -236,7 +234,7 @@
           candidateName = user.displayName || formatUsername(user.email);
           userEmail = user.email;
           document.getElementById('profile-display-name').innerText = candidateName;
-          await checkIfExamAlreadyGiven(userEmail);
+          await checkIfExamAlreadyGiven(candidateName, userEmail);
         } else {
           document.getElementById('login-modal').classList.add('active');
           document.getElementById('profile-display-name').innerText = 'लगइन गरिएको छैन';
@@ -247,12 +245,13 @@
 
     window.redirectToLogin = () => window.location.href = 'login.html';
 
-    async function checkIfExamAlreadyGiven(email) {
-      if (!email) return;
+    async function checkIfExamAlreadyGiven(name, email) {
+      if (!email && !name) return;
+      // युजरनेम वा इमेल दुवैबाट परीक्षा दिएको छ कि छैन चेक गर्ने
       const { data } = await supabaseClient
         .from('exam_leaderboard')
         .select('*')
-        .eq('username', email)
+        .or(`username.eq.${name},username.eq.${email}`)
         .eq('set_name', formattedSetName);
 
       if (data && data.length > 0) {
@@ -340,8 +339,9 @@
       const currentDate = new Date().toLocaleDateString('ne-NP', { year: 'numeric', month: 'long', day: 'numeric' });
 
       if (!isPracticeMode) {
+        // यहाँ userEmail को सट्टा profile मा देखिने candidateName सेभ गरिएको छ
         await supabaseClient.from('exam_leaderboard').insert([{ 
-          username: userEmail, 
+          username: candidateName, 
           set_name: formattedSetName, 
           score: Number(totalScore.toFixed(1)), 
           correct_count: correct, 
@@ -414,7 +414,8 @@
         if (!container) return;
         container.innerHTML = (!data || data.length === 0) ? '<p style="color: #64748b; text-align: center; font-size: 12px; padding: 4px;">हाल कुनै रेकर्ड छैन।</p>' : '';
         data?.forEach((item, i) => {
-          let displayName = formatUsername(item.username);
+          // लिडरबोर्डमा सेभ भएको नाम जस्ताको तस्तै देखाउने
+          let displayName = item.username;
           container.innerHTML += `
             <div class="lb-row">
               <span style="font-weight: 700; color: #1e293b;">${i+1}. ${displayName}</span>
