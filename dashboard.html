@@ -783,26 +783,19 @@
     closeSidebar.addEventListener('click', toggleSidebar);
     sidebarOverlay.addEventListener('click', toggleSidebar);
 
-    // Check if the user has an admin role
+    // इमेलको आधारमा एड्मिन प्यानल देखाउने फंक्सन
     async function checkAdminRole(user) {
       try {
-        // Method 1: Check Firestore user document for admin role
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists() && (docSnap.data().role === 'admin' || docSnap.data().is_admin === true)) {
-          document.getElementById('adminSidebarLink').style.display = 'flex';
-          return;
-        }
+        if (!user || !user.email) return;
 
-        // Method 2: Check Supabase profiles table for admin role
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.uid)
-          .maybeSingle();
+        // 👇 यहाँ आफ्नो वास्तविक एड्मिन इमेल राख्नुहोस्
+        const adminEmails = ["your-email@gmail.com"]; 
 
-        if (!error && data && data.role === 'admin') {
-          document.getElementById('adminSidebarLink').style.display = 'flex';
+        if (adminEmails.includes(user.email.toLowerCase())) {
+          const adminLink = document.getElementById('adminSidebarLink');
+          if (adminLink) {
+            adminLink.style.display = 'flex';
+          }
         }
       } catch (err) {
         console.error("Admin verification error:", err);
