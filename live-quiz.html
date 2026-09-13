@@ -615,24 +615,7 @@
       supabaseClient.channel('room_' + currentRoomId)
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'battle_rooms', filter: `room_id=eq.${currentRoomId}` }, async payload => {
           const newData = payload.new;
-          
-          if (newData.guest_name) {
-            document.getElementById("waitingGuestName").innerText = newData.guest_name;
-            document.getElementById("guestStatusBadge").innerText = "तयार";
-            document.getElementById("guestStatusBadge").style.background = "#dcfce7";
-            document.getElementById("guestStatusBadge").style.color = "#16a34a";
-          }
-
-          if (newData.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
-            battleData = newData.quiz_data;
-            startQuizInterface();
-          }
-
-          if (newData.status === 'completed') {
-            if (pollingInterval) clearInterval(pollingInterval);
-            const { data: freshRoom } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
-            showFinalResults(freshRoom || newData);
-          }
+          processRoomUpdate(newData);
         })
         .subscribe();
     }
@@ -642,25 +625,39 @@
       pollingInterval = setInterval(async () => {
         const { data, error } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
         if (!error && data) {
-          if (data.guest_name) {
-            document.getElementById("waitingGuestName").innerText = data.guest_name;
-            document.getElementById("guestStatusBadge").innerText = "तयार";
-            document.getElementById("guestStatusBadge").style.background = "#dcfce7";
-            document.getElementById("guestStatusBadge").style.color = "#16a34a";
-          }
-          if (data.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
-            battleData = data.quiz_data;
-            startQuizInterface();
-          }
-          if (data.status === 'completed') {
-            clearInterval(pollingInterval);
-            showFinalResults(data);
-          }
+          processRoomUpdate(data);
         }
-      }, 1500);
+      }, 1000);
+    }
+
+    function processRoomUpdate(roomData) {
+      if (!roomData) return;
+
+      if (roomData.guest_name) {
+        document.getElementById("waitingGuestName").innerText = roomData.guest_name;
+        document.getElementById("guestStatusBadge").innerText = "तयार";
+        document.getElementById("guestStatusBadge").style.background = "#dcfce7";
+        document.getElementById("guestStatusBadge").style.color = "#16a34a";
+      }
+
+      if (isHost && roomData.guest_name && roomData.status === 'waiting') {
+        supabaseClient.from('battle_rooms').update({ status: 'active' }).eq('room_id', currentRoomId);
+      }
+
+      if ((roomData.status === 'active' || roomData.guest_name) && document.getElementById("waitingView").classList.contains("hidden") === false) {
+        if (roomData.quiz_data) battleData = roomData.quiz_data;
+        startQuizInterface();
+      }
+
+      if (roomData.status === 'completed') {
+        if (pollingInterval) clearInterval(pollingInterval);
+        showFinalResults(roomData);
+      }
     }
 
     function startQuizInterface() {
+      if (!document.getElementById("quizView").classList.contains("hidden")) return;
+      
       document.getElementById("waitingView").classList.add("hidden");
       document.getElementById("quizView").classList.remove("hidden");
 
@@ -721,7 +718,6 @@
 
       try {
         const updateField = isHost ? { host_answers: currentAnswers } : { guest_answers: currentAnswers };
-        
         await supabaseClient.from('battle_rooms').update(updateField).eq('room_id', currentRoomId);
 
         const { data: roomData } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
