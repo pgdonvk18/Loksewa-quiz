@@ -319,15 +319,27 @@
           <b id="displayRoomCode" style="font-size: 18px; color: #2563eb; letter-spacing: 1px;">---</b>
         </div>
 
+        <!-- Connected Players Box -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 12px; margin-bottom: 14px; text-align: left;">
+          <p style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px;">रुममा उपस्थित खेलाडीहरू:</p>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 8px 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px;">
+              <span>👑 होस्ट (Host): <b id="waitingHostName" style="color: #2563eb;">-</b></span>
+              <span style="font-size: 10px; background: #dcfce7; color: #16a34a; padding: 2px 6px; border-radius: 6px; font-weight: 700;">तयार</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 8px 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px;">
+              <span>⚔️ पाहुना (Challenger): <b id="waitingGuestName" style="color: #64748b;">प्रतीक्षामा...</b></span>
+              <span id="guestStatusBadge" style="font-size: 10px; background: #fef3c7; color: #d97706; padding: 2px 6px; border-radius: 6px; font-weight: 700;">जोडिदैछ</span>
+            </div>
+          </div>
+        </div>
+
         <div style="display: flex; gap: 8px; margin-bottom: 14px;">
           <input type="text" id="shareLinkBox" readonly style="margin: 0; background: #f8fafc; font-size: 12px;">
           <button onclick="copyShareLink()" style="background: #e2e8f0; border: none; padding: 0 12px; border-radius: 12px; font-weight: 700; font-size: 11px; cursor: pointer;">कपी</button>
         </div>
         
         <div id="joinGuestBox" class="hidden">
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 12px; margin-bottom: 12px; font-size: 12px; color: #334155;">
-            खेलाडी (Challenger): <b id="displayGuestName" style="color: #2563eb;">लोड हुँदैछ...</b>
-          </div>
           <button onclick="joinBattle()" class="btn-primary">ब्याटलमा जोइन हुनुहोस्</button>
         </div>
       </div>
@@ -386,6 +398,7 @@
     let playerName = "";
     let battleData = null;
     let currentAnswers = {};
+    let pollingInterval = null;
 
     const urlParams = new URLSearchParams(window.location.search);
     const roomIdFromUrl = urlParams.get('room');
@@ -435,8 +448,17 @@
       document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
       document.getElementById("shareLinkBox").parentElement.style.display = "none";
       document.getElementById("displayRoomCode").innerText = currentRoomId;
-      document.getElementById("displayGuestName").innerText = playerName;
+      document.getElementById("waitingGuestName").innerText = playerName;
+      document.getElementById("guestStatusBadge").innerText = "तयार";
+      document.getElementById("guestStatusBadge").style.background = "#dcfce7";
+      document.getElementById("guestStatusBadge").style.color = "#16a34a";
       document.getElementById("joinGuestBox").classList.remove("hidden");
+
+      // Fetch host info
+      const { data } = await supabaseClient.from('battle_rooms').select('host_name').eq('room_id', currentRoomId).single();
+      if (data) {
+        document.getElementById("waitingHostName").innerText = data.host_name;
+      }
     }
 
     async function loginWithGoogle() {
@@ -556,6 +578,7 @@
       document.getElementById("waitingView").classList.remove("hidden");
 
       document.getElementById("displayRoomCode").innerText = currentRoomId;
+      document.getElementById("waitingHostName").innerText = playerName;
       const shareUrl = window.location.origin + window.location.pathname + "?room=" + currentRoomId;
       document.getElementById("shareLinkBox").value = shareUrl;
 
@@ -588,8 +611,8 @@
 
         if (roomError) throw roomError;
         
-        // Host पनि रुमको अपडेट सुन्न तयार बस्छ
         subscribeToRoom();
+        startPollingForHost();
 
       } catch (err) {
         console.error(err);
@@ -619,12 +642,12 @@
 
         battleData = data.quiz_data;
 
-        // Status active बनाउनेबित्तिकै host को supabase listener ले पनि ट्रिगर पाउँछ
         await supabaseClient.from('battle_rooms').update({
           guest_name: playerName,
           status: 'active'
         }).eq('room_id', currentRoomId);
 
+        if (pollingInterval) clearInterval(pollingInterval);
         startQuizInterface();
         subscribeToRoom();
 
@@ -639,16 +662,47 @@
       supabaseClient.channel('room_' + currentRoomId)
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'battle_rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
           const newData = payload.new;
-          // यदि होस्ट हो र पाहुनाले जोइन गरेर status 'active' भयो भने क्विज सुरु गर्ने
+          
+          // Update guest name live if host is waiting
+          if (isHost && newData.guest_name && document.getElementById("waitingView").classList.contains("hidden") === false) {
+            document.getElementById("waitingGuestName").innerText = newData.guest_name;
+            document.getElementById("guestStatusBadge").innerText = "तयार";
+            document.getElementById("guestStatusBadge").style.background = "#dcfce7";
+            document.getElementById("guestStatusBadge").style.color = "#16a34a";
+          }
+
           if (isHost && newData.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
             battleData = newData.quiz_data;
+            if (pollingInterval) clearInterval(pollingInterval);
             startQuizInterface();
           }
           if (newData.status === 'completed') {
+            if (pollingInterval) clearInterval(pollingInterval);
             showFinalResults(newData);
           }
         })
         .subscribe();
+    }
+
+    // Fallback polling for Host so game starts instantly even if realtime drops
+    function startPollingForHost() {
+      pollingInterval = setInterval(async () => {
+        if (!isHost) return;
+        const { data, error } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
+        if (!error && data) {
+          if (data.guest_name) {
+            document.getElementById("waitingGuestName").innerText = data.guest_name;
+            document.getElementById("guestStatusBadge").innerText = "तयार";
+            document.getElementById("guestStatusBadge").style.background = "#dcfce7";
+            document.getElementById("guestStatusBadge").style.color = "#16a34a";
+          }
+          if (data.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
+            battleData = data.quiz_data;
+            clearInterval(pollingInterval);
+            startQuizInterface();
+          }
+        }
+      }, 2000);
     }
 
     function startQuizInterface() {
