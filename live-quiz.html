@@ -202,6 +202,49 @@
 
 </div>
 
+
+
+  
+<!-- Load Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentRoomId = null;
+  let isHost = false;
+  let playerName = "";
+  let battleData = null;
+  let currentAnswers = {};
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const roomIdFromUrl = urlParams.get('room');
+
+  if (roomIdFromUrl) {
+    currentRoomId = roomIdFromUrl;
+    isHost = false;
+    document.getElementById("homeView").classList.add("hidden");
+    document.getElementById("waitingView").classList.remove("hidden");
+    document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
+    document.getElementById("shareLinkBox").parentElement.style.display = "none";
+    document.getElementById("joinGuestBox").classList.remove("hidden");
+  }
+
+  function showCreateBattle() {
+    document.getElementById("homeView").classList.add("hidden");
+    document.getElementById("setupView").classList.remove("hidden");
+  }
+
+  function showBulkAdminPanel() {
+    document.getElementById("homeView").classList.add("hidden");
+    document.getElementById("bulkAdminView").classList.remove("hidden");
+  }
+
+  function setTopic(topicName) {
+    document.getElementById("topicInput").value = topicName;
+  }
 // बल्क एडमिन प्यानल खोल्नु अघि एडमिन हो कि होइन चेक गर्ने
 async function showBulkAdminPanel() {
   const { data: { user } } = await supabaseClient.auth.getUser();
@@ -265,48 +308,8 @@ async function saveBulkQuestionsToDB() {
   }
 }
 
+
   
-<!-- Load Supabase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-  const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
-  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  let currentRoomId = null;
-  let isHost = false;
-  let playerName = "";
-  let battleData = null;
-  let currentAnswers = {};
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const roomIdFromUrl = urlParams.get('room');
-
-  if (roomIdFromUrl) {
-    currentRoomId = roomIdFromUrl;
-    isHost = false;
-    document.getElementById("homeView").classList.add("hidden");
-    document.getElementById("waitingView").classList.remove("hidden");
-    document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
-    document.getElementById("shareLinkBox").parentElement.style.display = "none";
-    document.getElementById("joinGuestBox").classList.remove("hidden");
-  }
-
-  function showCreateBattle() {
-    document.getElementById("homeView").classList.add("hidden");
-    document.getElementById("setupView").classList.remove("hidden");
-  }
-
-  function showBulkAdminPanel() {
-    document.getElementById("homeView").classList.add("hidden");
-    document.getElementById("bulkAdminView").classList.remove("hidden");
-  }
-
-  function setTopic(topicName) {
-    document.getElementById("topicInput").value = topicName;
-  }
-
   // Bulk save questions into database
   async function saveBulkQuestionsToDB() {
     const topic = document.getElementById("bulkTopic").value.trim();
