@@ -451,6 +451,18 @@
       }, 100);
     });
 
+    // Helper to robustly extract correct option index whether stored as number, string, or text
+    function getCorrectIndex(q) {
+      let rawAns = q.correct !== undefined ? q.correct : (q.answer !== undefined ? q.answer : q.correct_option);
+      if (typeof rawAns === 'number') return rawAns;
+      if (!isNaN(rawAns)) return parseInt(rawAns);
+      if (typeof rawAns === 'string' && Array.isArray(q.options)) {
+        const foundIdx = q.options.indexOf(rawAns);
+        if (foundIdx !== -1) return foundIdx;
+      }
+      return 0; // Fallback
+    }
+
     async function setupGuestRoomView(rId) {
       currentRoomId = rId;
       isHost = false;
@@ -572,7 +584,7 @@
           topic: topic,
           question: q.question,
           options: q.options,
-          answer: q.answer ?? q.correct ?? q.correct_option ?? 0
+          answer: q.answer !== undefined ? q.answer : (q.correct !== undefined ? q.correct : 0)
         }));
 
         const { error } = await supabaseClient.from('quizzes').insert(rowsToInsert);
@@ -615,7 +627,7 @@
         battleData = selectedQuestions.map(q => ({
           question: q.question,
           options: q.options,
-          correct: q.answer !== undefined ? q.answer : (q.correct !== undefined ? q.correct : (q.correct_option !== undefined ? q.correct_option : 0))
+          correct: getCorrectIndex(q)
         }));
 
         const { error: roomError } = await supabaseClient.from('battle_rooms').insert([{
@@ -817,7 +829,7 @@
       let score = 0;
       if (!answersObj || !questionsList) return 0;
       questionsList.forEach((q, idx) => {
-        let correctIdx = q.correct !== undefined ? q.correct : (q.answer !== undefined ? q.answer : q.correct_option);
+        let correctIdx = getCorrectIndex(q);
         if (answersObj[idx] === correctIdx) score++;
       });
       return score;
@@ -901,7 +913,7 @@
       let reviewHtml = "<h4 style='font-size: 12px; font-weight: 800; margin-bottom: 10px; color: #0f172a;'>📝 प्रश्नोत्तर समीक्षा (Answer Review)</h4>";
 
       battleData.forEach((q, idx) => {
-        const correctOptIdx = q.correct !== undefined ? q.correct : (q.answer !== undefined ? q.answer : q.correct_option);
+        const correctOptIdx = getCorrectIndex(q);
         const correctOptText = q.options[correctOptIdx] ?? "अज्ञात";
 
         const hAnsIdx = hostAns[idx];
