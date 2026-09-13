@@ -207,5 +207,51 @@ window.showSuccessPopup = function(message, redirectUrl, type = 'success', title
         setTimeout(() => { window.location.href = redirectUrl; }, 200);
       }
     };
+    // ४. कन्फर्मेसन (Cancel / OK) पपअपको लागि नयाँ ग्लोबल फंक्सन
+window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्टि गर्नुहोस् ⚠️') {
+  // यदि पहिले देखि नै यो मोडल छैन भने DOM मा थप्ने
+  if (!document.getElementById('customConfirmModal')) {
+    const confirmModalHTML = `
+      <div id="customConfirmModal" class="cg-modal-overlay">
+        <div class="cg-modal-card">
+          <div class="cg-icon-box warning">
+            <i id="cgConfirmIcon" class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <h3 id="cgConfirmTitle" class="cg-title">पुष्टि गर्नुहोस्</h3>
+          <p id="cgConfirmMessage" class="cg-message">के तपाईं यो कार्य गर्न चाहनुहुन्छ?</p>
+          <div style="display: flex; gap: 10px;">
+            <button id="cgCancelBtn" style="background: #e2e8f0; color: #475569;" class="cg-btn">रद्द गर्ने (Cancel)</button>
+            <button id="cgOkBtn" class="cg-btn">हुन्छ (OK)</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', confirmModalHTML);
+  }
+
+  const modal = document.getElementById('customConfirmModal');
+  const msgEl = document.getElementById('cgConfirmMessage');
+  const titleEl = document.getElementById('cgConfirmTitle');
+  const okBtn = document.getElementById('cgOkBtn');
+  const cancelBtn = document.getElementById('cgCancelBtn');
+
+  if (msgEl) msgEl.textContent = message;
+  if (titleEl) titleEl.textContent = titleText;
+  if (modal) modal.classList.add('active');
+
+  // 'OK' मा क्लिक गर्दा
+  okBtn.onclick = function() {
+    modal.classList.remove('active');
+    if (typeof onConfirm === 'function') {
+      onConfirm(); // युजरले सहमति जनाएपछि गर्ने काम यहाँ हुन्छ
+    }
+  };
+
+  // 'Cancel' मा क्लिक गर्दा
+  cancelBtn.onclick = function() {
+    modal.classList.remove('active');
+  };
+};
+
   }
 };
