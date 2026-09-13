@@ -42,19 +42,29 @@
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
       transition: 0.2s;
     }
-    .btn-primary:active { transform: scale(0.98); }
-    input[type="text"], select {
+    .btn-secondary {
+      width: 100%;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 11px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    input[type="text"], select, textarea {
       width: 100%;
       padding: 12px 14px;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
       font-size: 14px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       outline: none;
       box-sizing: border-box;
-      transition: 0.2s;
     }
-    input[type="text"]:focus, select:focus { border-color: #2563eb; }
+    input[type="text"]:focus, select:focus, textarea:focus { border-color: #2563eb; }
     .topic-chip {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -64,7 +74,6 @@
       font-weight: 600;
       color: #475569;
       cursor: pointer;
-      transition: 0.2s;
     }
     .topic-chip:hover { background: #eff6ff; border-color: #2563eb; color: #2563eb; }
     .spinner {
@@ -88,9 +97,9 @@
 
 <div class="battle-wrapper">
 
-  <!-- VIEW 1: SETUP/CREATE BATTLE -->
-  <div id="setupView">
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+  <!-- VIEW 1: HOME / CHOOSE MODE -->
+  <div id="homeView">
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
       <div style="width: 40px; height: 40px; background: #eff6ff; color: #2563eb; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
         <i class="fa-solid fa-swords"></i>
       </div>
@@ -100,6 +109,14 @@
       </div>
     </div>
 
+    <button onclick="showCreateBattle()" class="btn-primary" style="margin-bottom: 10px;">⚔️ नयाँ ब्याटल सुरु गर्नुहोस्</button>
+    <button onclick="showAddQuestionModal()" class="btn-secondary">➕ डाटाबेसमा प्रश्न थप्नुहोस् (Admin)</button>
+  </div>
+
+  <!-- VIEW 2: SETUP / CREATE BATTLE -->
+  <div id="setupView" class="hidden">
+    <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 12px; color: #0f172a;">ब्याटल रुम सेट गर्नुहोस्</h3>
+    
     <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">तपाईंको नाम:</label>
     <input type="text" id="hostNameInput" placeholder="जस्तै: रमेश अधिकारी">
 
@@ -119,10 +136,39 @@
       <option value="10">१० वटा प्रश्न</option>
     </select>
 
-    <button onclick="createBattle()" class="btn-primary" style="margin-top: 6px;">ब्याटल लिङ्क सिर्जना गर्नुहोस्</button>
+    <button onclick="createBattle()" class="btn-primary" style="margin-top: 6px;">लिङ्क जेनेरेट गर्नुहोस्</button>
+    <button onclick="location.reload()" class="btn-secondary">पछाडि जानुहोस्</button>
   </div>
 
-  <!-- VIEW 2: WAITING FOR GUEST OR JOINING -->
+  <!-- VIEW 3: ADD QUESTION PANEL (ADMIN) -->
+  <div id="addQuestionView" class="hidden">
+    <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 12px; color: #0f172a;">📝 डाटाबेसमा प्रश्न थप्नुहोस्</h3>
+
+    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">विषय (Topic):</label>
+    <input type="text" id="adminTopic" placeholder="जस्तै: नेपालको भूगोल">
+
+    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">प्रश्न (Question):</label>
+    <textarea id="adminQuestion" rows="2" placeholder="प्रश्न यहाँ लेख्नुहोस्..." style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:10px; margin-bottom:10px; outline:none; font-family:inherit;"></textarea>
+
+    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">विकल्पहरू (Options):</label>
+    <input type="text" id="opt0" placeholder="विकल्प क (Option 1)" style="margin-bottom:6px;">
+    <input type="text" id="opt1" placeholder="विकल्प ख (Option 2)" style="margin-bottom:6px;">
+    <input type="text" id="opt2" placeholder="विकल्प ग (Option 3)" style="margin-bottom:6px;">
+    <input type="text" id="opt3" placeholder="विकल्प घ (Option 4)" style="margin-bottom:10px;">
+
+    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">सही उत्तर कुन हो? (Index 0 देखि 3 सम्म):</label>
+    <select id="adminCorrectIndex" style="margin-bottom: 14px;">
+      <option value="0">पहिलो विकल्प (0)</option>
+      <option value="1">दोस्रो विकल्प (1)</option>
+      <option value="2">तेस्रो विकल्प (2)</option>
+      <option value="3">चौथो विकल्प (3)</option>
+    </select>
+
+    <button onclick="saveQuestionToDB()" class="btn-primary">प्रश्न सेभ गर्नुहोस्</button>
+    <button onclick="location.reload()" class="btn-secondary">गृहपृष्ठमा फर्कनुहोस्</button>
+  </div>
+
+  <!-- VIEW 4: WAITING FOR GUEST OR JOINING -->
   <div id="waitingView" class="hidden" style="text-align: center; padding: 10px 0;">
     <div class="spinner"></div>
     <h3 id="waitingTitle" style="font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">साथीको प्रतीक्षा गर्दैछ...</h3>
@@ -139,16 +185,16 @@
     </div>
   </div>
 
-  <!-- VIEW 3: LIVE BATTLE QUIZ -->
+  <!-- VIEW 5: LIVE BATTLE QUIZ -->
   <div id="quizView" class="hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; background: #f8fafc; padding: 10px 14px; border-radius: 12px; border: 1px solid #e2e8f0;">
       <span id="playerVsIndicator" style="font-size: 12px; font-weight: 700; color: #334155;">Battle</span>
-      <span id="liveScoreCounter" style="font-size: 12px; font-weight: 800; color: #2563eb;">Score: 0</span>
+      <span style="font-size: 12px; font-weight: 800; color: #2563eb;">LoksewaQuest 1v1</span>
     </div>
     <div id="battleQuestionContainer"></div>
   </div>
 
-  <!-- VIEW 4: RESULT ANIMATION -->
+  <!-- VIEW 6: RESULT ANIMATION -->
   <div id="resultView" class="hidden" style="text-align: center; padding: 15px 0;">
     <div id="resultEmoji" class="animate-bounce" style="font-size: 55px; margin-bottom: 10px;">🏆</div>
     <h2 id="resultHeading" style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">नतिजा</h2>
@@ -171,7 +217,6 @@
   let playerName = "";
   let battleData = null;
   let currentAnswers = {};
-  let realtimeChannel = null;
 
   const urlParams = new URLSearchParams(window.location.search);
   const roomIdFromUrl = urlParams.get('room');
@@ -179,15 +224,59 @@
   if (roomIdFromUrl) {
     currentRoomId = roomIdFromUrl;
     isHost = false;
-    document.getElementById("setupView").classList.add("hidden");
+    document.getElementById("homeView").classList.add("hidden");
     document.getElementById("waitingView").classList.remove("hidden");
     document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
     document.getElementById("shareLinkBox").parentElement.style.display = "none";
     document.getElementById("joinGuestBox").classList.remove("hidden");
   }
 
+  function showCreateBattle() {
+    document.getElementById("homeView").classList.add("hidden");
+    document.getElementById("setupView").classList.remove("hidden");
+  }
+
+  function showAddQuestionModal() {
+    document.getElementById("homeView").classList.add("hidden");
+    document.getElementById("addQuestionView").classList.remove("hidden");
+  }
+
   function setTopic(topicName) {
     document.getElementById("topicInput").value = topicName;
+  }
+
+  // Save manual question into database
+  async function saveQuestionToDB() {
+    const topic = document.getElementById("adminTopic").value.trim();
+    const question = document.getElementById("adminQuestion").value.trim();
+    const o0 = document.getElementById("opt0").value.trim();
+    const o1 = document.getElementById("opt1").value.trim();
+    const o2 = document.getElementById("opt2").value.trim();
+    const o3 = document.getElementById("opt3").value.trim();
+    const correct = parseInt(document.getElementById("adminCorrectIndex").value);
+
+    if (!topic || !question || !o0 || !o1) {
+      alert("कृपया आवश्यक विवरणहरू भरेर मात्र सेभ गर्नुहोस्!");
+      return;
+    }
+
+    const options = [o0, o1, o2, o3].filter(Boolean);
+
+    try {
+      const { error } = await supabaseClient.from('questions').insert([{
+        topic: topic,
+        question: question,
+        options: options,
+        correct_option: correct
+      }]);
+
+      if (error) throw error;
+      alert("सफलतापूर्वक प्रश्न डाटाबेसमा सेभ भयो! 🎉");
+      location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("प्रश्न सेभ गर्दा समस्या आयो। टेबल कन्फिगरेसन जाँच गर्नुहोस्।");
+    }
   }
 
   async function createBattle() {
@@ -202,7 +291,7 @@
 
     playerName = host;
     isHost = true;
-    currentRoomId = 'room_' + Math.random().toString(36.substring(2, 9));
+    currentRoomId = 'room_' + Math.random().toString(36).substring(2, 9);
 
     document.getElementById("setupView").classList.add("hidden");
     document.getElementById("waitingView").classList.remove("hidden");
@@ -211,16 +300,26 @@
     document.getElementById("shareLinkBox").value = shareUrl;
 
     try {
-      // Generate AI Quiz questions using existing edge function
-      const { data: aiData, error: aiError } = await supabaseClient.functions.invoke('generate-ai-quiz', {
-        body: { topic: topic, count: count }
-      });
+      // Fetch questions from database based on topic
+      const { data: dbQuestions, error: dbError } = await supabaseClient
+        .from('questions')
+        .select('*')
+        .ilike('topic', `%${topic}%`)
+        .limit(count);
 
-      if (aiError) throw aiError;
-      battleData = aiData.questions;
+      if (dbError || !dbQuestions || dbQuestions.length === 0) {
+        throw new Error("यो टपिकमा डाटाबेसमा पर्याप्त प्रश्नहरू फेला परेनन्। कृपया पहिले एडमिन प्यानलबाट प्रश्न थप्नुहोस्!");
+      }
+
+      // Format questions for battle
+      battleData = dbQuestions.map(q => ({
+        question: q.question,
+        options: q.options,
+        correct: q.correct_option
+      }));
 
       // Insert room into Supabase
-      const { error: dbError } = await supabaseClient.from('battle_rooms').insert([{
+      const { error: roomError } = await supabaseClient.from('battle_rooms').insert([{
         room_id: currentRoomId,
         host_name: host,
         topic: topic,
@@ -229,14 +328,13 @@
         quiz_data: battleData
       }]);
 
-      if (dbError) throw dbError;
+      if (roomError) throw roomError;
 
-      // Listen for Guest joining
       subscribeToRoom();
 
     } catch (err) {
       console.error(err);
-      alert("रुम बनाउन सकिएन। पुनः प्रयास गर्नुहोस्।");
+      alert(err.message || "रुम बनाउन सकिएन।");
       location.reload();
     }
   }
@@ -245,7 +343,7 @@
     const copyText = document.getElementById("shareLinkBox");
     copyText.select();
     navigator.clipboard.writeText(copyText.value);
-    alert("लिङ्क कपी भयो! अब साथीलाई पठाउनुहोस्।");
+    alert("लिङ्क कपी भयो! साथीलाई पठाउनुहोस्।");
   }
 
   async function joinBattle() {
@@ -264,7 +362,6 @@
 
       battleData = data.quiz_data;
 
-      // Update room with guest name and status active
       await supabaseClient.from('battle_rooms').update({
         guest_name: guest,
         status: 'active'
@@ -280,7 +377,7 @@
   }
 
   function subscribeToRoom() {
-    realtimeChannel = supabaseClient.channel('room_' + currentRoomId)
+    supabaseClient.channel('room_' + currentRoomId)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'battle_rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
         const newData = payload.new;
         if (isHost && newData.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
@@ -316,7 +413,7 @@
       `;
     });
 
-    html += `<button onclick="submitBattleQuiz()" class="btn-primary" style="background: #16a34a; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">मेरो उत्तर सबमिट गर्नुहोस्</button>`;
+    html += `<button onclick="submitBattleQuiz()" class="btn-primary" style="background: #16a34a; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">उत्तर सबमिट गर्नुहोस्</button>`;
     document.getElementById("battleQuestionContainer").innerHTML = html;
   }
 
@@ -354,14 +451,11 @@
 
     try {
       const updateField = isHost ? { host_answers: currentAnswers } : { guest_answers: currentAnswers };
-      
-      // Fetch latest row to check if opponent already submitted
       const { data: roomData } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
       
       let updatePayload = { ...updateField };
       const opponentAnswers = isHost ? roomData.guest_answers : roomData.host_answers;
 
-      // If opponent already submitted, calculate winner right now
       if (opponentAnswers && Object.keys(opponentAnswers).length > 0) {
         const hostScore = calculateScore(isHost ? currentAnswers : opponentAnswers);
         const guestScore = calculateScore(isHost ? opponentAnswers : currentAnswers);
