@@ -179,7 +179,7 @@
     <div id="alertBox"></div>
 
     <div class="form-card">
-      <h3><i class="fa-solid fa-file-arrow-up" style="color: #10b981;"></i> JSON मार्फत प्रश्नहरू अपलोड गर्नुहोस्</h3>
+      <h3><i class="fa-solid fa-file-arrow-up" style="color: #10b981;"></i> JSON मार्फत quizzes टेबलमा प्रश्नहरू अपलोड गर्नुहोस्</h3>
       <form id="bulkForm">
         <div class="form-group">
           <label>JSON Format मा प्रश्नहरू र Set ID राख्नुहोस्:</label>
@@ -195,7 +195,7 @@
   }
 ]' required></textarea>
           <div class="help-text">
-            💡 <b>निर्देशन:</b> प्रत्येक अब्जेक्टभित्र `set_id` अनिवार्य रूपमा राख्नुपर्छ। यसले गर्दा तपाईंले एउटै JSON मा फरक-फरक सेटका प्रश्नहरू पठाउन सक्नुहुन्छ। `correct_answer` मा A, B, C वा D लेख्नुहोला।
+            💡 <b>निर्देशन:</b> यहाँ राखेका डाटा सिधै Supabase को `quizzes` टेबलमा सेभ हुनेछन्।
           </div>
         </div>
 
@@ -272,10 +272,11 @@
           };
         });
 
-        const { error } = await supabase.from('questions').insert(formattedQuestions);
+        // यहाँ quizzes टेबलमा इन्सर्ट हुनेछ
+        const { error } = await supabase.from('quizzes').insert(formattedQuestions);
         if (error) throw error;
 
-        showAlert(`सफलतापूर्वक ${formattedQuestions.length} वटा प्रश्नहरू थपिए!`, "success");
+        showAlert(`सफलतापूर्वक ${formattedQuestions.length} वटा प्रश्नहरू quizzes टेबलमा थपिए!`, "success");
         bulkForm.reset();
       } catch (err) {
         showAlert("बल्क अपलोड असफल: " + err.message, "error");
