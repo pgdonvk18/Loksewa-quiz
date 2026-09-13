@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ne">
 <head>
@@ -582,7 +581,6 @@
 
   window.addEventListener("firebase-ready", initializeAuth);
 
-  // Firebase module पहिले load भएको अवस्थामा
   if (window.firebaseAuth) {
     initializeAuth();
   }
@@ -668,6 +666,7 @@
       .replace(/'/g, "&#039;");
   }
 
+  // Supabase को 'answer' स्तम्भमा टेक्स्ट वा इन्डेक्स जे भए पनि सही इन्डेक्स पत्ता लगाउने फंक्शन
   function getCorrectIndex(question) {
     const rawAnswer =
       question.correct !== undefined
@@ -676,23 +675,36 @@
           ? question.answer
           : question.correct_option;
 
+    if (rawAnswer === undefined || rawAnswer === null) {
+      return 0;
+    }
+
     if (typeof rawAnswer === "number") {
       return rawAnswer;
     }
 
-    if (typeof rawAnswer === "string" && rawAnswer.trim() !== "") {
+    const stringAnswer = String(rawAnswer).trim();
+    const numeric = Number(stringAnswer);
 
-      const numeric = Number(rawAnswer);
+    if (!isNaN(numeric) && Number.isInteger(numeric)) {
+      return numeric;
+    }
 
-      if (Number.isInteger(numeric)) {
-        return numeric;
-      }
+    if (Array.isArray(question.options)) {
+      const cleanRaw = stringAnswer.toLowerCase();
+      
+      let found = question.options.findIndex(
+        opt => String(opt).trim().toLowerCase() === cleanRaw
+      );
 
-      if (Array.isArray(question.options)) {
-        const found = question.options.indexOf(rawAnswer);
+      if (found !== -1) return found;
 
-        if (found !== -1) return found;
-      }
+      found = question.options.findIndex(
+        opt => String(opt).trim().toLowerCase().includes(cleanRaw) ||
+               cleanRaw.includes(String(opt).trim().toLowerCase())
+      );
+
+      if (found !== -1) return found;
     }
 
     return 0;
@@ -824,7 +836,6 @@
       return;
     }
 
-    // Full URL बाट room code निकाल्ने
     try {
       if (code.includes("room=")) {
         const url = new URL(code);
@@ -936,10 +947,8 @@
       clearInterval(pollingInterval);
     }
 
-    // तुरुन्तै database बाट data ल्याउने
     refreshRoomData();
 
-    // प्रत्येक 1 सेकेन्डमा update जाँच गर्ने
     pollingInterval = setInterval(() => {
       refreshRoomData();
     }, 1000);
@@ -970,9 +979,6 @@
 
       latestRoomRecord = data;
 
-      // मुख्य fix:
-      // Host र Guest दुवैको browser मा database को
-      // नयाँ guest_name तुरुन्तै process हुन्छ।
       processRoomUpdate(data);
 
     } catch (error) {
@@ -1027,20 +1033,12 @@
 
     if (!roomData) return;
 
-    console.log("Processing room:", roomData.room_id);
-    console.log("Host:", roomData.host_name);
-    console.log("Guest:", roomData.guest_name);
-    console.log("Status:", roomData.status);
-
-    // Host name - दुवैको स्क्रिनमा
     const hostNameEl = document.getElementById("waitingHostName");
 
     if (hostNameEl) {
       hostNameEl.innerText = roomData.host_name || "-";
     }
 
-    // मुख्य fix:
-    // Guest को नाम database बाट Host को UI मा पनि update हुन्छ।
     const guestNameEl = document.getElementById("waitingGuestName");
 
     if (guestNameEl) {
@@ -1057,7 +1055,6 @@
         guestBadge.className = "status-badge status-ready";
       }
 
-      // Host को स्क्रिनमा मात्र Start Battle देखाउने
       if (isHost && roomData.status === "waiting") {
 
         document.getElementById("hostStartBox")
@@ -1078,7 +1075,6 @@
       }
     }
 
-    // Guest जोडिएको छैन भने host start button लुकाउने
     if (!roomData.guest_name && isHost) {
       document.getElementById("hostStartBox")
         .classList.add("hidden");
@@ -1089,7 +1085,6 @@
         "साथीको प्रतीक्षा गर्दैछ...";
     }
 
-    // Active battle
     if (
       roomData.status === "active" &&
       !battleStarted &&
@@ -1103,7 +1098,6 @@
       startQuizInterface();
     }
 
-    // Completed battle
     if (roomData.status === "completed" && !resultsShown) {
 
       if (pollingInterval) {
@@ -1160,7 +1154,6 @@
 
       battleData = room.quiz_data;
 
-      // Guest name database मा update
       const { data: updatedRoom, error: updateError } =
         await supabaseClient
           .from("battle_rooms")
@@ -1173,9 +1166,6 @@
 
       if (updateError) throw updateError;
 
-      console.log("Guest successfully joined:", updatedRoom);
-
-      // तुरुन्तै आफ्नो UI update
       processRoomUpdate(updatedRoom);
 
       document.getElementById("waitingTitle").innerText =
@@ -1250,8 +1240,6 @@
           .eq("status", "waiting");
 
       if (error) throw error;
-
-      console.log("Battle started by host");
 
       await refreshRoomData();
 
