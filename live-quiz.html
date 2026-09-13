@@ -202,6 +202,70 @@
 
 </div>
 
+// बल्क एडमिन प्यानल खोल्नु अघि एडमिन हो कि होइन चेक गर्ने
+async function showBulkAdminPanel() {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if (!user) {
+    alert("पहिले लगइन (Login) गर्नुहोस्!");
+    // यदि लगइन पेज छ भने त्यहाँ रिडाइरेक्ट गर्नुहोस्
+    return;
+  }
+
+  // Database बाट युजरको रोल चेक गर्ने
+  const { data: profile, error } = await supabaseClient
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (error || !profile || profile.role !== 'admin') {
+    alert("Access Denied! यो प्यानलमा केवल एडमिन मात्र जान मिल्छ। ❌");
+    return;
+  }
+
+  // यदि एडमिन हो भने मात्र प्यानल देखाउने
+  document.getElementById("homeView").classList.add("hidden");
+  document.getElementById("bulkAdminView").classList.remove("hidden");
+}
+
+// बल्क प्रश्नहरू सेभ गर्ने फंक्सन
+async function saveBulkQuestionsToDB() {
+  const topic = document.getElementById("bulkTopic").value.trim();
+  const jsonText = document.getElementById("bulkJsonInput").value.trim();
+
+  if (!topic || !jsonText) {
+    alert("कृपया टपिक र JSON डाटा दुवै भर्नुहोस्!");
+    return;
+  }
+
+  try {
+    const parsedQuestions = JSON.parse(jsonText);
+    if (!Array.isArray(parsedQuestions) || parsedQuestions.length === 0) {
+      throw new Error("मान्य JSON एरे फेला परेन।");
+    }
+
+    const rowsToInsert = parsedQuestions.map(q => ({
+      topic: topic,
+      question: q.question,
+      options: q.options,
+      correct_option: q.correct
+    }));
+
+    // Data insert गर्दा Supabase ले आफैं RLS चेक गर्छ (Non-admin भए Error फाल्छ)
+    const { error } = await supabaseClient.from('questions').insert(rowsToInsert);
+    if (error) throw error;
+
+    alert(`सफलतापूर्वक ${rowsToInsert.length} वटा प्रश्नहरू सेभ भए! 🎉`);
+    location.reload();
+
+  } catch (err) {
+    console.error(err);
+    alert("सेभ असफल भयो! सम्भवतः तपाईं एडमिन हुनुहुन्न वा JSON फर्मट मिलेन।");
+  }
+}
+
+  
 <!-- Load Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
