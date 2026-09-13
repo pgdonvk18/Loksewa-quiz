@@ -278,7 +278,7 @@
       <!-- VIEW 2.5: JOIN ROOM BY CODE MODAL/VIEW -->
       <div id="joinModalView" class="hidden">
         <h3 style="font-size: 14px; font-weight: 800; margin-bottom: 6px; color: #0f172a;">🔑 रुम कोडद्वारा जोइन हुनुहोस्</h3>
-        <p style="font-size: 11px; color: #64748b; margin-bottom: 14px;">तपाईंका साथीले दिएको ६ वा ७ डिजिटको रुम कोड वा लिङ्क यहाँ राख्नुहोस्:</p>
+        <p style="font-size: 11px; color: #64748b; margin-bottom: 14px;">तपाईंका साथीले दिएको रुम कोड यहाँ राख्नुहोस्:</p>
 
         <label style="display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 6px;">रुम कोड (Room Code):</label>
         <input type="text" id="manualRoomCodeInput" placeholder="जस्तै: ab39xyz" style="text-transform: lowercase;">
@@ -290,7 +290,7 @@
       <!-- VIEW 3: BULK ADMIN PANEL -->
       <div id="bulkAdminView" class="hidden">
         <h3 style="font-size: 14px; font-weight: 800; margin-bottom: 4px; color: #0f172a;">📦 बल्क प्रश्न अपलोड प्यानल</h3>
-        <p style="font-size: 11px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">तलको बक्समा JSON ढाँचामा एकैचोटि धेरै प्रश्नहरू राखेर सेभ गर्नुहोस्। (`correct` मा 0 देखि 3 सम्मको इन्डेक्स राख्नुहोला)</p>
+        <p style="font-size: 11px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">तलको बक्समा JSON ढाँचामा एकैचोटि धेरै प्रश्नहरू राखेर सेभ गर्नुहोस्।</p>
 
         <label style="display: block; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 4px;">विषय (Topic):</label>
         <input type="text" id="bulkTopic" placeholder="जस्तै: नेपालको भूगोल">
@@ -400,7 +400,7 @@
               playerName = user.displayName || user.email.split('@')[0];
               
               if (roomIdFromUrl) {
-                handleRoomEntry(roomIdFromUrl);
+                setupGuestRoomView(roomIdFromUrl);
               }
             } else {
               currentUser = null;
@@ -425,7 +425,7 @@
       }, 100);
     });
 
-    async function handleRoomEntry(rId) {
+    async function setupGuestRoomView(rId) {
       currentRoomId = rId;
       isHost = false;
       document.getElementById("homeView").classList.add("hidden");
@@ -471,23 +471,21 @@
     }
 
     function joinByManualCode() {
-      let codeInput = document.getElementById("manualRoomCodeInput").value.trim();
+      let codeInput = document.getElementById("manualRoomCodeInput").value.trim().toLowerCase();
       if (!codeInput) {
         alert("कृपया रुम कोड राख्नुहोस्!");
         return;
       }
-      // If user pasted full url containing ?room=
       if (codeInput.includes("room=")) {
         try {
           const urlObj = new URL(codeInput);
           codeInput = urlObj.searchParams.get("room") || codeInput;
         } catch(e) {
-          // fallback if it's text
           const parts = codeInput.split("room=");
           if (parts.length > 1) codeInput = parts[1].split("&")[0];
         }
       }
-      handleRoomEntry(codeInput);
+      setupGuestRoomView(codeInput);
     }
 
     function updateRangeDisplay(val) {
@@ -552,7 +550,7 @@
     async function createBattle() {
       const count = parseInt(document.getElementById("questionRangeSlider").value);
       isHost = true;
-      currentRoomId = Math.random().toString(36).substring(2, 8); // e.g. 6-char code
+      currentRoomId = Math.random().toString(36).substring(2, 8);
 
       document.getElementById("setupView").classList.add("hidden");
       document.getElementById("waitingView").classList.remove("hidden");
@@ -589,6 +587,8 @@
         }]);
 
         if (roomError) throw roomError;
+        
+        // Host पनि रुमको अपडेट सुन्न तयार बस्छ
         subscribeToRoom();
 
       } catch (err) {
@@ -619,6 +619,7 @@
 
         battleData = data.quiz_data;
 
+        // Status active बनाउनेबित्तिकै host को supabase listener ले पनि ट्रिगर पाउँछ
         await supabaseClient.from('battle_rooms').update({
           guest_name: playerName,
           status: 'active'
@@ -638,6 +639,7 @@
       supabaseClient.channel('room_' + currentRoomId)
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'battle_rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
           const newData = payload.new;
+          // यदि होस्ट हो र पाहुनाले जोइन गरेर status 'active' भयो भने क्विज सुरु गर्ने
           if (isHost && newData.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
             battleData = newData.quiz_data;
             startQuizInterface();
