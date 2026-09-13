@@ -4,7 +4,7 @@
   <script src="components.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LoksewaQuest - Admin Panel</title>
+  <title>LoksewaQuest - Advanced Admin Panel</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -56,7 +56,7 @@
       margin-bottom: 20px;
     }
     .admin-header h1 {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
     }
     .back-btn {
@@ -77,6 +77,32 @@
       max-width: 650px;
       margin: 0 auto;
       padding: 0 20px;
+    }
+
+    /* ड्यासबोर्ड एनालिटिक्स कार्डहरू */
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 15px;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+    .stat-card h4 {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .stat-card span {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1e293b;
     }
 
     .form-card {
@@ -122,9 +148,12 @@
     }
     textarea.form-control {
       resize: vertical;
-      min-height: 250px;
+      min-height: 180px;
       font-family: monospace;
       font-size: 12px;
+    }
+    input.form-control {
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     .submit-btn {
@@ -141,6 +170,12 @@
     }
     .submit-btn:active {
       background: #1d4ed8;
+    }
+    .submit-btn.btn-orange {
+      background: #d97706;
+    }
+    .submit-btn.btn-orange:active {
+      background: #b45309;
     }
 
     .help-text {
@@ -171,15 +206,43 @@
 
   <div class="admin-header">
     <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1><i class="fa-solid fa-shield-halved" style="color: #fbbf24;"></i> SQL Insert Admin Panel</h1>
+    <h1><i class="fa-solid fa-shield-halved" style="color: #fbbf24;"></i> Loksewa Admin Hub</h1>
     <div style="width: 38px;"></div>
   </div>
 
   <div class="container">
     <div id="alertBox"></div>
 
+    <!-- लाइभ स्टाटिस्टिक्स कार्डहरू -->
+    <div class="admin-stats-grid">
+      <div class="stat-card">
+        <h4>कुल प्रश्नहरू (Quizzes)</h4>
+        <span id="totalQuizCount">लोड हुँदै...</span>
+      </div>
+      <div class="stat-card">
+        <h4>पछिल्लो सूचना स्थिति</h4>
+        <span id="tickerStatusText" style="font-size: 13px; color: #2563eb; font-weight: 700;">सक्रिय</span>
+      </div>
+    </div>
+
+    <!-- ⚡ १. लाइभ मकी सूचना (Notification Ticker) पठाउने फर्म -->
+    <div class="form-card" style="border-left: 4px solid #d97706;">
+      <h3><i class="fa-solid fa-bullhorn" style="color: #d97706;"></i> लाइभ सूचना पट्टी (Ticker) अपडेट गर्नुहोस्</h3>
+      <form id="notificationForm">
+        <div class="form-group">
+          <label>होमपेजमा सरर चल्ने नयाँ सन्देश:</label>
+          <input type="text" id="notificationInput" class="form-control" placeholder="उदा: नयाँ सेटहरू अपलोड गरिएको छ, सबैले अभ्यास गर्नुहोला!" required>
+          <div class="help-text">
+            💡 यो सन्देश सिधै युजरको ड्यासबोर्डको शीर्ष भागमा लाइभ चल्न सुरु हुनेछ।
+          </div>
+        </div>
+        <button type="submit" class="submit-btn btn-orange" id="notifBtn">सूचना लाइभ गर्नुहोस्</button>
+      </form>
+    </div>
+
+    <!-- २. SQL Query मार्फत प्रश्न हाल्ने फर्म -->
     <div class="form-card">
-      <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू हाल्नुहोस् (Explanation सहित)</h3>
+      <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू थप्नुहोस्</h3>
       <form id="sqlForm">
         <div class="form-group">
           <label>तपाईंको INSERT INTO SQL Query यहाँ राख्नुहोस्:</label>
@@ -197,7 +260,7 @@ VALUES
           </div>
         </div>
 
-        <button type="submit" class="submit-btn" id="sqlSaveBtn" style="background: #2563eb;">SQL डाटा सेभ गर्नुहोस्</button>
+        <button type="submit" class="submit-btn" id="sqlSaveBtn">SQL डाटा सेभ गर्नुहोस्</button>
       </form>
     </div>
   </div>
@@ -235,11 +298,65 @@ VALUES
 
       document.getElementById('loadingScreen').style.display = 'none';
       document.getElementById('adminBody').style.display = 'block';
+
+      // ड्यासबोर्डमा तथ्याङ्क लोड गर्ने
+      fetchDatabaseStats();
     });
 
-    const sqlForm = document.getElementById('sqlForm');
-    const alertBox = document.getElementById('alertBox');
+    // कुल क्विज संख्या फेच गर्ने फंक्सन
+    async function fetchDatabaseStats() {
+      try {
+        const { count, error } = await supabase
+          .from('quizzes')
+          .select('*', { count: 'exact', head: true });
+        
+        if (!error) {
+          document.getElementById('totalQuizCount').textContent = count || 0;
+        }
+      } catch (err) {
+        console.error("Stats load error:", err);
+      }
+    }
 
+    const alertBox = document.getElementById('alertBox');
+    function showAlert(message, type) {
+      alertBox.textContent = message;
+      alertBox.className = type === 'success' ? 'alert-success' : 'alert-error';
+      alertBox.style.display = 'block';
+      setTimeout(() => {
+        alertBox.style.display = 'none';
+      }, 5000);
+    }
+
+    // ⚡ Notification Ticker Form Handler
+    const notificationForm = document.getElementById('notificationForm');
+    notificationForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const notifBtn = document.getElementById('notifBtn');
+      notifBtn.disabled = true;
+      notifBtn.textContent = "सेभ हुँदैछ...";
+
+      const messageText = document.getElementById('notificationInput').value.trim();
+
+      try {
+        const { error } = await supabase
+          .from('notifications')
+          .insert([{ message: messageText }]);
+
+        if (error) throw error;
+
+        showAlert("सूचना सफलतापूर्वक लाइभ गरिदियो!", "success");
+        notificationForm.reset();
+      } catch (err) {
+        showAlert("सूचना राख्न त्रुटि भयो: " + err.message, "error");
+      } finally {
+        notifBtn.disabled = false;
+        notifBtn.textContent = "सूचना लाइभ गर्नुहोस्";
+      }
+    });
+
+    // SQL Quiz Form Handler
+    const sqlForm = document.getElementById('sqlForm');
     sqlForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const sqlSaveBtn = document.getElementById('sqlSaveBtn');
@@ -363,6 +480,7 @@ VALUES
 
         showAlert(`सफलतापूर्वक ${parsedRecords.length} वटा प्रश्नहरू explanation सहित सेभ भए!`, "success");
         sqlForm.reset();
+        fetchDatabaseStats(); // Refresh stats
       } catch (err) {
         showAlert("त्रुटि: " + err.message, "error");
       } finally {
@@ -370,15 +488,6 @@ VALUES
         sqlSaveBtn.textContent = "SQL डाटा सेभ गर्नुहोस्";
       }
     });
-
-    function showAlert(message, type) {
-      alertBox.textContent = message;
-      alertBox.className = type === 'success' ? 'alert-success' : 'alert-error';
-      alertBox.style.display = 'block';
-      setTimeout(() => {
-        alertBox.style.display = 'none';
-      }, 5000);
-    }
   </script>
 </body>
 </html>
