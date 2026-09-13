@@ -74,7 +74,7 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 650px;
       margin: 0 auto;
       padding: 0 20px;
     }
@@ -170,8 +170,9 @@
   </div>
 
   <div class="admin-header">
-    <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1><i class="fa-solid fa-shield-halved" style="color: #fbbf24;"></i> Admin Bulk Question Panel</h1>
+    <!-- यहाँ href लाई dashboard.html बनाइएको छ -->
+    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1><i class="fa-solid fa-shield-halved" style="color: #fbbf24;"></i> SQL Insert Admin Panel</h1>
     <div style="width: 38px;"></div>
   </div>
 
@@ -179,27 +180,24 @@
     <div id="alertBox"></div>
 
     <div class="form-card">
-      <h3><i class="fa-solid fa-file-arrow-up" style="color: #10b981;"></i> JSON मार्फत quizzes टेबलमा प्रश्नहरू अपलोड गर्नुहोस्</h3>
-      <form id="bulkForm">
+      <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू हाल्नुहोस्</h3>
+      <form id="sqlForm">
         <div class="form-group">
-          <label>JSON Format मा प्रश्नहरू र Set ID राख्नुहोस्:</label>
-          <textarea id="bulkJsonInput" class="form-control" placeholder='[
-  {
-    "set_id": "तपाईको_सेटको_UUID_वा_ID",
-    "question": "नेपालको राजधानी कहाँ हो?",
-    "option_a": "पोखरा",
-    "option_b": "काठमाडौं",
-    "option_c": "विराटनगर",
-    "option_d": "बुटवल",
-    "correct_answer": "B"
-  }
-]' required></textarea>
+          <label>तपाईंको INSERT INTO SQL Query यहाँ राख्नुहोस्:</label>
+          <textarea id="sqlInput" class="form-control" placeholder="INSERT INTO public.quizzes (topic, question, options, answer) 
+VALUES 
+(
+  'World_geography', 
+  'नेपाल राष्ट्र बैंकको स्थापना कहिले भएको हो?', 
+  '[\"वि.सं. २०१३ वैशाख १४\", \"वि.सं. २०१२ बैशाख २६\", \"वि.सं. २०२० साल\", \"वि.सं. २००७ साल\"]', 
+  'वि.सं. २०१३ वैशाख १४'
+);" required></textarea>
           <div class="help-text">
-            💡 <b>निर्देशन:</b> यहाँ राखेका डाटा सिधै Supabase को `quizzes` टेबलमा सेभ हुनेछन्।
+            💡 <b>निर्देशन:</b> `INSERT INTO public.quizzes (...) VALUES (...)` फॉर्मेटमा राख्नुहोला। बहुसंख्यक रेकर्डहरू हुँदा कोमा (,) ले छुट्याउनुहोला।
           </div>
         </div>
 
-        <button type="submit" class="submit-btn" id="bulkSaveBtn" style="background: #10b981;">सबै प्रश्नहरू एकैपटक सेभ गर्नुहोस्</button>
+        <button type="submit" class="submit-btn" id="sqlSaveBtn" style="background: #2563eb;">SQL डाटा सेभ गर्नुहोस्</button>
       </form>
     </div>
   </div>
@@ -231,7 +229,7 @@
     onAuthStateChanged(auth, async (user) => {
       if (!user || !user.email || !adminEmails.includes(user.email.toLowerCase())) {
         alert("तपाईंलाई यो प्यानल पहुँच गर्ने अनुमति छैन!");
-        window.location.href = "index.html";
+        window.location.href = "dashboard.html"; // अनाधिकृत युजरलाई पनि ड्यासबोर्ड वा होमपेजमा फर्काउने
         return;
       }
 
@@ -239,50 +237,135 @@
       document.getElementById('adminBody').style.display = 'block';
     });
 
-    const bulkForm = document.getElementById('bulkForm');
+    const sqlForm = document.getElementById('sqlForm');
     const alertBox = document.getElementById('alertBox');
 
-    bulkForm.addEventListener('submit', async (e) => {
+    sqlForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const bulkSaveBtn = document.getElementById('bulkSaveBtn');
-      bulkSaveBtn.disabled = true;
-      bulkSaveBtn.textContent = "अपलोड हुँदैछ...";
+      const sqlSaveBtn = document.getElementById('sqlSaveBtn');
+      sqlSaveBtn.disabled = true;
+      sqlSaveBtn.textContent = "प्रशोधन र सेभ हुँदैछ...";
 
-      const jsonInput = document.getElementById('bulkJsonInput').value;
+      const sqlText = document.getElementById('sqlInput').value;
 
       try {
-        let questionsArray = JSON.parse(jsonInput);
-        
-        if (!Array.isArray(questionsArray) || questionsArray.length === 0) {
-          throw new Error("अमान्य JSON format! कृप्या सहि तरिकाले राख्नुहोला।");
+        const valuesMatch = sqlText.match(/VALUES\s*([\s\S]*)/i);
+        if (!valuesMatch) {
+          throw new Error("SQL मा 'VALUES' फेला परेन। कृपया सही फॉर्मेट प्रयोग गर्नुहोस्।");
         }
 
-        const formattedQuestions = questionsArray.map(q => {
-          if (!q.set_id) {
-            throw new Error("प्रत्येक प्रश्नमा 'set_id' हुन अनिवार्य छ!");
+        let valuesString = valuesMatch[1].trim();
+        if (valuesString.endsWith(';')) {
+          valuesString = valuesString.slice(0, -1);
+        }
+
+        const rows = [];
+        let bracketDepth = 0;
+        let currentRow = "";
+        let inString = false;
+        let escapeNext = false;
+
+        for (let i = 0; i < valuesString.length; i++) {
+          let char = valuesString[i];
+          if (escapeNext) {
+            currentRow += char;
+            escapeNext = false;
+            continue;
           }
+          if (char === '\\') {
+            escapeNext = true;
+            currentRow += char;
+            continue;
+          }
+          if (char === "'" && valuesString[i-1] !== '\\') {
+            inString = !inString;
+          }
+          if (!inString) {
+            if (char === '(') {
+              if (bracketDepth === 0) {
+                currentRow = "";
+                bracketDepth++;
+                continue;
+              }
+              bracketDepth++;
+            } else if (char === ')') {
+              bracketDepth--;
+              if (bracketDepth === 0) {
+                rows.push(currentRow);
+                continue;
+              }
+            }
+          }
+          if (bracketDepth > 0) {
+            currentRow += char;
+          }
+        }
+
+        const parsedRecords = rows.map(rowStr => {
+          const fields = [];
+          let currentField = "";
+          let inStr = false;
+          let esc = false;
+
+          for (let j = 0; j < rowStr.length; j++) {
+            let c = rowStr[j];
+            if (esc) {
+              currentField += c;
+              esc = false;
+              continue;
+            }
+            if (c === '\\') {
+              esc = true;
+              currentField += c;
+              continue;
+            }
+            if (c === "'") {
+              inStr = !inStr;
+              continue;
+            }
+            if (c === ',' && !inStr) {
+              fields.push(currentField.trim());
+              currentField = "";
+            } else {
+              currentField += c;
+            }
+          }
+          fields.push(currentField.trim());
+
+          let topic = fields[0] || '';
+          let question = fields[1] || '';
+          let optionsStr = fields[2] || '[]';
+          let answer = fields[3] || '';
+
+          let optionsParsed;
+          try {
+            optionsParsed = JSON.parse(optionsStr);
+          } catch(e) {
+            optionsParsed = optionsStr; 
+          }
+
           return {
-            set_id: q.set_id,
-            question: q.question,
-            option_a: q.option_a,
-            option_b: q.option_b,
-            option_c: q.option_c,
-            option_d: q.option_d,
-            correct_answer: q.correct_answer ? q.correct_answer.toUpperCase() : 'A'
+            topic: topic,
+            question: question,
+            options: optionsParsed,
+            answer: answer
           };
         });
 
-        // यहाँ quizzes टेबलमा इन्सर्ट हुनेछ
-        const { error } = await supabase.from('quizzes').insert(formattedQuestions);
+        if (parsedRecords.length === 0) {
+          throw new Error("कुनै पनि वैध डेटा फेला परेन।");
+        }
+
+        const { error } = await supabase.from('quizzes').insert(parsedRecords);
         if (error) throw error;
 
-        showAlert(`सफलतापूर्वक ${formattedQuestions.length} वटा प्रश्नहरू quizzes टेबलमा थपिए!`, "success");
-        bulkForm.reset();
+        showAlert(`सफलतापूर्वक ${parsedRecords.length} वटा प्रश्नहरू quizzes टेबलमा सेभ भए!`, "success");
+        sqlForm.reset();
       } catch (err) {
-        showAlert("बल्क अपलोड असफल: " + err.message, "error");
+        showAlert("त्रुटि: " + err.message, "error");
       } finally {
-        bulkSaveBtn.disabled = false;
-        bulkSaveBtn.textContent = "सबै प्रश्नहरू एकैपटक सेभ गर्नुहोस्";
+        sqlSaveBtn.disabled = false;
+        sqlSaveBtn.textContent = "SQL डाटा सेभ गर्नुहोस्";
       }
     });
 
