@@ -19,7 +19,7 @@
     }
     .battle-wrapper {
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       background: #ffffff;
       padding: 24px;
       border-radius: 24px;
@@ -40,7 +40,6 @@
       font-size: 14px;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-      transition: 0.2s;
     }
     .btn-secondary {
       width: 100%;
@@ -63,6 +62,7 @@
       margin-bottom: 12px;
       outline: none;
       box-sizing: border-box;
+      font-family: inherit;
     }
     input[type="text"]:focus, select:focus, textarea:focus { border-color: #2563eb; }
     .topic-chip {
@@ -110,7 +110,7 @@
     </div>
 
     <button onclick="showCreateBattle()" class="btn-primary" style="margin-bottom: 10px;">⚔️ नयाँ ब्याटल सुरु गर्नुहोस्</button>
-    <button onclick="showAddQuestionModal()" class="btn-secondary">➕ डाटाबेसमा प्रश्न थप्नुहोस् (Admin)</button>
+    <button onclick="showBulkAdminPanel()" class="btn-secondary">📦 एकैचोटि धेरै प्रश्न थप्नुहोस् (Bulk Admin)</button>
   </div>
 
   <!-- VIEW 2: SETUP / CREATE BATTLE -->
@@ -140,31 +140,29 @@
     <button onclick="location.reload()" class="btn-secondary">पछाडि जानुहोस्</button>
   </div>
 
-  <!-- VIEW 3: ADD QUESTION PANEL (ADMIN) -->
-  <div id="addQuestionView" class="hidden">
-    <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 12px; color: #0f172a;">📝 डाटाबेसमा प्रश्न थप्नुहोस्</h3>
+  <!-- VIEW 3: BULK ADMIN PANEL -->
+  <div id="bulkAdminView" class="hidden">
+    <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 6px; color: #0f172a;">📦 बल्क प्रश्न अपलोड प्यानल</h3>
+    <p style="font-size: 11px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">तलको बक्समा JSON ढाँचामा एकैचोटि धेरै प्रश्नहरू राखेर सेभ गर्नुहोस्। (`correct` मा 0 देखि 3 सम्मको इन्डेक्स राख्नुहोला)</p>
 
     <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">विषय (Topic):</label>
-    <input type="text" id="adminTopic" placeholder="जस्तै: नेपालको भूगोल">
+    <input type="text" id="bulkTopic" placeholder="जस्तै: नेपालको भूगोल">
 
-    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">प्रश्न (Question):</label>
-    <textarea id="adminQuestion" rows="2" placeholder="प्रश्न यहाँ लेख्नुहोस्..." style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:10px; margin-bottom:10px; outline:none; font-family:inherit;"></textarea>
+    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">प्रश्नहरूको JSON डाटा:</label>
+    <textarea id="bulkJsonInput" rows="8" placeholder='[
+  {
+    "question": "सगरमाथाको उचाइ कति छ?",
+    "options": ["८८४८.८६ मि", "८,००० मि", "९,००० मि", "८,५०० मि"],
+    "correct": 0
+  },
+  {
+    "question": "लुम्बिनी कहाँ पर्छ?",
+    "options": ["काठमाडौं", "रुपन्देही", "पोखरा", "चितवन"],
+    "correct": 1
+  }
+]' style="font-size: 12px;"></textarea>
 
-    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">विकल्पहरू (Options):</label>
-    <input type="text" id="opt0" placeholder="विकल्प क (Option 1)" style="margin-bottom:6px;">
-    <input type="text" id="opt1" placeholder="विकल्प ख (Option 2)" style="margin-bottom:6px;">
-    <input type="text" id="opt2" placeholder="विकल्प ग (Option 3)" style="margin-bottom:6px;">
-    <input type="text" id="opt3" placeholder="विकल्प घ (Option 4)" style="margin-bottom:10px;">
-
-    <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">सही उत्तर कुन हो? (Index 0 देखि 3 सम्म):</label>
-    <select id="adminCorrectIndex" style="margin-bottom: 14px;">
-      <option value="0">पहिलो विकल्प (0)</option>
-      <option value="1">दोस्रो विकल्प (1)</option>
-      <option value="2">तेस्रो विकल्प (2)</option>
-      <option value="3">चौथो विकल्प (3)</option>
-    </select>
-
-    <button onclick="saveQuestionToDB()" class="btn-primary">प्रश्न सेभ गर्नुहोस्</button>
+    <button onclick="saveBulkQuestionsToDB()" class="btn-primary">सबै प्रश्नहरू एकैचोटि सेभ गर्नुहोस्</button>
     <button onclick="location.reload()" class="btn-secondary">गृहपृष्ठमा फर्कनुहोस्</button>
   </div>
 
@@ -236,46 +234,47 @@
     document.getElementById("setupView").classList.remove("hidden");
   }
 
-  function showAddQuestionModal() {
+  function showBulkAdminPanel() {
     document.getElementById("homeView").classList.add("hidden");
-    document.getElementById("addQuestionView").classList.remove("hidden");
+    document.getElementById("bulkAdminView").classList.remove("hidden");
   }
 
   function setTopic(topicName) {
     document.getElementById("topicInput").value = topicName;
   }
 
-  // Save manual question into database
-  async function saveQuestionToDB() {
-    const topic = document.getElementById("adminTopic").value.trim();
-    const question = document.getElementById("adminQuestion").value.trim();
-    const o0 = document.getElementById("opt0").value.trim();
-    const o1 = document.getElementById("opt1").value.trim();
-    const o2 = document.getElementById("opt2").value.trim();
-    const o3 = document.getElementById("opt3").value.trim();
-    const correct = parseInt(document.getElementById("adminCorrectIndex").value);
+  // Bulk save questions into database
+  async function saveBulkQuestionsToDB() {
+    const topic = document.getElementById("bulkTopic").value.trim();
+    const jsonText = document.getElementById("bulkJsonInput").value.trim();
 
-    if (!topic || !question || !o0 || !o1) {
-      alert("कृपया आवश्यक विवरणहरू भरेर मात्र सेभ गर्नुहोस्!");
+    if (!topic || !jsonText) {
+      alert("कृपया टपिक र JSON डाटा दुवै भर्नुहोस्!");
       return;
     }
 
-    const options = [o0, o1, o2, o3].filter(Boolean);
-
     try {
-      const { error } = await supabaseClient.from('questions').insert([{
-        topic: topic,
-        question: question,
-        options: options,
-        correct_option: correct
-      }]);
+      const parsedQuestions = JSON.parse(jsonText);
+      if (!Array.isArray(parsedQuestions) || parsedQuestions.length === 0) {
+        throw new Error("मान्य एरे (Array) डाटा फेला परेन।");
+      }
 
+      const rowsToInsert = parsedQuestions.map(q => ({
+        topic: topic,
+        question: q.question,
+        options: q.options,
+        correct_option: q.correct
+      }));
+
+      const { error } = await supabaseClient.from('questions').insert(rowsToInsert);
       if (error) throw error;
-      alert("सफलतापूर्वक प्रश्न डाटाबेसमा सेभ भयो! 🎉");
+
+      alert(`सफलतापूर्वक ${rowsToInsert.length} वटा प्रश्नहरू डाटाबेसमा सेभ भए! 🎉`);
       location.reload();
+
     } catch (err) {
       console.error(err);
-      alert("प्रश्न सेभ गर्दा समस्या आयो। टेबल कन्फिगरेसन जाँच गर्नुहोस्।");
+      alert("JSON फर्मट मिलेन वा सेभ गर्दा समस्या आयो। कृपया सही JSON लेख्नुहोला।");
     }
   }
 
@@ -300,7 +299,6 @@
     document.getElementById("shareLinkBox").value = shareUrl;
 
     try {
-      // Fetch questions from database based on topic
       const { data: dbQuestions, error: dbError } = await supabaseClient
         .from('questions')
         .select('*')
@@ -308,17 +306,15 @@
         .limit(count);
 
       if (dbError || !dbQuestions || dbQuestions.length === 0) {
-        throw new Error("यो टपिकमा डाटाबेसमा पर्याप्त प्रश्नहरू फेला परेनन्। कृपया पहिले एडमिन प्यानलबाट प्रश्न थप्नुहोस्!");
+        throw new Error("यो टपिकमा डाटाबेसमा प्रश्नहरू फेला परेनन्। कृपया पहिले 'बल्क एडमिन' बाट प्रश्न थप्नुहोस्!");
       }
 
-      // Format questions for battle
       battleData = dbQuestions.map(q => ({
         question: q.question,
         options: q.options,
         correct: q.correct_option
       }));
 
-      // Insert room into Supabase
       const { error: roomError } = await supabaseClient.from('battle_rooms').insert([{
         room_id: currentRoomId,
         host_name: host,
@@ -329,7 +325,6 @@
       }]);
 
       if (roomError) throw roomError;
-
       subscribeToRoom();
 
     } catch (err) {
