@@ -353,11 +353,18 @@
         <div id="battleQuestionContainer"></div>
       </div>
 
-      <!-- VIEW 6: RESULT ANIMATION -->
+      <!-- VIEW 6: RESULT & LEADERBOARD -->
       <div id="resultView" class="hidden" style="text-align: center; padding: 10px 0;">
         <div id="resultEmoji" class="animate-bounce" style="font-size: 48px; margin-bottom: 8px;">🏆</div>
         <h2 id="resultHeading" style="font-size: 16px; font-weight: 800; margin-bottom: 6px;">नतिजा</h2>
         <p id="resultDescription" style="font-size: 12px; color: #64748b; margin-bottom: 16px; line-height: 1.4;"></p>
+        
+        <!-- Leaderboard Box -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 12px; margin-bottom: 16px; text-align: left;">
+          <p style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px;"><i class="fa-solid fa-trophy" style="color: #eab308;"></i> लिडरबोर्ड (Leaderboard):</p>
+          <div id="leaderboardList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+        </div>
+
         <button onclick="location.href=window.location.pathname" class="btn-primary">नयाँ ब्याटल खेल्नुहोस्</button>
       </div>
 
@@ -445,7 +452,7 @@
       document.getElementById("setupView").classList.add("hidden");
       document.getElementById("joinModalView").classList.add("hidden");
       document.getElementById("waitingView").classList.remove("hidden");
-      document.getElementById("waitingTitle").innerText = "ब्याटल रुम भेटियो!";
+      document.getElementById("waitingTitle").innerText = "ब्याटल रुમ भेटियो!";
       document.getElementById("shareLinkBox").parentElement.style.display = "none";
       document.getElementById("displayRoomCode").innerText = currentRoomId;
       document.getElementById("waitingGuestName").innerText = playerName;
@@ -454,10 +461,10 @@
       document.getElementById("guestStatusBadge").style.color = "#16a34a";
       document.getElementById("joinGuestBox").classList.remove("hidden");
 
-      // Fetch host info
-      const { data } = await supabaseClient.from('battle_rooms').select('host_name').eq('room_id', currentRoomId).single();
+      const { data } = await supabaseClient.from('battle_rooms').select('host_name, quiz_data').eq('room_id', currentRoomId).single();
       if (data) {
         document.getElementById("waitingHostName").innerText = data.host_name;
+        battleData = data.quiz_data;
       }
     }
 
@@ -612,7 +619,7 @@
         if (roomError) throw roomError;
         
         subscribeToRoom();
-        startPollingForHost();
+        startPollingForRoom();
 
       } catch (err) {
         console.error(err);
@@ -647,9 +654,9 @@
           status: 'active'
         }).eq('room_id', currentRoomId);
 
-        if (pollingInterval) clearInterval(pollingInterval);
         startQuizInterface();
         subscribeToRoom();
+        startPollingForRoom();
 
       } catch (err) {
         console.error(err);
@@ -663,7 +670,6 @@
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'battle_rooms', filter: `room_id=eq.${currentRoomId}` }, payload => {
           const newData = payload.new;
           
-          // Update guest name live if host is waiting
           if (isHost && newData.guest_name && document.getElementById("waitingView").classList.contains("hidden") === false) {
             document.getElementById("waitingGuestName").innerText = newData.guest_name;
             document.getElementById("guestStatusBadge").innerText = "तयार";
@@ -673,9 +679,9 @@
 
           if (isHost && newData.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
             battleData = newData.quiz_data;
-            if (pollingInterval) clearInterval(pollingInterval);
             startQuizInterface();
           }
+
           if (newData.status === 'completed') {
             if (pollingInterval) clearInterval(pollingInterval);
             showFinalResults(newData);
@@ -684,25 +690,27 @@
         .subscribe();
     }
 
-    // Fallback polling for Host so game starts instantly even if realtime drops
-    function startPollingForHost() {
+    function startPollingForRoom() {
+      if (pollingInterval) clearInterval(pollingInterval);
       pollingInterval = setInterval(async () => {
-        if (!isHost) return;
         const { data, error } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
         if (!error && data) {
-          if (data.guest_name) {
+          if (isHost && data.guest_name) {
             document.getElementById("waitingGuestName").innerText = data.guest_name;
             document.getElementById("guestStatusBadge").innerText = "तयार";
             document.getElementById("guestStatusBadge").style.background = "#dcfce7";
             document.getElementById("guestStatusBadge").style.color = "#16a34a";
           }
-          if (data.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
+          if (isHost && data.status === 'active' && document.getElementById("waitingView").classList.contains("hidden") === false) {
             battleData = data.quiz_data;
-            clearInterval(pollingInterval);
             startQuizInterface();
           }
+          if (data.status === 'completed') {
+            clearInterval(pollingInterval);
+            showFinalResults(data);
+          }
         }
-      }, 2000);
+      }, 1500);
     }
 
     function startQuizInterface() {
@@ -766,20 +774,30 @@
 
       try {
         const updateField = isHost ? { host_answers: currentAnswers } : { guest_answers: currentAnswers };
+        
+        // First update own answers
+        await supabaseClient.from('battle_rooms').update(updateField).eq('room_id', currentRoomId);
+
+        // Fetch latest room data to check if both submitted
         const { data: roomData } = await supabaseClient.from('battle_rooms').select('*').eq('room_id', currentRoomId).single();
         
-        let updatePayload = { ...updateField };
-        const opponentAnswers = isHost ? roomData.guest_answers : roomData.host_answers;
+        const hostAns = roomData.host_answers;
+        const guestAns = roomData.guest_answers;
 
-        if (opponentAnswers && Object.keys(opponentAnswers).length > 0) {
-          const hostScore = calculateScore(isHost ? currentAnswers : opponentAnswers);
-          const guestScore = calculateScore(isHost ? opponentAnswers : currentAnswers);
+        if (hostAns && guestAns && Object.keys(hostAns).length > 0 && Object.keys(guestAns).length > 0) {
+          const hostScore = calculateScore(hostAns);
+          const guestScore = calculateScore(guestAns);
           let winnerName = hostScore > guestScore ? roomData.host_name : (guestScore > hostScore ? roomData.guest_name : "Tie");
-          updatePayload.winner = winnerName;
-          updatePayload.status = 'completed';
-        }
+          
+          await supabaseClient.from('battle_rooms').update({
+            winner: winnerName,
+            status: 'completed'
+          }).eq('room_id', currentRoomId);
 
-        await supabaseClient.from('battle_rooms').update(updatePayload).eq('room_id', currentRoomId);
+          showFinalResults({ ...roomData, winner: winnerName });
+        } else {
+          startPollingForRoom();
+        }
 
       } catch (err) {
         console.error(err);
@@ -788,6 +806,7 @@
 
     function calculateScore(answersObj) {
       let score = 0;
+      if (!answersObj) return 0;
       battleData.forEach((q, idx) => {
         if (answersObj[idx] === q.correct) score++;
       });
@@ -795,7 +814,12 @@
     }
 
     async function showFinalResults(roomData) {
+      if (!battleData && roomData.quiz_data) {
+        battleData = roomData.quiz_data;
+      }
+
       document.getElementById("quizView").classList.add("hidden");
+      document.getElementById("waitingView").classList.add("hidden");
       document.getElementById("resultView").classList.remove("hidden");
 
       const hostScore = calculateScore(roomData.host_answers || {});
@@ -826,6 +850,25 @@
         <b>${roomData.host_name}</b> स्कोर: <b>${hostScore} / ${battleData.length}</b><br>
         <b>${roomData.guest_name || 'Guest'}</b> स्कोर: <b>${guestScore} / ${battleData.length}</b>
       `;
+
+      // Build Leaderboard Ranking List
+      const players = [
+        { name: roomData.host_name, score: hostScore },
+        { name: roomData.guest_name || "Guest", score: guestScore }
+      ].sort((a, b) => b.score - a.score);
+
+      let leaderboardHtml = "";
+      players.forEach((p, idx) => {
+        let badgeColor = idx === 0 ? "background: #fef08a; color: #854d0e;" : "background: #f1f5f9; color: #475569;";
+        let rankEmoji = idx === 0 ? "🥇" : "🥈";
+        leaderboardHtml += `
+          <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 8px 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px;">
+            <span>${rankEmoji} <b>${p.name}</b></span>
+            <span style="font-size: 11px; ${badgeColor} padding: 2px 8px; border-radius: 6px; font-weight: 700;">${p.score} अंक</span>
+          </div>
+        `;
+      });
+      document.getElementById("leaderboardList").innerHTML = leaderboardHtml;
     }
   </script>
 
