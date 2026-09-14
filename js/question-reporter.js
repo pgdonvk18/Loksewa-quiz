@@ -34,14 +34,6 @@
       if (card) card.style.transform = 'scale(1)';
     }
   }
-  // सक्रिय प्रश्न पत्ता लगाउने सही र पक्का तरिका
-  function detectCurrentQuestion() {
-    // यदि तपाइँको पेजमा activeQuestions र currentIdx उपलब्ध छ भने
-    if (typeof activeQuestions !== 'undefined' && typeof currentIdx !== 'undefined' && activeQuestions[currentIdx]) {
-      return activeQuestions[currentIdx];
-    }
-    return null;
-  }
 
   window.closeGlobalReportModal = function() {
     const modal = document.getElementById('globalReportModal');
@@ -57,13 +49,24 @@
 
   // इभेन्ट लिसनर सुरक्षित रूपमा जोड्ने
   document.addEventListener('click', function(e) {
-    if (e.target && (e.target.id === 'closeGlobalReport' || e.target.id === 'cancelGlobalReport' || e.target.closest('#closeGlobalReport') || e.target.closest('#cancelGlobalReport'))) {
+    if (e.target && (e.target.id === 'closeGlobalReport' || e.target.id === 'cancelGlobalReport' || e.target.closest('#closeGlobalReport' ) || e.target.closest('#cancelGlobalReport'))) {
       window.closeGlobalReportModal();
     }
   });
 
-  
-    // ख. ग्लोबल रिएबलहरूको विभिन्न नामहरू स्वतः चेक गर्ने
+  // ३. सक्रिय प्रश्न पत्ता लगाउने स्मार्ट लजिक
+  function detectCurrentQuestion() {
+    // क. तपाईंको यो पेजको मुख्य रिएबल (activeQuestions र currentIdx) जाँच गर्ने
+    if (typeof activeQuestions !== 'undefined' && typeof currentIdx !== 'undefined' && activeQuestions[currentIdx]) {
+      return activeQuestions[currentIdx];
+    }
+
+    // ख. यदि कसैले कस्टम फंक्सन बनाएको छ भने
+    if (typeof window.getCurrentQuestion === 'function') {
+      try { return window.getCurrentQuestion(); } catch(err) {}
+    }
+
+    // ग. अन्य वैकल्पिक नामहरू चेक गर्ने
     const possibleArrays = [
       typeof examQuestions !== 'undefined' ? examQuestions : null,
       typeof questions !== 'undefined' ? questions : null,
@@ -85,12 +88,10 @@
             return arr[idx];
           }
         }
-        // यदि इन्डेक्स फेला परेन तर पहिलो प्रश्न दिन सकिन्छ भने वा active इंडेक्स ० छ भने
         return arr[0];
       }
     }
 
-    // ग. यदि सिंगल अब्जेक्टको रूपमा स्टोर छ भने
     if (typeof activeQuestion !== 'undefined' && activeQuestion) return activeQuestion;
     if (typeof currentQuestion !== 'undefined' && currentQuestion) return currentQuestion;
 
