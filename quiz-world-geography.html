@@ -328,7 +328,7 @@
       max-width: 340px;
       border-radius: 24px;
       padding: 24px 20px;
-      text-align: center;
+      text-align: left;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
       transform: scale(0.9);
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -344,7 +344,7 @@
 
   <!-- LOGIN WARNING MODAL -->
   <div id="login-modal" class="modal-overlay">
-    <div class="modal-card">
+    <div class="modal-card" style="text-align: center;">
       <div style="width: 56px; height: 56px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">
         <i class="fa-solid fa-lock"></i>
       </div>
@@ -358,6 +358,22 @@
       <a href="dashboard.html" style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none; padding: 6px;">
         ड्यासबोर्डमा फर्कनुहोस्
       </a>
+    </div>
+  </div>
+
+  <!-- GLOBAL REPORT MODAL -->
+  <div id="globalReportModal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin:0;">प्रश्न रिपोर्ट गर्नुहोस्</h3>
+        <button onclick="closeGlobalReportModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">यो प्रश्न वा उत्तरमा के समस्या छ लेख्नुहोस्:</p>
+      <textarea id="globalReportReason" placeholder="उदा: सही उत्तर मिलेको छैन।" style="min-height: 100px; margin-bottom: 12px; width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; box-sizing: border-box;"></textarea>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="submitGlobalReport()" style="flex: 1; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px;">पठाउनुहोस्</button>
+        <button onclick="closeGlobalReportModal()" style="flex: 1; background: #e2e8f0; color: #475569; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px;">रद्द गर्नुहोस्</button>
+      </div>
     </div>
   </div>
 
@@ -426,6 +442,10 @@
         </div>
         <p id="explanation-text" class="explanation-text"></p>
       </div>
+
+      <button onclick="openGlobalReportModal()" style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 14px;">  
+        <i class="fa-solid fa-triangle-exclamation"></i> यो प्रश्न रिपोर्ट गर्नुहोस्  
+      </button>
 
       <div style="display: flex; gap: 12px; margin-top: 24px;">
         <button onclick="prevQuestion()" id="prev-btn" class="btn-secondary">
@@ -678,6 +698,49 @@
       }
     }
 
+    // Report Modal Functions
+    window.openGlobalReportModal = function() {
+      document.getElementById('globalReportModal').classList.add('active');
+    }
+
+    window.closeGlobalReportModal = function() {
+      document.getElementById('globalReportModal').classList.remove('active');
+      document.getElementById('globalReportReason').value = '';
+    }
+
+    window.submitGlobalReport = async function() {
+      const reasonBox = document.getElementById('globalReportReason');
+      const reason = reasonBox ? reasonBox.value.trim() : '';
+      
+      if (!reason) {
+        alert('कृपया समस्या के हो लेख्नुहोस्!');
+        return;
+      }
+
+      const currentQ = activeQuestions[currentIdx];
+
+      if (!currentQ) {
+        alert('हालको प्रश्न फेला परेन!');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('reported_questions')
+        .insert([{ 
+          question_id: currentQ.id || currentQ.question_id || null, 
+          question_text: currentQ.question || currentQ.title || currentQ.text || 'Unknown Question', 
+          reason: reason,
+          status: 'Pending'
+        }]);
+
+      if (error) {
+        alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+      } else {
+        alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
+        window.closeGlobalReportModal();
+      }
+    }
+
     async function finishQuiz() {
       document.getElementById('quiz-screen').classList.add('hidden');
       document.getElementById('result-screen').classList.remove('hidden');
@@ -775,7 +838,6 @@
           .maybeSingle();
 
         if (existing) {
-          // पुरानो मानमा नयाँ मान जोडिने (Accumulate हुने) गरी मिलाइएको कोड
           const updatedSolved = (existing.solved_questions || 0) + solvedCount;
           const updatedDaily = (existing.solved_daily || 0) + solvedCount;
           const updatedWeekly = (existing.solved_weekly || 0) + solvedCount;
