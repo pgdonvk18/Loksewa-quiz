@@ -31,7 +31,7 @@
       border-bottom: 1px solid #1e40af;
     }
     .app-header h1 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
     }
     .back-btn {
@@ -216,7 +216,7 @@
   <!-- HEADER -->
   <header class="app-header">
     <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1 id="header-title">🇳🇵 LoksewaQuest - Exam</h1>
+    <h1 id="header-title">🇳🇵 LoksewaQuest</h1>
     <div id="timer-box" class="timer-badge hidden">
       ⏳ <span id="time-left">45:00</span>
     </div>
@@ -350,14 +350,22 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // URL बाट Dynamic Set नाम समात्ने (जस्तै: ?set=set_1 वा ?set=Set-1)
+    // URL बाट Dynamic Set नाम समात्ने (जस्तै: ?set=set_1 वा ?set=set_2)
     const urlParams = new URLSearchParams(window.location.search);
-    const currentSet = urlParams.get('set') || 'set_1'; // यदि छैन भने बाइफल्ट set_1
-    const leaderboardTable = currentSet.includes('set_') ? `leaderboard_${currentSet}` : `leaderboard_${currentSet.toLowerCase().replace('-', '_')}`;
+    const rawSet = urlParams.get('set') || 'set_1'; 
+    const currentSet = rawSet.toLowerCase();
 
-    document.getElementById('header-title').innerText = `🇳🇵 LoksewaQuest - ${currentSet.toUpperCase()}`;
-    document.getElementById('set-badge-title').innerText = `🎯 ${currentSet.toUpperCase()} (Model Exam)`;
-    document.getElementById('lb-title').innerText = `🏆 ${currentSet.toUpperCase()} लिडरबोर्ड`;
+    // लिडरबोर्ड टेबलको नाम: leaderboard_set1, leaderboard_set2 आदि (बीचमा अन्डरस्कोर नभएको)
+    const setNumberMatch = currentSet.match(/\d+/);
+    const setNum = setNumberMatch ? setNumberMatch[0] : '1';
+    const leaderboardTable = `leaderboard_set${setNum}`;
+
+    // डिस्प्ले नामलाई "Pre Qualifying Exam Set X" मा रूपान्तरण गर्ने
+    const prettyExamName = `Pre Qualifying Exam Set ${setNum}`;
+
+    document.getElementById('header-title').innerText = `🇳🇵 LoksewaQuest - ${prettyExamName}`;
+    document.getElementById('set-badge-title').innerText = `🎯 ${prettyExamName} (Model Exam)`;
+    document.getElementById('lb-title').innerText = `🏆 ${prettyExamName} लिडरबोर्ड`;
 
     let candidateName = '';
     let userEmail = '';
@@ -419,14 +427,20 @@
           return;
         }
 
+        // 'quizzes' टेबलमा topic म्याच गर्ने (जस्तै 'set_1' वा 'set_2')
         let { data, error } = await supabaseClient
           .from('quizzes')
           .select('*')
           .ilike('topic', currentSet);
         
         if (error || !data || data.length === 0) {
-          alert(`डेटाबेसमा ${currentSet} का प्रश्नहरू भेटिएनन्!`);
-          return;
+          // यदि फेला परेन भने rawSet सँग पनि ट्राई गर्ने
+          let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', rawSet);
+          if (retry.error || !retry.data || retry.data.length === 0) {
+            alert(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
+            return;
+          }
+          data = retry.data;
         }
 
         examQuestions = data;
@@ -436,11 +450,11 @@
         
         if (!isPracticeMode) {
           document.getElementById('timer-box').classList.remove('hidden');
-          document.getElementById('mode-badge').innerText = `${currentSet} Live Exam`;
+          document.getElementById('mode-badge').innerText = `${prettyExamName} Live Exam`;
           startTimer();
         } else {
           document.getElementById('timer-box').classList.add('hidden');
-          document.getElementById('mode-badge').innerText = `${currentSet} Practice Mode`;
+          document.getElementById('mode-badge').innerText = `${prettyExamName} Practice Mode`;
         }
 
         loadExamQuestion();
@@ -541,10 +555,10 @@
 
       if (isPracticeMode) {
         document.getElementById('report-main-title').innerText = '📊 अभ्यास प्रतिवेदन (Practice Report)';
-        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${currentSet} (अभ्यास मोड)`;
+        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${prettyExamName} (अभ्यास मोड)`;
       } else {
         document.getElementById('report-main-title').innerText = '📊 परीक्षा प्रतिवेदन (Exam Report)';
-        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${currentSet} (Live Exam)`;
+        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${prettyExamName} (Live Exam)`;
         
         await supabaseClient.from(leaderboardTable).insert([
           { username: userEmail, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
