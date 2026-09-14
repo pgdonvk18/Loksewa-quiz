@@ -69,7 +69,7 @@
       flex-direction: column;
       gap: 12px;
       background: #f1f5f9;
-      padding-bottom: 80px; /* Input box को लागि ठाउँ छोडेको */
+      padding-bottom: 80px;
     }
 
     /* Message Bubbles */
@@ -256,14 +256,29 @@
           return;
         }
 
+        let messages = [];
         snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
+          messages.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        // यदि serverTimestamp आउन केही सेकेन्ड ढिला भयो भने पनि अटोमेटिक मिलाउन सकियोस्
+        messages.sort((a, b) => {
+          const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
+          const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
+          return timeA - timeB;
+        });
+
+        messages.forEach((data) => {
           const isMe = data.uid === currentUser.uid;
 
-          let timeStr = "";
+          let timeStr = "भर्खरै";
           if (data.createdAt) {
-            const date = data.createdAt.toDate();
-            timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            try {
+              const date = data.createdAt.toDate();
+              timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } catch (e) {
+              timeStr = "";
+            }
           }
 
           const messageRow = document.createElement('div');
@@ -281,6 +296,8 @@
         });
 
         chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, (error) => {
+        console.error("Firestore Read Error: ", error);
       });
     }
 
@@ -303,6 +320,8 @@
           senderName: currentUserName,
           createdAt: serverTimestamp()
         });
+      }
+
       } catch (err) {
         console.error("मसेज पठाउन सकिएन:", err);
       }
