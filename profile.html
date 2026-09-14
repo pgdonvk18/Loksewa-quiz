@@ -382,7 +382,7 @@
       </div>
     </div>
 
-        <div class="menu-card">
+    <div class="menu-card">
       <a href="#" class="menu-item" onclick="enableNameEdit(); return false;">
         <div class="menu-item-left">
           <i class="fa-solid fa-user-pen"></i>
@@ -404,10 +404,10 @@
         </div>
       </a>
     </div>
+  </div>
 
-<script src="components.js"></script>
-<script>loadBottomNav('profile');</script>
-
+  <script src="components.js"></script>
+  <script>loadBottomNav('profile');</script>
 
   <!-- मुख्य साझा main.js फाइल लिङ्क -->
   <script src="main.js"></script>
@@ -486,7 +486,7 @@
           document.getElementById('userNameInput').value = displayName;
         }
 
-        // Supabase बाट user_stats र leaderboard को डेटा जोडेर कुल प्रश्न र समय देखाउने
+        // Supabase बाट user_stats र exam_leaderboard को total_questions जोडेर देखाउने
         try {
           let totalSolvedCount = 0;
           let totalTimeMinutes = 0;
@@ -502,14 +502,14 @@
             totalTimeMinutes += (userStatData.time_spent_minutes || 0);
           }
 
-          let { data: lbData } = await supabase
-            .from('leaderboard_geography')
-            .select('*')
-            .eq('username', displayName);
+          let { data: examLbData } = await supabase
+            .from('exam_leaderboard')
+            .select('total_questions')
+            .or(`id.eq.${user.uid},username.eq.${displayName}`);
 
-          if (lbData && lbData.length > 0) {
-            lbData.forEach(row => {
-              totalSolvedCount += (row.total_solved || row.score || 0);
+          if (examLbData && examLbData.length > 0) {
+            examLbData.forEach(row => {
+              totalSolvedCount += (row.total_questions || 0);
             });
           }
 
