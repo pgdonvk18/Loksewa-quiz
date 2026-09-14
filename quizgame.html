@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LoksewaQuest - Live Quiz Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Top Navigation / Header */
+    .game-header { background: #0f2a4a; color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 10; }
+    .room-badge { background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+    .chat-toggle-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+
+    /* Main Layout */
+    .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
+    .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; }
+
+    /* Scoreboard Bar */
+    .scoreboard { display: flex; gap: 8px; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow-x: auto; }
+    .player-card { flex: 1; min-width: 90px; background: #f8fafc; border: 2px solid #e2e8f0; padding: 8px; border-radius: 8px; text-align: center; transition: all 0.3s; }
+    .player-card.active-turn { border-color: #2563eb; background: #eff6ff; box-shadow: 0 0 10px rgba(37,99,235,0.2); }
+    .player-card .p-name { font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .player-card .p-score { font-size: 15px; font-weight: 800; color: #0f2a4a; margin-top: 2px; }
+
+    /* Card Box */
+    .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
+
+    /* Waiting Screen */
+    .waiting-box { text-align: center; padding: 40px 20px; }
+    .waiting-box h3 { font-size: 20px; font-weight: 800; color: #0f2a4a; margin-bottom: 8px; }
+    .waiting-box p { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+    .players-list { display: flex; flex-direction: column; gap: 8px; max-width: 300px; margin: 0 auto 20px auto; text-align: left; }
+    .player-item { background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; }
+
+    /* Quiz Question Box */
+    .question-box h4 { font-size: 16px; font-weight: 700; color: #0f2a4a; margin-bottom: 16px; line-height: 1.5; }
+    .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .option-btn { background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.2s; color: #1e293b; }
+    .option-btn:hover:not(:disabled) { background: #e2e8f0; border-color: #94a3b8; }
+
+    /* Chat Drawer (Side Panel) */
+    .chat-drawer { position: absolute; right: -320px; top: 0; width: 300px; height: 100%; background: white; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: right 0.3s ease; z-index: 100; box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
+    .chat-drawer.open { right: 0; }
+    .chat-header-bar { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .close-chat { background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b; }
+    .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #f1f5f9; }
+    .chat-msg { font-size: 12px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .chat-msg .c-user { font-weight: 700; color: #2563eb; margin-bottom: 2px; }
+    .chat-input-box { padding: 10px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; }
+    .chat-input { flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
+    .chat-send-btn { background: #2563eb; color: white; border: none; padding: 0 14px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+
+    .btn-main { background: #2563eb; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
+    .btn-main:hover { background: #1d4ed8; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="game-header">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <h3>Loksewa Arena</h3>
+      <span class="room-badge" id="roomCodeDisplay">ROOM: ----</span>
+    </div>
+    <button class="chat-toggle-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i> च्याट</button>
+  </div>
+
+  <div class="game-layout">
+    <!-- Main Game Area -->
+    <div class="main-content">
+      
+      <!-- Scoreboard -->
+      <div class="scoreboard" id="scoreboardContainer">
+        <!-- Dynamic Player Scores -->
+      </div>
+
+      <!-- Dynamic Game State Container -->
+      <div id="gameBody">
+        <!-- Javascript will inject Waiting Room or Quiz Screen here -->
+      </div>
+
+    </div>
+
+    <!-- Side Chat Drawer -->
+    <div class="chat-drawer" id="chatDrawer">
+      <div class="chat-header-bar">
+        <span>ग्रुप च्याट</span>
+        <button class="close-chat" onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="chat-messages" id="chatMessagesContainer">
+        <div style="text-align: center; color: #94a3b8; font-size: 11px;">च्याट लोड हुँदैछ...</div>
+      </div>
+      <form class="chat-input-box" id="chatForm">
+        <input type="text" class="chat-input" id="chatInputText" placeholder="केही लेख्नुहोस्..." autocomplete="off">
+        <button type="submit" class="chat-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, onSnapshot, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('room');
+
+    if (!roomId) {
+      window.location.href = "quizlobby.html";
+    }
+
+    document.getElementById('roomCodeDisplay').innerText = `ROOM: ${roomId}`;
+
+    let currentUser = null;
+    let currentUserName = "Aspirant";
+    let roomDataGlobal = null;
+
+    // नमुना प्रश्नहरूको बैंक (Loksewa Level Questions)
+    const sampleQuestions = [
+      { text: "नेपालको राष्ट्रिय बोट कुन हो?", options: ["गुराँस", "पिपल", "साल", "सल्ला"], correctAnswer: "गुराँस" },
+      { text: "संसारको सबैभन्दा अग्लो β-हिमाल कुन हो?", options: ["कञ्चनजङ्घा", "माउन्ट एभरेष्ट", "ल्होत्से", "मकालु"], correctAnswer: "माउन्ट एभरेष्ट" },
+      { text: "गौतम बुद्धको जन्मस्थल लुम्बिनी कुन जिल्लामा पर्छ?", options: ["कपिलवस्तु", "रूपन्देही", "नवलपरासी", "पाल्पा"], correctAnswer: "रूपन्देही" },
+      { text: "नेपालको संविधान २०७२ मा कतिवटा भाग छन्?", options: ["३५", "३७", "४०", "४२"], correctAnswer: "३५" }
+    ];
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        currentUserName = user.displayName || user.email.split('@')[0];
+        try {
+          const userSnap = await getDoc(doc(db, "users", user.uid));
+          if (userSnap.exists() && userSnap.data().name) {
+            currentUserName = userSnap.data().name;
+          }
+        } catch (e) { console.log(e); }
+
+        initGameListener();
+        initChatListener();
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    // Real-time Room State Sync
+    function initGameListener() {
+      const roomRef = doc(db, "quiz_rooms", roomId);
+      onSnapshot(roomRef, (docSnap) => {
+        if (!docSnap.exists()) {
+          alert("रुम बन्द भयो!");
+          window.location.href = "quizlobby.html";
+          return;
+        }
+
+        roomDataGlobal = docSnap.data();
+        renderGameUI(roomDataGlobal);
+      });
+    }
+
+    // UI Renderer based on Game Status
+    function renderGameUI(room) {
+      // 1. Render Scoreboard Header
+      const scoreContainer = document.getElementById('scoreboardContainer');
+      scoreContainer.innerHTML = '';
+      
+      room.players.forEach((p, idx) => {
+        const isTurn = (room.status === 'playing' && room.currentTurnIndex === idx);
+        scoreContainer.innerHTML += `
+          <div class="player-card ${isTurn ? 'active-turn' : ''}">
+            <div class="p-name">${escapeHTML(p.name)} ${p.uid === room.hostId ? '👑' : ''}</div>
+            <div class="p-score">${p.score}</div>
+          </div>
+        `;
+      });
+
+      const gameBody = document.getElementById('gameBody');
+
+      // 2. Waiting Room View
+      if (room.status === 'waiting') {
+        let playersHtml = room.players.map(p => `<div class="player-item"><span>${escapeHTML(p.name)}</span> <span>${p.uid === room.hostId ? 'Host' : 'Ready'}</span></div>`).join('');
+        let isHost = (currentUser.uid === room.hostId);
+
+        gameBody.innerHTML = `
+          <div class="card waiting-box">
+            <h3>🎮 खेल सुरु हुन प्रतीक्षारत छ...</h3>
+            <p>साथीहरू जोइन हुँदैछन्। कोड: <b>${room.roomId}</b></p>
+            <div class="players-list">${playersHtml}</div>
+            ${isHost ? `<button class="btn-main" id="startBtn">खेल सुरु गर्नुहोस्</button>` : `<p style="font-size:12px; color:#64748b;">होस्टले गेम सुरु नगरेसम्म पर्खनुहोस्...</p>`}
+          </div>
+        `;
+
+        if (isHost) {
+          document.getElementById('startBtn').addEventListener('click', startGameSession);
+        }
+      } 
+      // 3. Playing View
+      else if (room.status === 'playing') {
+        let currentTurnPlayer = room.players[room.currentTurnIndex];
+        let isMyTurn = (currentTurnPlayer.uid === currentUser.uid);
+        let q = room.currentQuestion;
+
+        gameBody.innerHTML = `
+          <div class="card question-box">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px;">
+              <span>राउन्ड: ${room.currentRound} / ${room.settings.totalRounds}</span>
+              <span>पालो: <b style="color: ${isMyTurn ? '#2563eb' : '#0f2a4a'}">${isMyTurn ? 'तपाईँको पालो!' : currentTurnPlayer.name + ' को पालो'}</b></span>
+            </div>
+            <h4>${escapeHTML(q.text)}</h4>
+            <div class="options-grid" id="optionsGrid">
+              ${q.options.map(opt => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt}')">${escapeHTML(opt)}</button>`).join('')}
+            </div>
+            ${!isMyTurn ? `<p style="text-align: center; font-size: 11px; color: #94a3b8; margin-top: 12px;">अहिले ${escapeHTML(currentTurnPlayer.name)} ले उत्तर दिँदै छन्...</p>` : ''}
+          </div>
+        `;
+      }
+      // 4. Finished / Leaderboard View
+      else if (room.status === 'finished') {
+        let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
+        let rankHtml = sortedPlayers.map((p, index) => `
+          <div class="player-item" style="background: ${index === 0 ? '#dcfce7' : '#f8fafc'};">
+            <span>#${index+1} ${escapeHTML(p.name)}</span>
+            <b>${p.score} अंक</b>
+          </div>
+        `).join('');
+
+        gameBody.innerHTML = `
+          <div class="card waiting-box">
+            <h3>🏆 खेल समाप्त भयो!</h3>
+            <p>अन्तिम नतिजा र लिडरबोर्ड:</p>
+            <div class="players-list">${rankHtml}</div>
+            <button class="btn-main" onclick="window.location.href='quizlobby.html'">लबीमा फर्कनुहोस्</button>
+          </div>
+        `;
+      }
+    }
+
+    // Host Starts Game
+    async function startGameSession() {
+      const roomRef = doc(db, "quiz_rooms", roomId);
+      const firstQ = sampleQuestions[Math.floor(Math.random() * sampleQuestions.length)];
+
+      await updateDoc(roomRef, {
+        status: "playing",
+        currentRound: 1,
+        currentTurnIndex: 0,
+        currentQuestion: firstQ
+      });
+    }
+
+    // Answer Submission Logic (+5 / -2 / Pass)
+    window.submitAnswer = async function(selectedOpt) {
+      if (!roomDataGlobal) return;
+      
+      let roomRef = doc(db, "quiz_rooms", roomId);
+      let players = [...roomDataGlobal.players];
+      let currentIndex = roomDataGlobal.currentTurnIndex;
+      let currentQ = roomDataGlobal.currentQuestion;
+
+      let isCorrect = (selectedOpt === currentQ.correctAnswer);
+      
+      if (isCorrect) {
+        players[currentIndex].score += 5; // सही भएमा +५
+        alert("सही उत्तर! (+५ अंक)");
+      } else {
+        players[currentIndex].score -= 2; // गलत भएमा -२
+        alert("गलत उत्तर! (-२ अंक, पालो अर्कोलाई पास भयो)");
+      }
+
+      // पालो अर्को खेलाडीलाई सार्ने
+      let nextTurnIndex = (currentIndex + 1) % players.length;
+      let nextRound = roomDataGlobal.currentRound;
+
+      // यदि सबै खेलाडीको पालो सकियो भने अर्को राउन्ड वा फिनिस गर्ने
+      if (nextTurnIndex === 0) {
+        nextRound += 1;
+      }
+
+      let newStatus = "playing";
+      if (nextRound > roomDataGlobal.settings.totalRounds) {
+        newStatus = "finished";
+      }
+
+      let nextQ = sampleQuestions[Math.floor(Math.random() * sampleQuestions.length)];
+
+      await updateDoc(roomRef, {
+        players: players,
+        currentTurnIndex: nextTurnIndex,
+        currentRound: nextRound,
+        status: newStatus,
+        currentQuestion: nextQ
+      });
+    };
+
+    // Side Chat System Logic
+    window.toggleChat = function() {
+      document.getElementById('chatDrawer').classList.toggle('open');
+    };
+
+    function initChatListener() {
+      const chatRef = collection(db, "quiz_rooms", roomId, "room_chat");
+      onSnapshot(chatRef, (snapshot) => {
+        const container = document.getElementById('chatMessagesContainer');
+        container.innerHTML = '';
+        if (snapshot.empty) {
+          container.innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 11px;">कुनै मसेज छैन।</div>`;
+          return;
+        }
+
+        let msgs = [];
+        snapshot.forEach(doc => msgs.push(doc.data()));
+        msgs.sort((a, b) => (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0));
+
+        msgs.forEach(m => {
+          container.innerHTML += `
+            <div class="chat-msg">
+              <div class="c-user">${escapeHTML(m.senderName)}</div>
+              <div>${escapeHTML(m.text)}</div>
+            </div>
+          `;
+        });
+        container.scrollTop = container.scrollHeight;
+      });
+    }
+
+    document.getElementById('chatForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('chatInputText');
+      const text = input.value.trim();
+      if (!text || !currentUser) return;
+      input.value = '';
+
+      await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
+        text: text,
+        uid: currentUser.uid,
+        senderName: currentUserName,
+        createdAt: serverTimestamp()
+      });
+    });
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag] || tag));
+    }
+  </script>
+</body>
+</html>
