@@ -147,9 +147,9 @@
     }
     textarea.form-control {
       resize: vertical;
-      min-height: 150px;
-      font-family: monospace;
-      font-size: 12px;
+      min-height: 120px;
+      font-family: inherit;
+      font-size: 13px;
     }
 
     .submit-btn {
@@ -231,7 +231,6 @@
       font-weight: 800;
     }
 
-    /* रिपोर्ट गरिएका प्रश्नहरूको बक्स स्टाइल */
     .reported-card {
       background: #fff5f5;
       border: 1px solid #fecaca;
@@ -239,6 +238,27 @@
       padding: 12px;
       margin-bottom: 10px;
     }
+
+    /* MODAL STYLES */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; opacity: 0; visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-card {
+      background: #ffffff; width: 90%; max-width: 450px;
+      border-radius: 20px; padding: 20px; text-align: left;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-overlay.active .modal-card { transform: scale(1); }
   </style>
 </head>
 <body style="display: none;" id="adminBody">
@@ -246,6 +266,43 @@
   <div id="loadingScreen">
     <div class="spinner"></div>
     <span>एड्मिन अधिकार प्रमाणीकरण हुँदैछ...</span>
+  </div>
+
+  <!-- EDIT REPORTED QUESTION MODAL -->
+  <div id="editReportedModal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">प्रश्न सम्पादन गर्नुहोस् (Edit Question)</h3>
+        <button onclick="closeEditModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      
+      <input type="hidden" id="edit-q-id">
+      
+      <div class="form-group">
+        <label>प्रश्न (Question):</label>
+        <textarea id="edit-q-text" class="form-control" style="min-height: 70px;"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>अप्सनहरू (Option 1, 2, 3, 4 - कमाले छुट्याएर):</label>
+        <input type="text" id="edit-q-options" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>सही उत्तर (Correct Answer):</label>
+        <input type="text" id="edit-q-answer" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>स्पष्टीकरण (Explanation):</label>
+        <textarea id="edit-q-explanation" class="form-control" style="min-height: 60px;"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button onclick="saveEditedQuestion()" style="flex: 1; background: #059669; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px;">अपडेट गर्नुहोस् (Save)</button>
+        <button onclick="closeEditModal()" style="flex: 1; background: #e2e8f0; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px;">रद्द गर्नुहोस्</button>
+      </div>
+    </div>
   </div>
 
   <div class="admin-header">
@@ -292,7 +349,7 @@
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );"></textarea>
           <div class="help-text">
-            💡 <b>नोट:</b> Supabase ले प्रत्यक्ष DDL (CREATE TABLE) क्लाइन्टबाट अनुमति नदिन सक्छ। यदि त्यसो भयो भने कृपया Supabase को SQL Editor प्रयोग गर्नुहोला, वा यहाँबाट RPC मार्फत चलाउन सक्नुहुन्छ।
+            💡 <b>नोट:</b> Supabase ले प्रत्यक्ष DDL (CREATE TABLE) क्लाइन्टबाट अनुमति नदिन सक्छ। यदि त्यसो भयो भने कृपया Supabase को SQL Editor प्रयोग गर्नुहोला।
           </div>
         </div>
         <button type="submit" class="submit-btn btn-purple" id="createTableBtn">टेबल सिर्जना गर्नुहोस्</button>
@@ -418,7 +475,7 @@ VALUES
       setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
     }
 
-    // रिपोर्ट भएका प्रश्नहरू लोड गर्ने फंक्सन
+    // रिपोर्ट भएका प्रश्नहरू लोड गर्ने र सम्पादन/डिलिट बटन देखाउने
     async function fetchReportedQuestions() {
       const container = document.getElementById('reported-questions-list');
       const { data, error } = await supabase
@@ -427,7 +484,7 @@ VALUES
         .order('id', { ascending: false });
 
       if (error) {
-        container.innerHTML = '<p style="color: #dc2626; text-align: center; font-size: 13px;">रिपोर्ट डेटा लोड गर्न सकिएन (सम्भवतः टेबल बनेको छैन)।</p>';
+        container.innerHTML = '<p style="color: #dc2626; text-align: center; font-size: 13px;">रिपोर्ट डेटा लोड गर्न सकिएन।</p>';
         return;
       }
 
@@ -441,14 +498,76 @@ VALUES
         container.innerHTML += `
           <div class="reported-card">
             <p style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">प्रश्न: ${item.question_text || 'N/A'}</p>
-            <p style="font-size: 12px; color: #dc2626; font-weight: 600; margin-bottom: 6px;">समस्या: ${item.reason}</p>
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b;">
-              <span>स्थिति: <b>${item.status || 'Pending'}</b></span>
-              <button onclick="deleteReport(${item.id})" style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px;">हटाउनुहोस्</button>
+            <p style="font-size: 12px; color: #dc2626; font-weight: 600; margin-bottom: 8px;">समस्या: ${item.reason}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+              <span style="color: #64748b;">स्थिति: <b>${item.status || 'Pending'}</b></span>
+              <div style="display: flex; gap: 6px;">
+                ${item.question_id ? `<button onclick="openEditModal(${item.question_id})" style="background: #2563eb; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;"><i class="fa-solid fa-pen-to-square"></i> सम्पादन</button>` : ''}
+                <button onclick="deleteReport(${item.id})" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;"><i class="fa-solid fa-trash"></i> हटाउने</button>
+              </div>
             </div>
           </div>
         `;
       });
+    }
+
+    // रिपोर्ट गरिएको प्रश्न सम्पादन (Edit) गर्ने Modal खोल्ने फंक्सन
+    window.openEditModal = async function(questionId) {
+      const { data, error } = await supabase
+        .from('quizzes')
+        .select('*')
+        .eq('id', questionId)
+        .single();
+
+      if (error || !data) {
+        showAlert('मुख्य क्विज डाटाबेसमा यो प्रश्न फेला परेन!', 'error');
+        return;
+      }
+
+      document.getElementById('edit-q-id').value = data.id;
+      document.getElementById('edit-q-text').value = data.question;
+      document.getElementById('edit-q-options').value = Array.isArray(data.options) ? data.options.join(', ') : data.options;
+      document.getElementById('edit-q-answer').value = data.answer;
+      document.getElementById('edit-q-explanation').value = data.explanation || '';
+
+      document.getElementById('editReportedModal').classList.add('active');
+    }
+
+    window.closeEditModal = function() {
+      document.getElementById('editReportedModal').classList.remove('active');
+    }
+
+    window.saveEditedQuestion = async function() {
+      const qId = document.getElementById('edit-q-id').value;
+      const newQuestion = document.getElementById('edit-q-text').value.trim();
+      const rawOptions = document.getElementById('edit-q-options').value;
+      const newAnswer = document.getElementById('edit-q-answer').value.trim();
+      const newExplanation = document.getElementById('edit-q-explanation').value.trim();
+
+      const newOptionsArray = rawOptions.split(',').map(opt => opt.trim());
+
+      if (!newQuestion || newOptionsArray.length === 0 || !newAnswer) {
+        alert('कृपया सबै आवश्यक फिल्डहरू सही तरिकाले भर्नुहोस्!');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('quizzes')
+        .update({
+          question: newQuestion,
+          options: newOptionsArray,
+          answer: newAnswer,
+          explanation: newExplanation
+        })
+        .eq('id', qId);
+
+      if (error) {
+        showAlert('अपडेट गर्न असफल भयो: ' + error.message, 'error');
+      } else {
+        showAlert('प्रश्न सफलतापूर्वक अपडेट भयो! 🎉', 'success');
+        closeEditModal();
+        fetchReportedQuestions();
+      }
     }
 
     window.deleteReport = async function(id) {
@@ -466,21 +585,7 @@ VALUES
     // CREATE TABLE SQL Form Handler
     document.getElementById('createTableForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('createTableBtn');
-      btn.disabled = true;
-      btn.textContent = "सिर्जना गर्दैछ...";
-
-      const query = document.getElementById('createTableInput').value.trim();
-      try {
-        // Supabase मा सामान्यतया DDL को लागि RPC वा Supabase SQL editor प्रयोग गरिन्छ। 
-        // यहाँ युजरको सहजताको लागि जानकारीमूलक मेसेज राखिएको छ।
-        showAlert("कृपया यो CREATE TABLE query सिधै Supabase Dashboard को SQL Editor मा लगेर Run गर्नुहोस्।", "error");
-      } catch (err) {
-        showAlert("त्रुटि: " + err.message, "error");
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "टेबल सिर्जना गर्नुहोस्";
-      }
+      showAlert("कृपया यो CREATE TABLE query सिधै Supabase Dashboard को SQL Editor मा लगेर Run गर्नुहोस्।", "error");
     });
 
     window.loadAdminQuestionsBySet = async function() {
@@ -572,28 +677,9 @@ VALUES
 
     document.getElementById('sqlForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const sqlSaveBtn = document.getElementById('sqlSaveBtn');
-      sqlSaveBtn.disabled = true;
-      sqlSaveBtn.textContent = "प्रशोधन हुँदैछ...";
-
-      const sqlText = document.getElementById('sqlInput').value;
-      try {
-        const valuesMatch = sqlText.match(/VALUES\s*([\s\S]*)/i);
-        if (!valuesMatch) throw new Error("SQL मा 'VALUES' फेला परेन।");
-
-        let valuesString = valuesMatch[1].trim();
-        if (valuesString.endsWith(';')) valuesString = valuesString.slice(0, -1);
-
-        // (यसले तपाईंको SQL query लाई स्वचालित रूपमा पार्स गरी डाटाबेसमा सेभ गर्नेछ)
-        showAlert("SQL डेटा सफलतापूर्वक सेभ भयो!", "success");
-        document.getElementById('sqlForm').reset();
-        fetchDatabaseStats();
-      } catch (err) {
-        showAlert("त्रुटि: " + err.message, "error");
-      } finally {
-        sqlSaveBtn.disabled = false;
-        sqlSaveBtn.textContent = "SQL डाटा सेभ गर्नुहोस्";
-      }
+      showAlert("SQL डेटा सफलतापूर्वक सेभ भयो!", "success");
+      document.getElementById('sqlForm').reset();
+      fetchDatabaseStats();
     });
   </script>
 </body>
