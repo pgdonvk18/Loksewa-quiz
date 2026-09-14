@@ -613,7 +613,60 @@
     window.downloadPDF = function() {
       window.print();
     }
-  </script>
+  </script><!-- क्विजको प्रश्न देखाउने ठाउँमा एउटा रिपोर्ट बटन राख्नुहोस् -->
+<button onclick="openReportModal()" style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 10px;">
+  <i class="fa-solid fa-triangle-exclamation"></i> यो प्रश्न रिपोर्ट गर्नुहोस्
+</button>
+
+<!-- Report Modal (रिपोर्ट गर्ने पपअप बक्स) -->
+<div id="reportModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center;">
+  <div style="background:white; padding:20px; border-radius:16px; width:90%; max-width:400px;">
+    <h3 style="font-size:15px; font-weight:800; margin-bottom:10px; color:#1e293b;">प्रश्न रिपोर्ट गर्नुहोस्</h3>
+  <p style="font-size:12px; color:#64748b; margin-bottom:12px;">यो प्रश्न वा उत्तरमा के समस्या छ लेख्नुहोस्:</p>
+    <textarea id="reportReason" class="form-control" placeholder="उदा: यसको सही उत्तर अप्सन (क) हुनुपर्नेमा (ख) देखाइएको छ।" style="min-height:100px; margin-bottom:12px; width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px;"></textarea>
+    <div style="display:flex; gap:10px;">
+      <button onclick="submitQuestionReport()" style="flex:1; background:#2563eb; color:white; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer;">पठाउनुहोस्</button>
+      <button onclick="closeReportModal()" style="flex:1; background:#e2e8f0; color:#475569; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer;">रद्द गर्नुहोस्</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // हाल खेलिरहेको वा देखिएको current question को ID global variable मा सेभ भएको हुनुपर्छ (उदा: currentQuizId)
+  function openReportModal() {
+    document.getElementById('reportModal').style.display = 'flex';
+  }
+  function closeReportModal() {
+    document.getElementById('reportModal').style.display = 'none';
+  }
+
+  async function submitQuestionReport() {
+    const reason = document.getElementById('reportReason').value.trim();
+    if (!reason) {
+      alert('कृपया समस्या के हो लेख्नुहोस्!');
+      return;
+    }
+
+    // Supabase को 'reported_questions' टेबलमा सेभ गर्ने
+    const { error } = await supabaseClient
+      .from('reported_questions')
+      .insert([{ 
+        question_id: currentQuizId, // हालको प्रश्नको ID
+        question_text: currentQuestionText, // प्रश्नको टेक्स्ट (optional)
+        reason: reason,
+        status: 'Pending'
+      }]);
+
+    if (error) {
+      alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+    } else {
+      alert('सफलतापूर्वक रिपोर्ट पठाइयो! एडमिनले यसलाई चेक गर्नेछन्। धन्यवाद! 🙏');
+      document.getElementById('reportReason').value = '';
+      closeReportModal();
+    }
+  }
+</script>
+
   
   <!-- components.js फाइल इन्क्लुड गरिएको (जसमा showConfirmPopup र अरू पपअप फंक्सनहरू छन्) -->
   <script src="components.js"></script>
