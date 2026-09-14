@@ -551,6 +551,7 @@ VALUES
         return;
       }
 
+      // १. मुख्य क्विज डाटाबेस अपडेट गर्ने
       const { error } = await supabase
         .from('quizzes')
         .update({
@@ -564,9 +565,18 @@ VALUES
       if (error) {
         showAlert('अपडेट गर्न असफल भयो: ' + error.message, 'error');
       } else {
-        showAlert('प्रश्न सफलतापूर्वक अपडेट भयो! 🎉', 'success');
+        // २. प्रश्न अपडेट हुनेबित्तिकै reported_questions बाट त्यो रिपोर्ट हटाइदिने
+        await supabase
+          .from('reported_questions')
+          .delete()
+          .eq('question_id', qId);
+
+        showAlert('प्रश्न सफलतापूर्वक अपडेट भयो र रिपोर्ट सूचीबाट हटाइयो! 🎉', 'success');
         closeEditModal();
+        
+        // लिस्ट र काउन्टरहरू रिफ्रेस गर्ने
         fetchReportedQuestions();
+        fetchDatabaseStats();
       }
     }
 
