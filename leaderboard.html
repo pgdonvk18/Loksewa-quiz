@@ -202,7 +202,6 @@
     }
 
     .leaderboard-item {
-      database-item;
       display: flex;
       align-items: center;
       padding: 14px 18px;
@@ -423,7 +422,8 @@
 
           if (!error && data) {
             data.forEach(row => {
-              // यदि database मा created_at छ भने मात्र time boundary चेक गर्ने, नत्र सबै डेटा देखाउने
+              // मिति चेक गर्ने: यदि created_at छ र त्यो तोकिएको अवधिको भन्दा पुरानो छ भने मात्र छोड्ने
+              // तर यदि इम्पोर्टेड डाटा वा टेस्ट डाटामा created_at छैन वा खाली छ भने त्यसलाई फिल्टर नगरिकन देखाउने
               if (row.created_at) {
                 const rowDate = new Date(row.created_at);
                 if (!isNaN(rowDate.getTime()) && rowDate < startDate) {
@@ -441,20 +441,18 @@
                 }
               }
 
-              // सबै टेबलहरूको लागि total_questions, score वा solved स्तूपहरूलाई प्राथमिकताका साथ जोड्ने
+              // स्कोर/प्रश्न संख्या निकाल्ने (सबै सम्भावित स्तम्भहरूलाई सुरक्षित रूपमा म्याच गराइएको छ)
               let score = 0;
-              let q1 = Number(row.total_questions) || 0;
-              let q2 = Number(row.score) || 0;
-              let q3 = Number(row.solved_questions) || 0;
-              
+              let qTotal = Number(row.total_questions) || Number(row.score) || Number(row.solved_questions) || 0;
+
               if (period === 'daily') {
-                score = Number(row.solved_daily) || q1 || q2 || q3 || 0;
+                score = Number(row.solved_daily) || qTotal;
               } else if (period === 'weekly') {
-                score = Number(row.solved_weekly) || q1 || q2 || q3 || 0;
+                score = Number(row.solved_weekly) || qTotal;
               } else if (period === 'monthly') {
-                score = Number(row.solved_monthly) || q1 || q2 || q3 || 0;
+                score = Number(row.solved_monthly) || qTotal;
               } else {
-                score = q1 || q2 || q3 || 0;
+                score = qTotal;
               }
 
               if (!userScoresMap[userName]) {
