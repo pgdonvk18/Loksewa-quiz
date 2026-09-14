@@ -270,7 +270,7 @@
       display: flex;
       justify-content: space-around;
       padding: 10px 0 14px 0;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+      box-shadow: -4px 20px rgba(0,0,0,0.06);
       border-radius: 20px 20px 0 0;
       z-index: 100;
     }
@@ -486,12 +486,13 @@
           document.getElementById('userNameInput').value = displayName;
         }
 
-        // Supabase बाट user_stats र exam_leaderboard को total_questions जोडेर देखाउने
+        // Supabase query with debug logs
         try {
           let totalSolvedCount = 0;
           let totalTimeMinutes = 0;
 
-          let { data: userStatData } = await supabase
+          // 1. Fetch user_stats
+          let { data: userStatData, error: statError } = await supabase
             .from('user_stats')
             .select('*')
             .eq('id', user.uid)
@@ -502,14 +503,21 @@
             totalTimeMinutes += (userStatData.time_spent_minutes || 0);
           }
 
-          let { data: examLbData } = await supabase
+          // 2. Fetch exam_leaderboard (using explicit check to avoid empty or issues)
+          let { data: examLbData, error: examError } = await supabase
             .from('exam_leaderboard')
-            .select('total_questions')
-            .or(`id.eq.${user.uid},username.eq.${displayName}`);
+            .select('total_questions, id, username');
+
+          console.log("All Exam Leaderboard Data:", examLbData);
+          console.log("Current User UID:", user.uid);
+          console.log("Current Display Name:", displayName);
 
           if (examLbData && examLbData.length > 0) {
             examLbData.forEach(row => {
-              totalSolvedCount += (row.total_questions || 0);
+              // Match either by ID or username
+              if (row.id === user.uid || row.username === displayName) {
+                totalSolvedCount += (row.total_questions || 0);
+              }
             });
           }
 
@@ -585,20 +593,20 @@
         img.src = e.target.result;
         img.onload = async function() {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 200;
+          const MAX_WIDTH =0;
           const MAX_HEIGHT = 200;
           let width = img.width;
           let height = img.height;
 
           if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
+            if (width > 200) {
+              height *= 200 / width;
+              width = 200;
             }
           } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
+            if (height > 200) {
+              width *= 200 / height;
+              height = 200;
             }
           }
 
