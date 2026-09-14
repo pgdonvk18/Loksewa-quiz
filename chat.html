@@ -19,7 +19,6 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      padding-bottom: 70px;
     }
 
     /* Header */
@@ -70,6 +69,7 @@
       flex-direction: column;
       gap: 12px;
       background: #f1f5f9;
+      padding-bottom: 80px; /* Input box को लागि ठाउँ छोडेको */
     }
 
     /* Message Bubbles */
@@ -127,11 +127,11 @@
     /* Input Box Area */
     .chat-input-area {
       position: fixed;
-      bottom: 60px;
+      bottom: 0;
       left: 0;
       width: 100%;
       background: #ffffff;
-      padding: 10px 16px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -142,7 +142,7 @@
       flex: 1;
       background: #f8fafc;
       border: 1px solid #cbd5e1;
-      padding: 10px 16px;
+      padding: 12px 16px;
       border-radius: 24px;
       font-size: 14px;
       outline: none;
@@ -156,8 +156,8 @@
       background: #2563eb;
       color: white;
       border: none;
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -198,10 +198,6 @@
     <button type="submit" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
   </form>
 
-  <!-- Bottom Navigation Component -->
-  <script src="components.js"></script>
-  <script>loadBottomNav('chat');</script>
-
   <!-- Firebase Integration Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -231,7 +227,6 @@
         currentUserName = user.displayName || user.email.split('@')[0];
 
         try {
-          // Firestore को users कलेक्सनबाट युजरको अपडेटेड नाम तानेर राख्ने
           const userDocRef = doc(db, "users", user.uid);
           const userDocSnap = await getDoc(userDocRef);
           if (userDocSnap.exists() && userDocSnap.data().name) {
@@ -241,7 +236,6 @@
           console.log("Profile Name fetch error", e);
         }
 
-        // Real-time मसेजहरू लोड गर्ने
         loadRealtimeMessages();
 
       } else {
@@ -286,7 +280,6 @@
           chatContainer.appendChild(messageRow);
         });
 
-        // नयाँ मसेज आउँदा अटोमेटिक तल स्क्रोल हुने
         chatContainer.scrollTop = chatContainer.scrollHeight;
       });
     }
@@ -315,7 +308,6 @@
       }
     });
 
-    // XSS सुरक्षाको लागि Helper
     function escapeHTML(str) {
       if (!str) return '';
       return str.replace(/[&<>'"]/g, 
