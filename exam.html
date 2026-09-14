@@ -174,7 +174,7 @@
     @media print {
       body * { visibility: hidden; }
       #pdf-report-content, #pdf-report-content * { visibility: visible; }
-      #pdf-report-content { position: absolute; left: 0; top: 0; width: 100%; background: #ffffff !important; }
+      #pdf-report-content { position: absolute; left: 0; top: 0; width: 100%; background: #ffffff !important; border: 2px solid #2563eb !important; box-shadow: none !important; }
       .no-print { display: none !important; }
     }
     .hidden { display: none !important; }
@@ -210,6 +210,18 @@
         <button onclick="submitQuestionReport()" style="flex: 1; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px;">पठाउनुहोस्</button>
         <button onclick="closeReportModal()" style="flex: 1; background: #e2e8f0; color: #475569; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px;">रद्द गर्नुहोस्</button>
       </div>
+    </div>
+  </div>
+
+  <!-- REVIEW DETAILS MODAL (समीक्षा पपअप) -->
+  <div id="reviewModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 480px; width: 95%; text-align: left; max-height: 85vh; display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">📋 उत्तर तथा समीक्षा</h3>
+        <button onclick="closeReviewModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="review-container" class="space-y-2 overflow-y-auto pr-1" style="font-size: 11px; flex: 1; max-height: 65vh;"></div>
+      <button onclick="closeReviewModal()" class="btn-primary" style="margin-top: 12px; padding: 10px;">बन्द गर्नुहोस्</button>
     </div>
   </div>
 
@@ -279,22 +291,26 @@
       </div>
     </div>
 
-    <!-- RESULT SCREEN -->
+    <!-- RESULT SCREEN (CERTIFICATE STYLE) -->
     <div id="result-screen" class="hidden space-y-4">
-      <div id="pdf-report-content" class="card space-y-4" style="background: #ffffff;">
-        <div style="text-align: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
-          <h2 id="report-main-title" style="font-size: 16px; font-weight: 800; color: #059669;">📊 परीक्षा प्रतिवेदन (Report Card)</h2>
-          <p id="rep-name" style="font-size: 13px; color: #334155; font-weight: 700; margin-top: 2px;"></p>
-          <p id="rep-set" style="font-size: 11px; color: #2563eb; font-weight: 700;"></p>
+      <div id="pdf-report-content" class="card space-y-4" style="background: #ffffff; border: 2px solid #2563eb; border-radius: 20px; text-align: center; padding: 24px 16px;">
+        <div style="font-size: 28px; color: #2563eb; margin-bottom: 4px;"><i class="fa-solid fa-award"></i></div>
+        <h2 id="report-main-title" style="font-size: 18px; font-weight: 800; color: #1e3a8a;">LOKSEWAQUEST CERTIFICATE OF COMPLETION</h2>
+        <p style="font-size: 11px; color: #64748b; margin-top: 2px;">यो प्रमाणित गरिन्छ कि सफल परीक्षार्थीले निर्धारित परीक्षा सफलतापूर्वक सम्पन्न गर्नुभएको छ।</p>
+        
+        <div style="margin: 16px 0; border-top: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; padding: 12px 0;">
+          <p id="rep-name" style="font-size: 16px; color: #0f172a; font-weight: 800;"></p>
+          <p id="rep-set" style="font-size: 12px; color: #2563eb; font-weight: 700; margin-top: 2px;"></p>
+          <p id="rep-time-info" style="font-size: 11px; color: #64748b; margin-top: 4px;"></p>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center;">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; margin-bottom: 16px;">
           <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;">
             <p style="font-size: 10px; color: #64748b;">सही</p>
             <p id="rep-correct" style="font-size: 14px; font-weight: 800; color: #059669;">0</p>
           </div>
           <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;">
-            <p style="font-size: 10px; color: #64748b;">गलत (-20%)</p>
+            <p style="font-size: 10px; color: #64748b;">गलत</p>
             <p id="rep-wrong" style="font-size: 14px; font-weight: 800; color: #dc2626;">0</p>
           </div>
           <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;">
@@ -307,15 +323,14 @@
           </div>
         </div>
 
-        <div>
-          <h4 style="font-size: 12px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">📝 उत्तर तथा समीक्षा:</h4>
-          <div id="review-container" class="space-y-2 max-h-56 overflow-y-auto pr-1" style="font-size: 11px;"></div>
-        </div>
+        <button onclick="openReviewModal()" class="btn-secondary" style="width: 100%; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; padding: 10px;">
+          📋 उत्तर तथा समीक्षा हेर्नुहोस् (View Solutions)
+        </button>
       </div>
 
       <div style="display: flex; gap: 8px;" class="no-print">
         <button onclick="downloadPDF()" style="width: 50%; background: #059669; color: white; font-weight: 700; padding: 12px; border-radius: 12px; border: none; cursor: pointer; font-size: 13px;">📥 प्रिन्ट / PDF</button>
-        <button onclick="location.href='dashboard.html'" class="btn-primary" style="width: 50%;">🔄 ड्यासबोर्डमा फर्कनुहोस्</button>
+        <button onclick="location.href='dashboard.html'" class="btn-primary" style="width: 50%;">🔄 ड्यासबोर्ड</button>
       </div>
 
       <div class="card no-print">
@@ -350,18 +365,15 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // URL बाट Dynamic Set नाम समात्ने (जस्तै: ?set=set_1 वा ?set=set_2)
     const urlParams = new URLSearchParams(window.location.search);
     const rawSet = urlParams.get('set') || 'set_1'; 
     const currentSet = rawSet.toLowerCase();
 
-    // सेट नम्बर निकाल्ने
     const setNumberMatch = currentSet.match(/\d+/);
     const setNum = setNumberMatch ? setNumberMatch[0] : '1';
 
-    // डिस्प्ले नामलाई "Pre Qualifying Exam Set X" मा रूपान्तरण गर्ने
     const prettyExamName = `Pre Qualifying Exam Set ${setNum}`;
-    const examIdentifier = `set_${setNum}`; // एउटै टेबलमा छुट्याउन प्रयोग हुने नाम
+    const examIdentifier = `set_${setNum}`;
 
     document.getElementById('header-title').innerText = `🇳🇵 LoksewaQuest - ${prettyExamName}`;
     document.getElementById('set-badge-title').innerText = `🎯 ${prettyExamName} (Model Exam)`;
@@ -375,6 +387,7 @@
     let timerInterval;
     let timeLeftSeconds = 45 * 60;
     let isPracticeMode = false;
+    let examStartTime = null;
 
     document.addEventListener("DOMContentLoaded", () => {
       onAuthStateChanged(auth, async (user) => {
@@ -400,12 +413,11 @@
     async function checkIfExamAlreadyGiven(email) {
       if (!email) return;
 
-      // 'exam_leaderboard' टेबलबाट यो युजरले यो सेटको परीक्षा दिएको छ कि छैन जाँच गर्ने
       const { data, error } = await supabaseClient
         .from('exam_leaderboard')
         .select('*')
         .eq('username', email)
-        .eq('exam_set', examIdentifier);
+        .eq('set_name', examIdentifier);
 
       if (error) {
         console.error("Leaderboard check error:", error);
@@ -429,7 +441,6 @@
           return;
         }
 
-        // 'quizzes' टेबलमा topic म्याच गर्ने
         let { data, error } = await supabaseClient
           .from('quizzes')
           .select('*')
@@ -445,6 +456,7 @@
         }
 
         examQuestions = data;
+        examStartTime = new Date();
 
         document.getElementById('reg-screen').classList.add('hidden');
         document.getElementById('exam-screen').classList.remove('hidden');
@@ -542,7 +554,7 @@
         else wrong++;
 
         reviewHTML += `
-          <div style="background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; margin-bottom: 6px;">
+          <div style="background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; margin-bottom: 6px; text-align: left;">
             <p style="font-weight: 700; color: #0f172a; margin-bottom: 2px;">Q${idx+1}: ${q.question}</p>
             <p style="color: #64748b;">तपाईंको उत्तर: <span style="font-weight: 700; color: ${isCorrect ? '#059669' : '#dc2626'};">${userAns || 'छोडेको'}</span></p>
             <p style="color: #059669; font-weight: 600;">सही उत्तर: ${q.answer}</p>
@@ -554,25 +566,27 @@
       let totalScore = (correct * 2) - (wrong * 0.4);
       if (totalScore < 0) totalScore = 0;
 
+      const completionDate = new Date().toLocaleString();
+
       if (isPracticeMode) {
-        document.getElementById('report-main-title').innerText = '📊 अभ्यास प्रतिवेदन (Practice Report)';
+        document.getElementById('report-main-title').innerText = 'LOKSEWAQUEST PRACTICE CERTIFICATE';
         document.getElementById('rep-set').innerText = `परीक्षा सेट: ${prettyExamName} (अभ्यास मोड)`;
       } else {
-        document.getElementById('report-main-title').innerText = '📊 परीक्षा प्रतिवेदन (Exam Report)';
-        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${prettyExamName} (Live Exam)`;
+        document.getElementById('report-main-title').innerText = 'LOKSEWAQUEST CERTIFICATE OF COMPLETION';
+        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${prettyExamName}`;
         
-        // एउटै 'exam_leaderboard' टेबलमा exam_set स्तम्भ (column) सहित डेटा सेभ गर्ने
         await supabaseClient.from('exam_leaderboard').insert([
           { 
             username: userEmail, 
             score: Number(totalScore.toFixed(1)), 
             total_questions: examQuestions.length,
-            exam_set: examIdentifier 
+            set_name: examIdentifier 
           }
         ]);
       }
 
-      document.getElementById('rep-name').innerText = `परीक्षार्थी: ${candidateName}`;
+      document.getElementById('rep-name').innerText = candidateName;
+      document.getElementById('rep-time-info').innerText = `सम्पन्न समय: ${completionDate}`;
       document.getElementById('rep-correct').innerText = correct;
       document.getElementById('rep-wrong').innerText = wrong;
       document.getElementById('rep-skipped').innerText = skipped;
@@ -583,11 +597,10 @@
     }
 
     async function fetchLeaderboard() {
-      // एउटै 'exam_leaderboard' टेबलबाट हालको सेटको मात्र डेटा फिल्टर गरेर तान्ने
       const { data, error } = await supabaseClient
         .from('exam_leaderboard')
         .select('*')
-        .eq('exam_set', examIdentifier)
+        .eq('set_name', examIdentifier)
         .order('score', { ascending: false });
 
       const containers = [
@@ -618,6 +631,14 @@
           `;
         });
       });
+    }
+
+    window.openReviewModal = function() {
+      document.getElementById('reviewModal').classList.add('active');
+    }
+
+    window.closeReviewModal = function() {
+      document.getElementById('reviewModal').classList.remove('active');
     }
 
     window.downloadPDF = function() {
