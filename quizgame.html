@@ -17,7 +17,6 @@
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
     .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; }
 
-    /* Scoreboard hidden during game, shown only at end */
     .scoreboard-hidden { background: white; padding: 12px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #64748b; border: 1px solid #e2e8f0; }
 
     .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
@@ -37,16 +36,22 @@
     .btn-skip { background: #64748b; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; }
     .btn-skip:hover { background: #475569; }
 
+    /* Modern Chat Drawer Layout */
     .chat-drawer { position: absolute; right: -320px; top: 0; width: 300px; height: 100%; background: white; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: right 0.3s ease; z-index: 100; box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
     .chat-drawer.open { right: 0; }
     .chat-header-bar { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
     .close-chat { background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b; }
+    
     .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #f1f5f9; }
     .chat-msg { font-size: 12px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .chat-msg .c-user { font-weight: 700; color: #2563eb; margin-bottom: 2px; }
-    .chat-input-box { padding: 10px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; }
-    .chat-input { flex: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
-    .chat-send-btn { background: #2563eb; color: white; border: none; padding: 0 14px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    
+    /* Fixed Chat Input Box at Bottom */
+    .chat-input-box { padding: 12px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; align-items: center; width: 100%; }
+    .chat-input { flex: 1; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
+    .chat-input:focus { border-color: #2563eb; }
+    .chat-send-btn { background: #2563eb; color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .chat-send-btn:hover { background: #1d4ed8; }
 
     .btn-main { background: #2563eb; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
     .btn-main:hover { background: #1d4ed8; }
@@ -65,7 +70,6 @@
   <div class="game-layout">
     <div class="main-content">
       
-      <!-- Hidden Scoreboard Notice during game -->
       <div class="scoreboard-hidden" id="scoreboardInfo">
         🤫 खेल जारी छ — लिडरबोर्ड र स्कोर खेल समाप्त भएपछि मात्र देखिनेछ!
       </div>
@@ -74,6 +78,7 @@
 
     </div>
 
+    <!-- Chat Drawer with properly pinned Input Box -->
     <div class="chat-drawer" id="chatDrawer">
       <div class="chat-header-bar">
         <span>ग्रुप च्याट</span>
@@ -89,6 +94,7 @@
     </div>
   </div>
 
+  <!-- Firebase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -149,7 +155,11 @@
       const roomRef = doc(db, "quiz_rooms", roomId);
       onSnapshot(roomRef, (docSnap) => {
         if (!docSnap.exists()) {
-          alert("रुम बन्द भयो!");
+          if (typeof showSuccessPopup === 'function') {
+            showSuccessPopup("रुम बन्द भयो!", null, 'error', 'सूचना ❌');
+          } else {
+            alert("रुम बन्द भयो!");
+          }
           window.location.href = "quizlobby.html";
           return;
         }
@@ -230,7 +240,6 @@
       const roomRef = doc(db, "quiz_rooms", roomId);
       const firstQ = sampleQuestions[Math.floor(Math.random() * sampleQuestions.length)];
 
-      // Initialize all scores to 0
       let initialPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
 
       await updateDoc(roomRef, {
@@ -256,31 +265,37 @@
       let newStatus = "playing";
 
       if (isSkipped) {
-        // Skip गर्दा ० अंक (अंक घट्दैन/बढ्दैन) र प्रश्न त्यही नै अर्कोलाई पास हुन्छ
-        alert("तपाईंले प्रश्न स्किप गर्नुभयो। पालो अर्को खेलाडीलाई पास भयो।");
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup("तपाईंले प्रश्न स्किप गर्नुभयो। पालो अर्को खेलाडीलाई पास भयो।", null, 'warning', 'स्कip ⚠️');
+        } else {
+          alert("तपाईंले प्रश्न स्किप गर्नुभयो। पालो अर्को खेलाडीलाई पास भयो।");
+        }
         nextTurnIndex = (currentIndex + 1) % players.length;
       } else {
         let isCorrect = (selectedOpt === currentQ.correctAnswer);
         
         if (isCorrect) {
-          players[currentIndex].score += 5; // सही भएमा +५
-          alert("सही उत्तर! (+५ अंक)");
-          
-          // सहि भएमा नयाँ प्रश्न आउँछ र पालो अर्कोलाई जान्छ
+          players[currentIndex].score += 5;
+          if (typeof showSuccessPopup === 'function') {
+            showSuccessPopup("सही उत्तर! (+५ अंक)", null, 'success', 'बधाई छ! 🎉');
+          } else {
+            alert("सही उत्तर! (+५ अंक)");
+          }
           nextTurnIndex = (currentIndex + 1) % players.length;
           nextQCount += 1;
           nextQuestion = sampleQuestions[Math.floor(Math.random() * sampleQuestions.length)];
         } else {
-          players[currentIndex].score -= 2; // गलत भएमा -२
-          alert("गलत उत्तर! (-२ अंक, प्रश्न अर्को खेलाडीलाई पास भयो)");
-          
-          // गलत भएमा वूही प्रश्न अर्को खेलाडीलाई पास हुन्छ
+          players[currentIndex].score -= 2;
+          if (typeof showSuccessPopup === 'function') {
+            showSuccessPopup("गलत उत्तर! (-२ अंक, प्रश्न अर्कोलाई पास)", null, 'error', 'गलत ❌');
+          } else {
+            alert("गलत उत्तर! (-२ अंक)");
+          }
           nextTurnIndex = (currentIndex + 1) % players.length;
         }
       }
 
-      // अधिकतम जति प्रश्न वा राउन्ड राखेको छ वा खेल समाप्त हुने कन्डिसन
-      if (nextQCount > 5) { // उदाहरणको लागि ५ वटा प्रश्न पछि गेम फिनिस हुने
+      if (nextQCount > 5) {
         newStatus = "finished";
       }
 
@@ -344,7 +359,10 @@
         '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
       }[tag] || tag));
     }
-  </script><script src="modal.js"></script>
+  </script>
+
+  <!-- Components Script (यसले पपअप र अन्य फंक्सनहरू म्यानेज गर्छ) -->
+  <script src="components.js"></script>
 
 </body>
 </html>
