@@ -228,6 +228,22 @@
     </div>
   </div>
 
+  <!-- REPORT QUESTION MODAL -->
+  <div id="reportModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 400px; text-align: left;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">प्रश्न रिपोर्ट गर्नुहोस्</h3>
+        <button onclick="closeReportModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">यो प्रश्न वा उत्तरमा के समस्या छ लेख्नुहोस्:</p>
+      <textarea id="reportReason" placeholder="उदा: यसको सही उत्तर अप्सन (क) हुनुपर्नेमा (ख) देखाइएको छ।" style="min-height: 100px; margin-bottom: 12px; width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none;"></textarea>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="submitQuestionReport()" style="flex: 1; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px;">पठाउनुहोस्</button>
+        <button onclick="closeReportModal()" style="flex: 1; background: #e2e8f0; color: #475569; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px;">रद्द गर्नुहोस्</button>
+      </div>
+    </div>
+  </div>
+
   <!-- HEADER -->
   <header class="app-header">
     <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
@@ -290,7 +306,14 @@
 
       <div id="exam-options"></div>
 
-      <div style="display: flex; justify-content: space-between; padding-top: 10px;">
+      <!-- रिपोर्ट गर्ने बटन -->
+      <div style="margin-top: 12px;">
+        <button onclick="openReportModal()" style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-triangle-exclamation"></i> यो प्रश्न रिपोर्ट गर्नुहोस्
+        </button>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; padding-top: 14px; border-top: 1px solid #f1f5f9; margin-top: 10px;">
         <button onclick="prevExamQuestion()" id="prev-btn" class="btn-secondary">⬅️ अघिल्लो</button>
         <button onclick="nextExamQuestion()" id="next-btn" class="btn-primary" style="width: auto; padding: 10px 20px;">अर्को ➡️</button>
       </div>
@@ -613,62 +636,50 @@
     window.downloadPDF = function() {
       window.print();
     }
-  </script><!-- क्विजको प्रश्न देखाउने ठाउँमा एउटा रिपोर्ट बटन राख्नुहोस् -->
-<button onclick="openReportModal()" style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 10px;">
-  <i class="fa-solid fa-triangle-exclamation"></i> यो प्रश्न रिपोर्ट गर्नुहोस्
-</button>
 
-<!-- Report Modal (रिपोर्ट गर्ने पपअप बक्स) -->
-<div id="reportModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center;">
-  <div style="background:white; padding:20px; border-radius:16px; width:90%; max-width:400px;">
-    <h3 style="font-size:15px; font-weight:800; margin-bottom:10px; color:#1e293b;">प्रश्न रिपोर्ट गर्नुहोस्</h3>
-  <p style="font-size:12px; color:#64748b; margin-bottom:12px;">यो प्रश्न वा उत्तरमा के समस्या छ लेख्नुहोस्:</p>
-    <textarea id="reportReason" class="form-control" placeholder="उदा: यसको सही उत्तर अप्सन (क) हुनुपर्नेमा (ख) देखाइएको छ।" style="min-height:100px; margin-bottom:12px; width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px;"></textarea>
-    <div style="display:flex; gap:10px;">
-      <button onclick="submitQuestionReport()" style="flex:1; background:#2563eb; color:white; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer;">पठाउनुहोस्</button>
-      <button onclick="closeReportModal()" style="flex:1; background:#e2e8f0; color:#475569; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer;">रद्द गर्नुहोस्</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  // हाल खेलिरहेको वा देखिएको current question को ID global variable मा सेभ भएको हुनुपर्छ (उदा: currentQuizId)
-  function openReportModal() {
-    document.getElementById('reportModal').style.display = 'flex';
-  }
-  function closeReportModal() {
-    document.getElementById('reportModal').style.display = 'none';
-  }
-
-  async function submitQuestionReport() {
-    const reason = document.getElementById('reportReason').value.trim();
-    if (!reason) {
-      alert('कृपया समस्या के हो लेख्नुहोस्!');
-      return;
+    // --- प्रश्न रिपोर्ट गर्ने फंक्सनहरू ---
+    window.openReportModal = function() {
+      document.getElementById('reportModal').classList.add('active');
     }
 
-    // Supabase को 'reported_questions' टेबलमा सेभ गर्ने
-    const { error } = await supabaseClient
-      .from('reported_questions')
-      .insert([{ 
-        question_id: currentQuizId, // हालको प्रश्नको ID
-        question_text: currentQuestionText, // प्रश्नको टेक्स्ट (optional)
-        reason: reason,
-        status: 'Pending'
-      }]);
-
-    if (error) {
-      alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
-    } else {
-      alert('सफलतापूर्वक रिपोर्ट पठाइयो! एडमिनले यसलाई चेक गर्नेछन्। धन्यवाद! 🙏');
+    window.closeReportModal = function() {
+      document.getElementById('reportModal').classList.remove('active');
       document.getElementById('reportReason').value = '';
-      closeReportModal();
     }
-  }
-</script>
 
-  
-  <!-- components.js फाइल इन्क्लुड गरिएको (जसमा showConfirmPopup र अरू पपअप फंक्सनहरू छन्) -->
+    window.submitQuestionReport = async function() {
+      const reason = document.getElementById('reportReason').value.trim();
+      if (!reason) {
+        alert('कृपया समस्या के हो लेख्नुहोस्!');
+        return;
+      }
+
+      const currentQ = examQuestions[currentIdx];
+      if (!currentQ) {
+        alert('प्रश्न फेला परेन!');
+        return;
+      }
+
+      // Supabase को 'reported_questions' टेबलमा डेटा पठाउने
+      const { error } = await supabaseClient
+        .from('reported_questions')
+        .insert([{ 
+          question_id: currentQ.id, 
+          question_text: currentQ.question, 
+          reason: reason,
+          status: 'Pending'
+        }]);
+
+      if (error) {
+        alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+      } else {
+        alert('सफलतापूर्वक रिपोर्ट पठाइयो! एडमिनले यसलाई चेक गर्नेछन्। धन्यवाद! 🙏');
+        closeReportModal();
+      }
+    }
+  </script>
+
+  <!-- components.js फाइल इन्क्लुड गरिएको -->
   <script src="components.js"></script>
 
 </body>
