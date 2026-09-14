@@ -1,3 +1,36 @@
+import React, { useState, useEffect } from 'react';
+import './DarkMode.css'; // CSS file import gareko
+
+export function DarkModeButton() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check if user previously had a dark mode preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    if (isDarkMode) {
+      setIsDarkMode(false);
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+    } else {
+      setIsDarkMode(true);
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  };
+
+  return (
+    <button className="dark-mode-toggle" onClick={toggleDarkMode}>
+      {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+    </button>
+  );
+}
 // १. अटोमेटिक Bottom Navigation Bar इन्जेक्ट गर्ने फंक्सन
 function loadBottomNav(activePage) {
   if (!document.getElementById('bottom-nav-style')) {
