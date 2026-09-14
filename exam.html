@@ -355,13 +355,13 @@
     const rawSet = urlParams.get('set') || 'set_1'; 
     const currentSet = rawSet.toLowerCase();
 
-    // लिडरबोर्ड टेबलको नाम: leaderboard_set1, leaderboard_set2 आदि (बीचमा अन्डरस्कोर नभएको)
+    // सेट नम्बर निकाल्ने
     const setNumberMatch = currentSet.match(/\d+/);
     const setNum = setNumberMatch ? setNumberMatch[0] : '1';
-    const leaderboardTable = `leaderboard_set${setNum}`;
 
     // डिस्प्ले नामलाई "Pre Qualifying Exam Set X" मा रूपान्तरण गर्ने
     const prettyExamName = `Pre Qualifying Exam Set ${setNum}`;
+    const examIdentifier = `set_${setNum}`; // एउटै टेबलमा छुट्याउन प्रयोग हुने नाम
 
     document.getElementById('header-title').innerText = `🇳🇵 LoksewaQuest - ${prettyExamName}`;
     document.getElementById('set-badge-title').innerText = `🎯 ${prettyExamName} (Model Exam)`;
@@ -400,10 +400,12 @@
     async function checkIfExamAlreadyGiven(email) {
       if (!email) return;
 
+      // 'exam_leaderboard' टेबलबाट यो युजरले यो सेटको परीक्षा दिएको छ कि छैन जाँच गर्ने
       const { data, error } = await supabaseClient
-        .from(leaderboardTable)
+        .from('exam_leaderboard')
         .select('*')
-        .eq('username', email);
+        .eq('username', email)
+        .eq('exam_set', examIdentifier);
 
       if (error) {
         console.error("Leaderboard check error:", error);
@@ -427,14 +429,13 @@
           return;
         }
 
-        // 'quizzes' टेबलमा topic म्याच गर्ने (जस्तै 'set_1' वा 'set_2')
+        // 'quizzes' टेबलमा topic म्याच गर्ने
         let { data, error } = await supabaseClient
           .from('quizzes')
           .select('*')
           .ilike('topic', currentSet);
         
         if (error || !data || data.length === 0) {
-          // यदि फेला परेन भने rawSet सँग पनि ट्राई गर्ने
           let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', rawSet);
           if (retry.error || !retry.data || retry.data.length === 0) {
             alert(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
@@ -560,8 +561,14 @@
         document.getElementById('report-main-title').innerText = '📊 परीक्षा प्रतिवेदन (Exam Report)';
         document.getElementById('rep-set').innerText = `परीक्षा सेट: ${prettyExamName} (Live Exam)`;
         
-        await supabaseClient.from(leaderboardTable).insert([
-          { username: userEmail, score: Number(totalScore.toFixed(1)), total_questions: examQuestions.length }
+        // एउटै 'exam_leaderboard' टेबलमा exam_set स्तम्भ (column) सहित डेटा सेभ गर्ने
+        await supabaseClient.from('exam_leaderboard').insert([
+          { 
+            username: userEmail, 
+            score: Number(totalScore.toFixed(1)), 
+            total_questions: examQuestions.length,
+            exam_set: examIdentifier 
+          }
         ]);
       }
 
@@ -576,9 +583,11 @@
     }
 
     async function fetchLeaderboard() {
+      // एउटै 'exam_leaderboard' टेबलबाट हालको सेटको मात्र डेटा फिल्टर गरेर तान्ने
       const { data, error } = await supabaseClient
-        .from(leaderboardTable)
+        .from('exam_leaderboard')
         .select('*')
+        .eq('exam_set', examIdentifier)
         .order('score', { ascending: false });
 
       const containers = [
@@ -627,7 +636,7 @@
     window.submitQuestionReport = async function() {
       const reason = document.getElementById('reportReason').value.trim();
       if (!reason) {
-        alert('कृपया समस्या के हो लेख्नुहोस्!');
+        alert('कृपया समस्या क्या हो लेख्नुहोस्!');
         return;
       }
 
