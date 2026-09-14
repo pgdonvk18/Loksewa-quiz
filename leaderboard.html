@@ -14,34 +14,69 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body { min-height: 100vh; background: #f8fafc; color: #1e293b; padding-bottom: 90px; }
-    .header { background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%); color: white; padding: 24px 20px 30px; border-bottom-left-radius: 28px; border-bottom-right-radius: 28px; box-shadow: 0 10px 25px rgba(29, 78, 216, 0.2); }
+    
+    .header { background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%); color: white; padding: 24px 20px 35px; border-bottom-left-radius: 32px; border-bottom-right-radius: 32px; box-shadow: 0 10px 25px rgba(29, 78, 216, 0.2); }
     .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
     .back-btn { background: rgba(255, 255, 255, 0.15); border: none; width: 40px; height: 40px; border-radius: 12px; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
     .header h1 { font-size: 20px; font-weight: 800; }
+    
     .filter-tabs { display: flex; background: rgba(0, 0, 0, 0.2); padding: 5px; border-radius: 14px; gap: 6px; }
     .tab-btn { flex: 1; background: transparent; border: none; padding: 11px 8px; color: rgba(255, 255, 255, 0.75); font-size: 13px; font-weight: 700; border-radius: 10px; cursor: pointer; transition: all 0.25s ease; text-align: center; }
     .tab-btn.active { background: #ffffff; color: #1d4ed8; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); transform: translateY(-1px); }
-    .container { max-width: 600px; margin: -15px auto 0; padding: 0 16px; }
+
+    .container { max-width: 600px; margin: -20px auto 0; padding: 0 16px; }
+
+    /* Podiums Design */
     .podium-section { display: flex; align-items: flex-end; justify-content: center; gap: 12px; margin-bottom: 25px; padding-top: 10px; }
-    .podium-card { background: #ffffff; flex: 1; border-radius: 20px; padding: 18px 10px; text-align: center; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); position: relative; border: 1px solid #e2e8f0; }
-    .podium-card.first { transform: translateY(-15px); border-color: #f59e0b; background: linear-gradient(to bottom, #fffbeb, #ffffff); }
-    .podium-rank { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: white; }
+    .podium-card { background: #ffffff; flex: 1; border-radius: 24px; padding: 20px 10px 16px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); position: relative; border: 2px solid #e2e8f0; transition: transform 0.3s ease; }
+    
+    .podium-card.first { transform: translateY(-18px); border-color: #fbbf24; background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%); box-shadow: 0 15px 35px rgba(245, 158, 11, 0.15); }
+    .podium-card.second { border-color: #cbd5e1; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%); }
+    .podium-card.third { border-color: #fcd34d; background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%); }
+
+    .podium-rank { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
     .first .podium-rank { background: #f59e0b; }
-    .second .podium-rank { background: #94a3b8; }
+    .second .podium-rank { background: #64748b; }
     .third .podium-rank { background: #d97706; }
-    .podium-avatar { width: 48px; height: 48px; border-radius: 50%; background: #e2e8f0; margin: 8px auto 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #475569; font-size: 16px; border: 2px solid white; }
-    .podium-name { font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
-    .podium-score { font-size: 12px; color: #2563eb; font-weight: 800; }
-    .leaderboard-list { background: #ffffff; border-radius: 20px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; overflow: hidden; margin-bottom: 20px; }
-    .leaderboard-item { display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid #f1f5f9; }
+
+    .podium-avatar { width: 52px; height: 52px; border-radius: 50%; background: #e2e8f0; margin: 6px auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #334155; font-size: 18px; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .first .podium-avatar { background: #fef3c7; color: #b45309; }
+    
+    .podium-name { font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+    .podium-score { font-size: 13px; color: #2563eb; font-weight: 800; }
+
+    /* Leaderboard List */
+    .leaderboard-list { background: #ffffff; border-radius: 24px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04); border: 2px solid #e2e8f0; overflow: hidden; margin-bottom: 20px; }
+    .leaderboard-item { display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid #f1f5f9; transition: background 0.2s; }
     .leaderboard-item:last-child { border-bottom: none; }
-    .item-rank { width: 30px; font-size: 14px; font-weight: 700; color: #64748b; text-align: center; }
-    .item-avatar { width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0; margin-left: 10px; margin-right: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #475569; font-size: 14px; }
+    
+    .item-rank { width: 32px; font-size: 14px; font-weight: 800; color: #64748b; text-align: center; }
+    .item-avatar { width: 42px; height: 42px; border-radius: 50%; background: #f1f5f9; margin-left: 10px; margin-right: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #475569; font-size: 14px; }
     .item-info { flex: 1; }
     .item-name { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
-    .item-sub { font-size: 11px; color: #94a3b8; }
-    .item-score { font-size: 14px; font-weight: 800; color: #2563eb; text-align: right; }
-    .current-user-card { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #bfdbfe; border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; }
+    .item-sub { font-size: 11px; color: #94a3b8; font-weight: 500; }
+    .item-score { font-size: 15px; font-weight: 800; color: #2563eb; text-align: right; }
+
+    /* Current User Highlighted Card */
+    .current-user-card { 
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); 
+      border: 2px solid #3b82f6; 
+      border-radius: 20px; 
+      padding: 16px 20px; 
+      display: flex; 
+      align-items: center; 
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.18); 
+      margin-top: 15px;
+      position: relative;
+      animation: pulse-border 2s infinite;
+    }
+
+    @keyframes pulse-border {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+
     .loading-state, .empty-state { text-align: center; padding: 40px 20px; color: #64748b; font-size: 14px; }
     .spinner { width: 30px; height: 30px; border: 3px solid #cbd5e1; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -139,20 +174,24 @@
       let podiumHTML = "";
       const top3 = filteredData.slice(0, 3);
       const orderedPodium = [];
-      if (top3[1]) orderedPodium.push({ user: top3[1], rank: 2, cls: "second" });
-      if (top3[0]) orderedPodium.push({ user: top3[0], rank: 1, cls: "first" });
-      if (top3[2]) orderedPodium.push({ user: top3[2], rank: 3, cls: "third" });
+      if (top3[1]) orderedPodium.push({ user: top3[1], rank: 2, cls: "second", icon: "fa-award" });
+      if (top3[0]) orderedPodium.push({ user: top3[0], rank: 1, cls: "first", icon: "fa-crown" });
+      if (top3[2]) orderedPodium.push({ user: top3[2], rank: 3, cls: "third", icon: "fa-medal" });
 
       orderedPodium.forEach(item => {
         let name = item.user.display_name;
         let score = item.user[scoreColumn];
         let initial = name ? name.charAt(0).toUpperCase() : "L";
+        
+        let crownHtml = item.rank === 1 ? `<i class="fa-solid fa-crown" style="color: #d97706; font-size: 14px; margin-bottom: 2px; display: block;"></i>` : '';
+
         podiumHTML += `
           <div class="podium-card ${item.cls}">
             <div class="podium-rank">${item.rank}</div>
+            ${crownHtml}
             <div class="podium-avatar">${initial}</div>
             <div class="podium-name">${name}</div>
-            <div class="podium-score">${score} अंक</div>
+            <div class="podium-score">${score} <span style="font-size:10px;">अंक</span></div>
           </div>
         `;
       });
@@ -170,13 +209,13 @@
           let initial = name ? name.charAt(0).toUpperCase() : "L";
           listHTML += `
             <div class="leaderboard-item">
-              <div class="item-rank">${rank}</div>
+              <div class="item-rank">#${rank}</div>
               <div class="item-avatar">${initial}</div>
               <div class="item-info">
                 <div class="item-name">${name}</div>
                 <div class="item-sub">Loksewa Aspirant</div>
               </div>
-              <div class="item-score">${score} अंक</div>
+              <div class="item-score">${score} <span style="font-size: 11px; font-weight: 600; color: #64748b;">अंक</span></div>
             </div>
           `;
         });
@@ -191,13 +230,13 @@
           let myInitial = loggedUser.display_name.charAt(0).toUpperCase();
           currentUserCard.style.display = "flex";
           currentUserCard.innerHTML = `
-            <div class="item-rank" style="color: #2563eb;">#${myRank}</div>
-            <div class="item-avatar" style="background: #2563eb; color: white;">${myInitial}</div>
+            <div class="item-rank" style="color: #1d4ed8; font-size: 16px;">#${myRank}</div>
+            <div class="item-avatar" style="background: #2563eb; color: white; box-shadow: 0 4px 10px rgba(37,99,235,0.3);">${myInitial}</div>
             <div class="item-info">
-              <div class="item-name">${loggedUser.display_name} (तपाईं)</div>
-              <div class="item-sub">तपाईँको स्थान</div>
+              <div class="item-name" style="color: #1e3a8a; font-size: 15px;">${loggedUser.display_name} <span style="background: #2563eb; color: white; font-size: 10px; padding: 2px 8px; border-radius: 6px; margin-left: 6px; font-weight: 600;">तपाईं</span></div>
+              <div class="item-sub" style="color: #1e40af;">तपाईँको स्थान र प्रदर्शन</div>
             </div>
-            <div class="item-score">${loggedUser[scoreColumn]} अंक</div>
+            <div class="item-score" style="font-size: 17px; color: #1d4ed8;">${loggedUser[scoreColumn]} <span style="font-size: 12px; font-weight: 600;">अंक</span></div>
           `;
         }
       }
