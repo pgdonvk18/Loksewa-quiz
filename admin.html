@@ -687,9 +687,61 @@ VALUES
 
     document.getElementById('sqlForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      showAlert("SQL डेटा सफलतापूर्वक सेभ भयो!", "success");
-      document.getElementById('sqlForm').reset();
-      fetchDatabaseStats();
+      const sqlText = document.getElementById('sqlInput').value.trim();
+      const sqlSaveBtn = document.getElementById('sqlSaveBtn');
+      
+      if (!sqlText) {
+        showAlert("कृपया SQL Query लेख्नुहोस्!", "error");
+        return;
+      }
+
+      sqlSaveBtn.disabled = true;
+      sqlSaveBtn.textContent = "डेटा सेभ हुँदैछ...";
+
+      try {
+        const valuesMatch = sqlText.match(/VALUES\s*\([\s\S]*?\);?/i);
+        if (!valuesMatch) {
+          throw new Error("मान्य INSERT INTO ... VALUES ढाँचा फेला परेन।");
+        }
+
+        const topicMatch = sqlText.match(/'([^']+)'\s*,\s*'([^']+)'\s*,\s*'(\[.*?\])'\s*,\s*'([^']+)'\s*,\s*'([^']+)'/s);
+        
+        if (!topicMatch) {
+          throw new Error("SQL को सिन्ट्याक्स मिलेन। कृपया topic, question, options, answer, explanation सही क्रममा राख्नुहोला।");
+        }
+
+        const topic = topicMatch[1];
+        const question = topicMatch[2];
+        let optionsStr = topicMatch[3];
+        const answer = topicMatch[4];
+        const explanation = topicMatch[5];
+
+        let optionsArray;
+        try {
+          optionsArray = JSON.parse(optionsStr.replace(/\\"/g, '"'));
+        } catch (err) {
+          optionsArray = optionsStr.replace(/[\[\]]/g, '').split(',').map(o => o.trim().replace(/^["']|["']$/g, ''));
+        }
+
+        const { error } = await supabase.from('quizzes').insert([{
+          topic: topic,
+          question: question,
+          options: optionsArray,
+          answer: answer,
+          explanation: explanation
+        }]);
+
+        if (error) throw error;
+
+        showAlert("SQL डेटा सफलतापूर्वक डाटाबेसमा सेभ भयो! 🎉", "success");
+        document.getElementById('sqlForm').reset();
+        fetchDatabaseStats();
+      } catch (err) {
+        showAlert("त्रुटि: " + err.message, "error");
+      } finally {
+        sqlSaveBtn.disabled = false;
+        sqlSaveBtn.textContent = "SQL डाटा सेभ गर्नुहोस्";
+      }
     });
   </script>
 </body>
