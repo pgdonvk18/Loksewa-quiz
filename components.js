@@ -1,3 +1,84 @@
+// ग्लोबल कन्फिगरेसन चरहरू (Variables)
+window.selectedMaxPlayers = 4;
+window.selectedTotalRounds = 3;
+
+// रुम सिर्जना गर्ने कार्ड (Lobby Card) अटो इन्जेक्ट गर्ने फंक्सन
+function loadCreateRoomCard(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="card">
+      <h3><i class="fa-solid fa-circle-plus"></i> नयाँ रुम बनाउनुहोस् (Create Room)</h3>
+      
+      <div class="form-group">
+        <label>खेलाडी संख्या (Players Limit):</label>
+        <div class="select-grid select-grid-3" id="maxPlayersGroup">
+          <button type="button" class="option-btn" data-value="2">1 vs 1 (2)</button>
+          <button type="button" class="option-btn" data-value="3">3 जना</button>
+          <button type="button" class="option-btn active" data-value="4">4 जना (Max)</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>कुल राउन्डहरू (Total Rounds):</label>
+        <div class="select-grid select-grid-3" id="totalRoundsGroup">
+          <button type="button" class="option-btn" data-value="1">१ राउन्ड</button>
+          <button type="button" class="option-btn" data-value="2">२ राउन्ड</button>
+          <button type="button" class="option-btn active" data-value="3">३ राउन्ड</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="createRoomBtn">रुम सुरु गर्नुहोस्</button>
+    </div>
+  `;
+
+  // स्टाइलहरू अटो थप्ने (CSS)
+  if (!document.getElementById('room-component-style')) {
+    const style = document.createElement('style');
+    style.id = 'room-component-style';
+    style.innerHTML = `
+      .card { background: white; padding: 18px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 14px; border: 1px solid #e2e8f0; }
+      .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1e40af; display: flex; align-items: center; gap: 8px; }
+      .form-group { margin-bottom: 14px; }
+      .form-group label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; }
+      .select-grid { display: grid; gap: 8px; }
+      .select-grid-3 { grid-template-columns: repeat(3, 1fr); }
+      .option-btn {
+        padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1;
+        border-radius: 10px; font-size: 13px; font-weight: 600; color: #475569;
+        cursor: pointer; text-align: center; transition: all 0.2s ease;
+      }
+      .option-btn.active {
+        background: #eff6ff; border-color: #2563eb; color: #2563eb;
+        box-shadow: 0 2px 5px rgba(37, 99, 235, 0.1);
+      }
+      .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+      .btn-primary { background: #2563eb; color: white; }
+      .btn-primary:hover { background: #1d4ed8; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // क्लिक इभेन्ट ह्यान्डल गर्ने
+  document.querySelectorAll('#maxPlayersGroup .option-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('#maxPlayersGroup .option-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      window.selectedMaxPlayers = parseInt(e.target.getAttribute('data-value'));
+    });
+  });
+
+  document.querySelectorAll('#totalRoundsGroup .option-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('#totalRoundsGroup .option-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      window.selectedTotalRounds = parseInt(e.target.getAttribute('data-value'));
+    });
+  });
+}
+
+
 // १. अटोमेटिक Bottom Navigation Bar इन्जेक्ट गर्ने फंक्सन
 function loadBottomNav(activePage) {
   if (!document.getElementById('bottom-nav-style')) {
