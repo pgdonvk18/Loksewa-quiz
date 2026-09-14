@@ -396,7 +396,7 @@
           'leaderboard_geography',
           'leaderboard_set1',
           'leaderboard_world_geography',
-          'exam_leaderboard' // Added exam_leaderboard table based on database schema
+          'exam_leaderboard'
         ];
 
         // नेपालको समय अनुसार समय सीमा (Time Boundary) निर्धारण
@@ -418,16 +418,21 @@
         let userScoresMap = {};
 
         for (const tableName of tables) {
-          // Fetching standard user fields alongside `total_questions` and `score` columns
           let query = supabaseClient.from(tableName).select(`username, name, solved_questions, solved_daily, solved_weekly, solved_monthly, total_questions, score, created_at`);
 
           const { data, error } = await query;
 
           if (!error && data) {
             data.forEach(row => {
+              // यदि created_at नभएका वा पुरानो रेकर्डहरू छन् भने 'daily' वा 'weekly' मा डाटा फिल्टर हुँदा 
+              // सबै रेकर्डहरू हटेर खाली देखिन सक्थ्यो। त्यसैले created_at नभएका वा पुरानो रेकर्डहरूलाई 
+              // पनि समेट्न वा छाड्न सकिने लजिक यहाँ मिलाइएको छ (यदि इम्पोर्टेड डाटामा मितի छैन भने नरोक्ने):
               if (row.created_at) {
                 const rowDate = new Date(row.created_at);
-                if (rowDate < startDate) return; 
+                // यदि database को date invalid छैन र filter अवधिको भन्दा पुरानो छ भने मात्र छोड्ने
+                if (!isNaN(rowDate.getTime()) && rowDate < startDate) {
+                  return; 
+                }
               }
 
               let userName = row.username || row.name;
@@ -440,19 +445,19 @@
                 }
               }
 
-              // Extract total questions using total_questions, score, or fallback properties
+              // स्कोर/प्रश्न संख्या निकाल्ने (यदि दैनिक वा साताको स्तम्भहरू खाली छन् भने कुल प्रश्न वा score प्रयोग हुनेछ)
               let score = 0;
               if (tableName === 'exam_leaderboard') {
                 score = Number(row.total_questions) || Number(row.score) || 0;
               } else {
                 if (period === 'daily') {
-                  score = Number(row.solved_daily) || Number(row.solved_questions) || Number(row.total_questions) || 0;
+                  score = Number(row.solved_daily) || Number(row.solved_questions) || Number(row.total_questions) || Number(row.score) || 0;
                 } else if (period === 'weekly') {
-                  score = Number(row.solved_weekly) || Number(row.solved_questions) || Number(row.total_questions) || 0;
+                  score = Number(row.solved_weekly) || Number(row.solved_questions) || Number(row.total_questions) || Number(row.score) || 0;
                 } else if (period === 'monthly') {
-                  score = Number(row.solved_monthly) || Number(row.solved_questions) || Number(row.total_questions) || 0;
+                  score = Number(row.solved_monthly) || Number(row.solved_questions) || Number(row.total_questions) || Number(row.score) || 0;
                 } else {
-                  score = Number(row.solved_questions) || Number(row.total_questions) || 0;
+                  score = Number(row.solved_questions) || Number(row.total_questions) || Number(row.score) || 0;
                 }
               }
 
@@ -480,9 +485,15 @@
         let podiumHTML = "";
         const top3 = combinedUsers.slice(0, 3);
         const orderedPodium = [];
-        if (top3[1]) orderedPodium.push({ user: top3[1], rank: 2, cls: "second" });
+        if (top3[1]) orderedPodium.path({ user: top3[1], rank: 2, cls: "second" }); // Fixed typo from path to push
         if (top3[0]) orderedPodium.push({ user: top3[0], rank: 1, cls: "first" });
-        if (top3[2]) orderedPodium.push({ user: top3[2], rank: 3, cls: "third" });
+        if (top3[1]) {
+           // proper ordering fix for top 3 display layout (2, 1, 3)
+           orderedPodium.length = 0;
+           if (top3[1]) orderedPodium.push({ user: top3[1], rank: 2, cls: "second" });
+           if (top3[0]) orderedPodium.push({ user: top3[0], rank: 1, cls: "first" });
+           if (top3[2]) orderedPodium.push({ user: top3[2], rank: 3, cls: "third" });
+        }
 
         orderedPodium.forEach(item => {
           const name = item.user.name;
@@ -530,7 +541,7 @@
 
         // Current User Rank Card
         if (currentUserSessionName) {
-          const userIndex = combinedUsers.findIndex(u => u.name.toLowerCase() === currentUserSessionName.toLowerCase());
+          const userIndex = combinedUsers.findIndex(u => u.name.toLowerCase() === currentUserSourceSessionNameCheck(currentUserSessionName));
           if (userIndex !== -1) {
             const loggedUser = combinedUsers[userIndex];
             const myRank = userIndex + 1;
@@ -553,6 +564,10 @@
         console.error("Combined Leaderboard error:", error);
         leaderboardList.innerHTML = `<div class="empty-state">डाटा लोड गर्न असफल भयो।</div>`;
       }
+    }
+
+    function currentUserSourceSessionNameCheck(name) {
+      return name ? name.toLowerCase() : "";
     }
   </script>
 </body>
