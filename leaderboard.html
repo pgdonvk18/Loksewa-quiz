@@ -395,7 +395,8 @@
           'leaderboard',
           'leaderboard_geography',
           'leaderboard_set1',
-          'leaderboard_world_geography'
+          'leaderboard_world_geography',
+          'exam_leaderboard' // Added exam_leaderboard table based on database schema
         ];
 
         // नेपालको समय अनुसार समय सीमा (Time Boundary) निर्धारण
@@ -403,16 +404,13 @@
         let startDate = new Date(nepalNow);
 
         if (period === 'daily') {
-          // आज राति १२:०० बजे (00:00:00) बाट सुरु
           startDate.setHours(0, 0, 0, 0);
         } else if (period === 'weekly') {
-          // यो हप्ताको सोमबार राति १२:०० बजेबाट सुरु (आइतबारबाट भए day === 0 ? -6 : 1 लाई मिलाउन सकिन्छ)
           const day = startDate.getDay();
           const diff = startDate.getDate() - day + (day === 0 ? -6 : 1);
           startDate.setDate(diff);
           startDate.setHours(0, 0, 0, 0);
         } else if (period === 'monthly')  {
-          // यो महिनाको १ गते राति १२:०० बजेबाट सुरु
           startDate.setDate(1);
           startDate.setHours(0, 0, 0, 0);
         }
@@ -420,16 +418,16 @@
         let userScoresMap = {};
 
         for (const tableName of tables) {
-          let query = supabaseClient.from(tableName).select(`username, name, solved_questions, solved_daily, solved_weekly, solved_monthly, created_at`);
+          // Fetching standard user fields alongside `total_questions` and `score` columns
+          let query = supabaseClient.from(tableName).select(`username, name, solved_questions, solved_daily, solved_weekly, solved_monthly, total_questions, score, created_at`);
 
           const { data, error } = await query;
 
           if (!error && data) {
             data.forEach(row => {
-              // यदि टेबलमा created_at छ भने, तोकिएको समयावधि पछिको मात्र रेकर्ड लिने
               if (row.created_at) {
                 const rowDate = new Date(row.created_at);
-                if (rowDate < startDate) return; // पुरानो डाटालाई यो अवधिको लागि छोड्ने
+                if (rowDate < startDate) return; 
               }
 
               let userName = row.username || row.name;
@@ -442,16 +440,20 @@
                 }
               }
 
-              // अवधिको आधारमा स्कोर छान्ने
+              // Extract total questions using total_questions, score, or fallback properties
               let score = 0;
-              if (period === 'daily') {
-                score = Number(row.solved_daily) || Number(row.solved_questions) || 0;
-              } else if (period === 'weekly') {
-                score = Number(row.solved_weekly) || Number(row.solved_questions) || 0;
-              } else if (period === 'monthly') {
-                score = Number(row.solved_monthly) || Number(row.solved_questions) || 0;
+              if (tableName === 'exam_leaderboard') {
+                score = Number(row.total_questions) || Number(row.score) || 0;
               } else {
-                score = Number(row.solved_questions) || 0;
+                if (period === 'daily') {
+                  score = Number(row.solved_daily) || Number(row.solved_questions) || Number(row.total_questions) || 0;
+                } else if (period === 'weekly') {
+                  score = Number(row.solved_weekly) || Number(row.solved_questions) || Number(row.total_questions) || 0;
+                } else if (period === 'monthly') {
+                  score = Number(row.solved_monthly) || Number(row.solved_questions) || Number(row.total_questions) || 0;
+                } else {
+                  score = Number(row.solved_questions) || Number(row.total_questions) || 0;
+                }
               }
 
               if (!userScoresMap[userName]) {
