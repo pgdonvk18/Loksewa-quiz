@@ -388,19 +388,14 @@
 
     <!-- ५. SQL Query मार्फत प्रश्न हाल्ने फर्म -->
     <div class="form-card">
-      <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू थप्नुहोस्</h3>
+      <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू थप्नुहोस् (एक वा धेरै)</h3>
       <form id="sqlForm">
         <div class="form-group">
-          <label>तपाईंको INSERT INTO SQL Query यहाँ राख्नुहोस्:</label>
+          <label>तपाईंको INSERT INTO SQL Query हरू यहाँ राख्नुहोस्:</label>
           <textarea id="sqlInput" class="form-control" placeholder="INSERT INTO public.quizzes (topic, question, options, answer, explanation) 
 VALUES 
-(
-  'Set-1', 
-  'नेपाल राष्ट्र बैंकको स्थापना कहिले भएको हो?', 
-  '[\"वि.सं. २०१३ वैशाख १४\", \"वि.सं. २०१२ बैशाख २६\", \"वि.सं. २०२० साल\", \"वि.सं. २००७ साल\"]', 
-  'वि.सं. २०१३ वैशाख १४',
-  'नेपाल राष्ट्र बैंक ऐन, २०१२ अन्तर्गत वि.सं. २०१३ वैशाख १४ गते स्थापना भएको हो।'
-);" required></textarea>
+('Set-1', 'प्रश्न १?', '[\"अ\", \"ब\", \"स\", \"द\"]', 'अ', 'स्पष्टीकरण १'),
+('Set-1', 'प्रश्न २?', '[\"अ\", \"ब\", \"स\", \"द\"]', 'ब', 'स्पष्टीकरण २');" required></textarea>
         </div>
         <button type="submit" class="submit-btn" id="sqlSaveBtn">SQL डाटा सेभ गर्नुहोस्</button>
       </form>
@@ -699,41 +694,55 @@ VALUES
       sqlSaveBtn.textContent = "डेटा सेभ हुँदैछ...";
 
       try {
-        const valuesMatch = sqlText.match(/VALUES\s*\([\s\S]*?\);?/i);
+        // VALUES पछाडिको सबै भाग निकाल्ने
+        const valuesMatch = sqlText.match(/VALUES\s*([\s\S]*);?/i);
         if (!valuesMatch) {
           throw new Error("मान्य INSERT INTO ... VALUES ढाँचा फेला परेन।");
         }
 
-        const topicMatch = sqlText.match(/'([^']+)'\s*,\s*'([^']+)'\s*,\s*'(\[.*?\])'\s*,\s*'([^']+)'\s*,\s*'([^']+)'/s);
+        let valuesString = valuesMatch[1].trim();
+        if (valuesString.endsWith(';')) {
+          valuesString = valuesString.slice(0, -1);
+        }
+
+        // सबै रेकर्डहरूलाई छुट्ट्याउन regex प्रयोग गर्ने (जसले कोष्ठकभित्रका कमाहरूलाई असर गर्दैन)
+        const regex = /\(\s*'([^']+)'\s*,\s*'([^']+)'\s*,\s*'(\[.*?\])'\s*,\s*'([^']+)'\s*,\s*'([^']+)'\s*\)/gs;
         
-        if (!topicMatch) {
-          throw new Error("SQL को सिन्ट्याक्स मिलेन। कृपया topic, question, options, answer, explanation सही क्रममा राख्नुहोला।");
+        let match;
+        const rowsToInsert = [];
+
+        while ((match = regex.exec(valuesString)) !== null) {
+          const topic = match[1];
+          const question = match[2];
+          let optionsStr = match[3];
+          const answer = match[4];
+          const explanation = match[5];
+
+          let optionsArray;
+          try {
+            optionsArray = JSON.parse(optionsStr.replace(/\\"/g, '"'));
+          } catch (err) {
+            optionsArray = optionsStr.replace(/[\[\]]/g, '').split(',').map(o => o.trim().replace(/^["']|["']$/g, ''));
+          }
+
+          rowsToInsert.push({
+            topic: topic,
+            question: question,
+            options: optionsArray,
+            answer: answer,
+            explanation: explanation
+          });
         }
 
-        const topic = topicMatch[1];
-        const question = topicMatch[2];
-        let optionsStr = topicMatch[3];
-        const answer = topicMatch[4];
-        const explanation = topicMatch[5];
-
-        let optionsArray;
-        try {
-          optionsArray = JSON.parse(optionsStr.replace(/\\"/g, '"'));
-        } catch (err) {
-          optionsArray = optionsStr.replace(/[\[\]]/g, '').split(',').map(o => o.trim().replace(/^["']|["']$/g, ''));
+        if (rowsToInsert.length === 0) {
+          throw new Error("कुनै पनि वैध डेटा फेला परेन। कृपया SQL को ढाँचा (Format) मिलाउनुहोला।");
         }
 
-        const { error } = await supabase.from('quizzes').insert([{
-          topic: topic,
-          question: question,
-          options: optionsArray,
-          answer: answer,
-          explanation: explanation
-        }]);
+        const { error } = await supabase.from('quizzes').insert(rowsToInsert);
 
         if (error) throw error;
 
-        showAlert("SQL डेटा सफलतापूर्वक डाटाबेसमा सेभ भयो! 🎉", "success");
+        showAlert(`सफलतापूर्वक ${rowsToInsert.length} वटा प्रश्नहरू डाटाबेसमा सेभ भए! 🎉`, "success");
         document.getElementById('sqlForm').reset();
         fetchDatabaseStats();
       } catch (err) {
