@@ -202,7 +202,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -243,9 +243,9 @@
       }
     });
 
-    // 2. Real-time Messages Fetching
+    // 2. Real-time Messages Fetching (Client-side sorting used to prevent disappearance)
     function loadRealtimeMessages() {
-      const q = query(collection(db, "global_chat"), orderBy("createdAt", "asc"));
+      const q = collection(db, "global_chat");
 
       onSnapshot(q, (snapshot) => {
         const chatContainer = document.getElementById('chatContainer');
@@ -261,9 +261,10 @@
           messages.push({ id: docSnap.id, ...docSnap.data() });
         });
 
+        // मसेजहरूलाई सही क्रममा मिलाउने (Sorting)
         messages.sort((a, b) => {
-          const timeA = a.createdAt ? a.createdAt.toMillis() : 0;
-          const timeB = b.createdAt ? b.createdAt.toMillis() : 0;
+          const timeA = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+          const timeB = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
           return timeA - timeB;
         });
 
@@ -271,7 +272,7 @@
           const isMe = data.uid === currentUser.uid;
 
           let timeStr = "भर्खरै";
-          if (data.createdAt) {
+          if (data.createdAt && data.createdAt.toDate) {
             try {
               const date = data.createdAt.toDate();
               timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
