@@ -107,6 +107,23 @@
       font-size: 13px;
     }
 
+    .filter-btn {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+
     .option-card {
       width: 100%;
       text-align: left;
@@ -215,13 +232,24 @@
 
   <!-- REVIEW DETAILS MODAL (समीक्षा पपअप) -->
   <div id="reviewModal" class="modal-overlay">
-    <div class="modal-card" style="max-width: 480px; width: 95%; text-align: left; max-height: 85vh; display: flex; flex-direction: column;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+    <div class="modal-card" style="max-width: 500px; width: 95%; text-align: left; height: 85vh; display: flex; flex-direction: column; padding: 16px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">📋 उत्तर तथा समीक्षा</h3>
         <button onclick="closeReviewModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div id="review-container" class="space-y-2 overflow-y-auto pr-1" style="font-size: 11px; flex: 1; max-height: 65vh;"></div>
-      <button onclick="closeReviewModal()" class="btn-primary" style="margin-top: 12px; padding: 10px;">बन्द गर्नुहोस्</button>
+      
+      <!-- Filter Buttons -->
+      <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
+        <button onclick="filterReview('all')" id="filter-all" class="filter-btn active">सबै (All)</button>
+        <button onclick="filterReview('right')" id="filter-right" class="filter-btn">मिलाइएका (Right)</button>
+        <button onclick="filterReview('wrong')" id="filter-wrong" class="filter-btn">बिग्रिएका (Wrong)</button>
+        <button onclick="filterReview('skipped')" id="filter-skipped" class="filter-btn">छोडेका (Skipped)</button>
+      </div>
+
+      <!-- Scrollable Review List Container -->
+      <div id="review-container" style="flex: 1; overflow-y: auto; padding-right: 4px; font-size: 11px;"></div>
+      
+      <button onclick="closeReviewModal()" class="btn-primary" style="margin-top: 10px; padding: 10px;">बन्द गर्नुहोस्</button>
     </div>
   </div>
 
@@ -304,7 +332,7 @@
           <p id="rep-time-info" style="font-size: 11px; color: #64748b; margin-top: 4px;"></p>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; margin-bottom: 16px;">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; margin-bottom: 12px;">
           <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;">
             <p style="font-size: 10px; color: #64748b;">सही</p>
             <p id="rep-correct" style="font-size: 14px; font-weight: 800; color: #059669;">0</p>
@@ -322,6 +350,9 @@
             <p id="rep-score" style="font-size: 14px; font-weight: 800; color: #2563eb;">0</p>
           </div>
         </div>
+
+        <!-- Dynamic Status Message Box -->
+        <div id="status-message-box" style="padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 700; margin-bottom: 14px;"></div>
 
         <button onclick="openReviewModal()" class="btn-secondary" style="width: 100%; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; padding: 10px;">
           📋 उत्तर तथा समीक्षा हेर्नुहोस् (View Solutions)
@@ -388,6 +419,7 @@
     let timeLeftSeconds = 45 * 60;
     let isPracticeMode = false;
     let examStartTime = null;
+    let evaluatedQuestionsList = [];
 
     document.addEventListener("DOMContentLoaded", () => {
       onAuthStateChanged(auth, async (user) => {
@@ -543,24 +575,32 @@
       document.getElementById('result-screen').classList.remove('hidden');
 
       let correct = 0, wrong = 0, skipped = 0;
-      let reviewHTML = '';
+      evaluatedQuestionsList = [];
 
       examQuestions.forEach((q, idx) => {
         const userAns = userAnswers[idx];
         const isCorrect = userAns === q.answer;
+        let status = 'skipped';
 
-        if (!userAns) skipped++;
-        else if (isCorrect) correct++;
-        else wrong++;
+        if (!userAns) {
+          skipped++;
+          status = 'skipped';
+        } else if (isCorrect) {
+          correct++;
+          status = 'right';
+        } else {
+          wrong++;
+          status = 'wrong';
+        }
 
-        reviewHTML += `
-          <div style="background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid ${isCorrect ? '#bbf7d0' : '#fecaca'}; margin-bottom: 6px; text-align: left;">
-            <p style="font-weight: 700; color: #0f172a; margin-bottom: 2px;">Q${idx+1}: ${q.question}</p>
-            <p style="color: #64748b;">तपाईंको उत्तर: <span style="font-weight: 700; color: ${isCorrect ? '#059669' : '#dc2626'};">${userAns || 'छोडेको'}</span></p>
-            <p style="color: #059669; font-weight: 600;">सही उत्तर: ${q.answer}</p>
-            ${q.explanation ? `<p style="font-size: 10px; color: #475569; margin-top: 2px; font-style: italic;">📌 ${q.explanation}</p>` : ''}
-          </div>
-        `;
+        evaluatedQuestionsList.push({
+          index: idx + 1,
+          question: q.question,
+          userAns: userAns || 'छोडेको',
+          correctAns: q.answer,
+          explanation: q.explanation || '',
+          status: status
+        });
       });
 
       let totalScore = (correct * 2) - (wrong * 0.4);
@@ -585,15 +625,78 @@
         ]);
       }
 
+      // Progress status text logic (< 45 marks check)
+      const statusBox = document.getElementById('status-message-box');
+      if (totalScore < 45) {
+        statusBox.style.background = '#fef2f2';
+        statusBox.style.border = '1px solid #fecaca';
+        statusBox.style.color = '#dc2626';
+        statusBox.innerText = 'असाफल! अभ्यास अझै मजबुत गर्नुहोला। 🎯';
+      } else {
+        statusBox.style.background = '#f0fdf4';
+        statusBox.style.border = '1px solid #bbf7d0';
+        statusBox.style.color = '#16a34a';
+        statusBox.innerText = 'धेरै राम्रो! प्रगति जारी राख्नुहोला। 🌟';
+      }
+
       document.getElementById('rep-name').innerText = candidateName;
       document.getElementById('rep-time-info').innerText = `सम्पन्न समय: ${completionDate}`;
       document.getElementById('rep-correct').innerText = correct;
       document.getElementById('rep-wrong').innerText = wrong;
       document.getElementById('rep-skipped').innerText = skipped;
       document.getElementById('rep-score').innerText = totalScore.toFixed(1);
-      document.getElementById('review-container').innerHTML = reviewHTML;
 
+      renderReviewList('all');
       fetchLeaderboard();
+    }
+
+    window.filterReview = function(type) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`filter-${type}`).classList.add('active');
+      renderReviewList(type);
+    }
+
+    function renderReviewList(filterType) {
+      const container = document.getElementById('review-container');
+      container.innerHTML = '';
+
+      let filtered = evaluatedQuestionsList;
+      if (filterType === 'right') {
+        filtered = evaluatedQuestionsList.filter(item => item.status === 'right');
+      } else if (filterType === 'wrong') {
+        filtered = evaluatedQuestionsList.filter(item => item.status === 'wrong');
+      } else if (filterType === 'skipped') {
+        filtered = evaluatedQuestionsList.filter(item => item.status === 'skipped');
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px; font-size: 12px;">कुनै प्रश्न फेला परेन।</p>';
+        return;
+      }
+
+      filtered.forEach(item => {
+        let borderColor = '#cbd5e1';
+        let ansColor = '#0f172a';
+        if (item.status === 'right') {
+          borderColor = '#bbf7d0';
+          ansColor = '#059669';
+        } else if (item.status === 'wrong') {
+          borderColor = '#fecaca';
+          ansColor = '#dc2626';
+        } else {
+          borderColor = '#fde68a';
+          ansColor = '#d97706';
+        }
+
+        container.innerHTML += `
+          <div style="background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid ${borderColor}; margin-bottom: 8px; text-align: left;">
+            <p style="font-weight: 700; color: #0f172a; margin-bottom: 2px;">Q${item.index}: ${item.question}</p>
+            <p style="color: #64748b;">तपाईंको उत्तर: <span style="font-weight: 700; color: ${ansColor};">${item.userAns}</span></p>
+            <p style="color: #059669; font-weight: 600;">सही उत्तर: ${item.correctAns}</p>
+            ${item.explanation ? `<p style="font-size: 10px; color: #475569; margin-top: 2px; font-style: italic;">📌 ${item.explanation}</p>` : ''}
+          </div>
+        `;
+      });
     }
 
     async function fetchLeaderboard() {
