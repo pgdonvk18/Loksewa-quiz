@@ -10,27 +10,24 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body { background: #f8fafc; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
     
-    .container { width: 100%; max-width: 480px; margin-top: 20px; }
+    .container { width: 100%; max-width: 480px; margin-top: 10px; }
     
-    .header { text-align: center; margin-bottom: 24px; }
-    .header h2 { font-size: 24px; font-weight: 800; color: #0f2a4a; }
+    .header { text-align: center; margin-bottom: 20px; }
+    .header h2 { font-size: 22px; font-weight: 800; color: #0f2a4a; }
     .header p { font-size: 13px; color: #64748b; margin-top: 4px; }
 
-    .card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 16px; border: 1px solid #e2e8f0; }
-    .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #1e40af; display: flex; align-items: center; gap: 8px; }
+    .card { background: white; padding: 18px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 14px; border: 1px solid #e2e8f0; }
+    .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1e40af; display: flex; align-items: center; gap: 8px; }
 
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
     .form-control { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; transition: border 0.2s; }
     .form-control:focus { border-color: #2563eb; }
 
-    .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
-    .btn-primary { background: #2563eb; color: white; }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-success { background: #16a34a; color: white; margin-top: 8px; }
+    .btn-success { background: #16a34a; color: white; margin-top: 4px; width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
     .btn-success:hover { background: #15803d; }
     
-    .divider { text-align: center; margin: 16px 0; font-size: 12px; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
+    .divider { text-align: center; margin: 14px 0; font-size: 12px; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
   </style>
 </head>
 <body>
@@ -41,27 +38,8 @@
       <p>आफ्नो साथीहरूसँग रियल-टाइम क्विज प्रतिस्पर्धा गर्नुहोस्</p>
     </div>
 
-    <!-- Create Room Card -->
-    <div class="card">
-      <h3><i class="fa-solid fa-circle-plus"></i> नयाँ रुम बनाउनुहोस् (Create Room)</h3>
-      <div class="form-group">
-        <label>खेलाडी संख्या (Players Limit):</label>
-        <select id="maxPlayers" class="form-control">
-          <option value="2">1 vs 1 (2 Players)</option>
-          <option value="3">1 vs 1 vs 1 (3 Players)</option>
-          <option value="4" selected>1 vs 1 vs 1 vs 1 (4 Players)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>कुल राउन्डहरू (Total Rounds):</label>
-        <select id="totalRounds" class="form-control">
-          <option value="1">1 राउन्ड</option>
-          <option value="2">2 राउन्डहरू</option>
-          <option value="3" selected>3 राउन्डहरू</option>
-        </select>
-      </div>
-      <button class="btn btn-primary" id="createRoomBtn">रुम सुरु गर्नुहोस्</button>
-    </div>
+    <!-- 1. यहाँ components.js बाट अटोमेटिक रुम क्रिएट कार्ड लोड हुन्छ -->
+    <div id="createRoomContainer"></div>
 
     <div class="divider">अथवा</div>
 
@@ -72,11 +50,14 @@
         <label>रुम कोड (Room Code):</label>
         <input type="text" id="roomCodeInput" class="form-control" placeholder="जस्तै: ABCD12" autocomplete="off">
       </div>
-      <button class="btn btn-success" id="joinRoomBtn">रुममा छिर्नुहोस्</button>
+      <button class="btn-success" id="joinRoomBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> रुममा छिर्नुहोस्</button>
     </div>
   </div>
 
-  <!-- Firebase Script -->
+  <!-- Components Script पहिले लोड गर्नुपर्छ -->
+  <script src="components.js"></script>
+
+  <!-- Firebase & Main Logic Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -98,6 +79,13 @@
     let currentUser = null;
     let currentUserName = "Aspirant";
 
+    // पेज लोड हुँदा कम्पोनेन्ट कल गर्ने
+    document.addEventListener("DOMContentLoaded", () => {
+      if (typeof loadCreateRoomCard === 'function') {
+        loadCreateRoomCard('createRoomContainer');
+      }
+    });
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
@@ -113,40 +101,41 @@
       }
     });
 
-    // Random Room Code Generator
     function generateRoomCode() {
       return Math.random().toString(36).substring(2, 8).toUpperCase();
     }
 
-    // Create Room Logic
-    document.getElementById('createRoomBtn').addEventListener('click', async () => {
-      if (!currentUser) return;
-      const maxPlayers = parseInt(document.getElementById('maxPlayers').value);
-      const totalRounds = parseInt(document.getElementById('totalRounds').value);
-      const roomId = generateRoomCode();
+    // Create Room Logic (Event Delegation प्रयोग गरिएको छ किनकी बटन dynamically load हुन्छ)
+    document.addEventListener('click', async (e) => {
+      if (e.target && e.target.id === 'createRoomBtn') {
+        if (!currentUser) return;
+        const roomId = generateRoomCode();
 
-      const roomData = {
-        roomId: roomId,
-        hostId: currentUser.uid,
-        status: "waiting", // waiting, playing, finished
-        settings: { maxPlayers, totalRounds },
-        players: [
-          { uid: currentUser.uid, name: currentUserName, score: 0 }
-        ],
-        currentRound: 1,
-        currentTurnIndex: 0,
-        createdAt: new Date()
-      };
+        const roomData = {
+          roomId: roomId,
+          hostId: currentUser.uid,
+          status: "waiting",
+          settings: { 
+            maxPlayers: window.selectedMaxPlayers || 4, 
+            totalRounds: window.selectedTotalRounds || 3 
+          },
+          players: [
+            { uid: currentUser.uid, name: currentUserName, score: 0 }
+          ],
+          currentRound: 1,
+          currentTurnIndex: 0,
+          createdAt: new Date()
+        };
 
-      try {
-        await setDoc(doc(db, "quiz_rooms", roomId), roomData);
-        window.location.href = `quizgame.html?room=${roomId}`;
-      } catch (err) {
-        // components.js को पपअप प्रयोग गरिएको
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup("रुम बनाउन सकिएन: " + err.message, null, 'error', 'त्रुटि! ❌');
-        } else {
-          alert("रुम बनाउन सकिएन: " + err.message);
+        try {
+          await setDoc(doc(db, "quiz_rooms", roomId), roomData);
+          window.location.href = `quizgame.html?room=${roomId}`;
+        } catch (err) {
+          if (typeof showSuccessPopup === 'function') {
+            showSuccessPopup("रुम बनाउन सकिएन: " + err.message, null, 'error', 'त्रुटि! ❌');
+          } else {
+            alert("रुम बनाउन सकिएन: " + err.message);
+          }
         }
       }
     });
@@ -206,9 +195,6 @@
       window.location.href = `quizgame.html?room=${roomCode}`;
     });
   </script>
-
-  <!-- Components Script -->
-  <script src="components.js"></script>
 
 </body>
 </html>
