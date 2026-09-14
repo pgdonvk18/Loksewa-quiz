@@ -34,6 +34,14 @@
       if (card) card.style.transform = 'scale(1)';
     }
   }
+  // सक्रिय प्रश्न पत्ता लगाउने सही र पक्का तरिका
+  function detectCurrentQuestion() {
+    // यदि तपाइँको पेजमा activeQuestions र currentIdx उपलब्ध छ भने
+    if (typeof activeQuestions !== 'undefined' && typeof currentIdx !== 'undefined' && activeQuestions[currentIdx]) {
+      return activeQuestions[currentIdx];
+    }
+    return null;
+  }
 
   window.closeGlobalReportModal = function() {
     const modal = document.getElementById('globalReportModal');
@@ -54,13 +62,7 @@
     }
   });
 
-  // ३. जुनसुकै पेजबाट पनि हालको प्रश्न अटोमेटिक पत्ता लगाउने स्मार्ट लजिक
-  function detectCurrentQuestion() {
-    // क. यदि पेजमा कसैले कस्टम फंक्सन बनाएको छ भने
-    if (typeof window.getCurrentQuestion === 'function') {
-      try { return window.getCurrentQuestion(); } catch(err) {}
-    }
-
+  
     // ख. ग्लोबल रिएबलहरूको विभिन्न नामहरू स्वतः चेक गर्ने
     const possibleArrays = [
       typeof examQuestions !== 'undefined' ? examQuestions : null,
