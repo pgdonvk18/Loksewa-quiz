@@ -140,21 +140,28 @@
 
       try {
         await setDoc(doc(db, "quiz_rooms", roomId), roomData);
-        // अब यो quizgame.html मा जान्छ
         window.location.href = `quizgame.html?room=${roomId}`;
       } catch (err) {
-        alert("रुम बनाउन सकिएन: " + err.message);
+        // components.js को पपअप प्रयोग गरिएको
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup("रुम बनाउन सकिएन: " + err.message, null, 'error', 'त्रुटि! ❌');
+        } else {
+          alert("रुम बनाउन सकिएन: " + err.message);
+        }
       }
     });
 
     // Join Room Logic
-    document.getElementById('joinRoomBtn').appendListener ? document.getElementById('joinRoomBtn').addEventListener('click', async () => {
-      // handled below properly
-    }) : document.getElementById('joinRoomBtn').addEventListener('click', async () => {
+    document.getElementById('joinRoomBtn').addEventListener('click', async () => {
       if (!currentUser) return;
       const roomCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+      
       if (!roomCode) {
-        alert("कृपया रुम कोड राख्नुहोस्!");
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup("कृपया रुम कोड राख्नुहोस्!", null, 'warning', 'ध्यान दिनुहोस् ⚠️');
+        } else {
+          alert("कृपया रुम कोड राख्नुहोस्!");
+        }
         return;
       }
 
@@ -162,18 +169,30 @@
       const roomSnap = await getDoc(roomRef);
 
       if (!roomSnap.exists()) {
-        alert("यो कोड भएको रुम फेला परेन!");
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup("यो कोड भएको रुम फेला परेन!", null, 'error', 'फेला परेन ❌');
+        } else {
+          alert("यो कोड भएको रुम फेला परेन!");
+        }
         return;
       }
 
       const roomData = roomSnap.data();
       if (roomData.status !== "waiting") {
-        alert("यो गेम अलरेडी सुरु भइसकेको छ!");
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup("यो गेम अलरेडी सुरु भइसकेको छ!", null, 'warning', 'सूचना ⚠️');
+        } else {
+          alert("यो गेम अलरेडी सुरु भइसकेको छ!");
+        }
         return;
       }
 
       if (roomData.players.length >= roomData.settings.maxPlayers) {
-        alert("यो रुम भरिइसकेको छ (Full)!");
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup("यो रुम भरिइसकेको छ (Full)!", null, 'warning', 'रुम भरियो ⚠️');
+        } else {
+          alert("यो रुम भरिइसकेको छ (Full)!");
+        }
         return;
       }
 
@@ -184,10 +203,12 @@
         });
       }
 
-      // अब यो quizgame.html मा जान्छ
       window.location.href = `quizgame.html?room=${roomCode}`;
     });
-  </script><script src="components.js"></script>
+  </script>
+
+  <!-- Components Script -->
+  <script src="components.js"></script>
 
 </body>
 </html>
