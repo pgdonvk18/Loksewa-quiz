@@ -200,14 +200,14 @@
     const urlParams = new URLSearchParams(window.location.search);
     const currentSet = urlParams.get('set') || 'world_history';
 
-    // टपिक अनुसारको कन्फिगरेसन (प्रश्नहरू सधैं 'quizzes' टेबलबाटै तानिन्छ)
+    // टपिक अनुसारको नाम कन्फिगरेसन
     const topicConfig = {
-      'world_history': { title: 'विश्व इतिहास', table: 'leaderboard_world_history' },
-      'world_geography': { title: 'विश्व भूगोल', table: 'leaderboard_world_geography' },
-      'nepal_history': { title: 'नेपालको इतिहास', table: 'leaderboard_nepal_history' }
+      'world_history': { title: 'विश्व इतिहास' },
+      'world_geography': { title: 'विश्व भूगोल' },
+      'nepal_history': { title: 'नेपालको इतिहास' }
     };
 
-    const activeConfig = topicConfig[currentSet] || { title: currentSet.replace('_', ' ').toUpperCase(), table: `leaderboard_${currentSet}` };
+    const activeConfig = topicConfig[currentSet] || { title: currentSet.replace('_', ' ').toUpperCase() };
 
     document.getElementById('page-title').innerText = `LoksewaQuest - ${activeConfig.title}`;
     document.getElementById('header-title').innerText = `LoksewaQuest - ${activeConfig.title}`;
@@ -406,35 +406,45 @@
       if (wrongQuestionsList.length > 0 && !isMistakeRetry) document.getElementById('mistake-retry-container').classList.remove('hidden');  
       else document.getElementById('mistake-retry-container').classList.add('hidden');  
   
-      if (!isMistakeRetry && solvedCount > 0) await saveLeaderboardAndProfile(correct, solvedCount);  
+      if (!isMistakeRetry && solvedCount > 0) await saveLeaderboardAndProfile(correct, wrong, solvedCount, activeQuestions.length);  
       fetchLeaderboard();  
     }  
   
-    async function saveLeaderboardAndProfile(score, solvedCount) {  
+    async function saveLeaderboardAndProfile(score, wrongCount, solvedCount, totalCount) {  
       try {  
         const saveName = candidateName || "Loksewa Aspirant";  
-        const tableName = activeConfig.table;  
+        const tableName = 'exam_level_leaderboard'; // वा तपाईंको टेबलको नाम अनुसार 'exam_leaderboard' राख्नुहोस्
 
-        const { data: existing } = await supabaseClient.from(tableName).select('*').eq('username', saveName);  
+        // exam_leaderboard टेबलमा username र set_name को आधारमा पहिले रेकर्ड छ कि छैन चेक गर्ने
+        const { data: existing } = await supabaseClient.from('exam_leaderboard').select('*').eq('username', saveName).eq('set_name', currentSet);  
   
         if (existing && existing.length > 0) {  
           const oldRecord = existing[0];  
-          await supabaseClient.from(tableName).update({   
+          await supabaseClient.from('exam_leaderboard').update({   
             score: Math.max(score, oldRecord.score || 0),   
-            solved_questions: (oldRecord.solved_questions || 0) + solvedCount,  
-            updated_at: new Date()  
-          }).eq('username', saveName);  
+            correct_count: (oldRecord.correct_count || 0) + score,
+            wrong_count: (oldRecord.wrong_count || 0) + wrongCount,
+            total_questions: (oldRecord.total_questions || 0) + totalCount,
+            created_at: new Date()  
+          }).eq('id', oldRecord.id);  
         } else {  
-          await supabaseClient.from(tableName).insert([{   
-            user_id: userId, name: saveName, username: saveName,   
-            score: score, solved_questions: solvedCount, updated_at: new Date()  
+          await supabaseClient.from('exam_leaderboard').insert([{   
+            username: saveName, 
+            set_name: currentSet,   
+            score: score, 
+            correct_count: score,
+            wrong_count: wrongCount,
+            skipped_count: 0,
+            total_questions: totalCount,
+            created_at: new Date()  
           }]);  
         }  
       } catch (err) { console.error("Error saving score:", err); }  
     }  
 
     async function fetchLeaderboard() {  
-      const { data, error } = await supabaseClient.from(activeConfig.table).select('*').order('score', { ascending: false });  
+      // exam_leaderboard टेबलबाट वर्तमान set_name अनुसार स्कोरहरू तानेर धेरै स्कोर ल्याउनेलाई माथि राख्ने (descending order)
+      const { data, error } = await supabaseClient.from('exam_leaderboard').select('*').eq('set_name', currentSet).order('score', { ascending: false });  
       const containers = [document.getElementById('dynamic-leaderboard'), document.getElementById('dynamic-leaderboard-result')];  
 
       containers.forEach(lbContainer => {  
@@ -445,7 +455,7 @@
           return;  
         }  
         data.forEach((item, i) => {  
-          lbContainer.innerHTML += `<div class="lb-row"><span style="font-weight: 700; color: #1e293b;">${i+1}. ${item.name || item.username}</span><span style="color: #2563eb; font-weight: 800;">${item.score} अंक</span></div>`;  
+          lbContainer.innerHTML += `<div class="lb-row"><span style="font-weight: 700; color: #1e293b;">${i+1}. ${item.username}</span><span style="color: #2563eb; font-weight: 800;">${item.score} अंक</span></div>`;  
         });  
       });  
     }  
