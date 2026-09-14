@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LoksewaQuest - Discussion Group</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    body {
+      background: #f8fafc;
+      color: #1e293b;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .chat-header {
+      background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
+      padding: 16px 20px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      z-index: 10;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .back-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      color: white;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .group-info h3 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .group-info p {
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+
+    /* Chat Messages Container */
+    .chat-container {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #f1f5f9;
+    }
+
+    /* Message Bubbles */
+    .message-row {
+      display: flex;
+      flex-direction: column;
+      max-width: 78%;
+    }
+    .message-row.sent {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+    .message-row.received {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .sender-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 3px;
+      padding: 0 4px;
+    }
+
+    .message-bubble {
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+      position: relative;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+    .message-row.sent .message-bubble {
+      background: #2563eb;
+      color: #ffffff;
+      border-bottom-right-radius: 4px;
+    }
+    .message-row.received .message-bubble {
+      background: #ffffff;
+      color: #0f172a;
+      border-bottom-left-radius: 4px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .msg-time {
+      font-size: 9px;
+      opacity: 0.7;
+      margin-top: 4px;
+      display: block;
+      text-align: right;
+    }
+
+    /* Input Box Area */
+    .chat-input-area {
+      background: #ffffff;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-top: 1px solid #e2e8f0;
+    }
+    .chat-input {
+      flex: 1;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 12px 16px;
+      border-radius: 24px;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .chat-input:focus {
+      border-color: #2563eb;
+      background: #ffffff;
+    }
+    .send-btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .send-btn:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Chat Header -->
+  <div class="chat-header">
+    <div class="header-left">
+      <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+      <div class="group-info">
+        <h3>Loksewa Discussion Group</h3>
+        <p><i class="fa-solid fa-circle" style="color: #22c55e; font-size: 8px;"></i> Global Community</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages Display Area -->
+  <div class="chat-container" id="chatContainer">
+    <div style="text-align: center; color: #94a3b8; font-size: 12px; margin-top: 20px;">
+      मसेजहरू लोड हुँदैछन्...
+    </div>
+  </div>
+
+  <!-- Input Form -->
+  <form class="chat-input-area" id="chatForm">
+    <input type="text" class="chat-input" id="messageInput" placeholder="यहाँ केही लेख्नुहोस्..." autocomplete="off" required>
+    <button type="submit" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let currentUserName = "Aspirant";
+
+    // 1. User Authentication Check
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        currentUserName = user.displayName || user.email.split('@')[0];
+
+        try {
+          // Fetch updated profile name if exists in Firestore
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists() && userDoc.data().name) {
+            currentUserName = userDoc.data().name;
+          }
+        } catch (e) {
+          console.log("Profile Name fetch error", e);
+        }
+
+        // Listen for Messages in Real-time
+        loadRealtimeMessages();
+
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    // 2. Real-time Messages Fetching
+    function loadRealtimeMessages() {
+      const q = query(collection(db, "global_chat"), orderBy("createdAt", "asc"));
+
+      onSnapshot(q, (snapshot) => {
+        const chatContainer = document.getElementById('chatContainer');
+        chatContainer.innerHTML = '';
+
+        if (snapshot.empty) {
+          chatContainer.innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 12px; margin-top: 20px;">कुनै मसेज छैन। पहिलो मसेज लेख्नुहोस्!</div>`;
+          return;
+        }
+
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const isMe = data.uid === currentUser.uid;
+
+          // Format timestamp
+          let timeStr = "";
+          if (data.createdAt) {
+            const date = data.createdAt.toDate();
+            timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          }
+
+          const messageRow = document.createElement('div');
+          messageRow.className = `message-row ${isMe ? 'sent' : 'received'}`;
+          
+          messageRow.innerHTML = `
+            ${!isMe ? `<span class="sender-name">${data.senderName}</span>` : ''}
+            <div class="message-bubble">
+              ${escapeHTML(data.text)}
+              <span class="msg-time">${timeStr}</span>
+            </div>
+          `;
+
+          chatContainer.appendChild(messageRow);
+        });
+
+        // Auto Scroll to Bottom on New Message
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      });
+    }
+
+    // 3. Send Message Handler
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = messageInput.value.trim();
+      
+      if (!text || !currentUser) return;
+
+      messageInput.value = '';
+
+      try {
+        await addDoc(collection(db, "global_chat"), {
+          text: text,
+          uid: currentUser.uid,
+          senderName: currentUserName,
+          createdAt: serverTimestamp()
+        });
+      } catch (err) {
+        console.error("मसेज पठाउन सकिएन:", err);
+      }
+    });
+
+    // Helper to prevent XSS Attacks
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>
