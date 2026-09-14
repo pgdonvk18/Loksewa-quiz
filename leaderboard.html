@@ -416,18 +416,18 @@
         let userScoresMap = {};
 
         for (const tableName of tables) {
-          let query = supabaseClient.from(tableName).select(`username, name, solved_questions, solved_daily, solved_weekly, solved_monthly, total_questions, score, created_at`);
+          // अब यहाँ exam_leaderboard मा भएका exact कोलमहरू (score, total_questions आदि) मात्र तानिएको छ
+          let query = supabaseClient.from(tableName).select(`username, name, score, total_questions, correct_count, created_at`);
 
           const { data, error } = await query;
 
           if (!error && data) {
             data.forEach(row => {
-              // मिति चेक गर्ने: यदि created_at छ र त्यो तोकिएको अवधिको भन्दा पुरानो छ भने मात्र छोड्ने
-              // तर यदि इम्पोर्टेड डाटा वा टेस्ट डाटामा created_at छैन वा खाली छ भने त्यसलाई फिल्टर नगरिकन देखाउने
+              // यदि created_at छ भने मात्र मिति फिल्टर गर्ने, नभए सबै लिने
               if (row.created_at) {
                 const rowDate = new Date(row.created_at);
                 if (!isNaN(rowDate.getTime()) && rowDate < startDate) {
-                  return; 
+                  return; // तोकिएको मितिभन्दा पुरानो भए exclude गर्ने
                 }
               }
 
@@ -441,19 +441,8 @@
                 }
               }
 
-              // स्कोर/प्रश्न संख्या निकाल्ने (सबै सम्भावित स्तम्भहरूलाई सुरक्षित रूपमा म्याच गराइएको छ)
-              let score = 0;
-              let qTotal = Number(row.total_questions) || Number(row.score) || Number(row.solved_questions) || 0;
-
-              if (period === 'daily') {
-                score = Number(row.solved_daily) || qTotal;
-              } else if (period === 'weekly') {
-                score = Number(row.solved_weekly) || qTotal;
-              } else if (period === 'monthly') {
-                score = Number(row.solved_monthly) || qTotal;
-              } else {
-                score = qTotal;
-              }
+              // score वा total_questions मध्ये जुन उपलब्ध छ, त्यसलाई स्कोरको रूपमा जोड्ने
+              let score = Number(row.score) || Number(row.correct_count) || Number(row.total_questions) || 0;
 
               if (!userScoresMap[userName]) {
                 userScoresMap[userName] = { name: userName, totalScore: 0 };
@@ -492,7 +481,7 @@
               <div class="podium-rank">${item.rank}</div>
               <div class="podium-avatar">${initials}</div>
               <div class="podium-name">${name}</div>
-              <div class="podium-score">${score} प्रश्न</div>
+              <div class="podium-score">${score} अंक</div>
             </div>
           `;
         });
@@ -518,7 +507,7 @@
                   <div class="item-name">${name}</div>
                   <div class="item-sub">Loksewa Aspirant</div>
                 </div>
-                <div class="item-score">${score} <span style="font-size: 11px; font-weight: 500; color: #64748b;">प्र.</span></div>
+                <div class="item-score">${score} <span style="font-size: 11px; font-weight: 500; color: #64748b;">अंक</span></div>
               </div>
             `;
           });
@@ -538,9 +527,9 @@
               <div class="item-avatar" style="background: #2563eb; color: white;">${myInitials}</div>
               <div class="item-info">
                 <div class="item-name">${loggedUser.name} (तपाईं)</div>
-                <div class="item-sub">तपाईँको समग्र स्थान</div>
+                <div class="item-sub">तपाईँको स्थान</div>
               </div>
-              <div class="item-score">${loggedUser.totalScore} प्रश्न</div>
+              <div class="item-score">${loggedUser.totalScore} अंक</div>
             `;
           }
         }
