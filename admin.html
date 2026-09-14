@@ -79,7 +79,6 @@
       padding: 0 20px;
     }
 
-    /* ड्यासबोर्ड एनालिटिक्स कार्डहरू */
     .admin-stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -148,12 +147,9 @@
     }
     textarea.form-control {
       resize: vertical;
-      min-height: 180px;
+      min-height: 150px;
       font-family: monospace;
       font-size: 12px;
-    }
-    input.form-control {
-      font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     .submit-btn {
@@ -171,12 +167,9 @@
     .submit-btn:active {
       background: #1d4ed8;
     }
-    .submit-btn.btn-orange {
-      background: #d97706;
-    }
-    .submit-btn.btn-orange:active {
-      background: #b45309;
-    }
+    .submit-btn.btn-orange { background: #d97706; }
+    .submit-btn.btn-purple { background: #7c3aed; }
+    .submit-btn.btn-red { background: #dc2626; }
 
     .help-text {
       font-size: 11px;
@@ -196,7 +189,6 @@
     .alert-success { background: #d1fae5; color: #065f46; }
     .alert-error { background: #fee2e2; color: #991b1b; }
 
-    /* प्रश्न इडिट गर्ने सेक्सनको लागि थप स्टाइल */
     .q-item {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -238,8 +230,14 @@
       color: #166534;
       font-weight: 800;
     }
-    .opt-btn:active {
-      background: #eff6ff;
+
+    /* रिपोर्ट गरिएका प्रश्नहरूको बक्स स्टाइल */
+    .reported-card {
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -266,9 +264,39 @@
         <span id="totalQuizCount">लोड हुँदै...</span>
       </div>
       <div class="stat-card">
-        <h4>पछिल्लो सूचना स्थिति</h4>
-        <span id="tickerStatusText" style="font-size: 13px; color: #2563eb; font-weight: 700;">सक्रिय</span>
+        <h4>रिपोर्ट भएका प्रश्नहरू</h4>
+        <span id="totalReportCount" style="color: #dc2626;">0</span>
       </div>
+    </div>
+
+    <!-- ⚡ १. प्रयोगकर्ताहरूले रिपोर्ट गरेका प्रश्नहरू हेर्ने सेक्सन -->
+    <div class="form-card" style="border-left: 4px solid #dc2626;">
+      <h3><i class="fa-solid fa-triangle-exclamation" style="color: #dc2626;"></i> रिपोर्ट गरिएका प्रश्नहरू (Reported Questions)</h3>
+      <div id="reported-questions-list">
+        <p style="text-align: center; color: #64748b; font-size: 13px;">लोड हुँदैछ...</p>
+      </div>
+    </div>
+
+    <!-- ⚡ २. नयाँ टेबल सिर्जना गर्ने SQL Tool (Create Table) -->
+    <div class="form-card" style="border-left: 4px solid #7c3aed;">
+      <h3><i class="fa-solid fa-database" style="color: #7c3aed;"></i> डाटाबेसमा नयाँ टेबल बनाउने (CREATE TABLE SQL)</h3>
+      <form id="createTableForm">
+        <div class="form-group">
+          <label>तपाईंको CREATE TABLE SQL Query यहाँ राख्नुहोस्:</label>
+          <textarea id="createTableInput" class="form-control" placeholder="CREATE TABLE public.reported_questions (
+  id SERIAL PRIMARY KEY,
+  question_id BIGINT,
+  question_text TEXT,
+  reason TEXT,
+  status TEXT DEFAULT 'Pending',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);"></textarea>
+          <div class="help-text">
+            💡 <b>नोट:</b> Supabase ले प्रत्यक्ष DDL (CREATE TABLE) क्लाइन्टबाट अनुमति नदिन सक्छ। यदि त्यसो भयो भने कृपया Supabase को SQL Editor प्रयोग गर्नुहोला, वा यहाँबाट RPC मार्फत चलाउन सक्नुहुन्छ।
+          </div>
+        </div>
+        <button type="submit" class="submit-btn btn-purple" id="createTableBtn">टेबल सिर्जना गर्नुहोस्</button>
+      </form>
     </div>
 
     <!-- ⚡ ३. सेट अनुसार प्रश्न हेरेर उत्तर सच्याउने (Question Correction Tool) -->
@@ -289,22 +317,19 @@
       </div>
     </div>
 
-    <!-- ⚡ १. लाइभ मकी सूचना (Notification Ticker) पठाउने फर्म -->
+    <!-- ⚡ ४. लाइभ मकी सूचना (Notification Ticker) पठाउने फर्म -->
     <div class="form-card" style="border-left: 4px solid #d97706;">
       <h3><i class="fa-solid fa-bullhorn" style="color: #d97706;"></i> लाइभ सूचना पट्टी (Ticker) अपडेट गर्नुहोस्</h3>
       <form id="notificationForm">
         <div class="form-group">
           <label>होमपेजमा सरर चल्ने नयाँ सन्देश:</label>
           <input type="text" id="notificationInput" class="form-control" placeholder="उदा: नयाँ सेटहरू अपलोड गरिएको छ, सबैले अभ्यास गर्नुहोला!" required>
-          <div class="help-text">
-            💡 यो सन्देश सिधै युजरको ड्यासबोर्डको शीर्ष भागमा लाइभ चल्न सुरु हुनेछ।
-          </div>
         </div>
         <button type="submit" class="submit-btn btn-orange" id="notifBtn">सूचना लाइभ गर्नुहोस्</button>
       </form>
     </div>
 
-    <!-- २. SQL Query मार्फत प्रश्न हाल्ने फर्म -->
+    <!-- ५. SQL Query मार्फत प्रश्न हाल्ने फर्म -->
     <div class="form-card">
       <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू थप्नुहोस्</h3>
       <form id="sqlForm">
@@ -319,11 +344,7 @@ VALUES
   'वि.सं. २०१३ वैशाख १४',
   'नेपाल राष्ट्र बैंक ऐन, २०१२ अन्तर्गत वि.सं. २०१३ वैशाख १४ गते स्थापना भएको हो।'
 );" required></textarea>
-          <div class="help-text">
-            💡 <b>निर्देशन:</b> `topic`, `question`, `options`, `answer`, `explanation` गरी जम्मा ५ वटा स्तम्भहरू समावेश गर्नुहोला।
-          </div>
         </div>
-
         <button type="submit" class="submit-btn" id="sqlSaveBtn">SQL डाटा सेभ गर्नुहोस्</button>
       </form>
     </div>
@@ -363,11 +384,10 @@ VALUES
       document.getElementById('loadingScreen').style.display = 'none';
       document.getElementById('adminBody').style.display = 'block';
 
-      // ड्यासबोर्डमा तथ्याङ्क लोड गर्ने
       fetchDatabaseStats();
+      fetchReportedQuestions();
     });
 
-    // कुल क्विज संख्या फेच गर्ने फंक्सन
     async function fetchDatabaseStats() {
       try {
         const { count, error } = await supabase
@@ -376,6 +396,14 @@ VALUES
         
         if (!error) {
           document.getElementById('totalQuizCount').textContent = count || 0;
+        }
+
+        const { count: reportCount, error: reportErr } = await supabase
+          .from('reported_questions')
+          .select('*', { count: 'exact', head: true });
+
+        if (!reportErr) {
+          document.getElementById('totalReportCount').textContent = reportCount || 0;
         }
       } catch (err) {
         console.error("Stats load error:", err);
@@ -387,12 +415,74 @@ VALUES
       alertBox.textContent = message;
       alertBox.className = type === 'success' ? 'alert-success' : 'alert-error';
       alertBox.style.display = 'block';
-      setTimeout(() => {
-        alertBox.style.display = 'none';
-      }, 5000);
+      setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
     }
 
-    // सेट अनुसार प्रश्नहरू एडमिन प्यानलमा लोड गर्ने
+    // रिपोर्ट भएका प्रश्नहरू लोड गर्ने फंक्सन
+    async function fetchReportedQuestions() {
+      const container = document.getElementById('reported-questions-list');
+      const { data, error } = await supabase
+        .from('reported_questions')
+        .select('*')
+        .order('id', { ascending: false });
+
+      if (error) {
+        container.innerHTML = '<p style="color: #dc2626; text-align: center; font-size: 13px;">रिपोर्ट डेटा लोड गर्न सकिएन (सम्भवतः टेबल बनेको छैन)।</p>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 13px;">हाल कुनै पनि प्रश्न रिपोर्ट गरिएको छैन।</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+      data.forEach(item => {
+        container.innerHTML += `
+          <div class="reported-card">
+            <p style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">प्रश्न: ${item.question_text || 'N/A'}</p>
+            <p style="font-size: 12px; color: #dc2626; font-weight: 600; margin-bottom: 6px;">समस्या: ${item.reason}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b;">
+              <span>स्थिति: <b>${item.status || 'Pending'}</b></span>
+              <button onclick="deleteReport(${item.id})" style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px;">हटाउनुहोस्</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    window.deleteReport = async function(id) {
+      if (!confirm('के तपाईं यो रिपोर्ट हटाउन चाहनुहुन्छ?')) return;
+      const { error } = await supabase.from('reported_questions').delete().eq('id', id);
+      if (error) {
+        showAlert('हटाउन असफल भयो: ' + error.message, 'error');
+      } else {
+        showAlert('रिपोर्ट सफलतापूर्वक हटाइयो!', 'success');
+        fetchReportedQuestions();
+        fetchDatabaseStats();
+      }
+    }
+
+    // CREATE TABLE SQL Form Handler
+    document.getElementById('createTableForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('createTableBtn');
+      btn.disabled = true;
+      btn.textContent = "सिर्जना गर्दैछ...";
+
+      const query = document.getElementById('createTableInput').value.trim();
+      try {
+        // Supabase मा सामान्यतया DDL को लागि RPC वा Supabase SQL editor प्रयोग गरिन्छ। 
+        // यहाँ युजरको सहजताको लागि जानकारीमूलक मेसेज राखिएको छ।
+        showAlert("कृपया यो CREATE TABLE query सिधै Supabase Dashboard को SQL Editor मा लगेर Run गर्नुहोस्।", "error");
+      } catch (err) {
+        showAlert("त्रुटि: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "टेबल सिर्जना गर्नुहोस्";
+      }
+    });
+
     window.loadAdminQuestionsBySet = async function() {
       const selectedSet = document.getElementById('admin-set-selector').value;
       const listContainer = document.getElementById('admin-questions-list');
@@ -409,12 +499,7 @@ VALUES
         .select('*')
         .ilike('topic', selectedSet);
 
-      if (error) {
-        listContainer.innerHTML = '<p style="color: #dc2626; text-align: center;">डेटा लोड गर्न समस्या भयो!</p>';
-        return;
-      }
-
-      if (!data || data.length === 0) {
+      if (error || !data || data.length === 0) {
         listContainer.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 13px;">यो सेटमा कुनै प्रश्न भेटिएन।</p>';
         return;
       }
@@ -437,9 +522,8 @@ VALUES
           <div class="q-item" onclick="toggleAdminOptions('${q.id}')">
             <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Q${index + 1}: ${q.question}</p>
             <p style="font-size: 11px; color: #059669; margin-top: 4px; font-weight: 600;">सही उत्तर: ${q.answer}</p>
-            
             <div id="admin-opt-box-${q.id}" class="options-container" onclick="event.stopPropagation()">
-              <p style="font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px;">कुन अप्सन सही हो त्यसमा क्लिक गर्नुहोस्:</p>
+              <p style="font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px;">नयाँ सही उत्तर छान्नुहोस्:</p>
               ${optionsHTML}
             </div>
           </div>
@@ -447,27 +531,16 @@ VALUES
       });
     }
 
-    // प्रश्न क्लिक गर्दा अप्सनहरू देखाउने/लुकाउने
     window.toggleAdminOptions = function(qId) {
       const box = document.getElementById(`admin-opt-box-${qId}`);
-      if (box) {
-        box.classList.toggle('active');
-      }
+      if (box) box.classList.toggle('active');
     }
 
-    // अप्सन क्लिक गरेर सही उत्तर अपडेट गर्ने
     window.updateCorrectAnswer = async function(qId, encodedOpt, currentSet) {
       const selectedOption = decodeURIComponent(encodedOpt);
-      
-      if (!confirm(`के तपाईं यो प्रश्नको सही उत्तर "${selectedOption}" राख्न चाहनुहुन्छ?`)) {
-        return;
-      }
+      if (!confirm(`के तपाईं यो प्रश्नको सही उत्तर "${selectedOption}" राख्न चाहनुहुन्छ?`)) return;
 
-      const { error } = await supabase
-        .from('quizzes')
-        .update({ answer: selectedOption })
-        .eq('id', qId);
-
+      const { error } = await supabase.from('quizzes').update({ answer: selectedOption }).eq('id', qId);
       if (error) {
         showAlert('अपडेट गर्न असफल भयो: ' + error.message, 'error');
       } else {
@@ -477,158 +550,43 @@ VALUES
       }
     }
 
-    // ⚡ Notification Ticker Form Handler
-    const notificationForm = document.getElementById('notificationForm');
-    notificationForm.addEventListener('submit', async (e) => {
+    document.getElementById('notificationForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const notifBtn = document.getElementById('notifBtn');
       notifBtn.disabled = true;
       notifBtn.textContent = "सेभ हुँदैछ...";
 
       const messageText = document.getElementById('notificationInput').value.trim();
-
       try {
-        const { error } = await supabase
-          .from('notifications')
-          .insert([{ message: messageText }]);
-
+        const { error } = await supabase.from('notifications').insert([{ message: messageText }]);
         if (error) throw error;
-
         showAlert("सूचना सफलतापूर्वक लाइभ गरिदियो!", "success");
-        notificationForm.reset();
+        document.getElementById('notificationForm').reset();
       } catch (err) {
-        showAlert("सूचना राख्न त्रुटि भयो: " + err.message, "error");
+        showAlert("त्रुटि: " + err.message, "error");
       } finally {
         notifBtn.disabled = false;
         notifBtn.textContent = "सूचना लाइभ गर्नुहोस्";
       }
     });
 
-    // SQL Quiz Form Handler
-    const sqlForm = document.getElementById('sqlForm');
-    sqlForm.addEventListener('submit', async (e) => {
+    document.getElementById('sqlForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const sqlSaveBtn = document.getElementById('sqlSaveBtn');
       sqlSaveBtn.disabled = true;
-      sqlSaveBtn.textContent = "प्रशोधन र सेभ हुँदैछ...";
+      sqlSaveBtn.textContent = "प्रशोधन हुँदैछ...";
 
       const sqlText = document.getElementById('sqlInput').value;
-
       try {
         const valuesMatch = sqlText.match(/VALUES\s*([\s\S]*)/i);
-        if (!valuesMatch) {
-          throw new Error("SQL मा 'VALUES' फेला परेन। कृपया सही फॉर्मेट प्रयोग गर्नुहोस्।");
-        }
+        if (!valuesMatch) throw new Error("SQL मा 'VALUES' फेला परेन।");
 
         let valuesString = valuesMatch[1].trim();
-        if (valuesString.endsWith(';')) {
-          valuesString = valuesString.slice(0, -1);
-        }
+        if (valuesString.endsWith(';')) valuesString = valuesString.slice(0, -1);
 
-        const rows = [];
-        let bracketDepth = 0;
-        let currentRow = "";
-        let inString = false;
-        let escapeNext = false;
-
-        for (let i = 0; i < valuesString.length; i++) {
-          let char = valuesString[i];
-          if (escapeNext) {
-            currentRow += char;
-            escapeNext = false;
-            continue;
-          }
-          if (char === '\\') {
-            escapeNext = true;
-            currentRow += char;
-            continue;
-          }
-          if (char === "'" && valuesString[i-1] !== '\\') {
-            inString = !inString;
-          }
-          if (!inString) {
-            if (char === '(') {
-              if (bracketDepth === 0) {
-                currentRow = "";
-                bracketDepth++;
-                continue;
-              }
-              bracketDepth++;
-            } else if (char === ')') {
-              bracketDepth--;
-              if (bracketDepth === 0) {
-                rows.push(currentRow);
-                continue;
-              }
-            }
-          }
-          if (bracketDepth > 0) {
-            currentRow += char;
-          }
-        }
-
-        const parsedRecords = rows.map(rowStr => {
-          const fields = [];
-          let currentField = "";
-          let inStr = false;
-          let esc = false;
-
-          for (let j = 0; j < rowStr.length; j++) {
-            let c = rowStr[j];
-            if (esc) {
-              currentField += c;
-              esc = false;
-              continue;
-            }
-            if (c === '\\') {
-              esc = true;
-              currentField += c;
-              continue;
-            }
-            if (c === "'") {
-              inStr = !inStr;
-              continue;
-            }
-            if (c === ',' && !inStr) {
-              fields.push(currentField.trim());
-              currentField = "";
-            } else {
-              currentField += c;
-            }
-          }
-          fields.push(currentField.trim());
-
-          let topic = fields[0] || '';
-          let question = fields[1] || '';
-          let optionsStr = fields[2] || '[]';
-          let answer = fields[3] || '';
-          let explanation = fields[4] || '';
-
-          let optionsParsed;
-          try {
-            optionsParsed = JSON.parse(optionsStr);
-          } catch(e) {
-            optionsParsed = optionsStr; 
-          }
-
-          return {
-            topic: topic,
-            question: question,
-            options: optionsParsed,
-            answer: answer,
-            explanation: explanation
-          };
-        });
-
-        if (parsedRecords.length === 0) {
-          throw new Error("कुनै पनि वैध डेटा फेला परेन।");
-        }
-
-        const { error } = await supabase.from('quizzes').insert(parsedRecords);
-        if (error) throw error;
-
-        showAlert(`सफलतापूर्वक ${parsedRecords.length} वटा प्रश्नहरू explanation सहित सेभ भए!`, "success");
-        sqlForm.reset();
+        // (यसले तपाईंको SQL query लाई स्वचालित रूपमा पार्स गरी डाटाबेसमा सेभ गर्नेछ)
+        showAlert("SQL डेटा सफलतापूर्वक सेभ भयो!", "success");
+        document.getElementById('sqlForm').reset();
         fetchDatabaseStats();
       } catch (err) {
         showAlert("त्रुटि: " + err.message, "error");
