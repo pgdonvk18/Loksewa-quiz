@@ -262,6 +262,18 @@
       gap: 8px;  
       width: 120px;  
     }  
+
+    .lb-row {  
+      display: flex;  
+      justify-content: space-between;  
+      align-items: center;  
+      background: #f8fafc;  
+      padding: 10px 12px;  
+      border-radius: 10px;  
+      border: 1px solid #f1f5f9;  
+      font-size: 13px;  
+      margin-bottom: 8px;  
+    }  
   
     .modal-overlay {  
       position: fixed;  
@@ -289,8 +301,13 @@
       max-width: 340px;  
       border-radius: 24px;  
       padding: 24px 20px;  
-      text-align: center;  
+      text-align: left;  
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);  
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
     }  
     .hidden { display: none !important; }  
   </style>  
@@ -298,7 +315,7 @@
 <body>  
   
   <div id="login-modal" class="modal-overlay">  
-    <div class="modal-card">  
+    <div class="modal-card" style="text-align: center;">  
       <div style="width: 56px; height: 56px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">  
         <i class="fa-solid fa-lock"></i>  
       </div>  
@@ -314,6 +331,22 @@
       </a>  
     </div>  
   </div>  
+
+  <!-- GLOBAL REPORT MODAL -->
+  <div id="globalReportModal" class="modal-overlay">
+    <div class="modal-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin:0;">प्रश्न रिपोर्ट गर्नुहोस्</h3>
+        <button onclick="closeGlobalReportModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">यो प्रश्न वा उत्तरमा के समस्या छ लेख्नुहोस्:</p>
+      <textarea id="globalReportReason" placeholder="उदा: सही उत्तर मिलेको छैन।" style="min-height: 100px; margin-bottom: 12px; width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; box-sizing: border-box;"></textarea>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="submitGlobalReport()" style="flex: 1; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px;">पठाउनुहोस्</button>
+        <button onclick="closeGlobalReportModal()" style="flex: 1; background: #e2e8f0; color: #475569; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px;">रद्द गर्नुहोस्</button>
+      </div>
+    </div>
+  </div>
   
   <header class="app-header">  
     <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>  
@@ -345,6 +378,12 @@
       <button onclick="startPractice()" class="btn-primary" style="width: 100%;">  
         अभ्यास सुरु गर्नुहोस् 🚀  
       </button>  
+
+      <!-- LEADERBOARD PREVIEW -->
+      <div style="border-top: 1px solid #f1f5f9; padding-top: 16px; margin-top: 20px;">
+        <h3 style="font-size: 13px; font-weight: 800; color: #2563eb; margin-bottom: 10px;">🏆 विश्व इतिहास लिडरबोर्ड (शीर्ष स्कोर)</h3>
+        <div id="history-leaderboard" class="max-h-48 overflow-y-auto"></div>
+      </div>
     </div>  
   
     <div id="quiz-screen" class="card hidden">  
@@ -368,6 +407,10 @@
         </div>  
         <p id="explanation-text" class="explanation-text"></p>  
       </div>  
+
+      <button onclick="openGlobalReportModal()" style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 14px;">  
+        <i class="fa-solid fa-triangle-exclamation"></i> यो प्रश्न रिपोर्ट गर्नुहोस्  
+      </button>  
   
       <div style="display: flex; gap: 12px; margin-top: 24px;">  
         <button onclick="prevQuestion()" id="prev-btn" class="btn-secondary">  
@@ -411,9 +454,15 @@
         <div id="review-container" class="space-y-2 max-h-56 overflow-y-auto pr-1" style="font-size: 12px;"></div>  
       </div>  
   
-      <button onclick="location.reload()" class="btn-primary" style="width: 100%;">  
+      <button onclick="location.reload()" class="btn-primary" style="width: 100%; margin-bottom: 20px;">  
         🔄 फेरि सुरु गर्नुहोस् (Home)  
       </button>  
+
+      <!-- RESULT LEADERBOARD -->
+      <div style="border-top: 1px solid #e2e8f0; padding-top: 16px;">
+        <h3 style="font-size: 13px; font-weight: 800; color: #2563eb; margin-bottom: 10px;">🏆 विश्व इतिहास लिडरबोर्ड</h3>
+        <div id="history-leaderboard-result" class="max-h-48 overflow-y-auto"></div>
+      </div>
     </div>  
   
   </main>  
@@ -455,15 +504,26 @@
     document.addEventListener("DOMContentLoaded", () => {  
       onAuthStateChanged(auth, async (user) => {  
         if (user) {  
-          candidateName = user.displayName ? user.displayName : "नाम छैन";  
-          userEmail = user.email;  
-          userId = user.uid;  
+          userId = user.uid;
+          userEmail = user.email;
+          
+          if (user.displayName) {
+            candidateName = user.displayName;
+          } else if (userEmail) {
+            let emailPrefix = userEmail.split('@')[0];
+            candidateName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+          } else {
+            candidateName = "Loksewa Aspirant";
+          }
+
           document.getElementById('profile-display-name').innerText = candidateName;  
         } else {  
           document.getElementById('login-modal').classList.add('active');  
           document.getElementById('profile-display-name').innerText = 'लगइन गरिएको छैन';  
         }  
       });  
+
+      fetchLeaderboard();
     });  
   
     window.updateSliderVal = function(val) {  
@@ -479,7 +539,6 @@
       const count = parseInt(document.getElementById('question-count-slider').value);  
   
       try {  
-        // 'world_history' टपिक भएका प्रश्नहरू फेच गर्ने 
         let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', 'world_history');  
           
         if (error || !data || data.length === 0) {  
@@ -560,7 +619,9 @@
           } else if (opt === savedAnswer) {  
             btnClass += ' wrong';  
           }  
-        }  
+        } else if (savedAnswer === opt) {
+          btnClass += ' selected';
+        }
   
         btn.className = btnClass;  
         btn.innerHTML = `  
@@ -612,6 +673,49 @@
         finishQuiz();  
       }  
     }  
+
+    // Report Modal Functions
+    window.openGlobalReportModal = function() {
+      document.getElementById('globalReportModal').classList.add('active');
+    }
+
+    window.closeGlobalReportModal = function() {
+      document.getElementById('globalReportModal').classList.remove('active');
+      document.getElementById('globalReportReason').value = '';
+    }
+
+    window.submitGlobalReport = async function() {
+      const reasonBox = document.getElementById('globalReportReason');
+      const reason = reasonBox ? reasonBox.value.trim() : '';
+      
+      if (!reason) {
+        alert('कृपया समस्या के हो लेख्नुहोस्!');
+        return;
+      }
+
+      const currentQ = activeQuestions[currentIdx];
+
+      if (!currentQ) {
+        alert('हालको प्रश्न फेला परेन!');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('reported_questions')
+        .insert([{ 
+          question_id: currentQ.id || currentQ.question_id || null, 
+          question_text: currentQ.question || currentQ.title || currentQ.text || 'Unknown Question', 
+          reason: reason,
+          status: 'Pending'
+        }]);
+
+      if (error) {
+        alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+      } else {
+        alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
+        window.closeGlobalReportModal();
+      }
+    }
   
     async function finishQuiz() {  
       document.getElementById('quiz-screen').classList.add('hidden');  
@@ -660,14 +764,15 @@
       if (!isMistakeRetry && solvedCount > 0) {  
         await saveLeaderboardAndProfile(correct, solvedCount);  
       }  
+
+      fetchLeaderboard();
     }  
   
     async function saveLeaderboardAndProfile(score, solvedCount) {  
       try {  
-        const saveName = candidateName && candidateName !== "नाम छैन" ? candidateName : "नाम छैन";  
+        const saveName = candidateName && candidateName !== "नाम छैन" ? candidateName : "Loksewa Aspirant";  
         const currentUserId = userId ? userId : '00000000-0000-0000-0000-000000000000';  
   
-        // नोट: विश्व इतिहासको लिडरबोर्ड टेबल (तपाईंले बनाएको टेबल अनुसार नाम राख्नुहोला, जस्तै: leaderboard_world_history)
         const { data: existing } = await supabaseClient  
           .from('leaderboard_world_history')  
           .select('*')  
@@ -715,6 +820,45 @@
         console.error("Error saving score:", err);  
       }  
     }  
+
+    async function fetchLeaderboard() {
+      const { data, error } = await supabaseClient
+        .from('leaderboard_world_history')
+        .select('*')
+        .order('score', { ascending: false });
+
+      const containers = [
+        document.getElementById('history-leaderboard'),
+        document.getElementById('history-leaderboard-result')
+      ];
+
+      containers.forEach(lbContainer => {
+        if (!lbContainer) return;
+        lbContainer.innerHTML = '';
+        
+        if (error || !data || data.length === 0) {
+          lbContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 12px; padding: 4px;">हाल कुनै रेकर्ड छैन।</p>';
+          return;
+        }
+        
+        data.forEach((item, i) => {
+          let displayName = item.name || item.username;
+          if (!displayName || displayName.trim() === "" || displayName.toLowerCase() === "aspirant") {
+            displayName = "Loksewa Aspirant";
+          }
+
+          let scoreVal = item.score !== undefined ? item.score : (item.solved_questions || 0);
+          let solvedVal = item.solved_questions || scoreVal;
+
+          lbContainer.innerHTML += `
+            <div class="lb-row">
+              <span style="font-weight: 700; color: #1e293b;">${i+1}. ${displayName}</span>
+              <span style="color: #2563eb; font-weight: 800;">${scoreVal} अंक (${solvedVal} हल)</span>
+            </div>
+          `;
+        });
+      });
+    }
   </script>  
 </body>  
 </html>
