@@ -19,6 +19,7 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
+      padding-bottom: 70px;
     }
 
     /* Header */
@@ -125,18 +126,23 @@
 
     /* Input Box Area */
     .chat-input-area {
+      position: fixed;
+      bottom: 60px;
+      left: 0;
+      width: 100%;
       background: #ffffff;
-      padding: 12px 16px;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       gap: 10px;
       border-top: 1px solid #e2e8f0;
+      z-index: 99;
     }
     .chat-input {
       flex: 1;
       background: #f8fafc;
       border: 1px solid #cbd5e1;
-      padding: 12px 16px;
+      padding: 10px 16px;
       border-radius: 24px;
       font-size: 14px;
       outline: none;
@@ -150,15 +156,16 @@
       background: #2563eb;
       color: white;
       border: none;
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 15px;
       cursor: pointer;
       transition: background 0.2s;
+      flex-shrink: 0;
     }
     .send-btn:hover {
       background: #1d4ed8;
@@ -191,7 +198,11 @@
     <button type="submit" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
   </form>
 
-  <!-- Firebase Script -->
+  <!-- Bottom Navigation Component -->
+  <script src="components.js"></script>
+  <script>loadBottomNav('chat');</script>
+
+  <!-- Firebase Integration Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -213,23 +224,24 @@
     let currentUser = null;
     let currentUserName = "Aspirant";
 
-    // 1. User Authentication Check
+    // 1. Authentication Check
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
         currentUserName = user.displayName || user.email.split('@')[0];
 
         try {
-          // Fetch updated profile name if exists in Firestore
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists() && userDoc.data().name) {
-            currentUserName = userDoc.data().name;
+          // Firestore को users कलेक्सनबाट युजरको अपडेटेड नाम तानेर राख्ने
+          const userDocRef = doc(db, "users", user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists() && userDocSnap.data().name) {
+            currentUserName = userDocSnap.data().name;
           }
         } catch (e) {
           console.log("Profile Name fetch error", e);
         }
 
-        // Listen for Messages in Real-time
+        // Real-time मसेजहरू लोड गर्ने
         loadRealtimeMessages();
 
       } else {
@@ -254,7 +266,6 @@
           const data = docSnap.data();
           const isMe = data.uid === currentUser.uid;
 
-          // Format timestamp
           let timeStr = "";
           if (data.createdAt) {
             const date = data.createdAt.toDate();
@@ -265,7 +276,7 @@
           messageRow.className = `message-row ${isMe ? 'sent' : 'received'}`;
           
           messageRow.innerHTML = `
-            ${!isMe ? `<span class="sender-name">${data.senderName}</span>` : ''}
+            ${!isMe ? `<span class="sender-name">${escapeHTML(data.senderName)}</span>` : ''}
             <div class="message-bubble">
               ${escapeHTML(data.text)}
               <span class="msg-time">${timeStr}</span>
@@ -275,7 +286,7 @@
           chatContainer.appendChild(messageRow);
         });
 
-        // Auto Scroll to Bottom on New Message
+        // नयाँ मसेज आउँदा अटोमेटिक तल स्क्रोल हुने
         chatContainer.scrollTop = chatContainer.scrollHeight;
       });
     }
@@ -304,8 +315,9 @@
       }
     });
 
-    // Helper to prevent XSS Attacks
+    // XSS सुरक्षाको लागि Helper
     function escapeHTML(str) {
+      if (!str) return '';
       return str.replace(/[&<>'"]/g, 
         tag => ({
           '&': '&amp;',
