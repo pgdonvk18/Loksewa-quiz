@@ -3,23 +3,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
-    // 2. Button aafai generate garera page ma halne
-    const button = document.createElement('button');
-    button.className = 'global-dark-mode-toggle';
-    button.innerHTML = savedTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
-    document.body.appendChild(button);
+    // 2. Professional Sliding Switch Container aafai generate garera page ma halne
+    const switchWrapper = document.createElement('div');
+    switchWrapper.className = 'theme-switch-wrapper';
 
-    // 3. Click event handle garne
-    button.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        if (currentTheme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'light');
-            localStorage.setItem('theme', 'light');
-            button.innerHTML = '🌙 Dark Mode';
-        } else {
+    switchWrapper.innerHTML = `
+        <label class="theme-switch" for="darkModeCheckbox">
+            <input type="checkbox" id="darkModeCheckbox" ${savedTheme === 'dark' ? 'checked' : ''}>
+            <span class="slider-toggle"></span>
+        </label>
+    `;
+    document.body.appendChild(switchWrapper);
+
+    const checkbox = document.getElementById('darkModeCheckbox');
+
+    // 3. Click/Change event handle garne
+    checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
             document.documentElement.setAttribute('data-theme', 'dark');
             localStorage.setItem('theme', 'dark');
-            button.innerHTML = '☀️ Light Mode';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
         }
     });
 });
