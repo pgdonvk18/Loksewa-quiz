@@ -1,4 +1,4 @@
-// question-reporter.js - Reusable Report System for All Quiz Pages
+// question-reporter.js - Fully Automated Universal Report System for All Quiz Pages
 
 (function () {
   // १. आवश्यक HTML (Report Button र Modal) स्वतः पेजमा इन्जेक्टर गर्ने
@@ -20,76 +20,119 @@
     </div>
   `;
 
-  // पेज लोड भएपछि यो HTML स्वतः बडीमा थपिदिने
   const div = document.createElement('div');
   div.innerHTML = reportHTML;
   document.body.appendChild(div);
 
-  // २. रिपोर्ट बटनलाई क्विज पेजको प्रश्न मुन ne (जहाँ जहाँ राख्न मन लाग्छ वा स्वतः म्यानेज गर्न) जोड्ने वा पेजमा भएको बटनलाई ट्रिगर गर्ने
-  // यदि तपाइँ हरेक क्विज पेजमा तलको सानो बटन मात्र राख्नुहुन्छ भने पुग्छ:
-  // <button onclick="openGlobalReportModal()" class="global-report-btn">⚠️ यो प्रश्न रिपोर्ट गर्नुहोस्</button>
-
+  // २. पपअप खोल्ने र बन्द गर्ने फंक्सनहरू
   window.openGlobalReportModal = function() {
     const modal = document.getElementById('globalReportModal');
-    modal.style.opacity = '1';
-    modal.style.visibility = 'visible';
-    modal.querySelector('.modal-card').style.transform = 'scale(1)';
+    if (modal) {
+      modal.style.opacity = '1';
+      modal.style.visibility = 'visible';
+      const card = modal.querySelector('.modal-card');
+      if (card) card.style.transform = 'scale(1)';
+    }
   }
 
   window.closeGlobalReportModal = function() {
     const modal = document.getElementById('globalReportModal');
-    modal.style.opacity = '0';
-    modal.style.visibility = 'hidden';
-    modal.querySelector('.modal-card').style.transform = 'scale(0.9)';
-    document.getElementById('globalReportReason').value = '';
+    if (modal) {
+      modal.style.opacity = '0';
+      modal.style.visibility = 'hidden';
+      const card = modal.querySelector('.modal-card');
+      if (card) card.style.transform = 'scale(0.9)';
+      const reasonBox = document.getElementById('globalReportReason');
+      if (reasonBox) reasonBox.value = '';
+    }
   }
 
-  document.getElementById('closeGlobalReport').onclick = window.closeGlobalReportModal;
-  document.getElementById('cancelGlobalReport').onclick = window.closeGlobalReportModal;
-
-  // ३. डेटाबेसमा पठाउने मुख्य लजिक
-  document.getElementById('submitGlobalReport').onclick = async function() {
-    const reason = document.getElementById('globalReportReason').value.trim();
-    if (!reason) {
-      alert('कृपया समस्या के हो लेख्नुहोस्!');
-      return;
-    }
-
-    // नोट: तपाइँको जुनसुकै क्विज पेजमा पनि हालको प्रश्न देखाइरहेको रिएबल वा अब्जेक्टको नाम फरक हुन सक्छ 
-    // (जस्तै: examQuestions[currentIdx] वा activeQuestion)। 
-    // त्यसैले हामी एउटा स्ट्यान्डर्ड युनिभर्सल विन्डो अब्जेक्ट प्रयोग गर्छौं।
-    let currentQ = null;
-    if (typeof window.getCurrentQuestion === 'function') {
-      currentQ = window.getCurrentQuestion();
-    } else if (typeof examQuestions !== 'undefined' && typeof currentIdx !== 'undefined') {
-      currentQ = examQuestions[currentIdx];
-    }
-
-    if (!currentQ) {
-      alert('हालको प्रश्न फेला परेन!');
-      return;
-    }
-
-    // Supabase मा डेटा पठाउने (window.supabaseClient वा ग्लोबल क्लाइन्ट प्रयोग गरेर)
-    if (typeof supabaseClient === 'undefined') {
-      alert('डेटाबेस कनेक्सन फेला परेन!');
-      return;
-    }
-
-    const { error } = await supabaseClient
-      .from('reported_questions')
-      .insert([{ 
-        question_id: currentQ.id || null, 
-        question_text: currentQ.question || currentQ.title, 
-        reason: reason,
-        status: 'Pending'
-      }]);
-
-    if (error) {
-      alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
-    } else {
-      alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
+  // इभेन्ट लिसनर सुरक्षित रूपमा जोड्ने
+  document.addEventListener('click', function(e) {
+    if (e.target && (e.target.id === 'closeGlobalReport' || e.target.id === 'cancelGlobalReport' || e.target.closest('#closeGlobalReport') || e.target.closest('#cancelGlobalReport'))) {
       window.closeGlobalReportModal();
     }
-  };
+  });
+
+  // ३. जुनसुकै पेजबाट पनि हालको प्रश्न अटोमेटिक पत्ता लगाउने स्मार्ट लजिक
+  function detectCurrentQuestion() {
+    // क. यदि पेजमा कसैले कस्टम फंक्सन बनाएको छ भने
+    if (typeof window.getCurrentQuestion === 'function') {
+      try { return window.getCurrentQuestion(); } catch(err) {}
+    }
+
+    // ख. ग्लोबल रिएबलहरूको विभिन्न नामहरू स्वतः चेक गर्ने
+    const possibleArrays = [
+      typeof examQuestions !== 'undefined' ? examQuestions : null,
+      typeof questions !== 'undefined' ? questions : null,
+      typeof quizList !== 'undefined' ? quizList : null,
+      typeof allQuestions !== 'undefined' ? allQuestions : null
+    ];
+
+    const possibleIndices = [
+      typeof currentIdx !== 'undefined' ? currentIdx : null,
+      typeof currentIndex !== 'undefined' ? currentIndex : null,
+      typeof index !== 'undefined' ? index : null,
+      typeof i !== 'undefined' ? i : null
+    ];
+
+    for (let arr of possibleArrays) {
+      if (Array.isArray(arr) && arr.length > 0) {
+        for (let idx of possibleIndices) {
+          if (idx !== null && typeof idx === 'number' && arr[idx]) {
+            return arr[idx];
+          }
+        }
+        // यदि इन्डेक्स फेला परेन तर पहिलो प्रश्न दिन सकिन्छ भने वा active इंडेक्स ० छ भने
+        return arr[0];
+      }
+    }
+
+    // ग. यदि सिंगल अब्जेक्टको रूपमा स्टोर छ भने
+    if (typeof activeQuestion !== 'undefined' && activeQuestion) return activeQuestion;
+    if (typeof currentQuestion !== 'undefined' && currentQuestion) return currentQuestion;
+
+    return null;
+  }
+
+  // ४. डेटाबेसमा पठाउने मुख्य लजिक
+  document.addEventListener('click', async function(e) {
+    if (e.target && e.target.id === 'submitGlobalReport') {
+      const reasonBox = document.getElementById('globalReportReason');
+      const reason = reasonBox ? reasonBox.value.trim() : '';
+      
+      if (!reason) {
+        alert('कृपया समस्या के हो लेख्नुहोस्!');
+        return;
+      }
+
+      const currentQ = detectCurrentQuestion();
+
+      if (!currentQ) {
+        alert('हालको प्रश्न फेला परेन!');
+        return;
+      }
+
+      if (typeof supabaseClient === 'undefined') {
+        alert('डेटाबेस कनेक्सन फेला परेन!');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('reported_questions')
+        .insert([{ 
+          question_id: currentQ.id || currentQ.question_id || null, 
+          question_text: currentQ.question || currentQ.title || currentQ.text || 'Unknown Question', 
+          reason: reason,
+          status: 'Pending'
+        }]);
+
+      if (error) {
+        alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+      } else {
+        alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
+        window.closeGlobalReportModal();
+      }
+    }
+  });
 })();
