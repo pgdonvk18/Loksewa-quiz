@@ -12,21 +12,23 @@
     --option-text: #1e293b;
     --option-circle-bg: #f1f5f9;
     --option-circle-text: #475569;
+    --link-color: #2563eb;
 }
 
 [data-theme='dark'] {
-    --bg-color: #18191a;          /* Image ma jasto background (pura black haina) */
-    --text-color: #e4e6eb;        /* Clean light text */
+    --bg-color: #18191a;          /* Image jasto dark gray background */
+    --text-color: #ffffff !important;        /* Dark mode ma sabai text white */
     --card-bg: #242526;           /* Cards & Modals background */
     --card-border: #393a3b;       /* Card borders */
     --sub-bg: #1e1f20;            /* Inner boxes / sliders background */
     --button-secondary-bg: #3a3b3c;
-    --button-secondary-text: #e4e6eb;
+    --button-secondary-text: #ffffff;
     --option-bg: #242526;         /* Options cards background */
     --option-border: #393a3b;     /* Options borders */
-    --option-text: #e4e6eb;       /* Options text */
-    --option-circle-bg: #3a3b3c;  /* Options A, B, C, D circle background */
-    --option-circle-text: #e4e6eb;
+    --option-text: #ffffff !important;       /* Options text white */
+    --option-circle-bg: #3a3b3c;  /* Options circle background */
+    --option-circle-text: #ffffff;
+    --link-color: #60a5fa;        /* Light blue for dark mode links */
 }
 
 /* Global body transition */
@@ -43,8 +45,16 @@ body {
     color: var(--text-color) !important;
 }
 
-h1, h2, h3, h4, p, span, label {
+h1, h2, h3, h4, p, span, label, a {
     color: var(--text-color);
+}
+
+/* Specific text fix for blue elements in dark mode */
+[data-theme='dark'] #lb-title, 
+[data-theme='dark'] .topic-badge, 
+[data-theme='dark'] span[style*="color: #2563eb"],
+[data-theme='dark'] p[style*="color: #2563eb"] {
+    color: #ffffff !important;
 }
 
 /* Sliders and inner containers */
@@ -84,24 +94,71 @@ h1, h2, h3, h4, p, span, label {
     opacity: 0.9;
 }
 
-/* Floating Dark Mode Button Styling */
-.global-dark-mode-toggle {
+/* --- Professional Sliding Switch Toggle Style --- */
+.theme-switch-wrapper {
     position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 99999;
-    background-color: var(--card-bg);
-    color: var(--text-color);
-    border: 1.5px solid var(--card-border);
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-bg);
+    padding: 8px 12px;
     border-radius: 30px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border: 1px solid var(--card-border);
 }
 
-.global-dark-mode-toggle:hover {
-    transform: scale(1.05);
+.theme-switch-wrapper span {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider-toggle {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #cbd5e1;
+    transition: 0.4s;
+    border-radius: 24px;
+}
+
+.slider-toggle:before {
+    position: absolute;
+    content: "🌙";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+    font-size: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider-toggle {
+    background-color: #2563eb;
+}
+
+input:checked + .slider-toggle:before {
+    transform: translateX(24px);
+    content: "☀️";
 }
