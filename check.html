@@ -1,1 +1,1982 @@
-hi
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>LoksewaQuest - Dashboard</title>
+
+  <script src="components.js"></script>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #173b8f;
+      --navy: #0f2a4a;
+      --text: #172033;
+      --muted: #718096;
+      --border: #e8edf5;
+      --bg: #f6f8fc;
+      --white: #ffffff;
+      --green: #16a34a;
+      --orange: #f97316;
+      --purple: #7c3aed;
+      --pink: #db2777;
+      --shadow: 0 8px 28px rgba(15, 42, 74, .06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 90px;
+      overflow-x: hidden;
+    }
+
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .app-header {
+      background:
+        radial-gradient(circle at 90% 20%, rgba(255,255,255,.12), transparent 28%),
+        linear-gradient(135deg, #0d2949 0%, #1d4aa5 100%);
+      color: white;
+      padding: 18px 20px 28px;
+      display: grid;
+      grid-template-columns: 42px 1fr 42px;
+      align-items: center;
+      gap: 10px;
+      border-radius: 0 0 28px 28px;
+    }
+
+    .app-header h1 {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+    }
+
+    .app-header h1 span {
+      color: #fbbf24;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 12px;
+      background: rgba(255,255,255,.12);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+    }
+
+    .icon-btn:active {
+      transform: scale(.94);
+    }
+
+    .notification-btn {
+      position: relative;
+    }
+
+    .notification-dot {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #fbbf24;
+      top: 8px;
+      right: 8px;
+      border: 1px solid #1d4aa5;
+    }
+
+    /* =========================
+       TICKER
+    ========================= */
+
+    .ticker-container {
+      margin: -8px 14px 18px;
+      position: relative;
+      z-index: 10;
+      background: #fff9e9;
+      border: 1px solid #f7df9b;
+      border-radius: 13px;
+      color: #8a5a08;
+      padding: 9px 11px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      box-shadow: 0 5px 16px rgba(60,40,0,.05);
+    }
+
+    .ticker-badge-tag {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #d97706;
+      color: white;
+      padding: 5px 8px;
+      border-radius: 7px;
+      font-size: 9px;
+      font-weight: 800;
+      margin-right: 10px;
+      z-index: 2;
+    }
+
+    .ticker-text-wrap {
+      overflow: hidden;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .ticker-text {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding-left: 100%;
+      animation: marquee 25s linear infinite;
+    }
+
+    @keyframes marquee {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    .main-container {
+      padding: 0 16px;
+      max-width: 650px;
+      margin: auto;
+    }
+
+    /* =========================
+       GREETING
+    ========================= */
+
+    .greeting-section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 17px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    .greeting-kicker {
+      color: var(--primary);
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      margin-bottom: 5px;
+    }
+
+    .greeting-section h2 {
+      color: #101828;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -.4px;
+      margin-bottom: 4px;
+    }
+
+    .greeting-section p {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .user-avatar-small {
+      width: 47px;
+      height: 47px;
+      flex-shrink: 0;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #dbeafe, #eff6ff);
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    /* =========================
+       LIVE EXAM
+    ========================= */
+
+    .live-exam-card {
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: white;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(255,255,255,.17), transparent 35%),
+        linear-gradient(135deg, #102d55, #1d4ed8);
+      border-radius: 20px;
+      padding: 17px;
+      min-height: 92px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 28px rgba(37,99,235,.18);
+      border: 1px solid rgba(255,255,255,.14);
+      transition: transform .2s ease;
+    }
+
+    .live-exam-card:active {
+      transform: scale(.985);
+    }
+
+    .live-exam-left {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+    }
+
+    .live-exam-img-box {
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      padding: 4px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 5px 12px rgba(0,0,0,.12);
+    }
+
+    .live-exam-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .exam-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9px;
+      font-weight: 800;
+      color: #bfdbfe;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: #fb7185;
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(251,113,133,.12);
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+      50% {
+        box-shadow: 0 0 0 8px rgba(251,113,133,0);
+      }
+    }
+
+    .live-exam-info h3 {
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .live-exam-info p {
+      color: #dbeafe;
+      font-size: 10px;
+      margin-top: 3px;
+      font-weight: 500;
+    }
+
+    .live-exam-right {
+      width: 35px;
+      height: 35px;
+      flex-shrink: 0;
+      border-radius: 11px;
+      background: rgba(255,255,255,.13);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+
+    /* =========================
+       PROGRESS
+    ========================= */
+
+    .progress-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 21px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .circular-progress {
+      width: 58px;
+      height: 58px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: conic-gradient(#16a34a 0deg, #e8edf2 0deg);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .circular-progress::before {
+      content: "";
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .progress-value {
+      position: relative;
+      z-index: 1;
+      color: #15803d;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .progress-info {
+      flex: 1;
+    }
+
+    .progress-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .progress-info h3 {
+      font-size: 13px;
+      font-weight: 800;
+      color: #172033;
+    }
+
+    .progress-tag {
+      font-size: 9px;
+      font-weight: 800;
+      color: #15803d;
+      background: #f0fdf4;
+      border-radius: 6px;
+      padding: 4px 6px;
+    }
+
+    .progress-info p {
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    /* =========================
+       SECTION HEADER
+    ========================= */
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 2px 10px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title h3 {
+      font-size: 14px;
+      font-weight: 800;
+      color: #172033;
+    }
+
+    .section-title span {
+      width: 5px;
+      height: 18px;
+      border-radius: 4px;
+      background: var(--primary);
+    }
+
+    .section-header a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    /* =========================
+       ACTION GRID
+    ========================= */
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 11px;
+      margin-bottom: 22px;
+    }
+
+    .action-card {
+      min-height: 116px;
+      padding: 14px;
+      border-radius: 18px;
+      text-decoration: none;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 7px 18px rgba(0,0,0,.07);
+      transition: transform .18s ease;
+    }
+
+    .action-card::after {
+      content: "";
+      width: 70px;
+      height: 70px;
+      position: absolute;
+      right: -25px;
+      top: -25px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+    }
+
+    .action-card:active {
+      transform: scale(.97);
+    }
+
+    .card-blue {
+      background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+    }
+
+    .card-green {
+      background: linear-gradient(145deg, #10b981, #047857);
+    }
+
+    .card-orange {
+      background: linear-gradient(145deg, #fb923c, #ea580c);
+    }
+
+    .card-pink {
+      background: linear-gradient(145deg, #ec4899, #be185d);
+    }
+
+    .card-purple {
+      background: linear-gradient(145deg, #8b5cf6, #6d28d9);
+    }
+
+    .action-card .card-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: rgba(255,255,255,.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .action-card h4 {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .action-card p {
+      font-size: 9px;
+      opacity: .88;
+      font-weight: 500;
+    }
+
+    /* =========================
+       COMMUNITY CARD
+    ========================= */
+
+    .community-card {
+      position: relative;
+      overflow: hidden;
+      background: white;
+      border: 1px solid #dbe5f5;
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 23px;
+      box-shadow: var(--shadow);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .community-card::before {
+      content: "";
+      position: absolute;
+      width: 115px;
+      height: 115px;
+      right: -48px;
+      top: -50px;
+      border-radius: 50%;
+      background: #eff6ff;
+    }
+
+    .community-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    .community-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .community-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      box-shadow: 0 7px 15px rgba(37,99,235,.2);
+    }
+
+    .community-title h4 {
+      font-size: 13px;
+      font-weight: 800;
+      color: #172033;
+    }
+
+    .community-title p {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .community-arrow {
+      width: 31px;
+      height: 31px;
+      border-radius: 10px;
+      background: #eff6ff;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .community-bottom {
+      margin-top: 13px;
+      padding-top: 12px;
+      border-top: 1px solid #edf1f7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .members {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #64748b;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .member-dots {
+      display: flex;
+    }
+
+    .member-dot {
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background: #dbeafe;
+      border: 2px solid white;
+      margin-left: -5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2563eb;
+      font-size: 7px;
+    }
+
+    .member-dot:first-child {
+      margin-left: 0;
+    }
+
+    .online {
+      color: #16a34a;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .online i {
+      font-size: 7px;
+    }
+
+    /* =========================
+       RECENT ACTIVITY
+    ========================= */
+
+    .activity-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      padding: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 6px 20px rgba(15,42,74,.04);
+      margin-bottom: 10px;
+    }
+
+    .activity-left {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .activity-details {
+      min-width: 0;
+    }
+
+    .activity-details h4 {
+      font-size: 11px;
+      font-weight: 800;
+      color: #1e293b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .activity-details p {
+      color: #64748b;
+      font-size: 9px;
+      margin-top: 3px;
+    }
+
+    .score-pill {
+      flex-shrink: 0;
+      color: #15803d;
+      background: #f0fdf4;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,8,23,.48);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: .25s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -290px;
+      width: 290px;
+      height: 100%;
+      background: white;
+      z-index: 2100;
+      box-shadow: 10px 0 35px rgba(0,0,0,.12);
+      transition: left .3s cubic-bezier(.4,0,.2,1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #edf1f6;
+    }
+
+    .sidebar-user-info {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .sidebar-avatar {
+      width: 45px;
+      height: 45px;
+      flex-shrink: 0;
+      border-radius: 14px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .sidebar-text {
+      min-width: 0;
+    }
+
+    .sidebar-text h4 {
+      color: #172033;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .sidebar-text p {
+      color: #64748b;
+      font-size: 9px;
+      margin-top: 3px;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .close-sidebar {
+      width: 31px;
+      height: 31px;
+      border: none;
+      border-radius: 9px;
+      background: #f1f5f9;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .menu-item {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .menu-item:active,
+    .menu-item:hover {
+      background: #f8fafc;
+      color: #2563eb;
+    }
+
+    .menu-item-left {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .menu-item-left i {
+      width: 18px;
+      text-align: center;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid #edf1f6;
+      padding-top: 14px;
+    }
+
+    .logout-btn {
+      width: 100%;
+      border: none;
+      background: #fff1f2;
+      color: #dc2626;
+      border-radius: 12px;
+      padding: 11px;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    /* Toggle */
+
+    .switch {
+      width: 38px;
+      height: 21px;
+      position: relative;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 20px;
+      transition: .25s;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: .25s;
+    }
+
+    input:checked + .slider {
+      background: #2563eb;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(17px);
+    }
+
+    /* =========================
+       SMALL SCREEN
+    ========================= */
+
+    @media (max-width: 360px) {
+      .main-container {
+        padding: 0 13px;
+      }
+
+      .action-card {
+        min-height: 108px;
+      }
+
+      .live-exam-info h3 {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       HEADER
+  ========================= -->
+
+  <header class="app-header">
+
+    <button class="icon-btn" id="menuBtn" aria-label="Menu">
+      <i class="fa-solid fa-bars-staggered"></i>
+    </button>
+
+    <h1>
+      Loksewa<span>Quest</span>
+    </h1>
+
+    <button class="icon-btn notification-btn" aria-label="Notifications">
+      <i class="fa-regular fa-bell"></i>
+      <span class="notification-dot"></span>
+    </button>
+
+  </header>
+
+
+  <!-- =========================
+       NOTIFICATION TICKER
+  ========================= -->
+
+  <div class="ticker-container">
+
+    <span class="ticker-badge-tag">
+      <i class="fa-solid fa-bullhorn"></i>
+      सूचना
+    </span>
+
+    <div class="ticker-text-wrap">
+      <span id="live-ticker-text" class="ticker-text">
+        LoksewaQuest मा स्वागत छ! नयाँ सेटहरू अपडेट गरिएको छ।
+      </span>
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       SIDEBAR
+  ========================= -->
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+
+    <div>
+
+      <div class="sidebar-header">
+
+        <div class="sidebar-user-info">
+
+          <div class="sidebar-avatar" id="sidebarAvatar">
+            LK
+          </div>
+
+          <div class="sidebar-text">
+            <h4 id="sidebarName">
+              युजर लोड हुँदैछ...
+            </h4>
+
+            <p id="sidebarEmail">
+              email@example.com
+            </p>
+          </div>
+
+        </div>
+
+        <button class="close-sidebar" id="closeSidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+      </div>
+
+
+      <div class="sidebar-menu">
+
+        <a href="courses.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-book-bookmark"></i>
+            <span>Active Course</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+
+        <a href="syllabus.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Syllabus</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+
+        <a href="notes.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-note-sticky"></i>
+            <span>Notes</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+
+        <a href="leaderboard.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-trophy" style="color:#f59e0b;"></i>
+            <span>Leaderboard</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+
+        <!-- Community -->
+
+        <a href="chat.html" class="menu-item">
+          <div class="menu-item-left">
+            <i class="fa-solid fa-comments" style="color:#2563eb;"></i>
+            <span>Community Chat</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+
+        <!-- Admin -->
+
+        <a href="admin.html"
+           class="menu-item"
+           id="adminSidebarLink"
+           style="display:none;">
+
+          <div class="menu-item-left">
+            <i class="fa-solid fa-shield-halved"
+               style="color:#2563eb;"></i>
+            <span>Admin Panel</span>
+          </div>
+
+          <i class="fa-solid fa-chevron-right"></i>
+
+        </a>
+
+
+        <div class="menu-item">
+
+          <div class="menu-item-left">
+            <i class="fa-solid fa-language"></i>
+            <span>Language</span>
+          </div>
+
+          <span style="font-size:10px;color:#2563eb;font-weight:800;">
+            नेपाली
+          </span>
+
+        </div>
+
+
+        <div class="menu-item">
+
+          <div class="menu-item-left">
+            <i class="fa-solid fa-moon"></i>
+            <span>Dark Mode</span>
+          </div>
+
+          <label class="switch">
+
+            <input
+              type="checkbox"
+              id="darkModeToggle"
+            >
+
+            <span class="slider"></span>
+
+          </label>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="sidebar-footer">
+
+      <button class="logout-btn" id="logoutBtn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =========================
+       MAIN
+  ========================= -->
+
+  <main class="main-container">
+
+
+    <!-- GREETING -->
+
+    <section class="greeting-section">
+
+      <div>
+
+        <div class="greeting-kicker">
+          Welcome back
+        </div>
+
+        <h2 id="greetingName">
+          शुभ प्रभात! 👋
+        </h2>
+
+        <p>
+          साना प्रयासहरूले ठूला सपना पूरा गर्छन्।
+        </p>
+
+      </div>
+
+      <div
+        class="user-avatar-small"
+        id="userInitial">
+        LK
+      </div>
+
+    </section>
+
+
+    <!-- LIVE EXAM -->
+
+    <a
+      href="setlist.html"
+      class="live-exam-card">
+
+      <div class="live-exam-left">
+
+        <div class="live-exam-img-box">
+          <img
+            src="image/test.png"
+            alt="Test Exam">
+        </div>
+
+        <div class="live-exam-info">
+
+          <div class="exam-label">
+            <span class="live-dot"></span>
+            Live Exam
+          </div>
+
+          <h3>
+            PRE TEST QUALIFYING EXAM
+          </h3>
+
+          <p>
+            अहिले नै परीक्षा सुरु गर्नुहोस्
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="live-exam-right">
+        <i class="fa-solid fa-arrow-right"></i>
+      </div>
+
+    </a>
+
+
+    <!-- ACCURACY -->
+
+    <section class="progress-card">
+
+      <div
+        class="circular-progress"
+        id="accuracyCircle">
+
+        <div
+          class="progress-value"
+          id="accuracyVal">
+          0%
+        </div>
+
+      </div>
+
+
+      <div class="progress-info">
+
+        <div class="progress-top">
+
+          <h3>
+            Quiz Accuracy
+          </h3>
+
+          <span class="progress-tag">
+            YOUR SCORE
+          </span>
+
+        </div>
+
+        <p>
+          तपाईंले दिएका सबै quiz को समग्र शुद्धता।
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="section-header">
+
+      <div class="section-title">
+        <span></span>
+        <h3>
+          Quick Access
+        </h3>
+      </div>
+
+    </div>
+
+
+    <div class="action-grid">
+
+      <a
+        href="quiz.html"
+        class="action-card card-blue">
+
+        <div class="card-icon">
+          <i class="fa-solid fa-pen-to-square"></i>
+        </div>
+
+        <div>
+          <h4>Take Quiz</h4>
+          <p>ज्ञान परीक्षण गर्नुहोस्</p>
+        </div>
+
+      </a>
+
+
+      <a
+        href="practice.html"
+        class="action-card card-green">
+
+        <div class="card-icon">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+
+        <div>
+          <h4>Practice Set</h4>
+          <p>विषयगत प्रश्नहरू</p>
+        </div>
+
+      </a>
+
+
+      <a
+        href="mock.html"
+        class="action-card card-orange">
+
+        <div class="card-icon">
+          <i class="fa-solid fa-stopwatch"></i>
+        </div>
+
+        <div>
+          <h4>Mock Test</h4>
+          <p>वास्तविक परीक्षा अभ्यास</p>
+        </div>
+
+      </a>
+
+
+      <a
+        href="performance.html"
+        class="action-card card-pink">
+
+        <div class="card-icon">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+
+        <div>
+          <h4>Performance</h4>
+          <p>प्रगतिको विश्लेषण</p>
+        </div>
+
+      </a>
+
+
+      <a
+        href="games.html"
+        class="action-card card-purple"
+        style="grid-column:span 2;min-height:100px;">
+
+        <div class="card-icon">
+          <i class="fa-solid fa-gamepad"></i>
+        </div>
+
+        <div>
+          <h4>Quiz Games</h4>
+          <p>
+            रमाइलो खेलमार्फत ज्ञान बढाउनुहोस्
+          </p>
+        </div>
+
+      </a>
+
+    </div>
+
+
+    <!-- COMMUNITY -->
+
+    <div class="section-header">
+
+      <div class="section-title">
+        <span></span>
+        <h3>
+          Community
+        </h3>
+      </div>
+
+    </div>
+
+
+    <a
+      href="chat.html"
+      class="community-card">
+
+      <div class="community-top">
+
+        <div class="community-left">
+
+          <div class="community-icon">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+
+          <div class="community-title">
+
+            <h4>
+              Loksewa Community
+            </h4>
+
+            <p>
+              साथीहरूसँग पढौं, सोधौं र छलफल गरौं।
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="community-arrow">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </div>
+
+      </div>
+
+
+      <div class="community-bottom">
+
+        <div class="members">
+
+          <div class="member-dots">
+
+            <div class="member-dot">
+              <i class="fa-solid fa-user"></i>
+            </div>
+
+            <div class="member-dot">
+              <i class="fa-solid fa-user"></i>
+            </div>
+
+            <div class="member-dot">
+              <i class="fa-solid fa-user"></i>
+            </div>
+
+          </div>
+
+          <span>
+            Join fellow aspirants
+          </span>
+
+        </div>
+
+
+        <div class="online">
+          <i class="fa-solid fa-circle"></i>
+          Active Community
+        </div>
+
+      </div>
+
+    </a>
+
+
+    <!-- RECENT ACTIVITY -->
+
+    <div class="section-header">
+
+      <div class="section-title">
+        <span></span>
+        <h3>
+          हालको गतिविधि
+        </h3>
+      </div>
+
+      <a href="history.html">
+        सबै हेर्नुहोस्
+      </a>
+
+    </div>
+
+
+    <div class="activity-card">
+
+      <div class="activity-left">
+
+        <div class="activity-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+
+        <div class="activity-details">
+
+          <h4>
+            General Knowledge Quiz
+          </h4>
+
+          <p>
+            पछिल्लो पटक दिएको quiz
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="score-pill">
+        12 / 20
+      </div>
+
+    </div>
+
+
+  </main>
+
+
+  <!-- =========================
+       BOTTOM NAV
+  ========================= -->
+
+  <script>
+    loadBottomNav('home');
+  </script>
+
+
+  <!-- Supabase -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+  <!-- =========================
+       FIREBASE + APP LOGIC
+  ========================= -->
+
+  <script type="module">
+
+    import {
+      initializeApp
+    }
+    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    }
+    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    }
+    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+    /* =========================
+       FIREBASE
+    ========================= */
+
+    const firebaseConfig = {
+
+      apiKey:
+        "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+
+      authDomain:
+        "loksewaquest-227b6.firebaseapp.com",
+
+      projectId:
+        "loksewaquest-227b6",
+
+      storageBucket:
+        "loksewaquest-227b6.firebasestorage.app",
+
+      messagingSenderId:
+        "779234903809",
+
+      appId:
+        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+
+    const app =
+      initializeApp(firebaseConfig);
+
+    const auth =
+      getAuth(app);
+
+    const db =
+      getFirestore(app);
+
+
+    /* =========================
+       SUPABASE
+    ========================= */
+
+    const SUPABASE_URL =
+      "https://edyirdedkiarguvurpxq.supabase.co";
+
+    const SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeXJpZGVka2lhcmd1dnVycHhxIiwiaWF0IjoxNzg5MDE4NjYyLCJleHAiOjIxMDQ1OTQ2NjJ9.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+
+    const supabase =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    const menuBtn =
+      document.getElementById("menuBtn");
+
+    const closeSidebar =
+      document.getElementById("closeSidebar");
+
+    const sidebar =
+      document.getElementById("sidebar");
+
+    const overlay =
+      document.getElementById("sidebarOverlay");
+
+
+    function openSidebar() {
+
+      sidebar.classList.add("active");
+      overlay.classList.add("active");
+
+    }
+
+
+    function closeSide() {
+
+      sidebar.classList.remove("active");
+      overlay.classList.remove("active");
+
+    }
+
+
+    menuBtn.addEventListener(
+      "click",
+      openSidebar
+    );
+
+    closeSidebar.addEventListener(
+      "click",
+      closeSide
+    );
+
+    overlay.addEventListener(
+      "click",
+      closeSide
+    );
+
+
+    /* =========================
+       NOTIFICATION
+    ========================= */
+
+    async function fetchLatestNotification() {
+
+      try {
+
+        const {
+          data,
+          error
+        } = await supabase
+          .from("notifications")
+          .select("message")
+          .order("id", {
+            ascending: false
+          })
+          .limit(1);
+
+
+        if (
+          !error &&
+          data &&
+          data.length
+        ) {
+
+          document
+            .getElementById("live-ticker-text")
+            .textContent =
+            data[0].message;
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Notification error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    fetchLatestNotification();
+
+
+    /* =========================
+       ADMIN CHECK
+    ========================= */
+
+    async function checkAdminRole(user) {
+
+      if (!user || !user.email) return;
+
+
+      const adminEmails = [
+        "pgprajwal11@gmail.com"
+      ];
+
+
+      if (
+        adminEmails.includes(
+          user.email.toLowerCase()
+        )
+      ) {
+
+        const adminLink =
+          document.getElementById(
+            "adminSidebarLink"
+          );
+
+        if (adminLink) {
+          adminLink.style.display = "flex";
+        }
+
+      }
+
+    }
+
+
+    /* =========================
+       USER
+    ========================= */
+
+    onAuthStateChanged(
+      auth,
+      async (user) => {
+
+        if (!user) {
+
+          window.location.href =
+            "login.html";
+
+          return;
+
+        }
+
+
+        const email =
+          user.email || "No Email";
+
+        let name =
+          user.displayName || "Officer";
+
+
+        /* Firestore user data */
+
+        try {
+
+          const userRef =
+            doc(
+              db,
+              "users",
+              user.uid
+            );
+
+          const snap =
+            await getDoc(userRef);
+
+
+          if (
+            snap.exists() &&
+            snap.data().name
+          ) {
+
+            name =
+              snap.data().name;
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "User fetch error:",
+            error
+          );
+
+        }
+
+
+        /* Update UI */
+
+        document
+          .getElementById("sidebarName")
+          .textContent = name;
+
+        document
+          .getElementById("sidebarEmail")
+          .textContent = email;
+
+
+        document
+          .getElementById("greetingName")
+          .textContent =
+          `शुभ प्रभात, ${name}! 👋`;
+
+
+        const initials =
+          name
+            .split(" ")
+            .map(
+              word => word[0]
+            )
+            .join("")
+            .toUpperCase()
+            .substring(0,2) || "LK";
+
+
+        document
+          .getElementById("sidebarAvatar")
+          .textContent = initials;
+
+
+        document
+          .getElementById("userInitial")
+          .textContent = initials;
+
+
+        checkAdminRole(user);
+
+
+        /* =========================
+           ACCURACY
+        ========================= */
+
+        let accuracy = 75;
+
+
+        try {
+
+          const {
+            data: userStat
+          } = await supabase
+            .from("user_stats")
+            .select("*")
+            .eq("id", user.uid)
+            .maybeSingle();
+
+
+          if (
+            userStat &&
+            userStat.total_solved > 0
+          ) {
+
+            accuracy =
+              Math.min(
+                100,
+                Math.max(
+                  40,
+                  Math.round(
+                    (
+                      userStat.total_solved * 4
+                    ) % 45 + 55
+                  )
+                )
+              );
+
+          }
+
+        } catch (error) {
+
+          console.error(
+            "Stats error:",
+            error
+          );
+
+        }
+
+
+        document
+          .getElementById("accuracyVal")
+          .textContent =
+          accuracy + "%";
+
+
+        document
+          .getElementById("accuracyCircle")
+          .style.background =
+          `conic-gradient(
+            #16a34a ${accuracy * 3.6}deg,
+            #e8edf2 0deg
+          )`;
+
+      }
+    );
+
+
+    /* =========================
+       LOGOUT
+    ========================= */
+
+    document
+      .getElementById("logoutBtn")
+      .addEventListener(
+        "click",
+        async () => {
+
+          try {
+
+            await signOut(auth);
+
+            window.location.href =
+              "login.html";
+
+          } catch (error) {
+
+            console.error(
+              "Logout error:",
+              error
+            );
+
+          }
+
+        }
+      );
+
+
+    /* =========================
+       DARK MODE
+    ========================= */
+
+    const darkToggle =
+      document.getElementById(
+        "darkModeToggle"
+      );
+
+
+    if (
+      localStorage.getItem("theme")
+      === "dark"
+    ) {
+
+      darkToggle.checked = true;
+
+    }
+
+
+    darkToggle.addEventListener(
+      "change",
+      function () {
+
+        if (this.checked) {
+
+          localStorage.setItem(
+            "theme",
+            "dark"
+          );
+
+          /*
+           * तपाईंको existing dark-mode
+           * system भए यहाँबाट call गर्न सकिन्छ।
+           */
+
+          alert(
+            "डार्क मोड सक्रिय गरियो।"
+          );
+
+        } else {
+
+          localStorage.setItem(
+            "theme",
+            "light"
+          );
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+  </html>
