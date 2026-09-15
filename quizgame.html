@@ -24,9 +24,13 @@
 
     .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
 
-    .waiting-box { text-align: center; padding: 40px 20px; }
+    .waiting-box { text-align: center; padding: 30px 20px; }
     .waiting-box h3 { font-size: 20px; font-weight: 800; color: #0f2a4a; margin-bottom: 8px; }
-    .waiting-box p { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+    .waiting-box p { font-size: 13px; color: #64748b; margin-bottom: 15px; }
+    
+    /* Room Expiry Timer Box inside Lobby */
+    .room-expiry-box { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 700; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px; }
+
     .players-list { display: flex; flex-direction: column; gap: 8px; max-width: 300px; margin: 0 auto 20px auto; text-align: left; }
     .player-item { background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; }
 
@@ -39,9 +43,9 @@
     .btn-skip { background: #64748b; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; }
     .btn-skip:hover { background: #475569; }
 
-    /* Review Box Styling */
-    .review-container { margin-top: 15px; text-align: left; max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; background: #f8fafc; }
-    .review-item { font-size: 12px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px dashed #cbd5e1; }
+    /* Review Detailed Box Styling */
+    .review-container { margin-top: 15px; text-align: left; max-height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; background: #f8fafc; }
+    .review-item { font-size: 12px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed #cbd5e1; line-height: 1.4; }
 
     /* Custom Attractive Popup Modal */
     .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 42, 74, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
@@ -206,7 +210,7 @@
       const roomRef = doc(db, "quiz_rooms", roomId);
       onSnapshot(roomRef, async (docSnap) => {
         if (!docSnap.exists()) {
-          showCustomModal("रुम बन्द भयो", "यो रुम हटाइएको वा समाप्त भएको छ।", "⚠️", "लबीमा जानुहोस्", () => {
+          showCustomModal("रुम बन्द भयो", "यो रुम हटाइएको वा समय समाप्त भएको छ।", "⚠️", "लबीमा जानुहोस्", () => {
             window.location.href = "quizlobby.html";
           });
           return;
@@ -237,6 +241,9 @@
           <div class="card waiting-box">
             <h3>🎮 खेल सुरु हुन प्रतीक्षारत छ...</h3>
             <p>कोड: <b>${room.roomId}</b> | जम्मा राउन्ड: <b>${totalRounds}</b></p>
+            <div class="room-expiry-box" id="roomExpiryDisplay">
+              <i class="fa-regular fa-clock"></i> रुम स्वतः बन्द हुन बाँकी: <span id="lobbyTimerText" style="margin-left: 4px;"> गणना हुँदैछ...</span>
+            </div>
             <div class="players-list">${playersHtml}</div>
             ${isHost ? `<button class="btn-main" id="startBtn">खेल सुरु गर्नुहोस्</button>` : `<p style="font-size:12px; color:#64748b;">होस्टले गेम सुरु नगरेसम्म पर्खनुहोस्...</p>`}
           </div>
@@ -295,12 +302,14 @@
           </div>
         `).join('');
 
-        // Review section history generated
+        // Detailed review section showing who gave which answer
         let reviewHistory = room.history || [];
         let reviewHtml = reviewHistory.map((h, i) => `
           <div class="review-item">
             <b>प्र. ${i+1}: ${escapeHTML(h.questionText)}</b><br>
-            <span style="color: #2563eb;">सही उत्तर: ${escapeHTML(h.correctAnswer)}</span>
+            <span style="color: #475569;">उत्तर दिने खेलाडी: <b>${escapeHTML(h.playerName)}</b></span> | 
+            <span style="color: ${h.isCorrect ? '#16a34a' : '#dc2626'}; font-weight:700;">छनोट: ${escapeHTML(h.selectedAnswer || 'स्कিপ')}</span><br>
+            <span style="color: #2563eb; font-weight: 600;">सही उत्तर: ${escapeHTML(h.correctAnswer)}</span>
           </div>
         `).join('') || '<div style="font-size:12px; color:#64748b; text-align:center;">समीक्षा डाटा उपलब्ध छैन।</div>';
 
@@ -310,7 +319,7 @@
             <p>तपाईँको स्थान: <b>#${myRank}</b></p>
             <div class="players-list">${rankHtml}</div>
             
-            <p style="font-weight: 700; margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #0f2a4a; text-align: left;">📝 प्रश्न समीक्षा (Question Review):</p>
+            <p style="font-weight: 700; margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #0f2a4a; text-align: left;">📝 विस्तृत उत्तर समीक्षा (Answer Review):</p>
             <div class="review-container">${reviewHtml}</div>
 
             <button class="btn-main" style="margin-top: 15px;" onclick="window.location.href='quizlobby.html'">लबीमा फर्कनुहोस्</button>
@@ -321,7 +330,6 @@
 
     function triggerFireworks(isWinner) {
       if (isWinner) {
-        // Grand victory fireworks
         var duration = 3 * 1000;
         var animationEnd = Date.now() + duration;
         var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
@@ -340,7 +348,6 @@
           confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
         }, 250);
       } else {
-        // Mild confetti celebration for finishing
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       }
     }
@@ -354,6 +361,7 @@
       roomExpiryTimerInterval = setInterval(async () => {
         const now = Date.now();
         const timeLeft = expiryTime - now;
+        const timerTextEl = document.getElementById('lobbyTimerText');
 
         if (timeLeft <= 0) {
           clearInterval(roomExpiryTimerInterval);
@@ -364,6 +372,12 @@
             window.location.href = "quizlobby.html";
           });
           return;
+        }
+
+        if (timerTextEl) {
+          let mins = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+          let secs = Math.floor((timeLeft % (1000 * 60)) / 1000);
+          timerTextEl.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
       }, 1000);
     }
@@ -400,13 +414,16 @@
       let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
       let history = roomDataGlobal.history || [];
 
+      let timedOutPlayerName = players[currentIndex].name;
       players[currentIndex].score -= 1; // Timeout penalty
 
       if (passAttempt >= players.length) {
-        // Save current question into history before moving next
         history.push({
           questionText: roomDataGlobal.currentQuestion.text,
-          correctAnswer: roomDataGlobal.currentQuestion.correctAnswer
+          correctAnswer: roomDataGlobal.currentQuestion.correctAnswer,
+          playerName: timedOutPlayerName + ' (समय समाप्त)',
+          selectedAnswer: 'उत्तर दिएन',
+          isCorrect: false
         });
 
         if (currentQCount >= totalRounds) {
@@ -521,7 +538,9 @@
       let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
       let history = roomDataGlobal.history || [];
 
+      let currentPlayerName = players[currentIndex].name;
       let isCorrect = false;
+
       if (!isSkipped) {
         isCorrect = (selectedOpt === currentQ.correctAnswer);
         if (isCorrect) {
@@ -534,10 +553,13 @@
       let isRoundOver = isCorrect || (passAttempt >= players.length);
 
       if (isRoundOver) {
-        // Record current question and answer in history
+        // Log to history who gave the answer
         history.push({
           questionText: currentQ.text,
-          correctAnswer: currentQ.correctAnswer
+          correctAnswer: currentQ.correctAnswer,
+          playerName: currentPlayerName,
+          selectedAnswer: isSkipped ? 'स्कিপ गरियो' : selectedOpt,
+          isCorrect: isCorrect
         });
 
         if (currentQCount >= totalRounds) {
@@ -571,12 +593,22 @@
         return;
 
       } else {
+        // If wrong answer, record the failed attempt and pass to next player
+        history.push({
+          questionText: currentQ.text,
+          correctAnswer: currentQ.correctAnswer,
+          playerName: currentPlayerName,
+          selectedAnswer: isSkipped ? 'स्किप गरियो' : selectedOpt,
+          isCorrect: false
+        });
+
         let nextTurnIndex = (currentIndex + 1) % players.length;
         let modalMsg = isSkipped ? "स्किप गरियो!" : "गलत उत्तर! ❌ (-२ अंक)";
         
         showCustomModal(modalMsg, `उत्तर मिलेन! यो प्रश्न अब अर्को खेलाडीलाई पास हुँदैछ।`, "🔄", "अर्को पालोमा जानुहोस्", async () => {
           await updateDoc(roomRef, {
             players: players,
+            history: history,
             currentTurnIndex: nextTurnIndex,
             passAttempt: passAttempt
           });
