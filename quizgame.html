@@ -6,6 +6,8 @@
   <title>LoksewaQuest - Live Quiz Game</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Canvas Confetti for Fireworks/Celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body { background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
@@ -36,6 +38,10 @@
     .action-row { display: flex; gap: 10px; margin-top: 12px; }
     .btn-skip { background: #64748b; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; }
     .btn-skip:hover { background: #475569; }
+
+    /* Review Box Styling */
+    .review-container { margin-top: 15px; text-align: left; max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; background: #f8fafc; }
+    .review-item { font-size: 12px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px dashed #cbd5e1; }
 
     /* Custom Attractive Popup Modal */
     .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 42, 74, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
@@ -274,7 +280,14 @@
       else if (room.status === 'finished') {
         if (questionTimerInterval) clearInterval(questionTimerInterval);
         scoreInfo.style.display = 'none';
+        
         let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
+        let myRank = sortedPlayers.findIndex(p => p.uid === currentUser.uid) + 1;
+        let isWinner = (myRank === 1);
+
+        // Trigger Fireworks effect on finish
+        triggerFireworks(isWinner);
+
         let rankHtml = sortedPlayers.map((p, index) => `
           <div class="player-item" style="background: ${index === 0 ? '#dcfce7' : '#f8fafc'};">
             <span>#${index+1} ${escapeHTML(p.name)}</span>
@@ -282,14 +295,53 @@
           </div>
         `).join('');
 
+        // Review section history generated
+        let reviewHistory = room.history || [];
+        let reviewHtml = reviewHistory.map((h, i) => `
+          <div class="review-item">
+            <b>प्र. ${i+1}: ${escapeHTML(h.questionText)}</b><br>
+            <span style="color: #2563eb;">सही उत्तर: ${escapeHTML(h.correctAnswer)}</span>
+          </div>
+        `).join('') || '<div style="font-size:12px; color:#64748b; text-align:center;">समीक्षा डाटा उपलब्ध छैन।</div>';
+
         gameBody.innerHTML = `
-          <div class="card waiting-box">
-            <h3>🏆 खेल समाप्त भयो!</h3>
-            <p>अन्तिम नतिजा र लिडरबोर्ड:</p>
+          <div class="card waiting-box" style="padding: 20px;">
+            <h3>${isWinner ? '🎉 बधाई छ! तपाईँले जित्नुभयो!' : '👏 राम्रो प्रयास! खेल समाप्त भयो।'}</h3>
+            <p>तपाईँको स्थान: <b>#${myRank}</b></p>
             <div class="players-list">${rankHtml}</div>
-            <button class="btn-main" onclick="window.location.href='quizlobby.html'">लबीमा फर्कनुहोस्</button>
+            
+            <p style="font-weight: 700; margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #0f2a4a; text-align: left;">📝 प्रश्न समीक्षा (Question Review):</p>
+            <div class="review-container">${reviewHtml}</div>
+
+            <button class="btn-main" style="margin-top: 15px;" onclick="window.location.href='quizlobby.html'">लबीमा फर्कनुहोस्</button>
           </div>
         `;
+      }
+    }
+
+    function triggerFireworks(isWinner) {
+      if (isWinner) {
+        // Grand victory fireworks
+        var duration = 3 * 1000;
+        var animationEnd = Date.now() + duration;
+        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+        function randomInRange(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+
+        var interval = setInterval(function() {
+          var timeLeft = animationEnd - Date.now();
+          if (timeLeft <= 0) {
+            return clearInterval(interval);
+          }
+          var particleCount = 50 * (timeLeft / duration);
+          confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+          confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+        }, 250);
+      } else {
+        // Mild confetti celebration for finishing
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       }
     }
 
@@ -346,24 +398,30 @@
       let totalRounds = roomDataGlobal.settings?.totalRounds || 5;
       let currentQCount = roomDataGlobal.questionCount || 1;
       let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
+      let history = roomDataGlobal.history || [];
 
       players[currentIndex].score -= 1; // Timeout penalty
 
-      // यदि यो प्रश्न सबै खेलाडीले हेरिसके भने (वा गलत/स्किप गरेर राउन्डको अन्त्यमा पुगे)
       if (passAttempt >= players.length) {
+        // Save current question into history before moving next
+        history.push({
+          questionText: roomDataGlobal.currentQuestion.text,
+          correctAnswer: roomDataGlobal.currentQuestion.correctAnswer
+        });
+
         if (currentQCount >= totalRounds) {
-          await updateDoc(roomRef, { players: players, status: "finished" });
+          await updateDoc(roomRef, { players: players, history: history, status: "finished" });
           return;
         }
         let nextQuestion = await fetchRandomQuestion(askedIds);
         if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
 
-        // **नयाँ राउन्ड अर्को खेलाडीबाट सुरु हुन्छ (Index परिवर्तन)**
         let nextRoundStarterIndex = (roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0);
         nextRoundStarterIndex = (nextRoundStarterIndex + 1) % players.length;
 
         await updateDoc(roomRef, {
           players: players,
+          history: history,
           currentTurnIndex: nextRoundStarterIndex,
           roundStarterIndex: nextRoundStarterIndex,
           questionCount: currentQCount + 1,
@@ -372,7 +430,6 @@
           askedQuestionIds: askedIds
         });
       } else {
-        // **पहिलोले मिलाएन भने, यही प्रश्न अर्को खेलाडीलाई पास हुन्छ**
         await updateDoc(roomRef, {
           players: players,
           currentTurnIndex: (currentIndex + 1) % players.length,
@@ -437,12 +494,13 @@
         await updateDoc(roomRef, {
           status: "playing",
           currentTurnIndex: 0,
-          roundStarterIndex: 0, // राउन्ड १ को पहिलो खेलाडी
+          roundStarterIndex: 0,
           questionCount: 1,
           passAttempt: 0,
           players: initialPlayers,
           currentQuestion: firstQ,
-          askedQuestionIds: [firstQ.id]
+          askedQuestionIds: [firstQ.id],
+          history: []
         });
       } catch (e) {
         showCustomModal("त्रुटि", "खेल सुरु गर्न सकिएन।", "❌");
@@ -461,6 +519,7 @@
       let totalRounds = roomDataGlobal.settings?.totalRounds || 5;
       let currentQCount = roomDataGlobal.questionCount || 1;
       let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
+      let history = roomDataGlobal.history || [];
 
       let isCorrect = false;
       if (!isSkipped) {
@@ -472,15 +531,18 @@
         }
       }
 
-      // **यदि पहिलो खेलाडीले सहि उत्तर दियो भने, यो प्रश्नको पालो त्यहीं अन्त्य हुन्छ (Round Ends)**
-      // वा यदि सबै खेलाडीले प्रयास गरेर सकियो (passAttempt >= players.length) भने पनि राउन्ड अन्त्य हुन्छ।
       let isRoundOver = isCorrect || (passAttempt >= players.length);
 
       if (isRoundOver) {
-        // यदि जम्मा राउन्ड पूरा भयो भने खेल समाप्त गर्ने
+        // Record current question and answer in history
+        history.push({
+          questionText: currentQ.text,
+          correctAnswer: currentQ.correctAnswer
+        });
+
         if (currentQCount >= totalRounds) {
           showCustomModal("खेल समाप्त! 🏆", "सबै राउन्डहरू पूरा भए। अब नतिजा हेर्नुहोस्।", "🏁", "नतिजा हेर्नुहोस्", async () => {
-            await updateDoc(roomRef, { players: players, status: "finished" });
+            await updateDoc(roomRef, { players: players, history: history, status: "finished" });
           });
           return;
         }
@@ -488,7 +550,6 @@
         let nextQuestion = await fetchRandomQuestion(askedIds);
         if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
 
-        // **अर्को राउन्ड अर्को खेलाडीबाट सुरु हुन्छ (Round 2 starts from next player)**
         let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
         let nextRoundStarterIndex = (currentStarter + 1) % players.length;
 
@@ -498,6 +559,7 @@
         showCustomModal(modalMsg, `राउन्ड ${currentQCount} समाप्त भयो! अब राउन्ड ${currentQCount + 1} **${players[nextRoundStarterIndex].name}** बाट नयाँ प्रश्नसहित सुरु हुँदैछ!`, "➡️", "अर्को राउन्डमा जानुहोस्", async () => {
           await updateDoc(roomRef, {
             players: players,
+            history: history,
             currentTurnIndex: nextRoundStarterIndex,
             roundStarterIndex: nextRoundStarterIndex,
             questionCount: currentQCount + 1,
@@ -509,7 +571,6 @@
         return;
 
       } else {
-        // **पहिलोले मिलाएन (गलत वा स्किप गर्यो) भने, यही प्रश्न अर्को खेलाडीलाई पास हुन्छ**
         let nextTurnIndex = (currentIndex + 1) % players.length;
         let modalMsg = isSkipped ? "स्किप गरियो!" : "गलत उत्तर! ❌ (-२ अंक)";
         
@@ -568,13 +629,6 @@
         createdAt: serverTimestamp()
       });
     });
-
-    function_escapeHTML = function(str) {
-      if (!str) return '';
-      return str.replace(/[&<>'"]/g, tag => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-      }[tag] || tag));
-    }
 
     function escapeHTML(str) {
       if (!str) return '';
