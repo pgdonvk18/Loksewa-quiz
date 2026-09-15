@@ -17,7 +17,8 @@
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
     .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; }
 
-    .scoreboard-hidden { background: white; padding: 12px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #64748b; border: 1px solid #e2e8f0; }
+    .scoreboard-hidden { background: white; padding: 12px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #64748b; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+    .timer-badge { background: #fee2e2; color: #dc2626; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; }
 
     .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
 
@@ -36,7 +37,18 @@
     .btn-skip { background: #64748b; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; }
     .btn-skip:hover { background: #475569; }
 
-    /* Fixed Chat Drawer Layout */
+    /* Custom Attractive Popup Modal */
+    .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 42, 74, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .custom-modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .custom-modal { background: white; width: 90%; max-width: 350px; border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: scale(0.9); transition: transform 0.3s ease; }
+    .custom-modal-overlay.active .custom-modal { transform: scale(1); }
+    .modal-icon { font-size: 48px; margin-bottom: 12px; }
+    .modal-title { font-size: 18px; font-weight: 800; color: #0f2a4a; margin-bottom: 8px; }
+    .modal-desc { font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.4; }
+    .modal-btn { background: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; }
+    .modal-btn:hover { background: #1d4ed8; }
+
+    /* Chat Drawer */
     .chat-drawer { position: absolute; right: -320px; top: 0; width: 300px; height: 100%; background: white; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: right 0.3s ease; z-index: 100; box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
     .chat-drawer.open { right: 0; }
     .chat-header-bar { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
@@ -72,8 +84,9 @@
   <div class="game-layout">
     <div class="main-content">
       
-      <div class="scoreboard-hidden" id="scoreboardInfo">
-        🤫 खेल जारी छ — लिडरबोर्ड र स्कोर खेल समाप्त भएपछि मात्र देखिनेछ!
+      <div class="scoreboard-hidden" id="scoreboardInfo" style="display:none;">
+        <span>🤫 खेल जारी छ — लिडरबोर्ड अन्त्यमा मात्र!</span>
+        <span class="timer-badge" id="questionTimerDisplay">⏳ 15s</span>
       </div>
 
       <div id="gameBody"></div>
@@ -96,11 +109,21 @@
     </div>
   </div>
 
+  <!-- Custom Attractive Modal Popup -->
+  <div class="custom-modal-overlay" id="customModalOverlay">
+    <div class="custom-modal">
+      <div class="modal-icon" id="modalIcon">🎉</div>
+      <div class="modal-title" id="modalTitle">सुचना</div>
+      <div class="modal-desc" id="modalDesc">विवरण यहाँ आउनेछ...</div>
+      <button class="modal-btn" id="modalActionBtn" onclick="closeCustomModal()">हुन्छ (OK)</button>
+    </div>
+  </div>
+
   <!-- Firebase & Supabase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, onSnapshot, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, onSnapshot, collection, addDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -131,6 +154,31 @@
     let currentUser = null;
     let currentUserName = "Aspirant";
     let roomDataGlobal = null;
+    let roomExpiryTimerInterval = null;
+    let questionTimerInterval = null;
+    let isTimerRunning = false;
+
+    // Custom Modal Function
+    window.showCustomModal = function(title, desc, icon = "🎉", btnText = "हुन्छ (OK)", callback = null) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalDesc').innerText = desc;
+      document.getElementById('modalIcon').innerText = icon;
+      document.getElementById('modalActionBtn').innerText = btnText;
+      
+      const overlay = document.getElementById('customModalOverlay');
+      overlay.classList.add('active');
+
+      window.modalCallback = callback;
+    }
+
+    window.closeCustomModal = function() {
+      const overlay = document.getElementById('customModalOverlay');
+      overlay.classList.remove('active');
+      if (window.modalCallback) {
+        window.modalCallback();
+        window.modalCallback = null;
+      }
+    }
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -152,10 +200,11 @@
 
     function initGameListener() {
       const roomRef = doc(db, "quiz_rooms", roomId);
-      onSnapshot(roomRef, (docSnap) => {
+      onSnapshot(roomRef, async (docSnap) => {
         if (!docSnap.exists()) {
-          alert("रुम बन्द भयो!");
-          window.location.href = "quizlobby.html";
+          showCustomModal("रुम बन्द भयो", "यो रुम हटाइएको वा समाप्त भएको छ।", "⚠️", "लबीमा जानुहोस्", () => {
+            window.location.href = "quizlobby.html";
+          });
           return;
         }
 
@@ -170,24 +219,36 @@
 
       if (room.status === 'waiting') {
         scoreInfo.style.display = 'none';
+        if (questionTimerInterval) clearInterval(questionTimerInterval);
+
+        // Check 2 minute room expiry based on createdAt
+        if (room.createdAt && !roomExpiryTimerInterval) {
+          startRoomExpiryCountdown(room.createdAt);
+        }
+
         let playersHtml = room.players.map(p => `<div class="player-item"><span>${escapeHTML(p.name)}</span> <span>${p.uid === room.hostId ? 'Host' : 'Ready'}</span></div>`).join('');
         let isHost = (currentUser.uid === room.hostId);
 
         gameBody.innerHTML = `
           <div class="card waiting-box">
             <h3>🎮 खेल सुरु हुन प्रतीक्षारत छ...</h3>
-            <p>साथीहरू जोइन हुँदैछन्। कोड: <b>${room.roomId}</b></p>
+            <p>कोड: <b>${room.roomId}</b> | रुम समाप्त हुन बाँकी समय: <span id="roomExpiryTimer" style="color:#dc2626; font-weight:700;">02:00</span></p>
             <div class="players-list">${playersHtml}</div>
             ${isHost ? `<button class="btn-main" id="startBtn">खेल सुरु गर्नुहोस्</button>` : `<p style="font-size:12px; color:#64748b;">होस्टले गेम सुरु नगरेसम्म पर्खनुहोस्...</p>`}
           </div>
         `;
 
         if (isHost) {
-          document.getElementById('startBtn').addEventListener('click', startGameSession);
+          const startBtn = document.getElementById('startBtn');
+          if (startBtn) {
+            startBtn.onclick = startGameSession;
+          }
         }
       } 
       else if (room.status === 'playing') {
-        scoreInfo.style.display = 'block';
+        if (roomExpiryTimerInterval) clearInterval(roomExpiryTimerInterval);
+        scoreInfo.style.display = 'flex';
+        
         let currentTurnPlayer = room.players[room.currentTurnIndex];
         let isMyTurn = (currentTurnPlayer.uid === currentUser.uid);
         let q = room.currentQuestion;
@@ -195,8 +256,8 @@
         gameBody.innerHTML = `
           <div class="card question-box">
             <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px;">
-              <span>प्रश्न संख्या: ${room.questionCount || 1}</span>
-              <span>पालो: <b style="color: ${isMyTrustColor(isMyTurn)}">${isMyTurn ? 'तपाईँको पालो!' : currentTurnPlayer.name + ' को पालो'}</b></span>
+              <span>प्रश्न संख्या: ${room.questionCount || 1} / 5</span>
+              <span>पालो: <b style="color: ${isMyTurn ? '#2563eb' : '#0f2a4a'}">${isMyTurn ? 'तपाईँको पालो!' : currentTurnPlayer.name + ' को पालो'}</b></span>
             </div>
             <h4>${escapeHTML(q.text)}</h4>
             <div class="options-grid" id="optionsGrid">
@@ -209,8 +270,12 @@
             ` : `<p style="text-align: center; font-size: 11px; color: #94a3b8; margin-top: 12px;">अहिले ${escapeHTML(currentTurnPlayer.name)} ले उत्तर दिँदै छन्...</p>`}
           </div>
         `;
+
+        // Start 15 seconds timer for current turn
+        startQuestionTimer(isMyTurn);
       }
       else if (room.status === 'finished') {
+        if (questionTimerInterval) clearInterval(questionTimerInterval);
         scoreInfo.style.display = 'none';
         let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
         let rankHtml = sortedPlayers.map((p, index) => `
@@ -231,53 +296,122 @@
       }
     }
 
-    function isMyTrustColor(isMyTurn) {
-      return isMyTurn ? '#2563eb' : '#0f2a4a';
+    // 2-minute Room Expiry Countdown
+    function startRoomExpiryCountdown(createdAtTimestamp) {
+      if (roomExpiryTimerInterval) clearInterval(roomExpiryTimerInterval);
+      
+      const createdTime = createdAtTimestamp?.toMillis ? createdAtTimestamp.toMillis() : Date.now();
+      const expiryTime = createdTime + (2 * 60 * 1000); // 2 minutes
+
+      roomExpiryTimerInterval = setInterval(async () => {
+        const now = Date.now();
+        const timeLeft = expiryTime - now;
+
+        if (timeLeft <= 0) {
+          clearInterval(roomExpiryTimerInterval);
+          // Delete or expire room
+          try {
+            await deleteDoc(doc(db, "quiz_rooms", roomId));
+          } catch(e) {}
+          showCustomModal("समय समाप्त", "२ मिनेटभित्र खेल सुरु नभएकोले रुम स्वतः बन्द भयो।", "⏰", "लबीमा जानुहोस्", () => {
+            window.location.href = "quizlobby.html";
+          });
+          return;
+        }
+
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        
+        const timerEl = document.getElementById('roomExpiryTimer');
+        if (timerEl) {
+          timerEl.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+      }, 1000);
     }
 
-    // नयाँ टेबल स्ट्रक्चर अनुसार Supabase बाट प्रश्न फेच गर्ने फंक्सन
+    // 15 Seconds Question Timer
+    function startQuestionTimer(isMyTurn) {
+      if (questionTimerInterval) clearInterval(questionTimerInterval);
+      let timeLeft = 15;
+      const timerDisplay = document.getElementById('questionTimerDisplay');
+      if (timerDisplay) timerDisplay.innerText = `⏳ ${timeLeft}s`;
+
+      questionTimerInterval = setInterval(async () => {
+        timeLeft--;
+        if (timerDisplay) timerDisplay.innerText = `⏳ ${timeLeft}s`;
+
+        if (timeLeft <= 0) {
+          clearInterval(questionTimerInterval);
+          if (isMyTurn && roomDataGlobal && roomDataGlobal.status === 'playing') {
+            showCustomModal("समय सकियो!", "तपाईले १५ सेकेन्डभित्र उत्तर दिनुभएन। पालो अर्को खेलाडीलाई गयो।", "⌛", "पछाडि जानुहोस्", () => {
+              handleTimeoutTurn();
+            });
+          }
+        }
+      }, 1000);
+    }
+
+    async function handleTimeoutTurn() {
+      if (!roomDataGlobal) return;
+      let roomRef = doc(db, "quiz_rooms", roomId);
+      let players = [...roomDataGlobal.players];
+      let currentIndex = roomDataGlobal.currentTurnIndex;
+      let askedIds = roomDataGlobal.askedQuestionIds || [];
+
+      players[currentIndex].score -= 2; // Penalty for timeout
+      let nextTurnIndex = (currentIndex + 1) % players.length;
+      let nextQCount = (roomDataGlobal.questionCount || 1) + 1;
+
+      if (nextQCount > 5) {
+        await updateDoc(roomRef, {
+          players: players,
+          currentTurnIndex: nextTurnIndex,
+          questionCount: nextQCount,
+          status: "finished"
+        });
+        return;
+      }
+
+      let nextQuestion = await fetchRandomQuestion(askedIds);
+      if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
+
+      await updateDoc(roomRef, {
+        players: players,
+        currentTurnIndex: nextTurnIndex,
+        questionCount: nextQCount,
+        currentQuestion: nextQuestion,
+        askedQuestionIds: askedIds
+      });
+    }
+
     async function fetchRandomQuestion(excludedIds = []) {
       try {
         let { data, error } = await supabaseClient.from('quizzes').select('*');
-        
-        if (error || !data || data.length === 0) {
-          console.error("Supabase fetch error:", error);
-          return getFallbackQuestion();
-        }
+        if (error || !data || data.length === 0) return getFallbackQuestion();
 
         let availableQuestions = data.filter(q => !excludedIds.includes(q.id));
-        if (availableQuestions.length === 0) {
-          availableQuestions = data;
-        }
+        if (availableQuestions.length === 0) availableQuestions = data;
 
         const randomIndex = Math.floor(Math.random() * availableQuestions.length);
         const qRow = availableQuestions[randomIndex];
         
-        // options (jsonb) लाई array मा रूपान्तरण गर्ने
         let options = [];
-        if (Array.isArray(qRow.options)) {
-          options = qRow.options;
-        } else if (typeof qRow.options === 'object' && qRow.options !== null) {
-          options = Object.values(qRow.options);
-        } else if (typeof qRow.options === 'string') {
+        if (Array.isArray(qRow.options)) options = qRow.options;
+        else if (typeof qRow.options === 'object' && qRow.options !== null) options = Object.values(qRow.options);
+        else if (typeof qRow.options === 'string') {
           try { options = JSON.parse(qRow.options); } catch(e) { options = []; }
         }
 
-        if (options.length === 0) {
-          options = ["विकल्प क", "विकल्प ख", "विकल्प ग", "विकल्प घ"];
-        }
-
-        // अप्सनहरूलाई अनियमित (shuffle) गर्ने
+        if (options.length === 0) options = ["विकल्प क", "विकल्प ख", "विकल्प ग", "विकल्प घ"];
         options.sort(() => Math.random() - 0.5);
 
         return {
           id: qRow.id,
-          text: qRow.question || "प्रश्नलै फेला परेन",
+          text: qRow.question || "प्रश्न फेला परेन",
           options: options,
           correctAnswer: qRow.answer || options[0]
         };
       } catch (err) {
-        console.error("Exception in fetching question:", err);
         return getFallbackQuestion();
       }
     }
@@ -293,15 +427,13 @@
 
     async function startGameSession() {
       if (!roomDataGlobal) return;
-
       if (!roomDataGlobal.players || roomDataGlobal.players.length < 1) {
-        alert("खेल सुरु गर्न खेलाडी आवश्यक पर्छ!");
+        showCustomModal("त्रुटि", "खेल सुरु गर्न खेलाडी आवश्यक पर्छ!", "⚠️");
         return;
       }
 
       const roomRef = doc(db, "quiz_rooms", roomId);
       const firstQ = await fetchRandomQuestion([]);
-
       let initialPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
 
       try {
@@ -314,12 +446,12 @@
           askedQuestionIds: [firstQ.id]
         });
       } catch (e) {
-        console.error("Error updating room to start game:", e);
-        alert("खेल सुरु गर्न सकिएन। कृपया कन्सोल चेक गर्नुहोस्।");
+        showCustomModal("त्रुटि", "खेल सुरु गर्न सकिएन।", "❌");
       }
     }
 
     window.submitAnswer = async function(selectedOpt, isSkipped) {
+      if (questionTimerInterval) clearInterval(questionTimerInterval);
       if (!roomDataGlobal) return;
       
       let roomRef = doc(db, "quiz_rooms", roomId);
@@ -328,25 +460,20 @@
       let currentQ = roomDataGlobal.currentQuestion;
       let askedIds = roomDataGlobal.askedQuestionIds || [];
 
-      let nextTurnIndex = currentIndex;
-      let nextQCount = roomDataGlobal.questionCount || 1;
+      let nextTurnIndex = (currentIndex + 1) % players.length;
+      let nextQCount = (roomDataGlobal.questionCount || 1) + 1;
       let newStatus = "playing";
 
       if (isSkipped) {
-        alert("तपाईंले प्रश्न स्किप गर्नुभयो। पालो अर्को खेलाडीलाई पास भयो।");
-        nextTurnIndex = (currentIndex + 1) % players.length;
+        showCustomModal("स्किप गरियो!", "तपाईंले प्रश्न स्किप गर्नुभयो। पालो अर्को खेलाडीलाई गयो।", "⏭️", "पछाडि जानुहोस्");
       } else {
         let isCorrect = (selectedOpt === currentQ.correctAnswer);
-        
         if (isCorrect) {
           players[currentIndex].score += 5;
-          alert("सही उत्तर! (+५ अंक)");
-          nextTurnIndex = (currentIndex + 1) % players.length;
-          nextQCount += 1;
+          showCustomModal("सही उत्तर! 🎉", "बधाई छ! तपाईंले ५ अंक पाउनुभयो।", "✅", "पछाडि जानुहोस्");
         } else {
           players[currentIndex].score -= 2;
-          alert("गलत उत्तर! (-२ अंक)");
-          nextTurnIndex = (currentIndex + 1) % players.length;
+          showCustomModal("गलत उत्तर! ❌", `सही उत्तर थियो: ${currentQ.correctAnswer} (-२ अंक)`, "❌", "पछाडि जानुहोस्");
         }
       }
 
@@ -362,9 +489,7 @@
       }
 
       let nextQuestion = await fetchRandomQuestion(askedIds);
-      if (nextQuestion && nextQuestion.id) {
-        askedIds.push(nextQuestion.id);
-      }
+      if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
 
       await updateDoc(roomRef, {
         players: players,
@@ -402,7 +527,6 @@
             </div>
           `;
         });
-
         container.scrollTop = container.scrollHeight;
       });
     }
@@ -429,9 +553,6 @@
       }[tag] || tag));
     }
   </script>
-
-  <!-- Components Script -->
   <script src="components.js"></script>
-
 </body>
 </html>
