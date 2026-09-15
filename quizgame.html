@@ -36,19 +36,19 @@
     .btn-skip { background: #64748b; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; }
     .btn-skip:hover { background: #475569; }
 
-    /* Modern Chat Drawer Layout with visible fixed bottom input */
+    /* Fixed Chat Drawer Layout */
     .chat-drawer { position: absolute; right: -320px; top: 0; width: 300px; height: 100%; background: white; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: right 0.3s ease; z-index: 100; box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
     .chat-drawer.open { right: 0; }
-    .chat-header-bar { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .chat-header-bar { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
     .close-chat { background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b; }
     
-    .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #f1f5f9; }
-    .chat-msg { font-size: 12px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #f1f5f9; min-height: 0; }
+    .chat-msg { font-size: 12px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; word-break: break-word; }
     .chat-msg .c-user { font-weight: 700; color: #2563eb; margin-bottom: 2px; }
     
-    /* Strictly Pinned Chat Input Box */
-    .chat-input-box { padding: 12px; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; align-items: center; width: 100%; min-height: 60px; }
-    .chat-input { flex: 1; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
+    /* Explicitly visible Chat Input Box at Bottom */
+    .chat-input-box { padding: 12px; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; align-items: center; width: 100%; flex-shrink: 0; }
+    .chat-input { flex: 1; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: #fff; color: #000; }
     .chat-input:focus { border-color: #2563eb; }
     .chat-send-btn { background: #2563eb; color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .chat-send-btn:hover { background: #1d4ed8; }
@@ -56,6 +56,9 @@
     .btn-main { background: #2563eb; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
     .btn-main:hover { background: #1d4ed8; }
   </style>
+
+  <!-- Supabase CDN समावेश गरिएको -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -94,7 +97,7 @@
     </div>
   </div>
 
-  <!-- Firebase Script -->
+  <!-- Firebase & Supabase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -113,6 +116,11 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Supabase Setup (तपाईँको Supabase Credential यहाँ राख्नुहोला)
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     const urlParams = new URLSearchParams(window.location.search);
     const roomId = urlParams.get('room');
 
@@ -125,13 +133,6 @@
     let currentUser = null;
     let currentUserName = "Aspirant";
     let roomDataGlobal = null;
-
-    const sampleQuestions = [
-      { text: "नेपालको राष्ट्रिय बोट कुन हो?", options: ["गुराँस", "पिपल", "साल", "सल्ला"], correctAnswer: "गुराँस" },
-      { text: "संसारको सबसे अग्लो हिमाल कुन हो?", options: ["कञ्चनजङ्घा", "माउन्ट एभरेष्ट", "ल्होत्से", "मकालु"], correctAnswer: "माउन्ट एभरेष्ट" },
-      { text: "गौतम बुद्धको जन्मस्थल लुम्बिनी कुन जिल्लामा पर्छ?", options: ["कपिलवस्तु", "रूपन्देही", "नवलपरासी", "पाल्पा"], correctAnswer: "रूपन्देही" },
-      { text: "नेपालको संविधान २०७२ मा कतिवटा भाग छन्?", options: ["३५", "३७", "४०", "४२"], correctAnswer: "३५" }
-    ];
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -236,10 +237,52 @@
       }
     }
 
+    // Supabase बाट र्यान्डम प्रश्न फेच गर्ने फंक्सन
+    async function fetchRandomQuestion(excludedIds = []) {
+      try {
+        let query = supabaseClient.from('quizzes').select('*');
+        if (excludedIds.length > 0) {
+          query = query.not('id', 'in', `(${excludedIds.join(',')})`);
+        }
+        
+        let { data, error } = await query;
+        if (error || !data || data.length === 0) {
+          // यदि सबै प्रश्न सकिएमा वा एरर आएमा रिसेट वा फallब्याक प्रयोग गर्ने
+          const { data: allData } = await supabaseClient.from('quizzes').select('*');
+          data = allData;
+        }
+
+        if (data && data.length > 0) {
+          const randomIndex = Math.floor(Math.random() * data.length);
+          const qRow = data[randomIndex];
+          
+          // अप्सनहरूलाई अनियमित (shuffle) गर्ने
+          let options = [qRow.option_a, qRow.option_b, qRow.option_c, qRow.option_d].filter(Boolean);
+          options.sort(() => Math.random() - 0.5);
+
+          return {
+            id: qRow.id,
+            text: qRow.question_text || qRow.question,
+            options: options,
+            correctAnswer: qRow.correct_answer || qRow.correct
+          };
+        }
+      } catch (err) {
+        console.error("Supabase fetch error:", err);
+      }
+      
+      // Fallback यदि Supabase कनेक्सन नभएमा
+      return {
+        id: Math.random(),
+        text: "नेपालको राष्ट्रिय बोट कुन हो?",
+        options: ["पिपल", "गुराँस", "साल", "सल्ला"].sort(() => Math.random() - 0.5),
+        correctAnswer: "गुराँस"
+      };
+    }
+
     async function startGameSession() {
       if (!roomDataGlobal) return;
 
-      // कम्तिमा २ जना खेलाडी हुनैपर्ने सर्त
       if (!roomDataGlobal.players || roomDataGlobal.players.length < 2) {
         if (typeof showSuccessPopup === 'function') {
           showSuccessPopup("खेल सुरु गर्न कम्तिमा २ जना खेलाडी आवश्यक पर्छ!", null, 'warning', 'ध्यान दिनुहोस् ⚠️');
@@ -250,7 +293,7 @@
       }
 
       const roomRef = doc(db, "quiz_rooms", roomId);
-      const firstQ = sampleQuestions[Math.floor(Math.random() * sampleQuestions.length)];
+      const firstQ = await fetchRandomQuestion([]);
 
       let initialPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
 
@@ -259,7 +302,8 @@
         currentTurnIndex: 0,
         questionCount: 1,
         players: initialPlayers,
-        currentQuestion: firstQ
+        currentQuestion: firstQ,
+        askedQuestionIds: [firstQ.id]
       });
     }
 
@@ -270,9 +314,9 @@
       let players = [...roomDataGlobal.players];
       let currentIndex = roomDataGlobal.currentTurnIndex;
       let currentQ = roomDataGlobal.currentQuestion;
+      let askedIds = roomDataGlobal.askedQuestionIds || [];
 
       let nextTurnIndex = currentIndex;
-      let nextQuestion = currentQ;
       let nextQCount = roomDataGlobal.questionCount || 1;
       let newStatus = "playing";
 
@@ -295,11 +339,10 @@
           }
           nextTurnIndex = (currentIndex + 1) % players.length;
           nextQCount += 1;
-          nextQuestion = sampleQuestions[Math.floor(Math.random() * sampleQuestions.length)];
         } else {
           players[currentIndex].score -= 2;
           if (typeof showSuccessPopup === 'function') {
-            showSuccessPopup("गलत उत्तर! (-२ अंक, प्रश्न अर्कोलाई पास)", null, 'error', 'गलत ❌');
+            showSuccessPopup("गलत उत्तर! (-२ अंक)", null, 'error', 'गलत ❌');
           } else {
             alert("गलत उत्तर! (-२ अंक)");
           }
@@ -309,6 +352,19 @@
 
       if (nextQCount > 5) {
         newStatus = "finished";
+        await updateDoc(roomRef, {
+          players: players,
+          currentTurnIndex: nextTurnIndex,
+          questionCount: nextQCount,
+          status: newStatus
+        });
+        return;
+      }
+
+      // नयाँ र्यान्डम प्रश्न फेच गर्ने (पहिले सोधिसकिएका बाहेक)
+      let nextQuestion = await fetchRandomQuestion(askedIds);
+      if (nextQuestion && nextQuestion.id) {
+        askedIds.push(nextQuestion.id);
       }
 
       await updateDoc(roomRef, {
@@ -316,7 +372,8 @@
         currentTurnIndex: nextTurnIndex,
         questionCount: nextQCount,
         status: newStatus,
-        currentQuestion: nextQuestion
+        currentQuestion: nextQuestion,
+        askedQuestionIds: askedIds
       });
     };
 
@@ -328,7 +385,6 @@
       const chatRef = collection(db, "quiz_rooms", roomId, "room_chat");
       onSnapshot(chatRef, (snapshot) => {
         const container = document.getElementById('chatMessagesContainer');
-        container.innerHTML = '';
         if (snapshot.empty) {
           container.innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 11px;">कुनै मसेज छैन।</div>`;
           return;
@@ -338,16 +394,6 @@
         snapshot.forEach(doc => msgs.push(doc.data()));
         msgs.sort((a, b) => (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0));
 
-        msgs.get = msgs.forEach(m => {
-          container.innerHTML += `
-            <div class="chat-msg">
-              <div class="c-user">${escapeHTML(m.senderName)}</div>
-              <div>${escapeHTML(m.text)}</div>
-            </div>
-          `;
-        });
-        
-        // सुरक्षित रूपमा मसेजहरू देखाउन लूप चलाउने
         container.innerHTML = "";
         msgs.forEach(m => {
           container.innerHTML += `
