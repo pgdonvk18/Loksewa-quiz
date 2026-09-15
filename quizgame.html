@@ -19,7 +19,7 @@
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
     .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; position: relative; }
 
-    /* Toast Notification (Mathi tira sano box) */
+    /* Toast Notification */
     .toast-container { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 500; display: flex; flex-direction: column; gap: 6px; width: 90%; max-width: 400px; pointer-events: none; }
     .toast-msg { background: #0f2a4a; color: white; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 8px; animation: fadeInOut 3.5s forwards; }
     @keyframes fadeInOut {
@@ -66,7 +66,7 @@
     .modal-btn { background: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; }
     .modal-btn:hover { background: #1d4ed8; }
 
-    /* Chat Drawer */
+    /* Chat Drawer & Quick Emojis */
     .chat-drawer { position: absolute; right: -320px; top: 0; width: 300px; height: 100%; background: white; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: right 0.3s ease; z-index: 100; box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
     .chat-drawer.open { right: 0; }
     .chat-header-bar { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
@@ -76,7 +76,12 @@
     .chat-msg { font-size: 12px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; word-break: break-word; }
     .chat-msg .c-user { font-weight: 700; color: #2563eb; margin-bottom: 2px; }
     
-    .chat-input-box { padding: 12px; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; align-items: center; width: 100%; flex-shrink: 0; }
+    /* Quick Emojis Bar */
+    .quick-emojis { display: flex; gap: 6px; padding: 8px 12px; background: #f8fafc; border-top: 1px solid #e2e8f0; overflow-x: auto; flex-shrink: 0; }
+    .emoji-pill { background: white; border: 1px solid #cbd5e1; border-radius: 20px; padding: 4px 8px; font-size: 15px; cursor: pointer; transition: transform 0.1s; }
+    .emoji-pill:hover { transform: scale(1.15); background: #e2e8f0; }
+
+    .chat-input-box { padding: 10px 12px; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; align-items: center; width: 100%; flex-shrink: 0; }
     .chat-input { flex: 1; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: #fff; color: #000; }
     .chat-input:focus { border-color: #2563eb; }
     .chat-send-btn { background: #2563eb; color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -123,8 +128,21 @@
       <div class="chat-messages" id="chatMessagesContainer">
         <div style="text-align: center; color: #94a3b8; font-size: 11px;">च्याट लोड हुँदैछ...</div>
       </div>
+      
+      <!-- Quick Emojis Selection Bar -->
+      <div class="quick-emojis">
+        <button type="button" class="emoji-pill" onclick="sendQuickEmoji('👍')">👍</button>
+        <button type="button" class="emoji-pill" onclick="sendQuickEmoji('🔥')">🔥</button>
+        <button type="button" class="emoji-pill" onclick="sendQuickEmoji('👏')">👏</button>
+        <button type="button" class="emoji-pill" onclick="sendQuickEmoji('😂')">😂</button>
+        <button type="button" class="emoji-pill" onclick="sendQuickEmoji('❤️')">❤️</button>
+        <button type="button" class="emoji-pill" onclick="sendQuickEmoji('🎯')">🎯</button>
+        <button type="button" class="emoji-pill" onclick="sendQuickEmoji('😎')">😎</button>
+        <button type="button" class="emoji-pill" onclick="sendQuickEmoji('💡')">💡</button>
+      </div>
+
       <form class="chat-input-box" id="chatForm">
-        <input type="text" class="chat-input" id="chatInputText" placeholder="केही लेख्नुहोस्..." autocomplete="off">
+        <input type="text" class="chat-input" id="chatInputText" placeholder="सन्देश लेख्नुहोस्..." autocomplete="off">
         <button type="submit" class="chat-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
       </form>
     </div>
@@ -225,7 +243,6 @@
         initGameListener();
         initChatListener();
 
-        // Handle user leaving the page unexpectedly
         window.addEventListener('beforeunload', handleUserLeave);
       } else {
         window.location.href = "login.html";
@@ -264,13 +281,11 @@
 
         const newRoomData = docSnap.data();
         
-        // Check for real-time broadcast notification to all players
         if (newRoomData.latestNotification && newRoomData.latestNotification.id !== lastProcessedNotificationId) {
           lastProcessedNotificationId = newRoomData.latestNotification.id;
           showToast(newRoomData.latestNotification.text);
         }
 
-        // Detect if a player left
         if (roomDataGlobal && roomDataGlobal.players && newRoomData.players) {
           if (newRoomData.players.length < roomDataGlobal.players.length) {
             let leftPlayers = roomDataGlobal.players.filter(p => !newRoomData.players.some(np => np.uid === p.uid));
@@ -764,6 +779,17 @@
         container.scrollTop = container.scrollHeight;
       });
     }
+
+    // Quick Emoji Click Handler
+    window.sendQuickEmoji = async function(emoji) {
+      if (!currentUser) return;
+      await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
+        text: emoji,
+        uid: currentUser.uid,
+        senderName: currentUserName,
+        createdAt: serverTimestamp()
+      });
+    };
 
     document.getElementById('chatForm').addEventListener('submit', async (e) => {
       e.preventDefault();
