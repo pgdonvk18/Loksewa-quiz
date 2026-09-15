@@ -12,6 +12,11 @@
     
     .container { width: 100%; max-width: 480px; margin-top: 10px; }
     
+    /* Top Header with Back Button */
+    .top-nav { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 480px; margin-bottom: 16px; }
+    .back-btn { background: white; border: 1px solid #e2e8f0; color: #0f2a4a; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: all 0.2s; }
+    .back-btn:hover { background: #f1f5f9; }
+
     .header { text-align: center; margin-bottom: 20px; }
     .header h2 { font-size: 22px; font-weight: 800; color: #0f2a4a; }
     .header p { font-size: 13px; color: #64748b; margin-top: 4px; }
@@ -24,6 +29,17 @@
     .form-control { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; transition: border 0.2s; }
     .form-control:focus { border-color: #2563eb; }
 
+    /* Attractive Sliding Range Selector */
+    .range-slider-container { background: #f8fafc; padding: 12px 14px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 12px; }
+    .range-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: #0f2a4a; margin-bottom: 8px; }
+    .range-header span#selectedRoundsVal { color: #2563eb; font-size: 14px; }
+    
+    input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+    input[type=range]:focus { outline: none; }
+    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: #cbd5e1; border-radius: 4px; }
+    input[type=range]::-webkit-slider-thumb { height: 20px; width: 20px; border-radius: 50%; background: #2563eb; cursor: pointer; -webkit-appearance: none; margin-top: -6px; box-shadow: 0 2px 6px rgba(37,99,235,0.4); transition: transform 0.1s; }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
     .btn-success { background: #16a34a; color: white; margin-top: 4px; width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
     .btn-success:hover { background: #15803d; }
     
@@ -32,14 +48,46 @@
 </head>
 <body>
 
+  <div class="top-nav">
+    <button class="back-btn" onclick="window.location.href='games.html'" title="पछाडि जानुहोस्"><i class="fa-solid fa-arrow-left"></i></button>
+    <span style="font-size: 13px; font-weight: 700; color: #64748b;">Lobby</span>
+    <div style="width: 38px;"></div> <!-- Alignment placeholder -->
+  </div>
+
   <div class="container">
     <div class="header">
       <h2><i class="fa-solid fa-gamepad" style="color: #2563eb;"></i> Loksewa 1v1 Battle</h2>
       <p>आफ्नो साथीहरूसँग रियल-टाइम क्विज प्रतिस्पर्धा गर्नुहोस्</p>
     </div>
 
-    <!-- 1. यहाँ components.js बाट अटोमेटिक रुम क्रिएट कार्ड लोड हुन्छ -->
-    <div id="createRoomContainer"></div>
+    <!-- Create Room Card with Sliding Rounds Selector -->
+    <div class="card">
+      <h3><i class="fa-solid fa-plus-circle"></i> नयाँ रुम बनाउनुहोस् (Create Room)</h3>
+      
+      <div class="form-group">
+        <label>खेलाडी संख्या (Max Players):</label>
+        <select id="maxPlayersInput" class="form-control">
+          <option value="2">२ जना (1v1)</option>
+          <option value="3">३ जना</option>
+          <option value="4" selected>४ जना</option>
+        </select>
+      </div>
+
+      <div class="range-slider-container">
+        <div class="range-header">
+          <label style="margin:0; font-size:12px; color:#475569;">जम्मा प्रश्न/राउन्ड (Total Rounds):</label>
+          <span id="selectedRoundsVal">5 राउन्ड</span>
+        </div>
+        <input type="range" id="totalRoundsRange" min="1" max="10" value="5" step="1">
+        <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; margin-top: 4px;">
+          <span>1</span>
+          <span>5</span>
+          <span>10</span>
+        </div>
+      </div>
+
+      <button class="btn-success" id="createRoomBtn"><i class="fa-solid fa-circle-plus"></i> रुम सिर्जना गर्नुहोस्</button>
+    </div>
 
     <div class="divider">अथवा</div>
 
@@ -54,7 +102,7 @@
     </div>
   </div>
 
-  <!-- Components Script पहिले लोड गर्नुपर्छ -->
+  <!-- Components Script -->
   <script src="components.js"></script>
 
   <!-- Firebase & Main Logic Script -->
@@ -79,11 +127,11 @@
     let currentUser = null;
     let currentUserName = "Aspirant";
 
-    // पेज लोड हुँदा कम्पोनेन्ट कल गर्ने
-    document.addEventListener("DOMContentLoaded", () => {
-      if (typeof loadCreateRoomCard === 'function') {
-        loadCreateRoomCard('createRoomContainer');
-      }
+    // Sliding range live value update
+    const roundsRange = document.getElementById('totalRoundsRange');
+    const roundsValDisplay = document.getElementById('selectedRoundsVal');
+    roundsRange.addEventListener('input', (e) => {
+      roundsValDisplay.innerText = `${e.target.value} राउन्ड`;
     });
 
     onAuthStateChanged(auth, async (user) => {
@@ -105,37 +153,37 @@
       return Math.random().toString(36).substring(2, 8).toUpperCase();
     }
 
-    // Create Room Logic (Event Delegation प्रयोग गरिएको छ किनकी बटन dynamically load हुन्छ)
-    document.addEventListener('click', async (e) => {
-      if (e.target && e.target.id === 'createRoomBtn') {
-        if (!currentUser) return;
-        const roomId = generateRoomCode();
+    // Create Room Logic
+    document.getElementById('createRoomBtn').addEventListener('click', async () => {
+      if (!currentUser) return;
+      const roomId = generateRoomCode();
+      const maxPlayers = parseInt(document.getElementById('maxPlayersInput').value);
+      const totalRounds = parseInt(roundsRange.value);
 
-        const roomData = {
-          roomId: roomId,
-          hostId: currentUser.uid,
-          status: "waiting",
-          settings: { 
-            maxPlayers: window.selectedMaxPlayers || 4, 
-            totalRounds: window.selectedTotalRounds || 3 
-          },
-          players: [
-            { uid: currentUser.uid, name: currentUserName, score: 0 }
-          ],
-          currentRound: 1,
-          currentTurnIndex: 0,
-          createdAt: new Date()
-        };
+      const roomData = {
+        roomId: roomId,
+        hostId: currentUser.uid,
+        status: "waiting",
+        settings: { 
+          maxPlayers: maxPlayers, 
+          totalRounds: totalRounds 
+        },
+        players: [
+          { uid: currentUser.uid, name: currentUserName, score: 0 }
+        ],
+        currentRound: 1,
+        currentTurnIndex: 0,
+        createdAt: new Date()
+      };
 
-        try {
-          await setDoc(doc(db, "quiz_rooms", roomId), roomData);
-          window.location.href = `quizgame.html?room=${roomId}`;
-        } catch (err) {
-          if (typeof showSuccessPopup === 'function') {
-            showSuccessPopup("रुम बनाउन सकिएन: " + err.message, null, 'error', 'त्रुटि! ❌');
-          } else {
-            alert("रुम बनाउन सकिएन: " + err.message);
-          }
+      try {
+        await setDoc(doc(db, "quiz_rooms", roomId), roomData);
+        window.location.href = `quizgame.html?room=${roomId}`;
+      } catch (err) {
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup("रुम बनाउन सकिएन: " + err.message, null, 'error', 'त्रुटि! ❌');
+        } else {
+          alert("रुम बनाउन सकिएन: " + err.message);
         }
       }
     });
