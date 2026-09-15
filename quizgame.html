@@ -177,6 +177,7 @@
     let roomDataGlobal = null;
     let roomExpiryTimerInterval = null;
     let questionTimerInterval = null;
+    let lastProcessedNotificationId = null;
 
     window.showToast = function(message) {
       const container = document.getElementById('toastContainer');
@@ -263,6 +264,12 @@
 
         const newRoomData = docSnap.data();
         
+        // Check for real-time broadcast notification to all players
+        if (newRoomData.latestNotification && newRoomData.latestNotification.id !== lastProcessedNotificationId) {
+          lastProcessedNotificationId = newRoomData.latestNotification.id;
+          showToast(newRoomData.latestNotification.text);
+        }
+
         // Detect if a player left
         if (roomDataGlobal && roomDataGlobal.players && newRoomData.players) {
           if (newRoomData.players.length < roomDataGlobal.players.length) {
@@ -476,9 +483,7 @@
 
         if (timeLeft <= 0) {
           clearInterval(questionTimerInterval);
-          // Only host or the player whose turn it is triggers the timeout processing to avoid race conditions
           if (isMyTurn && roomDataGlobal && roomDataGlobal.status === 'playing') {
-            showToast("समय समाप्त! यो प्रश्न अर्को खेलाडीलाई पास हुँदैछ।");
             await handleTimeoutTurn();
           }
         }
@@ -508,10 +513,16 @@
       });
 
       let totalQuestionsPlanned = totalRounds * players.length;
+      let notificationText = "समय समाप्त! यो प्रश्न अर्को खेलाडीलाई पास हुँदैछ।";
 
       if (passAttempt >= players.length) {
         if (currentQCount >= totalQuestionsPlanned) {
-          await updateDoc(roomRef, { players: players, history: history, status: "finished" });
+          await updateDoc(roomRef, { 
+            players: players, 
+            history: history, 
+            status: "finished",
+            latestNotification: { id: Date.now(), text: notificationText }
+          });
           return;
         }
 
@@ -529,7 +540,8 @@
           questionCount: currentQCount + 1,
           passAttempt: 0,
           currentQuestion: nextQuestion,
-          askedQuestionIds: askedIds
+          askedQuestionIds: askedIds,
+          latestNotification: { id: Date.now(), text: "कसैले पनि मिलाएनन्! नयाँ प्रश्न सुरु भयो।" }
         });
       } else {
         let nextTurnIndex = (currentIndex + 1) % players.length;
@@ -537,7 +549,8 @@
           players: players,
           history: history,
           currentTurnIndex: nextTurnIndex,
-          passAttempt: passAttempt
+          passAttempt: passAttempt,
+          latestNotification: { id: Date.now(), text: notificationText }
         });
       }
     }
@@ -605,7 +618,8 @@
           players: initialPlayers,
           currentQuestion: firstQ,
           askedQuestionIds: [firstQ.id],
-          history: []
+          history: [],
+          latestNotification: { id: Date.now(), text: "खेल सुरु भयो! शुभकामना!" }
         });
       } catch (e) {
         showCustomModal("त्रुटि", "खेल सुरु गर्न सकिएन।", "❌");
@@ -662,7 +676,8 @@
         let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
         let nextRoundStarterIndex = (currentStarter + 1) % players.length;
 
-        showToast(`${currentPlayerName} ले सही उत्तर मिलाउनुभयो! (+५ अंक)`);
+        let notificationText = `${currentPlayerName} ले सही उत्तर मिलाउनुभयो! (+५ अंक)`;
+
         await updateDoc(roomRef, {
           players: players,
           history: history,
@@ -671,22 +686,22 @@
           questionCount: currentQCount + 1,
           passAttempt: 0,
           currentQuestion: nextQuestion,
-          askedQuestionIds: askedIds
+          askedQuestionIds: askedIds,
+          latestNotification: { id: Date.now(), text: notificationText }
         });
         return;
 
       } else {
         if (passAttempt < players.length) {
           let nextTurnIndex = (currentIndex + 1) % players.length;
-          
-          // Popup modal ko sato mathi sano toast notification 
-          showToast(`${currentPlayerName} ले गलत उत्तर दिनुभयो। प्रश्न अर्कोलाई पास भयो!`);
+          let notificationText = `${currentPlayerName} ले गलत उत्तर दिनुभयो। प्रश्न अर्कोलाई पास भयो!`;
           
           await updateDoc(roomRef, {
             players: players,
             history: history,
             currentTurnIndex: nextTurnIndex,
-            passAttempt: passAttempt
+            passAttempt: passAttempt,
+            latestNotification: { id: Date.now(), text: notificationText }
           });
           return;
         } else {
@@ -702,8 +717,8 @@
 
           let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
           let nextRoundStarterIndex = (currentStarter + 1) % players.length;
+          let notificationText = `कसैले पनि मिलाएनन्! सही उत्तर: ${currentQ.correctAnswer}`;
 
-          showToast(`कसैले पनि मिलाएनन्! सही उत्तर: ${currentQ.correctAnswer}`);
           await updateDoc(roomRef, {
             players: players,
             history: history,
@@ -712,7 +727,8 @@
             questionCount: currentQCount + 1,
             passAttempt: 0,
             currentQuestion: nextQuestion,
-            askedQuestionIds: askedIds
+            askedQuestionIds: askedIds,
+            latestNotification: { id: Date.now(), text: notificationText }
           });
           return;
         }
