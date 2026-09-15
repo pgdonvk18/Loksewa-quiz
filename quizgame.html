@@ -22,11 +22,11 @@
 
     .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
 
-    .waiting-box { text-align: center; padding: 40px 20px; }
+    .waiting-box { text-align: center; padding: 30px 20px; }
     .waiting-box h3 { font-size: 20px; font-weight: 800; color: #0f2a4a; margin-bottom: 8px; }
     .waiting-box p { font-size: 13px; color: #64748b; margin-bottom: 20px; }
-    .players-list { display: flex; flex-direction: column; gap: 8px; max-width: 300px; margin: 0 auto 20px auto; text-align: left; }
-    .player-item { background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; }
+    .players-list { display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin: 0 auto 20px auto; text-align: left; }
+    .player-item { background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; }
 
     .question-box h4 { font-size: 16px; font-weight: 700; color: #0f2a4a; margin-bottom: 16px; line-height: 1.5; }
     .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
@@ -36,6 +36,12 @@
     .action-row { display: flex; gap: 10px; margin-top: 12px; }
     .btn-skip { background: #64748b; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; }
     .btn-skip:hover { background: #475569; }
+
+    /* Review & Recent Games Section Styling */
+    .review-container { text-align: left; margin-top: 15px; max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; background: #f8fafc; }
+    .review-item { font-size: 12px; padding: 8px; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 4px; }
+    .recent-games-box { margin-top: 20px; text-align: left; background: #fff; border-radius: 12px; padding: 15px; border: 1px solid #e2e8f0; }
+    .recent-games-box h4 { font-size: 14px; color: #0f2a4a; margin-bottom: 10px; font-weight: 700; }
 
     /* Custom Attractive Popup Modal */
     .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 42, 74, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
@@ -156,6 +162,7 @@
     let roomDataGlobal = null;
     let roomExpiryTimerInterval = null;
     let questionTimerInterval = null;
+    let hasSavedToLeaderboard = false;
 
     window.showCustomModal = function(title, desc, icon = "🎉", btnText = "हुन्छ (OK)", callback = null) {
       document.getElementById('modalTitle').innerText = title;
@@ -211,7 +218,7 @@
       });
     }
 
-    function renderGameUI(room) {
+    async function renderGameUI(room) {
       const gameBody = document.getElementById('gameBody');
       const scoreInfo = document.getElementById('scoreboardInfo');
       const totalRounds = room.settings?.totalRounds || 5;
@@ -219,6 +226,7 @@
       if (room.status === 'waiting') {
         scoreInfo.style.display = 'none';
         if (questionTimerInterval) clearInterval(questionTimerInterval);
+        hasSavedToLeaderboard = false;
 
         if (room.createdAt && !roomExpiryTimerInterval) {
           startRoomExpiryCountdown(room.createdAt);
@@ -272,9 +280,22 @@
         startQuestionTimer(isMyTurn);
       }
       else if (room.status === 'finished') {
-        if (questionTimerInterval) clearInterval(questionTimerInterval);
+        if (questionTimerIndexCleaner()) {};
         scoreInfo.style.display = 'none';
+
+        // Save to Supabase Leaderboard once
+        if (!hasSavedToLeaderboard && currentUser) {
+          hasSavedToLeaderboard = true;
+          saveGameToSupabase(room);
+        }
+
         let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
+        let topScore = sortedPlayers[0].score;
+        let isWinner = sortedPlayers[0].uid === currentUser.uid;
+        let isTie = sortedPlayers.length > 1 && sortedPlayers[0].score === sortedPlayers[1].score && sortedPlayers[0].uid !== sortedPlayers[1].uid && sortedPlayers[1].uid === currentUser.uid;
+
+        let resultTitle = isWinner ? "🎉 बधाई छ! तपाईँले जित्नुभयो!" : (isTie ? "🤝 बराबरी (Tie) भयो!" : "😢 तपाईँले हार्नुभयो!");
+
         let rankHtml = sortedPlayers.map((p, index) => `
           <div class="player-item" style="background: ${index === 0 ? '#dcfce7' : '#f8fafc'};">
             <span>#${index+1} ${escapeHTML(p.name)}</span>
@@ -282,14 +303,85 @@
           </div>
         `).join('');
 
+        // Review History Build
+        let historyList = room.gameHistory || [];
+        let reviewHtml = historyList.map((h, idx) => `
+          <div class="review-item">
+            <div><b>प्र. ${idx+1}:</b> ${escapeHTML(h.questionText)}</div>
+            <div style="color: #64748b;">उत्तर दिने: <b>${escapeHTML(h.playerName)}</b> | छनौट: <span style="color:${h.isCorrect ? '#16a34a' : '#dc2626'}">${escapeHTML(h.givenAnswer || 'Skiped')}</span></div>
+            <div style="font-size: 11px; color: #0284c7;">सहि उत्तर: <b>${escapeHTML(h.correctAnswer)}</b></div>
+          </div>
+        `).join('') || '<div style="font-size:12px; color:#64748b; text-align:center;">कुनै विवरण छैन</div>';
+
         gameBody.innerHTML = `
           <div class="card waiting-box">
-            <h3>🏆 खेल समाप्त भयो!</h3>
+            <h3 style="color: ${isWinner ? '#16a34a' : '#dc2626'}">${resultTitle}</h3>
             <p>अन्तिम नतिजा र लिडरबोर्ड:</p>
             <div class="players-list">${rankHtml}</div>
-            <button class="btn-main" onclick="window.location.href='quizlobby.html'">लबीमा फर्कनुहोस्</button>
+            
+            <h4 style="font-size: 14px; text-align: left; margin-top: 15px; color: #0f2a4a;">📋 प्रश्नहरूको उत्तर समीक्षा (Review):</h4>
+            <div class="review-container">${reviewHtml}</div>
+
+            <div class="recent-games-box">
+              <h4>📊 हालसालै खेलेका खेलहरू (Recent Games)</h4>
+              <div id="recentGamesContainer" style="font-size: 12px; color: #64748b;">लोड हुँदैछ...</div>
+            </div>
+
+            <button class="btn-main" style="margin-top: 15px;" onclick="window.location.href='quizlobby.html'">लबीमा फर्कनुहोस्</button>
           </div>
         `;
+
+        fetchRecentGames();
+      }
+    }
+
+    function questionIndexCleaner() {
+      if (questionTimerInterval) clearInterval(questionTimerInterval);
+      return true;
+    }
+
+    async function saveGameToSupabase(room) {
+      try {
+        let myPlayerObj = room.players.find(p => p.uid === currentUser.uid);
+        let myScore = myPlayerObj ? myPlayerObj.score : 0;
+        let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
+        let isWinner = sortedPlayers[0].uid === currentUser.uid;
+
+        await supabaseClient.from('leaderboard_realquiz').insert([{
+          user_id: currentUser.uid,
+          player_name: currentUserName,
+          room_id: room.roomId,
+          score: myScore,
+          status: isWinner ? 'Won' : 'Lost',
+          played_at: new Date().toISOString()
+        }]);
+      } catch (e) {
+        console.log("Supabase save error:", e);
+      }
+    }
+
+    async function fetchRecentGames() {
+      try {
+        let { data, error } = await supabaseClient
+          .from('leaderboard_realquiz')
+          .select('*')
+          .order('played_at', { ascending: false })
+          .limit(5);
+
+        const container = document.getElementById('recentGamesContainer');
+        if (error || !data || data.length === 0) {
+          container.innerHTML = "कुनै पनि खेल रेकर्ड भेटिएन।";
+          return;
+        }
+
+        container.innerHTML = data.map(g => `
+          <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9;">
+            <span><b>${escapeHTML(g.player_name || 'Player')}</b> (Room: ${g.room_id})</span>
+            <span><b>${g.score} अंक</b> <span style="color: ${g.status === 'Won' ? '#16a34a' : '#dc2626'}">(${g.status})</span></span>
+          </div>
+        `).join('');
+      } catch (e) {
+        document.getElementById('recentGamesContainer').innerHTML = "डाटा लोड गर्न सकिएन।";
       }
     }
 
@@ -346,24 +438,31 @@
       let totalRounds = roomDataGlobal.settings?.totalRounds || 5;
       let currentQCount = roomDataGlobal.questionCount || 1;
       let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
+      let history = roomDataGlobal.gameHistory || [];
 
-      players[currentIndex].score -= 1; // Timeout penalty
+      players[currentIndex].score -= 1;
+      history.push({
+        questionText: roomDataGlobal.currentQuestion.text,
+        playerName: players[currentIndex].name,
+        givenAnswer: "Timeout/Skipped",
+        correctAnswer: roomDataGlobal.currentQuestion.correctAnswer,
+        isCorrect: false
+      });
 
-      // यदि यो प्रश्न सबै खेलाडीले हेरिसके भने (वा गलत/स्किप गरेर राउन्डको अन्त्यमा पुगे)
       if (passAttempt >= players.length) {
         if (currentQCount >= totalRounds) {
-          await updateDoc(roomRef, { players: players, status: "finished" });
+          await updateDoc(roomRef, { players: players, gameHistory: history, status: "finished" });
           return;
         }
         let nextQuestion = await fetchRandomQuestion(askedIds);
         if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
 
-        // **नयाँ राउन्ड अर्को खेलाडीबाट सुरु हुन्छ (Index परिवर्तन)**
         let nextRoundStarterIndex = (roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0);
         nextRoundStarterIndex = (nextRoundStarterIndex + 1) % players.length;
 
         await updateDoc(roomRef, {
           players: players,
+          gameHistory: history,
           currentTurnIndex: nextRoundStarterIndex,
           roundStarterIndex: nextRoundStarterIndex,
           questionCount: currentQCount + 1,
@@ -372,9 +471,9 @@
           askedQuestionIds: askedIds
         });
       } else {
-        // **पहिलोले मिलाएन भने, यही प्रश्न अर्को खेलाडीलाई पास हुन्छ**
         await updateDoc(roomRef, {
           players: players,
+          gameHistory: history,
           currentTurnIndex: (currentIndex + 1) % players.length,
           passAttempt: passAttempt
         });
@@ -437,12 +536,13 @@
         await updateDoc(roomRef, {
           status: "playing",
           currentTurnIndex: 0,
-          roundStarterIndex: 0, // राउन्ड १ को पहिलो खेलाडी
+          roundStarterIndex: 0,
           questionCount: 1,
           passAttempt: 0,
           players: initialPlayers,
           currentQuestion: firstQ,
-          askedQuestionIds: [firstQ.id]
+          askedQuestionIds: [firstQ.id],
+          gameHistory: []
         });
       } catch (e) {
         showCustomModal("त्रुटि", "खेल सुरु गर्न सकिएन।", "❌");
@@ -461,6 +561,7 @@
       let totalRounds = roomDataGlobal.settings?.totalRounds || 5;
       let currentQCount = roomDataGlobal.questionCount || 1;
       let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
+      let history = roomDataGlobal.gameHistory || [];
 
       let isCorrect = false;
       if (!isSkipped) {
@@ -472,15 +573,20 @@
         }
       }
 
-      // **यदि पहिलो खेलाडीले सहि उत्तर दियो भने, यो प्रश्नको पालो त्यहीं अन्त्य हुन्छ (Round Ends)**
-      // वा यदि सबै खेलाडीले प्रयास गरेर सकियो (passAttempt >= players.length) भने पनि राउन्ड अन्त्य हुन्छ।
+      history.push({
+        questionText: currentQ.text,
+        playerName: players[currentIndex].name,
+        givenAnswer: isSkipped ? "Skiped" : selectedOpt,
+        correctAnswer: currentQ.correctAnswer,
+        isCorrect: isCorrect
+      });
+
       let isRoundOver = isCorrect || (passAttempt >= players.length);
 
       if (isRoundOver) {
-        // यदि जम्मा राउन्ड पूरा भयो भने खेल समाप्त गर्ने
         if (currentQCount >= totalRounds) {
           showCustomModal("खेल समाप्त! 🏆", "सबै राउन्डहरू पूरा भए। अब नतिजा हेर्नुहोस्।", "🏁", "नतिजा हेर्नुहोस्", async () => {
-            await updateDoc(roomRef, { players: players, status: "finished" });
+            await updateDoc(roomRef, { players: players, gameHistory: history, status: "finished" });
           });
           return;
         }
@@ -488,7 +594,6 @@
         let nextQuestion = await fetchRandomQuestion(askedIds);
         if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
 
-        // **अर्को राउन्ड अर्को खेलाडीबाट सुरु हुन्छ (Round 2 starts from next player)**
         let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
         let nextRoundStarterIndex = (currentStarter + 1) % players.length;
 
@@ -498,6 +603,7 @@
         showCustomModal(modalMsg, `राउन्ड ${currentQCount} समाप्त भयो! अब राउन्ड ${currentQCount + 1} **${players[nextRoundStarterIndex].name}** बाट नयाँ प्रश्नसहित सुरु हुँदैछ!`, "➡️", "अर्को राउन्डमा जानुहोस्", async () => {
           await updateDoc(roomRef, {
             players: players,
+            gameHistory: history,
             currentTurnIndex: nextRoundStarterIndex,
             roundStarterIndex: nextRoundStarterIndex,
             questionCount: currentQCount + 1,
@@ -509,13 +615,13 @@
         return;
 
       } else {
-        // **पहिलोले मिलाएन (गलत वा स्किप गर्यो) भने, यही प्रश्न अर्को खेलाडीलाई पास हुन्छ**
         let nextTurnIndex = (currentIndex + 1) % players.length;
         let modalMsg = isSkipped ? "स्किप गरियो!" : "गलत उत्तर! ❌ (-२ अंक)";
         
         showCustomModal(modalMsg, `उत्तर मिलेन! यो प्रश्न अब अर्को खेलाडीलाई पास हुँदैछ।`, "🔄", "अर्को पालोमा जानुहोस्", async () => {
           await updateDoc(roomRef, {
             players: players,
+            gameHistory: history,
             currentTurnIndex: nextTurnIndex,
             passAttempt: passAttempt
           });
@@ -568,13 +674,6 @@
         createdAt: serverTimestamp()
       });
     });
-
-    function_escapeHTML = function(str) {
-      if (!str) return '';
-      return str.replace(/[&<>'"]/g, tag => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-      }[tag] || tag));
-    }
 
     function escapeHTML(str) {
       if (!str) return '';
