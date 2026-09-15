@@ -19,13 +19,13 @@
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
     .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; position: relative; }
 
-    /* Floating Emoji Animation Container */
-    .floating-emoji-container { position: absolute; bottom: 0; right: 20px; width: 100px; height: 100%; pointer-events: none; overflow: hidden; z-index: 200; }
-    .floating-emoji { position: absolute; font-size: 36px; animation: floatUp 2s ease-out forwards; opacity: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+    /* Floating Emoji Animation Container - पूरै स्क्रीनमा फैलिनको लागि सच्याइएको */
+    .floating-emoji-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 200; }
+    .floating-emoji { position: absolute; bottom: 0; font-size: 42px; animation: floatUp 2.5s ease-out forwards; opacity: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     @keyframes floatUp {
       0% { transform: translateY(0) scale(0.5); opacity: 1; }
-      50% { transform: translateY(-200px) scale(1.5) rotate(15deg); opacity: 0.95; }
-      100% { transform: translateY(-400px) scale(1.2) rotate(-15deg); opacity: 0; }
+      50% { transform: translateY(-250px) scale(1.6) rotate(20deg); opacity: 0.95; }
+      100% { transform: translateY(-500px) scale(1.2) rotate(-20deg); opacity: 0; }
     }
 
     /* Toast Notification */
@@ -85,7 +85,7 @@
     .chat-msg { font-size: 12px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; word-break: break-word; }
     .chat-msg .c-user { font-weight: 700; color: #2563eb; margin-bottom: 2px; }
     
-    /* Quick Emojis Selection Bar (Placed right above Chat Input) */
+    /* Quick Emojis Selection Bar */
     .quick-emojis { display: flex; gap: 6px; padding: 8px 12px; background: #f8fafc; border-top: 1px solid #e2e8f0; overflow-x: auto; flex-shrink: 0; }
     .emoji-pill { background: white; border: 1px solid #cbd5e1; border-radius: 20px; padding: 4px 8px; font-size: 16px; cursor: pointer; transition: transform 0.1s; }
     .emoji-pill:hover { transform: scale(1.15); background: #e2e8f0; }
@@ -141,7 +141,7 @@
         <div style="text-align: center; color: #94a3b8; font-size: 11px;">च्याट लोड हुँदैछ...</div>
       </div>
       
-      <!-- Quick Emojis Selection Bar (Placed above Input Box) -->
+      <!-- Quick Emojis Selection Bar -->
       <div class="quick-emojis">
         <button type="button" class="emoji-pill" onclick="sendQuickEmoji('👍')">👍</button>
         <button type="button" class="emoji-pill" onclick="sendQuickEmoji('🔥')">🔥</button>
@@ -220,7 +220,7 @@
       }, 3500);
     }
 
-    // Function to trigger floating emoji animation on quiz screen
+    // Function to trigger floating emoji animation across full screen width randomly
     window.triggerFloatingEmoji = function(emojiChar) {
       const container = document.getElementById('floatingEmojiContainer');
       if (!container) return;
@@ -229,16 +229,16 @@
       span.className = 'floating-emoji';
       span.innerText = emojiChar;
       
-      // Randomize horizontal positioning slightly
-      const randomLeft = Math.floor(Math.random() * 60) + 10;
+      // स्क्रीनको चौडाइ अनुसार बीच वा विभिन्न भागबाट अनियमित (random) रूपमा उडाउने
+      const randomLeft = Math.floor(Math.random() * (container.clientWidth - 80)) + 20;
       span.style.left = randomLeft + 'px';
 
       container.appendChild(span);
 
-      // Remove element after animation finishes (2 seconds)
+      // एनिमेशन सकिएपछि DOM बाट हटाउने (२.५ सेकेन्ड पछि)
       setTimeout(() => {
         span.remove();
-      }, 2000);
+      }, 2500);
     }
 
     window.showCustomModal = function(title, desc, icon = "🎉", btnText = "हुन्छ (OK)", callback = null) {
@@ -806,7 +806,6 @@
         // Trigger floating emoji animation on new incoming chat message if it's an emoji
         if (!isFirstLoad && msgs.length > 0) {
           const latestMsg = msgs[msgs.length - 1];
-          // Check if message text is pure emoji(s)
           const isEmoji = /^\p{Emoji}+$/u.test(latestMsg.text.trim());
           if (isEmoji) {
             triggerFloatingEmoji(latestMsg.text.trim());
@@ -831,7 +830,6 @@
     window.sendQuickEmoji = async function(emoji) {
       if (!currentUser) return;
       
-      // Send emoji as a chat document to Firebase so everyone in room receives it
       await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
         text: emoji,
         uid: currentUser.uid,
