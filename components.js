@@ -148,12 +148,7 @@
           <h4>LoksewaQuest</h4>
           <p>लोकसेवा आयोग (Loksewa Aayog) तथा शिक्षक सेवा आयोगका परीक्षार्थीहरूका लागि तयार पारिएको स्मार्ट अनलाइन क्विज र तयारी प्लेटफर्म।</p>
         </div>
-        <div class="footer-col">
-          <h4>द्रुत लिङ्कहरू (Quick Links)</h4>
-          <a href="quizlobby.html">मुख्य लबी (Lobby)</a>
-          <a href="#" onclick="toggleGlobalChat(); return false;">लाइभ च्याट (Live Chat)</a>
-          <a href="#">पाठ्यक्रम तथा नोटहरू</a>
-        </div>
+        
         <div class="footer-col">
           <h4>हामीसँग जोडिनुहोस्</h4>
           <p>अपडेट र नयाँ प्रश्नहरूको लागि हाम्रा कम्युनिटीहरूमा जोडिँनुहोस्।</p>
