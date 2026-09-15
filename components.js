@@ -158,7 +158,7 @@
           <h4>हामीसँग जोडिनुहोस्</h4>
           <p>अपडेट र नयाँ प्रश्नहरूको लागि हाम्रा कम्युनिटीहरूमा जोडिँनुहोस्।</p>
           <div class="footer-socials">
-            <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.facebook.com/share/1EvbsXtXRD/" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
             <a href="#" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
             <a href="#" title="Viber"><i class="fa-brands fa-viber"></i></a>
           </div>
