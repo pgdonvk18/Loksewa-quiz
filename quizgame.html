@@ -28,7 +28,6 @@
     .waiting-box h3 { font-size: 20px; font-weight: 800; color: #0f2a4a; margin-bottom: 8px; }
     .waiting-box p { font-size: 13px; color: #64748b; margin-bottom: 15px; }
     
-    /* Room Expiry Timer Box inside Lobby */
     .room-expiry-box { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 700; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px; }
 
     .players-list { display: flex; flex-direction: column; gap: 8px; max-width: 300px; margin: 0 auto 20px auto; text-align: left; }
@@ -43,7 +42,6 @@
     .btn-skip { background: #64748b; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; }
     .btn-skip:hover { background: #475569; }
 
-    /* Review Detailed Box Styling */
     .review-container { margin-top: 15px; text-align: left; max-height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; background: #f8fafc; }
     .review-item { font-size: 12px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed #cbd5e1; line-height: 1.4; }
 
@@ -234,6 +232,7 @@
           startRoomExpiryCountdown(room.createdAt);
         }
 
+        let playerCount = room.players ? room.players.length : 0;
         let playersHtml = room.players.map(p => `<div class="player-item"><span>${escapeHTML(p.name)}</span> <span>${p.uid === room.hostId ? 'Host' : 'Ready'}</span></div>`).join('');
         let isHost = (currentUser.uid === room.hostId);
 
@@ -245,6 +244,9 @@
               <i class="fa-regular fa-clock"></i> रुम स्वतः बन्द हुन बाँकी: <span id="lobbyTimerText" style="margin-left: 4px;"> गणना हुँदैछ...</span>
             </div>
             <div class="players-list">${playersHtml}</div>
+            
+            ${playerCount < 2 ? `<p style="font-size:12px; color:#dc2626; font-weight:700; margin-bottom: 10px;">⚠️ खेल सुरु गर्न कम्तीमा २ जना खेलाडी आवश्यक छ!</p>` : ``}
+
             ${isHost ? `<button class="btn-main" id="startBtn">खेल सुरु गर्नुहोस्</button>` : `<p style="font-size:12px; color:#64748b;">होस्टले गेम सुरु नगरेसम्म पर्खनुहोस्...</p>`}
           </div>
         `;
@@ -292,7 +294,6 @@
         let myRank = sortedPlayers.findIndex(p => p.uid === currentUser.uid) + 1;
         let isWinner = (myRank === 1);
 
-        // Trigger Fireworks effect on finish
         triggerFireworks(isWinner);
 
         let rankHtml = sortedPlayers.map((p, index) => `
@@ -302,13 +303,12 @@
           </div>
         `).join('');
 
-        // Detailed review section showing who gave which answer
         let reviewHistory = room.history || [];
         let reviewHtml = reviewHistory.map((h, i) => `
           <div class="review-item">
             <b>प्र. ${i+1}: ${escapeHTML(h.questionText)}</b><br>
             <span style="color: #475569;">उत्तर दिने खेलाडी: <b>${escapeHTML(h.playerName)}</b></span> | 
-            <span style="color: ${h.isCorrect ? '#16a34a' : '#dc2626'}; font-weight:700;">छनोट: ${escapeHTML(h.selectedAnswer || 'स्कিপ')}</span><br>
+            <span style="color: ${h.isCorrect ? '#16a34a' : '#dc2626'}; font-weight:700;">छनोट: ${escapeHTML(h.selectedAnswer || 'स्किप')}</span><br>
             <span style="color: #2563eb; font-weight: 600;">सही उत्तर: ${escapeHTML(h.correctAnswer)}</span>
           </div>
         `).join('') || '<div style="font-size:12px; color:#64748b; text-align:center;">समीक्षा डाटा उपलब्ध छैन।</div>';
@@ -355,7 +355,7 @@
     function startRoomExpiryCountdown(createdAtTimestamp) {
       if (roomExpiryTimerInterval) clearInterval(roomExpiryTimerInterval);
       
-      const createdTime = createdAtTimestamp?.toMillis ? createdAtTimestamp.toMillis() : Date.now();
+      const createdTime = createdAtTimestamp?.toMillis ? createdAtTimestamp.toMillis() : Date.0 ? Date.now() : Date.now();
       const expiryTime = createdTime + (2 * 60 * 1000);
 
       roomExpiryTimerInterval = setInterval(async () => {
@@ -415,7 +415,7 @@
       let history = roomDataGlobal.history || [];
 
       let timedOutPlayerName = players[currentIndex].name;
-      players[currentIndex].score -= 1; // Timeout penalty
+      players[currentIndex].score -= 1;
 
       if (passAttempt >= players.length) {
         history.push({
@@ -498,8 +498,10 @@
 
     async function startGameSession() {
       if (!roomDataGlobal) return;
-      if (!roomDataGlobal.players || roomDataGlobal.players.length < 1) {
-        showCustomModal("त्रुटि", "खेल सुरु गर्न खेलाडी आवश्यक पर्छ!", "⚠️");
+      
+      // Strict check: At least 2 players are required to start the game
+      if (!roomDataGlobal.players || roomDataGlobal.players.length < 2) {
+        showCustomModal("खेलाडी नपुगेको", "खेल सुरु गर्न कम्तीमा २ जना खेलाडी (Players) आवश्यक छ। अरू साथीहरू जोडिन पर्खनुहोस्!", "⚠️");
         return;
       }
 
@@ -553,12 +555,11 @@
       let isRoundOver = isCorrect || (passAttempt >= players.length);
 
       if (isRoundOver) {
-        // Log to history who gave the answer
         history.push({
           questionText: currentQ.text,
           correctAnswer: currentQ.correctAnswer,
           playerName: currentPlayerName,
-          selectedAnswer: isSkipped ? 'स्कিপ गरियो' : selectedOpt,
+          selectedAnswer: isSkipped ? 'स्किप गरियो' : selectedOpt,
           isCorrect: isCorrect
         });
 
@@ -593,7 +594,6 @@
         return;
 
       } else {
-        // If wrong answer, record the failed attempt and pass to next player
         history.push({
           questionText: currentQ.text,
           correctAnswer: currentQ.correctAnswer,
