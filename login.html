@@ -404,7 +404,7 @@
   <!-- FIREBASE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -419,11 +419,17 @@
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
 
-    try {
-      await setPersistence(auth, browserSessionPersistence);
-    } catch (error) {
+    // १. Local Persistence सेट गर्ने (जसले गर्दा ब्राउजर बन्द गरेर खोल्दा पनि लगइन सेसन हराउँदैन)
+    setPersistence(auth, browserLocalPersistence).catch((error) => {
       console.error("Persistence Error:", error);
-    }
+    });
+
+    // २. यदि युजर पहिले नै लगइन छ भने सिधै dashboard मा पठाउने (Auto-detect)
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = "dashboard.html";
+      }
+    });
 
     // पेज लोड हुँदा यदि Google बाट redirect भएर आएको छ भने त्यसलाई प्रमाणित गर्ने
     document.addEventListener("DOMContentLoaded", async () => {
@@ -523,7 +529,7 @@
       }
     }
 
-    // Google Error Handler फङ्सन (एउटै इमेलबाट विभिन्न माध्यम प्रयोग भएको केस ह्यान्डल गर्न)
+    // Google Error Handler फङ्सन
     function handleGoogleError(error) {
       googleLoginBtn.disabled = false;
       googleLoginBtn.style.opacity = "1";
@@ -536,7 +542,6 @@
           "warning"
         );
       } else if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
-        // युजरले आफैँ पपअप बन्द गरेको हो भने केही नगर्ने
         return;
       } else {
         console.error("Google Login Error:", error);
@@ -625,7 +630,6 @@
         window.location.href = "dashboard.html";
       } catch (error) {
         if (error.code === 'auth/popup-blocked') {
-          // यदि पपअप ब्लक भयो भने रिडाइरेक्ट प्रयोग गर्ने
           try {
             await signInWithRedirect(auth, googleProvider);
             return;
