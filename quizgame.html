@@ -310,9 +310,10 @@
         let reviewHtml = reviewHistory.map((h, i) => `
           <div class="review-item">
             <b>प्र. ${i+1}: ${escapeHTML(h.questionText)}</b><br>
-            <span style="color: #475569;">उत्तर दिने प्रयास गर्ने: <b>${escapeHTML(h.playerName)}</b></span> | 
+            <span style="color: #475569;">उत्तर दिने: <b>${escapeHTML(h.playerName)}</b></span> | 
+            <span style="color: #2563eb;">रोजेको उत्तर: <b>${escapeHTML(h.selectedAnswer)}</b></span><br>
             <span style="color: ${h.isCorrect ? '#16a34a' : '#dc2626'}; font-weight:700;">स्थिति: ${h.isCorrect ? 'सहि उत्तर मिलाएको' : 'गलत उत्तर / स्किप'}</span><br>
-            <span style="color: #2563eb; font-weight: 600;">सही उत्तर: ${escapeHTML(h.correctAnswer)}</span>
+            <span style="color: #0f2a4a; font-weight: 600;">सही उत्तर: ${escapeHTML(h.correctAnswer)}</span>
           </div>
         `).join('') || '<div style="font-size:12px; color:#64748b; text-align:center;">समीक्षा डाटा उपलब्ध छैन।</div>';
 
@@ -423,7 +424,8 @@
       history.push({
         questionText: roomDataGlobal.currentQuestion.text,
         correctAnswer: roomDataGlobal.currentQuestion.correctAnswer,
-        playerName: timedOutPlayerName + ' (समय समाप्त)',
+        playerName: timedOutPlayerName,
+        selectedAnswer: 'समय समाप्त (Timeout)',
         isCorrect: false
       });
 
@@ -562,6 +564,7 @@
         questionText: currentQ.text,
         correctAnswer: currentQ.correctAnswer,
         playerName: currentPlayerName,
+        selectedAnswer: isSkipped ? 'स्कip गरिएको (Skipped)' : selectedOpt,
         isCorrect: isCorrect
       });
 
@@ -598,9 +601,9 @@
       } else {
         if (passAttempt < players.length) {
           let nextTurnIndex = (currentIndex + 1) % players.length;
-          let modalMsg = isSkipped ? "प्रश्न स्किप गरियो!" : "गलत उत्तर! ❌ (-२ अंक)";
           
-          showCustomModal(modalMsg, `${currentPlayerName} को उत्तर मिलेन। यो प्रश्न अब अर्को खेलाडीलाई पास हुँदैछ!`, "🔄", "अर्को पालो", async () => {
+          // Modal message ma kunai specific option na-dekhaune, just galat uttar diye vanne matra
+          showCustomModal("गलत उत्तर! ❌ (-२ अंक)", `${currentPlayerName} ले गलत उत्तर दिनुभयो। यो प्रश्न अब अर्को खेलाडीलाई पास हुँदैछ!`, "🔄", "अर्को पालो", async () => {
             await updateDoc(roomRef, {
               players: players,
               history: history,
