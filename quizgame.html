@@ -176,12 +176,13 @@
       window.modalCallback = callback;
     }
 
-    window.closeCustomModal = function() {
+    window.closeCustomModal = async function() {
       const overlay = document.getElementById('customModalOverlay');
       overlay.classList.remove('active');
       if (window.modalCallback) {
-        window.modalCallback();
+        let cb = window.modalCallback;
         window.modalCallback = null;
+        await cb();
       }
     }
 
