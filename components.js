@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <h3 id="cgModalTitle" class="cg-title">सफल भयो!</h3>
           <p id="cgModalMessage" class="cg-message">तपाईंको कार्य सफलतापूर्वक पूरा भयो।</p>
-          <button id="cgModalBtn" class="cg-btn">ठीक्क छ (OK)</button>
+          <button id="cgModalBtn" class="cg-btn">ठीक छ </button>
         </div>
       </div>
 
