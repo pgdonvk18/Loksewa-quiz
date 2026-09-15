@@ -57,7 +57,7 @@
     .btn-main:hover { background: #1d4ed8; }
   </style>
 
-  <!-- Supabase CDN समावेश गरिएको -->
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -116,9 +116,9 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Supabase Setup (तपाईँको Supabase Credential यहाँ राख्नुहोला)
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    // Supabase Credentials (तपाईंले दिएको लिङ्क र कुञ्जी राखिएको छ)
+    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -247,7 +247,6 @@
         
         let { data, error } = await query;
         if (error || !data || data.length === 0) {
-          // यदि सबै प्रश्न सकिएमा वा एरर आएमा रिसेट वा फallब्याक प्रयोग गर्ने
           const { data: allData } = await supabaseClient.from('quizzes').select('*');
           data = allData;
         }
@@ -256,7 +255,6 @@
           const randomIndex = Math.floor(Math.random() * data.length);
           const qRow = data[randomIndex];
           
-          // अप्सनहरूलाई अनियमित (shuffle) गर्ने
           let options = [qRow.option_a, qRow.option_b, qRow.option_c, qRow.option_d].filter(Boolean);
           options.sort(() => Math.random() - 0.5);
 
@@ -271,7 +269,6 @@
         console.error("Supabase fetch error:", err);
       }
       
-      // Fallback यदि Supabase कनेक्सन नभएमा
       return {
         id: Math.random(),
         text: "नेपालको राष्ट्रिय बोट कुन हो?",
@@ -361,7 +358,6 @@
         return;
       }
 
-      // नयाँ र्यान्डम प्रश्न फेच गर्ने (पहिले सोधिसकिएका बाहेक)
       let nextQuestion = await fetchRandomQuestion(askedIds);
       if (nextQuestion && nextQuestion.id) {
         askedIds.push(nextQuestion.id);
