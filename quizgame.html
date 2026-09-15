@@ -422,7 +422,7 @@
         if (timeLeft <= 0) {
           clearInterval(questionTimerInterval);
           if (isMyTurn && roomDataGlobal && roomDataGlobal.status === 'playing') {
-            showCustomModal("समय सकियो!", "तपाईले १५ सेकेन्डभित्र उत्तर दिनुभएन। यसलाई स्किप सरह मानेर अगाडि बढिन्छ।", "⌛", "पछाडि जानुहोस्", () => {
+            showCustomModal("समय सकियो!", "तपाईले १५ सेकेन्डभित्र उत्तर दिनुभएन। यसलाई स्किप सरහ मानेर अगाडि बढिन्छ।", "⌛", "पछाडि जानुहोस्", () => {
               handleTimeoutTurn();
             });
           }
@@ -582,16 +582,23 @@
         isCorrect: isCorrect
       });
 
+      // यदि अन्तिम राउन्ड थियो र उत्तर मिल्यो वा सबैले पालो पाइसके भने सिधै खेल समाप्त (finished) गर्ने
       let isRoundOver = isCorrect || (passAttempt >= players.length);
 
-      if (isRoundOver) {
-        if (currentQCount >= totalRounds) {
-          showCustomModal("खेल समाप्त! 🏆", "सबै राउन्डहरू पूरा भए। अब नतिजा हेर्नुहोस्।", "🏁", "नतिजा हेर्नुहोस्", async () => {
-            await updateDoc(roomRef, { players: players, gameHistory: history, status: "finished" });
+      if (isRoundOver && currentQCount >= totalRounds) {
+        try {
+          await updateDoc(roomRef, { 
+            players: players, 
+            gameHistory: history, 
+            status: "finished" 
           });
-          return;
+        } catch (e) {
+          console.log("Error finishing game:", e);
         }
+        return;
+      }
 
+      if (isRoundOver) {
         let nextQuestion = await fetchRandomQuestion(askedIds);
         if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
 
