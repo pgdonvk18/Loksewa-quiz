@@ -214,6 +214,7 @@
     function renderGameUI(room) {
       const gameBody = document.getElementById('gameBody');
       const scoreInfo = document.getElementById('scoreboardInfo');
+      const totalRounds = room.settings?.totalRounds || 5;
 
       if (room.status === 'waiting') {
         scoreInfo.style.display = 'none';
@@ -229,7 +230,7 @@
         gameBody.innerHTML = `
           <div class="card waiting-box">
             <h3>🎮 खेल सुरु हुन प्रतीक्षारत छ...</h3>
-            <p>कोड: <b>${room.roomId}</b> | रुम समाप्त हुन बाँकी समय: <span id="roomExpiryTimer" style="color:#dc2626; font-weight:700;">02:00</span></p>
+            <p>कोड: <b>${room.roomId}</b> | जम्मा राउन्ड: <b>${totalRounds}</b></p>
             <div class="players-list">${playersHtml}</div>
             ${isHost ? `<button class="btn-main" id="startBtn">खेल सुरु गर्नुहोस्</button>` : `<p style="font-size:12px; color:#64748b;">होस्टले गेम सुरु नगरेसम्म पर्खनुहोस्...</p>`}
           </div>
@@ -253,7 +254,7 @@
         gameBody.innerHTML = `
           <div class="card question-box">
             <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px;">
-              <span>प्रश्न संख्या: ${room.questionCount || 1} / 5</span>
+              <span>राउन्ड: ${room.questionCount || 1} / ${totalRounds}</span>
               <span>पालो: <b style="color: ${isMyTurn ? '#2563eb' : '#0f2a4a'}">${isMyTurn ? 'तपाईँको पालो!' : currentTurnPlayer.name + ' को पालो'}</b></span>
             </div>
             <h4>${escapeHTML(q.text)}</h4>
@@ -312,14 +313,6 @@
           });
           return;
         }
-
-        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-        
-        const timerEl = document.getElementById('roomExpiryTimer');
-        if (timerEl) {
-          timerEl.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
       }, 1000);
     }
 
@@ -336,7 +329,7 @@
         if (timeLeft <= 0) {
           clearInterval(questionTimerInterval);
           if (isMyTurn && roomDataGlobal && roomDataGlobal.status === 'playing') {
-            showCustomModal("समय सकियो!", "तपाईले १५ सेकेन्डभित्र उत्तर दिनुभएन। यो प्रश्न अब अर्को खेलाडीलाई जान्छ।", "⌛", "पछाडि जानुहोस्", () => {
+            showCustomModal("समय सकियो!", "तपाईले १५ सेकेन्डभित्र उत्तर दिनुभएन। यसलाई स्किप सरह मानेर अगाडि बढिन्छ।", "⌛", "पछाडि जानुहोस्", () => {
               handleTimeoutTurn();
             });
           }
@@ -349,15 +342,43 @@
       let roomRef = doc(db, "quiz_rooms", roomId);
       let players = [...roomDataGlobal.players];
       let currentIndex = roomDataGlobal.currentTurnIndex;
+      let askedIds = roomDataGlobal.askedQuestionIds || [];
+      let totalRounds = roomDataGlobal.settings?.totalRounds || 5;
+      let currentQCount = roomDataGlobal.questionCount || 1;
+      let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
 
-      players[currentIndex].score -= 2; // Penalty for timeout
-      let nextTurnIndex = (currentIndex + 1) % players.length;
+      players[currentIndex].score -= 1; // Timeout penalty
 
-      // ब्याकएन्डमा प्रश्न परिवर्तन नगरी केवल अर्को खेलाडीको पालो र तिनै प्रश्न कायम राख्ने
-      await updateDoc(roomRef, {
-        players: players,
-        currentTurnIndex: nextTurnIndex
-      });
+      // यदि यो प्रश्न सबै खेलाडीले हेरिसके भने (वा गलत/स्किप गरेर राउन्डको अन्त्यमा पुगे)
+      if (passAttempt >= players.length) {
+        if (currentQCount >= totalRounds) {
+          await updateDoc(roomRef, { players: players, status: "finished" });
+          return;
+        }
+        let nextQuestion = await fetchRandomQuestion(askedIds);
+        if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
+
+        // **नयाँ राउन्ड अर्को खेलाडीबाट सुरु हुन्छ (Index परिवर्तन)**
+        let nextRoundStarterIndex = (roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0);
+        nextRoundStarterIndex = (nextRoundStarterIndex + 1) % players.length;
+
+        await updateDoc(roomRef, {
+          players: players,
+          currentTurnIndex: nextRoundStarterIndex,
+          roundStarterIndex: nextRoundStarterIndex,
+          questionCount: currentQCount + 1,
+          passAttempt: 0,
+          currentQuestion: nextQuestion,
+          askedQuestionIds: askedIds
+        });
+      } else {
+        // **पहिलोले मिलाएन भने, यही प्रश्न अर्को खेलाडीलाई पास हुन्छ**
+        await updateDoc(roomRef, {
+          players: players,
+          currentTurnIndex: (currentIndex + 1) % players.length,
+          passAttempt: passAttempt
+        });
+      }
     }
 
     async function fetchRandomQuestion(excludedIds = []) {
@@ -416,7 +437,9 @@
         await updateDoc(roomRef, {
           status: "playing",
           currentTurnIndex: 0,
+          roundStarterIndex: 0, // राउन्ड १ को पहिलो खेलाडी
           questionCount: 1,
+          passAttempt: 0,
           players: initialPlayers,
           currentQuestion: firstQ,
           askedQuestionIds: [firstQ.id]
@@ -435,67 +458,69 @@
       let currentIndex = roomDataGlobal.currentTurnIndex;
       let currentQ = roomDataGlobal.currentQuestion;
       let askedIds = roomDataGlobal.askedQuestionIds || [];
+      let totalRounds = roomDataGlobal.settings?.totalRounds || 5;
+      let currentQCount = roomDataGlobal.questionCount || 1;
+      let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
 
-      let nextTurnIndex = currentIndex;
-      let nextQCount = roomDataGlobal.questionCount || 1;
-      let newStatus = "playing";
-      let updateData = {};
-
-      if (isSkipped) {
-        // स्किप गर्दा: अंक घट्दैन, एउटै प्रश्न अर्को खेलाडीलाई जान्छ
-        showCustomModal("स्किप गरियो!", "तपाईंले प्रश्न स्किप गर्नुभयो। यही प्रश्न अब अर्को खेलाडीलाई जान्छ।", "⏭️", "पछाडि जानुहोस्", async () => {
-          nextTurnIndex = (currentIndex + 1) % players.length;
-          await updateDoc(roomRef, {
-            currentTurnIndex: nextTurnIndex
-          });
-        });
-        return;
-      } else {
-        let isCorrect = (selectedOpt === currentQ.correctAnswer);
+      let isCorrect = false;
+      if (!isSkipped) {
+        isCorrect = (selectedOpt === currentQ.correctAnswer);
         if (isCorrect) {
           players[currentIndex].score += 5;
-          
-          // सही उत्तर आएपछि मात्र प्रश्न बदलिन्छ र प्रश्न संख्या (questionCount) बढ्छ
-          nextQCount += 1;
-          if (nextQCount > 5) {
-            newStatus = "finished";
-            showCustomModal("सही उत्तर! 🎉", "बधाई छ! तपाईंले सही उत्तर दिनुभयो र खेल समाप्त भयो।", "🏆", "नतिजा हेर्नुहोस्", async () => {
-              await updateDoc(roomRef, {
-                players: players,
-                status: newStatus,
-                questionCount: nextQCount
-              });
-            });
-            return;
-          }
-
-          let nextQuestion = await fetchRandomQuestion(askedIds);
-          if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
-          nextTurnIndex = (currentIndex + 1) % players.length;
-
-          showCustomModal("सही उत्तर! 🎉", "बधाई छ! तपाईंले ५ अंक पाउनुभयो। नयाँ प्रश्न अर्को पालोमा जाँदैछ।", "✅", "पछाडि जानुहोस्", async () => {
-            await updateDoc(roomRef, {
-              players: players,
-              currentTurnIndex: nextTurnIndex,
-              questionCount: nextQCount,
-              currentQuestion: nextQuestion,
-              askedQuestionIds: askedIds
-            });
-          });
-          return;
-
         } else {
-          // गलत उत्तर दिँदा: अंक घटेर, प्रश्न नबदली पालो अर्को खेलाडीलाई जान्छ
           players[currentIndex].score -= 2;
-          showCustomModal("गलत उत्तर! ❌", `गलत उत्तर (-२ अंक)। यही प्रश्न अब अर्को खेलाडीलाई पालो जान्छ।`, "❌", "पछाडि जानुहोस्", async () => {
-            nextTurnIndex = (currentIndex + 1) % players.length;
-            await updateDoc(roomRef, {
-              players: players,
-              currentTurnIndex: nextTurnIndex
-            });
+        }
+      }
+
+      // **यदि पहिलो खेलाडीले सहि उत्तर दियो भने, यो प्रश्नको पालो त्यहीं अन्त्य हुन्छ (Round Ends)**
+      // वा यदि सबै खेलाडीले प्रयास गरेर सकियो (passAttempt >= players.length) भने पनि राउन्ड अन्त्य हुन्छ।
+      let isRoundOver = isCorrect || (passAttempt >= players.length);
+
+      if (isRoundOver) {
+        // यदि जम्मा राउन्ड पूरा भयो भने खेल समाप्त गर्ने
+        if (currentQCount >= totalRounds) {
+          showCustomModal("खेल समाप्त! 🏆", "सबै राउन्डहरू पूरा भए। अब नतिजा हेर्नुहोस्।", "🏁", "नतिजा हेर्नुहोस्", async () => {
+            await updateDoc(roomRef, { players: players, status: "finished" });
           });
           return;
         }
+
+        let nextQuestion = await fetchRandomQuestion(askedIds);
+        if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
+
+        // **अर्को राउन्ड अर्को खेलाडीबाट सुरु हुन्छ (Round 2 starts from next player)**
+        let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
+        let nextRoundStarterIndex = (currentStarter + 1) % players.length;
+
+        let modalMsg = isCorrect ? "सही उत्तर! 🎉 (+५ अंक)" : "कसैले पनि मिलाएनन्! ❌";
+        if (isSkipped && !isCorrect) modalMsg = "प्रश्न स्किप गरियो।";
+
+        showCustomModal(modalMsg, `राउन्ड ${currentQCount} समाप्त भयो! अब राउन्ड ${currentQCount + 1} **${players[nextRoundStarterIndex].name}** बाट नयाँ प्रश्नसहित सुरु हुँदैछ!`, "➡️", "अर्को राउन्डमा जानुहोस्", async () => {
+          await updateDoc(roomRef, {
+            players: players,
+            currentTurnIndex: nextRoundStarterIndex,
+            roundStarterIndex: nextRoundStarterIndex,
+            questionCount: currentQCount + 1,
+            passAttempt: 0,
+            currentQuestion: nextQuestion,
+            askedQuestionIds: askedIds
+          });
+        });
+        return;
+
+      } else {
+        // **पहिलोले मिलाएन (गलत वा स्किप गर्यो) भने, यही प्रश्न अर्को खेलाडीलाई पास हुन्छ**
+        let nextTurnIndex = (currentIndex + 1) % players.length;
+        let modalMsg = isSkipped ? "स्किप गरियो!" : "गलत उत्तर! ❌ (-२ अंक)";
+        
+        showCustomModal(modalMsg, `उत्तर मिलेन! यो प्रश्न अब अर्को खेलाडीलाई पास हुँदैछ।`, "🔄", "अर्को पालोमा जानुहोस्", async () => {
+          await updateDoc(roomRef, {
+            players: players,
+            currentTurnIndex: nextTurnIndex,
+            passAttempt: passAttempt
+          });
+        });
+        return;
       }
     };
 
@@ -543,6 +568,13 @@
         createdAt: serverTimestamp()
       });
     });
+
+    function_escapeHTML = function(str) {
+      if (!str) return '';
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag] || tag));
+    }
 
     function escapeHTML(str) {
       if (!str) return '';
