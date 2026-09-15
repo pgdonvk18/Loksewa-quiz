@@ -139,6 +139,24 @@
       color: #2563eb;
     }
 
+    .forgot-password-container {
+      text-align: right;
+      margin-top: -10px;
+      margin-bottom: 18px;
+    }
+
+    .forgot-password-link {
+      font-size: 12px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .forgot-password-link:hover {
+      text-decoration: underline;
+    }
+
     .submit-btn {
       width: 100%;
       background: #2563eb;
@@ -355,7 +373,7 @@
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom: 8px;">
         <label for="loginPassword">पासवर्ड (Password)</label>
         <div class="input-box">
           <i class="fa-solid fa-lock input-icon"></i>
@@ -364,6 +382,11 @@
             <i id="passwordIcon" class="fa-solid fa-eye"></i>
           </button>
         </div>
+      </div>
+
+      <!-- FORGOT PASSWORD LINK -->
+      <div class="forgot-password-container">
+        <a href="#" id="forgotPasswordLink" class="forgot-password-link">पासवर्ड बिर्सनुभयो? (Forgot Password)</a>
       </div>
 
       <button type="submit" id="loginButton" class="submit-btn">
@@ -404,7 +427,7 @@
   <!-- FIREBASE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -419,19 +442,18 @@
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
 
-    // १. Local Persistence सेट गर्ने (जसले गर्दा ब्राउजर बन्द गरेर खोल्दा पनि लगइन सेसन हराउँदैन)
+    // लोकल Persistence सेट गर्ने
     setPersistence(auth, browserLocalPersistence).catch((error) => {
       console.error("Persistence Error:", error);
     });
 
-    // २. यदि युजर पहिले नै लगइन छ भने सिधै dashboard मा पठाउने (Auto-detect)
+    // पहिले नै लगइन छ भने ड्यासबोर्डमा पठाउने
     onAuthStateChanged(auth, (user) => {
       if (user) {
         window.location.href = "dashboard.html";
       }
     });
 
-    // पेज लोड हुँदा यदि Google बाट redirect भएर आएको छ भने त्यसलाई प्रमाणित गर्ने
     document.addEventListener("DOMContentLoaded", async () => {
       try {
         const result = await getRedirectResult(auth);
@@ -451,6 +473,7 @@
     const passwordToggle = document.getElementById("passwordToggle");
     const passwordIcon = document.getElementById("passwordIcon");
     const googleLoginBtn = document.getElementById("googleLoginBtn");
+    const forgotPasswordLink = document.getElementById("forgotPasswordLink");
 
     const popup = document.getElementById("customPopup");
     const popupTitle = document.getElementById("popupTitle");
@@ -529,7 +552,6 @@
       }
     }
 
-    // Google Error Handler फङ्सन
     function handleGoogleError(error) {
       googleLoginBtn.disabled = false;
       googleLoginBtn.style.opacity = "1";
@@ -548,6 +570,42 @@
         showPopup("गुगल लगइन असफल", "Google बाट लगइन गर्दा समस्या आयो: " + error.message, "error");
       }
     }
+
+    // FORGOT PASSWORD LOGIC
+    forgotPasswordLink.addEventListener("click", async function(event) {
+      event.preventDefault();
+      const email = emailInput.value.trim();
+
+      if (!email) {
+        showPopup("इमेल आवश्यक छ", "कृपया पासवर्ड रिसेट गर्न माथिको इमेल बक्समा आफ्नो इमेल ठेगाना लेख्नुहोस् र फेरि 'पासवर्ड बिर्सनुभयो?' मा क्लिक गर्नुहोस्।", "warning");
+        emailInput.focus();
+        return;
+      }
+
+      if (!emailInput.checkValidity()) {
+        showPopup("अमान्य इमेल", "कृपया सही इमेल ठेगाना राख्नुहोस्।", "error");
+        emailInput.focus();
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showPopup(
+          "लिंक पठाइयो! ✉️",
+          `तपाईंको इमेल (${email}) मा पासवर्ड रिसेट गर्ने लिङ्क पठाइएको छ। कृपया आफ्नो इमेल चेक गरेर नयाँ पासवर्ड सेट गर्नुहोस्।`,
+          "success"
+        );
+      } catch (error) {
+        console.error("Password Reset Error:", error);
+        let message = "पासवर्ड रिसेट इमेल पठाउन सकिएन।";
+        if (error.code === 'auth/user-not-found') {
+          message = "यो इमेलसँग सम्बन्धित कुनै अकाउन्ट फेला परेन।";
+        } else if (error.code === 'auth/invalid-email') {
+          message = "अमान्य इमेल ठेगाना।";
+        }
+        showPopup("त्रुटि!", message, "error");
+      }
+    });
 
     // Email/Password Login
     loginForm.addEventListener("submit", async function(event) {
