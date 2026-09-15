@@ -110,6 +110,50 @@
       background: #1d4ed8;
     }
 
+    /* Google Sign-in Button */
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .divider::before { margin-right: 10px; }
+    .divider::after { margin-left: 10px; }
+
+    .google-btn {
+      width: 100%;
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 13px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      transition: 0.2s;
+    }
+    .google-btn:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+    .google-icon {
+      width: 18px;
+      height: 18px;
+    }
+
     .login-redirect {
       text-align: center;
       margin-top: 24px;
@@ -145,6 +189,7 @@
     }
     .popup-icon-container.success { background: #dcfce7; color: #16a34a; }
     .popup-icon-container.error { background: #fee2e2; color: #dc2626; }
+    .popup-icon-container.warning { background: #fef3c7; color: #d97706; }
     .custom-popup-box h3 { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
     .custom-popup-box p { font-size: 14px; color: #64748b; margin-bottom: 24px; line-height: 1.5; }
     .popup-btn {
@@ -163,7 +208,7 @@
       <p>LoksewaQuest मा स्वागत छ</p>
     </div>
 
-    <form id="registerForm" onsubmit="handleRegister(event)">
+    <form id="registerForm">
       <div class="form-group">
         <label>पूरा नाम (Full Name)</label>
         <div class="input-box">
@@ -191,6 +236,19 @@
       <button type="submit" class="submit-btn">Register</button>
     </form>
 
+    <div class="divider">अथवा</div>
+
+    <!-- GOOGLE SIGNUP/LOGIN BUTTON -->
+    <button type="button" id="googleRegisterBtn" class="google-btn">
+      <svg class="google-icon" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.19v3.14C3.21 21.35 7.3 24 12 24z"/>
+        <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.19C.43 8.15 0 9.89 0 11.7s.43 3.55 1.19 5.08l4.08-2.54z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.3 0 3.21 2.65 1.19 6.62l4.08 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
+      </svg>
+      Google बाट दर्ता गर्नुहोस्
+    </button>
+
     <div class="login-redirect">
       पहिले नै अकाउन्ट छ? <a href="login.html">लगइन गर्नुहोस्</a>
     </div>
@@ -210,56 +268,11 @@
 
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <!-- EmailJS SDK CDN -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script type="text/javascript">
-    (function() {
-      emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
-    })();
-  </script>
-
-  <!-- मुख्य साझा main.js फाइल लिङ्क -->
-  <script src="main.js"></script>
-
-  <!-- Popup Helper Function Script -->
-  <script>
-    let popupCallback = null;
-
-    function showPopup(title, message, type = "success", callback = null) {
-      const overlay = document.getElementById('customPopup');
-      const popupTitle = document.getElementById('popupTitle');
-      const popupMessage = document.getElementById('popupMessage');
-      const popupIcon = document.getElementById('popupIcon');
-      const popupIconSymbol = document.getElementById('popupIconSymbol');
-      
-      popupTitle.textContent = title;
-      popupMessage.textContent = message;
-      popupCa1lback = callback;
-
-      popupIcon.className = "popup-icon-container " + type;
-      if (type === "success") {
-        popupIconSymbol.className = "fa-solid fa-check";
-      } else {
-        popupIconSymbol.className = "fa-solid fa-triangle-exclamation";
-      }
-
-      overlay.classList.add('active');
-    }
-
-    function closePopup() {
-      const overlay = document.getElementById('customPopup');
-      overlay.classList.remove('active');
-      if (window.popupCa1lback && typeof window.popupCa1lback === 'function') {
-        window.popupCa1lback();
-      }
-    }
-  </script>
 
   <!-- Firebase & Registration Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -274,19 +287,55 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
 
     const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    window.handleRegister = async function(event) {
+    let popupCallback = null;
+
+    window.showPopup = function(title, message, type = "success", callback = null) {
+      const overlay = document.getElementById('customPopup');
+      const popupTitle = document.getElementById('popupTitle');
+      const popupMessage = document.getElementById('popupMessage');
+      const popupIcon = document.getElementById('popupIcon');
+      const popupIconSymbol = document.getElementById('popupIconSymbol');
+      
+      popupTitle.textContent = title;
+      popupMessage.textContent = message;
+      popupCallback = callback;
+
+      popupIcon.className = "popup-icon-container " + type;
+      if (type === "success") {
+        popupIconSymbol.className = "fa-solid fa-check";
+      } else if (type === "warning") {
+        popupIconSymbol.className = "fa-solid fa-triangle-exclamation";
+      } else {
+        popupIconSymbol.className = "fa-solid fa-triangle-exclamation";
+      }
+
+      overlay.classList.add('active');
+    }
+
+    window.closePopup = function() {
+      const overlay = document.getElementById('customPopup');
+      overlay.classList.remove('active');
+      if (popupCallback && typeof popupCallback === 'function') {
+        const cb = popupCallback;
+        popupCallback = null;
+        cb();
+      }
+    }
+
+    // Email/Password Registration
+    const registerForm = document.getElementById('registerForm');
+    registerForm.addEventListener('submit', async function(event) {
       event.preventDefault();
       
-      const fullName = document.getElementById('fullName').value;
-      const email = document.getElementById('registerEmail').value;
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
       const password = document.getElementById('registerPassword').value;
-
-      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -294,39 +343,83 @@
 
         await updateProfile(user, { displayName: fullName });
 
+        // इमेल भेरिफिकेसन लिङ्क पठाउने
+        await sendEmailVerification(user);
+
+        // Firestore मा युजर डेटा सेभ गर्ने
         await setDoc(doc(db, "users", user.uid), {
           name: fullName,
           email: email,
           createdAt: new Date()
         });
 
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
         await supabase.from('user_stats').upsert([
           { id: user.uid, total_solved: 0, time_spent_minutes: 0, accuracy: 0, otp_code: otpCode }
         ]);
 
-        const templateParams = {
-          to_email: email,
-          to_name: fullName,
-          otp_code: otpCode
-        };
-
-        // Note: यदि EmailJS को सहि ID हरू हालिएको छैन भने यहाँ एरर आउन सक्छ, यसलाई पछि मिलाउनुहोला
-        // await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
-
-        showPopup("सफल भयो!", "सफलतापूर्वक रजिस्टर भयो! कृपया लगइन गर्नुहोस्।", "success", () => {
-          window.location.href = "login.html";
-        });
+        showPopup(
+          "भेरिफिकेसन इमेल पठाइयो! ✉️", 
+          `तपाईंको इमेल (${email}) मा भेरिफिकेसन लिङ्क पठाइएको छ। कृपया आफ्नो इमेल चेक गरेर भेरिफाइ गर्नुहोस्, त्यसपछि मात्र लगइन गर्नुहोस्।`, 
+          "success", 
+          () => {
+            window.location.href = "login.html";
+          }
+        );
 
       } catch (error) {
         let errorMessage = error.message;
         
         if (error.code === 'auth/email-already-in-use') {
-          errorMessage = "यो इमेल पहिले नै प्रयोगमा छ।";
+          errorMessage = "यो इमेल पहिले नै प्रयोगमा छ। कृपया लगइन गर्नुहोस् वा अर्को इमेल प्रयोग गर्नुहोस्।";
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = "पासवर्ड कम्तिमा ६ अक्षरको हुनुपर्छ।";
         }
 
         showPopup("त्रुटि!", errorMessage, "error");
       }
-    };
+    });
+
+    // Google Sign-up / Sign-in Handler
+    const googleRegisterBtn = document.getElementById('googleRegisterBtn');
+    googleRegisterBtn.addEventListener('click', async function() {
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+
+        // Firestore र Supabase मा युजरको डेटा चेक गरेर राख्ने
+        await setDoc(doc(db, "users", user.uid), {
+          name: user.displayName || "Google User",
+          email: user.email,
+          createdAt: new Date()
+        }, { merge: true });
+
+        await supabase.from('user_stats').upsert([
+          { id: user.uid, total_solved: 0, time_spent_minutes: 0, accuracy: 0 }
+        ]);
+
+        // Google बाट लगइन गर्दा इमेल पहिल्यै प्रमाणित हुने भएकोले सिधै ड्यासबोर्डमा पठाउने
+        window.location.href = "dashboard.html";
+
+      } catch (error) {
+        if (error.code === 'auth/account-exists-with-different-credential') {
+          const email = error.customData ? error.customData.email : "";
+          showPopup(
+            "अकाउन्ट पहिले नै अवस्थित छ!",
+            `यो इमेल (${email}) बाट पहिले नै इमेल/पासवर्ड विधिबाट अकाउन्ट बनिसकेको छ। कृपया लगइन पेजमा गएर इमेल र पासवर्डमार्फत लगइन गर्नुहोस्।`,
+            "warning"
+          );
+        } else if (error.code === 'auth/popup-blocked') {
+          try {
+            await signInWithRedirect(auth, googleProvider);
+          } catch (redirectError) {
+            showPopup("गुगल दर्ता असफल", redirectError.message, "error");
+          }
+        } else if (error.code !== 'auth/popup-closed-by-user') {
+          showPopup("गुगल दर्ता असफल", "समस्या आयो: " + error.message, "error");
+        }
+      }
+    });
   </script>
 
 </body>
