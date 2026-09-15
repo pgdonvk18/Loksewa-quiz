@@ -19,6 +19,15 @@
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
     .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; position: relative; }
 
+    /* Floating Emoji Animation Container */
+    .floating-emoji-container { position: absolute; bottom: 0; right: 20px; width: 100px; height: 100%; pointer-events: none; overflow: hidden; z-index: 200; }
+    .floating-emoji { position: absolute; font-size: 28px; animation: floatUp 2s ease-out forwards; opacity: 1; }
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(0.5); opacity: 1; }
+      50% { transform: translateY(-180px) scale(1.3) rotate(15deg); opacity: 0.9; }
+      100% { transform: translateY(-350px) scale(1) rotate(-15deg); opacity: 0; }
+    }
+
     /* Toast Notification */
     .toast-container { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 500; display: flex; flex-direction: column; gap: 6px; width: 90%; max-width: 400px; pointer-events: none; }
     .toast-msg { background: #0f2a4a; color: white; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 8px; animation: fadeInOut 3.5s forwards; }
@@ -76,7 +85,7 @@
     .chat-msg { font-size: 12px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; word-break: break-word; }
     .chat-msg .c-user { font-weight: 700; color: #2563eb; margin-bottom: 2px; }
     
-    /* Quick Emojis Bar */
+    /* Quick Emojis Selection Bar (Placed right above Chat Input) */
     .quick-emojis { display: flex; gap: 6px; padding: 8px 12px; background: #f8fafc; border-top: 1px solid #e2e8f0; overflow-x: auto; flex-shrink: 0; }
     .emoji-pill { background: white; border: 1px solid #cbd5e1; border-radius: 20px; padding: 4px 8px; font-size: 15px; cursor: pointer; transition: transform 0.1s; }
     .emoji-pill:hover { transform: scale(1.15); background: #e2e8f0; }
@@ -105,8 +114,11 @@
   </div>
 
   <div class="game-layout">
-    <div class="main-content">
+    <div class="main-content" id="mainContentArea">
       
+      <!-- Floating Emoji Animation Layer -->
+      <div class="floating-emoji-container" id="floatingEmojiContainer"></div>
+
       <!-- Toast Notification Container -->
       <div class="toast-container" id="toastContainer"></div>
 
@@ -129,7 +141,7 @@
         <div style="text-align: center; color: #94a3b8; font-size: 11px;">च्याट लोड हुँदैछ...</div>
       </div>
       
-      <!-- Quick Emojis Selection Bar -->
+      <!-- Quick Emojis Selection Bar (Placed above Input Box) -->
       <div class="quick-emojis">
         <button type="button" class="emoji-pill" onclick="sendQuickEmoji('👍')">👍</button>
         <button type="button" class="emoji-pill" onclick="sendQuickEmoji('🔥')">🔥</button>
@@ -206,6 +218,27 @@
       setTimeout(() => {
         toast.remove();
       }, 3500);
+    }
+
+    // Function to trigger floating emoji animation on quiz screen
+    window.triggerFloatingEmoji = function(emojiChar) {
+      const container = document.getElementById('floatingEmojiContainer');
+      if (!container) return;
+
+      const span = document.createElement('span');
+      span.className = 'floating-emoji';
+      span.innerText = emojiChar;
+      
+      // Randomize horizontal positioning slightly
+      const randomLeft = Math.floor(Math.random() * 60) + 10;
+      span.style.left = randomLeft + 'px';
+
+      container.appendChild(span);
+
+      // Remove element after animation finishes (2 seconds)
+      setTimeout(() => {
+        span.remove();
+      }, 2000);
     }
 
     window.showCustomModal = function(title, desc, icon = "🎉", btnText = "हुन्छ (OK)", callback = null) {
@@ -756,16 +789,29 @@
 
     function initChatListener() {
       const chatRef = collection(db, "quiz_rooms", roomId, "room_chat");
+      let isFirstLoad = true;
+
       onSnapshot(chatRef, (snapshot) => {
         const container = document.getElementById('chatMessagesContainer');
         if (snapshot.empty) {
           container.innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 11px;">कुनै मसेज छैन।</div>`;
+          isFirstLoad = false;
           return;
         }
 
         let msgs = [];
-        snapshot.forEach(doc => msgs.push(doc.data()));
+        snapshot.forEach(doc => msgs.push({ id: doc.id, ...doc.data() }));
         msgs.sort((a, b) => (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0));
+
+        // If not first load, check latest message to trigger floating emoji animation for everyone in room
+        if (!isFirstLoad && msgs.length > 0) {
+          const latestMsg = msgs[msgs.length - 1];
+          // Check if message is a single or short emoji string
+          const isEmoji = /^\p{Emoji}+$/u.test(latestMsg.text.trim());
+          if (isEmoji) {
+            triggerFloatingEmoji(latestMsg.text.trim());
+          }
+        }
 
         container.innerHTML = "";
         msgs.forEach(m => {
@@ -777,12 +823,16 @@
           `;
         });
         container.scrollTop = container.scrollHeight;
+        isFirstLoad = false;
       });
     }
 
     // Quick Emoji Click Handler
     window.sendQuickEmoji = async function(emoji) {
       if (!currentUser) return;
+      // Instantly trigger animation locally for smoother feel
+      triggerFloatingEmoji(emoji);
+      
       await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
         text: emoji,
         uid: currentUser.uid,
@@ -797,6 +847,11 @@
       const text = input.value.trim();
       if (!text || !currentUser) return;
       input.value = '';
+
+      // Check if typed text is an emoji to trigger floating animation
+      if (/^\p{Emoji}+$/u.test(text)) {
+        triggerFloatingEmoji(text);
+      }
 
       await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
         text: text,
