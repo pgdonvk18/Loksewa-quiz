@@ -46,7 +46,6 @@
     .chat-msg { font-size: 12px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; word-break: break-word; }
     .chat-msg .c-user { font-weight: 700; color: #2563eb; margin-bottom: 2px; }
     
-    /* Explicitly visible Chat Input Box at Bottom */
     .chat-input-box { padding: 12px; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; align-items: center; width: 100%; flex-shrink: 0; }
     .chat-input { flex: 1; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: #fff; color: #000; }
     .chat-input:focus { border-color: #2563eb; }
@@ -116,7 +115,6 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Supabase Credentials (तपाईंले दिएको लिङ्क र कुञ्जी राखिएको छ)
     const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -156,11 +154,7 @@
       const roomRef = doc(db, "quiz_rooms", roomId);
       onSnapshot(roomRef, (docSnap) => {
         if (!docSnap.exists()) {
-          if (typeof showSuccessPopup === 'function') {
-            showSuccessPopup("रुम बन्द भयो!", null, 'error', 'सूचना ❌');
-          } else {
-            alert("रुम बन्द भयो!");
-          }
+          alert("रुम बन्द भयो!");
           window.location.href = "quizlobby.html";
           return;
         }
@@ -202,11 +196,11 @@
           <div class="card question-box">
             <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px;">
               <span>प्रश्न संख्या: ${room.questionCount || 1}</span>
-              <span>पालो: <b style="color: ${isMyTurn ? '#2563eb' : '#0f2a4a'}">${isMyTurn ? 'तपाईँको पालो!' : currentTurnPlayer.name + ' को पालो'}</b></span>
+              <span>पालो: <b style="color: ${isMyTrustColor(isMyTurn)}">${isMyTurn ? 'तपाईँको पालो!' : currentTurnPlayer.name + ' को पालो'}</b></span>
             </div>
             <h4>${escapeHTML(q.text)}</h4>
             <div class="options-grid" id="optionsGrid">
-              ${q.options.map(opt => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt}', false)">${escapeHTML(opt)}</button>`).join('')}
+              ${q.options.map(opt => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt.replace(/'/g, "\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
             </div>
             ${isMyTurn ? `
               <div class="action-row">
@@ -237,38 +231,58 @@
       }
     }
 
-    // Supabase बाट र्यान्डम प्रश्न फेच गर्ने फंक्सन
+    function isMyTrustColor(isMyTurn) {
+      return isMyTurn ? '#2563eb' : '#0f2a4a';
+    }
+
+    // नयाँ टेबल स्ट्रक्चर अनुसार Supabase बाट प्रश्न फेच गर्ने फंक्सन
     async function fetchRandomQuestion(excludedIds = []) {
       try {
-        let query = supabaseClient.from('quizzes').select('*');
-        if (excludedIds.length > 0) {
-          query = query.not('id', 'in', `(${excludedIds.join(',')})`);
-        }
+        let { data, error } = await supabaseClient.from('quizzes').select('*');
         
-        let { data, error } = await query;
         if (error || !data || data.length === 0) {
-          const { data: allData } = await supabaseClient.from('quizzes').select('*');
-          data = allData;
+          console.error("Supabase fetch error:", error);
+          return getFallbackQuestion();
         }
 
-        if (data && data.length > 0) {
-          const randomIndex = Math.floor(Math.random() * data.length);
-          const qRow = data[randomIndex];
-          
-          let options = [qRow.option_a, qRow.option_b, qRow.option_c, qRow.option_d].filter(Boolean);
-          options.sort(() => Math.random() - 0.5);
-
-          return {
-            id: qRow.id,
-            text: qRow.question_text || qRow.question,
-            options: options,
-            correctAnswer: qRow.correct_answer || qRow.correct
-          };
+        let availableQuestions = data.filter(q => !excludedIds.includes(q.id));
+        if (availableQuestions.length === 0) {
+          availableQuestions = data;
         }
+
+        const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+        const qRow = availableQuestions[randomIndex];
+        
+        // options (jsonb) लाई array मा रूपान्तरण गर्ने
+        let options = [];
+        if (Array.isArray(qRow.options)) {
+          options = qRow.options;
+        } else if (typeof qRow.options === 'object' && qRow.options !== null) {
+          options = Object.values(qRow.options);
+        } else if (typeof qRow.options === 'string') {
+          try { options = JSON.parse(qRow.options); } catch(e) { options = []; }
+        }
+
+        if (options.length === 0) {
+          options = ["विकल्प क", "विकल्प ख", "विकल्प ग", "विकल्प घ"];
+        }
+
+        // अप्सनहरूलाई अनियमित (shuffle) गर्ने
+        options.sort(() => Math.random() - 0.5);
+
+        return {
+          id: qRow.id,
+          text: qRow.question || "प्रश्नलै फेला परेन",
+          options: options,
+          correctAnswer: qRow.answer || options[0]
+        };
       } catch (err) {
-        console.error("Supabase fetch error:", err);
+        console.error("Exception in fetching question:", err);
+        return getFallbackQuestion();
       }
-      
+    }
+
+    function getFallbackQuestion() {
       return {
         id: Math.random(),
         text: "नेपालको राष्ट्रिय बोट कुन हो?",
@@ -280,12 +294,8 @@
     async function startGameSession() {
       if (!roomDataGlobal) return;
 
-      if (!roomDataGlobal.players || roomDataGlobal.players.length < 2) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup("खेल सुरु गर्न कम्तिमा २ जना खेलाडी आवश्यक पर्छ!", null, 'warning', 'ध्यान दिनुहोस् ⚠️');
-        } else {
-          alert("खेल सुरु गर्न कम्तिमा २ जना खेलाडी आवश्यक पर्छ!");
-        }
+      if (!roomDataGlobal.players || roomDataGlobal.players.length < 1) {
+        alert("खेल सुरु गर्न खेलाडी आवश्यक पर्छ!");
         return;
       }
 
@@ -294,14 +304,19 @@
 
       let initialPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
 
-      await updateDoc(roomRef, {
-        status: "playing",
-        currentTurnIndex: 0,
-        questionCount: 1,
-        players: initialPlayers,
-        currentQuestion: firstQ,
-        askedQuestionIds: [firstQ.id]
-      });
+      try {
+        await updateDoc(roomRef, {
+          status: "playing",
+          currentTurnIndex: 0,
+          questionCount: 1,
+          players: initialPlayers,
+          currentQuestion: firstQ,
+          askedQuestionIds: [firstQ.id]
+        });
+      } catch (e) {
+        console.error("Error updating room to start game:", e);
+        alert("खेल सुरु गर्न सकिएन। कृपया कन्सोल चेक गर्नुहोस्।");
+      }
     }
 
     window.submitAnswer = async function(selectedOpt, isSkipped) {
@@ -318,31 +333,19 @@
       let newStatus = "playing";
 
       if (isSkipped) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup("तपाईंले प्रश्न स्किप गर्नुभयो। पालो अर्को खेलाडीलाई पास भयो।", null, 'warning', 'स्कip ⚠️');
-        } else {
-          alert("तपाईंले प्रश्न स्किप गर्नुभयो। पालो अर्को खेलाडीलाई पास भयो।");
-        }
+        alert("तपाईंले प्रश्न स्किप गर्नुभयो। पालो अर्को खेलाडीलाई पास भयो।");
         nextTurnIndex = (currentIndex + 1) % players.length;
       } else {
         let isCorrect = (selectedOpt === currentQ.correctAnswer);
         
         if (isCorrect) {
           players[currentIndex].score += 5;
-          if (typeof showSuccessPopup === 'function') {
-            showSuccessPopup("सही उत्तर! (+५ अंक)", null, 'success', 'बधाई छ! 🎉');
-          } else {
-            alert("सही उत्तर! (+५ अंक)");
-          }
+          alert("सही उत्तर! (+५ अंक)");
           nextTurnIndex = (currentIndex + 1) % players.length;
           nextQCount += 1;
         } else {
           players[currentIndex].score -= 2;
-          if (typeof showSuccessPopup === 'function') {
-            showSuccessPopup("गलत उत्तर! (-२ अंक)", null, 'error', 'गलत ❌');
-          } else {
-            alert("गलत उत्तर! (-२ अंक)");
-          }
+          alert("गलत उत्तर! (-२ अंक)");
           nextTurnIndex = (currentIndex + 1) % players.length;
         }
       }
