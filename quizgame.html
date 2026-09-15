@@ -17,7 +17,17 @@
     .chat-toggle-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
-    .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; }
+    .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; position: relative; }
+
+    /* Toast Notification (Mathi tira sano box) */
+    .toast-container { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 500; display: flex; flex-direction: column; gap: 6px; width: 90%; max-width: 400px; pointer-events: none; }
+    .toast-msg { background: #0f2a4a; color: white; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 8px; animation: fadeInOut 3.5s forwards; }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(-10px); }
+      15% { opacity: 1; transform: translateY(0); }
+      85% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
 
     .scoreboard-hidden { background: white; padding: 12px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 700; color: #64748b; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
     .timer-badge { background: #fee2e2; color: #dc2626; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 800; }
@@ -31,7 +41,7 @@
     .room-expiry-box { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 700; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px; }
 
     .players-list { display: flex; flex-direction: column; gap: 8px; max-width: 300px; margin: 0 auto 20px auto; text-align: left; }
-    .player-item { background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; }
+    .player-item { background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; }
 
     .question-box h4 { font-size: 16px; font-weight: 700; color: #0f2a4a; margin-bottom: 16px; line-height: 1.5; }
     .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
@@ -92,6 +102,9 @@
   <div class="game-layout">
     <div class="main-content">
       
+      <!-- Toast Notification Container -->
+      <div class="toast-container" id="toastContainer"></div>
+
       <div class="scoreboard-hidden" id="scoreboardInfo" style="display:none;">
         <span>🤫 खेल जारी छ — लिडरबोर्ड अन्त्यमा मात्र!</span>
         <span class="timer-badge" id="questionTimerDisplay">⏳ 15s</span>
@@ -165,6 +178,17 @@
     let roomExpiryTimerInterval = null;
     let questionTimerInterval = null;
 
+    window.showToast = function(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast-msg';
+      toast.innerHTML = `<i class="fa-solid fa-circle-info" style="color: #60a5fa;"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 3500);
+    }
+
     window.showCustomModal = function(title, desc, icon = "🎉", btnText = "हुन्छ (OK)", callback = null) {
       document.getElementById('modalTitle').innerText = title;
       document.getElementById('modalDesc').innerText = desc;
@@ -199,10 +223,33 @@
 
         initGameListener();
         initChatListener();
+
+        // Handle user leaving the page unexpectedly
+        window.addEventListener('beforeunload', handleUserLeave);
       } else {
         window.location.href = "login.html";
       }
     });
+
+    async function handleUserLeave() {
+      if (!roomId || !currentUser || !roomDataGlobal) return;
+      if (roomDataGlobal.status === 'finished') return;
+
+      const roomRef = doc(db, "quiz_rooms", roomId);
+      try {
+        let updatedPlayers = roomDataGlobal.players.filter(p => p.uid !== currentUser.uid);
+        if (updatedPlayers.length === 0) {
+          await deleteDoc(roomRef);
+        } else {
+          let newTurnIndex = roomDataGlobal.currentTurnIndex;
+          if (newTurnIndex >= updatedPlayers.length) newTurnIndex = 0;
+          await updateDoc(roomRef, {
+            players: updatedPlayers,
+            currentTurnIndex: newTurnIndex
+          });
+        }
+      } catch(e) {}
+    }
 
     function initGameListener() {
       const roomRef = doc(db, "quiz_rooms", roomId);
@@ -214,7 +261,19 @@
           return;
         }
 
-        roomDataGlobal = docSnap.data();
+        const newRoomData = docSnap.data();
+        
+        // Detect if a player left
+        if (roomDataGlobal && roomDataGlobal.players && newRoomData.players) {
+          if (newRoomData.players.length < roomDataGlobal.players.length) {
+            let leftPlayers = roomDataGlobal.players.filter(p => !newRoomData.players.some(np => np.uid === p.uid));
+            leftPlayers.forEach(lp => {
+              showToast(`${lp.name} खेलबाट बाहिरिनुभयो!`);
+            });
+          }
+        }
+
+        roomDataGlobal = newRoomData;
         renderGameUI(roomDataGlobal);
       });
     }
@@ -234,7 +293,15 @@
           startRoomExpiryCountdown(room.createdAt);
         }
 
-        let playersHtml = room.players.map(p => `<div class="player-item"><span>${escapeHTML(p.name)}</span> <span>${p.uid === room.hostId ? 'Host' : 'Ready'}</span></div>`).join('');
+        let playersHtml = room.players.map(p => `
+          <div class="player-item">
+            <span>${escapeHTML(p.name)}</span> 
+            <span style="display: flex; gap: 8px; align-items: center;">
+              <span style="font-size: 11px; color: #16a34a;">${p.uid === room.hostId ? 'Host' : 'Ready'}</span>
+              ${currentUser.uid === room.hostId && p.uid !== currentUser.uid ? `<button onclick="kickPlayer('${p.uid}')" style="background:#fee2e2; color:#dc2626; border:none; padding:2px 6px; border-radius:4px; font-size:10px; cursor:pointer;" title="Remove player">Kick</button>` : ''}
+            </span>
+          </div>
+        `).join('');
         let isHost = (currentUser.uid === room.hostId);
 
         gameBody.innerHTML = `
@@ -264,6 +331,10 @@
         scoreInfo.style.display = 'flex';
         
         let currentTurnPlayer = room.players[room.currentTurnIndex];
+        if (!currentTurnPlayer) {
+          room.currentTurnIndex = 0;
+          currentTurnPlayer = room.players[0];
+        }
         let isMyTurn = (currentTurnPlayer.uid === currentUser.uid);
         let q = room.currentQuestion;
         let currentQCount = room.questionCount || 1;
@@ -332,6 +403,13 @@
       }
     }
 
+    window.kickPlayer = async function(targetUid) {
+      if (!roomDataGlobal || currentUser.uid !== roomDataGlobal.hostId) return;
+      let updatedPlayers = roomDataGlobal.players.filter(p => p.uid !== targetUid);
+      const roomRef = doc(db, "quiz_rooms", roomId);
+      await updateDoc(roomRef, { players: updatedPlayers });
+    }
+
     function triggerFireworks(isWinner) {
       if (isWinner) {
         var duration = 3 * 1000;
@@ -398,10 +476,10 @@
 
         if (timeLeft <= 0) {
           clearInterval(questionTimerInterval);
+          // Only host or the player whose turn it is triggers the timeout processing to avoid race conditions
           if (isMyTurn && roomDataGlobal && roomDataGlobal.status === 'playing') {
-            showCustomModal("समय सकियो!", "तपाईले १५ सेकेन्डभित्र उत्तर दिनुभएन। यो प्रश्न अर्को खेलाडीलाई पास हुँदैछ।", "⌛", "पछाडि जानुहोस्", () => {
-              handleTimeoutTurn();
-            });
+            showToast("समय समाप्त! यो प्रश्न अर्को खेलाडीलाई पास हुँदैछ।");
+            await handleTimeoutTurn();
           }
         }
       }, 1000);
@@ -584,17 +662,16 @@
         let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
         let nextRoundStarterIndex = (currentStarter + 1) % players.length;
 
-        showCustomModal("सही उत्तर! 🎉 (+५ अंक)", `${currentPlayerName} ले सहि उत्तर मिलाउनुभयो! अब नयाँ प्रश्न पालो अनुसार **${players[nextRoundStarterIndex].name}** बाट सुरु हुँदैछ।`, "➡️", "अर्को राउन्ड", async () => {
-          await updateDoc(roomRef, {
-            players: players,
-            history: history,
-            currentTurnIndex: nextRoundStarterIndex,
-            roundStarterIndex: nextRoundStarterIndex,
-            questionCount: currentQCount + 1,
-            passAttempt: 0,
-            currentQuestion: nextQuestion,
-            askedQuestionIds: askedIds
-          });
+        showToast(`${currentPlayerName} ले सही उत्तर मिलाउनुभयो! (+५ अंक)`);
+        await updateDoc(roomRef, {
+          players: players,
+          history: history,
+          currentTurnIndex: nextRoundStarterIndex,
+          roundStarterIndex: nextRoundStarterIndex,
+          questionCount: currentQCount + 1,
+          passAttempt: 0,
+          currentQuestion: nextQuestion,
+          askedQuestionIds: askedIds
         });
         return;
 
@@ -602,14 +679,14 @@
         if (passAttempt < players.length) {
           let nextTurnIndex = (currentIndex + 1) % players.length;
           
-          // Modal message ma kunai specific option na-dekhaune, just galat uttar diye vanne matra
-          showCustomModal("गलत उत्तर! ❌ (-२ अंक)", `${currentPlayerName} ले गलत उत्तर दिनुभयो। यो प्रश्न अब अर्को खेलाडीलाई पास हुँदैछ!`, "🔄", "अर्को पालो", async () => {
-            await updateDoc(roomRef, {
-              players: players,
-              history: history,
-              currentTurnIndex: nextTurnIndex,
-              passAttempt: passAttempt
-            });
+          // Popup modal ko sato mathi sano toast notification 
+          showToast(`${currentPlayerName} ले गलत उत्तर दिनुभयो। प्रश्न अर्कोलाई पास भयो!`);
+          
+          await updateDoc(roomRef, {
+            players: players,
+            history: history,
+            currentTurnIndex: nextTurnIndex,
+            passAttempt: passAttempt
           });
           return;
         } else {
@@ -626,17 +703,16 @@
           let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
           let nextRoundStarterIndex = (currentStarter + 1) % players.length;
 
-          showCustomModal("कसैले पनि मिलाएनन्! ❌", `सबै खेलाडीले गलत उत्तर दिए / स्किप गरे। सही उत्तर: **${currentQ.correctAnswer}** थियो। अब नयाँ प्रश्न **${players[nextRoundStarterIndex].name}** को लागि आउँदैछ!`, "➡️", "अर्को प्रश्न", async () => {
-            await updateDoc(roomRef, {
-              players: players,
-              history: history,
-              currentTurnIndex: nextRoundStarterIndex,
-              roundStarterIndex: nextRoundStarterIndex,
-              questionCount: currentQCount + 1,
-              passAttempt: 0,
-              currentQuestion: nextQuestion,
-              askedQuestionIds: askedIds
-            });
+          showToast(`कसैले पनि मिलाएनन्! सही उत्तर: ${currentQ.correctAnswer}`);
+          await updateDoc(roomRef, {
+            players: players,
+            history: history,
+            currentTurnIndex: nextRoundStarterIndex,
+            roundStarterIndex: nextRoundStarterIndex,
+            questionCount: currentQCount + 1,
+            passAttempt: 0,
+            currentQuestion: nextQuestion,
+            askedQuestionIds: askedIds
           });
           return;
         }
