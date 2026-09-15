@@ -37,13 +37,11 @@
     .btn-skip { background: #64748b; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; }
     .btn-skip:hover { background: #475569; }
 
-    /* Review & Recent Games Section Styling */
     .review-container { text-align: left; margin-top: 15px; max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; background: #f8fafc; }
     .review-item { font-size: 12px; padding: 8px; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 4px; }
     .recent-games-box { margin-top: 20px; text-align: left; background: #fff; border-radius: 12px; padding: 15px; border: 1px solid #e2e8f0; }
     .recent-games-box h4 { font-size: 14px; color: #0f2a4a; margin-bottom: 10px; font-weight: 700; }
 
-    /* Custom Attractive Popup Modal */
     .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 42, 74, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     .custom-modal-overlay.active { opacity: 1; pointer-events: auto; }
     .custom-modal { background: white; width: 90%; max-width: 350px; border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: scale(0.9); transition: transform 0.3s ease; }
@@ -54,7 +52,6 @@
     .modal-btn { background: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; }
     .modal-btn:hover { background: #1d4ed8; }
 
-    /* Chat Drawer */
     .chat-drawer { position: absolute; right: -320px; top: 0; width: 300px; height: 100%; background: white; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: right 0.3s ease; z-index: 100; box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
     .chat-drawer.open { right: 0; }
     .chat-header-bar { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
@@ -222,7 +219,7 @@
     async function renderGameUI(room) {
       const gameBody = document.getElementById('gameBody');
       const scoreInfo = document.getElementById('scoreboardInfo');
-      const totalRounds = room.settings?.totalRounds || 5;
+      const totalRounds = Number(room.settings?.totalRounds || 5);
 
       if (room.status === 'waiting') {
         scoreInfo.style.display = 'none';
@@ -284,14 +281,12 @@
         if (questionTimerIndexCleaner()) {};
         scoreInfo.style.display = 'none';
 
-        // Save to Supabase Leaderboard once
         if (!hasSavedToLeaderboard && currentUser) {
           hasSavedToLeaderboard = true;
           saveGameToSupabase(room);
         }
 
         let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
-        let topScore = sortedPlayers[0].score;
         let isWinner = sortedPlayers[0].uid === currentUser.uid;
         let isTie = sortedPlayers.length > 1 && sortedPlayers[0].score === sortedPlayers[1].score && sortedPlayers[0].uid !== sortedPlayers[1].uid && sortedPlayers[1].uid === currentUser.uid;
 
@@ -304,7 +299,6 @@
           </div>
         `).join('');
 
-        // Review History Build
         let historyList = room.gameHistory || [];
         let reviewHtml = historyList.map((h, idx) => `
           <div class="review-item">
@@ -422,9 +416,7 @@
         if (timeLeft <= 0) {
           clearInterval(questionTimerInterval);
           if (isMyTurn && roomDataGlobal && roomDataGlobal.status === 'playing') {
-            showCustomModal("समय सकियो!", "तपाईले १५ सेकेन्डभित्र उत्तर दिनुभएन। यसलाई स्किप सरහ मानेर अगाडि बढिन्छ।", "⌛", "पछाडि जानुहोस्", () => {
-              handleTimeoutTurn();
-            });
+            handleTimeoutTurn();
           }
         }
       }, 1000);
@@ -436,8 +428,8 @@
       let players = [...roomDataGlobal.players];
       let currentIndex = roomDataGlobal.currentTurnIndex;
       let askedIds = roomDataGlobal.askedQuestionIds || [];
-      let totalRounds = roomDataGlobal.settings?.totalRounds || 5;
-      let currentQCount = roomDataGlobal.questionCount || 1;
+      let totalRounds = Number(roomDataGlobal.settings?.totalRounds || 5);
+      let currentQCount = Number(roomDataGlobal.questionCount || 1);
       let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
       let history = roomDataGlobal.gameHistory || [];
 
@@ -449,6 +441,12 @@
         correctAnswer: roomDataGlobal.currentQuestion.correctAnswer,
         isCorrect: false
       });
+
+      // यदि अन्तिम राउन्ड पुगिसक्यो भने टाइमआउट हुँदा पनि सिधै गेम फिनिस गर्ने
+      if (currentQCount >= totalRounds && passAttempt >= players.length) {
+        await updateDoc(roomRef, { players: players, gameHistory: history, status: "finished" });
+        return;
+      }
 
       if (passAttempt >= players.length) {
         if (currentQCount >= totalRounds) {
@@ -559,8 +557,8 @@
       let currentIndex = roomDataGlobal.currentTurnIndex;
       let currentQ = roomDataGlobal.currentQuestion;
       let askedIds = roomDataGlobal.askedQuestionIds || [];
-      let totalRounds = roomDataGlobal.settings?.totalRounds || 5;
-      let currentQCount = roomDataGlobal.questionCount || 1;
+      let totalRounds = Number(roomDataGlobal.settings?.totalRounds || 5);
+      let currentQCount = Number(roomDataGlobal.questionCount || 1);
       let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
       let history = roomDataGlobal.gameHistory || [];
 
@@ -582,10 +580,10 @@
         isCorrect: isCorrect
       });
 
-      // यदि अन्तिम राउन्ड थियो र उत्तर मिल्यो वा सबैले पालो पाइसके भने सिधै खेल समाप्त (finished) गर्ने
+      // मुख्य सुरक्षा जाँच: यदि वर्तमान राउन्ड जम्मा राउन्ड (totalRounds) बराबर वा बढी छ र उत्तर मिल्यो वा पालो सकियो भने सिधै गेम फिनिस गर्ने
       let isRoundOver = isCorrect || (passAttempt >= players.length);
 
-      if (isRoundOver && currentQCount >= totalRounds) {
+      if (currentQCount >= totalRounds && isRoundOver) {
         try {
           await updateDoc(roomRef, { 
             players: players, 
