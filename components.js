@@ -32,10 +32,6 @@
     .chat-input { flex: 1; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: #fff; color: #000; }
     .chat-send-btn { background: #2563eb; color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-    
-
-
-    
     /* Professional Global Footer Styling */
     .global-site-footer {
       background: #0f2a4a;
@@ -114,7 +110,7 @@
   // Check if current page is NOT dashboard.html
   const isNotDashboard = !window.location.pathname.includes('dashboard.html');
 
-  // Inject Header (only for non-dashboard pages), Chat Drawer & Footer
+  // Inject Chat Drawer & Footer Container
   const containerDiv = document.createElement('div');
   containerDiv.innerHTML = `
     <!-- Floating Emoji Animation Container -->
@@ -172,7 +168,8 @@
     </footer>
   `;
 
-  
+  // कन्टेनरलाई वेबपेजको बडीमा इन्जेक्ट गर्ने मुख्य लाइन (यो छुटेको थियो)
+  document.body.appendChild(containerDiv);
 
   // Global functions
   window.toggleGlobalChat = function() {
