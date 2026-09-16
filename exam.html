@@ -405,16 +405,20 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // URL बाट सेट समात्ने (उदा: exam.html?set=set_1, set_2 आदि)
     const urlParams = new URLSearchParams(window.location.search);
     const rawSet = urlParams.get('set') || 'set_1'; 
     const currentSet = rawSet.toLowerCase();
 
+    // सेट नम्बर निकाल्ने (1, 2, 3, 4, 5)
     const setNumberMatch = currentSet.match(/\d+/);
     const setNum = setNumberMatch ? setNumberMatch[0] : '1';
 
-    const prettyExamName = `Pre Qualifying Exam Set ${setNum}`;
+    // गतिशील नाम र पहिचान बनाउने
+    const prettyExamName = `Pre Qualifying Test Set ${setNum}`;
     const examIdentifier = `set_${setNum}`;
 
+    // UI मा динамика तरिकाले राख्ने
     document.getElementById('header-title').innerText = `🇳🇵 LoksewaQuest - ${prettyExamName}`;
     document.getElementById('set-badge-title').innerText = `🎯 ${prettyExamName} (Model Exam)`;
     document.getElementById('lb-title').innerText = `🏆 ${prettyExamName} लिडरबोर्ड`;
@@ -490,7 +494,7 @@
         if (error || !data || data.length === 0) {
           let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', rawSet);
           if (retry.error || !retry.data || retry.data.length === 0) {
-            showSuccessPopup(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`, '', 'error', 'त्रुटि ❌');
+            alert(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
             return;
           }
           data = retry.data;
@@ -513,7 +517,7 @@
 
         loadExamQuestion();
       } catch (err) {
-        showSuccessPopup('त्रुटि: ' + err.message, '', 'error', 'त्रुटि ❌');
+        alert('त्रुटि: ' + err.message);
       }
     }
 
@@ -749,6 +753,7 @@
     }
 
     window.closeReviewModal = function() {
+      document.getElementById('reviewModal').classList.add('active'); // Wait, keeping close logic correct
       document.getElementById('reviewModal').classList.remove('active');
     }
 
@@ -768,7 +773,7 @@
     window.submitQuestionReport = async function() {
       const reason = document.getElementById('reportReason').value.trim();
       if (!reason) {
-        showSuccessPopup('कृपया समस्या के हो लेख्नुहोस्!', '', 'warning', 'ध्यान दिनुहोस् ⚠️');
+        alert('कृपया समस्या के हो लेख्नुहोस्!');
         return;
       }
 
@@ -783,10 +788,10 @@
         }]);
 
       if (error) {
-        showSuccessPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message, '', 'error', 'त्रुटि ❌');
+        alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
       } else {
         closeReportModal();
-        showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏', '', 'success', 'सफल भयो! 🎉');
+        alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
       }
     }
   </script>
