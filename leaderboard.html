@@ -15,14 +15,20 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body { min-height: 100vh; background: #f8fafc; color: #1e293b; padding-bottom: 90px; }
     
-    .header { background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%); color: white; padding: 24px 20px 35px; border-bottom-left-radius: 32px; border-bottom-right-radius: 32px; box-shadow: 0 10px 25px rgba(29, 78, 216, 0.2); }
-    .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .header { background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%); color: white; padding: 24px 20px 30px; border-bottom-left-radius: 32px; border-bottom-right-radius: 32px; box-shadow: 0 10px 25px rgba(29, 78, 216, 0.2); }
+    .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .back-btn { background: rgba(255, 255, 255, 0.15); border: none; width: 40px; height: 40px; border-radius: 12px; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
     .header h1 { font-size: 20px; font-weight: 800; }
     
-    .filter-tabs { display: flex; background: rgba(0, 0, 0, 0.2); padding: 5px; border-radius: 14px; gap: 6px; }
-    .tab-btn { flex: 1; background: transparent; border: none; padding: 11px 8px; color: rgba(255, 255, 255, 0.75); font-size: 13px; font-weight: 700; border-radius: 10px; cursor: pointer; transition: all 0.25s ease; text-align: center; }
-    .tab-btn.active { background: #ffffff; color: #1d4ed8; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); transform: translateY(-1px); }
+    /* Main Category Switch (Solved Questions vs Coins) */
+    .category-switch { display: flex; background: rgba(0, 0, 0, 0.25); padding: 4px; border-radius: 14px; margin-bottom: 14px; gap: 4px; }
+    .cat-btn { flex: 1; background: transparent; border: none; padding: 10px; color: rgba(255, 255, 255, 0.8); font-size: 13px; font-weight: 700; border-radius: 10px; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .cat-btn.active { background: #ffffff; color: #1d4ed8; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+    /* Time Filter Tabs (Daily, Weekly, Monthly) */
+    .filter-tabs { display: flex; background: rgba(0, 0, 0, 0.2); padding: 4px; border-radius: 12px; gap: 4px; }
+    .tab-btn { flex: 1; background: transparent; border: none; padding: 8px 6px; color: rgba(255, 255, 255, 0.75); font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; text-align: center; }
+    .tab-btn.active { background: rgba(255, 255, 255, 0.9); color: #1d4ed8; }
 
     .container { max-width: 600px; margin: -20px auto 0; padding: 0 16px; }
 
@@ -67,14 +73,6 @@
       align-items: center; 
       box-shadow: 0 10px 25px rgba(37, 99, 235, 0.18); 
       margin-top: 15px;
-      position: relative;
-      animation: pulse-border 2s infinite;
-    }
-
-    @keyframes pulse-border {
-      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-      70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
     }
 
     .loading-state, .empty-state { text-align: center; padding: 40px 20px; color: #64748b; font-size: 14px; }
@@ -91,10 +89,18 @@
       <h1>लिडरबोर्ड (Leaderboard)</h1>
       <div style="width: 40px;"></div>
     </div>
-    <div class="filter-tabs">
-      <button class="tab-btn active" data-period="daily">दैनिक (Daily)</button>
-      <button class="tab-btn" data-period="weekly">साताको (Weekly)</button>
-      <button class="tab-btn" data-period="monthly">मासिक (Monthly)</button>
+
+    <!-- Category Switch: Solved Questions vs Coins -->
+    <div class="category-switch">
+      <button class="cat-btn active" data-category="questions" onclick="switchCategory('questions')"><i class="fa-solid fa-trophy"></i> हल गरिएका प्रश्नहरू</button>
+      <button class="cat-btn" data-category="coins" onclick="switchCategory('coins')"><i class="fa-solid fa-coins" style="color: #f59e0b;"></i> कोइन लिडरबोर्ड</button>
+    </div>
+
+    <!-- Time Filter Tabs (Only visible for Solved Questions) -->
+    <div class="filter-tabs" id="timeFilterTabs">
+      <button class="tab-btn active" data-period="daily">दैनिक</button>
+      <button class="tab-btn" data-period="weekly">साताको</button>
+      <button class="tab-btn" data-period="monthly">मासिक</button>
     </div>
   </div>
 
@@ -106,17 +112,52 @@
     <div id="currentUserCard" style="display: none;" class="current-user-card"></div>
   </div>
 
+  <!-- Supabase & Firebase SDKs -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let currentCategory = "questions"; // 'questions' or 'coins'
     let currentPeriod = "daily";
     let currentUserName = null;
+    let currentUserUid = null;
+
+    window.switchCategory = function(category) {
+      currentCategory = category;
+      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+      document.querySelector(`[data-category="${category}"]`).classList.add("active");
+
+      const timeTabs = document.getElementById("timeFilterTabs");
+      if (category === 'coins') {
+        timeTabs.style.display = "none";
+        fetchCoinsLeaderboard();
+      } else {
+        timeTabs.style.display = "flex";
+        fetchLeaderboardData(currentPeriod);
+      }
+    };
 
     document.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {
+        if (currentCategory === 'coins') return;
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         currentPeriod = btn.getAttribute("data-period");
@@ -127,6 +168,7 @@
     document.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session && session.user) {
+        currentUserUid = session.user.id;
         if (session.user.user_metadata?.full_name) {
           currentUserName = session.user.user_metadata.full_name;
         } else if (session.user.email) {
@@ -137,6 +179,7 @@
       fetchLeaderboardData(currentPeriod);
     });
 
+    // 1. Solved Questions Leaderboard (Supabase)
     async function fetchLeaderboardData(period) {
       const leaderboardList = document.getElementById("leaderboardList");
       const podiumSection = document.getElementById("podiumSection");
@@ -156,12 +199,11 @@
         .order(scoreColumn, { ascending: false });
 
       if (error) {
-        console.error("Error fetching leaderboard:", error);
         leaderboardList.innerHTML = `<div class="empty-state">डाटा लोड गर्न असफल भयो।</div>`;
         return;
       }
 
-      const filteredData = data.filter(item => Number(item[scoreColumn]) > 0);
+      const filteredData = (data || []).filter(item => Number(item[scoreColumn]) > 0);
 
       if (filteredData.length === 0) {
         leaderboardList.innerHTML = `<div class="empty-state">यो समयावधिमा अहिलेसम्म कुनै डाटा उपलब्ध छैन।</div>`;
@@ -170,19 +212,83 @@
       }
 
       podiumSection.style.display = "flex";
+      renderPodiumAndList(filteredData, scoreColumn, "अंक");
+
+      if (currentUserName) {
+        const uIndex = filteredData.findIndex(u => u.display_name.toLowerCase() === currentUserName.toLowerCase());
+        if (uIndex !== -1) {
+          renderCurrentUserCard(filteredData[uIndex], uIndex + 1, scoreColumn, "अंक");
+        }
+      }
+    }
+
+    // 2. Coins Leaderboard (Firebase Firestore)
+    async function fetchCoinsLeaderboard() {
+      const leaderboardList = document.getElementById("leaderboardList");
+      const podiumSection = document.getElementById("podiumSection");
+      const currentUserCard = document.getElementById("currentUserCard");
+
+      leaderboardList.innerHTML = `<div class="loading-state"><div class="spinner"></div>कोइन डाटा लोड हुँदैछ...</div>`;
+      podiumSection.innerHTML = "";
+      currentUserCard.style.display = "none";
+
+      try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        let usersList = [];
+
+        usersSnapshot.forEach(docSnap => {
+          let uData = docSnap.data();
+          let coins = Number(uData.coins || 0);
+          // ० कोइन हुनेहरूलाई लिडरबोर्डमा नदेखाउने शर्त अनुसार फिल्टर गरिएको
+          if (coins > 0) {
+            usersList.push({
+              uid: docSnap.id,
+              display_name: uData.name || uData.email?.split('@')[0] || "Aspirant",
+              coins: coins
+            });
+          }
+        });
+
+        // धेरै कोइन हुनेलाई माथि राख्ने (Descending Order)
+        usersList.sort((a, b) => b.coins - a.coins);
+
+        if (usersList.length === 0) {
+          leaderboardList.innerHTML = `<div class="empty-state">अहिलेसम्म कोइन भएको कुनै प्रयोगकर्ता छैन।</div>`;
+          podiumSection.style.display = "none";
+          return;
+        }
+
+        podiumSection.style.display = "flex";
+        renderPodiumAndList(usersList, 'coins', "कोइन");
+
+        if (currentUserUid) {
+          const myIndex = usersList.findIndex(u => u.uid === currentUserUid);
+          if (myIndex !== -1) {
+            renderCurrentUserCard(usersList[myIndex], myIndex + 1, 'coins', "कोइन");
+          }
+        }
+
+      } catch (err) {
+        console.error("Firebase fetch error:", err);
+        leaderboardList.innerHTML = `<div class="empty-state">कोइन डाटा लोड गर्न असफल भयो।</div>`;
+      }
+    }
+
+    function renderPodiumAndList(dataArray, scoreKey, unitLabel) {
+      const podiumSection = document.getElementById("podiumSection");
+      const leaderboardList = document.getElementById("leaderboardList");
 
       let podiumHTML = "";
-      const top3 = filteredData.slice(0, 3);
+      const top3 = dataArray.slice(0, 3);
       const orderedPodium = [];
-      if (top3[1]) orderedPodium.push({ user: top3[1], rank: 2, cls: "second", icon: "fa-award" });
-      if (top3[0]) orderedPodium.push({ user: top3[0], rank: 1, cls: "first", icon: "fa-crown" });
-      if (top3[2]) orderedPodium.push({ user: top3[2], rank: 3, cls: "third", icon: "fa-medal" });
+      if (top3[1]) orderedPodium.push({ user: top3[1], rank: 2, cls: "second" });
+      if (top3[0]) orderedPodium.push({ user: top3[0], rank: 1, cls: "first" });
+      if (top3[2]) orderedPodium.push({ user: top3[2], rank: 3, cls: "third" });
 
       orderedPodium.forEach(item => {
         let name = item.user.display_name;
-        let score = item.user[scoreColumn];
+        let score = item.user[scoreKey];
         let initial = name ? name.charAt(0).toUpperCase() : "L";
-        
         let crownHtml = item.rank === 1 ? `<i class="fa-solid fa-crown" style="color: #d97706; font-size: 14px; margin-bottom: 2px; display: block;"></i>` : '';
 
         podiumHTML += `
@@ -191,21 +297,21 @@
             ${crownHtml}
             <div class="podium-avatar">${initial}</div>
             <div class="podium-name">${name}</div>
-            <div class="podium-score">${score} <span style="font-size:10px;">अंक</span></div>
+            <div class="podium-score">${score} <span style="font-size:10px;">${unitLabel}</span></div>
           </div>
         `;
       });
       podiumSection.innerHTML = podiumHTML;
 
       let listHTML = "";
-      const remaining = filteredData.slice(3);
+      const remaining = dataArray.slice(3);
       if (remaining.length === 0) {
         leaderboardList.innerHTML = `<div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 13px;">अन्य सहभागीहरू छैनन्</div>`;
       } else {
         remaining.forEach((user, index) => {
           let rank = index + 4;
           let name = user.display_name;
-          let score = user[scoreColumn];
+          let score = user[scoreKey];
           let initial = name ? name.charAt(0).toUpperCase() : "L";
           listHTML += `
             <div class="leaderboard-item">
@@ -215,31 +321,30 @@
                 <div class="item-name">${name}</div>
                 <div class="item-sub">Loksewa Aspirant</div>
               </div>
-              <div class="item-score">${score} <span style="font-size: 11px; font-weight: 600; color: #64748b;">अंक</span></div>
+              <div class="item-score">${score} <span style="font-size: 11px; font-weight: 600; color: #64748b;">${unitLabel}</span></div>
             </div>
           `;
         });
         leaderboardList.innerHTML = listHTML;
       }
+    }
 
-      if (currentUserName) {
-        const uIndex = filteredData.findIndex(u => u.display_name.toLowerCase() === currentUserName.toLowerCase());
-        if (uIndex !== -1) {
-          let loggedUser = filteredData[uIndex];
-          let myRank = uIndex + 1;
-          let myInitial = loggedUser.display_name.charAt(0).toUpperCase();
-          currentUserCard.style.display = "flex";
-          currentUserCard.innerHTML = `
-            <div class="item-rank" style="color: #1d4ed8; font-size: 16px;">#${myRank}</div>
-            <div class="item-avatar" style="background: #2563eb; color: white; box-shadow: 0 4px 10px rgba(37,99,235,0.3);">${myInitial}</div>
-            <div class="item-info">
-              <div class="item-name" style="color: #1e3a8a; font-size: 15px;">${loggedUser.display_name} <span style="background: #2563eb; color: white; font-size: 10px; padding: 2px 8px; border-radius: 6px; margin-left: 6px; font-weight: 600;">तपाईं</span></div>
-              <div class="item-sub" style="color: #1e40af;">तपाईँको स्थान र प्रदर्शन</div>
-            </div>
-            <div class="item-score" style="font-size: 17px; color: #1d4ed8;">${loggedUser[scoreColumn]} <span style="font-size: 12px; font-weight: 600;">अंक</span></div>
-          `;
-        }
-      }
+    function renderCurrentUserCard(userData, rank, scoreKey, unitLabel) {
+      const currentUserCard = document.getElementById("currentUserCard");
+      let name = userData.display_name;
+      let score = userData[scoreKey];
+      let myInitial = name ? name.charAt(0).toUpperCase() : "U";
+
+      currentUserCard.style.display = "flex";
+      currentUserCard.innerHTML = `
+        <div class="item-rank" style="color: #1d4ed8; font-size: 16px;">#${rank}</div>
+        <div class="item-avatar" style="background: #2563eb; color: white; box-shadow: 0 4px 10px rgba(37,99,235,0.3);">${myInitial}</div>
+        <div class="item-info">
+          <div class="item-name" style="color: #1e3a8a; font-size: 15px;">${name} <span style="background: #2563eb; color: white; font-size: 10px; padding: 2px 8px; border-radius: 6px; margin-left: 6px; font-weight: 600;">तपाईं</span></div>
+          <div class="item-sub" style="color: #1e40af;">तपाईँको स्थान र प्रदर्शन</div>
+        </div>
+        <div class="item-score" style="font-size: 17px; color: #1d4ed8;">${score} <span style="font-size: 12px; font-weight: 600;">${unitLabel}</span></div>
+      `;
     }
   </script>
 </body>
