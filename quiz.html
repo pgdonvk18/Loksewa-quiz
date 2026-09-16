@@ -61,6 +61,8 @@
     .modal-overlay.active { opacity: 1; visibility: visible; }  
     .modal-card { background: #ffffff; width: 90%; max-width: 380px; border-radius: 24px; padding: 24px 20px; text-align: left; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }  
     .modal-overlay.active .modal-card { transform: scale(1); }  
+    .clickable-box { cursor: pointer; transition: transform 0.1s, background-color 0.2s; }
+    .clickable-box:hover { background-color: #f1f5f9 !important; transform: translateY(-2px); border-color: #2563eb !important; }
     .hidden { display: none !important; }  
   </style>  
 </head>  
@@ -91,11 +93,11 @@
     </div>  
   </div>  
 
-  <!-- REVIEW POPUP MODAL -->
+  <!-- CATEGORY REVIEW POPUP MODAL -->
   <div id="reviewModal" class="modal-overlay">  
     <div class="modal-card" style="max-width: 440px; max-height: 85vh; overflow-y: auto;">  
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">  
-        <h3 style="font-size: 16px; font-weight: 800; color: #1e293b; margin:0;"><i class="fa-solid fa-clipboard-list" style="color: #2563eb;"></i> अभ्यास समीक्षा (Review)</h3>  
+        <h3 id="modal-review-title" style="font-size: 16px; font-weight: 800; color: #1e293b; margin:0;"><i class="fa-solid fa-clipboard-list" style="color: #2563eb;"></i> समीक्षा (Review)</h3>  
         <button onclick="closeReviewModal()" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; color: #475569; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-xmark"></i></button>  
       </div>  
       <div id="modal-review-container" style="display: flex; flex-direction: column; gap: 12px;"></div>  
@@ -169,26 +171,26 @@
       </div>  
   
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; margin-bottom: 16px;">  
-        <div style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #e2e8f0;">  
+        <div onclick="openFilteredReview('score')" class="clickable-box" style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #e2e8f0;">  
           <p style="font-size: 10px; color: #64748b; font-weight: 600;">अंक (Marks)</p>  
           <p id="rep-score" style="font-size: 15px; font-weight: 800; color: #2563eb;">0</p>  
         </div>
-        <div style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #e2e8f0;">  
+        <div onclick="openFilteredReview('correct')" class="clickable-box" style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #e2e8f0;">  
           <p style="font-size: 10px; color: #64748b; font-weight: 600;">मिलाएको</p>  
           <p id="rep-correct" style="font-size: 15px; font-weight: 800; color: #059669;">0</p>  
         </div>  
-        <div style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #e2e8f0;">  
+        <div onclick="openFilteredReview('wrong')" class="clickable-box" style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #e2e8f0;">  
           <p style="font-size: 10px; color: #64748b; font-weight: 600;">बिग्रिएको</p>  
           <p id="rep-wrong" style="font-size: 15px; font-weight: 800; color: #dc2626;">0</p>  
         </div>  
-        <div style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #e2e8f0;">  
+        <div onclick="openFilteredReview('skipped')" class="clickable-box" style="background: #f8fafc; padding: 10px 6px; border-radius: 12px; border: 1px solid #e2e8f0;">  
           <p style="font-size: 10px; color: #64748b; font-weight: 600;">छोडेको</p>  
           <p id="rep-skipped" style="font-size: 15px; font-weight: 800; color: #d97706;">0</p>  
         </div>  
       </div>  
 
       <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
-        <button onclick="openReviewModal()" class="btn-primary" style="width: 100%; background: #0284c7; border-radius: 14px;"><i class="fa-solid fa-eye"></i> उत्तरहरूको समीक्षा हेर्नुहोस् (Review)</button>
+        <button onclick="openFilteredReview('all')" class="btn-primary" style="width: 100%; background: #0284c7; border-radius: 14px;"><i class="fa-solid fa-eye"></i> सबै उत्तरहरूको समीक्षा हेर्नुहोस् (Review)</button>
         <div id="mistake-retry-container" class="hidden">  
           <button onclick="startMistakeRetry()" class="btn-primary" style="width: 100%; background: #d97706; border-radius: 14px;">🔁 बिग्रिएका प्रश्नहरू मात्र फेरि खेल्नुहोस्</button>  
         </div>  
@@ -206,7 +208,6 @@
   <script type="module">  
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
     import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
-    // Firestore बाट कोइन अपडेट गर्न आवश्यक पर्ने फंक्सनहरू इम्पोर्ट गरिएको
     import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   
     const firebaseConfig = {  
@@ -220,7 +221,7 @@
   
     const app = initializeApp(firebaseConfig);  
     const auth = getAuth(app);  
-    const db = getFirestore(app); // Firestore इनिसलाइज गरिएको
+    const db = getFirestore(app);  
     setPersistence(auth, browserSessionPersistence).catch((error) => console.error(error));  
   
     const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';  
@@ -252,6 +253,7 @@
     let wrongQuestionsList = [];  
     let isMistakeRetry = false;  
     let seenQuestionIds = new Set();  
+    let evaluatedResults = []; // सबै प्रश्नहरूको अन्तिम नतिजा स्टोर गर्न
 
     document.addEventListener("DOMContentLoaded", () => {  
       onAuthStateChanged(auth, async (user) => {  
@@ -331,7 +333,7 @@
       currentIdx = 0;  
       userAnswers = {};  
       wrongQuestionsList = [];  
-      isMistakeRetry = true; // बिग्रिएको प्रश्न खेल्दा कोइन नबढोस् भन्नका लागि true राखिएको छ  
+      isMistakeRetry = true;  
   
       document.getElementById('result-screen').classList.add('hidden');  
       document.getElementById('quiz-screen').classList.remove('hidden');  
@@ -400,8 +402,57 @@
     window.openGlobalReportModal = function() { document.getElementById('globalReportModal').classList.add('active'); }  
     window.closeGlobalReportModal = function() { document.getElementById('globalReportModal').classList.remove('active'); document.getElementById('globalReportReason').value = ''; }  
 
-    window.openReviewModal = function() { document.getElementById('reviewModal').classList.add('active'); }
     window.closeReviewModal = function() { document.getElementById('reviewModal').classList.remove('active'); }
+
+    // छुट्टाछुट्टै फिल्टर गरेर पपअपमा देखाउने फंक्सन
+    window.openFilteredReview = function(type) {
+      let filtered = evaluatedResults;
+      let titleText = "सबै उत्तरहरूको समीक्षा (Review)";
+
+      if (type === 'correct') {
+        filtered = evaluatedResults.filter(item => item.status === 'correct');
+        titleText = "मिलाएका प्रश्नहरूको समीक्षा (Correct Answers)";
+      } else if (type === 'wrong') {
+        filtered = evaluatedResults.filter(item => item.status === 'wrong');
+        titleText = "बिग्रिएका प्रश्नहरूको समीक्षा (Incorrect Answers)";
+      } else if (type === 'skipped') {
+        filtered = evaluatedResults.filter(item => item.status === 'skipped');
+        titleText = "छोडेका प्रश्नहरूको समीक्षा (Skipped Questions)";
+      } else if (type === 'score') {
+        filtered = evaluatedResults.filter(item => item.status === 'correct');
+        titleText = "अंक प्राप्त प्रश्नहरूको समीक्षा (Scored Questions)";
+      }
+
+      document.getElementById('modal-review-title').innerHTML = `<i class="fa-solid fa-clipboard-list" style="color: #2563eb;"></i> ${titleText}`;
+      
+      let reviewHTML = '';
+      if (filtered.length === 0) {
+        reviewHTML = '<p style="text-align: center; color: #64748b; font-size: 13px; padding: 20px;">यो वर्गमा कुनै प्रश्नहरू छैनन्।</p>';
+      } else {
+        filtered.forEach((item, idx) => {  
+          let badgeStyle = item.isCorrect ? 'background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;' : (item.userAns ? 'background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;' : 'background: #fef3c7; color: #92400e; border: 1px solid #fde68a;');
+          let statusText = item.isCorrect ? 'सही (Correct)' : (item.userAns ? 'गलत (Incorrect)' : 'छोडेको (Skipped)');
+
+          reviewHTML += `  
+            <div style="background: #f8fafc; padding: 14px; border-radius: 14px; border: 1px solid #e2e8f0; font-size: 13px;">  
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">  
+                <span style="font-weight: 800; color: #2563eb;">प्रश्न ${item.originalIndex + 1}</span>  
+                <span style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; ${badgeStyle}">${statusText}</span>  
+              </div>  
+              <p style="font-weight: 700; color: #0f172a; margin-bottom: 8px; line-height: 1.4;">${item.q.question}</p>  
+              <div style="font-size: 12px; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;">  
+                <p style="color: #475569;">तपाईंको उत्तर: <b style="color: ${item.isCorrect ? '#166534' : '#991b1b'}">${item.userAns || 'छोडिएको'}</b></p>  
+                <p style="color: #166534;">सही उत्तर: <b>${item.q.answer}</b></p>  
+              </div>  
+              ${item.q.explanation ? `<div style="background: #ffffff; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 11px; color: #334155; margin-top: 6px;"><b>स्पष्टीकरण:</b> ${item.q.explanation}</div>` : ''}  
+            </div>  
+          `;  
+        });
+      }
+
+      document.getElementById('modal-review-container').innerHTML = reviewHTML;
+      document.getElementById('reviewModal').classList.add('active');
+    }
 
     window.submitGlobalReport = async function() {  
       const reason = document.getElementById('globalReportReason').value.trim();  
@@ -430,38 +481,33 @@
       document.getElementById('quiz-screen').classList.add('hidden');  
       document.getElementById('result-screen').classList.remove('hidden');  
   
-      let correct = 0, wrong = 0, skipped = 0, reviewHTML = '';  
-  
+      let correct = 0, wrong = 0, skipped = 0;  
+      evaluatedResults = [];
+
       activeQuestions.forEach((q, idx) => {  
         const userAns = userAnswers[idx];  
         const isCorrect = userAns === q.answer;  
+        let status = 'skipped';
         
         if (!userAns) {
           skipped++;
+          status = 'skipped';
         } else if (isCorrect) {  
           correct++;  
+          status = 'correct';
         } else {  
           wrong++;  
+          status = 'wrong';
           wrongQuestionsList.push(q);  
         }  
 
-        let badgeStyle = isCorrect ? 'background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;' : (userAns ? 'background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;' : 'background: #fef3c7; color: #92400e; border: 1px solid #fde68a;');
-        let statusText = isCorrect ? 'सही (Correct)' : (userAns ? 'गलत (Incorrect)' : 'छोडेको (Skipped)');
-
-        reviewHTML += `  
-          <div style="background: #f8fafc; padding: 14px; border-radius: 14px; border: 1px solid #e2e8f0; font-size: 13px;">  
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">  
-              <span style="font-weight: 800; color: #2563eb;">प्रश्न ${idx+1}</span>  
-              <span style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; ${badgeStyle}">${statusText}</span>  
-            </div>  
-            <p style="font-weight: 700; color: #0f172a; margin-bottom: 8px; line-height: 1.4;">${q.question}</p>  
-            <div style="font-size: 12px; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;">  
-              <p style="color: #475569;">तपाईंको उत्तर: <b style="color: ${isCorrect ? '#166534' : '#991b1b'}">${userAns || 'छोडिएको'}</b></p>  
-              <p style="color: #166534;">सही उत्तर: <b>${q.answer}</b></p>  
-            </div>  
-            ${q.explanation ? `<div style="background: #ffffff; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 11px; color: #334155; margin-top: 6px;"><b>स्पष्टीकरण:</b> ${q.explanation}</div>` : ''}  
-          </div>  
-        `;  
+        evaluatedResults.push({
+          q: q,
+          userAns: userAns,
+          isCorrect: isCorrect,
+          status: status,
+          originalIndex: idx
+        });
       });  
   
       let totalScore = correct;  
@@ -470,14 +516,12 @@
       document.getElementById('rep-correct').innerText = correct;  
       document.getElementById('rep-wrong').innerText = wrong;  
       document.getElementById('rep-skipped').innerText = skipped;  
-      document.getElementById('modal-review-container').innerHTML = reviewHTML;  
 
-      // --- कोइन अपडेट गर्ने र स्क्रिनमा सन्देश देखाउने कोड ---
       let coinEarnedMessage = "";
       if (!isMistakeRetry && userId && correct > 0) {
         try {
           const userDocRef = doc(db, "users", userId);
-          const coinsToAdd = correct; // प्रत्येक मिलाएको प्रश्न बराबर १ कोइन
+          const coinsToAdd = correct; 
           await updateDoc(userDocRef, {
             coins: increment(coinsToAdd)
           });
@@ -501,7 +545,6 @@
         reportCard.after(coinMsgContainer);
       }
       coinMsgContainer.innerText = coinEarnedMessage;
-      // ----------------------------------------------------
   
       if (wrongQuestionsList.length > 0 && !isMistakeRetry) document.getElementById('mistake-retry-container').classList.remove('hidden');  
       else document.getElementById('mistake-retry-container').classList.add('hidden');  
