@@ -12,7 +12,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body { background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-    /* यो कोडले components.js बाट आउने ग्लोबल फुटरलाई मात्र यस पेजमा लुकाउँछ, अरूलाई असर गर्दैन */
+    /* यो कोडले components.js बाट आउने ग्लोबल फुटरलाई मात्र यस पेजमा लुकाउँछ */
     footer, .global-site-footer, #globalFooter {
       display: none !important;
     }
@@ -48,13 +48,19 @@
 
     .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
 
-    .waiting-box { text-align: center; padding: 30px 20px; }
-    .waiting-box h3 { font-size: 20px; font-weight: 800; color: #0f2a4a; margin-bottom: 8px; }
-    .waiting-box p { font-size: 13px; color: #64748b; margin-bottom: 15px; }
+    .waiting-box { text-align: center; padding: 25px 20px; }
+    .waiting-box h3 { font-size: 18px; font-weight: 800; color: #0f2a4a; margin-bottom: 6px; }
+    .waiting-box p { font-size: 12px; color: #64748b; margin-bottom: 12px; }
     
-    .room-expiry-box { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 700; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px; }
+    .room-expiry-box { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 6px; }
 
-    .players-list { display: flex; flex-direction: column; gap: 8px; max-width: 300px; margin: 0 auto 20px auto; text-align: left; }
+    /* Settings Box for Host */
+    .settings-group { margin-bottom: 15px; text-align: left; background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; }
+    .settings-group label { display: block; font-size: 12px; font-weight: 700; color: #0f2a4a; margin-bottom: 6px; }
+    .settings-select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; outline: none; background: white; color: #1e293b; }
+    .settings-select:focus { border-color: #2563eb; }
+
+    .players-list { display: flex; flex-direction: column; gap: 8px; max-width: 300px; margin: 0 auto 15px auto; text-align: left; }
     .player-item { background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; }
 
     .question-box h4 { font-size: 16px; font-weight: 700; color: #0f2a4a; margin-bottom: 16px; line-height: 1.5; }
@@ -90,7 +96,6 @@
     .chat-msg { font-size: 12px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; word-break: break-word; }
     .chat-msg .c-user { font-weight: 700; color: #2563eb; margin-bottom: 2px; }
     
-    /* Quick Emojis Selection Bar */
     .quick-emojis { display: flex; gap: 6px; padding: 8px 12px; background: #f8fafc; border-top: 1px solid #e2e8f0; overflow-x: auto; flex-shrink: 0; }
     .emoji-pill { background: white; border: 1px solid #cbd5e1; border-radius: 20px; padding: 4px 8px; font-size: 16px; cursor: pointer; transition: transform 0.1s; }
     .emoji-pill:hover { transform: scale(1.15); background: #e2e8f0; }
@@ -121,14 +126,11 @@
   <div class="game-layout">
     <div class="main-content" id="mainContentArea">
       
-      <!-- Floating Emoji Animation Layer -->
       <div class="floating-emoji-container" id="floatingEmojiContainer"></div>
-
-      <!-- Toast Notification Container -->
       <div class="toast-container" id="toastContainer"></div>
 
       <div class="scoreboard-hidden" id="scoreboardInfo" style="display:none;">
-        <span>🤫 खेल जारी छ — लिडरबोर्ड अन्त्यमा मात्र!</span>
+        <span id="activeTopicBadge">🤫 खेल जारी छ</span>
         <span class="timer-badge" id="questionTimerDisplay">⏳ 15s</span>
       </div>
 
@@ -146,7 +148,6 @@
         <div style="text-align: center; color: #94a3b8; font-size: 11px;">च्याट लोड हुँदैछ...</div>
       </div>
       
-      <!-- Quick Emojis Selection Bar -->
       <div class="quick-emojis">
         <button type="button" class="emoji-pill" onclick="sendQuickEmoji('👍')">👍</button>
         <button type="button" class="emoji-pill" onclick="sendQuickEmoji('🔥')">🔥</button>
@@ -214,33 +215,34 @@
     let questionTimerInterval = null;
     let lastProcessedNotificationId = null;
 
+    // म्यापिङ शब्दहरू (Database column value vs Friendly UI Label)
+    const topicDisplayNames = {
+      "Nepal geography": "नेपालको भूगोल",
+      "nepal_history": "नेपालको इतिहास",
+      "world_history": "विश्वको इतिहास",
+      "16thYojana": "१६ औँ योजना",
+      "Budget2083-84": "आर्थिक वर्ष २०८३/८४ को बजेट"
+    };
+
     window.showToast = function(message) {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       toast.className = 'toast-msg';
       toast.innerHTML = `<i class="fa-solid fa-circle-info" style="color: #60a5fa;"></i> <span>${message}</span>`;
       container.appendChild(toast);
-      setTimeout(() => {
-        toast.remove();
-      }, 3500);
+      setTimeout(() => { toast.remove(); }, 3500);
     }
 
     window.triggerFloatingEmoji = function(emojiChar) {
       const container = document.getElementById('floatingEmojiContainer');
       if (!container) return;
-
       const span = document.createElement('span');
       span.className = 'floating-emoji';
       span.innerText = emojiChar;
-      
       const randomLeft = Math.floor(Math.random() * (container.clientWidth - 80)) + 20;
       span.style.left = randomLeft + 'px';
-
       container.appendChild(span);
-
-      setTimeout(() => {
-        span.remove();
-      }, 2500);
+      setTimeout(() => { span.remove(); }, 2500);
     }
 
     window.showCustomModal = function(title, desc, icon = "🎉", btnText = "हुन्छ (OK)", callback = null) {
@@ -248,10 +250,8 @@
       document.getElementById('modalDesc').innerText = desc;
       document.getElementById('modalIcon').innerText = icon;
       document.getElementById('modalActionBtn').innerText = btnText;
-      
       const overlay = document.getElementById('customModalOverlay');
       overlay.classList.add('active');
-
       window.modalCallback = callback;
     }
 
@@ -277,7 +277,6 @@
 
         initGameListener();
         initChatListener();
-
         window.addEventListener('beforeunload', handleUserLeave);
       } else {
         window.location.href = "login.html";
@@ -296,10 +295,7 @@
         } else {
           let newTurnIndex = roomDataGlobal.currentTurnIndex;
           if (newTurnIndex >= updatedPlayers.length) newTurnIndex = 0;
-          await updateDoc(roomRef, {
-            players: updatedPlayers,
-            currentTurnIndex: newTurnIndex
-          });
+          await updateDoc(roomRef, { players: updatedPlayers, currentTurnIndex: newTurnIndex });
         }
       } catch(e) {}
     }
@@ -315,19 +311,9 @@
         }
 
         const newRoomData = docSnap.data();
-        
         if (newRoomData.latestNotification && newRoomData.latestNotification.id !== lastProcessedNotificationId) {
           lastProcessedNotificationId = newRoomData.latestNotification.id;
           showToast(newRoomData.latestNotification.text);
-        }
-
-        if (roomDataGlobal && roomDataGlobal.players && newRoomData.players) {
-          if (newRoomData.players.length < roomDataGlobal.players.length) {
-            let leftPlayers = roomDataGlobal.players.filter(p => !newRoomData.players.some(np => np.uid === p.uid));
-            leftPlayers.forEach(lp => {
-              showToast(`${lp.name} खेलबाट बाहिरिनुभयो!`);
-            });
-          }
         }
 
         roomDataGlobal = newRoomData;
@@ -355,38 +341,56 @@
             <span>${escapeHTML(p.name)}</span> 
             <span style="display: flex; gap: 8px; align-items: center;">
               <span style="font-size: 11px; color: #16a34a;">${p.uid === room.hostId ? 'Host' : 'Ready'}</span>
-              ${currentUser.uid === room.hostId && p.uid !== currentUser.uid ? `<button onclick="kickPlayer('${p.uid}')" style="background:#fee2e2; color:#dc2626; border:none; padding:2px 6px; border-radius:4px; font-size:10px; cursor:pointer;" title="Remove player">Kick</button>` : ''}
+              ${currentUser.uid === room.hostId && p.uid !== currentUser.uid ? `<button onclick="kickPlayer('${p.uid}')" style="background:#fee2e2; color:#dc2626; border:none; padding:2px 6px; border-radius:4px; font-size:10px; cursor:pointer;">Kick</button>` : ''}
             </span>
           </div>
         `).join('');
+
         let isHost = (currentUser.uid === room.hostId);
+        let currentTopic = room.settings?.topic || 'Nepal geography';
+        let friendlyTopicName = topicDisplayNames[currentTopic] || currentTopic;
 
         gameBody.innerHTML = `
           <div class="card waiting-box">
             <h3>🎮 खेल सुरु हुन प्रतीक्षारत छ...</h3>
-            <p>कोड: <b>${roomId}</b> | जम्मा राउन्ड: <b>${totalRounds}</b> (जम्मा प्रश्न: <b>${totalQuestionsPlanned}</b>)</p>
-            <div class="room-expiry-box" id="roomExpiryDisplay">
-              <i class="fa-regular fa-clock"></i> रुम स्वतः बन्द हुन बाँकी: <span id="lobbyTimerText" style="margin-left: 4px;"> गणना हुँदैछ...</span>
+            <p>कोड: <b>${roomId}</b> | राउन्ड: <b>${totalRounds}</b></p>
+            
+            <div class="room-expiry-box">
+              <i class="fa-regular fa-clock"></i> समय बाँकी: <span id="lobbyTimerText">गणना हुँदैछ...</span>
             </div>
+
+            <!-- होस्टले मात्र विषय छनौट गर्न मिल्ने वा सबैले हेर्न मिल्ने -->
+            <div class="settings-group">
+              <label><i class="fa-solid fa-book-open"></i> क्विजको विषयवस्तु (Topic):</label>
+              <select class="settings-select" id="roomTopicSelect" ${!isHost ? 'disabled' : ''} onchange="updateRoomTopic(this.value)">
+                <option value="Nepal geography" ${currentTopic === 'Nepal geography' ? 'selected' : ''}>नेपालको भूगोल (Nepal Geography)</option>
+                <option value="nepal_history" ${currentTopic === 'nepal_history' ? 'selected' : ''}>नेपालको इतिहास (Nepal History)</option>
+                <option value="world_history" ${currentTopic === 'world_history' ? 'selected' : ''}>विश्वको इतिहास (World History)</option>
+                <option value="16thYojana" ${currentTopic === '16thYojana' ? 'selected' : ''}>१६ औँ योजना (16th Periodic Plan)</option>
+                <option value="Budget2083-84" ${currentTopic === 'Budget2083-84' ? 'selected' : ''}>आर्थिक वर्ष २०८३/८४ को बजेट (Budget 2083/84)</option>
+              </select>
+            </div>
+
             <div class="players-list">${playersHtml}</div>
             
-            ${playerCount < 2 ? `<p style="font-size:12px; color:#dc2626; font-weight:700; margin-bottom: 10px;">⚠️ खेल सुरु गर्न कम्तीमा २ जना खेलाडी आवश्यक छ!</p>` : ``}
+            ${playerCount < 2 ? `<p style="font-size:11px; color:#dc2626; font-weight:700; margin-bottom: 8px;">⚠️ कम्तीमा २ जना खेलाडी आवश्यक छ!</p>` : ``}
 
-            ${isHost ? `<button class="btn-main" id="startBtn">खेल सुरु गर्नुहोस्</button>` : `<p style="font-size:12px; color:#64748b;">होस्टले गेम सुरु नगरेसम्म पर्खनुहोस्...</p>`}
+            ${isHost ? `<button class="btn-main" id="startBtn">खेल सुरु गर्नुहोस्</button>` : `<p style="font-size:11px; color:#64748b;">होस्टले गेम सुरु नगरेसम्म पर्खनुहोस्...</p>`}
           </div>
         `;
 
         if (isHost) {
           const startBtn = document.getElementById('startBtn');
-          if (startBtn) {
-            startBtn.onclick = startGameSession;
-          }
+          if (startBtn) startBtn.onclick = startGameSession;
         }
       } 
       else if (room.status === 'playing') {
         if (roomExpiryTimerInterval) clearInterval(roomExpiryTimerInterval);
         scoreInfo.style.display = 'flex';
         
+        let currentTopic = room.settings?.topic || 'Nepal geography';
+        document.getElementById('activeTopicBadge').innerText = `📌 विषय: ${topicDisplayNames[currentTopic] || currentTopic}`;
+
         let currentTurnPlayer = room.players[room.currentTurnIndex];
         if (!currentTurnPlayer) {
           room.currentTurnIndex = 0;
@@ -424,7 +428,6 @@
         let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
         let myRank = sortedPlayers.findIndex(p => p.uid === currentUser.uid) + 1;
         let isWinner = (myRank === 1);
-
         triggerFireworks(isWinner);
 
         let rankHtml = sortedPlayers.map((p, index) => `
@@ -440,10 +443,10 @@
             <b>प्र. ${i+1}: ${escapeHTML(h.questionText)}</b><br>
             <span style="color: #475569;">उत्तर दिने: <b>${escapeHTML(h.playerName)}</b></span> | 
             <span style="color: #2563eb;">रोजेको उत्तर: <b>${escapeHTML(h.selectedAnswer)}</b></span><br>
-            <span style="color: ${h.isCorrect ? '#16a34a' : '#dc2626'}; font-weight:700;">स्थिति: ${h.isCorrect ? 'सहि उत्तर मिलाएको' : 'गलत उत्तर / स्किप'}</span><br>
+            <span style="color: ${h.isCorrect ? '#16a34a' : '#dc2626'}; font-weight:700;">स्थिति: ${h.isCorrect ? 'सहि उत्तर' : 'गलत/स्किप'}</span><br>
             <span style="color: #0f2a4a; font-weight: 600;">सही उत्तर: ${escapeHTML(h.correctAnswer)}</span>
           </div>
-        `).join('') || '<div style="font-size:12px; color:#64748b; text-align:center;">समीक्षा डाटा उपलब्ध छैन।</div>';
+        `).join('') || '<div style="font-size:12px; color:#64748b; text-align:center;">डाटा उपलब्ध छैन।</div>';
 
         gameBody.innerHTML = `
           <div class="card waiting-box" style="padding: 20px;">
@@ -451,13 +454,22 @@
             <p>तपाईँको स्थान: <b>#${myRank}</b></p>
             <div class="players-list">${rankHtml}</div>
             
-            <p style="font-weight: 700; margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #0f2a4a; text-align: left;">📝 विस्तृत उत्तर समीक्षा (Answer Review):</p>
+            <p style="font-weight: 700; margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #0f2a4a; text-align: left;">📝 उत्तर समीक्षा:</p>
             <div class="review-container">${reviewHtml}</div>
 
             <button class="btn-main" style="margin-top: 15px;" onclick="window.location.href='quizlobby.html'">लबीमा फर्कनुहोस्</button>
           </div>
         `;
       }
+    }
+
+    // होस्टले विषय परिवर्तन गर्दा रियलटाइम अपडेट हुने फंक्सन
+    window.updateRoomTopic = async function(selectedTopic) {
+      if (!roomDataGlobal || currentUser.uid !== roomDataGlobal.hostId) return;
+      const roomRef = doc(db, "quiz_rooms", roomId);
+      let currentSettings = roomDataGlobal.settings || {};
+      currentSettings.topic = selectedTopic;
+      await updateDoc(roomRef, { settings: currentSettings });
     }
 
     window.kickPlayer = async function(targetUid) {
@@ -472,16 +484,10 @@
         var duration = 3 * 1000;
         var animationEnd = Date.now() + duration;
         var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
-
-        function randomInRange(min, max) {
-          return Math.random() * (max - min) + min;
-        }
-
+        function randomInRange(min, max) { return Math.random() * (max - min) + min; }
         var interval = setInterval(function() {
           var timeLeft = animationEnd - Date.now();
-          if (timeLeft <= 0) {
-            return clearInterval(interval);
-          }
+          if (timeLeft <= 0) return clearInterval(interval);
           var particleCount = 50 * (timeLeft / duration);
           confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
           confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
@@ -493,7 +499,6 @@
 
     function startRoomExpiryCountdown(createdAtTimestamp) {
       if (roomExpiryTimerInterval) clearInterval(roomExpiryTimerInterval);
-      
       const createdTime = createdAtTimestamp?.toMillis ? createdAtTimestamp.toMillis() : Date.now();
       const expiryTime = createdTime + (2 * 60 * 1000);
 
@@ -504,10 +509,8 @@
 
         if (timeLeft <= 0) {
           clearInterval(roomExpiryTimerInterval);
-          try {
-            await deleteDoc(doc(db, "quiz_rooms", roomId));
-          } catch(e) {}
-          showCustomModal("समय समाप्त", "२ मिनेटभित्र खेल सुरु नभएकोले रुम स्वतः बन्द भयो।", "⏰", "लबीमा जानुहोस्", () => {
+          try { await deleteDoc(doc(db, "quiz_rooms", roomId)); } catch(e) {}
+          showCustomModal("समय समाप्त", "२ मिनेटभित्र खेल सुरु नभएकोले रुम बन्द भयो।", "⏰", "लबीमा जानुहोस्", () => {
             window.location.href = "quizlobby.html";
           });
           return;
@@ -563,52 +566,53 @@
       });
 
       let totalQuestionsPlanned = totalRounds * players.length;
-      let notificationText = "समय समाप्त! यो प्रश्न अर्को खेलाडीलाई पास हुँदैछ।";
+      let notificationText = "समय समाप्त! प्रश्न अर्को खेलाडीलाई पास हुँदैछ।";
+      let chosenTopic = roomDataGlobal.settings?.topic || 'Nepal geography';
 
       if (passAttempt >= players.length) {
         if (currentQCount >= totalQuestionsPlanned) {
-          await updateDoc(roomRef, { 
-            players: players, 
-            history: history, 
-            status: "finished",
-            latestNotification: { id: Date.now(), text: notificationText }
-          });
+          await updateDoc(roomRef, { players: players, history: history, status: "finished", latestNotification: { id: Date.now(), text: notificationText } });
           return;
         }
 
-        let nextQuestion = await fetchRandomQuestion(askedIds);
+        let nextQuestion = await fetchQuestionByTopic(chosenTopic, askedIds);
         if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
 
         let nextRoundStarterIndex = (roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0);
         nextRoundStarterIndex = (nextRoundStarterIndex + 1) % players.length;
 
         await updateDoc(roomRef, {
-          players: players,
-          history: history,
-          currentTurnIndex: nextRoundStarterIndex,
-          roundStarterIndex: nextRoundStarterIndex,
-          questionCount: currentQCount + 1,
-          passAttempt: 0,
-          currentQuestion: nextQuestion,
-          askedQuestionIds: askedIds,
+          players: players, history: history,
+          currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundStarterIndex,
+          questionCount: currentQCount + 1, passAttempt: 0,
+          currentQuestion: nextQuestion, askedQuestionIds: askedIds,
           latestNotification: { id: Date.now(), text: "कसैले पनि मिलाएनन्! नयाँ प्रश्न सुरु भयो।" }
         });
       } else {
         let nextTurnIndex = (currentIndex + 1) % players.length;
         await updateDoc(roomRef, {
-          players: players,
-          history: history,
-          currentTurnIndex: nextTurnIndex,
-          passAttempt: passAttempt,
+          players: players, history: history,
+          currentTurnIndex: nextTurnIndex, passAttempt: passAttempt,
           latestNotification: { id: Date.now(), text: notificationText }
         });
       }
     }
 
-    async function fetchRandomQuestion(excludedIds = []) {
+    // छनौट गरिएको विषय (Topic) अनुसार डाटाबेसबाट प्रश्न तान्ने फंक्सन
+    async function fetchQuestionByTopic(topicName, excludedIds = []) {
       try {
-        let { data, error } = await supabaseClient.from('quizzes').select('*');
-        if (error || !data || data.length === 0) return getFallbackQuestion();
+        let { data, error } = await supabaseClient
+          .from('quizzes')
+          .select('*')
+          .eq('topic', topicName); // डाटाबेसमा रहेको 'topic' स्तम्भसँग म्याच गर्ने
+
+        if (error || !data || data.length === 0) {
+          // यदि त्यो टपिकमा प्रश्न भेटिएन भने सबैबाट तानेर विकल्प दिने
+          let fallbackRes = await supabaseClient.from('quizzes').select('*');
+          data = fallbackRes.data || [];
+        }
+
+        if (data.length === 0) return getFallbackQuestion();
 
         let availableQuestions = data.filter(q => !excludedIds.includes(q.id));
         if (availableQuestions.length === 0) availableQuestions = data;
@@ -650,12 +654,13 @@
       if (!roomDataGlobal) return;
       
       if (!roomDataGlobal.players || roomDataGlobal.players.length < 2) {
-        showCustomModal("खेलाडी नपुगेको", "खेल सुरु गर्न कम्तीमा २ जना खेलाडी (Players) आवश्यक छ। अरू साथीहरू जोडिन पर्खनुहोस्!", "⚠️");
+        showCustomModal("खेलाडी नपुगेको", "खेल सुरु गर्न कम्तीमा २ जना खेलाडी आवश्यक छ।", "⚠️");
         return;
       }
 
       const roomRef = doc(db, "quiz_rooms", roomId);
-      const firstQ = await fetchRandomQuestion([]);
+      let chosenTopic = roomDataGlobal.settings?.topic || 'Nepal geography';
+      const firstQ = await fetchQuestionByTopic(chosenTopic, []);
       let initialPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
 
       try {
@@ -689,17 +694,15 @@
       let currentQCount = roomDataGlobal.questionCount || 1;
       let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
       let history = roomDataGlobal.history || [];
+      let chosenTopic = roomDataGlobal.settings?.topic || 'Nepal geography';
 
       let currentPlayerName = players[currentIndex].name;
       let isCorrect = false;
 
       if (!isSkipped) {
         isCorrect = (selectedOpt === currentQ.correctAnswer);
-        if (isCorrect) {
-          players[currentIndex].score += 5;
-        } else {
-          players[currentIndex].score -= 2;
-        }
+        if (isCorrect) players[currentIndex].score += 5;
+        else players[currentIndex].score -= 2;
       }
 
       history.push({
@@ -714,70 +717,58 @@
 
       if (isCorrect) {
         if (currentQCount >= totalQuestionsPlanned) {
-          showCustomModal("खेल समाप्त! 🏆", "सबै राउन्डहरू पूरा भए। अब नतिजा हेर्नुहोस्।", "🏁", "नतिजा हेर्नुहोस्", async () => {
+          showCustomModal("खेल समाप्त! 🏆", "सबै राउन्डहरू पूरा भए।", "🏁", "नतिजा हेर्नुहोस्", async () => {
             await updateDoc(roomRef, { players: players, history: history, status: "finished" });
           });
           return;
         }
 
-        let nextQuestion = await fetchRandomQuestion(askedIds);
+        let nextQuestion = await fetchQuestionByTopic(chosenTopic, askedIds);
         if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
 
         let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
         let nextRoundStarterIndex = (currentStarter + 1) % players.length;
-
         let notificationText = `${currentPlayerName} ले सही उत्तर मिलाउनुभयो! (+५ अंक)`;
 
         await updateDoc(roomRef, {
-          players: players,
-          history: history,
-          currentTurnIndex: nextRoundStarterIndex,
-          roundStarterIndex: nextRoundStarterIndex,
-          questionCount: currentQCount + 1,
-          passAttempt: 0,
-          currentQuestion: nextQuestion,
-          askedQuestionIds: askedIds,
+          players: players, history: history,
+          currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundStarterIndex,
+          questionCount: currentQCount + 1, passAttempt: 0,
+          currentQuestion: nextQuestion, askedQuestionIds: askedIds,
           latestNotification: { id: Date.now(), text: notificationText }
         });
         return;
-
       } else {
         if (passAttempt < players.length) {
           let nextTurnIndex = (currentIndex + 1) % players.length;
-          let notificationText = `${currentPlayerName} ले गलत उत्तर दिनुभयो। प्रश्न अर्कोलाई पास भयो!`;
+          let notificationText = `${currentPlayerName} ले गलत उत्तर दिनुभयो। प्रश्न पास भयो!`;
           
           await updateDoc(roomRef, {
-            players: players,
-            history: history,
-            currentTurnIndex: nextTurnIndex,
-            passAttempt: passAttempt,
+            players: players, history: history,
+            currentTurnIndex: nextTurnIndex, passAttempt: passAttempt,
             latestNotification: { id: Date.now(), text: notificationText }
           });
           return;
         } else {
           if (currentQCount >= totalQuestionsPlanned) {
-            showCustomModal("खेल समाप्त! 🏆", "सबै राउन्डहरू पूरा भए। अब नतिजा हेर्नुहोस्।", "🏁", "नतिजा हेर्नुहोस्", async () => {
+            showCustomModal("खेल समाप्त! 🏆", "सबै राउन्डहरू पूरा भए।", "🏁", "नतिजा हेर्नुहोस्", async () => {
               await updateDoc(roomRef, { players: players, history: history, status: "finished" });
             });
             return;
           }
 
-          let nextQuestion = await fetchRandomQuestion(askedIds);
+          let nextQuestion = await fetchQuestionByTopic(chosenTopic, askedIds);
           if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
 
           let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
           let nextRoundStarterIndex = (currentStarter + 1) % players.length;
-          let notificationText = `कसैले पनि मिलाएनन्! सही उत्तर: ${currentQ.correctAnswer}`;
+          let notificationText = `कसैले मिलाएनन्! सही उत्तर: ${currentQ.correctAnswer}`;
 
           await updateDoc(roomRef, {
-            players: players,
-            history: history,
-            currentTurnIndex: nextRoundStarterIndex,
-            roundStarterIndex: nextRoundStarterIndex,
-            questionCount: currentQCount + 1,
-            passAttempt: 0,
-            currentQuestion: nextQuestion,
-            askedQuestionIds: askedIds,
+            players: players, history: history,
+            currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundStarterIndex,
+            questionCount: currentQCount + 1, passAttempt: 0,
+            currentQuestion: nextQuestion, askedQuestionIds: askedIds,
             latestNotification: { id: Date.now(), text: notificationText }
           });
           return;
@@ -808,9 +799,7 @@
         if (!isFirstLoad && msgs.length > 0) {
           const latestMsg = msgs[msgs.length - 1];
           const isEmoji = /^\p{Emoji}+$/u.test(latestMsg.text.trim());
-          if (isEmoji) {
-            triggerFloatingEmoji(latestMsg.text.trim());
-          }
+          if (isEmoji) triggerFloatingEmoji(latestMsg.text.trim());
         }
 
         container.innerHTML = "";
@@ -829,12 +818,8 @@
 
     window.sendQuickEmoji = async function(emoji) {
       if (!currentUser) return;
-      
       await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
-        text: emoji,
-        uid: currentUser.uid,
-        senderName: currentUserName,
-        createdAt: serverTimestamp()
+        text: emoji, uid: currentUser.uid, senderName: currentUserName, createdAt: serverTimestamp()
       });
     };
 
@@ -846,10 +831,7 @@
       input.value = '';
 
       await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
-        text: text,
-        uid: currentUser.uid,
-        senderName: currentUserName,
-        createdAt: serverTimestamp()
+        text: text, uid: currentUser.uid, senderName: currentUserName, createdAt: serverTimestamp()
       });
     });
 
@@ -860,7 +842,6 @@
       }[tag] || tag));
     }
   </script>
-  <!-- components.js राखिएको छ जसले गर्दा अन्य महत्त्वपूर्ण फिचरहरू नबिग्रियोस् -->
   <script src="components.js"></script>
 </body>
 </html>
