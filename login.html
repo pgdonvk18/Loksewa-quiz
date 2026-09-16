@@ -442,17 +442,19 @@
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
 
-    // लोकल Persistence सेट गर्ने
-    setPersistence(auth, browserLocalPersistence).catch((error) => {
-      console.error("Persistence Error:", error);
-    });
-
-    // पहिले नै लगइन छ भने ड्यासबोर्डमा पठाउने
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        window.location.href = "dashboard.html";
-      }
-    });
+    // यो भागले persistence सेट गरेर मात्र युजर स्टेट चेक गर्छ (स्थायी लगइनको लागि मुख्य कोड)
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            // युजर पहिल्यै लगइन छ भने सिधै ड्यासबोर्डमा पठाउने
+            window.location.href = "dashboard.html";
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Persistence Error:", error);
+      });
 
     document.addEventListener("DOMContentLoaded", async () => {
       try {
