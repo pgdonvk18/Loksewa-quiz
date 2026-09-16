@@ -47,7 +47,6 @@
     .explanation-header { display: flex; align-items: center; gap: 8px; color: #15803d; font-weight: 800; font-size: 13px; margin-bottom: 4px; }  
     .explanation-text { font-size: 12px; color: #166534; line-height: 1.5; }  
     
-    /* Quiz भित्र आउने Table को लागि डिजाइन */
     table.quiz-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; background: #ffffff; }
     table.quiz-table th, table.quiz-table td { border: 1px solid #cbd5e1; padding: 8px; text-align: center; color: #1e293b; }
     table.quiz-table th { background-color: #f1f5f9; font-weight: 700; }
@@ -207,6 +206,8 @@
   <script type="module">  
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
     import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
+    // Firestore बाट कोइन अपडेट गर्न आवश्यक पर्ने फंक्सनहरू इम्पोर्ट गरिएको
+    import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   
     const firebaseConfig = {  
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",  
@@ -219,6 +220,7 @@
   
     const app = initializeApp(firebaseConfig);  
     const auth = getAuth(app);  
+    const db = getFirestore(app); // Firestore इनिसलाइज गरिएको
     setPersistence(auth, browserSessionPersistence).catch((error) => console.error(error));  
   
     const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';  
@@ -329,7 +331,7 @@
       currentIdx = 0;  
       userAnswers = {};  
       wrongQuestionsList = [];  
-      isMistakeRetry = true;  
+      isMistakeRetry = true; // बिग्रिएको प्रश्न खेल्दा कोइन नबढोस् भन्नका लागि true राखिएको छ  
   
       document.getElementById('result-screen').classList.add('hidden');  
       document.getElementById('quiz-screen').classList.remove('hidden');  
@@ -341,7 +343,6 @@
       document.getElementById('q-tracker').innerText = `${currentIdx + 1} / ${activeQuestions.length}`;  
       document.getElementById('progress-fill').style.width = `${((currentIdx + 1) / activeQuestions.length) * 100}%`;  
       
-      // प्रश्न HTML को रूपमा लोड गर्न innerHTML प्रयोग गरिएको (Table का लागि)
       document.getElementById('quiz-question').innerHTML = q.question;  
   
       const container = document.getElementById('quiz-options');  
@@ -375,14 +376,12 @@
   
       if (savedAnswer) {  
         expBox.classList.remove('hidden');  
-        // स्पष्टीकरण HTML को रूपमा लोड गर्न innerHTML प्रयोग गरिएको
         document.getElementById('explanation-text').innerHTML = q.explanation || 'कुनै स्पष्टीकरण उपलब्ध छैन।';  
       }  
   
       document.getElementById('prev-btn').style.display = currentIdx === 0 ? 'none' : 'flex';  
       document.getElementById('next-btn').innerText = currentIdx === activeQuestions.length - 1 ? 'Finish' : 'Next';  
 
-      // KaTeX मैथ्मेटिकल चिन्हहरू रेन्डर गराउन
       setTimeout(() => {
         if (window.renderMathInElement) {
           renderMathInElement(document.body, {
@@ -472,6 +471,37 @@
       document.getElementById('rep-wrong').innerText = wrong;  
       document.getElementById('rep-skipped').innerText = skipped;  
       document.getElementById('modal-review-container').innerHTML = reviewHTML;  
+
+      // --- कोइन अपडेट गर्ने र स्क्रिनमा सन्देश देखाउने कोड ---
+      let coinEarnedMessage = "";
+      if (!isMistakeRetry && userId && correct > 0) {
+        try {
+          const userDocRef = doc(db, "users", userId);
+          const coinsToAdd = correct; // प्रत्येक मिलाएको प्रश्न बराबर १ कोइन
+          await updateDoc(userDocRef, {
+            coins: increment(coinsToAdd)
+          });
+          coinEarnedMessage = `🎉 बधाई छ! तपाईंले यो अभ्यासमा ${correct} वटा प्रश्न मिलाउनु भएकोले ${coinsToAdd} कोइन प्राप्त गर्नुभयो!`;
+        } catch (err) {
+          console.error("Coin update error:", err);
+          coinEarnedMessage = "⚠️ कोइन अपडेट गर्दा केही समस्या आयो।";
+        }
+      } else if (isMistakeRetry) {
+        coinEarnedMessage = "ℹ️ यो बिग्रिएका प्रश्नहरूको पुन: अभ्यास भएकोले कोइन थप गरिएको छैन।";
+      } else {
+        coinEarnedMessage = "ℹ️ एउटा पनि प्रश्न नमिल्दा कोइन प्राप्त भएन।";
+      }
+
+      let coinMsgContainer = document.getElementById('coin-earned-msg');
+      if (!coinMsgContainer) {
+        coinMsgContainer = document.createElement('div');
+        coinMsgContainer.id = 'coin-earned-msg';
+        coinMsgContainer.style.cssText = "background: #eff6ff; border: 1px solid #dbeafe; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; color: #1e40af; text-align: center; margin-bottom: 16px;";
+        const reportCard = document.querySelector('#result-screen div');
+        reportCard.after(coinMsgContainer);
+      }
+      coinMsgContainer.innerText = coinEarnedMessage;
+      // ----------------------------------------------------
   
       if (wrongQuestionsList.length > 0 && !isMistakeRetry) document.getElementById('mistake-retry-container').classList.remove('hidden');  
       else document.getElementById('mistake-retry-container').classList.add('hidden');  
