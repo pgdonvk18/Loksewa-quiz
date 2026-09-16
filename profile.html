@@ -183,6 +183,61 @@
       flex: 1;
     }
 
+    /* कोइन कार्डको डिजाइन */
+    .coin-display-card {
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+      border-radius: 20px;
+      padding: 16px 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      border: 1px solid #fde68a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .coin-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .coin-icon {
+      font-size: 32px;
+      background: #fff;
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.2);
+    }
+    .coin-info h4 {
+      font-size: 12px;
+      font-weight: 700;
+      color: #92400e;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .coin-info span {
+      font-size: 22px;
+      font-weight: 800;
+      color: #78350f;
+    }
+    .redeem-btn {
+      background: #d97706;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .redeem-btn:hover {
+      background: #b45309;
+    }
+
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -348,6 +403,19 @@
   </div>
 
   <div class="container">
+    
+    <!-- कोइन देखाउने बक्स (Coin Display Card) -->
+    <div class="coin-display-card">
+      <div class="coin-left">
+        <div class="coin-icon">🪙</div>
+        <div class="coin-info">
+          <h4>मेरो कोइन (Coins)</h4>
+          <span id="userCoinsDisplay">0</span>
+        </div>
+      </div>
+      <button class="redeem-btn" onclick="showToast('रिडिम फिचर छिट्टै आउँदैछ!')">रिडिम (Redeem)</button>
+    </div>
+
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon solved"><i class="fa-solid fa-circle-check"></i></div>
@@ -466,6 +534,11 @@
 
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
+            
+            // कोइन लोड गर्ने
+            let userCoins = userData.coins !== undefined ? userData.coins : 0;
+            document.getElementById('userCoinsDisplay').textContent = userCoins;
+
             if (userData.name) {
               displayName = userData.name;
               document.getElementById('userNameInput').value = userData.name;
@@ -479,7 +552,8 @@
             }
           } else {
             document.getElementById('userNameInput').value = displayName;
-            await setDoc(userDocRef, { name: displayName, email: userEmail }, { merge: true });
+            document.getElementById('userCoinsDisplay').textContent = "0";
+            await setDoc(userDocRef, { name: displayName, email: userEmail, coins: 0 }, { merge: true });
           }
         } catch (err) {
           console.error("Firestore error:", err);
@@ -508,13 +582,8 @@
             .from('exam_leaderboard')
             .select('total_questions, id, username');
 
-          console.log("All Exam Leaderboard Data:", examLbData);
-          console.log("Current User UID:", user.uid);
-          console.log("Current Display Name:", displayName);
-
           if (examLbData && examLbData.length > 0) {
             examLbData.forEach(row => {
-              // Match either by ID or username
               if (row.id === user.uid || row.username === displayName) {
                 totalSolvedCount += (row.total_questions || 0);
               }
@@ -593,8 +662,6 @@
         img.src = e.target.result;
         img.onload = async function() {
           const canvas = document.createElement('canvas');
-          const MAX_WIDTH =0;
-          const MAX_HEIGHT = 200;
           let width = img.width;
           let height = img.height;
 
