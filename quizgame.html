@@ -215,8 +215,9 @@
     let questionTimerInterval = null;
     let lastProcessedNotificationId = null;
 
-    // म्यापिङ शब्दहरू (Database column value vs Friendly UI Label)
+    // विषयहरूको नाम म्यापिङ (सबै अप्सन सहित)
     const topicDisplayNames = {
+      "all": "सबै विषयबाट मिक्स (All Topics Random)",
       "Nepal geography": "नेपालको भूगोल",
       "nepal_history": "नेपालको इतिहास",
       "world_history": "विश्वको इतिहास",
@@ -347,8 +348,7 @@
         `).join('');
 
         let isHost = (currentUser.uid === room.hostId);
-        let currentTopic = room.settings?.topic || 'Nepal geography';
-        let friendlyTopicName = topicDisplayNames[currentTopic] || currentTopic;
+        let currentTopic = room.settings?.topic || 'all';
 
         gameBody.innerHTML = `
           <div class="card waiting-box">
@@ -359,10 +359,11 @@
               <i class="fa-regular fa-clock"></i> समय बाँकी: <span id="lobbyTimerText">गणना हुँदैछ...</span>
             </div>
 
-            <!-- होस्टले मात्र विषय छनौट गर्न मिल्ने वा सबैले हेर्न मिल्ने -->
+            <!-- विषय छनौट गर्ने ड्रपडाउन (सबै विषय अप्सन सहित) -->
             <div class="settings-group">
               <label><i class="fa-solid fa-book-open"></i> क्विजको विषयवस्तु (Topic):</label>
               <select class="settings-select" id="roomTopicSelect" ${!isHost ? 'disabled' : ''} onchange="updateRoomTopic(this.value)">
+                <option value="all" ${currentTopic === 'all' ? 'selected' : ''}>सबै विषयबाट मिक्स (All Topics Random)</option>
                 <option value="Nepal geography" ${currentTopic === 'Nepal geography' ? 'selected' : ''}>नेपालको भूगोल (Nepal Geography)</option>
                 <option value="nepal_history" ${currentTopic === 'nepal_history' ? 'selected' : ''}>नेपालको इतिहास (Nepal History)</option>
                 <option value="world_history" ${currentTopic === 'world_history' ? 'selected' : ''}>विश्वको इतिहास (World History)</option>
@@ -388,7 +389,7 @@
         if (roomExpiryTimerInterval) clearInterval(roomExpiryTimerInterval);
         scoreInfo.style.display = 'flex';
         
-        let currentTopic = room.settings?.topic || 'Nepal geography';
+        let currentTopic = room.settings?.topic || 'all';
         document.getElementById('activeTopicBadge').innerText = `📌 विषय: ${topicDisplayNames[currentTopic] || currentTopic}`;
 
         let currentTurnPlayer = room.players[room.currentTurnIndex];
@@ -448,6 +449,8 @@
           </div>
         `).join('') || '<div style="font-size:12px; color:#64748b; text-align:center;">डाटा उपलब्ध छैन।</div>';
 
+        let isHost = (currentUser.uid === room.hostId);
+
         gameBody.innerHTML = `
           <div class="card waiting-box" style="padding: 20px;">
             <h3>${isWinner ? '🎉 बधाई छ! तपाईँले जित्नुभयो!' : '👏 राम्रो प्रयास! खेल समाप्त भयो।'}</h3>
@@ -457,7 +460,11 @@
             <p style="font-weight: 700; margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #0f2a4a; text-align: left;">📝 उत्तर समीक्षा:</p>
             <div class="review-container">${reviewHtml}</div>
 
-            <button class="btn-main" style="margin-top: 15px;" onclick="window.location.href='quizlobby.html'">लबीमा फर्कनुहोस्</button>
+            <!-- Rematch र Lobby Button -->
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+              ${isHost ? `<button class="btn-main" onclick="triggerRematch()" style="background: #16a34a;">🔄 फेरि खेल्नुहोस् (Rematch)</button>` : `<p style="font-size:11px; color:#64748b; width:100%; text-align:center;">होस्टले रिमम्याच सुरु नगरेसम्म पर्खनुहोस्...</p>`}
+              <button class="btn-main" style="background: #64748b;" onclick="window.location.href='quizlobby.html'">लबीमा फर्कनुहोस्</button>
+            </div>
           </div>
         `;
       }
@@ -470,6 +477,28 @@
       let currentSettings = roomDataGlobal.settings || {};
       currentSettings.topic = selectedTopic;
       await updateDoc(roomRef, { settings: currentSettings });
+    }
+
+    // एउटै रुम र खेलाडीहरूलाई फेरि waiting स्टेटमा लैजाने (Rematch)
+    window.triggerRematch = async function() {
+      if (!roomDataGlobal || currentUser.uid !== roomDataGlobal.hostId) return;
+      const roomRef = doc(db, "quiz_rooms", roomId);
+      let resetPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
+
+      try {
+        await updateDoc(roomRef, {
+          status: "waiting",
+          players: resetPlayers,
+          currentTurnIndex: 0,
+          questionCount: 0,
+          currentQuestion: null,
+          askedQuestionIds: [],
+          history: [],
+          latestNotification: { id: Date.now(), text: "रिमम्याच सुरु भएको छ! होस्टले गेम सुरु गर्न सक्नुहुन्छ।" }
+        });
+      } catch (e) {
+        showCustomModal("त्रुटि", "रिमम्याच गर्न सकिएन।", "❌");
+      }
     }
 
     window.kickPlayer = async function(targetUid) {
@@ -567,7 +596,7 @@
 
       let totalQuestionsPlanned = totalRounds * players.length;
       let notificationText = "समय समाप्त! प्रश्न अर्को खेलाडीलाई पास हुँदैछ।";
-      let chosenTopic = roomDataGlobal.settings?.topic || 'Nepal geography';
+      let chosenTopic = roomDataGlobal.settings?.topic || 'all';
 
       if (passAttempt >= players.length) {
         if (currentQCount >= totalQuestionsPlanned) {
@@ -598,16 +627,19 @@
       }
     }
 
-    // छनौट गरिएको विषय (Topic) अनुसार डाटाबेसबाट प्रश्न तान्ने फंक्सन
+    // टपिक वा 'all' छनौटको आधारमा Supabase बाट प्रश्न तानेर दिने फंक्सन
     async function fetchQuestionByTopic(topicName, excludedIds = []) {
       try {
-        let { data, error } = await supabaseClient
-          .from('quizzes')
-          .select('*')
-          .eq('topic', topicName); // डाटाबेसमा रहेको 'topic' स्तम्भसँग म्याच गर्ने
+        let query = supabaseClient.from('quizzes').select('*');
+        
+        // यदि 'all' छ भने filter नगरिकन सबैबाट लिने, अन्यथा निश्चित topic मात्र फिल्टर गर्ने
+        if (topicName && topicName !== 'all') {
+          query = query.eq('topic', topicName);
+        }
+
+        let { data, error } = await query;
 
         if (error || !data || data.length === 0) {
-          // यदि त्यो टपिकमा प्रश्न भेटिएन भने सबैबाट तानेर विकल्प दिने
           let fallbackRes = await supabaseClient.from('quizzes').select('*');
           data = fallbackRes.data || [];
         }
@@ -659,7 +691,7 @@
       }
 
       const roomRef = doc(db, "quiz_rooms", roomId);
-      let chosenTopic = roomDataGlobal.settings?.topic || 'Nepal geography';
+      let chosenTopic = roomDataGlobal.settings?.topic || 'all';
       const firstQ = await fetchQuestionByTopic(chosenTopic, []);
       let initialPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
 
@@ -694,7 +726,7 @@
       let currentQCount = roomDataGlobal.questionCount || 1;
       let passAttempt = (roomDataGlobal.passAttempt || 0) + 1;
       let history = roomDataGlobal.history || [];
-      let chosenTopic = roomDataGlobal.settings?.topic || 'Nepal geography';
+      let chosenTopic = roomDataGlobal.settings?.topic || 'all';
 
       let currentPlayerName = players[currentIndex].name;
       let isCorrect = false;
