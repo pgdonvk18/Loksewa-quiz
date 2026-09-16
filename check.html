@@ -3,504 +3,349 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LoksewaQuest - Practice Topics</title>
+  <meta name="theme-color" content="#2563eb">
+  <title>LoksewaQuest - Leaderboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- सही theme.css यहाँ लिंक गरिएको छ -->
-  <link rel="stylesheet" href="theme.css">
-  
+
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { min-height: 100vh; background: #f8fafc; color: #1e293b; padding-bottom: 90px; }
+    
+    .header { background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%); color: white; padding: 24px 20px 30px; border-bottom-left-radius: 32px; border-bottom-right-radius: 32px; box-shadow: 0 10px 25px rgba(29, 78, 216, 0.2); }
+    .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .back-btn { background: rgba(255, 255, 255, 0.15); border: none; width: 40px; height: 40px; border-radius: 12px; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .header h1 { font-size: 20px; font-weight: 800; }
+    
+    /* Main Category Switch (Solved Questions vs Coins) */
+    .category-switch { display: flex; background: rgba(0, 0, 0, 0.25); padding: 4px; border-radius: 14px; margin-bottom: 14px; gap: 4px; }
+    .cat-btn { flex: 1; background: transparent; border: none; padding: 10px; color: rgba(255, 255, 255, 0.8); font-size: 13px; font-weight: 700; border-radius: 10px; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .cat-btn.active { background: #ffffff; color: #1d4ed8; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+    /* Time Filter Tabs (Daily, Weekly, Monthly) */
+    .filter-tabs { display: flex; background: rgba(0, 0, 0, 0.2); padding: 4px; border-radius: 12px; gap: 4px; }
+    .tab-btn { flex: 1; background: transparent; border: none; padding: 8px 6px; color: rgba(255, 255, 255, 0.75); font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; text-align: center; }
+    .tab-btn.active { background: rgba(255, 255, 255, 0.9); color: #1d4ed8; }
+
+    .container { max-width: 600px; margin: -20px auto 0; padding: 0 16px; }
+
+    /* Podiums Design */
+    .podium-section { display: flex; align-items: flex-end; justify-content: center; gap: 12px; margin-bottom: 25px; padding-top: 10px; }
+    .podium-card { background: #ffffff; flex: 1; border-radius: 24px; padding: 20px 10px 16px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); position: relative; border: 2px solid #e2e8f0; transition: transform 0.3s ease; }
+    
+    .podium-card.first { transform: translateY(-18px); border-color: #fbbf24; background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%); box-shadow: 0 15px 35px rgba(245, 158, 11, 0.15); }
+    .podium-card.second { border-color: #cbd5e1; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%); }
+    .podium-card.third { border-color: #fcd34d; background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%); }
+
+    .podium-rank { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+    .first .podium-rank { background: #f59e0b; }
+    .second .podium-rank { background: #64748b; }
+    .third .podium-rank { background: #d97706; }
+
+    .podium-avatar { width: 52px; height: 52px; border-radius: 50%; background: #e2e8f0; margin: 6px auto 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #334155; font-size: 18px; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .first .podium-avatar { background: #fef3c7; color: #b45309; }
+    
+    .podium-name { font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+    .podium-score { font-size: 13px; color: #2563eb; font-weight: 800; }
+
+    /* Leaderboard List */
+    .leaderboard-list { background: #ffffff; border-radius: 24px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04); border: 2px solid #e2e8f0; overflow: hidden; margin-bottom: 20px; }
+    .leaderboard-item { display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid #f1f5f9; transition: background 0.2s; }
+    .leaderboard-item:last-child { border-bottom: none; }
+    
+    .item-rank { width: 32px; font-size: 14px; font-weight: 800; color: #64748b; text-align: center; }
+    .item-avatar { width: 42px; height: 42px; border-radius: 50%; background: #f1f5f9; margin-left: 10px; margin-right: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #475569; font-size: 14px; }
+    .item-info { flex: 1; }
+    .item-name { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+    .item-sub { font-size: 11px; color: #94a3b8; font-weight: 500; }
+    .item-score { font-size: 15px; font-weight: 800; color: #2563eb; text-align: right; }
+
+    /* Current User Highlighted Card */
+    .current-user-card { 
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); 
+      border: 2px solid #3b82f6; 
+      border-radius: 20px; 
+      padding: 16px 20px; 
+      display: flex; 
+      align-items: center; 
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.18); 
+      margin-top: 15px;
     }
 
-    body {
-      background-color: #f8fafc;
-      color: #1e293b;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding-bottom: 70px;
-    }
-
-    .top-nav {
-      background: #ffffff;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .back-btn {
-      font-size: 18px;
-      color: #0f172a;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .nav-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #0f172a;
-    }
-
-    .container {
-      max-width: 600px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 20px 16px;
-      flex: 1;
-    }
-
-    .exam-info-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    }
-
-    .exam-icon-box {
-      width: 50px;
-      height: 50px;
-      background: #2563eb;
-      color: white;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-    }
-
-    .exam-details h2 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #0f172a;
-    }
-
-    .exam-details span {
-      font-size: 13px;
-      color: #64748b;
-    }
-
-    /* Tabs */
-    .tabs-container {
-      display: flex;
-      background: #e2e8f0;
-      padding: 4px;
-      border-radius: 30px;
-      margin-bottom: 24px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      text-align: center;
-      padding: 10px 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #64748b;
-      background: transparent;
-      border: none;
-      border-radius: 26px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .tab-btn.active {
-      background: #2563eb;
-      color: white;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-    }
-
-    .topic-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .topic-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-      cursor: pointer;
-    }
-
-    .topic-card:hover {
-      border-color: #2563eb;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(37, 99, 235, 0.08);
-    }
-
-    .topic-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .topic-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: white;
-    }
-
-    .bg-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-    .bg-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    .bg-green { background: linear-gradient(135deg, #10b981, #059669); }
-    .bg-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-    .bg-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
-    .bg-teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
-    .bg-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
-
-    .topic-info h3 {
-      font-size: 15px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 3px;
-    }
-
-    .topic-info p {
-      font-size: 12px;
-      color: #64748b;
-    }
-
-    .arrow-icon {
-      color: #94a3b8;
-      font-size: 14px;
-    }
-
-    .breadcrumb {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #2563eb;
-      margin-bottom: 16px;
-      cursor: pointer;
-    }
+    .loading-state, .empty-state { text-align: center; padding: 40px 20px; color: #64748b; font-size: 14px; }
+    .spinner { width: 30px; height: 30px; border: 3px solid #cbd5e1; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
+
 <body>
 
-  <!-- Top Header -->
-  <div class="top-nav">
-    <a href="dashboard.html" class="back-btn" id="mainBackBtn"><i class="fa-solid fa-chevron-left"></i></a>
-    <span class="nav-title" id="headerTitle">Practice Topics</span>
-    <div style="width: 18px;"></div>
+  <div class="header">
+    <div class="header-top">
+      <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
+      <h1>लिडरबोर्ड (Leaderboard)</h1>
+      <div style="width: 40px;"></div>
+    </div>
+
+    <!-- Category Switch: Solved Questions vs Coins -->
+    <div class="category-switch">
+      <button class="cat-btn active" data-category="questions" onclick="switchCategory('questions')"><i class="fa-solid fa-trophy"></i> हल गरिएका प्रश्नहरू</button>
+      <button class="cat-btn" data-category="coins" onclick="switchCategory('coins')"><i class="fa-solid fa-coins" style="color: #f59e0b;"></i> कोइन लिडरबोर्ड</button>
+    </div>
+
+    <!-- Time Filter Tabs (Only visible for Solved Questions) -->
+    <div class="filter-tabs" id="timeFilterTabs">
+      <button class="tab-btn active" data-period="daily">दैनिक</button>
+      <button class="tab-btn" data-period="weekly">साताको</button>
+      <button class="tab-btn" data-period="monthly">मासिक</button>
+    </div>
   </div>
 
   <div class="container">
-    
-    <!-- Top Info Card -->
-    <div class="exam-info-card">
-      <div class="exam-icon-box">
-        <i class="fa-solid fa-pen-to-square"></i>
-      </div>
-      <div class="exam-details">
-        <h2>Chapter-wise Practice</h2>
-        <span>लोकसेवा तयारी • विषयगत अभ्यास</span>
-      </div>
+    <div id="podiumSection" class="podium-section"></div>
+    <div class="leaderboard-list" id="leaderboardList">
+      <div class="loading-state"><div class="spinner"></div>डाटा लोड हुँदैछ...</div>
     </div>
-
-    <!-- Tabs -->
-    <div class="tabs-container">
-      <button class="tab-btn active" onclick="switchMainTab('topics', this)">Topics</button>
-      <button class="tab-btn" onclick="switchMainTab('samasamayik', this)">समसामयिक</button>
-      <button class="tab-btn" onclick="switchMainTab('gorkhapatra', this)">गोर्खापत्र</button>
-    </div>
-
-    <!-- Breadcrumb -->
-    <div class="breadcrumb" id="breadcrumb" onclick="goBackLevel()">
-      <i class="fa-solid fa-arrow-left"></i> पछाडि फर्कनुहोस्
-    </div>
-
-    <!-- Content Container -->
-    <div class="topic-list" id="topicListContainer">
-      <!-- Default view -->
-    </div>
+    <div id="currentUserCard" style="display: none;" class="current-user-card"></div>
   </div>
 
-  <script src="components.js"></script>
-  <script>
-    loadBottomNav('practice');
+  <!-- Supabase & Firebase SDKs -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const topicsContent = `
-      <a href="quiz-nepal-geography.html" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-blue"><i class="fa-solid fa-mountain-sun"></i></div>
-          <div class="topic-info">
-            <h3>नेपालको भूगोल</h3>
-            <p>12 topics • 250+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
 
-      <a href="quiz.html?set=World_geography" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-orange"><i class="fa-solid fa-globe"></i></div>
-          <div class="topic-info">
-            <h3>विश्वको भूगोल</h3>
-            <p>10 topics • 180+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-      <a href="quiz.html?set=nepal_history" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-green"><i class="fa-solid fa-monument"></i></div>
-          <div class="topic-info">
-            <h3>नेपालको इतिहास</h3>
-            <p>15 topics • 300+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      <a href="quiz.html?set=world_history" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-purple"><i class="fa-solid fa-landmark-dome"></i></div>
-          <div class="topic-info">
-            <h3>विश्व इतिहास</h3>
-            <p>8 topics • 150+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+    let currentCategory = "questions"; // 'questions' or 'coins'
+    let currentPeriod = "daily";
+    let currentUserName = null;
+    let currentUserUid = null;
 
-      <a href="quiz.html?set=social_culture" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-pink"><i class="fa-solid fa-users-rectangle"></i></div>
-          <div class="topic-info">
-            <h3>सामाजिक र सांस्कृतिक</h3>
-            <p>10 topics • 200+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+    window.switchCategory = function(category) {
+      currentCategory = category;
+      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+      document.querySelector(`[data-category="${category}"]`).classList.add("active");
 
-      <a href="quiz.html?set=economic" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-teal"><i class="fa-solid fa-chart-line"></i></div>
-          <div class="topic-info">
-            <h3>आर्थिक अवस्था</h3>
-            <p>9 topics • 170+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+      const timeTabs = document.getElementById("timeFilterTabs");
+      if (category === 'coins') {
+        timeTabs.style.display = "none";
+        fetchCoinsLeaderboard();
+      } else {
+        timeTabs.style.display = "flex";
+        fetchLeaderboardData(currentPeriod);
+      }
+    };
 
-      <a href="quiz.html?set=iq" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-blue"><i class="fa-solid fa-brain"></i></div>
-          <div class="topic-info">
-            <h3>बौद्धिक परीक्षण (IQ)</h3>
-            <p>14 topics • 280+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (currentCategory === 'coins') return;
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentPeriod = btn.getAttribute("data-period");
+        fetchLeaderboardData(currentPeriod);
+      });
+    });
 
-      <a href="quiz.html?set=science_tech" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-orange"><i class="fa-solid fa-flask"></i></div>
-          <div class="topic-info">
-            <h3>विज्ञान तथा प्रविधि</h3>
-            <p>10 topics • 200+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
-    `;
+    document.addEventListener("DOMContentLoaded", async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session && session.user) {
+        currentUserUid = session.user.id;
+        if (session.user.user_metadata?.full_name) {
+          currentUserName = session.user.user_metadata.full_name;
+        } else if (session.user.email) {
+          let p = session.user.email.split('@')[0];
+          currentUserName = p.charAt(0).toUpperCase() + p.slice(1);
+        }
+      }
+      fetchLeaderboardData(currentPeriod);
+    });
 
-    const samasamayikContent = `
-      <a href="quiz.html?set=samasamayik2083" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-red"><i class="fa-solid fa-calendar-days"></i></div>
-          <div class="topic-info">
-            <h3>समसामयिक २०८३</h3>
-            <p>वर्ष २०८३ का महत्त्वपूर्ण घटनाहरू</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
-    `;
+    // 1. Solved Questions Leaderboard (Supabase)
+    async function fetchLeaderboardData(period) {
+      const leaderboardList = document.getElementById("leaderboardList");
+      const podiumSection = document.getElementById("podiumSection");
+      const currentUserCard = document.getElementById("currentUserCard");
 
-    const gorkhapatraContent = `
-      <div class="topic-card" onclick="openGorkhapatraYears()">
-        <div class="topic-left">
-          <div class="topic-icon bg-green"><i class="fa-solid fa-folder-open"></i></div>
-          <div class="topic-info">
-            <h3>गोर्खापत्र ज्ञानसागर २०८३</h3>
-            <p>वैशाखदेखि चैतसम्मका बुधवार विशेष सेटहरू</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </div>
-    `;
+      leaderboardList.innerHTML = `<div class="loading-state"><div class="spinner"></div>डाटा लोड हुँदैछ...</div>`;
+      podiumSection.innerHTML = "";
+      currentUserCard.style.display = "none";
 
-    let activeTab = 'topics';
-    let navigationStack = [];
+      let scoreColumn = 'daily_score';
+      if (period === 'weekly') scoreColumn = 'weekly_score';
+      if (period === 'monthly') scoreColumn = 'monthly_score';
 
-    function switchMainTab(tabName, btnElement) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      btnElement.classList.add('active');
+      const { data, error } = await supabaseClient
+        .from('v_exam_leaderboard_summary')
+        .select(`display_name, ${scoreColumn}`)
+        .order(scoreColumn, { ascending: false });
 
-      activeTab = tabName;
-      navigationStack = [];
-      document.getElementById('breadcrumb').style.display = 'none';
+      if (error) {
+        leaderboardList.innerHTML = `<div class="empty-state">डाटा लोड गर्न असफल भयो।</div>`;
+        return;
+      }
 
-      const container = document.getElementById('topicListContainer');
-      const headerTitle = document.getElementById('headerTitle');
+      const filteredData = (data || []).filter(item => Number(item[scoreColumn]) > 0);
 
-      if (tabName === 'topics') {
-        headerTitle.innerText = 'Practice Topics';
-        container.innerHTML = topicsContent;
-      } else if (tabName === 'samasamayik') {
-        headerTitle.innerText = 'समसामयिक';
-        container.innerHTML = samasamayikContent;
-      } else if (tabName === 'gorkhapatra') {
-        headerTitle.innerText = 'गोर्खापत्र ज्ञानसागर';
-        container.innerHTML = gorkhapatraContent;
+      if (filteredData.length === 0) {
+        leaderboardList.innerHTML = `<div class="empty-state">यो समयावधिमा अहिलेसम्म कुनै डाटा उपलब्ध छैन।</div>`;
+        podiumSection.style.display = "none";
+        return;
+      }
+
+      podiumSection.style.display = "flex";
+      renderPodiumAndList(filteredData, scoreColumn, "अंक");
+
+      if (currentUserName) {
+        const uIndex = filteredData.findIndex(u => u.display_name.toLowerCase() === currentUserName.toLowerCase());
+        if (uIndex !== -1) {
+          renderCurrentUserCard(filteredData[uIndex], uIndex + 1, scoreColumn, "अंक");
+        }
       }
     }
 
-    function openGorkhapatraYears() {
-      navigationStack.push({title: 'गोर्खापत्र ज्ञानसागर', content: gorkhapatraContent});
-      document.getElementById('breadcrumb').style.display = 'flex';
-      document.getElementById('headerTitle').innerText = 'गोर्खापत्र २०८३ (महिनाहरू)';
-      
-      const container = document.getElementById('topicListContainer');
-      container.innerHTML = `
-        <div class="topic-card" onclick="openMonthWednesdays('वैशाख २०८३', '01', ['03', '10', '17', '24', '31'])">
-          <div class="topic-left"><div class="topic-icon bg-blue"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>वैशाख महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('जेठ २०८३', '02', ['07', '14', '21', '28'])">
-          <div class="topic-left"><div class="topic-icon bg-orange"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>जेठ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('आषाढ २०८३', '03', ['04', '11', '18', '25'])">
-          <div class="topic-left"><div class="topic-icon bg-green"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>आषाढ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('श्रावण २०८३', '04', ['01', '08', '15', '22', '29'])">
-          <div class="topic-left"><div class="topic-icon bg-purple"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>श्रावण महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('भाद्र २०८३', '05', ['05', '12', '19', '26', '31'])">
-          <div class="topic-left"><div class="topic-icon bg-pink"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>भाद्र महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('आश्विन २०८३', '06', ['07', '14', '21', '28'])">
-          <div class="topic-left"><div class="topic-icon bg-teal"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>आश्विन महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('कार्तिक २०८३', '07', ['04', '11', '18', '25'])">
-          <div class="topic-left"><div class="topic-icon bg-blue"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>कार्तिक महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('मंसिर २०८३', '08', ['02', '09', '16', '23', '30'])">
-          <div class="topic-left"><div class="topic-icon bg-orange"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>मंसिर महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('पुष २०८३', '09', ['07', '14', '21', '28'])">
-          <div class="topic-left"><div class="topic-icon bg-green"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>पुष महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('माघ २०८३', '10', ['05', '12', '19', '26'])">
-          <div class="topic-left"><div class="topic-icon bg-purple"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>माघ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('फागुन २०८३', '11', ['03', '10', '17', '24'])">
-          <div class="topic-left"><div class="topic-icon bg-pink"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>फागुन महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('चैत २०८३', '12', ['01', '08', '15', '22', '29'])">
-          <div class="topic-left"><div class="topic-icon bg-teal"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>चैत महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-      `;
+    // 2. Coins Leaderboard (Firebase Firestore)
+    async function fetchCoinsLeaderboard() {
+      const leaderboardList = document.getElementById("leaderboardList");
+      const podiumSection = document.getElementById("podiumSection");
+      const currentUserCard = document.getElementById("currentUserCard");
+
+      leaderboardList.innerHTML = `<div class="loading-state"><div class="spinner"></div>कोइन डाटा लोड हुँदैछ...</div>`;
+      podiumSection.innerHTML = "";
+      currentUserCard.style.display = "none";
+
+      try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        let usersList = [];
+
+        usersSnapshot.forEach(docSnap => {
+          let uData = docSnap.data();
+          let coins = Number(uData.coins || 0);
+          // ० कोइन हुनेहरूलाई लिडरबोर्डमा नदेखाउने शर्त अनुसार फिल्टर गरिएको
+          if (coins > 0) {
+            usersList.push({
+              uid: docSnap.id,
+              display_name: uData.name || uData.email?.split('@')[0] || "Aspirant",
+              coins: coins
+            });
+          }
+        });
+
+        // धेरै कोइन हुनेलाई माथि राख्ने (Descending Order)
+        usersList.sort((a, b) => b.coins - a.coins);
+
+        if (usersList.length === 0) {
+          leaderboardList.innerHTML = `<div class="empty-state">अहिलेसम्म कोइन भएको कुनै प्रयोगकर्ता छैन।</div>`;
+          podiumSection.style.display = "none";
+          return;
+        }
+
+        podiumSection.style.display = "flex";
+        renderPodiumAndList(usersList, 'coins', "कोइन");
+
+        if (currentUserUid) {
+          const myIndex = usersList.findIndex(u => u.uid === currentUserUid);
+          if (myIndex !== -1) {
+            renderCurrentUserCard(usersList[myIndex], myIndex + 1, 'coins', "कोइन");
+          }
+        }
+
+      } catch (err) {
+        console.error("Firebase fetch error:", err);
+        leaderboardList.innerHTML = `<div class="empty-state">कोइन डाटा लोड गर्न असफल भयो।</div>`;
+      }
     }
 
-    function openMonthWednesdays(monthName, monthCode, daysArray) {
-      const currentHTML = document.getElementById('topicListContainer').innerHTML;
-      navigationStack.push({title: document.getElementById('headerTitle').innerText, content: currentHTML});
-      
-      document.getElementById('headerTitle').innerText = monthName + ' (गोर्खापत्र)';
-      const container = document.getElementById('topicListContainer');
-      
-      let htmlContent = '';
-      daysArray.forEach(day => {
-        let fullDateStr = `2083-${monthCode}-${day}`;
-        htmlContent += `
-          <a href="quiz.html?set=gorkhapatra${fullDateStr}" class="topic-card">
-            <div class="topic-left">
-              <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
-              <div class="topic-info">
-                <h3>2083-${monthCode}-${day}</h3>
-                <p>${monthName} ${parseInt(day)} गते • बुधवार</p>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right arrow-icon"></i>
-          </a>
+    function renderPodiumAndList(dataArray, scoreKey, unitLabel) {
+      const podiumSection = document.getElementById("podiumSection");
+      const leaderboardList = document.getElementById("leaderboardList");
+
+      let podiumHTML = "";
+      const top3 = dataArray.slice(0, 3);
+      const orderedPodium = [];
+      if (top3[1]) orderedPodium.push({ user: top3[1], rank: 2, cls: "second" });
+      if (top3[0]) orderedPodium.push({ user: top3[0], rank: 1, cls: "first" });
+      if (top3[2]) orderedPodium.push({ user: top3[2], rank: 3, cls: "third" });
+
+      orderedPodium.forEach(item => {
+        let name = item.user.display_name;
+        let score = item.user[scoreKey];
+        let initial = name ? name.charAt(0).toUpperCase() : "L";
+        let crownHtml = item.rank === 1 ? `<i class="fa-solid fa-crown" style="color: #d97706; font-size: 14px; margin-bottom: 2px; display: block;"></i>` : '';
+
+        podiumHTML += `
+          <div class="podium-card ${item.cls}">
+            <div class="podium-rank">${item.rank}</div>
+            ${crownHtml}
+            <div class="podium-avatar">${initial}</div>
+            <div class="podium-name">${name}</div>
+            <div class="podium-score">${score} <span style="font-size:10px;">${unitLabel}</span></div>
+          </div>
         `;
       });
-      container.innerHTML = htmlContent;
-    }
+      podiumSection.innerHTML = podiumHTML;
 
-    function goBackLevel() {
-      if (navigationStack.length > 0) {
-        let prev = navigationStack.pop();
-        document.getElementById('headerTitle').innerText = prev.title;
-        document.getElementById('topicListContainer').innerHTML = prev.content;
-        if (navigationStack.length === 0) {
-          document.getElementById('breadcrumb').style.display = 'none';
-        }
+      let listHTML = "";
+      const remaining = dataArray.slice(3);
+      if (remaining.length === 0) {
+        leaderboardList.innerHTML = `<div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 13px;">अन्य सहभागीहरू छैनन्</div>`;
       } else {
-        document.getElementById('breadcrumb').style.display = 'none';
+        remaining.forEach((user, index) => {
+          let rank = index + 4;
+          let name = user.display_name;
+          let score = user[scoreKey];
+          let initial = name ? name.charAt(0).toUpperCase() : "L";
+          listHTML += `
+            <div class="leaderboard-item">
+              <div class="item-rank">#${rank}</div>
+              <div class="item-avatar">${initial}</div>
+              <div class="item-info">
+                <div class="item-name">${name}</div>
+                <div class="item-sub">Loksewa Aspirant</div>
+              </div>
+              <div class="item-score">${score} <span style="font-size: 11px; font-weight: 600; color: #64748b;">${unitLabel}</span></div>
+            </div>
+          `;
+        });
+        leaderboardList.innerHTML = listHTML;
       }
     }
 
-    // Initialize default view
-    document.getElementById('topicListContainer').innerHTML = topicsContent;
+    function renderCurrentUserCard(userData, rank, scoreKey, unitLabel) {
+      const currentUserCard = document.getElementById("currentUserCard");
+      let name = userData.display_name;
+      let score = userData[scoreKey];
+      let myInitial = name ? name.charAt(0).toUpperCase() : "U";
+
+      currentUserCard.style.display = "flex";
+      currentUserCard.innerHTML = `
+        <div class="item-rank" style="color: #1d4ed8; font-size: 16px;">#${rank}</div>
+        <div class="item-avatar" style="background: #2563eb; color: white; box-shadow: 0 4px 10px rgba(37,99,235,0.3);">${myInitial}</div>
+        <div class="item-info">
+          <div class="item-name" style="color: #1e3a8a; font-size: 15px;">${name} <span style="background: #2563eb; color: white; font-size: 10px; padding: 2px 8px; border-radius: 6px; margin-left: 6px; font-weight: 600;">तपाईं</span></div>
+          <div class="item-sub" style="color: #1e40af;">तपाईँको स्थान र प्रदर्शन</div>
+        </div>
+        <div class="item-score" style="font-size: 17px; color: #1d4ed8;">${score} <span style="font-size: 12px; font-weight: 600;">${unitLabel}</span></div>
+      `;
+    }
   </script>
 </body>
 </html>
