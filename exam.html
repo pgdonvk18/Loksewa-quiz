@@ -516,7 +516,11 @@
         if (error || !data || data.length === 0) {
           let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', rawSet);
           if (retry.error || !retry.data || retry.data.length === 0) {
-            alert(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
+            if (typeof showSuccessPopup === 'function') {
+              showSuccessPopup(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`, '', 'error', 'त्रुटि');
+            } else {
+              alert(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
+            }
             return;
           }
           data = retry.data;
@@ -539,7 +543,11 @@
 
         loadExamQuestion();
       } catch (err) {
-        showConfirmPopup('त्रुटि: ' + err.message);
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup('त्रुटि: ' + err.message, '', 'error', 'त्रुटि');
+        } else {
+          alert('त्रुटि: ' + err.message);
+        }
       }
     }
 
@@ -565,7 +573,6 @@
       const q = examQuestions[currentIdx];
       document.getElementById('q-tracker').innerText = `Question ${currentIdx + 1} of ${examQuestions.length}`;
       
-      // प्रश्नमा भएको HTML र KaTeX रेन्डर गर्न innerHTML प्रयोग गरिएको छ
       const qElem = document.getElementById('exam-question');
       qElem.innerHTML = q.question;
 
@@ -584,7 +591,6 @@
         container.appendChild(btn);
       });
 
-      // KaTeX र Table हरूलाई पेजमा तुरुन्तै रेन्डर गराउन
       if (window.renderMathInElement) {
         renderMathInElement(document.body, {
           delimiters: [
@@ -611,9 +617,16 @@
         currentIdx++;
         loadExamQuestion();
       } else {
-        if (showConfirmPopup("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?")) {
-          if (!isPracticeMode) clearInterval(timerInterval);
-          submitExam();
+        if (typeof showConfirmPopup === 'function') {
+          showConfirmPopup("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?", () => {
+            if (!isPracticeMode) clearInterval(timerInterval);
+            submitExam();
+          }, "परीक्षा बुझाउने?");
+        } else {
+          if (confirm("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?")) {
+            if (!isPracticeMode) clearInterval(timerInterval);
+            submitExam();
+          }
         }
       }
     }
@@ -746,7 +759,6 @@
         `;
       });
 
-      // समीक्षा सूची भित्र पनि KaTeX रन गर्नको लागि
       if (window.renderMathInElement) {
         renderMathInElement(container, {
           delimiters: [
@@ -819,7 +831,11 @@
     window.submitQuestionReport = async function() {
       const reason = document.getElementById('reportReason').value.trim();
       if (!reason) {
-        showConfirmPopup('कृपया समस्या के हो लेख्नुहोस्!');
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup('कृपया समस्या के हो लेख्नुहोस्!', '', 'warning', 'अपूरो विवरण');
+        } else {
+          alert('कृपया समस्या के हो लेख्नुहोस्!');
+        }
         return;
       }
 
@@ -834,10 +850,18 @@
         }]);
 
       if (error) {
-        showConfirmPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message, '', 'error', 'त्रुटि');
+        } else {
+          alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+        }
       } else {
         closeReportModal();
-        showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
+        if (typeof showSuccessPopup === 'function') {
+          showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏', '', 'success', 'सफल');
+        } else {
+          alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
+        }
       }
     }
   </script>
