@@ -32,26 +32,7 @@
     .chat-input { flex: 1; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; background: #fff; color: #000; }
     .chat-send-btn { background: #2563eb; color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-    /* Professional Floating Glow Header for Non-Dashboard Pages */
-    .screenshot-dashboard-header {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #1d4ed8 100%);
-      color: white;
-      padding: 16px 24px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: 0.8px;
-      width: 92%;
-      max-width: 1050px;
-      margin: 16px auto 10px auto;
-      border-radius: 18px;
-      box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4), 0 0 15px rgba(59, 130, 246, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      position: sticky;
-      top: 12px;
-      z-index: 100;
-      backdrop-filter: blur(10px);
-    }
+    
 
 
     
@@ -191,15 +172,7 @@
     </footer>
   `;
 
-  if (document.body) {
-    // If NOT dashboard.html, insert the clean header at the very top
-    if (isNotDashboard) {
-      const headerDiv = document.createElement('div');
-      headerDiv.innerHTML = `<header class="screenshot-dashboard-header">LoksewaQuest</header>`;
-      document.body.insertBefore(headerDiv, document.body.firstChild);
-    }
-    document.body.appendChild(containerDiv);
-  }
+  
 
   // Global functions
   window.toggleGlobalChat = function() {
