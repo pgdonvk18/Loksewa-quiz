@@ -273,7 +273,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -344,11 +344,12 @@
         await updateProfile(user, { displayName: fullName });
         await sendEmailVerification(user);
 
-        // Firestore मा युजर डेटा सेभ गर्ने
+        // Firestore मा युजर डेटा सेभ गर्ने (coins: 50 सहित)
         try {
           await setDoc(doc(db, "users", user.uid), {
             name: fullName,
             email: email,
+            coins: 50, // <--- यहाँ ५० कोइन थपिएको छ
             createdAt: new Date()
           });
         } catch (e) {
@@ -394,18 +395,31 @@
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
 
-        // Firestore मा डेटा सेभ गर्ने (सुधार गरिएको)
+        // Firestore मा युजर पहिले नै छ कि छैन चेक गरेर मात्र कोइन सेट गर्ने (नभए ५० जोड्ने)
         try {
-          await setDoc(doc(db, "users", user.uid), {
-            name: user.displayName || "Google User",
-            email: user.email,
-            createdAt: new Date()
-          }, { merge: true });
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+
+          if (!userSnap.exists()) {
+            // पहिलो पटक साइन-अप गर्दैछ भने मात्र ५० कोइन दिने
+            await setDoc(userRef, {
+              name: user.displayName || "Google User",
+              email: user.email,
+              coins: 50, // <--- गुगल साइनअपमा पहिलो पटक ५० कोइन
+              createdAt: new Date()
+            });
+          } else {
+            // यदि पहिलेनै अकाउन्ट छ भने कोइन नचलाई नाम/इमेल मात्र अपडेट गर्ने
+            await setDoc(userRef, {
+              name: user.displayName || "Google User",
+              email: user.email
+            }, { merge: true });
+          }
         } catch (dbError) {
           console.error("Firestore DB Error:", dbError);
         }
 
-        // Supabase मा डेटा सेभ गर्ने (सुधार गरिएको)
+        // Supabase मा डेटा सेभ गर्ने
         try {
           await supabase.from('user_stats').upsert([
             { id: user.uid, total_solved: 0, time_spent_minutes: 0, accuracy: 0 }
