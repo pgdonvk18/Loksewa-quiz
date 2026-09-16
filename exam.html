@@ -481,7 +481,7 @@
         if (error || !data || data.length === 0) {
           let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', rawSet);
           if (retry.error || !retry.data || retry.data.length === 0) {
-            alert(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
+            showPopup(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
             return;
           }
           data = retry.data;
@@ -504,7 +504,7 @@
 
         loadExamQuestion();
       } catch (err) {
-        alert('त्रुटि: ' + err.message);
+        showPopup('त्रुटि: ' + err.message);
       }
     }
 
@@ -760,7 +760,7 @@
     window.submitQuestionReport = async function() {
       const reason = document.getElementById('reportReason').value.trim();
       if (!reason) {
-        alert('कृपया समस्या क्या हो लेख्नुहोस्!');
+        ShowPopup('कृपया समस्या क्या हो लेख्नुहोस्!');
         return;
       }
 
@@ -775,9 +775,9 @@
         }]);
 
       if (error) {
-        alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+        ShowPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message);
       } else {
-        alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
+        ShowPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
         closeReportModal();
       }
     }
