@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- व्यावसायिक आइकनहरूको लागि FontAwesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Supabase CDN (डाटाबेसबाट डेटा तान्नको लागि) -->
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
@@ -243,22 +243,22 @@
 
     <div class="section-header">
       <h3><i class="fa-solid fa-layer-group text-blue-600"></i> उपलब्ध सेट सूची (Available Sets)</h3>
-      <span class="counter" id="setCounter">लोड हुँदैछ...</span>
+      <span class="counter" id="setCounter">सेटहरू चेक गर्दैछ...</span>
     </div>
 
     <div class="sets-grid" id="setsContainer">
-      <!-- Supabase बाट डेटा आएपछि यहाँ कार्डहरू बन्छन् -->
+      <!-- Supabase बाट चेक भएर यहाँ कार्डहरू देखिनेछन् -->
     </div>
   </div>
 
   <script>
-    // १. आफ्नो Supabase को विवरण यहाँ राख्नुहोला (Supabase Project Settings > API बाट पाइन्छ)
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    // तपाईंले दिनुभएको Supabase विवरणहरू
+    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // सेटहरूको लिस्ट (जसमा चेक गरिन्छ कि DB मा प्रश्न छ वा छैन)
+    // कुल सेटहरूको लिस्ट (तपाईंको आवश्यकता अनुसार थप्न वा घटाउन सक्नुहुन्छ)
     const baseSets = [
       { id: 'set_1', number: '01', title: 'Pre Qualifying Exam Set 1', desc: 'सामान्य ज्ञान र आधारभूत बौद्धिक परीक्षण (IQ) समेटिएको पहिलो मोडल सेट।' },
       { id: 'set_2', number: '02', title: 'Pre Qualifying Exam Set 2', desc: 'समसामयिक घटना, भूगोल तथा खरिदार प्रथम पत्रको नयाँ पाठ्यक्रममा आधारित सेट।' },
@@ -270,7 +270,7 @@
       { id: 'set_8', number: '08', title: 'Pre Qualifying Exam Set 8', desc: 'आगामी मोडल परीक्षा सेट ८।' }
     ];
 
-    async function loadSets() {
+    async function loadSetsFromSupabase() {
       const container = document.getElementById('setsContainer');
       const counter = document.getElementById('setCounter');
       container.innerHTML = '';
@@ -278,15 +278,15 @@
       let activeCount = 0;
 
       for (const set of baseSets) {
-        // २. Supabase को 'questions' टेबलमा गएर चेक गर्छ कि यो setId का प्रश्नहरू छन् कि छैनन्
-        // (तपाईंको Supabase टेबलको नाम र column अनुसार तलको 'questions' र 'set_id' मिलाउनुहोला)
+        // 'quizzes' टेबलमा set_id (वा set) को आधारमा चेक गर्छ 
+        // (यदि तपाईंको टेबलमा स्तम्भको नाम अर्कै छ भने तलको 'set_id' लाई मिलाउन सक्नुहुन्छ)
         const { data, error } = await supabaseClient
-          .from('questions')
+          .from('quizzes')
           .select('id')
           .eq('set_id', set.id)
           .limit(1);
 
-        // यदि डेटाबेसमा प्रश्न भेटियो भने status 'active' हुन्छ, नत्र 'upcoming'
+        // यदि डेटाबेसमा प्रश्न भेटियो भने सक्रिय, नत्र छिट्टै आउँदैछ
         const isActive = (data && data.length > 0);
         
         if (isActive) activeCount++;
@@ -328,8 +328,7 @@
       counter.innerText = `कुल ${baseSets.length} सेटहरू`;
     }
 
-    // पेज खुल्नेबित्तिकै Supabase चेक गर्छ
-    loadSets();
+    loadSetsFromSupabase();
   </script>
 
 </body>
