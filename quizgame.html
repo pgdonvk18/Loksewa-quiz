@@ -6,6 +6,12 @@
   <title>LoksewaQuest - Live Quiz Game</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- KaTeX for Math & Science Formulars -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
   <!-- Canvas Confetti for Fireworks/Celebration -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
@@ -54,11 +60,16 @@
     
     .room-expiry-box { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 6px; }
 
-    /* Settings Box for Host */
-    .settings-group { margin-bottom: 15px; text-align: left; background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; }
-    .settings-group label { display: block; font-size: 12px; font-weight: 700; color: #0f2a4a; margin-bottom: 6px; }
-    .settings-select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; outline: none; background: white; color: #1e293b; }
-    .settings-select:focus { border-color: #2563eb; }
+    /* Professional & Attractive Settings Box for Host */
+    .settings-group { margin-bottom: 18px; text-align: left; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); }
+    .settings-group label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #0f2a4a; margin-bottom: 8px; }
+    .settings-group label i { color: #2563eb; }
+    
+    .settings-select-wrapper { position: relative; }
+    .settings-select { width: 100%; padding: 12px 16px; border-radius: 10px; border: 2px solid #cbd5e1; font-size: 13px; font-weight: 600; outline: none; background: white; color: #1e293b; cursor: pointer; transition: all 0.2s ease; appearance: none; }
+    .settings-select:hover:not(:disabled) { border-color: #94a3b8; }
+    .settings-select:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    .settings-select-wrapper::after { content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 12px; pointer-events: none; }
 
     .players-list { display: flex; flex-direction: column; gap: 8px; max-width: 300px; margin: 0 auto 15px auto; text-align: left; }
     .player-item { background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; }
@@ -215,15 +226,36 @@
     let questionTimerInterval = null;
     let lastProcessedNotificationId = null;
 
-    // विषयहरूको नाम म्यापिङ (सबै अप्सन सहित)
+    // विषयहरूको नाम म्यापिङ (set=Nepal Geography लगायतलाई मिलाइएको छ)
     const topicDisplayNames = {
       "all": "सबै विषयबाट मिक्स (All Topics Random)",
-      "Nepal geography": "नेपालको भूगोल",
+      "Nepal Geography": "नेपालको भूगोल",
+      "World_geography": "World Geography" ,    
       "nepal_history": "नेपालको इतिहास",
       "world_history": "विश्वको इतिहास",
+      "science&tech" : "Science & Technology",
+      "iq": "Intelligent Quotient",
       "16thYojana": "१६ औँ योजना",
       "Budget2083-84": "आर्थिक वर्ष २०८३/८४ को बजेट"
     };
+
+    // KaTeX Render Helper Function (HTML र Math formulas रेन्डर गर्नको लागि)
+    function renderMathContent(elementId) {
+      setTimeout(() => {
+        const el = document.getElementById(elementId);
+        if (el && window.renderMathInElement) {
+          window.renderMathInElement(el, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      }, 50);
+    }
 
     window.showToast = function(message) {
       const container = document.getElementById('toastContainer');
@@ -359,17 +391,19 @@
               <i class="fa-regular fa-clock"></i> समय बाँकी: <span id="lobbyTimerText">गणना हुँदैछ...</span>
             </div>
 
-            <!-- विषय छनौट गर्ने ड्रपडाउन (सबै विषय अप्सन सहित) -->
+            <!-- आकर्षक र प्रोफेसनल विषय छनौट बक्स -->
             <div class="settings-group">
-              <label><i class="fa-solid fa-book-open"></i> क्विजको विषयवस्तु (Topic):</label>
-              <select class="settings-select" id="roomTopicSelect" ${!isHost ? 'disabled' : ''} onchange="updateRoomTopic(this.value)">
-                <option value="all" ${currentTopic === 'all' ? 'selected' : ''}>सबै विषयबाट मिक्स (All Topics Random)</option>
-                <option value="Nepal geography" ${currentTopic === 'Nepal geography' ? 'selected' : ''}>नेपालको भूगोल (Nepal Geography)</option>
-                <option value="nepal_history" ${currentTopic === 'nepal_history' ? 'selected' : ''}>नेपालको इतिहास (Nepal History)</option>
-                <option value="world_history" ${currentTopic === 'world_history' ? 'selected' : ''}>विश्वको इतिहास (World History)</option>
-                <option value="16thYojana" ${currentTopic === '16thYojana' ? 'selected' : ''}>१६ औँ योजना (16th Periodic Plan)</option>
-                <option value="Budget2083-84" ${currentTopic === 'Budget2083-84' ? 'selected' : ''}>आर्थिक वर्ष २०८३/८४ को बजेट (Budget 2083/84)</option>
-              </select>
+              <label><i class="fa-solid fa-layer-group"></i> क्विजको विषयवस्तु (Topic Selection)</label>
+              <div class="settings-select-wrapper">
+                <select class="settings-select" id="roomTopicSelect" ${!isHost ? 'disabled' : ''} onchange="updateRoomTopic(this.value)">
+                  <option value="all" ${currentTopic === 'all' ? 'selected' : ''}>सबै विषयबाट मिक्स (All Topics Random)</option>
+                  <option value="Nepal Geography" ${currentTopic === 'Nepal Geography' ? 'selected' : ''}>नेपालको भूगोल (Nepal Geography)</option>
+                  <option value="nepal_history" ${currentTopic === 'nepal_history' ? 'selected' : ''}>नेपालको इतिहास (Nepal History)</option>
+                  <option value="world_history" ${currentTopic === 'world_history' ? 'selected' : ''}>विश्वको इतिहास (World History)</option>
+                  <option value="16thYojana" ${currentTopic === '16thYojana' ? 'selected' : ''}>१६ औँ योजना (16th Periodic Plan)</option>
+                  <option value="Budget2083-84" ${currentTopic === 'Budget2083-84' ? 'selected' : ''}>आर्थिक वर्ष २०८३/८४ को बजेट (Budget 2083/84)</option>
+                </select>
+              </div>
             </div>
 
             <div class="players-list">${playersHtml}</div>
@@ -403,12 +437,12 @@
         let currentRoundNum = Math.floor((currentQCount - 1) / playerCount) + 1;
 
         gameBody.innerHTML = `
-          <div class="card question-box">
+          <div class="card question-box" id="activeQuestionCard">
             <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px;">
               <span>राउन्ड: ${currentRoundNum} / ${totalRounds} (प्रश्न: ${currentQCount}/${totalQuestionsPlanned})</span>
               <span>पालो: <b style="color: ${isMyTurn ? '#2563eb' : '#0f2a4a'}">${isMyTurn ? 'तपाईँको पालो!' : currentTurnPlayer.name + ' को पालो'}</b></span>
             </div>
-            <h4>${escapeHTML(q.text)}</h4>
+            <h4 id="questionTextRender">${escapeHTML(q.text)}</h4>
             <div class="options-grid" id="optionsGrid">
               ${q.options.map(opt => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt.replace(/'/g, "\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
             </div>
@@ -420,6 +454,8 @@
           </div>
         `;
 
+        // प्रश्न र अप्सनहरूमा LaTeX/Math rendering एप्लाई गर्ने
+        renderMathContent('activeQuestionCard');
         startQuestionTimer(isMyTurn);
       }
       else if (room.status === 'finished') {
@@ -452,7 +488,7 @@
         let isHost = (currentUser.uid === room.hostId);
 
         gameBody.innerHTML = `
-          <div class="card waiting-box" style="padding: 20px;">
+          <div class="card waiting-box" id="resultCardContainer" style="padding: 20px;">
             <h3>${isWinner ? '🎉 बधाई छ! तपाईँले जित्नुभयो!' : '👏 राम्रो प्रयास! खेल समाप्त भयो।'}</h3>
             <p>तपाईँको स्थान: <b>#${myRank}</b></p>
             <div class="players-list">${rankHtml}</div>
@@ -460,17 +496,16 @@
             <p style="font-weight: 700; margin-top: 15px; margin-bottom: 5px; font-size: 13px; color: #0f2a4a; text-align: left;">📝 उत्तर समीक्षा:</p>
             <div class="review-container">${reviewHtml}</div>
 
-            <!-- Rematch र Lobby Button -->
             <div style="display: flex; gap: 10px; margin-top: 15px;">
               ${isHost ? `<button class="btn-main" onclick="triggerRematch()" style="background: #16a34a;">🔄 फेरि खेल्नुहोस् (Rematch)</button>` : `<p style="font-size:11px; color:#64748b; width:100%; text-align:center;">होस्टले रिमम्याच सुरु नगरेसम्म पर्खनुहोस्...</p>`}
               <button class="btn-main" style="background: #64748b;" onclick="window.location.href='quizlobby.html'">लबीमा फर्कनुहोस्</button>
             </div>
           </div>
         `;
+        renderMathContent('resultCardContainer');
       }
     }
 
-    // होस्टले विषय परिवर्तन गर्दा रियलटाइम अपडेट हुने फंक्सन
     window.updateRoomTopic = async function(selectedTopic) {
       if (!roomDataGlobal || currentUser.uid !== roomDataGlobal.hostId) return;
       const roomRef = doc(db, "quiz_rooms", roomId);
@@ -479,7 +514,6 @@
       await updateDoc(roomRef, { settings: currentSettings });
     }
 
-    // एउटै रुम र खेलाडीहरूलाई फेरि waiting स्टेटमा लैजाने (Rematch)
     window.triggerRematch = async function() {
       if (!roomDataGlobal || currentUser.uid !== roomDataGlobal.hostId) return;
       const roomRef = doc(db, "quiz_rooms", roomId);
@@ -627,12 +661,10 @@
       }
     }
 
-    // टपिक वा 'all' छनौटको आधारमा Supabase बाट प्रश्न तानेर दिने फंक्सन
     async function fetchQuestionByTopic(topicName, excludedIds = []) {
       try {
         let query = supabaseClient.from('quizzes').select('*');
         
-        // यदि 'all' छ भने filter नगरिकन सबैबाट लिने, अन्यथा निश्चित topic मात्र फिल्टर गर्ने
         if (topicName && topicName !== 'all') {
           query = query.eq('topic', topicName);
         }
@@ -798,7 +830,7 @@
 
           await updateDoc(roomRef, {
             players: players, history: history,
-            currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundStarterIndex,
+            currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundSpacer = nextRoundStarterIndex,
             questionCount: currentQCount + 1, passAttempt: 0,
             currentQuestion: nextQuestion, askedQuestionIds: askedIds,
             latestNotification: { id: Date.now(), text: notificationText }
@@ -814,13 +846,13 @@
 
     function initChatListener() {
       const chatRef = collection(db, "quiz_rooms", roomId, "room_chat");
-      let isFirstLoad = true;
+      let isFirstListLoad = true;
 
       onSnapshot(chatRef, (snapshot) => {
         const container = document.getElementById('chatMessagesContainer');
         if (snapshot.empty) {
           container.innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 11px;">कुनै मसेज छैन।</div>`;
-          isFirstLoad = false;
+          isFirstListLoad = false;
           return;
         }
 
@@ -828,7 +860,7 @@
         snapshot.forEach(doc => msgs.push({ id: doc.id, ...doc.data() }));
         msgs.sort((a, b) => (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0));
 
-        if (!isFirstLoad && msgs.length > 0) {
+        if (!isFirstListLoad && msgs.length > 0) {
           const latestMsg = msgs[msgs.length - 1];
           const isEmoji = /^\p{Emoji}+$/u.test(latestMsg.text.trim());
           if (isEmoji) triggerFloatingEmoji(latestMsg.text.trim());
@@ -844,7 +876,7 @@
           `;
         });
         container.scrollTop = container.scrollHeight;
-        isFirstLoad = false;
+        isFirstListLoad = false;
       });
     }
 
@@ -860,7 +892,7 @@
       const input = document.getElementById('chatInputText');
       const text = input.value.trim();
       if (!text || !currentUser) return;
-      input.value = '';
+      input.value, input.value = '';
 
       await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
         text: text, uid: currentUser.uid, senderName: currentUserName, createdAt: serverTimestamp()
