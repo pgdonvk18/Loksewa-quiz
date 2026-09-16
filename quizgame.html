@@ -12,6 +12,11 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body { background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
+    /* यो कोडले components.js बाट आउने ग्लोबल फुटरलाई मात्र यस पेजमा लुकाउँछ, अरूलाई असर गर्दैन */
+    footer, .global-site-footer, #globalFooter {
+      display: none !important;
+    }
+
     .game-header { background: #0f2a4a; color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 10; }
     .room-badge { background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
     .chat-toggle-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
@@ -19,7 +24,7 @@
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
     .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; position: relative; }
 
-    /* Floating Emoji Animation Container - पूरै स्क्रीनमा फैलिनको लागि सच्याइएको */
+    /* Floating Emoji Animation Container */
     .floating-emoji-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 200; }
     .floating-emoji { position: absolute; bottom: 0; font-size: 42px; animation: floatUp 2.5s ease-out forwards; opacity: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     @keyframes floatUp {
@@ -220,7 +225,6 @@
       }, 3500);
     }
 
-    // Function to trigger floating emoji animation across full screen width randomly
     window.triggerFloatingEmoji = function(emojiChar) {
       const container = document.getElementById('floatingEmojiContainer');
       if (!container) return;
@@ -229,13 +233,11 @@
       span.className = 'floating-emoji';
       span.innerText = emojiChar;
       
-      // स्क्रीनको चौडाइ अनुसार बीच वा विभिन्न भागबाट अनियमित (random) रूपमा उडाउने
       const randomLeft = Math.floor(Math.random() * (container.clientWidth - 80)) + 20;
       span.style.left = randomLeft + 'px';
 
       container.appendChild(span);
 
-      // एनिमेशन सकिएपछि DOM बाट हटाउने (२.५ सेकेन्ड पछि)
       setTimeout(() => {
         span.remove();
       }, 2500);
@@ -803,7 +805,6 @@
         snapshot.forEach(doc => msgs.push({ id: doc.id, ...doc.data() }));
         msgs.sort((a, b) => (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0));
 
-        // Trigger floating emoji animation on new incoming chat message if it's an emoji
         if (!isFirstLoad && msgs.length > 0) {
           const latestMsg = msgs[msgs.length - 1];
           const isEmoji = /^\p{Emoji}+$/u.test(latestMsg.text.trim());
@@ -826,7 +827,6 @@
       });
     }
 
-    // Quick Emoji Click Handler
     window.sendQuickEmoji = async function(emoji) {
       if (!currentUser) return;
       
@@ -860,6 +860,7 @@
       }[tag] || tag));
     }
   </script>
+  <!-- components.js राखिएको छ जसले गर्दा अन्य महत्त्वपूर्ण फिचरहरू नबिग्रियोस् -->
   <script src="components.js"></script>
 </body>
 </html>
