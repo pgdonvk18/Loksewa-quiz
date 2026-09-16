@@ -18,7 +18,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body { background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-    /* यो कोडले components.js बाट आउने ग्लोबल फुटरलाई मात्र यस पेजमा लुकाउँछ */
     footer, .global-site-footer, #globalFooter {
       display: none !important;
     }
@@ -30,7 +29,6 @@
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
     .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; position: relative; }
 
-    /* Floating Emoji Animation Container */
     .floating-emoji-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 200; }
     .floating-emoji { position: absolute; bottom: 0; font-size: 42px; animation: floatUp 2.5s ease-out forwards; opacity: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     @keyframes floatUp {
@@ -39,7 +37,6 @@
       100% { transform: translateY(-500px) scale(1.2) rotate(-20deg); opacity: 0; }
     }
 
-    /* Toast Notification */
     .toast-container { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 500; display: flex; flex-direction: column; gap: 6px; width: 90%; max-width: 400px; pointer-events: none; }
     .toast-msg { background: #0f2a4a; color: white; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 8px; animation: fadeInOut 3.5s forwards; }
     @keyframes fadeInOut {
@@ -60,7 +57,6 @@
     
     .room-expiry-box { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 6px; }
 
-    /* Professional & Attractive Settings Box for Host */
     .settings-group { margin-bottom: 18px; text-align: left; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); }
     .settings-group label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #0f2a4a; margin-bottom: 8px; }
     .settings-group label i { color: #2563eb; }
@@ -86,7 +82,6 @@
     .review-container { margin-top: 15px; text-align: left; max-height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; background: #f8fafc; }
     .review-item { font-size: 12px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed #cbd5e1; line-height: 1.4; }
 
-    /* Custom Attractive Popup Modal */
     .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 42, 74, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     .custom-modal-overlay.active { opacity: 1; pointer-events: auto; }
     .custom-modal { background: white; width: 90%; max-width: 350px; border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: scale(0.9); transition: transform 0.3s ease; }
@@ -97,7 +92,6 @@
     .modal-btn { background: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; }
     .modal-btn:hover { background: #1d4ed8; }
 
-    /* Chat Drawer & Quick Emojis */
     .chat-drawer { position: absolute; right: -320px; top: 0; width: 300px; height: 100%; background: white; border-left: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: right 0.3s ease; z-index: 100; box-shadow: -5px 0 15px rgba(0,0,0,0.05); }
     .chat-drawer.open { right: 0; }
     .chat-header-bar { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
@@ -121,7 +115,6 @@
     .btn-main:hover { background: #1d4ed8; }
   </style>
 
-  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -149,7 +142,6 @@
 
     </div>
 
-    <!-- Chat Drawer -->
     <div class="chat-drawer" id="chatDrawer">
       <div class="chat-header-bar">
         <span>ग्रुप च्याट</span>
@@ -177,7 +169,6 @@
     </div>
   </div>
 
-  <!-- Custom Attractive Modal Popup -->
   <div class="custom-modal-overlay" id="customModalOverlay">
     <div class="custom-modal">
       <div class="modal-icon" id="modalIcon">🎉</div>
@@ -187,7 +178,6 @@
     </div>
   </div>
 
-  <!-- Firebase & Supabase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -225,8 +215,8 @@
     let roomExpiryTimerInterval = null;
     let questionTimerInterval = null;
     let lastProcessedNotificationId = null;
+    let isAnswerSubmitting = false; // डबल क्लिक रोक्नको लागि Lock
 
-    // विषयहरूको नाम म्यापिङ (set=Nepal Geography लगायतलाई मिलाइएको छ)
     const topicDisplayNames = {
       "all": "सबै विषयबाट मिक्स (All Topics Random)",
       "Nepal Geography": "नेपालको भूगोल",
@@ -239,7 +229,6 @@
       "Budget2083-84": "आर्थिक वर्ष २०८३/८४ को बजेट"
     };
 
-    // KaTeX Render Helper Function (HTML र Math formulas रेन्डर गर्नको लागि)
     function renderMathContent(elementId) {
       setTimeout(() => {
         const el = document.getElementById(elementId);
@@ -391,7 +380,6 @@
               <i class="fa-regular fa-clock"></i> समय बाँकी: <span id="lobbyTimerText">गणना हुँदैछ...</span>
             </div>
 
-            <!-- आकर्षक र प्रोफेसनल विषय छनौट बक्स -->
             <div class="settings-group">
               <label><i class="fa-solid fa-layer-group"></i> क्विजको विषयवस्तु (Topic Selection)</label>
               <div class="settings-select-wrapper">
@@ -454,7 +442,6 @@
           </div>
         `;
 
-        // प्रश्न र अप्सनहरूमा LaTeX/Math rendering एप्लाई गर्ने
         renderMathContent('activeQuestionCard');
         startQuestionTimer(isMyTurn);
       }
@@ -607,7 +594,14 @@
     }
 
     async function handleTimeoutTurn() {
-      if (!roomDataGlobal) return;
+      if (isAnswerSubmitting) return;
+      isAnswerSubmitting = true;
+
+      if (!roomDataGlobal) {
+        isAnswerSubmitting = false;
+        return;
+      }
+
       let roomRef = doc(db, "quiz_rooms", roomId);
       let players = [...roomDataGlobal.players];
       let currentIndex = roomDataGlobal.currentTurnIndex;
@@ -632,32 +626,39 @@
       let notificationText = "समय समाप्त! प्रश्न अर्को खेलाडीलाई पास हुँदैछ।";
       let chosenTopic = roomDataGlobal.settings?.topic || 'all';
 
-      if (passAttempt >= players.length) {
-        if (currentQCount >= totalQuestionsPlanned) {
-          await updateDoc(roomRef, { players: players, history: history, status: "finished", latestNotification: { id: Date.now(), text: notificationText } });
-          return;
+      try {
+        if (passAttempt >= players.length) {
+          if (currentQCount >= totalQuestionsPlanned) {
+            await updateDoc(roomRef, { players: players, history: history, status: "finished", latestNotification: { id: Date.now(), text: notificationText } });
+            isAnswerSubmitting = false;
+            return;
+          }
+
+          let nextQuestion = await fetchQuestionByTopic(chosenTopic, askedIds);
+          if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
+
+          let nextRoundStarterIndex = (roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0);
+          nextRoundStarterIndex = (nextRoundStarterIndex + 1) % players.length;
+
+          await updateDoc(roomRef, {
+            players: players, history: history,
+            currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundStarterIndex,
+            questionCount: currentQCount + 1, passAttempt: 0,
+            currentQuestion: nextQuestion, askedQuestionIds: askedIds,
+            latestNotification: { id: Date.now(), text: "कसैले पनि मिलाएनन्! नयाँ प्रश्न सुरु भयो।" }
+          });
+        } else {
+          let nextTurnIndex = (currentIndex + 1) % players.length;
+          await updateDoc(roomRef, {
+            players: players, history: history,
+            currentTurnIndex: nextTurnIndex, passAttempt: passAttempt,
+            latestNotification: { id: Date.now(), text: notificationText }
+          });
         }
-
-        let nextQuestion = await fetchQuestionByTopic(chosenTopic, askedIds);
-        if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
-
-        let nextRoundStarterIndex = (roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0);
-        nextRoundStarterIndex = (nextRoundStarterIndex + 1) % players.length;
-
-        await updateDoc(roomRef, {
-          players: players, history: history,
-          currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundStarterIndex,
-          questionCount: currentQCount + 1, passAttempt: 0,
-          currentQuestion: nextQuestion, askedQuestionIds: askedIds,
-          latestNotification: { id: Date.now(), text: "कसैले पनि मिलाएनन्! नयाँ प्रश्न सुरु भयो।" }
-        });
-      } else {
-        let nextTurnIndex = (currentIndex + 1) % players.length;
-        await updateDoc(roomRef, {
-          players: players, history: history,
-          currentTurnIndex: nextTurnIndex, passAttempt: passAttempt,
-          latestNotification: { id: Date.now(), text: notificationText }
-        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setTimeout(() => { isAnswerSubmitting = false; }, 500);
       }
     }
 
@@ -746,8 +747,14 @@
     }
 
     window.submitAnswer = async function(selectedOpt, isSkipped) {
+      if (isAnswerSubmitting) return; // डबल क्लिकबाट जोगाउन
+      isAnswerSubmitting = true;
+
       if (questionTimerInterval) clearInterval(questionTimerInterval);
-      if (!roomDataGlobal) return;
+      if (!roomDataGlobal) {
+        isAnswerSubmitting = false;
+        return;
+      }
       
       let roomRef = doc(db, "quiz_rooms", roomId);
       let players = [...roomDataGlobal.players];
@@ -779,45 +786,11 @@
 
       let totalQuestionsPlanned = totalRounds * players.length;
 
-      if (isCorrect) {
-        if (currentQCount >= totalQuestionsPlanned) {
-          showCustomModal("खेल समाप्त! 🏆", "सबै राउन्डहरू पूरा भए।", "🏁", "नतिजा हेर्नुहोस्", async () => {
-            await updateDoc(roomRef, { players: players, history: history, status: "finished" });
-          });
-          return;
-        }
-
-        let nextQuestion = await fetchQuestionByTopic(chosenTopic, askedIds);
-        if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
-
-        let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
-        let nextRoundStarterIndex = (currentStarter + 1) % players.length;
-        let notificationText = `${currentPlayerName} ले सही उत्तर मिलाउनुभयो! (+५ अंक)`;
-
-        await updateDoc(roomRef, {
-          players: players, history: history,
-          currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundStarterIndex,
-          questionCount: currentQCount + 1, passAttempt: 0,
-          currentQuestion: nextQuestion, askedQuestionIds: askedIds,
-          latestNotification: { id: Date.now(), text: notificationText }
-        });
-        return;
-      } else {
-        if (passAttempt < players.length) {
-          let nextTurnIndex = (currentIndex + 1) % players.length;
-          let notificationText = `${currentPlayerName} ले गलत उत्तर दिनुभयो। प्रश्न पास भयो!`;
-          
-          await updateDoc(roomRef, {
-            players: players, history: history,
-            currentTurnIndex: nextTurnIndex, passAttempt: passAttempt,
-            latestNotification: { id: Date.now(), text: notificationText }
-          });
-          return;
-        } else {
+      try {
+        if (isCorrect) {
           if (currentQCount >= totalQuestionsPlanned) {
-            showCustomModal("खेल समाप्त! 🏆", "सबै राउन्डहरू पूरा भए।", "🏁", "नतिजा हेर्नुहोस्", async () => {
-              await updateDoc(roomRef, { players: players, history: history, status: "finished" });
-            });
+            await updateDoc(roomRef, { players: players, history: history, status: "finished" });
+            isAnswerSubmitting = false;
             return;
           }
 
@@ -826,17 +799,52 @@
 
           let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
           let nextRoundStarterIndex = (currentStarter + 1) % players.length;
-          let notificationText = `कसैले मिलाएनन्! सही उत्तर: ${currentQ.correctAnswer}`;
+          let notificationText = `${currentPlayerName} ले सही उत्तर मिलाउनुभयो! (+५ अंक)`;
 
           await updateDoc(roomRef, {
             players: players, history: history,
-            currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundSpacer = nextRoundStarterIndex,
+            currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundStarterIndex,
             questionCount: currentQCount + 1, passAttempt: 0,
             currentQuestion: nextQuestion, askedQuestionIds: askedIds,
             latestNotification: { id: Date.now(), text: notificationText }
           });
-          return;
+        } else {
+          if (passAttempt < players.length) {
+            let nextTurnIndex = (currentIndex + 1) % players.length;
+            let notificationText = `${currentPlayerName} ले गलत उत्तर दिनुभयो। प्रश्न पास भयो!`;
+            
+            await updateDoc(roomRef, {
+              players: players, history: history,
+              currentTurnIndex: nextTurnIndex, passAttempt: passAttempt,
+              latestNotification: { id: Date.now(), text: notificationText }
+            });
+          } else {
+            if (currentQCount >= totalQuestionsPlanned) {
+              await updateDoc(roomRef, { players: players, history: history, status: "finished" }, { merge: true });
+              isAnswerSubmitting = false;
+              return;
+            }
+
+            let nextQuestion = await fetchQuestionByTopic(chosenTopic, askedIds);
+            if (nextQuestion && nextQuestion.id) askedIds.push(nextQuestion.id);
+
+            let currentStarter = roomDataGlobal.roundStarterIndex !== undefined ? roomDataGlobal.roundStarterIndex : 0;
+            let nextRoundStarterIndex = (currentStarter + 1) % players.length;
+            let notificationText = `कसैले मिलाएनन्! सही उत्तर: ${currentQ.correctAnswer}`;
+
+            await updateDoc(roomRef, {
+              players: players, history: history,
+              currentTurnIndex: nextRoundStarterIndex, roundStarterIndex: nextRoundStarterIndex,
+              questionCount: currentQCount + 1, passAttempt: 0,
+              currentQuestion: nextQuestion, askedQuestionIds: askedIds,
+              latestNotification: { id: Date.now(), text: notificationText }
+            });
+          }
         }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setTimeout(() => { isAnswerSubmitting = false; }, 500);
       }
     };
 
@@ -892,7 +900,7 @@
       const input = document.getElementById('chatInputText');
       const text = input.value.trim();
       if (!text || !currentUser) return;
-      input.value, input.value = '';
+      input.value = '';
 
       await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
         text: text, uid: currentUser.uid, senderName: currentUserName, createdAt: serverTimestamp()
