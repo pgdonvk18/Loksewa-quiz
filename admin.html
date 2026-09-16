@@ -168,7 +168,6 @@
       background: #1d4ed8;
     }
     .submit-btn.btn-orange { background: #d97706; }
-    .submit-btn.btn-purple { background: #7c3aed; }
     .submit-btn.btn-red { background: #dc2626; }
 
     .help-text {
@@ -334,29 +333,7 @@
       </div>
     </div>
 
-    <!-- ⚡ २. नयाँ टेबल सिर्जना गर्ने SQL Tool (Create Table) -->
-    <div class="form-card" style="border-left: 4px solid #7c3aed;">
-      <h3><i class="fa-solid fa-database" style="color: #7c3aed;"></i> डाटाबेसमा नयाँ टेबल बनाउने (CREATE TABLE SQL)</h3>
-      <form id="createTableForm">
-        <div class="form-group">
-          <label>तपाईंको CREATE TABLE SQL Query यहाँ राख्नुहोस्:</label>
-          <textarea id="createTableInput" class="form-control" placeholder="CREATE TABLE public.reported_questions (
-  id SERIAL PRIMARY KEY,
-  question_id BIGINT,
-  question_text TEXT,
-  reason TEXT,
-  status TEXT DEFAULT 'Pending',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);"></textarea>
-          <div class="help-text">
-            💡 <b>नोट:</b> Supabase ले प्रत्यक्ष DDL (CREATE TABLE) क्लाइन्टबाट अनुमति नदिन सक्छ। यदि त्यसो भयो भने कृपया Supabase को SQL Editor प्रयोग गर्नुहोला।
-          </div>
-        </div>
-        <button type="submit" class="submit-btn btn-purple" id="createTableBtn">टेबल सिर्जना गर्नुहोस्</button>
-      </form>
-    </div>
-
-    <!-- ⚡ ३. सेट अनुसार प्रश्न हेरेर उत्तर सच्याउने (Question Correction Tool) -->
+    <!-- ⚡ २. सेट अनुसार प्रश्न हेरेर उत्तर सच्याउने (Question Correction Tool) -->
     <div class="form-card" style="border-left: 4px solid #059669;">
       <h3><i class="fa-solid fa-pen-to-square" style="color: #059669;"></i> सेट अनुसार प्रश्न हेर्ने र उत्तर सच्याउने</h3>
       <div class="form-group">
@@ -374,7 +351,7 @@
       </div>
     </div>
 
-    <!-- ⚡ ४. लाइभ मकी सूचना (Notification Ticker) पठाउने फर्म -->
+    <!-- ⚡ ३. लाइभ मकी सूचना (Notification Ticker) पठाउने फर्म -->
     <div class="form-card" style="border-left: 4px solid #d97706;">
       <h3><i class="fa-solid fa-bullhorn" style="color: #d97706;"></i> लाइभ सूचना पट्टी (Ticker) अपडेट गर्नुहोस्</h3>
       <form id="notificationForm">
@@ -386,7 +363,7 @@
       </form>
     </div>
 
-    <!-- ५. SQL Query मार्फत प्रश्न हाल्ने फर्म (Upsert Enabled) -->
+    <!-- ४. SQL Query मार्फत प्रश्न हाल्ने फर्म (Upsert Enabled) -->
     <div class="form-card">
       <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू थप्नुहोस् (एक वा धेरै)</h3>
       <form id="sqlForm">
@@ -500,7 +477,7 @@ VALUES
               <span style="color: #64748b;">स्थिति: <b>${item.status || 'Pending'}</b></span>
               <div style="display: flex; gap: 6px;">
                 ${item.question_id ? `<button onclick="openEditModal(${item.question_id})" style="background: #2563eb; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;"><i class="fa-solid fa-pen-to-square"></i> सम्पादन</button>` : ''}
-                <button onclick="deleteReport(${item.id})" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;"><i class="fa-solid fa-trash"></i> हटाउने</button>
+                <button onclick="deleteReport('${item.id}')" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;"><i class="fa-solid fa-trash"></i> हटाउने</button>
               </div>
             </div>
           </div>
@@ -573,21 +550,16 @@ VALUES
     }
 
     window.deleteReport = async function(id) {
-      if (!confirm('के तपाईं यो रिपोर्ट हटाउन चाहनुहुन्छ?')) return;
+      if (!confirm('के तपाईं यो रिपोर्ट डाटाबेसबाट पूर्ण रूपमा हटाउन चाहनुहुन्छ?')) return;
       const { error } = await supabase.from('reported_questions').delete().eq('id', id);
       if (error) {
         showAlert('हटाउन असफल भयो: ' + error.message, 'error');
       } else {
-        showAlert('रिपोर्ट सफलतापूर्वक हटाइयो!', 'success');
+        showAlert('रिपोर्ट डाटाबाट सफलतापूर्वक हटाइयो!', 'success');
         fetchReportedQuestions();
         fetchDatabaseStats();
       }
     }
-
-    document.getElementById('createTableForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showAlert("कृपया यो CREATE TABLE query सिधै Supabase Dashboard को SQL Editor मा लगेर Run गर्नुहोस्।", "error");
-    });
 
     window.loadAdminQuestionsBySet = async function() {
       const selectedSet = document.getElementById('admin-set-selector').value;
@@ -676,7 +648,6 @@ VALUES
       }
     });
 
-    // ⚡ SQL Form Handler with Upsert Enabled
     document.getElementById('sqlForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const sqlText = document.getElementById('sqlInput').value.trim();
@@ -733,7 +704,6 @@ VALUES
           throw new Error("कुनै पनि वैध डेटा फेला परेन। कृपया SQL को ढाँचा (Format) मिलाउनुहोला।");
         }
 
-        // ⚡ .insert को सट्टा .upsert प्रयोग गरिएको छ जसमा onConflict 'question' दिइएको छ
         const { error } = await supabase
           .from('quizzes')
           .upsert(rowsToInsert, { onConflict: 'question' });
