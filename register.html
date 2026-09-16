@@ -342,21 +342,28 @@
         const user = userCredential.user;
 
         await updateProfile(user, { displayName: fullName });
-
-        // इमेल भेरिफिकेसन लिङ्क पठाउने
         await sendEmailVerification(user);
 
         // Firestore मा युजर डेटा सेभ गर्ने
-        await setDoc(doc(db, "users", user.uid), {
-          name: fullName,
-          email: email,
-          createdAt: new Date()
-        });
+        try {
+          await setDoc(doc(db, "users", user.uid), {
+            name: fullName,
+            email: email,
+            createdAt: new Date()
+          });
+        } catch (e) {
+          console.error("Firestore save error:", e);
+        }
 
-        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-        await supabase.from('user_stats').upsert([
-          { id: user.uid, total_solved: 0, time_spent_minutes: 0, accuracy: 0, otp_code: otpCode }
-        ]);
+        // Supabase मा डेटा सेभ गर्ने
+        try {
+          const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+          await supabase.from('user_stats').upsert([
+            { id: user.uid, total_solved: 0, time_spent_minutes: 0, accuracy: 0, otp_code: otpCode }
+          ]);
+        } catch (e) {
+          console.error("Supabase save error:", e);
+        }
 
         showPopup(
           "भेरिफिकेसन इमेल पठाइयो! ✉️", 
@@ -387,18 +394,27 @@
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
 
-        // Firestore र Supabase मा युजरको डेटा चेक गरेर राख्ने
-        await setDoc(doc(db, "users", user.uid), {
-          name: user.displayName || "Google User",
-          email: user.email,
-          createdAt: new Date()
-        }, { merge: true });
+        // Firestore मा डेटा सेभ गर्ने (सुधार गरिएको)
+        try {
+          await setDoc(doc(db, "users", user.uid), {
+            name: user.displayName || "Google User",
+            email: user.email,
+            createdAt: new Date()
+          }, { merge: true });
+        } catch (dbError) {
+          console.error("Firestore DB Error:", dbError);
+        }
 
-        await supabase.from('user_stats').upsert([
-          { id: user.uid, total_solved: 0, time_spent_minutes: 0, accuracy: 0 }
-        ]);
+        // Supabase मा डेटा सेभ गर्ने (सुधार गरिएको)
+        try {
+          await supabase.from('user_stats').upsert([
+            { id: user.uid, total_solved: 0, time_spent_minutes: 0, accuracy: 0 }
+          ]);
+        } catch (supabaseError) {
+          console.error("Supabase DB Error:", supabaseError);
+        }
 
-        // Google बाट लगइन गर्दा इमेल पहिल्यै प्रमाणित हुने भएकोले सिधै ड्यासबोर्डमा पठाउने
+        // सिधै ड्यासबोर्डमा पठाउने
         window.location.href = "dashboard.html";
 
       } catch (error) {
