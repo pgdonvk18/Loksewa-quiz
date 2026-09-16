@@ -175,7 +175,7 @@
       background: #f1f5f9;
       opacity: 0.75;
       cursor: not-allowed;
-      pointer-events: none; /* क्लिक गर्न नमिल्ने बनाउन */
+      pointer-events: none;
     }
 
     .set-card-top {
@@ -299,17 +299,15 @@
   </div>
 
   <script>
-    // यहाँ तपाईंले सेटहरूको कन्ट्रोल गर्नुहुनेछ। 
-    // status मा 'active' राख्दा परीक्षा दिन मिल्छ (सक्रिय हुन्छ), 
-    // र 'upcoming' राख्दा 'छिट्टै आउँदैछ' भनेर देखाउँछ (क्लिक गर्न मिल्दैन)।
+    // यहाँ status लाई 'active' बनाउँदा परीक्षा दिन मिल्छ, 
+    // र 'upcoming' बनाउँदा 'छिट्टै आउँदैछ' भनेर देखाउँछ।
     const allExamSets = [
       { id: 'set_1', number: '01', title: 'Pre Qualifying Exam Set 1', desc: 'सामान्य ज्ञान र आधारभूत बौद्धिक परीक्षण (IQ) समेटिएको पहिलो मोडल सेट।', status: 'active' },
       { id: 'set_2', number: '02', title: 'Pre Qualifying Exam Set 2', desc: 'समसामयिक घटना, भूगोल तथा खरिदार प्रथम पत्रको नयाँ पाठ्यक्रममा आधारित सेट।', status: 'active' },
       { id: 'set_3', number: '03', title: 'Pre Qualifying Exam Set 3', desc: 'इतिहास, संस्कृति, संविधान र व्यवस्थापनसम्बन्धी महत्वपूर्ण प्रश्नहरूको संगालो।', status: 'active' },
       { id: 'set_4', number: '04', title: 'Pre Qualifying Exam Set 4', desc: 'विज्ञान, प्रविधि, अर्थशास्त्र तथा तर्कशास्त्रमा आधारित अभ्यास सेट।', status: 'active' },
-      { id: 'set_5', number: '05', title: 'Pre Qualifying Exam Set 5', desc: 'पूर्ण मोडल टेस्ट – लोकसेवा आयोगको परीक्षा ढाँचा अनुसार अभ्यास सेट।', status: 'active' },
-      { id: 'set_6', number: '06', title: 'Pre Qualifying Exam Set 6', desc: 'नयाँ पाठ्यक्रममा आधारित एड्भान्सड मोडल टेस्ट तथा विशेष प्रश्नहरू।', status: 'active' },
-      // सेट नबनुन्जेल status लाई 'upcoming' बनाइदिनुहोला। बन्नेबित्तिकै 'active' बनाउँदा स्वतः खुल्नेछ:
+      { id: 'set_5', number: '05', title: 'Pre Qualifying Exam Set 5', desc: 'पूर्ण मोडल टेस्ट – लोकसेवा आयोगको परीक्षा ढाँचा अनुसार अभ्यास सेट।', status: 'upcoming' },
+      { id: 'set_6', number: '06', title: 'Pre Qualifying Exam Set 6', desc: 'नयाँ पाठ्यक्रममा आधारित एड्भान्सड मोडल टेस्ट तथा विशेष प्रश्नहरू।', status: 'upcoming' },
       { id: 'set_7', number: '07', title: 'Pre Qualifying Exam Set 7', desc: 'नवीनतम मोडल प्रश्नहरूमा आधारित अभ्यास सेट ७।', status: 'upcoming' },
       { id: 'set_8', number: '08', title: 'Pre Qualifying Exam Set 8', desc: 'आगामी मोडल परीक्षा सेट ८।', status: 'upcoming' }
     ];
@@ -322,8 +320,6 @@
 
     allExamSets.forEach(set => {
       const isActive = set.status === 'active';
-      
-      // यदि active छ भने 'a' ट्याग (लिंक), upcoming छ भने 'div' ट्याग (क्लिक नहुने) बन्छ
       const card = document.createElement(isActive ? 'a' : 'div');
       
       if (isActive) {
