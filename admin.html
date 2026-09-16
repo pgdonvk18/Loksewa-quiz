@@ -386,7 +386,7 @@
       </form>
     </div>
 
-    <!-- ५. SQL Query मार्फत प्रश्न हाल्ने फर्म -->
+    <!-- ५. SQL Query मार्फत प्रश्न हाल्ने फर्म (Upsert Enabled) -->
     <div class="form-card">
       <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू थप्नुहोस् (एक वा धेरै)</h3>
       <form id="sqlForm">
@@ -396,6 +396,9 @@
 VALUES 
 ('Set-1', 'प्रश्न १?', '[\"अ\", \"ब\", \"स\", \"द\"]', 'अ', 'स्पष्टीकरण १'),
 ('Set-1', 'प्रश्न २?', '[\"अ\", \"ब\", \"स\", \"द\"]', 'ब', 'स्पष्टीकरण २');" required></textarea>
+          <div class="help-text">
+            ⚡ <b>सुविधा:</b> यदि उही प्रश्न पहिले नै डाटाबेसमा छ भने यो स्वचालित रूपमा <b>Overwrite (Update)</b> हुनेछ!
+          </div>
         </div>
         <button type="submit" class="submit-btn" id="sqlSaveBtn">SQL डाटा सेभ गर्नुहोस्</button>
       </form>
@@ -470,7 +473,6 @@ VALUES
       setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
     }
 
-    // रिपोर्ट भएका प्रश्नहरू लोड गर्ने र सम्पादन/डिलिट बटन देखाउने
     async function fetchReportedQuestions() {
       const container = document.getElementById('reported-questions-list');
       const { data, error } = await supabase
@@ -506,7 +508,6 @@ VALUES
       });
     }
 
-    // रिपोर्ट गरिएको प्रश्न सम्पादन (Edit) गर्ने Modal खोल्ने फंक्सन
     window.openEditModal = async function(questionId) {
       const { data, error } = await supabase
         .from('quizzes')
@@ -546,7 +547,6 @@ VALUES
         return;
       }
 
-      // १. मुख्य क्विज डाटाबेस अपडेट गर्ने
       const { error } = await supabase
         .from('quizzes')
         .update({
@@ -560,7 +560,6 @@ VALUES
       if (error) {
         showAlert('अपडेट गर्न असफल भयो: ' + error.message, 'error');
       } else {
-        // २. प्रश्न अपडेट हुनेबित्तिकै reported_questions बाट त्यो रिपोर्ट हटाइदिने
         await supabase
           .from('reported_questions')
           .delete()
@@ -568,8 +567,6 @@ VALUES
 
         showAlert('प्रश्न सफलतापूर्वक अपडेट भयो र रिपोर्ट सूचीबाट हटाइयो! 🎉', 'success');
         closeEditModal();
-        
-        // लिस्ट र काउन्टरहरू रिफ्रेस गर्ने
         fetchReportedQuestions();
         fetchDatabaseStats();
       }
@@ -587,7 +584,6 @@ VALUES
       }
     }
 
-    // CREATE TABLE SQL Form Handler
     document.getElementById('createTableForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       showAlert("कृपया यो CREATE TABLE query सिधै Supabase Dashboard को SQL Editor मा लगेर Run गर्नुहोस्।", "error");
@@ -680,6 +676,7 @@ VALUES
       }
     });
 
+    // ⚡ SQL Form Handler with Upsert Enabled
     document.getElementById('sqlForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const sqlText = document.getElementById('sqlInput').value.trim();
@@ -694,7 +691,6 @@ VALUES
       sqlSaveBtn.textContent = "डेटा सेभ हुँदैछ...";
 
       try {
-        // VALUES पछाडिको सबै भाग निकाल्ने
         const valuesMatch = sqlText.match(/VALUES\s*([\s\S]*);?/i);
         if (!valuesMatch) {
           throw new Error("मान्य INSERT INTO ... VALUES ढाँचा फेला परेन।");
@@ -705,7 +701,6 @@ VALUES
           valuesString = valuesString.slice(0, -1);
         }
 
-        // सबै रेकर्डहरूलाई छुट्ट्याउन regex प्रयोग गर्ने (जसले कोष्ठकभित्रका कमाहरूलाई असर गर्दैन)
         const regex = /\(\s*'([^']+)'\s*,\s*'([^']+)'\s*,\s*'(\[.*?\])'\s*,\s*'([^']+)'\s*,\s*'([^']+)'\s*\)/gs;
         
         let match;
@@ -738,11 +733,14 @@ VALUES
           throw new Error("कुनै पनि वैध डेटा फेला परेन। कृपया SQL को ढाँचा (Format) मिलाउनुहोला।");
         }
 
-        const { error } = await supabase.from('quizzes').insert(rowsToInsert);
+        // ⚡ .insert को सट्टा .upsert प्रयोग गरिएको छ जसमा onConflict 'question' दिइएको छ
+        const { error } = await supabase
+          .from('quizzes')
+          .upsert(rowsToInsert, { onConflict: 'question' });
 
         if (error) throw error;
 
-        showAlert(`सफलतापूर्वक ${rowsToInsert.length} वटा प्रश्नहरू डाटाबेसमा सेभ भए! 🎉`, "success");
+        showAlert(`सफलतापूर्वक ${rowsToInsert.length} वटा प्रश्नहरू सेभ/ओभरराइट भए! 🎉`, "success");
         document.getElementById('sqlForm').reset();
         fetchDatabaseStats();
       } catch (err) {
