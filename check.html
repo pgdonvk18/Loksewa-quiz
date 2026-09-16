@@ -95,6 +95,7 @@
       color: #64748b;
     }
 
+    /* Tabs (Topics, Samasamayik, Gorkhapatra) */
     .tabs-container {
       display: flex;
       background: #e2e8f0;
@@ -106,8 +107,8 @@
     .tab-btn {
       flex: 1;
       text-align: center;
-      padding: 10px;
-      font-size: 14px;
+      padding: 10px 6px;
+      font-size: 13px;
       font-weight: 600;
       color: #64748b;
       background: transparent;
@@ -225,27 +226,33 @@
       </div>
     </div>
 
-    <!-- Tabs -->
+    <!-- Replaced Tabs -->
     <div class="tabs-container">
-      <button class="tab-btn active">Topics</button>
-      <button class="tab-btn">Syllasys</button>
-      <button class="tab-btn">Tips</button>
+      <button class="tab-btn active" onclick="switchMainTab('topics', this)">Topics</button>
+      <button class="tab-btn" onclick="switchMainTab('samasamayik', this)">समसामयिक</button>
+      <button class="tab-btn" onclick="switchMainTab('gorkhapatra', this)">गोर्खापत्र</button>
     </div>
 
     <!-- Breadcrumb for sub-views -->
-    <div class="breadcrumb" id="breadcrumb" onclick="goBackMain()">
+    <div class="breadcrumb" id="breadcrumb" onclick="resetToCurrentTab()">
       <i class="fa-solid fa-arrow-left"></i> पछाडि फर्कनुहोस्
     </div>
 
-    <!-- Topics List -->
+    <!-- Content Container -->
     <div class="topic-list" id="topicListContainer">
-      
-      <!-- 1. Nepal ko Bhugol -->
+      <!-- Default view (Topics) will be loaded here -->
+    </div>
+  </div>
+
+  <script src="components.js"></script>
+  <script>
+    loadBottomNav('practice');
+
+    // Store different tab contents
+    const topicsContent = `
       <a href="quiz-nepal-geography.html" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-blue">
-            <i class="fa-solid fa-mountain-sun"></i>
-          </div>
+          <div class="topic-icon bg-blue"><i class="fa-solid fa-mountain-sun"></i></div>
           <div class="topic-info">
             <h3>नेपालको भूगोल</h3>
             <p>12 topics • 250+ questions</p>
@@ -254,12 +261,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 2. Biswa Bhugol -->
       <a href="quiz.html?set=World_geography" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-orange">
-            <i class="fa-solid fa-globe"></i>
-          </div>
+          <div class="topic-icon bg-orange"><i class="fa-solid fa-globe"></i></div>
           <div class="topic-info">
             <h3>विश्वको भूगोल</h3>
             <p>10 topics • 180+ questions</p>
@@ -268,12 +272,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 3. Nepal ko Itihas -->
       <a href="quiz.html?set=nepal_history" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-green">
-            <i class="fa-solid fa-monument"></i>
-          </div>
+          <div class="topic-icon bg-green"><i class="fa-solid fa-monument"></i></div>
           <div class="topic-info">
             <h3>नेपालको इतिहास</h3>
             <p>15 topics • 300+ questions</p>
@@ -282,12 +283,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 4. Biswa Itihas -->
       <a href="quiz.html?set=world_history" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-purple">
-            <i class="fa-solid fa-landmark-dome"></i>
-          </div>
+          <div class="topic-icon bg-purple"><i class="fa-solid fa-landmark-dome"></i></div>
           <div class="topic-info">
             <h3>विश्व इतिहास</h3>
             <p>8 topics • 150+ questions</p>
@@ -296,12 +294,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 5. Samajik ra Sanskritik -->
       <a href="quiz.html?set=social_culture" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-pink">
-            <i class="fa-solid fa-users-rectangle"></i>
-          </div>
+          <div class="topic-icon bg-pink"><i class="fa-solid fa-users-rectangle"></i></div>
           <div class="topic-info">
             <h3>सामाजिक र सांस्कृतिक</h3>
             <p>10 topics • 200+ questions</p>
@@ -310,12 +305,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 6. Arthik (Economic) -->
       <a href="quiz.html?set=economic" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-teal">
-            <i class="fa-solid fa-chart-line"></i>
-          </div>
+          <div class="topic-icon bg-teal"><i class="fa-solid fa-chart-line"></i></div>
           <div class="topic-info">
             <h3>आर्थिक अवस्था</h3>
             <p>9 topics • 170+ questions</p>
@@ -324,12 +316,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 7. IQ -->
       <a href="quiz.html?set=iq" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-blue">
-            <i class="fa-solid fa-brain"></i>
-          </div>
+          <div class="topic-icon bg-blue"><i class="fa-solid fa-brain"></i></div>
           <div class="topic-info">
             <h3>बौद्धिक परीक्षण (IQ)</h3>
             <p>14 topics • 280+ questions</p>
@@ -338,12 +327,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 8. Science & Tech -->
       <a href="quiz.html?set=science_tech" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-orange">
-            <i class="fa-solid fa-flask"></i>
-          </div>
+          <div class="topic-icon bg-orange"><i class="fa-solid fa-flask"></i></div>
           <div class="topic-info">
             <h3>विज्ञान तथा प्रविधि</h3>
             <p>10 topics • 200+ questions</p>
@@ -351,95 +337,68 @@
         </div>
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
+    `;
 
-      <!-- 9. Samasamayik (Added) -->
-      <div class="topic-card" onclick="openSamasamayikSub()">
+    const samasamayikContent = `
+      <a href="quiz.html?set=samasamayik2083" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-red">
-            <i class="fa-solid fa-newspaper"></i>
-          </div>
+          <div class="topic-icon bg-red"><i class="fa-solid fa-calendar-days"></i></div>
           <div class="topic-info">
-            <h3>समसामयिक</h3>
-            <p>Current Affairs & Updates</p>
+            <h3>समसामयिक २०८३</h3>
+            <p>वर्ष २०८३ का महत्त्वपूर्ण घटनाहरू</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </a>
+    `;
+
+    const gorkhapatraContent = `
+      <div class="topic-card" onclick="openGorkhapatraYears()">
+        <div class="topic-left">
+          <div class="topic-icon bg-green"><i class="fa-solid fa-folder-open"></i></div>
+          <div class="topic-info">
+            <h3>गोर्खापत्र ज्ञानसागर २०८३</h3>
+            <p>विभिन्न महिनाका गोर्खापत्र प्रश्नोत्तरहरू</p>
           </div>
         </div>
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </div>
+    `;
 
-      <!-- 10. Gorkhapatra (Added) -->
-      <div class="topic-card" onclick="openGorkhapatraSub()">
-        <div class="topic-left">
-          <div class="topic-icon bg-green">
-            <i class="fa-solid fa-book-open"></i>
-          </div>
-          <div class="topic-info">
-            <h3>गोर्खापत्र ज्ञानसागर</h3>
-            <p>Weekly Gorkhapatra GK Sets</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </div>
+    let activeTab = 'topics';
 
-    </div>
-  </div>
+    function switchMainTab(tabName, btnElement) {
+      // Update active tab style
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
 
-  <script src="components.js"></script>
-  <script>
-    loadBottomNav('practice');
+      activeTab = tabName;
+      document.getElementById('breadcrumb').style.display = 'none';
 
-    const defaultContent = document.getElementById('topicListContainer').innerHTML;
-
-    function openSamasamayikSub() {
-      document.getElementById('breadcrumb').style.display = 'flex';
-      document.getElementById('headerTitle').innerText = 'समसामयिक';
-      
       const container = document.getElementById('topicListContainer');
-      container.innerHTML = `
-        <a href="exam.html?set=samasamayik2083" class="topic-card">
-          <div class="topic-left">
-            <div class="topic-icon bg-blue">
-              <i class="fa-solid fa-calendar-days"></i>
-            </div>
-            <div class="topic-info">
-              <h3>समसामयिक २०८३</h3>
-              <p>वर्ष २०८३ का महत्त्वपूर्ण घटनाहरू</p>
-            </div>
-          </div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </a>
-      `;
+      const headerTitle = document.getElementById('headerTitle');
+
+      if (tabName === 'topics') {
+        headerTitle.innerText = 'Practice Topics';
+        container.innerHTML = topicsContent;
+      } else if (tabName === 'samasamayik') {
+        headerTitle.innerText = 'समसामयिक';
+        container.innerHTML = samasamayikContent;
+      } else if (tabName === 'gorkhapatra') {
+        headerTitle.innerText = 'गोर्खापत्र ज्ञानसागर';
+        container.innerHTML = gorkhapatraContent;
+      }
     }
 
-    function openGorkhapatraSub() {
-      document.getElementById('breadcrumb').style.display = 'flex';
-      document.getElementById('headerTitle').innerText = 'गोर्खापत्र ज्ञानसागर';
-      
-      const container = document.getElementById('topicListContainer');
-      container.innerHTML = `
-        <div class="topic-card" onclick="openGorkhapatraYears()">
-          <div class="topic-left">
-            <div class="topic-icon bg-green">
-              <i class="fa-solid fa-folder-open"></i>
-            </div>
-            <div class="topic-info">
-              <h3>गोर्खापत्र २०८३</h3>
-              <p>विभिन्न महिनाका गोर्खापत्र प्रश्नोत्तरहरू</p>
-            </div>
-          </div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-      `;
-    }
-
+    // Gorkhapatra Sub-branches navigation
     function openGorkhapatraYears() {
+      document.getElementById('breadcrumb').style.display = 'flex';
       document.getElementById('headerTitle').innerText = 'गोर्खापत्र २०८३';
       const container = document.getElementById('topicListContainer');
       container.innerHTML = `
         <div class="topic-card" onclick="openGorkhapatraMonths()">
           <div class="topic-left">
-            <div class="topic-icon bg-orange">
-              <i class="fa-solid fa-calendar"></i>
-            </div>
+            <div class="topic-icon bg-orange"><i class="fa-solid fa-calendar"></i></div>
             <div class="topic-info">
               <h3>भाद्र महिना</h3>
               <p>भाद्र महिनाका गोर्खापत्र सेटहरू</p>
@@ -449,9 +408,7 @@
         </div>
         <div class="topic-card" onclick="openAshojMonths()">
           <div class="topic-left">
-            <div class="topic-icon bg-purple">
-              <i class="fa-solid fa-calendar"></i>
-            </div>
+            <div class="topic-icon bg-purple"><i class="fa-solid fa-calendar"></i></div>
             <div class="topic-info">
               <h3>आश्विन महिना</h3>
               <p>बुधबार प्रकाशित गोर्खापत्र सेटहरू</p>
@@ -466,11 +423,9 @@
       document.getElementById('headerTitle').innerText = 'भाद्र २०८३ (गोर्खापत्र)';
       const container = document.getElementById('topicListContainer');
       container.innerHTML = `
-        <a href="exam.html?set=gorkhapatra2083-05-31" class="topic-card">
+        <a href="quiz.html?set=gorkhapatra2083-05-31" class="topic-card">
           <div class="topic-left">
-            <div class="topic-icon bg-teal">
-              <i class="fa-solid fa-file-lines"></i>
-            </div>
+            <div class="topic-icon bg-teal"><i class="fa-solid fa-file-lines"></i></div>
             <div class="topic-info">
               <h3>भाद्र ३१, २०८३</h3>
               <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
@@ -485,11 +440,9 @@
       document.getElementById('headerTitle').innerText = 'आश्विन २०८३ (गोर्खापत्र)';
       const container = document.getElementById('topicListContainer');
       container.innerHTML = `
-        <a href="exam.html?set=gorkhapatra2083-06-07" class="topic-card">
+        <a href="quiz.html?set=gorkhapatra2083-06-07" class="topic-card">
           <div class="topic-left">
-            <div class="topic-icon bg-blue">
-              <i class="fa-solid fa-file-lines"></i>
-            </div>
+            <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
             <div class="topic-info">
               <h3>आश्विन ७, २०८३</h3>
               <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
@@ -497,11 +450,9 @@
           </div>
           <i class="fa-solid fa-chevron-right arrow-icon"></i>
         </a>
-        <a href="exam.html?set=gorkhapatra2083-06-14" class="topic-card">
+        <a href="quiz.html?set=gorkhapatra2083-06-14" class="topic-card">
           <div class="topic-left">
-            <div class="topic-icon bg-blue">
-              <i class="fa-solid fa-file-lines"></i>
-            </div>
+            <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
             <div class="topic-info">
               <h3>आश्विन १४, २०८३</h3>
               <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
@@ -509,11 +460,9 @@
           </div>
           <i class="fa-solid fa-chevron-right arrow-icon"></i>
         </a>
-        <a href="exam.html?set=gorkhapatra2083-06-21" class="topic-card">
+        <a href="quiz.html?set=gorkhapatra2083-06-21" class="topic-card">
           <div class="topic-left">
-            <div class="topic-icon bg-blue">
-              <i class="fa-solid fa-file-lines"></i>
-            </div>
+            <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
             <div class="topic-info">
               <h3>आश्विन २१, २०८३</h3>
               <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
@@ -521,11 +470,9 @@
           </div>
           <i class="fa-solid fa-chevron-right arrow-icon"></i>
         </a>
-        <a href="exam.html?set=gorkhapatra2083-06-28" class="topic-card">
+        <a href="quiz.html?set=gorkhapatra2083-06-28" class="topic-card">
           <div class="topic-left">
-            <div class="topic-icon bg-blue">
-              <i class="fa-solid fa-file-lines"></i>
-            </div>
+            <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
             <div class="topic-info">
               <h3>आश्विन २८, २०८३</h3>
               <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
@@ -536,11 +483,16 @@
       `;
     }
 
-    function goBackMain() {
+    function resetToCurrentTab() {
       document.getElementById('breadcrumb').style.display = 'none';
-      document.getElementById('headerTitle').innerText = 'Practice Topics';
-      document.getElementById('topicListContainer').innerHTML = defaultContent;
+      if (activeTab === 'gorkhapatra') {
+        document.getElementById('headerTitle').innerText = 'गोर्खापत्र ज्ञानसागर';
+        document.getElementById('topicListContainer').innerHTML = gorkhapatraContent;
+      }
     }
+
+    // Initialize default view on load
+    document.getElementById('topicListContainer').innerHTML = topicsContent;
   </script>
 </body>
 </html>
