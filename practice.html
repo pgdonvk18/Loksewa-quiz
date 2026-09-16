@@ -24,10 +24,9 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding-bottom: 70px; /* तल्लो नेभिगेसन बारले छोपरोस् भनेर प्याडिङ */
+      padding-bottom: 70px;
     }
 
-    /* Top Navigation / Header */
     .top-nav {
       background: #ffffff;
       padding: 16px 20px;
@@ -44,6 +43,7 @@
       font-size: 18px;
       color: #0f172a;
       text-decoration: none;
+      cursor: pointer;
     }
 
     .nav-title {
@@ -60,7 +60,6 @@
       flex: 1;
     }
 
-    /* Top Banner Card */
     .exam-info-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -96,7 +95,7 @@
       color: #64748b;
     }
 
-    /* Tabs (Topics, Syllabus, Tips) */
+    /* Tabs */
     .tabs-container {
       display: flex;
       background: #e2e8f0;
@@ -108,8 +107,8 @@
     .tab-btn {
       flex: 1;
       text-align: center;
-      padding: 10px;
-      font-size: 14px;
+      padding: 10px 6px;
+      font-size: 13px;
       font-weight: 600;
       color: #64748b;
       background: transparent;
@@ -125,7 +124,6 @@
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     }
 
-    /* Topic List Cards */
     .topic-list {
       display: flex;
       flex-direction: column;
@@ -143,6 +141,7 @@
       text-decoration: none;
       transition: all 0.2s ease;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      cursor: pointer;
     }
 
     .topic-card:hover {
@@ -168,13 +167,13 @@
       color: white;
     }
 
-    /* Different Colors for Icons */
     .bg-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
     .bg-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
     .bg-green { background: linear-gradient(135deg, #10b981, #059669); }
     .bg-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
     .bg-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
     .bg-teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+    .bg-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
 
     .topic-info h3 {
       font-size: 15px;
@@ -192,14 +191,25 @@
       color: #94a3b8;
       font-size: 14px;
     }
+
+    .breadcrumb {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #2563eb;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
   <!-- Top Header -->
   <div class="top-nav">
-    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
-    <span class="nav-title">Practice Topics</span>
+    <a href="dashboard.html" class="back-btn" id="mainBackBtn"><i class="fa-solid fa-chevron-left"></i></a>
+    <span class="nav-title" id="headerTitle">Practice Topics</span>
     <div style="width: 18px;"></div>
   </div>
 
@@ -218,20 +228,30 @@
 
     <!-- Tabs -->
     <div class="tabs-container">
-      <button class="tab-btn active">Topics</button>
-      <button class="tab-btn">Syllabus</button>
-      <button class="tab-btn">Tips</button>
+      <button class="tab-btn active" onclick="switchMainTab('topics', this)">Topics</button>
+      <button class="tab-btn" onclick="switchMainTab('samasamayik', this)">समसामयिक</button>
+      <button class="tab-btn" onclick="switchMainTab('gorkhapatra', this)">गोर्खापत्र</button>
     </div>
 
-    <!-- Topics List -->
-    <div class="topic-list">
-      
-      <!-- 1. Nepal ko Bhugol (As requested: kept as it is) -->
+    <!-- Breadcrumb -->
+    <div class="breadcrumb" id="breadcrumb" onclick="goBackLevel()">
+      <i class="fa-solid fa-arrow-left"></i> पछाडि फर्कनुहोस्
+    </div>
+
+    <!-- Content Container -->
+    <div class="topic-list" id="topicListContainer">
+      <!-- Default view -->
+    </div>
+  </div>
+
+  <script src="components.js"></script>
+  <script>
+    loadBottomNav('practice');
+
+    const topicsContent = `
       <a href="quiz-nepal-geography.html" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-blue">
-            <i class="fa-solid fa-mountain-sun"></i>
-          </div>
+          <div class="topic-icon bg-blue"><i class="fa-solid fa-mountain-sun"></i></div>
           <div class="topic-info">
             <h3>नेपालको भूगोल</h3>
             <p>12 topics • 250+ questions</p>
@@ -240,12 +260,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 2. Biswa Bhugol -->
       <a href="quiz.html?set=World_geography" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-orange">
-            <i class="fa-solid fa-globe"></i>
-          </div>
+          <div class="topic-icon bg-orange"><i class="fa-solid fa-globe"></i></div>
           <div class="topic-info">
             <h3>विश्वको भूगोल</h3>
             <p>10 topics • 180+ questions</p>
@@ -254,12 +271,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 3. Nepal ko Itihas -->
       <a href="quiz.html?set=nepal_history" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-green">
-            <i class="fa-solid fa-monument"></i>
-          </div>
+          <div class="topic-icon bg-green"><i class="fa-solid fa-monument"></i></div>
           <div class="topic-info">
             <h3>नेपालको इतिहास</h3>
             <p>15 topics • 300+ questions</p>
@@ -268,12 +282,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 4. Biswa Itihas -->
       <a href="quiz.html?set=world_history" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-purple">
-            <i class="fa-solid fa-landmark-dome"></i>
-          </div>
+          <div class="topic-icon bg-purple"><i class="fa-solid fa-landmark-dome"></i></div>
           <div class="topic-info">
             <h3>विश्व इतिहास</h3>
             <p>8 topics • 150+ questions</p>
@@ -282,12 +293,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 5. Samajik ra Sanskritik -->
       <a href="quiz.html?set=social_culture" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-pink">
-            <i class="fa-solid fa-users-rectangle"></i>
-          </div>
+          <div class="topic-icon bg-pink"><i class="fa-solid fa-users-rectangle"></i></div>
           <div class="topic-info">
             <h3>सामाजिक र सांस्कृतिक</h3>
             <p>10 topics • 200+ questions</p>
@@ -296,12 +304,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 6. Arthik (Economic) -->
       <a href="quiz.html?set=economic" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-teal">
-            <i class="fa-solid fa-chart-line"></i>
-          </div>
+          <div class="topic-icon bg-teal"><i class="fa-solid fa-chart-line"></i></div>
           <div class="topic-info">
             <h3>आर्थिक अवस्था</h3>
             <p>9 topics • 170+ questions</p>
@@ -310,12 +315,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 7. IQ (General Mental Ability) -->
       <a href="quiz.html?set=iq" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-blue">
-            <i class="fa-solid fa-brain"></i>
-          </div>
+          <div class="topic-icon bg-blue"><i class="fa-solid fa-brain"></i></div>
           <div class="topic-info">
             <h3>बौद्धिक परीक्षण (IQ)</h3>
             <p>14 topics • 280+ questions</p>
@@ -324,12 +326,9 @@
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
 
-      <!-- 8. Science & Tech (Added as requested) -->
       <a href="quiz.html?set=science_tech" class="topic-card">
         <div class="topic-left">
-          <div class="topic-icon bg-orange">
-            <i class="fa-solid fa-flask"></i>
-          </div>
+          <div class="topic-icon bg-orange"><i class="fa-solid fa-flask"></i></div>
           <div class="topic-info">
             <h3>विज्ञान तथा प्रविधि</h3>
             <p>10 topics • 200+ questions</p>
@@ -337,11 +336,171 @@
         </div>
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
       </a>
+    `;
 
-    </div>
-  </div>
+    const samasamayikContent = `
+      <a href="quiz.html?set=samasamayik2083" class="topic-card">
+        <div class="topic-left">
+          <div class="topic-icon bg-red"><i class="fa-solid fa-calendar-days"></i></div>
+          <div class="topic-info">
+            <h3>समसामयिक २०८३</h3>
+            <p>वर्ष २०८३ का महत्त्वपूर्ण घटनाहरू</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </a>
+    `;
 
-  <script src="components.js"></script>
-  <script>loadBottomNav('practice');</script>
+    const gorkhapatraContent = `
+      <div class="topic-card" onclick="openGorkhapatraYears()">
+        <div class="topic-left">
+          <div class="topic-icon bg-green"><i class="fa-solid fa-folder-open"></i></div>
+          <div class="topic-info">
+            <h3>गोर्खापत्र ज्ञानसागर २०८३</h3>
+            <p>वैशाखदेखि चैतसम्मका बुधवार विशेष सेटहरू</p>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </div>
+    `;
+
+    let activeTab = 'topics';
+    let navigationStack = [];
+
+    function switchMainTab(tabName, btnElement) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      activeTab = tabName;
+      navigationStack = [];
+      document.getElementById('breadcrumb').style.display = 'none';
+
+      const container = document.getElementById('topicListContainer');
+      const headerTitle = document.getElementById('headerTitle');
+
+      if (tabName === 'topics') {
+        headerTitle.innerText = 'Practice Topics';
+        container.innerHTML = topicsContent;
+      } else if (tabName === 'samasamayik') {
+        headerTitle.innerText = 'समसामयिक';
+        container.innerHTML = samasamayikContent;
+      } else if (tabName === 'gorkhapatra') {
+        headerTitle.innerText = 'गोर्खापत्र ज्ञानसागर';
+        container.innerHTML = gorkhapatraContent;
+      }
+    }
+
+    function openGorkhapatraYears() {
+      navigationStack.push({title: 'गोर्खापत्र ज्ञानसागर', content: gorkhapatraContent});
+      document.getElementById('breadcrumb').style.display = 'flex';
+      document.getElementById('headerTitle').innerText = 'गोर्खापत्र २०८३ (महिनाहरू)';
+      
+      const container = document.getElementById('topicListContainer');
+      container.innerHTML = `
+        <div class="topic-card" onclick="openMonthWednesdays('वैशाख २०८३', '01', ['03', '10', '17', '24', '31'])">
+          <div class="topic-left"><div class="topic-icon bg-blue"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>वैशाख महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('जेठ २०८३', '02', ['07', '14', '21', '28'])">
+          <div class="topic-left"><div class="topic-icon bg-orange"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>जेठ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('आषाढ २०८३', '03', ['04', '11', '18', '25'])">
+          <div class="topic-left"><div class="topic-icon bg-green"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>आषाढ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('श्रावण २०८३', '04', ['01', '08', '15', '22', '29'])">
+          <div class="topic-left"><div class="topic-icon bg-purple"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>श्रावण महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('भाद्र २०८३', '05', ['05', '12', '19', '26', '31'])">
+          <div class="topic-left"><div class="topic-icon bg-pink"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>भाद्र महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('आश्विन २०८३', '06', ['07', '14', '21', '28'])">
+          <div class="topic-left"><div class="topic-icon bg-teal"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>आश्विन महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('कार्तिक २०८३', '07', ['04', '11', '18', '25'])">
+          <div class="topic-left"><div class="topic-icon bg-blue"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>कार्तिक महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('मंसिर २०८३', '08', ['02', '09', '16', '23', '30'])">
+          <div class="topic-left"><div class="topic-icon bg-orange"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>मंसिर महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('पुष २०८३', '09', ['07', '14', '21', '28'])">
+          <div class="topic-left"><div class="topic-icon bg-green"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>पुष महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('माघ २०८३', '10', ['05', '12', '19', '26'])">
+          <div class="topic-left"><div class="topic-icon bg-purple"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>माघ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('फागुन २०८३', '11', ['03', '10', '17', '24'])">
+          <div class="topic-left"><div class="topic-icon bg-pink"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>फागुन महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('चैत २०८३', '12', ['01', '08', '15', '22', '29'])">
+          <div class="topic-left"><div class="topic-icon bg-teal"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>चैत महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+      `;
+    }
+
+    function openMonthWednesdays(monthName, monthCode, daysArray) {
+      const currentHTML = document.getElementById('topicListContainer').innerHTML;
+      navigationStack.push({title: document.getElementById('headerTitle').innerText, content: currentHTML});
+      
+      document.getElementById('headerTitle').innerText = monthName + ' (गोर्खापत्र)';
+      const container = document.getElementById('topicListContainer');
+      
+      let htmlContent = '';
+      daysArray.forEach(day => {
+        let fullDateStr = `2083-${monthCode}-${day}`;
+        htmlContent += `
+          <a href="quiz.html?set=gorkhapatra${fullDateStr}" class="topic-card">
+            <div class="topic-left">
+              <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
+              <div class="topic-info">
+                <h3>2083-${monthCode}-${day}</h3>
+                <p>${monthName} ${parseInt(day)} गते • बुधवार</p>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right arrow-icon"></i>
+          </a>
+        `;
+      });
+      container.innerHTML = htmlContent;
+    }
+
+    function goBackLevel() {
+      if (navigationStack.length > 0) {
+        let prev = navigationStack.pop();
+        document.getElementById('headerTitle').innerText = prev.title;
+        document.getElementById('topicListContainer').innerHTML = prev.content;
+        if (navigationStack.length === 0) {
+          document.getElementById('breadcrumb').style.display = 'none';
+        }
+      } else {
+        document.getElementById('breadcrumb').style.display = 'none';
+      }
+    }
+
+    // Initialize default view
+    document.getElementById('topicListContainer').innerHTML = topicsContent;
+  </script>
 </body>
 </html>
