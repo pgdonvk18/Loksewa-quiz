@@ -570,19 +570,16 @@ VALUES
       }
     }
 
-    // ⚡ Open Custom Delete Modal
     window.openDeleteModal = function(reportId, questionId) {
       document.getElementById('del-report-id').value = reportId;
       document.getElementById('del-question-id').value = questionId;
       document.getElementById('deleteConfirmModal').classList.add('active');
     }
 
-    // ⚡ Close Custom Delete Modal
     window.closeDeleteModal = function() {
       document.getElementById('deleteConfirmModal').classList.remove('active');
     }
 
-    // ⚡ Confirm and Delete from both 'quizzes' and 'reported_questions'
     window.confirmDeleteQuestion = async function() {
       const reportId = document.getElementById('del-report-id').value;
       const questionId = document.getElementById('del-question-id').value;
@@ -590,7 +587,6 @@ VALUES
       closeDeleteModal();
 
       try {
-        // १. मुख्य क्विज डाटाबेसबाट प्रश्न हटाउने (यदि ID छ भने)
         if (questionId && questionId !== 'null' && questionId !== '') {
           const { error: quizErr } = await supabase
             .from('quizzes')
@@ -600,7 +596,6 @@ VALUES
           if (quizErr) throw quizErr;
         }
 
-        // २. रिपोर्ट गरिएको सूचीबाट पनि रिपोर्ट हटाउने
         const { error: reportErr } = await supabase
           .from('reported_questions')
           .delete()
@@ -759,9 +754,10 @@ VALUES
           throw new Error("कुनै पनि वैध डेटा फेला परेन। कृपया SQL को ढाँचा (Format) मिलाउनुहोला।");
         }
 
+        // यहाँ rowsToList को ठाउँमा सही rowsToInsert राखिएको छ
         const { error } = await supabase
           .from('quizzes')
-          .upsert(rowsToList, { onConflict: 'question' });
+          .upsert(rowsToInsert, { onConflict: 'question' });
 
         if (error) throw error;
 
