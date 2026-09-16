@@ -229,6 +229,50 @@
       "Budget2083-84": "आर्थिक वर्ष २०८३/८४ को बजेट"
     };
 
+    // ==========================================
+    // कोइन वितरण गर्ने फंक्सनहरू (Coin Distribution Functions)
+    // ==========================================
+    async function addCoinsToUser(userId, earnedCoins) {
+      try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        
+        let currentCoins = 0;
+        if (userSnap.exists() && userSnap.data().coins !== undefined) {
+          currentCoins = userSnap.data().coins;
+        }
+        
+        await updateDoc(userRef, {
+          coins: Math.max(0, currentCoins + earnedCoins)
+        });
+        console.log(`युजर ${userId} लाई ${earnedCoins} कोइन सफलतापूर्वक थपियो!`);
+      } catch (error) {
+        console.error("कोइन अपडेट गर्दा त्रुटि आयो: ", error);
+      }
+    }
+
+    async function distributeCoinsForGame(room) {
+      if (!room.players || !Array.isArray(room.players)) return;
+      
+      let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
+      
+      for (let i = 0; i < sortedPlayers.length; i++) {
+        let player = sortedPlayers[i];
+        let earnedCoins = 10; // खेल्नुको लागि बेसिक पार्टिसिपेसन कोइन
+        
+        if (i === 0) {
+          earnedCoins += 40; // प्रथम हुनेलाई थप ४० कोइन (जम्मा ५०)
+        } else {
+          earnedCoins += (player.score > 0 ? player.score * 2 : 0);
+        }
+
+        if (player.uid) {
+          await addCoinsToUser(player.uid, earnedCoins);
+        }
+      }
+    }
+    // ==========================================
+
     function renderMathContent(elementId) {
       setTimeout(() => {
         const el = document.getElementById(elementId);
@@ -629,6 +673,10 @@
       try {
         if (passAttempt >= players.length) {
           if (currentQCount >= totalQuestionsPlanned) {
+            // होस्टले कोइन वितरण गर्ने र गेम समाप्त गर्ने
+            if (currentUser && currentUser.uid === roomDataGlobal.hostId) {
+              await distributeCoinsForGame({ ...roomDataGlobal, players: players });
+            }
             await updateDoc(roomRef, { players: players, history: history, status: "finished", latestNotification: { id: Date.now(), text: notificationText } });
             isAnswerSubmitting = false;
             return;
@@ -789,6 +837,10 @@
       try {
         if (isCorrect) {
           if (currentQCount >= totalQuestionsPlanned) {
+            // होस्टले कोइन वितरण गर्ने र गेम समाप्त गर्ने
+            if (currentUser && currentUser.uid === roomDataGlobal.hostId) {
+              await distributeCoinsForGame({ ...roomDataGlobal, players: players });
+            }
             await updateDoc(roomRef, { players: players, history: history, status: "finished" });
             isAnswerSubmitting = false;
             return;
@@ -820,6 +872,10 @@
             });
           } else {
             if (currentQCount >= totalQuestionsPlanned) {
+              // होस्टले कोइन वितरण गर्ने र गेम समाप्त गर्ने
+              if (currentUser && currentUser.uid === roomDataGlobal.hostId) {
+                await distributeCoinsForGame({ ...roomDataGlobal, players: players });
+              }
               await updateDoc(roomRef, { players: players, history: history, status: "finished" }, { merge: true });
               isAnswerSubmitting = false;
               return;
@@ -897,7 +953,7 @@
 
     document.getElementById('chatForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const input = document.getElementById('chatInputText');
+      const input = document.getElementById('chatText') || document.getElementById('chatInputText');
       const text = input.value.trim();
       if (!text || !currentUser) return;
       input.value = '';
