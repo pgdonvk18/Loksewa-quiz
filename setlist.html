@@ -6,8 +6,11 @@
   <title>Exam Sets Hub - LoksewaQuest</title>
   <!-- प्रिमियम आधुनिक फन्ट (Plus Jakarta Sans) -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- व्यावसायिक आइकनहरूको लागि FontAwesome Pro/Free CDN -->
+  <!-- व्यावसायिक आइकनहरूको लागि FontAwesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Supabase CDN (डाटाबेसबाट डेटा तान्नको लागि) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
     * {
       box-sizing: border-box;
@@ -55,9 +58,6 @@
       text-decoration: none;
       transition: background 0.2s;
     }
-    .icon-btn:active {
-      background: rgba(255, 255, 255, 0.2);
-    }
 
     /* मुख्य सेतो कन्टेनर */
     .main-container {
@@ -81,17 +81,6 @@
       position: relative;
       overflow: hidden;
     }
-    .welcome-banner::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(0deg, transparent, rgba(255,255,255,0.08), transparent);
-      transform: rotate(30deg);
-      pointer-events: none;
-    }
     .badge-tag {
       display: inline-block;
       background: rgba(255, 255, 255, 0.2);
@@ -103,19 +92,16 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 10px;
-      backdrop-filter: blur(4px);
     }
     .welcome-banner h2 {
       font-size: 18px;
       font-weight: 800;
       margin-bottom: 6px;
-      letter-spacing: -0.3px;
     }
     .welcome-banner p {
       font-size: 12px;
       color: #bfdbfe;
       line-height: 1.5;
-      font-weight: 500;
     }
 
     /* खण्ड हेडर */
@@ -129,7 +115,6 @@
       font-size: 15px;
       font-weight: 800;
       color: #0f172a;
-      letter-spacing: -0.3px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -160,8 +145,6 @@
       text-decoration: none;
       transition: all 0.2s ease;
     }
-    
-    /* सक्रिय सेटको स्टाइल */
     .set-card.active-set {
       border: 1.5px solid #3b82f6;
       box-shadow: 0 6px 20px rgba(59, 130, 246, 0.1);
@@ -169,8 +152,6 @@
     .set-card.active-set:active {
       transform: scale(0.98);
     }
-
-    /* बन्द/छिट्टै आउने सेटको स्टाइल */
     .set-card.disabled-set {
       background: #f1f5f9;
       opacity: 0.75;
@@ -210,33 +191,21 @@
       align-items: center;
       gap: 5px;
     }
-    .badge-active {
-      background: #dcfce7;
-      color: #15803d;
-    }
-    .badge-inactive {
-      background: #e2e8f0;
-      color: #64748b;
-    }
+    .badge-active { background: #dcfce7; color: #15803d; }
+    .badge-inactive { background: #e2e8f0; color: #64748b; }
 
     .set-info h4 {
       font-size: 15px;
       font-weight: 700;
       color: #1e293b;
       margin-bottom: 4px;
-      letter-spacing: -0.2px;
     }
-    .active-set h4:hover {
-      color: #2563eb;
-    }
-    .disabled-set .set-info h4 {
-      color: #64748b;
-    }
+    .active-set h4:hover { color: #2563eb; }
+    .disabled-set .set-info h4 { color: #64748b; }
     .set-info p {
       font-size: 12px;
       color: #64748b;
       line-height: 1.4;
-      font-weight: 500;
       margin-bottom: 14px;
     }
 
@@ -250,20 +219,9 @@
       color: #64748b;
       font-weight: 600;
     }
-    .set-meta {
-      display: flex;
-      gap: 12px;
-    }
-    .action-text {
-      color: #2563eb;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .disabled-set .action-text {
-      color: #94a3b8;
-    }
+    .set-meta { display: flex; gap: 12px; }
+    .action-text { color: #2563eb; font-weight: 700; }
+    .disabled-set .action-text { color: #94a3b8; }
   </style>
 </head>
 <body>
@@ -277,83 +235,101 @@
 
   <!-- मुख्य सेतो इन्टरफेस -->
   <div class="main-container">
-    
-    <!-- स्वागत ब्यानर -->
     <div class="welcome-banner">
       <span class="badge-tag">⚡ उच्च प्राविधिक अभ्यास केन्द्र</span>
       <h2>Pre Qualifying Exam Sets</h2>
       <p>लोकसेवा तथा खरिदार/नासु प्रथम पत्रको पूर्वयोग्यता परीक्षाको नयाँ ढाँचामा आधारित मोडल सेटहरू अभ्यास गर्नुहोस्।</p>
     </div>
 
-    <!-- उपलब्ध सेट सूची हेडर -->
     <div class="section-header">
       <h3><i class="fa-solid fa-layer-group text-blue-600"></i> उपलब्ध सेट सूची (Available Sets)</h3>
-      <span class="counter" id="setCounter">कुल ० सेटहरू</span>
+      <span class="counter" id="setCounter">लोड हुँदैछ...</span>
     </div>
 
-    <!-- सेट लिस्ट ग्रिड -->
     <div class="sets-grid" id="setsContainer">
-      <!-- यहाँ जाभास्क्रिप्टले स्वचालित रूपमा सेटहरू लोड गर्नेछ -->
+      <!-- Supabase बाट डेटा आएपछि यहाँ कार्डहरू बन्छन् -->
     </div>
-
   </div>
 
   <script>
-    // यहाँ status लाई 'active' बनाउँदा परीक्षा दिन मिल्छ, 
-    // र 'upcoming' बनाउँदा 'छिट्टै आउँदैछ' भनेर देखाउँछ।
-    const allExamSets = [
-      { id: 'set_1', number: '01', title: 'Pre Qualifying Exam Set 1', desc: 'सामान्य ज्ञान र आधारभूत बौद्धिक परीक्षण (IQ) समेटिएको पहिलो मोडल सेट।', status: 'active' },
-      { id: 'set_2', number: '02', title: 'Pre Qualifying Exam Set 2', desc: 'समसामयिक घटना, भूगोल तथा खरिदार प्रथम पत्रको नयाँ पाठ्यक्रममा आधारित सेट।', status: 'active' },
-      { id: 'set_3', number: '03', title: 'Pre Qualifying Exam Set 3', desc: 'इतिहास, संस्कृति, संविधान र व्यवस्थापनसम्बन्धी महत्वपूर्ण प्रश्नहरूको संगालो।', status: 'active' },
-      { id: 'set_4', number: '04', title: 'Pre Qualifying Exam Set 4', desc: 'विज्ञान, प्रविधि, अर्थशास्त्र तथा तर्कशास्त्रमा आधारित अभ्यास सेट।', status: 'active' },
-      { id: 'set_5', number: '05', title: 'Pre Qualifying Exam Set 5', desc: 'पूर्ण मोडल टेस्ट – लोकसेवा आयोगको परीक्षा ढाँचा अनुसार अभ्यास सेट।', status: 'upcoming' },
-      { id: 'set_6', number: '06', title: 'Pre Qualifying Exam Set 6', desc: 'नयाँ पाठ्यक्रममा आधारित एड्भान्सड मोडल टेस्ट तथा विशेष प्रश्नहरू।', status: 'upcoming' },
-      { id: 'set_7', number: '07', title: 'Pre Qualifying Exam Set 7', desc: 'नवीनतम मोडल प्रश्नहरूमा आधारित अभ्यास सेट ७।', status: 'upcoming' },
-      { id: 'set_8', number: '08', title: 'Pre Qualifying Exam Set 8', desc: 'आगामी मोडल परीक्षा सेट ८।', status: 'upcoming' }
+    // १. आफ्नो Supabase को विवरण यहाँ राख्नुहोला (Supabase Project Settings > API बाट पाइन्छ)
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // सेटहरूको लिस्ट (जसमा चेक गरिन्छ कि DB मा प्रश्न छ वा छैन)
+    const baseSets = [
+      { id: 'set_1', number: '01', title: 'Pre Qualifying Exam Set 1', desc: 'सामान्य ज्ञान र आधारभूत बौद्धिक परीक्षण (IQ) समेटिएको पहिलो मोडल सेट।' },
+      { id: 'set_2', number: '02', title: 'Pre Qualifying Exam Set 2', desc: 'समसामयिक घटना, भूगोल तथा खरिदार प्रथम पत्रको नयाँ पाठ्यक्रममा आधारित सेट।' },
+      { id: 'set_3', number: '03', title: 'Pre Qualifying Exam Set 3', desc: 'इतिहास, संस्कृति, संविधान र व्यवस्थापनसम्बन्धी महत्वपूर्ण प्रश्नहरूको संगालो।' },
+      { id: 'set_4', number: '04', title: 'Pre Qualifying Exam Set 4', desc: 'विज्ञान, प्रविधि, अर्थशास्त्र तथा तर्कशास्त्रमा आधारित अभ्यास सेट।' },
+      { id: 'set_5', number: '05', title: 'Pre Qualifying Exam Set 5', desc: 'पूर्ण मोडल टेस्ट – लोकसेवा आयोगको परीक्षा ढाँचा अनुसार अभ्यास सेट।' },
+      { id: 'set_6', number: '06', title: 'Pre Qualifying Exam Set 6', desc: 'नयाँ पाठ्यक्रममा आधारित एड्भान्सड मोडल टेस्ट तथा विशेष प्रश्नहरू।' },
+      { id: 'set_7', number: '07', title: 'Pre Qualifying Exam Set 7', desc: 'नवीनतम मोडल प्रश्नहरूमा आधारित अभ्यास सेट ७।' },
+      { id: 'set_8', number: '08', title: 'Pre Qualifying Exam Set 8', desc: 'आगामी मोडल परीक्षा सेट ८।' }
     ];
 
-    const container = document.getElementById('setsContainer');
-    const counter = document.getElementById('setCounter');
-    
-    container.innerHTML = '';
-    counter.innerText = `कुल ${allExamSets.length} सेटहरू`;
+    async function loadSets() {
+      const container = document.getElementById('setsContainer');
+      const counter = document.getElementById('setCounter');
+      container.innerHTML = '';
 
-    allExamSets.forEach(set => {
-      const isActive = set.status === 'active';
-      const card = document.createElement(isActive ? 'a' : 'div');
-      
-      if (isActive) {
-        card.href = `exam.html?set=${set.id}`;
-        card.className = 'set-card active-set';
-      } else {
-        card.className = 'set-card disabled-set';
-      }
-      
-      card.innerHTML = `
-        <div>
-          <div class="set-card-top">
-            <div class="set-number-box">${set.number}</div>
-            <span class="status-badge ${isActive ? 'badge-active' : 'badge-inactive'}">
-              ${isActive ? '<i class="fa-solid fa-circle text-[8px]"></i> सक्रिय (Active)' : 'छिट्टै आउँदैछ'}
+      let activeCount = 0;
+
+      for (const set of baseSets) {
+        // २. Supabase को 'questions' टेबलमा गएर चेक गर्छ कि यो setId का प्रश्नहरू छन् कि छैनन्
+        // (तपाईंको Supabase टेबलको नाम र column अनुसार तलको 'questions' र 'set_id' मिलाउनुहोला)
+        const { data, error } = await supabaseClient
+          .from('questions')
+          .select('id')
+          .eq('set_id', set.id)
+          .limit(1);
+
+        // यदि डेटाबेसमा प्रश्न भेटियो भने status 'active' हुन्छ, नत्र 'upcoming'
+        const isActive = (data && data.length > 0);
+        
+        if (isActive) activeCount++;
+
+        const card = document.createElement(isActive ? 'a' : 'div');
+        if (isActive) {
+          card.href = `exam.html?set=${set.id}`;
+          card.className = 'set-card active-set';
+        } else {
+          card.className = 'set-card disabled-set';
+        }
+
+        card.innerHTML = `
+          <div>
+            <div class="set-card-top">
+              <div class="set-number-box">${set.number}</div>
+              <span class="status-badge ${isActive ? 'badge-active' : 'badge-inactive'}">
+                ${isActive ? '<i class="fa-solid fa-circle text-[8px]"></i> सक्रिय (Active)' : 'छिट्टै आउँदैछ'}
+              </span>
+            </div>
+            <div class="set-info">
+              <h4>${set.title}</h4>
+              <p>${set.desc}</p>
+            </div>
+          </div>
+          <div class="set-card-footer">
+            <div class="set-meta">
+              <span><i class="fa-regular fa-clock"></i> ४५ मिनेट</span>
+              <span><i class="fa-solid fa-file-lines"></i> ५० प्रश्न</span>
+            </div>
+            <span class="action-text">
+              ${isActive ? 'परीक्षा दिनुहोस् <i class="fa-solid fa-arrow-right text-[10px]"></i>' : 'छिट्टै खुलेको'}
             </span>
           </div>
-          <div class="set-info">
-            <h4>${set.title}</h4>
-            <p>${set.desc}</p>
-          </div>
-        </div>
-        <div class="set-card-footer">
-          <div class="set-meta">
-            <span><i class="fa-regular fa-clock"></i> ४५ मिनेट</span>
-            <span><i class="fa-solid fa-file-lines"></i> ५० प्रश्न</span>
-          </div>
-          <span class="action-text">
-            ${isActive ? 'परीक्षा दिनुहोस् <i class="fa-solid fa-arrow-right text-[10px]"></i>' : 'छिट्टै खुलेको'}
-          </span>
-        </div>
-      `;
-      container.appendChild(card);
-    });
+        `;
+        container.appendChild(card);
+      }
+
+      counter.innerText = `कुल ${baseSets.length} सेटहरू`;
+    }
+
+    // पेज खुल्नेबित्तिकै Supabase चेक गर्छ
+    loadSets();
   </script>
 
 </body>
