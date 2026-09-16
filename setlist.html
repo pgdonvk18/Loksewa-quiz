@@ -160,17 +160,22 @@
       text-decoration: none;
       transition: all 0.2s ease;
     }
-    .set-card:active {
-      transform: scale(0.98);
-    }
+    
+    /* सक्रिय सेटको स्टाइल */
     .set-card.active-set {
-      border-color: #3b82f6;
+      border: 1.5px solid #3b82f6;
       box-shadow: 0 6px 20px rgba(59, 130, 246, 0.1);
     }
+    .set-card.active-set:active {
+      transform: scale(0.98);
+    }
+
+    /* बन्द/छिट्टै आउने सेटको स्टाइल */
     .set-card.disabled-set {
       background: #f1f5f9;
-      opacity: 0.7;
+      opacity: 0.75;
       cursor: not-allowed;
+      pointer-events: none; /* क्लिक गर्न नमिल्ने बनाउन */
     }
 
     .set-card-top {
@@ -223,6 +228,9 @@
     }
     .active-set h4:hover {
       color: #2563eb;
+    }
+    .disabled-set .set-info h4 {
+      color: #64748b;
     }
     .set-info p {
       font-size: 12px;
@@ -280,130 +288,77 @@
     <!-- उपलब्ध सेट सूची हेडर -->
     <div class="section-header">
       <h3><i class="fa-solid fa-layer-group text-blue-600"></i> उपलब्ध सेट सूची (Available Sets)</h3>
-      <span class="counter">कुल ५ सेटहरू</span>
+      <span class="counter" id="setCounter">कुल ० सेटहरू</span>
     </div>
 
     <!-- सेट लिस्ट ग्रिड -->
-    <div class="sets-grid">
-      
-      <!-- सेट १ -->
-      <a href="exam.html?set=set_1" class="set-card active-set">
-        <div>
-          <div class="set-card-top">
-            <div class="set-number-box">01</div>
-            <span class="status-badge badge-active">
-              <i class="fa-solid fa-circle text-[8px]"></i> सक्रिय (Active)
-            </span>
-          </div>
-          <div class="set-info">
-            <h4>Pre Qualifying Exam Set 1</h4>
-            <p>सामान्य ज्ञान र आधारभूत बौद्धिक परीक्षण (IQ) समेटिएको पहिलो मोडल सेट।</p>
-          </div>
-        </div>
-        <div class="set-card-footer">
-          <div class="set-meta">
-            <span><i class="fa-regular fa-clock"></i> ४५ मिनेट</span>
-            <span><i class="fa-solid fa-file-lines"></i> ५० प्रश्न</span>
-          </div>
-          <span class="action-text">परीक्षा दिनुहोस् <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
-        </div>
-      </a>
-
-      <!-- सेट २ -->
-      <a href="exam.html?set=set_2" class="set-card active-set">
-        <div>
-          <div class="set-card-top">
-            <div class="set-number-box">02</div>
-            <span class="status-badge badge-active">
-              <i class="fa-solid fa-circle text-[8px]"></i> सक्रिय (Active)
-            </span>
-          </div>
-          <div class="set-info">
-            <h4>Pre Qualifying Exam Set 2</h4>
-            <p>समसामयिक घटना, भूगोल तथा खरिदार प्रथम पत्रको नयाँ पाठ्यक्रममा आधारित सेट।</p>
-          </div>
-        </div>
-        <div class="set-card-footer">
-          <div class="set-meta">
-            <span><i class="fa-regular fa-clock"></i> ४५ मिनेट</span>
-            <span><i class="fa-solid fa-file-lines"></i> ५० प्रश्न</span>
-          </div>
-          <span class="action-text">परीक्षा दिनुहोस् <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
-        </div>
-      </a>
-
-      <!-- सेट ३ -->
-      <a href="exam.html?set=set_3" class="set-card active-set">
-        <div>
-          <div class="set-card-top">
-            <div class="set-number-box">03</div>
-            <span class="status-badge badge-active">
-              <i class="fa-solid fa-circle text-[8px]"></i> सक्रिय (Active)
-            </span>
-          </div>
-          <div class="set-info">
-            <h4>Pre Qualifying Exam Set 3</h4>
-            <p>इतिहास, संस्कृति, संविधान र व्यवस्थापनसम्बन्धी महत्वपूर्ण प्रश्नहरूको संगालो।</p>
-          </div>
-        </div>
-        <div class="set-card-footer">
-          <div class="set-meta">
-            <span><i class="fa-regular fa-clock"></i> ४५ मिनेट</span>
-            <span><i class="fa-solid fa-file-lines"></i> ५० प्रश्न</span>
-          </div>
-          <span class="action-text">परीक्षा दिनुहोस् <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
-        </div>
-      </a>
-
-      <!-- सेट ४ -->
-      <a href="exam.html?set=set_4" class="set-card active-set">
-        <div>
-          <div class="set-card-top">
-            <div class="set-number-box">04</div>
-            <span class="status-badge badge-active">
-              <i class="fa-solid fa-circle text-[8px]"></i> सक्रिय (Active)
-            </span>
-          </div>
-          <div class="set-info">
-            <h4>Pre Qualifying Exam Set 4</h4>
-            <p>विज्ञान, प्रविधि, अर्थशास्त्र तथा तर्कशास्त्रमा आधारित अभ्यास सेट।</p>
-          </div>
-        </div>
-        <div class="set-card-footer">
-          <div class="set-meta">
-            <span><i class="fa-regular fa-clock"></i> ४५ मिनेट</span>
-            <span><i class="fa-solid fa-file-lines"></i> ५० प्रश्न</span>
-          </div>
-          <span class="action-text">परीक्षा दिनुहोस् <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
-        </div>
-      </a>
-
-      <!-- सेट ५ -->
-      <a href="exam.html?set=set_5" class="set-card active-set">
-        <div>
-          <div class="set-card-top">
-            <div class="set-number-box">05</div>
-            <span class="status-badge badge-active">
-              <i class="fa-solid fa-circle text-[8px]"></i> सक्रिय (Active)
-            </span>
-          </div>
-          <div class="set-info">
-            <h4>Pre Qualifying Exam Set 5</h4>
-            <p>पूर्ण मोडल टेस्ट – लोकसेवा आयोगको परीक्षा ढाँचा अनुसार अन्तिम अभ्यास सेट।</p>
-          </div>
-        </div>
-        <div class="set-card-footer">
-          <div class="set-meta">
-            <span><i class="fa-regular fa-clock"></i> ४५ मिनेट</span>
-            <span><i class="fa-solid fa-file-lines"></i> ५० प्रश्न</span>
-          </div>
-          <span class="action-text">परीक्षा दिनुहोस् <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
-        </div>
-      </a>
-
+    <div class="sets-grid" id="setsContainer">
+      <!-- यहाँ जाभास्क्रिप्टले स्वचालित रूपमा सेटहरू लोड गर्नेछ -->
     </div>
 
   </div>
+
+  <script>
+    // यहाँ तपाईंले सेटहरूको कन्ट्रोल गर्नुहुनेछ। 
+    // status मा 'active' राख्दा परीक्षा दिन मिल्छ (सक्रिय हुन्छ), 
+    // र 'upcoming' राख्दा 'छिट्टै आउँदैछ' भनेर देखाउँछ (क्लिक गर्न मिल्दैन)।
+    const allExamSets = [
+      { id: 'set_1', number: '01', title: 'Pre Qualifying Exam Set 1', desc: 'सामान्य ज्ञान र आधारभूत बौद्धिक परीक्षण (IQ) समेटिएको पहिलो मोडल सेट।', status: 'active' },
+      { id: 'set_2', number: '02', title: 'Pre Qualifying Exam Set 2', desc: 'समसामयिक घटना, भूगोल तथा खरिदार प्रथम पत्रको नयाँ पाठ्यक्रममा आधारित सेट।', status: 'active' },
+      { id: 'set_3', number: '03', title: 'Pre Qualifying Exam Set 3', desc: 'इतिहास, संस्कृति, संविधान र व्यवस्थापनसम्बन्धी महत्वपूर्ण प्रश्नहरूको संगालो।', status: 'active' },
+      { id: 'set_4', number: '04', title: 'Pre Qualifying Exam Set 4', desc: 'विज्ञान, प्रविधि, अर्थशास्त्र तथा तर्कशास्त्रमा आधारित अभ्यास सेट।', status: 'active' },
+      { id: 'set_5', number: '05', title: 'Pre Qualifying Exam Set 5', desc: 'पूर्ण मोडल टेस्ट – लोकसेवा आयोगको परीक्षा ढाँचा अनुसार अभ्यास सेट।', status: 'active' },
+      { id: 'set_6', number: '06', title: 'Pre Qualifying Exam Set 6', desc: 'नयाँ पाठ्यक्रममा आधारित एड्भान्सड मोडल टेस्ट तथा विशेष प्रश्नहरू।', status: 'active' },
+      // सेट नबनुन्जेल status लाई 'upcoming' बनाइदिनुहोला। बन्नेबित्तिकै 'active' बनाउँदा स्वतः खुल्नेछ:
+      { id: 'set_7', number: '07', title: 'Pre Qualifying Exam Set 7', desc: 'नवीनतम मोडल प्रश्नहरूमा आधारित अभ्यास सेट ७।', status: 'upcoming' },
+      { id: 'set_8', number: '08', title: 'Pre Qualifying Exam Set 8', desc: 'आगामी मोडल परीक्षा सेट ८।', status: 'upcoming' }
+    ];
+
+    const container = document.getElementById('setsContainer');
+    const counter = document.getElementById('setCounter');
+    
+    container.innerHTML = '';
+    counter.innerText = `कुल ${allExamSets.length} सेटहरू`;
+
+    allExamSets.forEach(set => {
+      const isActive = set.status === 'active';
+      
+      // यदि active छ भने 'a' ट्याग (लिंक), upcoming छ भने 'div' ट्याग (क्लिक नहुने) बन्छ
+      const card = document.createElement(isActive ? 'a' : 'div');
+      
+      if (isActive) {
+        card.href = `exam.html?set=${set.id}`;
+        card.className = 'set-card active-set';
+      } else {
+        card.className = 'set-card disabled-set';
+      }
+      
+      card.innerHTML = `
+        <div>
+          <div class="set-card-top">
+            <div class="set-number-box">${set.number}</div>
+            <span class="status-badge ${isActive ? 'badge-active' : 'badge-inactive'}">
+              ${isActive ? '<i class="fa-solid fa-circle text-[8px]"></i> सक्रिय (Active)' : 'छिट्टै आउँदैछ'}
+            </span>
+          </div>
+          <div class="set-info">
+            <h4>${set.title}</h4>
+            <p>${set.desc}</p>
+          </div>
+        </div>
+        <div class="set-card-footer">
+          <div class="set-meta">
+            <span><i class="fa-regular fa-clock"></i> ४५ मिनेट</span>
+            <span><i class="fa-solid fa-file-lines"></i> ५० प्रश्न</span>
+          </div>
+          <span class="action-text">
+            ${isActive ? 'परीक्षा दिनुहोस् <i class="fa-solid fa-arrow-right text-[10px]"></i>' : 'छिट्टै खुलेको'}
+          </span>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  </script>
 
 </body>
 </html>
