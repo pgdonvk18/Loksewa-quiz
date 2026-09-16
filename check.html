@@ -95,7 +95,7 @@
       color: #64748b;
     }
 
-    /* Tabs (Topics, Samasamayik, Gorkhapatra) */
+    /* Tabs */
     .tabs-container {
       display: flex;
       background: #e2e8f0;
@@ -226,21 +226,21 @@
       </div>
     </div>
 
-    <!-- Replaced Tabs -->
+    <!-- Tabs -->
     <div class="tabs-container">
       <button class="tab-btn active" onclick="switchMainTab('topics', this)">Topics</button>
       <button class="tab-btn" onclick="switchMainTab('samasamayik', this)">समसामयिक</button>
       <button class="tab-btn" onclick="switchMainTab('gorkhapatra', this)">गोर्खापत्र</button>
     </div>
 
-    <!-- Breadcrumb for sub-views -->
-    <div class="breadcrumb" id="breadcrumb" onclick="resetToCurrentTab()">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb" id="breadcrumb" onclick="goBackLevel()">
       <i class="fa-solid fa-arrow-left"></i> पछाडि फर्कनुहोस्
     </div>
 
     <!-- Content Container -->
     <div class="topic-list" id="topicListContainer">
-      <!-- Default view (Topics) will be loaded here -->
+      <!-- Default view -->
     </div>
   </div>
 
@@ -248,7 +248,6 @@
   <script>
     loadBottomNav('practice');
 
-    // Store different tab contents
     const topicsContent = `
       <a href="quiz-nepal-geography.html" class="topic-card">
         <div class="topic-left">
@@ -358,7 +357,7 @@
           <div class="topic-icon bg-green"><i class="fa-solid fa-folder-open"></i></div>
           <div class="topic-info">
             <h3>गोर्खापत्र ज्ञानसागर २०८३</h3>
-            <p>विभिन्न महिनाका गोर्खापत्र प्रश्नोत्तरहरू</p>
+            <p>वैशाखदेखि चैतसम्मका बुधवार विशेष सेटहरू</p>
           </div>
         </div>
         <i class="fa-solid fa-chevron-right arrow-icon"></i>
@@ -366,13 +365,14 @@
     `;
 
     let activeTab = 'topics';
+    let navigationStack = [];
 
     function switchMainTab(tabName, btnElement) {
-      // Update active tab style
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       btnElement.classList.add('active');
 
       activeTab = tabName;
+      navigationStack = [];
       document.getElementById('breadcrumb').style.display = 'none';
 
       const container = document.getElementById('topicListContainer');
@@ -390,108 +390,116 @@
       }
     }
 
-    // Gorkhapatra Sub-branches navigation
     function openGorkhapatraYears() {
+      navigationStack.push({title: 'गोर्खापत्र ज्ञानसागर', content: gorkhapatraContent});
       document.getElementById('breadcrumb').style.display = 'flex';
-      document.getElementById('headerTitle').innerText = 'गोर्खापत्र २०८३';
+      document.getElementById('headerTitle').innerText = 'गोर्खापत्र २०८३ (महिनाहरू)';
+      
       const container = document.getElementById('topicListContainer');
       container.innerHTML = `
-        <div class="topic-card" onclick="openGorkhapatraMonths()">
-          <div class="topic-left">
-            <div class="topic-icon bg-orange"><i class="fa-solid fa-calendar"></i></div>
-            <div class="topic-info">
-              <h3>भाद्र महिना</h3>
-              <p>भाद्र महिनाका गोर्खापत्र सेटहरू</p>
-            </div>
-          </div>
+        <div class="topic-card" onclick="openMonthWednesdays('वैशाख २०८३', '01', ['03', '10', '17', '24', '31'])">
+          <div class="topic-left"><div class="topic-icon bg-blue"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>वैशाख महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
           <i class="fa-solid fa-chevron-right arrow-icon"></i>
         </div>
-        <div class="topic-card" onclick="openAshojMonths()">
-          <div class="topic-left">
-            <div class="topic-icon bg-purple"><i class="fa-solid fa-calendar"></i></div>
-            <div class="topic-info">
-              <h3>आश्विन महिना</h3>
-              <p>बुधबार प्रकाशित गोर्खापत्र सेटहरू</p>
-            </div>
-          </div>
+        <div class="topic-card" onclick="openMonthWednesdays('जेठ २०८३', '02', ['07', '14', '21', '28'])">
+          <div class="topic-left"><div class="topic-icon bg-orange"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>जेठ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('आषाढ २०८३', '03', ['04', '11', '18', '25'])">
+          <div class="topic-left"><div class="topic-icon bg-green"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>आषाढ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('श्रावण २०८३', '04', ['01', '08', '15', '22', '29'])">
+          <div class="topic-left"><div class="topic-icon bg-purple"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>श्रावण महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('भाद्र २०८३', '05', ['05', '12', '19', '26', '31'])">
+          <div class="topic-left"><div class="topic-icon bg-pink"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>भाद्र महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('आश्विन २०८३', '06', ['07', '14', '21', '28'])">
+          <div class="topic-left"><div class="topic-icon bg-teal"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>आश्विन महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('कार्तिक २०८३', '07', ['04', '11', '18', '25'])">
+          <div class="topic-left"><div class="topic-icon bg-blue"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>कार्तिक महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('मंसिर २०८३', '08', ['02', '09', '16', '23', '30'])">
+          <div class="topic-left"><div class="topic-icon bg-orange"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>मंसिर महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('पुष २०८३', '09', ['07', '14', '21', '28'])">
+          <div class="topic-left"><div class="topic-icon bg-green"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>पुष महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('माघ २०८३', '10', ['05', '12', '19', '26'])">
+          <div class="topic-left"><div class="topic-icon bg-purple"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>माघ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('फागुन २०८३', '11', ['03', '10', '17', '24'])">
+          <div class="topic-left"><div class="topic-icon bg-pink"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>फागुन महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </div>
+        <div class="topic-card" onclick="openMonthWednesdays('चैत २०८३', '12', ['01', '08', '15', '22', '29'])">
+          <div class="topic-left"><div class="topic-icon bg-teal"><i class="fa-solid fa-calendar"></i></div>
+          <div class="topic-info"><h3>चैत महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
           <i class="fa-solid fa-chevron-right arrow-icon"></i>
         </div>
       `;
     }
 
-    function openGorkhapatraMonths() {
-      document.getElementById('headerTitle').innerText = 'भाद्र २०८३ (गोर्खापत्र)';
+    function openMonthWednesdays(monthName, monthCode, daysArray) {
+      const currentHTML = document.getElementById('topicListContainer').innerHTML;
+      navigationStack.push({title: document.getElementById('headerTitle').innerText, content: currentHTML});
+      
+      document.getElementById('headerTitle').innerText = monthName + ' (गोर्खापत्र)';
       const container = document.getElementById('topicListContainer');
-      container.innerHTML = `
-        <a href="quiz.html?set=gorkhapatra2083-05-31" class="topic-card">
-          <div class="topic-left">
-            <div class="topic-icon bg-teal"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="topic-info">
-              <h3>भाद्र ३१, २०८३</h3>
-              <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
+      
+      let htmlContent = '';
+      daysArray.forEach(day => {
+        let fullDateStr = `2083-${monthCode}-${day}`;
+        htmlContent += `
+          <a href="quiz.html?set=gorkhapatra${fullDateStr}" class="topic-card">
+            <div class="topic-left">
+              <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
+              <div class="topic-info">
+                <h3>${monthName} ${parseInt(day)}, २०८३</h3>
+                <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
+              </div>
             </div>
-          </div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </a>
-      `;
+            <i class="fa-solid fa-chevron-right arrow-icon"></i>
+          </a>
+        `;
+      });
+      container.innerHTML = htmlContent;
     }
 
-    function openAshojMonths() {
-      document.getElementById('headerTitle').innerText = 'आश्विन २०८३ (गोर्खापत्र)';
-      const container = document.getElementById('topicListContainer');
-      container.innerHTML = `
-        <a href="quiz.html?set=gorkhapatra2083-06-07" class="topic-card">
-          <div class="topic-left">
-            <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="topic-info">
-              <h3>आश्विन ७, २०८३</h3>
-              <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
-            </div>
-          </div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </a>
-        <a href="quiz.html?set=gorkhapatra2083-06-14" class="topic-card">
-          <div class="topic-left">
-            <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="topic-info">
-              <h3>आश्विन १४, २०८३</h3>
-              <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
-            </div>
-          </div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </a>
-        <a href="quiz.html?set=gorkhapatra2083-06-21" class="topic-card">
-          <div class="topic-left">
-            <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="topic-info">
-              <h3>आश्विन २१, २०८३</h3>
-              <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
-            </div>
-          </div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </a>
-        <a href="quiz.html?set=gorkhapatra2083-06-28" class="topic-card">
-          <div class="topic-left">
-            <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="topic-info">
-              <h3>आश्विन २८, २०८३</h3>
-              <p>बुधवार विशेष गोर्खापत्र ज्ञानसागर</p>
-            </div>
-          </div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </a>
-      `;
-    }
-
-    function resetToCurrentTab() {
-      document.getElementById('breadcrumb').style.display = 'none';
-      if (activeTab === 'gorkhapatra') {
-        document.getElementById('headerTitle').innerText = 'गोर्खापत्र ज्ञानसागर';
-        document.getElementById('topicListContainer').innerHTML = gorkhapatraContent;
+    function goBackLevel() {
+      if (navigationStack.length > 0) {
+        let prev = navigationStack.pop();
+        document.getElementById('headerTitle').innerText = prev.title;
+        document.getElementById('topicListContainer').innerHTML = prev.content;
+        if (navigationStack.length === 0) {
+          document.getElementById('breadcrumb').style.display = 'none';
+        }
+      } else {
+        document.getElementById('breadcrumb').style.display = 'none';
       }
     }
 
-    // Initialize default view on load
+    // Initialize default view
     document.getElementById('topicListContainer').innerHTML = topicsContent;
   </script>
 </body>
