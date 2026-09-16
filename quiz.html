@@ -1,8 +1,8 @@
 <!DOCTYPE html>  
 <html lang="ne">  
-<head>  <script src="dark-mode.js" defer></script>
-<link rel="stylesheet" href="DarkMode.css">
-
+<head>  
+  <script src="dark-mode.js" defer></script>
+  <link rel="stylesheet" href="DarkMode.css">
   <meta charset="UTF-8">  
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
   <title id="page-title">LoksewaQuest - Quiz Practice</title>  
@@ -42,7 +42,6 @@
     .explanation-header { display: flex; align-items: center; gap: 8px; color: #15803d; font-weight: 800; font-size: 13px; margin-bottom: 4px; }  
     .explanation-text { font-size: 12px; color: #166534; line-height: 1.5; }  
     
-    /* Rounded attractive buttons style */
     .btn-primary { background: #2563eb; color: white; font-weight: 700; padding: 14px 24px; border-radius: 30px; border: none; cursor: pointer; font-size: 14px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); display: flex; align-items: center; justify-content: center; gap: 8px; flex-grow: 1; transition: transform 0.1s; }  
     .btn-primary:active { transform: scale(0.98); }
     .btn-secondary { background: #f1f5f9; color: #334155; font-weight: 700; padding: 14px 24px; border-radius: 30px; border: none; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; width: 130px; transition: background 0.2s; }  
@@ -74,7 +73,7 @@
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin:0;">प्रश्न रिपोर्ट गर्नुहोस्</h3>  
         <button onclick="closeGlobalReportModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>  
       </div>  
-      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">यो प्रश्न वा उत्तरमा के समस्या छ लेख्नुहोस्:</p>  
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">यो प्रश्न या उत्तरमा के समस्या छ लेख्नुहोस्:</p>  
       <textarea id="globalReportReason" placeholder="उदा: सही उत्तर मिलेको छैन।" style="min-height: 100px; margin-bottom: 12px; width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; outline: none; box-sizing: border-box;"></textarea>  
       <div style="display: flex; gap: 10px;">  
         <button onclick="submitGlobalReport()" class="btn-primary" style="flex: 1; border-radius: 12px; padding: 12px;">पठाउनुहोस्</button>  
@@ -280,7 +279,7 @@
         let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', currentSet);  
           
         if (error || !data || data.length === 0) {  
-          alert(`डेटाबेसमा ${activeConfig.title} का प्रश्नहरू भेटिएनन्!`);  
+          showSuccessPopup(`डेटाबेसमा ${activeConfig.title} का प्रश्नहरू भेटिएनन्!`, '', 'error', 'त्रुटि ❌');  
           return;  
         }  
   
@@ -307,7 +306,7 @@
         document.getElementById('quiz-screen').classList.remove('hidden');  
         loadQuestion();  
       } catch (err) {  
-        alert('केही प्राविधिक समस्या आयो: ' + err.message);  
+        showSuccessPopup('केही प्राविधिक समस्या आयो: ' + err.message, '', 'error', 'त्रुटि ❌');  
       }  
     }  
   
@@ -382,7 +381,10 @@
 
     window.submitGlobalReport = async function() {  
       const reason = document.getElementById('globalReportReason').value.trim();  
-      if (!reason) { ShowConfirmPopup('कृपया समस्या के हो लेख्नुहोस्!'); return; }  
+      if (!reason) { 
+        showSuccessPopup('कृपया समस्या के हो लेख्नुहोस्!', '', 'warning', 'ध्यान दिनुहोस् ⚠️'); 
+        return; 
+      }  
       const currentQ = activeQuestions[currentIdx];  
 
       const { error } = await supabaseClient.from('reported_questions').insert([{  
@@ -392,8 +394,12 @@
         status: 'Pending'  
       }]);  
 
-      if (errhead ShowConfirmPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message);  
-      else { ShowSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏'); window.closeGlobalReportModal(); }  
+      if (error) { 
+        showSuccessPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message, '', 'error', 'त्रुटि ❌');  
+      } else { 
+        showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏', '', 'success', 'सफल भयो! 🎉'); 
+        window.closeGlobalReportModal(); 
+      }  
     }  
   
     async function finishQuiz() {  
@@ -434,7 +440,7 @@
         `;  
       });  
   
-      let totalScore = correct; // 1 अंक प्रति सहि उत्तर
+      let totalScore = correct;  
       document.getElementById('rep-name').innerText = `परीक्षार्थी: ${candidateName}`;  
       document.getElementById('rep-score').innerText = totalScore;
       document.getElementById('rep-correct').innerText = correct;  
@@ -496,6 +502,7 @@
         });  
       });  
     }  
-  </script>  
+  </script>
+  <script src="components.js"></script>
 </body>  
 </html>
