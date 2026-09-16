@@ -252,13 +252,13 @@
   </div>
 
   <script>
-    // तपाईंले दिनुभएको Supabase विवरणहरू
+    // Supabase Credentials
     const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // कुल सेटहरूको लिस्ट (तपाईंको आवश्यकता अनुसार थप्न वा घटाउन सक्नुहुन्छ)
+    // कुल सेटहरूको लिस्ट
     const baseSets = [
       { id: 'set_1', number: '01', title: 'Pre Qualifying Exam Set 1', desc: 'सामान्य ज्ञान र आधारभूत बौद्धिक परीक्षण (IQ) समेटिएको पहिलो मोडल सेट।' },
       { id: 'set_2', number: '02', title: 'Pre Qualifying Exam Set 2', desc: 'समसामयिक घटना, भूगोल तथा खरिदार प्रथम पत्रको नयाँ पाठ्यक्रममा आधारित सेट।' },
@@ -278,12 +278,11 @@
       let activeCount = 0;
 
       for (const set of baseSets) {
-        // 'quizzes' टेबलमा set_id (वा set) को आधारमा चेक गर्छ 
-        // (यदि तपाईंको टेबलमा स्तम्भको नाम अर्कै छ भने तलको 'set_id' लाई मिलाउन सक्नुहुन्छ)
+        // 'quizzes' टेबलमा 'topic' स्तम्भ (Column) भित्र set_1, set_2 चेक गर्छ
         const { data, error } = await supabaseClient
           .from('quizzes')
           .select('id')
-          .eq('set_id', set.id)
+          .eq('topic', set.id)
           .limit(1);
 
         // यदि डेटाबेसमा प्रश्न भेटियो भने सक्रिय, नत्र छिट्टै आउँदैछ
