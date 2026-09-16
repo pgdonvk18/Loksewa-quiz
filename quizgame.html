@@ -215,7 +215,7 @@
     let roomExpiryTimerInterval = null;
     let questionTimerInterval = null;
     let lastProcessedNotificationId = null;
-    let isAnswerSubmitting = false; // डबल क्लिक रोक्नको लागि Lock
+    let isAnswerSubmitting = false;
 
     const topicDisplayNames = {
       "all": "सबै विषयबाट मिक्स (All Topics Random)",
@@ -230,7 +230,7 @@
     };
 
     // ==========================================
-    // कोइन वितरण गर्ने फंक्सनहरू (Coin Distribution Functions)
+    // कोइन वितरण गर्ने लजिक (Coin Distribution System)
     // ==========================================
     async function addCoinsToUser(userId, earnedCoins) {
       try {
@@ -258,16 +258,26 @@
       
       for (let i = 0; i < sortedPlayers.length; i++) {
         let player = sortedPlayers[i];
-        let earnedCoins = 10; // खेल्नुको लागि बेसिक पार्टिसिपेसन कोइन
         
+        // १. बेसिक पार्टिसिपेसन कोइन (१०)
+        let calculatedCoins = 10; 
+        
+        // २. प्रथम हुनेलाई थप ४० कोइन बोनस
         if (i === 0) {
-          earnedCoins += 40; // प्रथम हुनेलाई थप ४० कोइन (जम्मा ५०)
-        } else {
-          earnedCoins += (player.score > 0 ? player.score * 2 : 0);
+          calculatedCoins += 40; 
         }
 
+        // ३. स्कोर अनुसार कोइन थप्ने (माइनस भएमा ० मात्र जोड्ने, प्लस भएमा जति स्कोर छ त्यति नै कोइन)
+        let scoreEarned = player.score > 0 ? player.score : 0;
+        let totalEarnedForThisPlayer = calculatedCoins + scoreEarned;
+
         if (player.uid) {
-          await addCoinsToUser(player.uid, earnedCoins);
+          await addCoinsToUser(player.uid, totalEarnedForThisPlayer);
+
+          // यदि यो डिभाइस चलाइरहेको आफ्नै युजर हो भने उसलाई सन्देश देखाउने
+          if (currentUser && player.uid === currentUser.uid) {
+            showToast(`🎉 बधाई छ! तपाईँले यो खेलबाट ${totalEarnedForThisPlayer} कोइन प्राप्त गर्नुभयो! (स्कोर्स: ${player.score})`);
+          }
         }
       }
     }
@@ -480,7 +490,7 @@
             </div>
             ${isMyTurn ? `
               <div class="action-row">
-                <button class="btn-skip" onclick="submitAnswer('', true)">स्कip गर्नुहोस् (Skip)</button>
+                <button class="btn-skip" onclick="submitAnswer('', true)">स्किप गर्नुहोस् (Skip)</button>
               </div>
             ` : `<p style="text-align: center; font-size: 11px; color: #94a3b8; margin-top: 12px;">अहिले ${escapeHTML(currentTurnPlayer.name)} ले उत्तर दिँदै छन्...</p>`}
           </div>
@@ -673,7 +683,6 @@
       try {
         if (passAttempt >= players.length) {
           if (currentQCount >= totalQuestionsPlanned) {
-            // होस्टले कोइन वितरण गर्ने र गेम समाप्त गर्ने
             if (currentUser && currentUser.uid === roomDataGlobal.hostId) {
               await distributeCoinsForGame({ ...roomDataGlobal, players: players });
             }
@@ -795,7 +804,7 @@
     }
 
     window.submitAnswer = async function(selectedOpt, isSkipped) {
-      if (isAnswerSubmitting) return; // डबल क्लिकबाट जोगाउन
+      if (isAnswerSubmitting) return;
       isAnswerSubmitting = true;
 
       if (questionTimerInterval) clearInterval(questionTimerInterval);
@@ -828,7 +837,7 @@
         questionText: currentQ.text,
         correctAnswer: currentQ.correctAnswer,
         playerName: currentPlayerName,
-        selectedAnswer: isSkipped ? 'स्कip गरिएको (Skipped)' : selectedOpt,
+        selectedAnswer: isSkipped ? 'स्किप गरिएको (Skipped)' : selectedOpt,
         isCorrect: isCorrect
       });
 
@@ -837,7 +846,6 @@
       try {
         if (isCorrect) {
           if (currentQCount >= totalQuestionsPlanned) {
-            // होस्टले कोइन वितरण गर्ने र गेम समाप्त गर्ने
             if (currentUser && currentUser.uid === roomDataGlobal.hostId) {
               await distributeCoinsForGame({ ...roomDataGlobal, players: players });
             }
@@ -872,7 +880,6 @@
             });
           } else {
             if (currentQCount >= totalQuestionsPlanned) {
-              // होस्टले कोइन वितरण गर्ने र गेम समाप्त गर्ने
               if (currentUser && currentUser.uid === roomDataGlobal.hostId) {
                 await distributeCoinsForGame({ ...roomDataGlobal, players: players });
               }
