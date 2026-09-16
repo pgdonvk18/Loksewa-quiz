@@ -216,6 +216,7 @@
     let questionTimerInterval = null;
     let lastProcessedNotificationId = null;
     let isAnswerSubmitting = false;
+    let coinAlreadyDistributed = false; // दोहोरो कोइन नजोडिनको लागि
 
     const topicDisplayNames = {
       "all": "सबै विषयबाट मिक्स (All Topics Random)",
@@ -230,53 +231,45 @@
     };
 
     // ==========================================
-    // कोइन वितरण गर्ने लजिक (Coin Distribution System)
+    // कोइन वितरण गर्ने फिक्स गरिएको लजिक (प्रत्येक युजरले आफ्नो कोइन आफैँ अपडेट गर्ने)
     // ==========================================
-    async function addCoinsToUser(userId, earnedCoins) {
-      try {
-        const userRef = doc(db, "users", userId);
-        const userSnap = await getDoc(userRef);
-        
-        let currentCoins = 0;
-        if (userSnap.exists() && userSnap.data().coins !== undefined) {
-          currentCoins = userSnap.data().coins;
-        }
-        
-        await updateDoc(userRef, {
-          coins: Math.max(0, currentCoins + earnedCoins)
-        });
-        console.log(`युजर ${userId} लाई ${earnedCoins} कोइन सफलतापूर्वक थपियो!`);
-      } catch (error) {
-        console.error("कोइन अपडेट गर्दा त्रुटि आयो: ", error);
-      }
-    }
-
     async function distributeCoinsForGame(room) {
       if (!room.players || !Array.isArray(room.players)) return;
-      
+      if (coinAlreadyDistributed) return; // एउटै गेममा दुई पटक नजोडियोस्
+      coinAlreadyDistributed = true;
+
       let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
       
       for (let i = 0; i < sortedPlayers.length; i++) {
         let player = sortedPlayers[i];
         
-        // १. बेसिक पार्टिसिपेसन कोइन (१०)
-        let calculatedCoins = 10; 
-        
-        // २. प्रथम हुनेलाई थप ४० कोइन बोनस
+        let calculatedCoins = 10; // बेस कोइन
         if (i === 0) {
-          calculatedCoins += 40; 
+          calculatedCoins += 40; // प्रथम हुनेलाई बोनस
         }
 
-        // ३. स्कोर अनुसार कोइन थप्ने (माइनस भएमा ० मात्र जोड्ने, प्लस भएमा जति स्कोर छ त्यति नै कोइन)
         let scoreEarned = player.score > 0 ? player.score : 0;
         let totalEarnedForThisPlayer = calculatedCoins + scoreEarned;
 
-        if (player.uid) {
-          await addCoinsToUser(player.uid, totalEarnedForThisPlayer);
-
-          // यदि यो डिभाइस चलाइरहेको आफ्नै युजर हो भने उसलाई सन्देश देखाउने
-          if (currentUser && player.uid === currentUser.uid) {
+        // यदि यो लूपमा आएको खेलाडी अहिलेको डिभाइस चलाइरहेको युजर हो भने, उसले आफ्नो कोइन सुरक्षित रूपमा अपडेट गर्छ
+        if (player.uid && currentUser && player.uid === currentUser.uid) {
+          try {
+            const userRef = doc(db, "users", currentUser.uid);
+            const userSnap = await getDoc(userRef);
+            
+            let currentCoins = 0;
+            if (userSnap.exists() && userSnap.data().coins !== undefined) {
+              currentCoins = Number(userSnap.data().coins);
+            }
+            
+            await updateDoc(userRef, {
+              coins: currentCoins + totalEarnedForThisPlayer
+            });
+            
             showToast(`🎉 बधाई छ! तपाईँले यो खेलबाट ${totalEarnedForThisPlayer} कोइन प्राप्त गर्नुभयो! (स्कोर्स: ${player.score})`);
+            console.log(`आफ्नो कोइन সফল रूपमा थपियो: ${totalEarnedForThisPlayer}`);
+          } catch (err) {
+            console.error("कोइन अपडेट गर्दा त्रुटी आयो:", err);
           }
         }
       }
@@ -393,6 +386,14 @@
         }
 
         roomDataGlobal = newRoomData;
+        
+        // यदि गेम समाप्त भएको छ भने कोइन वितरण गर्ने फंक्सन कल गर्ने
+        if (roomDataGlobal.status === 'finished') {
+          await distributeCoinsForGame(roomDataGlobal);
+        } else {
+          coinAlreadyDistributed = false; // नयाँ खेल सुरु हुँदा रिसेट हुने
+        }
+
         renderGameUI(roomDataGlobal);
       });
     }
@@ -683,9 +684,6 @@
       try {
         if (passAttempt >= players.length) {
           if (currentQCount >= totalQuestionsPlanned) {
-            if (currentUser && currentUser.uid === roomDataGlobal.hostId) {
-              await distributeCoinsForGame({ ...roomDataGlobal, players: players });
-            }
             await updateDoc(roomRef, { players: players, history: history, status: "finished", latestNotification: { id: Date.now(), text: notificationText } });
             isAnswerSubmitting = false;
             return;
@@ -846,9 +844,6 @@
       try {
         if (isCorrect) {
           if (currentQCount >= totalQuestionsPlanned) {
-            if (currentUser && currentUser.uid === roomDataGlobal.hostId) {
-              await distributeCoinsForGame({ ...roomDataGlobal, players: players });
-            }
             await updateDoc(roomRef, { players: players, history: history, status: "finished" });
             isAnswerSubmitting = false;
             return;
@@ -880,9 +875,6 @@
             });
           } else {
             if (currentQCount >= totalQuestionsPlanned) {
-              if (currentUser && currentUser.uid === roomDataGlobal.hostId) {
-                await distributeCoinsForGame({ ...roomDataGlobal, players: players });
-              }
               await updateDoc(roomRef, { players: players, history: history, status: "finished" }, { merge: true });
               isAnswerSubmitting = false;
               return;
