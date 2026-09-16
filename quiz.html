@@ -382,7 +382,7 @@
 
     window.submitGlobalReport = async function() {  
       const reason = document.getElementById('globalReportReason').value.trim();  
-      if (!reason) { alert('कृपया समस्या के हो लेख्नुहोस्!'); return; }  
+      if (!reason) { ShowConfirmPopup('कृपया समस्या के हो लेख्नुहोस्!'); return; }  
       const currentQ = activeQuestions[currentIdx];  
 
       const { error } = await supabaseClient.from('reported_questions').insert([{  
@@ -392,8 +392,8 @@
         status: 'Pending'  
       }]);  
 
-      if (error) alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);  
-      else { alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏'); window.closeGlobalReportModal(); }  
+      if (errhead ShowConfirmPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message);  
+      else { ShowSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏'); window.closeGlobalReportModal(); }  
     }  
   
     async function finishQuiz() {  
