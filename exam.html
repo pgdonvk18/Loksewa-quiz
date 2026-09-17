@@ -195,6 +195,47 @@
       margin-bottom: 8px;
     }
 
+    /* Language Switcher Toggle Styles */
+    .lang-switch-container {
+      display: inline-flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 20px;
+      padding: 2px;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid #cbd5e1;
+      margin-bottom: 12px;
+    }
+    .lang-option {
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #475569;
+      z-index: 2;
+      user-select: none;
+    }
+    .lang-slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 32px;
+      height: 24px;
+      background: #2563eb;
+      border-radius: 14px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1;
+    }
+    .lang-switch-container.en-active .lang-slider {
+      transform: translateX(32px);
+    }
+    .lang-switch-container.en-active .lang-option:last-child {
+      color: #ffffff;
+    }
+    .lang-switch-container:not(.en-active) .lang-option:first-child {
+      color: #ffffff;
+    }
+
     /* Attractive Modern Popup Modal Animations */
     .modal-overlay {
       position: fixed;
@@ -339,6 +380,13 @@
         <span id="mode-badge" style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">Exam</span>
       </div>
 
+      <!-- Language Switch Toggle (प्रश्नको ठ्याक्कै माथि राखिएको) -->
+      <div id="lang-switch" class="lang-switch-container" onclick="toggleLanguage()">
+        <div class="lang-slider"></div>
+        <span class="lang-option">नेपाली</span>
+        <span class="lang-option">English</span>
+      </div>
+
       <h3 id="exam-question" style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.5;">Loading...</h3>
       <div id="exam-options"></div>
 
@@ -407,6 +455,9 @@
 
   </main>
 
+  <!-- Hidden Google Translate Element -->
+  <div id="google_translate_element" style="display: none;"></div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -455,6 +506,9 @@
     let isPracticeMode = false;
     let examStartTime = null;
     let evaluatedQuestionsList = [];
+
+    // Language State Variable
+    let currentLang = 'ne';
 
     document.addEventListener("DOMContentLoaded", () => {
       onAuthStateChanged(auth, async (user) => {
@@ -603,6 +657,11 @@
 
       document.getElementById('prev-btn').style.display = currentIdx === 0 ? 'none' : 'block';
       document.getElementById('next-btn').innerText = currentIdx === examQuestions.length - 1 ? 'परीक्षा बुझाउने (Submit)' : 'अर्को ➡️';
+
+      // यदि पहिले नै English मोडमा छ भने नयाँ प्रश्न लोड हुँदा पनि स्वतः अनुवाद लागू गर्ने
+      if (currentLang === 'en') {
+        setTimeout(() => triggerGoogleTranslate('en'), 200);
+      }
     }
 
     window.prevExamQuestion = function() {
@@ -628,6 +687,27 @@
             submitExam();
           }
         }
+      }
+    }
+
+    // Language Toggle Functions
+    window.toggleLanguage = function() {
+      const switchEl = document.getElementById('lang-switch');
+      if (!switchEl) return;
+      
+      switchEl.classList.toggle('en-active');
+      currentLang = currentLang === 'ne' ? 'en' : 'ne';
+      
+      triggerGoogleTranslate(currentLang);
+    }
+
+    function triggerGoogleTranslate(lang) {
+      const selectField = document.querySelector('.goog-te-combo');
+      if (selectField) {
+        selectField.value = lang;
+        selectField.dispatchEvent(new Event('change'));
+      } else {
+        setTimeout(() => triggerGoogleTranslate(lang), 500);
       }
     }
 
@@ -865,6 +945,19 @@
       }
     }
   </script>
+
+  <!-- Google Translate Script Initialization -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'ne',
+        includedLanguages: 'en,ne',
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
   <script src="components.js"></script>
 </body>
 </html>
