@@ -1,8 +1,6 @@
 import { doc, updateDoc, increment, collection, addDoc, serverTimestamp, getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // यदि components.js मा पहिल्यै db इन्स्टन्स छ भने त्यसैलाई प्रयोग गर्नुहोस्, नभए getFirestore() प्रयोग गर्नुहोस्।
-// (तपाईंको प्रोजेक्टको db इन्स्टन्स अनुसार मिलाउनुहोला)
-
 /**
  * युजरको कोइन अपडेट गर्ने र स्वचालित रूपमा coin_history मा रेकर्ड राख्ने फंक्सन
  * @param {object} db - Firestore database instance
@@ -37,7 +35,6 @@ export async function updateUserCoinsWithHistory(db, userId, amount, description
     console.error("Error updating coins with history:", error);
   }
 }
-
 
 // // Global Components (Chat, Footer, Floating Emojis, Room Config, Bottom Nav & Other Pages Header)
 (function() {
@@ -208,7 +205,7 @@ export async function updateUserCoinsWithHistory(db, userId, amount, description
 
   document.body.appendChild(containerDiv);
 
-  // सुधारेको र भरपर्दो toggleGlobalChat फंक्सन
+  // toggleGlobalChat फंक्सन
   window.toggleGlobalChat = function() {
     const chatDrawer = document.getElementById('globalChatDrawer');
     if (chatDrawer) {
@@ -404,7 +401,7 @@ function loadBottomNav(activePage) {
   document.body.insertAdjacentHTML('beforeend', navHTML);
 }
 
-// सुधारेको पपअप र मोडल कोड
+// पपअप र मोडल कोड
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById('customGlobalModal')) {
     const modalHTML = `
@@ -527,16 +524,20 @@ window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्
   if (titleEl) titleEl.textContent = titleText;
   if (modal) modal.classList.add('active');
 
-  okBtn.onclick = function() {
-    modal.classList.remove('active');
-    if (typeof onConfirm === 'function') {
-      onConfirm();
-    }
-  };
+  if (okBtn) {
+    okBtn.onclick = function() {
+      if (modal) modal.classList.remove('active');
+      if (typeof onConfirm === 'function') {
+        onConfirm();
+      }
+    };
+  }
 
-  cancelBtn.onclick = function() {
-    if (modal) {
-      modal.classList.remove('active'); // बग फिक्स गरिएको भाग
-    }
-  };
+  if (cancelBtn) {
+    cancelBtn.onclick = function() {
+      if (modal) {
+        modal.classList.remove('active');
+      }
+    };
+  }
 };
