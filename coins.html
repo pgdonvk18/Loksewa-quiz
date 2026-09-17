@@ -34,16 +34,17 @@
     .history-item { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: transform 0.2s; }
     .history-item:hover { transform: translateY(-1px); }
     
-    .history-left { display: flex; align-items: center; gap: 12px; }
-    .history-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .history-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .history-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
     .history-icon.earn { background: #dcfce7; color: #16a34a; }
     .history-icon.spend { background: #fee2e2; color: #dc2626; }
 
-    .history-info .title { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 2px; }
-    .history-info .source-tag { font-size: 11px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 3px; }
+    .history-info { flex: 1; min-width: 0; }
+    .history-info .title { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-info .source-desc { font-size: 11px; font-weight: 600; color: #2563eb; margin-bottom: 2px; }
     .history-info .date { font-size: 10px; font-weight: 600; color: #64748b; }
 
-    .history-amount { font-size: 14px; font-weight: 800; }
+    .history-amount { font-size: 15px; font-weight: 800; white-space: nowrap; margin-left: 10px; }
     .history-amount.earn { color: #16a34a; }
     .history-amount.spend { color: #dc2626; }
 
@@ -108,7 +109,7 @@
         try {
           const container = document.getElementById('historyContainer');
           
-          // १. युजरको मुख्य कागजातबाट कुल कोइन ल्याउने
+          // १. युजरको कुल कोइन ब्यालेन्स फेच गर्ने
           const userRef = fsDoc(db, "users", user.uid);
           const userSnap = await fsGetDoc(userRef);
           
@@ -118,14 +119,13 @@
             document.getElementById('totalCoinsVal').innerText = totalCoins;
           }
 
-          // २. सब-कलेक्सनबाट ट्रान्जेक्सन इतिहास फेच गर्ने (सम्भव भए मितिअनुसार क्रमबद्ध गरी)
+          // २. ट्रान्जेक्सन इतिहास सब-कलेक्सनबाट तान्ने
           const historyRef = collection(db, "users", user.uid, "coin_history");
           let querySnapshot;
           try {
             const q = query(historyRef, orderBy("created_at", "desc"));
             querySnapshot = await getDocs(q);
           } catch (ordErr) {
-            // यदि index मिलेन भने सामान्य getDocs प्रयोग गर्ने
             querySnapshot = await getDocs(historyRef);
           }
 
@@ -137,28 +137,47 @@
             querySnapshot.forEach((doc) => {
               const item = doc.data();
               const isEarn = item.type === 'earn' || item.amount > 0;
-              const sign = isEarn ? '+' : '';
+              const sign = isEarn ? '+' : '-';
+              const cleanAmount = Math.abs(item.amount || 0);
+              const displayAmount = `${sign}${cleanAmount}`;
+              
               const iconClass = isEarn ? 'earn' : 'spend';
-              const iconSymbol = isEarn ? (item.source === 'quiz' ? 'fa-pen-to-square' : (item.source === 'leaderboard' ? 'fa-trophy' : 'fa-arrow-down')) : 'fa-arrow-up';
               const amountClass = isEarn ? 'earn' : 'spend';
+              
+              // आइकन छान्ने तरिका
+              let iconSymbol = 'fa-arrow-down';
+              if (item.source === 'quiz') iconSymbol = 'fa-pen-to-square';
+              else if (item.source === 'leaderboard') iconSymbol = 'fa-trophy';
+              else if (item.source === 'daily_login') iconSymbol = 'fa-gift';
+              else if (!isEarn) iconSymbol = 'fa-arrow-up';
 
-              // स्रोत (Source) वा माध्यम पहिचान गर्ने र मिलाउने
-              let sourceText = "";
-              let descText = item.description || "";
+              // कहाँबाट आयो भन्ने कुरा स्पष्ट पार्ने विवरण (Source Description)
+              let sourceOrigin = "";
+              let titleText = item.description || (isEarn ? 'कोइन प्राप्त भयो' : 'कोइन खर्च भयो');
 
               if (item.source) {
                 switch(item.source.toLowerCase()) {
-                  case 'quiz': sourceText = '📝 क्विज अभ्यासबाट'; break;
-                  case 'leaderboard': sourceText = '🏆 लिडरबोर्ड पुरस्कार'; break;
-                  case 'daily_login': sourceText = '🎁 दैनिक बोनस (Daily Login)'; break;
-                  case 'admin': sourceText = '⚡ प्रशासक (Admin) द्वारा प्रदत्त'; break;
-                  default: sourceText = `📌 ${item.source}`;
+                  case 'quiz': 
+                    sourceOrigin = '📝 क्विज अभ्यासबाट प्राप्त'; 
+                    break;
+                  case 'leaderboard': 
+                    sourceOrigin = '🏆 लिडरबोर्ड विजेता पुरस्कार'; 
+                    break;
+                  case 'daily_login': 
+                    sourceOrigin = '🎁 दैनिक लगइन बोनस (Daily Login)'; 
+                    break;
+                  case 'admin': 
+                    sourceOrigin = '⚡ प्रशासक (Admin) द्वारा थपिएको'; 
+                    break;
+                  default: 
+                    sourceOrigin = `📌 ${item.source} बाट`; 
                 }
               } else {
-                // यदि source फिल्ड छैन भने description वा ტიपको आधारमा अनुमान लगाउने
-                if (descText.toLowerCase().includes('quiz')) sourceText = '📝 क्विज कम्पिटिशन';
-                else if (descText.toLowerCase().includes('leaderboard')) sourceText = '🏆 लिडरबोर्ड';
-                else sourceText = isEarn ? '🎁 कोइन आर्जन' : '🛍️ कोइन खर्च';
+                // यदि source फिल्ड छैन भने description हेरेर पत्ता लगाउने
+                if (titleText.toLowerCase().includes('quiz')) sourceOrigin = '📝 क्विज कम्पिटिशनबाट';
+                else if (titleText.toLowerCase().includes('leaderboard')) sourceOrigin = '🏆 लिडरबोर्डबाट';
+                else if (titleText.toLowerCase().includes('login')) sourceOrigin = '🎁 दैनिक बोनसबाट';
+                else sourceOrigin = isEarn ? '✨ बोनस कोइन' : '🛍️ वस्तु खरिद वा उपयोग';
               }
 
               let dateStr = 'हालसालै';
@@ -176,17 +195,16 @@
                       <i class="fa-solid ${iconSymbol}"></i>
                     </div>
                     <div class="history-info">
-                      <span class="source-tag">${sourceText}</span>
-                      <div class="title">${descText || (isEarn ? 'कोइन प्राप्त भयो' : 'कोइन खर्च भयो')}</div>
+                      <div class="source-desc">${sourceOrigin}</div>
+                      <div class="title">${titleText}</div>
                       <div class="date">${dateStr}</div>
                     </div>
                   </div>
-                  <div class="history-amount ${amountClass}">${sign}${item.amount} कोइन</div>
+                  <div class="history-amount ${amountClass}">${displayAmount} कोइन</div>
                 </div>
               `;
             });
           } else {
-            // यदि इतिहास छैन भने ब्यालेन्स कार्ड देखाउने
             txCount = 1;
             html = `
               <div class="history-item">
@@ -195,8 +213,8 @@
                     <i class="fa-solid fa-coins"></i>
                   </div>
                   <div class="history-info">
-                    <span class="source-tag">💼 वालेट ब्यालेन्स</span>
-                    <div class="title">हालको जम्मा कुल मौज्दात</div>
+                    <div class="source-desc">💼 वालेट जम्मा ब्यालेन्स</div>
+                    <div class="title">हालको कुल मौज्दात</div>
                     <div class="date">अद्यावधिक गरिएको</div>
                   </div>
                 </div>
@@ -224,4 +242,4 @@
   </script>  
 
 </body>  
-</html>
+</html>  
