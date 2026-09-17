@@ -1,4 +1,4 @@
-// Global Components (Chat, Footer, Floating Emojis, Room Config, Bottom Nav & Other Pages Header)
+// // Global Components (Chat, Footer, Floating Emojis, Room Config, Bottom Nav & Other Pages Header)
 (function() {
   // Inject CSS styles dynamically for all global components
   const style = document.createElement('style');
@@ -107,9 +107,6 @@
   `;
   document.head.appendChild(style);
 
-  // Check if current page is NOT dashboard.html
-  const isNotDashboard = !window.location.pathname.includes('dashboard.html');
-
   // Inject Chat Drawer & Footer Container
   const containerDiv = document.createElement('div');
   containerDiv.innerHTML = `
@@ -168,10 +165,8 @@
     </footer>
   `;
 
-  // कन्टेनरलाई वेबपेजको बडीमा इन्जेक्ट गर्ने मुख्य लाइन (यो छुटेको थियो)
   document.body.appendChild(containerDiv);
 
-  // Global functions
   window.toggleGlobalChat = function() {
     document.getElementById('globalChatDrawer').classList.toggle('open');
   };
@@ -225,7 +220,6 @@
 window.selectedMaxPlayers = 4;
 window.selectedTotalRounds = 3;
 
-// रुम सिर्जना गर्ने कार्ड (Lobby Card) अटो इन्जेक्ट गर्ने फंक्सन
 function loadCreateRoomCard(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -299,7 +293,6 @@ function loadCreateRoomCard(containerId) {
   });
 }
 
-// १. अटोमेटिक Bottom Navigation Bar इन्जेक्ट गर्ने फंक्सन
 function loadBottomNav(activePage) {
   if (!document.getElementById('bottom-nav-style')) {
     const styleElem = document.createElement('style');
@@ -360,7 +353,7 @@ function loadBottomNav(activePage) {
   document.body.insertAdjacentHTML('beforeend', navHTML);
 }
 
-// २. पेज लोड हुँदा ग्लोबल पपअप र कन्फर्मेसन मोडलहरू इन्जेक्ट गर्ने
+// सुधारेको पपअप र मोडल कोड
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById('customGlobalModal')) {
     const modalHTML = `
@@ -372,7 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <h3 id="cgModalTitle" class="cg-title">सफल भयो!</h3>
           <p id="cgModalMessage" class="cg-message">तपाईंको कार्य सफलतापूर्वक पूरा भयो।</p>
-          <button id="cgModalBtn" class="cg-btn">ठीक छ </button>
+          <button id="cgModalBtn" class="cg-btn">ठीक छ</button>
         </div>
       </div>
 
@@ -385,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <h3 id="cgConfirmTitle" class="cg-title">पुष्टि गर्नुहोस्</h3>
           <p id="cgConfirmMessage" class="cg-message">के तपाईं यो कार्य गर्न चाहनुहुन्छ?</p>
           <div style="display: flex; gap: 10px;">
-            <button id="cgCancelBtn" style="background: #e2e8f0; color: #475569;" class="cg-btn">रद्द गर्ने (Cancel)</button>
+            <button id="cgCancelBtn" class="cg-btn cg-btn-secondary">रद्द गर्ने</button>
             <button id="cgOkBtn" class="cg-btn">हुन्छ (OK)</button>
           </div>
         </div>
@@ -394,43 +387,48 @@ document.addEventListener("DOMContentLoaded", () => {
       <style>
         .cg-modal-overlay {
           position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-          background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px); z-index: 99999;
+          background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px); z-index: 99999;
           display: flex; align-items: center; justify-content: center;
-          opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          opacity: 0; visibility: hidden; transition: all 0.25s ease-in-out;
         }
         .cg-modal-overlay.active { opacity: 1; visibility: visible; }
         .cg-modal-card {
-          background: #ffffff; width: 88%; max-width: 340px; border-radius: 24px;
-          padding: 28px 24px; text-align: center; box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
-          transform: scale(0.85) translateY(20px); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-          border: 1px solid rgba(255, 255, 255, 0.8);
+          background: #ffffff; width: 90%; max-width: 360px; border-radius: 24px;
+          padding: 26px 20px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          transform: scale(0.9) translateY(15px); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+          border: 1px solid #f1f5f9;
         }
         .cg-modal-overlay.active .cg-modal-card { transform: scale(1) translateY(0); }
         .cg-icon-box {
-          width: 65px; height: 65px; border-radius: 50%; display: flex;
-          align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 18px auto;
-          box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+          width: 58px; height: 58px; border-radius: 50%; display: flex;
+          align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px auto;
+          box-shadow: 0 8px 16px rgba(0,0,0,0.06);
         }
         .cg-icon-box.success { background: #dcfce7; color: #16a34a; }
         .cg-icon-box.error { background: #fee2e2; color: #dc2626; }
         .cg-icon-box.warning { background: #fef3c7; color: #d97706; }
-        .cg-title { font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
-        .cg-message { font-size: 13.5px; color: #64748b; line-height: 1.5; margin-bottom: 24px; }
+        .cg-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+        .cg-message { font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px; }
         .cg-btn {
-          width: 100%; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-          color: white; border: none; padding: 13px; border-radius: 14px;
-          font-weight: 700; font-size: 14px; cursor: pointer;
-          box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+          flex: 1; background: #2563eb;
+          color: white; border: none; padding: 12px; border-radius: 12px;
+          font-weight: 700; font-size: 13.5px; cursor: pointer;
+          transition: background 0.2s, transform 0.1s;
         }
+        .cg-btn:hover { background: #1d4ed8; }
         .cg-btn:active { transform: scale(0.97); }
+        .cg-btn-secondary {
+          background: #f1f5f9; color: #475569;
+        }
+        .cg-btn-secondary:hover { background: #e2e8f0; }
       </style>
     `;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
   }
 });
 
-// ३. ग्लोबल पपअप फंक्सन (Success, Error, Warning)
+// ग्लोबल पपअप फंक्सन (Success, Error, Warning)
 window.showSuccessPopup = function(message, redirectUrl, type = 'success', titleText = '') {
   const modal = document.getElementById('customGlobalModal');
   const msgEl = document.getElementById('cgModalMessage');
@@ -466,7 +464,7 @@ window.showSuccessPopup = function(message, redirectUrl, type = 'success', title
   }
 };
 
-// ४. कन्फर्मेसन (Cancel / OK) पपअपको लागि ग्लोबल फंक्सन
+// कन्फर्मेसन (Cancel / OK) पपअपको लागि ग्लोबल फंक्सन
 window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्टि गर्नुहोस् ⚠️') {
   const modal = document.getElementById('customConfirmModal');
   const msgEl = document.getElementById('cgConfirmMessage');
@@ -486,6 +484,7 @@ window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्
   };
 
   cancelBtn.onclick = function() {
-    modal.classList.remove('active');
+    modal.classList.remaining ? '' : modal.classList.remove('active');
+    document.getElementById('customConfirmModal').classList.remove('active');
   };
 };
