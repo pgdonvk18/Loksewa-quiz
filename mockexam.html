@@ -463,7 +463,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -577,12 +577,22 @@
         return;
       }
 
-      // ५० कोइन काट्ने
+      // ५० कोइन काट्ने र इतिहासमा राख्ने
       try {
         const userDocRef = doc(db, "users", currentUserUid);
         await updateDoc(userDocRef, {
           coins: increment(-50)
         });
+
+        // ट्रान्जेक्सन इतिहास थप्ने (कोइन खर्च भएको)
+        await addDoc(collection(db, "users", currentUserUid, "coin_history"), {
+          amount: -50,
+          type: 'spend',
+          source: 'exam_fee',
+          description: `मोक टेस्ट (${displayNameSet}) परीक्षा शुल्क`,
+          created_at: serverTimestamp()
+        });
+
         await fetchUserCoins(currentUserUid);
         startExam(false);
       } catch (err) {
@@ -756,6 +766,15 @@
         if (earnedCoins > 0 && currentUserUid) {
           const userDocRef = doc(db, "users", currentUserUid);
           await updateDoc(userDocRef, { coins: increment(earnedCoins) });
+
+          // ट्रान्जेक्सन इतिहास थप्ने (कोइन प्राप्त भएको)
+          await addDoc(collection(db, "users", currentUserUid, "coin_history"), {
+            amount: earnedCoins,
+            type: 'earn',
+            source: 'exam_reward',
+            description: `मोक टेस्ट (${displayNameSet}) मा ${percentage.toFixed(0)}% ल्याए बापत`,
+            created_at: serverTimestamp()
+          });
         }
 
         if (userEmail) {
@@ -864,7 +883,7 @@
 
     window.submitQuestionReport = async function() {
       const reason = document.getElementById('reportReason').value.trim();
-      if (!reason) { showConfirmPopup('कृपया समस्या क्या हो लेख्नुहोस्!'); return; }
+      if (!reason) { alert('कृपया समस्या क्या हो लेख्नुहोस्!'); return; }
 
       const currentQ = examQuestions[currentIdx];
       const { error } = await supabaseClient.from('reported_questions').insert([{ 
@@ -875,10 +894,10 @@
       }]);
 
       if (error) {
-        showConfirmPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+        alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
       } else {
         closeReportModal();
-        showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
+        alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
       }
     }
   </script>
