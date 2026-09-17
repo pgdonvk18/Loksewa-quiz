@@ -512,7 +512,7 @@
     let candidateName = '', userEmail = '', examQuestions = [], currentIdx = 0, userAnswers = {};
     let timerInterval, timeLeftSeconds = 45 * 60, isPracticeMode = false;
     let currentLang = 'ne'; 
-    let globalReviewList = []; // संकलित समीक्षा डेटा
+    let globalReviewList = [];
 
     const translations = {
       en: { examStart: "Start Exam 🚀", practice: "Practice Mode 💡", submit: "Submit", next: "Next ➡️", prev: "⬅️ Previous", leaderboard: "🏆 Leaderboard" },
@@ -680,7 +680,6 @@
       let finalScore = (correct * 2) - (wrong * 0.4);
       finalScore = Math.max(0, parseFloat(finalScore.toFixed(2)));
 
-      // प्रोफसनल मार्कसीटमा मानहरू अपडेट गर्ने
       document.getElementById('rep-name').innerText = candidateName;
       document.getElementById('rep-set').innerText = prettyExamName;
       document.getElementById('stat-correct').innerText = correct;
@@ -688,7 +687,6 @@
       document.getElementById('stat-skipped').innerText = skipped;
       document.getElementById('stat-score').innerText = finalScore;
 
-      // Supabase लिडरबोर्डमा पठाउने डेटा
       const payload = {
         username: userEmail,
         set_name: examIdentifier,
@@ -699,14 +697,22 @@
         total_questions: examQuestions.length
       };
 
-      const { error } = await supabaseClient.from('exam_leaderboard').upsert([payload], { onConflict: 'username,set_name' });
-      if (error) console.error("Leaderboard insert error:", error.message);
+      // Supabase मा डेटा पठाउने र त्रुटि आएमा अलर्टमा देखाउने
+      const { data, error } = await supabaseClient
+        .from('exam_leaderboard')
+        .upsert([payload], { onConflict: 'username,set_name' });
+
+      if (error) {
+        console.error("Leaderboard insert error:", error);
+        alert("Supabase Error: " + error.message);
+      } else {
+        console.log("Successfully saved to leaderboard:", data);
+      }
 
       renderReviewItems('all');
       fetchLeaderboard();
     }
 
-    // समीक्षा फिल्टर गर्ने फंक्सन
     window.filterReview = function(type) {
       document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
       document.getElementById(`tab-${type}`).classList.add('active');
