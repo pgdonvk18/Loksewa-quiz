@@ -106,17 +106,17 @@
       </div>  
 
       <div id="kharidar-sets" class="set-list-container hidden">  
-        <div class="set-card" onclick="confirmExamStart('exam.html?set=kharidar_mocktest1')">  
+        <div class="set-card" id="card-kharidar-1" onclick="confirmExamStart('exam.html?set=kharidar_mocktest1')">  
           <div>  
             <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Mock Test Set 1</p>  
-            <p style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
+            <p id="desc-kharidar-1" style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
           </div>  
           <button class="btn-primary" style="padding: 8px 14px; font-size: 12px;">सुरु गर्नुहोस्</button>  
         </div>  
-        <div class="set-card" onclick="confirmExamStart('exam.html?set=kharidar_mocktest2')">  
+        <div class="set-card" id="card-kharidar-2" onclick="confirmExamStart('exam.html?set=kharidar_mocktest2')">  
           <div>  
             <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Mock Test Set 2</p>  
-            <p style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
+            <p id="desc-kharidar-2" style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
           </div>  
           <button class="btn-primary" style="padding: 8px 14px; font-size: 12px;">सुरु गर्नुहोस्</button>  
         </div>  
@@ -138,17 +138,17 @@
       </div>  
 
       <div id="naasu-sets" class="set-list-container hidden">  
-        <div class="set-card" onclick="confirmExamStart('exam.html?set=naasu_mocktest1')">  
+        <div class="set-card" id="card-naasu-1" onclick="confirmExamStart('exam.html?set=naasu_mocktest1')">  
           <div>  
             <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Mock Test Set 1</p>  
-            <p style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
+            <p id="desc-naasu-1" style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
           </div>  
           <button class="btn-primary" style="padding: 8px 14px; font-size: 12px;">सुरु गर्नुहोस्</button>  
         </div>  
-        <div class="set-card" onclick="confirmExamStart('exam.html?set=naasu_mocktest2')">  
+        <div class="set-card" id="card-naasu-2" onclick="confirmExamStart('exam.html?set=naasu_mocktest2')">  
           <div>  
             <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Mock Test Set 2</p>  
-            <p style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
+            <p id="desc-naasu-2" style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
           </div>  
           <button class="btn-primary" style="padding: 8px 14px; font-size: 12px;">सुरु गर्नुहोस्</button>  
         </div>  
@@ -186,12 +186,17 @@
     const app = initializeApp(firebaseConfig);  
     const auth = getAuth(app);  
     const db = getFirestore(app);  
+
+    // Supabase सेटअप (तपाईंको credentials अनुसार)
+    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   
     let currentUserUid = null;  
     let userCoins = 0;  
     let pendingExamUrl = '';  
 
-    document.addEventListener("DOMContentLoaded", () => {  
+    document.addEventListener("DOMContentLoaded", async () => {  
       onAuthStateChanged(auth, async (user) => {  
         if (user) {  
           currentUserUid = user.uid;  
@@ -201,7 +206,45 @@
           document.getElementById('user-coin-balance').innerText = '0';  
         }  
       });  
+
+      // पेज लोड हुनेबित्तिकै डेटाबेसमा सेटहरूको प्रश्न छ/छैन जाँच गर्ने
+      await checkAvailableSets();
     });  
+
+    async function checkAvailableSets() {
+      const sets = [
+        { id: 'kharidar_mocktest1', cardId: 'card-kharidar-1', descId: 'desc-kharidar-1' },
+        { id: 'kharidar_mocktest2', cardId: 'card-kharidar-2', descId: 'desc-kharidar-2' },
+        { id: 'naasu_mocktest1', cardId: 'card-naasu-1', descId: 'desc-naasu-1' },
+        { id: 'naasu_mocktest2', cardId: 'card-naasu-2', descId: 'desc-naasu-2' }
+      ];
+
+      for (let item of sets) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('quizzes')
+            .select('id')
+            .ilike('topic', item.id);
+
+          const cardElement = document.getElementById(item.cardId);
+          const descElement = document.getElementById(item.descId);
+
+          if (error || !data || data.length === 0) {
+            // यदि प्रश्न भेटिएन भने कार्डलाई डिसेबल गर्ने
+            if (cardElement) {
+              cardElement.style.opacity = '0.5';
+              cardElement.style.pointerEvents = 'none';
+              cardElement.style.background = '#f1f5f9';
+            }
+            if (descElement) {
+              descElement.innerHTML = '<span style="color: #dc2626; font-weight: 700;">प्रश्न उपलब्ध छैन</span>';
+            }
+          }
+        } catch (err) {
+          console.error(`Error checking set ${item.id}:`, err);
+        }
+      }
+    }
 
     async function fetchUserCoins(uid) {  
       try {  
