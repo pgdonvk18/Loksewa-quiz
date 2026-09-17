@@ -235,6 +235,24 @@
     }
     .modal-overlay.active .modal-card { transform: translateY(0) scale(1); }
     .hidden { display: none !important; }
+
+    /* Review Filter Tabs */
+    .filter-tab {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-tab.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
   </style>
 </head>
 <body>
@@ -261,13 +279,22 @@
     </div>
   </div>
 
-  <!-- REVIEW DETAILS MODAL -->
+  <!-- REVIEW DETAILS MODAL WITH FILTERS -->
   <div id="reviewModal" class="modal-overlay">
-    <div class="modal-card" style="max-width: 550px; width: 95%; height: 85vh; display: flex; flex-direction: column; padding: 16px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+    <div class="modal-card" style="max-width: 580px; width: 95%; height: 90vh; display: flex; flex-direction: column; padding: 16px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">📋 उत्तर तथा समीक्षा (Review)</h3>
         <button onclick="closeReviewModal()" style="background: none; border: none; font-size: 16px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
       </div>
+      
+      <!-- Filter Buttons Bar -->
+      <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
+        <button onclick="filterReview('all')" id="tab-all" class="filter-tab active">सबै (All)</button>
+        <button onclick="filterReview('correct')" id="tab-correct" class="filter-tab">✅ सही (Correct)</button>
+        <button onclick="filterReview('wrong')" id="tab-wrong" class="filter-tab">❌ गलत (Wrong)</button>
+        <button onclick="filterReview('skipped')" id="tab-skipped" class="filter-tab">⚠️ छाडिएको (Skipped)</button>
+      </div>
+
       <div id="review-container" style="flex: 1; overflow-y: auto; font-size: 12px; padding-right: 4px;"></div>
       <button onclick="closeReviewModal()" class="btn-primary" style="margin-top: 10px; padding: 10px;">बन्द गर्नुहोस्</button>
     </div>
@@ -344,20 +371,54 @@
       </div>
     </div>
 
-    <!-- RESULT SCREEN -->
+    <!-- RESULT / PROFESSIONAL MARKSHEET SCREEN -->
     <div id="result-screen" class="hidden space-y-4">
-      <div id="pdf-report-content" class="card space-y-4" style="background: #ffffff; border: 2px solid #2563eb; border-radius: 20px; text-align: center; padding: 24px 16px;">
-        <h2 id="report-main-title" style="font-size: 16px; font-weight: 800; color: #1e3a8a;">LOKSEWAQUEST CERTIFICATE OF COMPLETION</h2>
-        <div style="margin: 16px 0; border-top: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; padding: 12px 0;">
-          <p id="rep-name" style="font-size: 16px; color: #0f172a; font-weight: 800;"></p>
-          <p id="rep-set" style="font-size: 12px; color: #2563eb; font-weight: 700; margin-top: 2px;"></p>
-          <p id="rep-score-details" style="font-size: 13px; color: #334155; font-weight: 700; margin-top: 8px;"></p>
+      <div class="card" style="background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); border: 2px solid #3b82f6; border-radius: 24px; text-align: center; padding: 24px 16px; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);">
+        
+        <div style="width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px auto; box-shadow: 0 4px 10px rgba(37,99,235,0.3);">
+          <i class="fa-solid fa-award"></i>
         </div>
-        <button onclick="openReviewModal()" class="btn-secondary" style="width: 100%; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; padding: 10px;">
-          📋 उत्तर तथा समीक्षा हेर्नुहोस् (View Solutions)
+        
+        <h2 style="font-size: 14px; font-weight: 800; color: #1e3a8a; letter-spacing: 0.5px;">LOKSEWAQUEST OFFICIAL SCORECARD</h2>
+        <p id="rep-set" style="font-size: 12px; color: #2563eb; font-weight: 700; margin-top: 2px;"></p>
+
+        <!-- Candidate Info Box -->
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 14px; padding: 14px; margin: 16px 0; text-align: left;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px;">
+            <span style="color: #64748b; font-weight: 600;">परीक्षार्थी (Candidate):</span>
+            <span id="rep-name" style="color: #0f172a; font-weight: 800;"></span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px;">
+            <span style="color: #64748b; font-weight: 600;">नतिजा स्थिति (Status):</span>
+            <span style="color: #16a34a; font-weight: 800;">सफलतापूर्वक सम्पन्न (Completed)</span>
+          </div>
+        </div>
+
+        <!-- Score Breakdown Grid -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px;">
+          <div style="background: #dcfce7; border: 1px solid #bbf7d0; padding: 10px; border-radius: 12px; text-align: center;">
+            <span style="font-size: 10px; color: #166534; font-weight: 700; display: block;">सही उत्तर (Correct)</span>
+            <span id="stat-correct" style="font-size: 16px; color: #15803d; font-weight: 800;">0</span>
+          </div>
+          <div style="background: #fee2e2; border: 1px solid #fecaca; padding: 10px; border-radius: 12px; text-align: center;">
+            <span style="font-size: 10px; color: #991b1b; font-weight: 700; display: block;">गलत उत्तर (Wrong)</span>
+            <span id="stat-wrong" style="font-size: 16px; color: #b91c1c; font-weight: 800;">0</span>
+          </div>
+          <div style="background: #fef3c7; border: 1px solid #fde68a; padding: 10px; border-radius: 12px; text-align: center;">
+            <span style="font-size: 10px; color: #92400e; font-weight: 700; display: block;">छोटिएको (Skipped)</span>
+            <span id="stat-skipped" style="font-size: 16px; color: #b45309; font-weight: 800;">0</span>
+          </div>
+          <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px; border-radius: 12px; text-align: center;">
+            <span style="font-size: 10px; color: #1e40af; font-weight: 700; display: block;">कुल प्राप्तांक (Score)</span>
+            <span id="stat-score" style="font-size: 16px; color: #1d4ed8; font-weight: 800;">0</span>
+          </div>
+        </div>
+
+        <button onclick="openReviewModal()" class="btn-primary" style="background: #1e3a8a; margin-bottom: 10px; font-size: 13px; padding: 12px;">
+          📋 उत्तर तथा समीक्षा हेर्नुहोस् (Review Answers)
         </button>
       </div>
-      <button onclick="location.href='dashboard.html'" class="btn-primary">🔄 ड्यासबोर्डमा फर्कनुहोस्</button>
+      <button onclick="location.href='dashboard.html'" class="btn-secondary" style="width: 100%; text-align: center; padding: 12px;">🔄 ड्यासबोर्डमा फर्कनुहोस्</button>
     </div>
   </main>
 
@@ -451,6 +512,7 @@
     let candidateName = '', userEmail = '', examQuestions = [], currentIdx = 0, userAnswers = {};
     let timerInterval, timeLeftSeconds = 45 * 60, isPracticeMode = false;
     let currentLang = 'ne'; 
+    let globalReviewList = []; // संकलित समीक्षा डेटा
 
     const translations = {
       en: { examStart: "Start Exam 🚀", practice: "Practice Mode 💡", submit: "Submit", next: "Next ➡️", prev: "⬅️ Previous", leaderboard: "🏆 Leaderboard" },
@@ -589,26 +651,44 @@
       document.getElementById('result-screen').classList.remove('hidden');
 
       let correct = 0, wrong = 0, skipped = 0;
+      globalReviewList = [];
+
       examQuestions.forEach((q, idx) => {
         const userAns = userAnswers[idx];
-        if (!userAns) {
-          skipped++;
-        } else if (userAns === q.answer) {
-          correct++;
+        let status = 'skipped';
+        if (userAns) {
+          if (userAns === q.answer) {
+            correct++;
+            status = 'correct';
+          } else {
+            wrong++;
+            status = 'wrong';
+          }
         } else {
-          wrong++;
+          skipped++;
         }
+
+        globalReviewList.push({
+          index: idx + 1,
+          question: q.question,
+          correctAns: q.answer,
+          userAns: userAns || null,
+          status: status
+        });
       });
 
-      // हिसाब: सही को २ अंक (+2), गलत को २०% माइनस (अर्थात् -0.4 अंक प्रति गलत उत्तर)
       let finalScore = (correct * 2) - (wrong * 0.4);
-      finalScore = Math.max(0, parseFloat(finalScore.toFixed(2))); // माइनसमा नजाओस् भनेर वा दुई अंकसम्म मिलाउन
+      finalScore = Math.max(0, parseFloat(finalScore.toFixed(2)));
 
+      // प्रोफसनल मार्कसीटमा मानहरू अपडेट गर्ने
       document.getElementById('rep-name').innerText = candidateName;
       document.getElementById('rep-set').innerText = prettyExamName;
-      document.getElementById('rep-score-details').innerHTML = `सही: <span style="color:#16a34a">${correct}</span> | गलत: <span style="color:#dc2626">${wrong}</span> | छाडिएको: <span style="color:#d97706">${skipped}</span><br>कुल प्राप्तांक: <span style="color:#2563eb; font-size:16px;">${finalScore}</span>`;
+      document.getElementById('stat-correct').innerText = correct;
+      document.getElementById('stat-wrong').innerText = wrong;
+      document.getElementById('stat-skipped').innerText = skipped;
+      document.getElementById('stat-score').innerText = finalScore;
 
-      // Supabase टेबलमा डेटा पठाउने (तपाईंको टेबलका स्तम्भहरूसँग ठ्याक्क म्याच गराइएको छ)
+      // Supabase लिडरबोर्डमा पठाउने डेटा
       const payload = {
         username: userEmail,
         set_name: examIdentifier,
@@ -620,26 +700,41 @@
       };
 
       const { error } = await supabaseClient.from('exam_leaderboard').upsert([payload], { onConflict: 'username,set_name' });
-      if (error) console.error("Leaderboard error:", error.message);
+      if (error) console.error("Leaderboard insert error:", error.message);
 
-      buildReviewContainer();
+      renderReviewItems('all');
       fetchLeaderboard();
     }
 
-    function buildReviewContainer() {
+    // समीक्षा फिल्टर गर्ने फंक्सन
+    window.filterReview = function(type) {
+      document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`tab-${type}`).classList.add('active');
+      renderReviewItems(type);
+    }
+
+    function renderReviewItems(filterType) {
       const container = document.getElementById('review-container');
       container.innerHTML = '';
       
-      examQuestions.forEach((q, idx) => {
-        const userAns = userAnswers[idx];
-        const correctAns = q.answer;
+      const filtered = globalReviewList.filter(item => {
+        if (filterType === 'all') return true;
+        return item.status === filterType;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">कुनै प्रश्न फेला परेन।</p>';
+        return;
+      }
+
+      filtered.forEach(item => {
         let statusTag = '';
         let statusBg = '';
 
-        if (!userAns) {
+        if (item.status === 'skipped') {
           statusTag = '⚠️ छाडिएको (Skipped)';
           statusBg = '#fef3c7';
-        } else if (userAns === correctAns) {
+        } else if (item.status === 'correct') {
           statusTag = '✅ सही (+2)';
           statusBg = '#dcfce7';
         } else {
@@ -650,12 +745,12 @@
         let html = `
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 10px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <strong style="color: #1e293b;">प्रश्न ${idx + 1}:</strong>
+              <strong style="color: #1e293b;">प्रश्न ${item.index}:</strong>
               <span style="background: ${statusBg}; padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 10px;">${statusTag}</span>
             </div>
-            <p style="color: #0f172a; font-weight: 600; margin-bottom: 8px;">${q.question}</p>
-            <p style="color: #16a34a; font-weight: 700; font-size: 11px;">सही उत्तर: ${correctAns}</p>
-            <p style="color: ${!userAns ? '#d97706' : (userAns === correctAns ? '#16a34a' : '#dc2626')}; font-weight: 700; font-size: 11px;">तपाईंको उत्तर: ${userAns || 'छैन (Skipped)'}</p>
+            <p style="color: #0f172a; font-weight: 600; margin-bottom: 8px;">${item.question}</p>
+            <p style="color: #16a34a; font-weight: 700; font-size: 11px;">सही उत्तर: ${item.correctAns}</p>
+            <p style="color: ${!item.userAns ? '#d97706' : (item.status === 'correct' ? '#16a34a' : '#dc2626')}; font-weight: 700; font-size: 11px;">तपाईंको उत्तर: ${item.userAns || 'छैन (Skipped)'}</p>
           </div>
         `;
         container.innerHTML += html;
