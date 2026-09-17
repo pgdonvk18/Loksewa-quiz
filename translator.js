@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+Document.addEventListener("DOMContentLoaded", () => {
   // 1. Google Translate Element को लागि आवश्यक hidden div बनाउने
   if (!document.getElementById('google_translate_element')) {
     const hiddenDiv = document.createElement('div');
@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(hiddenDiv);
   }
 
-  // 2. Slide Toggle को CSS Style इन्जेक्ट गर्ने (र गुगलको ब्यानर लुकाउने)
+  // 2. Professional & Modern Slide Toggle को CSS Style इन्जेक्ट गर्ने
   if (!document.getElementById('lang-switch-style')) {
     const style = document.createElement('style');
     style.id = 'lang-switch-style';
@@ -15,35 +15,46 @@ document.addEventListener("DOMContentLoaded", () => {
       .lang-switch-container {
         display: inline-flex;
         align-items: center;
-        background: #f1f5f9;
-        border-radius: 20px;
-        padding: 2px;
+        background: rgba(241, 245, 249, 0.8);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-radius: 30px;
+        padding: 3px;
         position: relative;
         cursor: pointer;
-        border: 1px solid #cbd5e1;
-        margin-bottom: 12px;
+        border: 1px solid rgba(203, 213, 225, 0.8);
+        margin-bottom: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .lang-switch-container:hover {
+        border-color: #2563eb;
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
       }
       .lang-option {
-        padding: 4px 10px;
-        font-size: 11px;
+        padding: 6px 14px;
+        font-size: 12px;
         font-weight: 800;
-        color: #475569;
+        color: #64748b;
         z-index: 2;
         user-select: none;
+        letter-spacing: 0.3px;
+        transition: color 0.2s ease;
       }
       .lang-slider {
         position: absolute;
-        top: 2px;
-        left: 2px;
-        width: 32px;
-        height: 24px;
-        background: #2563eb;
-        border-radius: 14px;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        top: 3px;
+        left: 3px;
+        width: 44px;
+        height: 28px;
+        background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+        border-radius: 20px;
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
       }
       .lang-switch-container.en-active .lang-slider {
-        transform: translateX(32px);
+        transform: translateX(44px);
       }
       .lang-switch-container.en-active .lang-option:last-child {
         color: #ffffff;
@@ -51,19 +62,20 @@ document.addEventListener("DOMContentLoaded", () => {
       .lang-switch-container:not(.en-active) .lang-option:first-child {
         color: #ffffff;
       }
+      
       /* गुगल ट्रान्सलेटले माथि थप्ने ब्यानर र स्पेस हटाउनको लागि */
       .goog-te-banner-frame { display: none !important; }
-      body { top: 0px !important; }
+      body { top: 0px !important; position: static !important; }
       .skiptranslate { display: none !important; }
     `;
     document.head.appendChild(style);
   }
 
-  // 3. Quiz Screen को भित्र प्रश्न देखाउने ठाउँको ठ्याक्कै माथि Slide Toggle Button राख्ने
+  // 3. Quiz Screen को भित्र प्रश्न देखाउने ठाउँको ठ्याक्कै माथि Professional Slide Toggle Button राख्ने
   const quizScreen = document.getElementById('quiz-screen');
   if (quizScreen && !document.getElementById('lang-switch')) {
     const toggleHTML = `
-      <div id="lang-switch" class="lang-switch-container" onclick="toggleLanguage()">
+      <div id="lang-switch" class="lang-switch-container" onclick="toggleLanguage()" title="भाषा परिवर्तन गर्नुहोस् / Change Language">
         <div class="lang-slider"></div>
         <span class="lang-option">नेपाली</span>
         <span class="lang-option">English</span>
@@ -130,7 +142,7 @@ function triggerGoogleTranslate(lang) {
     selectField.value = lang;
     selectField.dispatchEvent(new Event('change'));
   } else {
-    // यदि ड्रपडाउन अझै लोड भइसकेको छैन भने अलिकति पछि फेري प्रयास गर्ने
+    // यदि ड्रपडाउन अझै लोड भइसकेको छैन भने अलिकति पछि फेरि प्रयास गर्ने
     setTimeout(() => triggerGoogleTranslate(lang), 300);
   }
 }
