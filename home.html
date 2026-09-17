@@ -24,24 +24,25 @@
   <meta name="theme-color" content="#3413aa">
   
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Poppins', sans-serif;
-    }
+    /* सुरुमा पेज लुकाउनको लागि (ফ्लिकर नहोस् भन्न हेतु) */
     body {
+      display: none; 
       background: linear-gradient(180deg, rgba(15, 32, 39, 0.85) 0%, rgba(32, 58, 67, 0.9) 50%, rgba(44, 83, 100, 0.95) 100%), 
                   url('https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1000&auto=format&fit=crop') no-repeat center center/cover;
       color: #ffffff;
       height: 100vh;
-      display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
       padding: 50px 20px;
       text-align: center;
       overflow: hidden;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      box-sizing: border-box;
+    }
+    * {
+      box-sizing: border-box;
     }
     .content-container {
       display: flex;
@@ -115,16 +116,40 @@
     }
   </style>
 
-  <!-- Session Check Script -->
-  <script>
-    // पेज लोड हुनेबित्तिकै localStorage मा session वा user token जाँच गर्ने
-    // (तपाईंले लगइन हुँदा localStorage.setItem('userSession', 'active') वा यस्तै कुनै key राख्नुभएको हुनुपर्छ)
-    const userSession = localStorage.getItem('userSession'); // वा तपाईंको आवश्यकता अनुसारको key नाम राख्नुहोला (जस्तै: authToken, loggedInUser)
+  <!-- Firebase Auth & Session Check Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    if (userSession) {
-      // यदि session फेला पर्यो भने सिधै dashboard.html मा पठाउने
-      window.location.replace('dashboard.html');
-    }
+    // TODO: तपाईंको आफ्नै Firebase config यहाँ राख्नुहोला (यदि अगाडि नै अर्को फाइलमा छ भने मिलाउनुस्)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            // युजर पहिल्यै लगइन छ भने सिधै ड्यासबोर्डमा पठाउने
+            window.location.replace("dashboard.html");
+          } else {
+            // युजर लगइन छैन भने मात्र यो वेलकम पेज देखाउने (display: flex)
+            document.body.style.display = "flex";
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Persistence Error:", error);
+        document.body.style.display = "flex"; // एरर आए पनि पेज देखियोस्
+      });
   </script>
 </head>
 <body>
