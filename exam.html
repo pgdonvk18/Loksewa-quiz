@@ -532,14 +532,22 @@
           return;
         }
 
-        // Live exam ko bela 25 coin katine confirmation popup
+        // Live exam ko bela 25 coin katine confirmation popup (showConfirmPopup प्रयोग गरिएको)
         if (!isPracticeMode) {
-          let confirmCoin = confirm("⚠️ चेतावनी: परीक्षा सुरु गर्न तपाईंको खाताबाट २५ कोइन (25 Coins) काटिनेछ। के तपाईं अगाडि बढ्न चाहनुहुन्छ?");
-          if (!confirmCoin) {
-            return; // User le cancel garyo vane exam suru hudaina
-          }
+          showConfirmPopup("⚠️ चेतावनी: परीक्षा सुरु गर्न तपाईंको खाताबाट २५ कोइन (25 Coins) काटिनेछ। के तपाईं अगाडि बढ्न चाहनुहुन्छ?", async () => {
+            proceedStartExam();
+          }, "कोइन काटिने कन्फर्मेसन");
+          return;
+        } else {
+          proceedStartExam();
         }
+      } catch (err) {
+        showSuccessPopup('त्रुटि: ' + err.message, '', 'error', 'त्रुटि');
+      }
+    }
 
+    async function proceedStartExam() {
+      try {
         if (!isPracticeMode) {
           const userRef = doc(db, "users", auth.currentUser.uid);
           const userSnap = await getDoc(userRef);
@@ -550,11 +558,7 @@
           }
 
           if (currentCoins < 25) {
-            if (typeof showSuccessPopup === 'function') {
-              showSuccessPopup('तपाईंसँग परीक्षा दिन पर्याप्त कोइन (कम्तीमा २५) छैन!', '', 'warning', 'अपर्याप्त कोइन');
-            } else {
-              alert('तपाईंसँग परीक्षा दिन पर्याप्त कोइन (कम्तीमा २५) छैन!');
-            }
+            showSuccessPopup('तपाईंसँग परीक्षा दिन पर्याप्त कोइन (कम्तीमा २५) छैन!', '', 'warning', 'अपर्याप्त कोइन');
             return;
           }
 
@@ -571,11 +575,7 @@
         if (error || !data || data.length === 0) {
           let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', rawSet);
           if (retry.error || !retry.data || retry.data.length === 0) {
-            if (typeof showSuccessPopup === 'function') {
-              showSuccessPopup(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`, '', 'error', 'त्रुटि');
-            } else {
-              alert(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
-            }
+            showSuccessPopup(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`, '', 'error', 'त्रुटि');
             return;
           }
           data = retry.data;
@@ -602,11 +602,7 @@
 
         loadExamQuestion();
       } catch (err) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup('त्रुटि: ' + err.message, '', 'error', 'त्रुटि');
-        } else {
-          alert('त्रुटि: ' + err.message);
-        }
+        showSuccessPopup('त्रुटि: ' + err.message, '', 'error', 'त्रुटि');
       }
     }
 
@@ -676,19 +672,12 @@
         currentIdx++;
         loadExamQuestion();
       } else {
-        if (typeof showConfirmPopup === 'function') {
-          showConfirmPopup("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?", () => {
-            examStartedActive = false; // Stop auto-submit trigger after deliberate submission
-            if (!isPracticeMode) clearInterval(timerInterval);
-            submitExam();
-          }, "परीक्षा बुझाउने?");
-        } else {
-          if (confirm("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?")) {
-            examStartedActive = false;
-            if (!isPracticeMode) clearInterval(timerInterval);
-            submitExam();
-          }
-        }
+        // showConfirmPopup को प्रयोग गरिएको
+        showConfirmPopup("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?", () => {
+          examStartedActive = false; // Stop auto-submit trigger after deliberate submission
+          if (!isPracticeMode) clearInterval(timerInterval);
+          submitExam();
+        }, "परीक्षा बुझाउने?");
       }
     }
 
@@ -930,11 +919,7 @@
     window.submitQuestionReport = async function() {
       const reason = document.getElementById('reportReason').value.trim();
       if (!reason) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup('कृपया समस्या के हो लेख्नुहोस्!', '', 'warning', 'अपूरो विवरण');
-        } else {
-          alert('कृपया समस्या के हो लेख्नुहोस्!');
-        }
+        showSuccessPopup('कृपया समस्या के हो लेख्नुहोस्!', '', 'warning', 'अपूरो विवरण');
         return;
       }
 
@@ -949,18 +934,10 @@
         }]);
 
       if (error) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message, '', 'error', 'त्रुटि');
-        } else {
-          alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
-        }
+        showSuccessPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message, '', 'error', 'त्रुटि');
       } else {
         closeReportModal();
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏', '', 'success', 'सफल');
-        } else {
-          alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
-        }
+        showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏', '', 'success', 'सफल');
       }
     }
 
@@ -969,7 +946,7 @@
       const examScreen = document.getElementById('exam-screen');
       if (examStartedActive && !examScreen.classList.contains('hidden') && !isPracticeMode) {
         if (document.hidden) {
-          alert("⚠️ चेतावनी: तपाईंले परीक्षाको tab छोड्नुभयो वा minimize गर्नुभयो! तपाईंको परीक्षा स्वतः submit हुँदैछ।");
+          showSuccessPopup("⚠️ चेतावनी: तपाईंले परीक्षाको tab छोड्नुभयो वा minimize गर्नुभयो! तपाईंको परीक्षा स्वतः submit हुँदैछ।", '', 'warning', 'चेतावनी');
           clearInterval(timerInterval);
           submitExam();
         }
@@ -979,13 +956,11 @@
     window.addEventListener('popstate', function(event) {
       const examScreen = document.getElementById('exam-screen');
       if (examStartedActive && !examScreen.classList.contains('hidden') && !isPracticeMode) {
-        let confirmLeave = confirm("⚠️ सावधान! तपाईं परीक्षा दिँदै हुनुहुन्छ, back जाँदा परीक्षा स्वतः submit हुनेछ। क्यान्सिल गर्न चाहनुहुन्छ?");
-        if (confirmLeave) {
+        showConfirmPopup("⚠️ सावधान! तपाईं परीक्षा दिँदै हुनुहुन्छ, back जाँदा परीक्षा स्वतः submit हुनेछ। क्यान्सिल गर्न चाहनुहुन्छ?", () => {
           clearInterval(timerInterval);
           submitExam();
-        } else {
-          history.pushState(null, null, window.location.href);
-        }
+        }, "सावधान!");
+        history.pushState(null, null, window.location.href);
       }
     });
 
