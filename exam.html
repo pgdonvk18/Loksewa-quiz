@@ -1,20 +1,31 @@
 <!DOCTYPE html>
 <html lang="ne">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <title>LoksewaQuest - Mock Exam & Practice</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- KaTeX -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
-          onload="renderMathInElement(document.body);"></script>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
 
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body);"></script>
+
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -33,7 +44,7 @@
     }
 
     /* ================================
-       QUIZ TABLE
+       TABLE
     ================================= */
     .quiz-table {
       width: 100%;
@@ -281,15 +292,14 @@
     #achievement-unlocked-popup {
       position: fixed;
       inset: 0;
-      z-index: 20000;
-      background: rgba(15, 23, 42, 0.78);
-      backdrop-filter: blur(7px);
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 10001;
       opacity: 0;
       visibility: hidden;
-      pointer-events: none;
       transition: all 0.3s ease;
       padding: 20px;
     }
@@ -297,37 +307,37 @@
     #achievement-unlocked-popup.active {
       opacity: 1;
       visibility: visible;
-      pointer-events: auto;
     }
 
     .achievement-popup-card {
       width: 100%;
-      max-width: 340px;
+      max-width: 350px;
       background: #ffffff;
-      border-radius: 28px;
-      padding: 28px 22px 22px;
+      border-radius: 26px;
+      padding: 30px 22px 24px;
       text-align: center;
       box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
-      transform: translateY(25px) scale(0.9);
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: scale(0.8) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 2px solid #facc15;
     }
 
     #achievement-unlocked-popup.active .achievement-popup-card {
-      transform: translateY(0) scale(1);
+      transform: scale(1) translateY(0);
     }
 
     .achievement-popup-icon {
       width: 82px;
       height: 82px;
-      margin: 0 auto 14px;
+      margin: 0 auto 16px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       background: linear-gradient(135deg, #fef3c7, #fde68a);
       color: #d97706;
-      font-size: 36px;
-      box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
+      font-size: 34px;
+      box-shadow: 0 12px 30px rgba(217, 119, 6, 0.22);
     }
 
     .achievement-popup-label {
@@ -335,32 +345,40 @@
       font-weight: 800;
       letter-spacing: 1.5px;
       color: #d97706;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
     }
 
-    .achievement-popup-card h3 {
-      font-size: 20px;
+    #achievement-popup-name {
+      font-size: 21px;
       font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 3px;
+      color: #1e293b;
+      margin-bottom: 5px;
     }
 
-    .achievement-popup-card p {
-      font-size: 12px;
+    #achievement-popup-en {
       color: #64748b;
+      font-size: 12px;
+      font-weight: 600;
       margin-bottom: 20px;
     }
 
-    .achievement-popup-card button {
+    .achievement-popup-btn {
       width: 100%;
       border: none;
       background: #2563eb;
-      color: white;
-      padding: 12px;
+      color: #ffffff;
+      padding: 13px;
       border-radius: 12px;
       font-size: 13px;
       font-weight: 800;
       cursor: pointer;
+    }
+
+    /* ================================
+       HIDDEN
+    ================================= */
+    .hidden {
+      display: none !important;
     }
 
     /* ================================
@@ -390,137 +408,335 @@
         display: none !important;
       }
     }
-
-    .hidden {
-      display: none !important;
-    }
   </style>
 </head>
 
 <body>
 
-  <!-- =========================================
+  <!-- ==========================================
+       ACHIEVEMENT UNLOCKED POPUP
+  =========================================== -->
+  <div id="achievement-unlocked-popup">
+
+    <div class="achievement-popup-card">
+
+      <div class="achievement-popup-icon">
+        <i id="achievement-popup-icon" class="fa-solid fa-trophy"></i>
+      </div>
+
+      <div class="achievement-popup-label">
+        ACHIEVEMENT UNLOCKED!
+      </div>
+
+      <h3 id="achievement-popup-name">
+        परीक्षा योद्धा
+      </h3>
+
+      <p id="achievement-popup-en">
+        Exam Warrior
+      </p>
+
+      <button
+        id="achievement-popup-close"
+        class="achievement-popup-btn">
+        शानदार! 🎉
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ==========================================
        LOGIN WARNING MODAL
-  ========================================== -->
+  =========================================== -->
   <div id="login-modal" class="modal-overlay">
+
     <div class="modal-card" style="text-align: center;">
-      <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px; box-shadow: 0 10px 15px -3px rgba(37,99,235,0.15);">
+
+      <div style="
+        width:60px;
+        height:60px;
+        background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%);
+        color:#2563eb;
+        border-radius:50%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:24px;
+        margin:0 auto 16px;
+        box-shadow:0 10px 15px -3px rgba(37,99,235,0.15);
+      ">
         <i class="fa-solid fa-lock"></i>
       </div>
 
-      <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
+      <h3 style="
+        font-size:18px;
+        font-weight:800;
+        color:#0f172a;
+        margin-bottom:8px;
+      ">
         लगइन आवश्यक छ!
       </h3>
 
-      <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px;">
+      <p style="
+        font-size:13px;
+        color:#64748b;
+        line-height:1.5;
+        margin-bottom:20px;
+      ">
         तपाईंले परीक्षा दिन वा लिडरबोर्डमा नाम राख्नको लागि पहिले लगइन गर्नुपर्ने हुन्छ।
       </p>
 
-      <button onclick="redirectToLogin()" class="btn-primary" style="margin-bottom: 8px;">
+      <button
+        onclick="redirectToLogin()"
+        class="btn-primary"
+        style="margin-bottom:8px;">
         लगइन पेजमा जानुहोस् 🚀
       </button>
 
       <a href="dashboard.html"
-         style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none; padding: 6px;">
+        style="
+          display:block;
+          font-size:12px;
+          color:#64748b;
+          font-weight:700;
+          text-decoration:none;
+          padding:6px;
+        ">
         ड्यासबोर्डमा फर्कनुहोस्
       </a>
+
     </div>
   </div>
 
 
-  <!-- =========================================
+  <!-- ==========================================
        REPORT QUESTION MODAL
-  ========================================== -->
+  =========================================== -->
   <div id="reportModal" class="modal-overlay">
+
     <div class="modal-card">
 
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
-        <h3 style="font-size: 16px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        margin-bottom:12px;
+        border-bottom:1px solid #f1f5f9;
+        padding-bottom:10px;
+      ">
+
+        <h3 style="
+          font-size:16px;
+          font-weight:800;
+          color:#1e293b;
+          display:flex;
+          align-items:center;
+          gap:8px;
+        ">
+          <i class="fa-solid fa-triangle-exclamation"
+            style="color:#ef4444;"></i>
           प्रश्न रिपोर्ट गर्नुहोस्
         </h3>
 
-        <button onclick="closeReportModal()"
-                style="background: #f1f5f9; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center;">
+        <button
+          onclick="closeReportModal()"
+          style="
+            background:#f1f5f9;
+            border:none;
+            width:30px;
+            height:30px;
+            border-radius:50%;
+            font-size:14px;
+            cursor:pointer;
+            color:#64748b;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+          ">
           <i class="fa-solid fa-xmark"></i>
         </button>
+
       </div>
 
-      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">
+      <p style="
+        font-size:12px;
+        color:#64748b;
+        margin-bottom:12px;
+        line-height:1.4;
+      ">
         यो प्रश्न या उत्तरमा केही त्रुटि वा समस्या भए तल लेखी पठाउनुहोस्:
       </p>
 
-      <textarea id="reportReason"
-                placeholder="उदा: सही उत्तर मिलेको छैन वा अप्सन गलत छ..."
-                style="min-height: 110px; margin-bottom: 16px; width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; outline: none; background: #f8fafc; color: #1e293b; font-family: inherit; resize: none;"></textarea>
+      <textarea
+        id="reportReason"
+        placeholder="उदा: सही उत्तर मिलेको छैन वा अप्सन गलत छ..."
+        style="
+          min-height:110px;
+          margin-bottom:16px;
+          width:100%;
+          padding:12px;
+          border:1px solid #cbd5e1;
+          border-radius:12px;
+          font-size:13px;
+          outline:none;
+          background:#f8fafc;
+          color:#1e293b;
+          font-family:inherit;
+          resize:none;
+        "></textarea>
 
-      <div style="display: flex; gap: 10px;">
-        <button onclick="submitQuestionReport()"
-                style="flex: 1; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px; box-shadow: 0 4px 12px rgba(37,99,235,0.2);">
+      <div style="display:flex;gap:10px;">
+
+        <button
+          onclick="submitQuestionReport()"
+          style="
+            flex:1;
+            background:#2563eb;
+            color:white;
+            border:none;
+            padding:12px;
+            border-radius:12px;
+            font-weight:700;
+            cursor:pointer;
+            font-size:13px;
+            box-shadow:0 4px 12px rgba(37,99,235,0.2);
+          ">
           पठाउनुहोस् 🚀
         </button>
 
-        <button onclick="closeReportModal()"
-                style="flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px;">
+        <button
+          onclick="closeReportModal()"
+          style="
+            flex:1;
+            background:#f1f5f9;
+            color:#475569;
+            border:none;
+            padding:12px;
+            border-radius:12px;
+            font-weight:700;
+            cursor:pointer;
+            font-size:13px;
+          ">
           रद्द गर्नुहोस्
         </button>
+
       </div>
 
     </div>
   </div>
 
 
-  <!-- =========================================
-       REVIEW DETAILS MODAL
-  ========================================== -->
+  <!-- ==========================================
+       REVIEW MODAL
+  =========================================== -->
   <div id="reviewModal" class="modal-overlay">
-    <div class="modal-card"
-         style="max-width: 500px; width: 95%; height: 85vh; display: flex; flex-direction: column; padding: 16px;">
 
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
-        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">
+    <div class="modal-card"
+      style="
+        max-width:500px;
+        width:95%;
+        height:85vh;
+        display:flex;
+        flex-direction:column;
+        padding:16px;
+      ">
+
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        margin-bottom:8px;
+        border-bottom:1px solid #f1f5f9;
+        padding-bottom:8px;
+      ">
+
+        <h3 style="
+          font-size:15px;
+          font-weight:800;
+          color:#1e293b;
+        ">
           📋 उत्तर तथा समीक्षा
         </h3>
 
-        <button onclick="closeReviewModal()"
-                style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;">
+        <button
+          onclick="closeReviewModal()"
+          style="
+            background:none;
+            border:none;
+            font-size:16px;
+            cursor:pointer;
+            color:#64748b;
+          ">
           <i class="fa-solid fa-xmark"></i>
         </button>
+
       </div>
 
-      <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
-        <button onclick="filterReview('all')" id="filter-all" class="filter-btn active">
+      <div style="
+        display:flex;
+        gap:6px;
+        margin-bottom:10px;
+        flex-wrap:wrap;
+      ">
+
+        <button
+          onclick="filterReview('all')"
+          id="filter-all"
+          class="filter-btn active">
           सबै (All)
         </button>
 
-        <button onclick="filterReview('right')" id="filter-right" class="filter-btn">
+        <button
+          onclick="filterReview('right')"
+          id="filter-right"
+          class="filter-btn">
           मिलाइएका (Right)
         </button>
 
-        <button onclick="filterReview('wrong')" id="filter-wrong" class="filter-btn">
+        <button
+          onclick="filterReview('wrong')"
+          id="filter-wrong"
+          class="filter-btn">
           बिग्रिएका (Wrong)
         </button>
 
-        <button onclick="filterReview('skipped')" id="filter-skipped" class="filter-btn">
+        <button
+          onclick="filterReview('skipped')"
+          id="filter-skipped"
+          class="filter-btn">
           छोडेका (Skipped)
         </button>
+
       </div>
 
-      <div id="review-container"
-           style="flex: 1; overflow-y: auto; padding-right: 4px; font-size: 11px;"></div>
+      <div
+        id="review-container"
+        style="
+          flex:1;
+          overflow-y:auto;
+          padding-right:4px;
+          font-size:11px;
+        ">
+      </div>
 
-      <button onclick="closeReviewModal()"
-              class="btn-primary"
-              style="margin-top: 10px; padding: 10px;">
+      <button
+        onclick="closeReviewModal()"
+        class="btn-primary"
+        style="
+          margin-top:10px;
+          padding:10px;
+        ">
         बन्द गर्नुहोस्
       </button>
+
     </div>
   </div>
 
 
-  <!-- =========================================
+  <!-- ==========================================
        HEADER
-  ========================================== -->
+  =========================================== -->
   <header class="app-header">
 
     <a href="dashboard.html" class="back-btn">
@@ -540,25 +756,53 @@
 
   <main class="main-wrapper">
 
-    <!-- =========================================
-         REGISTRATION / SET SELECTION
-    ========================================== -->
+    <!-- ==========================================
+         REGISTRATION SCREEN
+    =========================================== -->
     <div id="reg-screen" class="card space-y-4">
 
-      <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">
+      <h2 style="
+        font-size:16px;
+        font-weight:800;
+        color:#1e293b;
+        margin-bottom:8px;
+      ">
         परीक्षा विवरण:
       </h2>
 
-      <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #cbd5e1; border-left: 5px solid #2563eb; padding: 16px; border-radius: 14px; margin-bottom: 16px;">
+      <div style="
+        background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);
+        border:1px solid #cbd5e1;
+        border-left:5px solid #2563eb;
+        padding:16px;
+        border-radius:14px;
+        margin-bottom:16px;
+      ">
 
-        <h3 style="font-size: 14px; font-weight: 800; color: #1e3a8a; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-circle-info" style="color: #2563eb; font-size: 16px;"></i>
+        <h3 style="
+          font-size:14px;
+          font-weight:800;
+          color:#1e3a8a;
+          margin-bottom:10px;
+          display:flex;
+          align-items:center;
+          gap:8px;
+        ">
+          <i class="fa-solid fa-circle-info"
+            style="color:#2563eb;font-size:16px;"></i>
           परीक्षा नियम तथा कोइन व्यवस्था (Rules & Rewards)
         </h3>
 
-        <ul style="font-size: 13px; color: #334155; padding-left: 18px; line-height: 1.6; margin-bottom: 10px; font-weight: 600;">
+        <ul style="
+          font-size:13px;
+          color:#334155;
+          padding-left:18px;
+          line-height:1.6;
+          margin-bottom:10px;
+          font-weight:600;
+        ">
 
-          <li style="margin-bottom: 4px;">
+          <li style="margin-bottom:4px;">
             <b>शुल्क:</b>
             परीक्षा सुरु गर्न तपाईंको खाताबाट
             <b>२५ कोइन (Coins)</b> काटिनेछ।
@@ -571,120 +815,236 @@
 
         </ul>
 
-        <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 12px; border-radius: 10px; font-size: 12px; color: #1e40af; font-weight: 700;">
+        <div style="
+          background:#eff6ff;
+          border:1px solid #bfdbfe;
+          padding:10px 12px;
+          border-radius:10px;
+          font-size:12px;
+          color:#1e40af;
+          font-weight:700;
+        ">
 
           🎁 प्राप्तांक अनुसार कोइन पुरस्कार (Rewards):
 
-          <div style="font-weight: 600; font-size: 11px; margin-top: 6px; color: #1e293b; line-height: 1.5;">
-            • ९०–१०० अंक: <b>५० कोइन</b> |
-            • ८०–९० अंक: <b>४० कोइन</b><br>
-            • ७०–८० अंक: <b>३० कोइन</b> |
-            • ६०–७० अंक: <b>२० कोइन</b> |
-            • ५०–६० अंक: <b>१० कोइन</b>
+          <div style="
+            font-weight:600;
+            font-size:11px;
+            margin-top:6px;
+            color:#1e293b;
+            line-height:1.5;
+          ">
+            • ९०–१०० अंक:
+            <b>५० कोइन</b> |
+            • ८०–९० अंक:
+            <b>४० कोइन</b><br>
+
+            • ७०–८० अंक:
+            <b>३० कोइन</b> |
+            • ६०–७० अंक:
+            <b>२० कोइन</b> |
+            • ५०–६० अंक:
+            <b>१० कोइन</b>
           </div>
 
         </div>
       </div>
 
 
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+      <div style="
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        padding:14px;
+        border-radius:12px;
+        margin-bottom:12px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+      ">
 
         <div>
 
-          <p style="font-size: 11px; color: #64748b; font-weight: 600;">
+          <p style="
+            font-size:11px;
+            color:#64748b;
+            font-weight:600;
+          ">
             लगइन गरिएको प्रयोगकर्ता
           </p>
 
-          <p id="profile-display-name"
-             style="font-size: 15px; font-weight: 800; color: #1e293b;">
+          <p
+            id="profile-display-name"
+            style="
+              font-size:15px;
+              font-weight:800;
+              color:#1e293b;
+            ">
             चेक गर्दैछ...
           </p>
 
         </div>
 
         <i class="fa-solid fa-user-check"
-           style="color: #2563eb; font-size: 20px;"></i>
+          style="color:#2563eb;font-size:20px;"></i>
 
       </div>
 
 
-      <div style="margin-bottom: 16px;">
+      <div style="margin-bottom:16px;">
 
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 4px;">
+        <label style="
+          display:block;
+          font-size:12px;
+          font-weight:700;
+          color:#64748b;
+          margin-bottom:4px;
+        ">
           परीक्षा सेट:
         </label>
 
-        <div id="set-badge-title"
-             style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 13px;">
+        <div
+          id="set-badge-title"
+          style="
+            background:#eff6ff;
+            border:1px solid #bfdbfe;
+            color:#1e40af;
+            padding:12px;
+            border-radius:12px;
+            font-weight:700;
+            font-size:13px;
+          ">
           🎯 लोड हुँदैछ...
         </div>
 
       </div>
 
 
-      <div id="already-given-box"
-           class="hidden"
-           style="background: #fef2f2; border: 1px solid #fecaca; padding: 14px; border-radius: 12px; margin-bottom: 16px; text-align: center;">
+      <div
+        id="already-given-box"
+        class="hidden"
+        style="
+          background:#fef2f2;
+          border:1px solid #fecaca;
+          padding:14px;
+          border-radius:12px;
+          margin-bottom:16px;
+          text-align:center;
+        ">
 
-        <p style="color: #dc2626; font-weight: 800; font-size: 13px; margin-bottom: 4px;">
+        <p style="
+          color:#dc2626;
+          font-weight:800;
+          font-size:13px;
+          margin-bottom:4px;
+        ">
           🚫 तपाईंले यो परीक्षा पहिले नै दिसक्नुभएको छ!
         </p>
 
-        <p style="color: #7f1d1d; font-size: 11px; margin-bottom: 10px;">
-          तपाईंले अभ्यास गर्न सक्नुहुन्छ (लिडरबोर्डमा जोडिने छैन)।
+        <p style="
+          color:#7f1d1d;
+          font-size:11px;
+          margin-bottom:10px;
+        ">
+          तपाईंले अभ्यास गर्न सक्नुहुन्छ
+          (लिडरबोर्डमा जोडिने छैन)।
         </p>
 
-        <button onclick="startPracticeMode()" class="btn-practice">
+        <button
+          onclick="startPracticeMode()"
+          class="btn-practice">
           अभ्यास गर्नुहोस् (Practice Mode) 💡
         </button>
 
       </div>
 
 
-      <button id="start-exam-btn"
-              onclick="startExam(false)"
-              class="btn-primary">
+      <button
+        id="start-exam-btn"
+        onclick="startExam(false)"
+        class="btn-primary">
         परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀
       </button>
 
 
-      <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 16px;">
+      <div style="
+        border-top:1px solid #f1f5f9;
+        padding-top:14px;
+        margin-top:16px;
+      ">
 
-        <h3 id="lb-title"
-            style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">
+        <h3
+          id="lb-title"
+          style="
+            font-size:12px;
+            font-weight:800;
+            color:#2563eb;
+            margin-bottom:8px;
+          ">
           🏆 लिडरबोर्ड
         </h3>
 
-        <div id="home-leaderboard"
-             class="max-h-48 overflow-y-auto"></div>
+        <div
+          id="home-leaderboard"
+          class="max-h-48 overflow-y-auto">
+        </div>
 
       </div>
 
     </div>
 
 
-    <!-- =========================================
+    <!-- ==========================================
          EXAM SCREEN
-    ========================================== -->
-    <div id="exam-screen" class="card hidden space-y-4">
+    =========================================== -->
+    <div
+      id="exam-screen"
+      class="card hidden space-y-4">
 
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        border-bottom:1px solid #f1f5f9;
+        padding-bottom:10px;
+      ">
 
-        <span id="q-tracker"
-              style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">
+        <span
+          id="q-tracker"
+          style="
+            background:#f1f5f9;
+            color:#334155;
+            padding:4px 10px;
+            border-radius:8px;
+            font-size:12px;
+            font-weight:700;
+          ">
           Question 1
         </span>
 
-        <span id="mode-badge"
-              style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
+        <span
+          id="mode-badge"
+          style="
+            background:#eff6ff;
+            color:#1d4ed8;
+            padding:4px 8px;
+            border-radius:6px;
+            font-size:11px;
+            font-weight:700;
+          ">
           Exam
         </span>
 
       </div>
 
 
-      <h3 id="exam-question"
-          style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.5;">
+      <h3
+        id="exam-question"
+        style="
+          font-size:15px;
+          font-weight:700;
+          color:#0f172a;
+          line-height:1.5;
+        ">
         Loading...
       </h3>
 
@@ -692,10 +1052,23 @@
       <div id="exam-options"></div>
 
 
-      <div style="margin-top: 12px;">
+      <div style="margin-top:12px;">
 
-        <button onclick="openReportModal()"
-                style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+        <button
+          onclick="openReportModal()"
+          style="
+            background:#fee2e2;
+            color:#991b1b;
+            border:none;
+            padding:6px 12px;
+            border-radius:8px;
+            font-size:11px;
+            font-weight:700;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            gap:6px;
+          ">
 
           <i class="fa-solid fa-triangle-exclamation"></i>
           यो प्रश्न रिपोर्ट गर्नुहोस्
@@ -705,18 +1078,29 @@
       </div>
 
 
-      <div style="display: flex; justify-content: space-between; padding-top: 14px; border-top: 1px solid #f1f5f9; margin-top: 10px;">
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        padding-top:14px;
+        border-top:1px solid #f1f5f9;
+        margin-top:10px;
+      ">
 
-        <button onclick="prevExamQuestion()"
-                id="prev-btn"
-                class="btn-secondary">
+        <button
+          onclick="prevExamQuestion()"
+          id="prev-btn"
+          class="btn-secondary">
           ⬅️ अघिल्लो
         </button>
 
-        <button onclick="nextExamQuestion()"
-                id="next-btn"
-                class="btn-primary"
-                style="width: auto; padding: 10px 20px;">
+        <button
+          onclick="nextExamQuestion()"
+          id="next-btn"
+          class="btn-primary"
+          style="
+            width:auto;
+            padding:10px 20px;
+          ">
           अर्को ➡️
         </button>
 
@@ -725,73 +1109,178 @@
     </div>
 
 
-    <!-- =========================================
+    <!-- ==========================================
          RESULT SCREEN
-    ========================================== -->
+    =========================================== -->
     <div id="result-screen" class="hidden space-y-4">
 
-      <div id="pdf-report-content"
-           class="card space-y-4"
-           style="background: #ffffff; border: 2px solid #2563eb; border-radius: 20px; text-align: center; padding: 24px 16px;">
+      <div
+        id="pdf-report-content"
+        class="card space-y-4"
+        style="
+          background:#ffffff;
+          border:2px solid #2563eb;
+          border-radius:20px;
+          text-align:center;
+          padding:24px 16px;
+        ">
 
-        <div style="font-size: 28px; color: #2563eb; margin-bottom: 4px;">
+        <div style="
+          font-size:28px;
+          color:#2563eb;
+          margin-bottom:4px;
+        ">
           <i class="fa-solid fa-award"></i>
         </div>
 
-        <h2 id="report-main-title"
-            style="font-size: 18px; font-weight: 800; color: #1e3a8a;">
+        <h2
+          id="report-main-title"
+          style="
+            font-size:18px;
+            font-weight:800;
+            color:#1e3a8a;
+          ">
           LOKSEWAQUEST CERTIFICATE OF COMPLETION
         </h2>
 
-        <p style="font-size: 11px; color: #64748b; margin-top: 2px;">
+        <p style="
+          font-size:11px;
+          color:#64748b;
+          margin-top:2px;
+        ">
           यो प्रमाणित गरिन्छ कि सफल परीक्षार्थीले निर्धारित परीक्षा सफलतापूर्वक सम्पन्न गर्नुभएको छ।
         </p>
 
 
-        <div style="margin: 16px 0; border-top: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; padding: 12px 0;">
+        <div style="
+          margin:16px 0;
+          border-top:1px dashed #cbd5e1;
+          border-bottom:1px dashed #cbd5e1;
+          padding:12px 0;
+        ">
 
-          <p id="rep-name"
-             style="font-size: 16px; color: #0f172a; font-weight: 800;"></p>
+          <p
+            id="rep-name"
+            style="
+              font-size:16px;
+              color:#0f172a;
+              font-weight:800;
+            ">
+          </p>
 
-          <p id="rep-set"
-             style="font-size: 12px; color: #2563eb; font-weight: 700; margin-top: 2px;"></p>
+          <p
+            id="rep-set"
+            style="
+              font-size:12px;
+              color:#2563eb;
+              font-weight:700;
+              margin-top:2px;
+            ">
+          </p>
 
-          <p id="rep-time-info"
-             style="font-size: 11px; color: #64748b; margin-top: 4px;"></p>
+          <p
+            id="rep-time-info"
+            style="
+              font-size:11px;
+              color:#64748b;
+              margin-top:4px;
+            ">
+          </p>
 
         </div>
 
 
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; margin-bottom: 12px;">
+        <div style="
+          display:grid;
+          grid-template-columns:repeat(4,1fr);
+          gap:6px;
+          text-align:center;
+          margin-bottom:12px;
+        ">
 
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;">
-            <p style="font-size: 10px; color: #64748b;">सही</p>
-            <p id="rep-correct"
-               style="font-size: 14px; font-weight: 800; color: #059669;">
+          <div style="
+            background:#f8fafc;
+            padding:8px 4px;
+            border-radius:10px;
+            border:1px solid #f1f5f9;
+          ">
+            <p style="font-size:10px;color:#64748b;">
+              सही
+            </p>
+
+            <p
+              id="rep-correct"
+              style="
+                font-size:14px;
+                font-weight:800;
+                color:#059669;
+              ">
               0
             </p>
           </div>
 
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;">
-            <p style="font-size: 10px; color: #64748b;">गलत</p>
-            <p id="rep-wrong"
-               style="font-size: 14px; font-weight: 800; color: #dc2626;">
+
+          <div style="
+            background:#f8fafc;
+            padding:8px 4px;
+            border-radius:10px;
+            border:1px solid #f1f5f9;
+          ">
+            <p style="font-size:10px;color:#64748b;">
+              गलत
+            </p>
+
+            <p
+              id="rep-wrong"
+              style="
+                font-size:14px;
+                font-weight:800;
+                color:#dc2626;
+              ">
               0
             </p>
           </div>
 
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;">
-            <p style="font-size: 10px; color: #64748b;">छोडेको</p>
-            <p id="rep-skipped"
-               style="font-size: 14px; font-weight: 800; color: #d97706;">
+
+          <div style="
+            background:#f8fafc;
+            padding:8px 4px;
+            border-radius:10px;
+            border:1px solid #f1f5f9;
+          ">
+            <p style="font-size:10px;color:#64748b;">
+              छोडेको
+            </p>
+
+            <p
+              id="rep-skipped"
+              style="
+                font-size:14px;
+                font-weight:800;
+                color:#d97706;
+              ">
               0
             </p>
           </div>
 
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;">
-            <p style="font-size: 10px; color: #64748b;">कुल अंक</p>
-            <p id="rep-score"
-               style="font-size: 14px; font-weight: 800; color: #2563eb;">
+
+          <div style="
+            background:#f8fafc;
+            padding:8px 4px;
+            border-radius:10px;
+            border:1px solid #f1f5f9;
+          ">
+            <p style="font-size:10px;color:#64748b;">
+              कुल अंक
+            </p>
+
+            <p
+              id="rep-score"
+              style="
+                font-size:14px;
+                font-weight:800;
+                color:#2563eb;
+              ">
               0
             </p>
           </div>
@@ -800,43 +1289,85 @@
 
 
         <!-- COIN REWARD -->
-        <div id="coin-reward-box"
-             class="hidden"
-             style="background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%); border: 1px solid #fde047; padding: 12px; border-radius: 12px; margin-bottom: 14px; text-align: center;">
+        <div
+          id="coin-reward-box"
+          class="hidden"
+          style="
+            background:linear-gradient(135deg,#fefce8 0%,#fef9c3 100%);
+            border:1px solid #fde047;
+            padding:12px;
+            border-radius:12px;
+            margin-bottom:14px;
+            text-align:center;
+          ">
 
-          <p style="font-size: 13px; font-weight: 800; color: #854d0e;"
-             id="coin-reward-text">
-            🎉 बधाई छ! तपाईंले यो परीक्षाबाट कोइन जित्नुभयो!
+          <p
+            id="coin-reward-text"
+            style="
+              font-size:13px;
+              font-weight:800;
+              color:#854d0e;
+            ">
+            🎉 बधाई छ!
           </p>
 
         </div>
 
 
         <!-- STATUS -->
-        <div id="status-message-box"
-             style="padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 700; margin-bottom: 14px;">
+        <div
+          id="status-message-box"
+          style="
+            padding:10px;
+            border-radius:10px;
+            font-size:12px;
+            font-weight:700;
+            margin-bottom:14px;
+          ">
         </div>
 
 
-        <button onclick="openReviewModal()"
-                class="btn-secondary"
-                style="width: 100%; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; padding: 10px;">
+        <button
+          onclick="openReviewModal()"
+          class="btn-secondary"
+          style="
+            width:100%;
+            background:#eff6ff;
+            color:#1d4ed8;
+            border:1px solid #bfdbfe;
+            font-size:12px;
+            padding:10px;
+          ">
           📋 उत्तर तथा समीक्षा हेर्नुहोस् (View Solutions)
         </button>
 
       </div>
 
 
-      <div style="display: flex; gap: 8px;" class="no-print">
+      <div
+        style="display:flex;gap:8px;"
+        class="no-print">
 
-        <button onclick="downloadPDF()"
-                style="width: 50%; background: #059669; color: white; font-weight: 700; padding: 12px; border-radius: 12px; border: none; cursor: pointer; font-size: 13px;">
+        <button
+          onclick="downloadPDF()"
+          style="
+            width:50%;
+            background:#059669;
+            color:white;
+            font-weight:700;
+            padding:12px;
+            border-radius:12px;
+            border:none;
+            cursor:pointer;
+            font-size:13px;
+          ">
           📥 प्रिन्ट / PDF
         </button>
 
-        <button onclick="location.href='dashboard.html'"
-                class="btn-primary"
-                style="width: 50%;">
+        <button
+          onclick="location.href='dashboard.html'"
+          class="btn-primary"
+          style="width:50%;">
           🔄 ड्यासबोर्ड
         </button>
 
@@ -845,12 +1376,19 @@
 
       <div class="card no-print">
 
-        <h3 style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">
+        <h3 style="
+          font-size:12px;
+          font-weight:800;
+          color:#2563eb;
+          margin-bottom:8px;
+        ">
           🏆 लिडरबोर्ड
         </h3>
 
-        <div id="result-leaderboard"
-             class="max-h-48 overflow-y-auto"></div>
+        <div
+          id="result-leaderboard"
+          class="max-h-48 overflow-y-auto">
+        </div>
 
       </div>
 
@@ -859,13 +1397,18 @@
   </main>
 
 
-  <!-- =========================================
+  <!-- ==========================================
        JAVASCRIPT
-  ========================================== -->
+  =========================================== -->
   <script type="module">
 
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    /* ==========================================
+       FIREBASE IMPORTS
+    =========================================== */
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
     import {
       getAuth,
@@ -886,9 +1429,9 @@
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
-    /* =========================================
-       FIREBASE
-    ========================================== */
+    /* ==========================================
+       FIREBASE CONFIG
+    =========================================== */
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -899,6 +1442,7 @@
       appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
     };
 
+
     const app = initializeApp(firebaseConfig);
 
     const auth = getAuth(app);
@@ -906,19 +1450,31 @@
     const db = getFirestore(app);
 
 
-    setPersistence(auth, browserSessionPersistence).catch((error) => {
+    setPersistence(
+      auth,
+      browserSessionPersistence
+    ).catch((error) => {
       console.error("Persistence Error:", error);
     });
 
 
-    /* =========================================
+    /* ==========================================
        SUPABASE
-    ========================================== */
+       QUESTIONS REMAIN IN SUPABASE
+    =========================================== */
 
-    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+    const SUPABASE_URL =
+      'https://edyirdedkiarguvurpxq.supabase.co';
 
     const SUPABASE_ANON_KEY =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeXJpZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZWRraWFyZ3V2dXJwcHFxIiwicm9sZSI6ImVkeWlyZWRlZGtpYXJndXZ1cnB4cSIsImlhdCI6MTc4OTAxODY2MiwiZXhwIjoxNzY0NTk0NjYyfQ';
+
+    /*
+      NOTE:
+      The Supabase key above is kept from your original setup.
+      Questions continue to come from:
+      Supabase -> quizzes
+    */
 
     const supabaseClient =
       window.supabase.createClient(
@@ -927,9 +1483,9 @@
       );
 
 
-    /* =========================================
-       URL / SET
-    ========================================== */
+    /* ==========================================
+       URL / EXAM SET
+    =========================================== */
 
     const urlParams =
       new URLSearchParams(window.location.search);
@@ -944,7 +1500,9 @@
       currentSet.match(/\d+/);
 
     const setNum =
-      setNumberMatch ? setNumberMatch[0] : '1';
+      setNumberMatch
+        ? setNumberMatch[0]
+        : '1';
 
     const prettyExamName =
       `Pre Qualifying Test Set ${setNum}`;
@@ -963,11 +1521,12 @@
       `🏆 ${prettyExamName} लिडरबोर्ड`;
 
 
-    /* =========================================
-       VARIABLES
-    ========================================== */
+    /* ==========================================
+       STATE
+    =========================================== */
 
     let candidateName = '';
+
     let userEmail = '';
 
     let examQuestions = [];
@@ -988,100 +1547,427 @@
 
     let examStartedActive = false;
 
+
     /*
       IMPORTANT:
-      एउटै page मा visibilitychange + beforeunload +
-      submit button बाट submitExam() multiple पटक
-      चल्न नदिन।
+      Prevent submitExam() from running more than once
+      from timer / visibilitychange / back button / submit.
     */
-    let submissionHandled = false;
 
-    /*
-      Exam Warrior popup queue
-    */
-    let achievementPopupQueue = [];
+    let submitInProgress = false;
 
-    let achievementPopupShowing = false;
+    let completionRecorded = false;
 
 
-    /* =========================================
-       BADGE CONFIG
-    ========================================== */
+    /* ==========================================
+       EXAM WARRIOR BADGE
+    =========================================== */
 
-    const EXAM_BADGE = {
-      id: "exam_warrior",
-      name: "परीक्षा योद्धा",
-      english: "Exam Warrior",
-      icon: "fa-shield-halved",
+    const EXAM_WARRIOR_BADGE = {
+
+      id: 'exam_warrior',
+
+      name: 'परीक्षा योद्धा',
+
+      english: 'Exam Warrior',
+
+      icon: 'fa-shield-halved',
+
       target: 5
+
     };
 
 
-    /* =========================================
-       DOM READY + AUTH
-    ========================================== */
+    /* ==========================================
+       ACHIEVEMENT POPUP
+    =========================================== */
 
-    document.addEventListener("DOMContentLoaded", () => {
+    function showAchievementUnlocked(badge) {
 
-      onAuthStateChanged(auth, async (user) => {
+      let popup =
+        document.getElementById(
+          'achievement-unlocked-popup'
+        );
 
-        if (user) {
+      document.getElementById(
+        'achievement-popup-icon'
+      ).className =
+        `fa-solid ${badge.icon}`;
 
-          candidateName =
-            user.displayName ||
-            (user.email ? user.email.split('@')[0] : 'User');
+      document.getElementById(
+        'achievement-popup-name'
+      ).innerText =
+        badge.name;
 
-          userEmail =
-            user.email || '';
+      document.getElementById(
+        'achievement-popup-en'
+      ).innerText =
+        badge.english;
 
-          document.getElementById(
-            'profile-display-name'
-          ).innerText = candidateName;
+      popup.classList.add('active');
+    }
 
-          await checkIfExamAlreadyGiven(userEmail);
 
-        } else {
+    function closeAchievementPopup() {
 
-          document.getElementById(
-            'login-modal'
-          ).classList.add('active');
+      const popup =
+        document.getElementById(
+          'achievement-unlocked-popup'
+        );
 
-          document.getElementById(
-            'profile-display-name'
-          ).innerText = 'लगइन गरिएको छैन';
+      if (popup) {
+        popup.classList.remove('active');
+      }
+    }
+
+
+    document.getElementById(
+      'achievement-popup-close'
+    ).addEventListener(
+      'click',
+      closeAchievementPopup
+    );
+
+
+    /* ==========================================
+       RECORD EXAM COMPLETION + BADGE
+       
+       ONLY LIVE EXAM
+       PRACTICE MODE DOES NOT COUNT
+    =========================================== */
+
+    async function recordLiveExamCompletion() {
+
+      if (
+        isPracticeMode ||
+        !auth.currentUser ||
+        completionRecorded
+      ) {
+        return;
+      }
+
+
+      const userRef =
+        doc(
+          db,
+          "users",
+          auth.currentUser.uid
+        );
+
+
+      try {
+
+        /*
+          Transaction ensures:
+          - completedExams cannot accidentally
+            overwrite another update.
+          - badge progress and exam count
+            are updated together.
+        */
+
+        const result =
+          await runTransaction(
+            db,
+            async (transaction) => {
+
+              const userSnap =
+                await transaction.get(userRef);
+
+              const userData =
+                userSnap.exists()
+                  ? userSnap.data()
+                  : {};
+
+
+              const oldCompleted =
+                Number(
+                  userData.completedExams ??
+                  userData.examsCompleted ??
+                  0
+                );
+
+
+              const newCompleted =
+                oldCompleted + 1;
+
+
+              const existingBadges =
+                userData.badges || {};
+
+
+              const oldBadge =
+                existingBadges[
+                  EXAM_WARRIOR_BADGE.id
+                ];
+
+
+              const alreadyUnlocked =
+                oldBadge === true ||
+                oldBadge?.unlocked === true;
+
+
+              const updatedBadges = {
+                ...existingBadges
+              };
+
+
+              let newlyUnlocked = false;
+
+
+              /* ==========================
+                 BADGE UNLOCKED
+              ========================== */
+
+              if (
+                newCompleted >=
+                EXAM_WARRIOR_BADGE.target
+              ) {
+
+                if (!alreadyUnlocked) {
+
+                  newlyUnlocked = true;
+
+                  updatedBadges[
+                    EXAM_WARRIOR_BADGE.id
+                  ] = {
+
+                    unlocked: true,
+
+                    progress:
+                      EXAM_WARRIOR_BADGE.target,
+
+                    target:
+                      EXAM_WARRIOR_BADGE.target,
+
+                    unlockedAt:
+                      new Date().toISOString()
+
+                  };
+
+                } else {
+
+                  /*
+                    Keep old unlockedAt,
+                    but normalize progress.
+                  */
+
+                  updatedBadges[
+                    EXAM_WARRIOR_BADGE.id
+                  ] = {
+
+                    ...(typeof oldBadge === 'object'
+                      ? oldBadge
+                      : {}),
+
+                    unlocked: true,
+
+                    progress:
+                      EXAM_WARRIOR_BADGE.target,
+
+                    target:
+                      EXAM_WARRIOR_BADGE.target
+
+                  };
+
+                }
+
+              } else {
+
+                /*
+                  Badge still locked.
+                  Save current progress.
+                */
+
+                updatedBadges[
+                  EXAM_WARRIOR_BADGE.id
+                ] = {
+
+                  ...(typeof oldBadge === 'object'
+                    ? oldBadge
+                    : {}),
+
+                  unlocked: false,
+
+                  progress: newCompleted,
+
+                  target:
+                    EXAM_WARRIOR_BADGE.target
+
+                };
+
+              }
+
+
+              transaction.set(
+                userRef,
+                {
+
+                  completedExams:
+                    newCompleted,
+
+                  lastExamCompletedAt:
+                    serverTimestamp(),
+
+                  badges:
+                    updatedBadges
+
+                },
+                {
+                  merge: true
+                }
+              );
+
+
+              return {
+
+                completedExams:
+                  newCompleted,
+
+                newlyUnlocked
+
+              };
+
+            }
+          );
+
+
+        /*
+          This prevents another call in the
+          same page session.
+        */
+
+        completionRecorded = true;
+
+
+        console.log(
+          "Exam completion recorded:",
+          result.completedExams
+        );
+
+
+        /* ==========================
+           SHOW BADGE POPUP
+        ========================== */
+
+        if (result.newlyUnlocked) {
+
+          setTimeout(() => {
+
+            showAchievementUnlocked(
+              EXAM_WARRIOR_BADGE
+            );
+
+          }, 500);
 
         }
 
-      });
+      } catch (error) {
 
-      fetchLeaderboard();
+        console.error(
+          "Exam completion / badge error:",
+          error
+        );
 
-    });
+      }
+
+    }
 
 
-    /* =========================================
+    /* ==========================================
+       DOM CONTENT LOADED
+    =========================================== */
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        onAuthStateChanged(
+          auth,
+          async (user) => {
+
+            if (user) {
+
+              candidateName =
+                user.displayName ||
+                user.email.split('@')[0];
+
+              userEmail =
+                user.email;
+
+
+              document.getElementById(
+                'profile-display-name'
+              ).innerText =
+                candidateName;
+
+
+              await checkIfExamAlreadyGiven(
+                userEmail
+              );
+
+            } else {
+
+              document.getElementById(
+                'login-modal'
+              ).classList.add('active');
+
+
+              document.getElementById(
+                'profile-display-name'
+              ).innerText =
+                'लगइन गरिएको छैन';
+
+            }
+
+          }
+        );
+
+
+        fetchLeaderboard();
+
+      }
+    );
+
+
+    /* ==========================================
        LOGIN
-    ========================================== */
+    =========================================== */
 
-    window.redirectToLogin = function() {
-      window.location.href = 'login.html';
-    };
+    window.redirectToLogin =
+      function () {
+
+        window.location.href =
+          'login.html';
+
+      };
 
 
-    /* =========================================
-       CHECK ALREADY GIVEN
-    ========================================== */
+    /* ==========================================
+       CHECK EXISTING EXAM
+       
+       SUPABASE LEADERBOARD
+    =========================================== */
 
-    async function checkIfExamAlreadyGiven(email) {
+    async function checkIfExamAlreadyGiven(
+      email
+    ) {
 
       if (!email) return;
 
-      const { data, error } =
-        await supabaseClient
-          .from('exam_leaderboard')
-          .select('*')
-          .eq('username', email)
-          .eq('set_name', examIdentifier);
+
+      const {
+        data,
+        error
+      } = await supabaseClient
+
+        .from('exam_leaderboard')
+
+        .select('*')
+
+        .eq('username', email)
+
+        .eq('set_name', examIdentifier);
+
 
       if (error) {
 
@@ -1091,13 +1977,19 @@
         );
 
         return;
+
       }
 
-      if (data && data.length > 0) {
+
+      if (
+        data &&
+        data.length > 0
+      ) {
 
         document.getElementById(
           'start-exam-btn'
         ).classList.add('hidden');
+
 
         document.getElementById(
           'already-given-box'
@@ -1109,133 +2001,93 @@
           'start-exam-btn'
         ).classList.remove('hidden');
 
+
         document.getElementById(
           'already-given-box'
         ).classList.add('hidden');
 
       }
+
     }
 
 
-    /* =========================================
+    /* ==========================================
        START EXAM
-    ========================================== */
+    =========================================== */
 
-    window.startExam = async function(practice = false) {
+    window.startExam =
+      async function (
+        practice = false
+      ) {
 
-      isPracticeMode = practice;
+        isPracticeMode =
+          practice;
 
-      try {
 
-        if (!userEmail) {
+        try {
 
-          document.getElementById(
-            'login-modal'
-          ).classList.add('active');
+          if (!userEmail) {
 
-          return;
-        }
+            document.getElementById(
+              'login-modal'
+            ).classList.add('active');
 
-        if (!isPracticeMode) {
+            return;
 
-          showConfirmPopup(
-            "⚠️ चेतावनी: परीक्षा सुरु गर्न तपाईंको खाताबाट २५ कोइन (25 Coins) काटिनेछ। के तपाईं अगाडि बढ्न चाहनुहुन्छ?",
-            async () => {
-              proceedStartExam();
-            },
-            "कोइन काटिने कन्फर्मेसन"
+          }
+
+
+          if (!isPracticeMode) {
+
+            showConfirmPopup(
+
+              "⚠️ चेतावनी: परीक्षा सुरु गर्न तपाईंको खाताबाट २५ कोइन (25 Coins) काटिनेछ। के तपाईं अगाडि बढ्न चाहनुहुन्छ?",
+
+              async () => {
+
+                proceedStartExam();
+
+              },
+
+              "कोइन काटिने कन्फर्मेसन"
+
+            );
+
+            return;
+
+          } else {
+
+            proceedStartExam();
+
+          }
+
+        } catch (err) {
+
+          showSuccessPopup(
+            'त्रुटि: ' + err.message,
+            '',
+            'error',
+            'त्रुटि'
           );
 
-          return;
-
-        } else {
-
-          proceedStartExam();
-
         }
 
-      } catch (err) {
-
-        showSuccessPopup(
-          'त्रुटि: ' + err.message,
-          '',
-          'error',
-          'त्रुटि'
-        );
-
-      }
-    };
+      };
 
 
-    /* =========================================
+    /* ==========================================
        PROCEED START EXAM
-    ========================================== */
+       
+       QUESTIONS ARE FETCHED FROM SUPABASE
+    =========================================== */
 
     async function proceedStartExam() {
 
       try {
 
-        if (!auth.currentUser) {
-          showSuccessPopup(
-            'कृपया पहिले लगइन गर्नुहोस्।',
-            '',
-            'warning',
-            'लगइन आवश्यक'
-          );
-          return;
-        }
-
-
-        /*
-          पहिले प्रश्नहरू load गर्छौं।
-          यसले database मा प्रश्न नभएको अवस्थामा
-          अनावश्यक 25 coins काटिनबाट जोगाउँछ।
-        */
-
-        let { data, error } =
-          await supabaseClient
-            .from('quizzes')
-            .select('*')
-            .ilike('topic', currentSet);
-
-
-        if (
-          error ||
-          !data ||
-          data.length === 0
-        ) {
-
-          const retry =
-            await supabaseClient
-              .from('quizzes')
-              .select('*')
-              .ilike('topic', rawSet);
-
-          if (
-            retry.error ||
-            !retry.data ||
-            retry.data.length === 0
-          ) {
-
-            showSuccessPopup(
-              `डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`,
-              '',
-              'error',
-              'त्रुटि'
-            );
-
-            return;
-          }
-
-          data = retry.data;
-        }
-
-
-        /*
-          REAL EXAM ONLY:
-          प्रश्नहरू successfully load भएपछि मात्र
-          25 coins deduct हुन्छ।
-        */
+        /* ==========================
+           LIVE EXAM FEE
+        ========================== */
 
         if (!isPracticeMode) {
 
@@ -1246,17 +2098,18 @@
               auth.currentUser.uid
             );
 
+
           const userSnap =
             await getDoc(userRef);
 
+
           let currentCoins = 0;
+
 
           if (userSnap.exists()) {
 
             currentCoins =
-              Number(
-                userSnap.data().coins || 0
-              );
+              userSnap.data().coins || 0;
 
           }
 
@@ -1264,65 +2117,168 @@
           if (currentCoins < 25) {
 
             showSuccessPopup(
+
               'तपाईंसँग परीक्षा दिन पर्याप्त कोइन (कम्तीमा २५) छैन!',
+
               '',
+
               'warning',
+
               'अपर्याप्त कोइन'
+
             );
 
             return;
+
           }
 
 
-          await updateDoc(userRef, {
-            coins: currentCoins - 25
-          });
+          /* Deduct coins */
+
+          await updateDoc(
+            userRef,
+            {
+              coins:
+                currentCoins - 25
+            }
+          );
 
 
-          /*
-            Coin history
-          */
+          /* Coin history */
 
           await addDoc(
+
             collection(
               db,
               "users",
               auth.currentUser.uid,
               "coin_history"
             ),
+
             {
+
               amount: -25,
+
               type: "exam_fee",
+
               description:
                 `${prettyExamName} परीक्षा शुल्क (Exam Fee)`,
-              created_at: serverTimestamp()
+
+              created_at:
+                serverTimestamp()
+
             }
+
           );
 
         }
 
 
-        examQuestions = data;
+        /* ==========================================
+           IMPORTANT:
+           QUESTIONS CONTINUE TO COME FROM SUPABASE
+        =========================================== */
 
-        examStartTime = new Date();
+        let {
+          data,
+          error
+        } = await supabaseClient
 
-        currentIdx = 0;
+          .from('quizzes')
 
-        userAnswers = {};
+          .select('*')
 
-        submissionHandled = false;
+          .ilike(
+            'topic',
+            currentSet
+          );
 
-        achievementPopupQueue = [];
+
+        /* Retry with rawSet */
+
+        if (
+          error ||
+          !data ||
+          data.length === 0
+        ) {
+
+          let retry =
+            await supabaseClient
+
+              .from('quizzes')
+
+              .select('*')
+
+              .ilike(
+                'topic',
+                rawSet
+              );
+
+
+          if (
+            retry.error ||
+            !retry.data ||
+            retry.data.length === 0
+          ) {
+
+            showSuccessPopup(
+
+              `डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`,
+
+              '',
+
+              'error',
+
+              'त्रुटि'
+
+            );
+
+            return;
+
+          }
+
+
+          data =
+            retry.data;
+
+        }
+
+
+        /* Save questions */
+
+        examQuestions =
+          data;
+
+
+        examStartTime =
+          new Date();
+
 
         document.getElementById(
           'reg-screen'
         ).classList.add('hidden');
 
+
         document.getElementById(
           'exam-screen'
         ).classList.remove('hidden');
 
-        examStartedActive = true;
+
+        examStartedActive =
+          true;
+
+
+        /*
+          Reset submit guard
+          for this exam session.
+        */
+
+        submitInProgress =
+          false;
+
+        completionRecorded =
+          false;
+
 
         history.pushState(
           null,
@@ -1331,24 +2287,38 @@
         );
 
 
+        /* ==========================
+           LIVE EXAM
+        ========================== */
+
         if (!isPracticeMode) {
 
           document.getElementById(
             'timer-box'
           ).classList.remove('hidden');
 
+
           document.getElementById(
             'mode-badge'
           ).innerText =
             `${prettyExamName} Live Exam`;
 
+
           startTimer();
 
-        } else {
+        }
+
+
+        /* ==========================
+           PRACTICE MODE
+        ========================== */
+
+        else {
 
           document.getElementById(
             'timer-box'
           ).classList.add('hidden');
+
 
           document.getElementById(
             'mode-badge'
@@ -1360,12 +2330,8 @@
 
         loadExamQuestion();
 
-      } catch (err) {
 
-        console.error(
-          "Start exam error:",
-          err
-        );
+      } catch (err) {
 
         showSuccessPopup(
           'त्रुटि: ' + err.message,
@@ -1379,362 +2345,507 @@
     }
 
 
-    /* =========================================
+    /* ==========================================
        PRACTICE MODE
-    ========================================== */
+    =========================================== */
 
-    window.startPracticeMode = function() {
-      startExam(true);
-    };
+    window.startPracticeMode =
+      function () {
+
+        startExam(true);
+
+      };
 
 
-    /* =========================================
+    /* ==========================================
        TIMER
-    ========================================== */
+    =========================================== */
 
     function startTimer() {
 
-      clearInterval(timerInterval);
-
       timerInterval =
-        setInterval(() => {
+        setInterval(
+          () => {
 
-          if (timeLeftSeconds <= 0) {
+            if (
+              timeLeftSeconds <= 0
+            ) {
 
-            clearInterval(timerInterval);
+              clearInterval(
+                timerInterval
+              );
 
-            submitExam();
+              submitExam();
 
-            return;
-          }
+              return;
 
-          timeLeftSeconds--;
+            }
 
-          const m =
-            Math.floor(
-              timeLeftSeconds / 60
-            );
 
-          const s =
-            timeLeftSeconds % 60;
+            timeLeftSeconds--;
 
-          document.getElementById(
-            'time-left'
-          ).innerText =
-            `${m}:${s < 10 ? '0' : ''}${s}`;
 
-        }, 1000);
+            let m =
+              Math.floor(
+                timeLeftSeconds / 60
+              );
+
+
+            let s =
+              timeLeftSeconds % 60;
+
+
+            document.getElementById(
+              'time-left'
+            ).innerText =
+
+              `${m}:${s < 10 ? '0' : ''}${s}`;
+
+          },
+          1000
+        );
+
     }
 
 
-    /* =========================================
+    /* ==========================================
        LOAD QUESTION
-    ========================================== */
+    =========================================== */
 
-    window.loadExamQuestion = function() {
+    window.loadExamQuestion =
+      function () {
 
-      const q =
-        examQuestions[currentIdx];
-
-      if (!q) return;
-
-      document.getElementById(
-        'q-tracker'
-      ).innerText =
-        `Question ${currentIdx + 1} of ${examQuestions.length}`;
+        const q =
+          examQuestions[currentIdx];
 
 
-      const qElem =
         document.getElementById(
-          'exam-question'
-        );
-
-      qElem.innerHTML =
-        q.question;
+          'q-tracker'
+        ).innerText =
+          `Question ${currentIdx + 1} of ${examQuestions.length}`;
 
 
-      const container =
-        document.getElementById(
-          'exam-options'
-        );
-
-      container.innerHTML = '';
+        const qElem =
+          document.getElementById(
+            'exam-question'
+          );
 
 
-      q.options.forEach(opt => {
-
-        const isSelected =
-          userAnswers[currentIdx] === opt;
-
-        const btn =
-          document.createElement('button');
-
-        btn.className =
-          `option-card ${isSelected ? 'selected' : ''}`;
-
-        btn.innerHTML =
-          `<i class="fa-regular ${isSelected ? 'fa-square-check' : 'fa-square'}"></i>
-           <span>${opt}</span>`;
-
-        btn.onclick = () => {
-
-          userAnswers[currentIdx] =
-            opt;
-
-          loadExamQuestion();
-
-        };
-
-        container.appendChild(btn);
-
-      });
+        qElem.innerHTML =
+          q.question;
 
 
-      if (window.renderMathInElement) {
+        const container =
+          document.getElementById(
+            'exam-options'
+          );
 
-        renderMathInElement(
-          document.body,
-          {
-            delimiters: [
-              {
-                left: '$$',
-                right: '$$',
-                display: true
-              },
-              {
-                left: '$',
-                right: '$',
-                display: false
-              }
-            ],
-            throwOnError: false
+
+        container.innerHTML =
+          '';
+
+
+        q.options.forEach(
+          opt => {
+
+            const isSelected =
+              userAnswers[currentIdx] === opt;
+
+
+            const btn =
+              document.createElement(
+                'button'
+              );
+
+
+            btn.className =
+              `option-card ${
+                isSelected
+                  ? 'selected'
+                  : ''
+              }`;
+
+
+            btn.innerHTML =
+              `
+              <i class="fa-regular ${
+                isSelected
+                  ? 'fa-square-check'
+                  : 'fa-square'
+              }"></i>
+
+              <span>${opt}</span>
+              `;
+
+
+            btn.onclick =
+              () => {
+
+                userAnswers[
+                  currentIdx
+                ] = opt;
+
+                loadExamQuestion();
+
+              };
+
+
+            container.appendChild(
+              btn
+            );
+
           }
         );
 
-      }
 
+        if (
+          window.renderMathInElement
+        ) {
 
-      document.getElementById(
-        'prev-btn'
-      ).style.display =
-        currentIdx === 0
-          ? 'none'
-          : 'block';
+          renderMathInElement(
+            document.body,
+            {
 
+              delimiters: [
 
-      document.getElementById(
-        'next-btn'
-      ).innerText =
-        currentIdx === examQuestions.length - 1
-          ? 'परीक्षा बुझाउने (Submit)'
-          : 'अर्को ➡️';
+                {
+                  left: '$$',
+                  right: '$$',
+                  display: true
+                },
 
-    };
+                {
+                  left: '$',
+                  right: '$',
+                  display: false
+                }
 
+              ],
 
-    /* =========================================
-       PREVIOUS QUESTION
-    ========================================== */
+              throwOnError: false
 
-    window.prevExamQuestion = function() {
-
-      if (currentIdx > 0) {
-
-        currentIdx--;
-
-        loadExamQuestion();
-
-      }
-
-    };
-
-
-    /* =========================================
-       NEXT QUESTION
-    ========================================== */
-
-    window.nextExamQuestion = function() {
-
-      if (
-        currentIdx <
-        examQuestions.length - 1
-      ) {
-
-        currentIdx++;
-
-        loadExamQuestion();
-
-      } else {
-
-        showConfirmPopup(
-          "के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?",
-          () => {
-
-            examStartedActive = false;
-
-            if (!isPracticeMode) {
-              clearInterval(timerInterval);
             }
+          );
 
-            submitExam();
-
-          },
-          "परीक्षा बुझाउने?"
-        );
-
-      }
-
-    };
+        }
 
 
-    /* =========================================
+        document.getElementById(
+          'prev-btn'
+        ).style.display =
+          currentIdx === 0
+            ? 'none'
+            : 'block';
+
+
+        document.getElementById(
+          'next-btn'
+        ).innerText =
+
+          currentIdx ===
+          examQuestions.length - 1
+
+            ? 'परीक्षा बुझाउने (Submit)'
+
+            : 'अर्को ➡️';
+
+      };
+
+
+    /* ==========================================
+       PREVIOUS
+    =========================================== */
+
+    window.prevExamQuestion =
+      function () {
+
+        if (
+          currentIdx > 0
+        ) {
+
+          currentIdx--;
+
+          loadExamQuestion();
+
+        }
+
+      };
+
+
+    /* ==========================================
+       NEXT / SUBMIT
+    =========================================== */
+
+    window.nextExamQuestion =
+      function () {
+
+        if (
+          currentIdx <
+          examQuestions.length - 1
+        ) {
+
+          currentIdx++;
+
+          loadExamQuestion();
+
+        } else {
+
+          showConfirmPopup(
+
+            "के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?",
+
+            () => {
+
+              examStartedActive =
+                false;
+
+
+              if (!isPracticeMode) {
+
+                clearInterval(
+                  timerInterval
+                );
+
+              }
+
+
+              submitExam();
+
+            },
+
+            "परीक्षा बुझाउने?"
+
+          );
+
+        }
+
+      };
+
+
+    /* ==========================================
        SUBMIT EXAM
-    ========================================== */
+    =========================================== */
 
     async function submitExam() {
 
       /*
-        VERY IMPORTANT:
-        एउटै exam मा submitExam() दोहोरिएर चल्न नदिने।
+        IMPORTANT:
+        Prevent duplicate execution.
+
+        This protects against:
+        - manual submit
+        - timer submit
+        - visibilitychange submit
+        - back button submit
+        - beforeunload submit
       */
 
-      if (submissionHandled) {
+      if (submitInProgress) {
+
         console.log(
-          "Submission already handled."
+          "Submit already in progress."
         );
+
         return;
+
       }
 
-      submissionHandled = true;
 
-      examStartedActive = false;
+      if (completionRecorded) {
 
-      clearInterval(timerInterval);
+        console.log(
+          "Exam completion already recorded."
+        );
+
+        return;
+
+      }
+
+
+      submitInProgress =
+        true;
+
+
+      examStartedActive =
+        false;
+
+
+      clearInterval(
+        timerInterval
+      );
 
 
       document.getElementById(
         'exam-screen'
       ).classList.add('hidden');
 
+
       document.getElementById(
         'timer-box'
       ).classList.add('hidden');
+
 
       document.getElementById(
         'result-screen'
       ).classList.remove('hidden');
 
 
+      /* ==========================================
+         EVALUATE
+      =========================================== */
+
       let correct = 0;
+
       let wrong = 0;
+
       let skipped = 0;
 
-      evaluatedQuestionsList = [];
+
+      evaluatedQuestionsList =
+        [];
 
 
-      /* =========================================
-         EVALUATE
-      ========================================== */
+      examQuestions.forEach(
+        (q, idx) => {
 
-      examQuestions.forEach((q, idx) => {
-
-        const userAns =
-          userAnswers[idx];
-
-        const isCorrect =
-          userAns === q.answer;
-
-        let status = 'skipped';
+          const userAns =
+            userAnswers[idx];
 
 
-        if (!userAns) {
+          const isCorrect =
+            userAns === q.answer;
 
-          skipped++;
 
-          status = 'skipped';
+          let status =
+            'skipped';
 
-        } else if (isCorrect) {
 
-          correct++;
+          if (!userAns) {
 
-          status = 'right';
+            skipped++;
 
-        } else {
+            status =
+              'skipped';
 
-          wrong++;
+          }
 
-          status = 'wrong';
+          else if (isCorrect) {
+
+            correct++;
+
+            status =
+              'right';
+
+          }
+
+          else {
+
+            wrong++;
+
+            status =
+              'wrong';
+
+          }
+
+
+          evaluatedQuestionsList.push({
+
+            index:
+              idx + 1,
+
+            question:
+              q.question,
+
+            userAns:
+              userAns || 'छोडेको',
+
+            correctAns:
+              q.answer,
+
+            explanation:
+              q.explanation || '',
+
+            status:
+              status
+
+          });
 
         }
+      );
 
 
-        evaluatedQuestionsList.push({
-
-          index: idx + 1,
-
-          question: q.question,
-
-          userAns:
-            userAns || 'छोडेको',
-
-          correctAns:
-            q.answer,
-
-          explanation:
-            q.explanation || '',
-
-          status:
-            status
-
-        });
-
-      });
-
-
-      /* =========================================
+      /* ==========================================
          SCORE
-      ========================================== */
+      =========================================== */
 
       let totalScore =
         (correct * 2) -
         (wrong * 0.4);
 
-      if (totalScore < 0) {
+
+      if (
+        totalScore < 0
+      ) {
+
         totalScore = 0;
+
       }
 
 
-      /* =========================================
-         EXAM COIN REWARD
-      ========================================== */
+      /* ==========================================
+         COIN REWARD
+      =========================================== */
 
-      let earnedCoins = 0;
+      let earnedCoins =
+        0;
 
 
       if (!isPracticeMode) {
 
-        if (totalScore >= 90) {
+        if (
+          totalScore >= 90
+        ) {
 
           earnedCoins = 50;
 
-        } else if (totalScore >= 80) {
+        }
+
+        else if (
+          totalScore >= 80
+        ) {
 
           earnedCoins = 40;
 
-        } else if (totalScore >= 70) {
+        }
+
+        else if (
+          totalScore >= 70
+        ) {
 
           earnedCoins = 30;
 
-        } else if (totalScore >= 60) {
+        }
+
+        else if (
+          totalScore >= 60
+        ) {
 
           earnedCoins = 20;
 
-        } else if (totalScore >= 50) {
+        }
+
+        else if (
+          totalScore >= 50
+        ) {
 
           earnedCoins = 10;
 
         }
 
+
+        /* ==========================
+           ADD COINS
+        ========================== */
 
         if (
           earnedCoins > 0 &&
@@ -1750,13 +2861,18 @@
                 auth.currentUser.uid
               );
 
-            const userSnap =
-              await getDoc(userRef);
 
-            const existingCoins =
+            const userSnap =
+              await getDoc(
+                userRef
+              );
+
+
+            let existingCoins =
               userSnap.exists()
-                ? Number(
-                    userSnap.data().coins || 0
+                ? (
+                    userSnap.data().coins ||
+                    0
                   )
                 : 0;
 
@@ -1764,22 +2880,30 @@
             await updateDoc(
               userRef,
               {
+
                 coins:
                   existingCoins +
                   earnedCoins
+
               }
             );
 
 
+            /* Coin history */
+
             await addDoc(
+
               collection(
                 db,
                 "users",
                 auth.currentUser.uid,
                 "coin_history"
               ),
+
               {
-                amount: earnedCoins,
+
+                amount:
+                  earnedCoins,
 
                 type:
                   "exam_reward",
@@ -1789,13 +2913,15 @@
 
                 created_at:
                   serverTimestamp()
+
               }
+
             );
 
           } catch (e) {
 
             console.error(
-              "Coin reward update error:",
+              "Coin update error:",
               e
             );
 
@@ -1806,17 +2932,13 @@
       }
 
 
-      /* =========================================
-         COMPLETION DATE
-      ========================================== */
-
       const completionDate =
         new Date().toLocaleString();
 
 
-      /* =========================================
-         REAL EXAM
-      ========================================== */
+      /* ==========================================
+         PRACTICE RESULT
+      =========================================== */
 
       if (isPracticeMode) {
 
@@ -1825,17 +2947,29 @@
         ).innerText =
           'LOKSEWAQUEST PRACTICE CERTIFICATE';
 
+
         document.getElementById(
           'rep-set'
         ).innerText =
           `परीक्षा सेट: ${prettyExamName} (अभ्यास मोड)`;
 
-      } else {
+      }
+
+
+      /* ==========================================
+         LIVE EXAM RESULT
+         
+         1. Save leaderboard to Supabase
+         2. ONLY IF SUCCESS -> completedExams +1
+      =========================================== */
+
+      else {
 
         document.getElementById(
           'report-main-title'
         ).innerText =
           'LOKSEWAQUEST CERTIFICATE OF COMPLETION';
+
 
         document.getElementById(
           'rep-set'
@@ -1843,66 +2977,69 @@
           `परीक्षा सेट: ${prettyExamName}`;
 
 
-        /*
-          =========================================
-          LEADERBOARD INSERT
-          =========================================
-        */
+        /* ==========================
+           SUPABASE LEADERBOARD
+        ========================== */
 
-        const { error: leaderboardError } =
-          await supabaseClient
-            .from('exam_leaderboard')
-            .insert([
-              {
-                username: userEmail,
+        const {
+          error: leaderboardError
+        } = await supabaseClient
 
-                score:
-                  Number(
-                    totalScore.toFixed(1)
-                  ),
+          .from('exam_leaderboard')
 
-                total_questions:
-                  examQuestions.length,
+          .insert([
 
-                set_name:
-                  examIdentifier
-              }
-            ]);
+            {
+
+              username:
+                userEmail,
+
+              score:
+                Number(
+                  totalScore.toFixed(1)
+                ),
+
+              total_questions:
+                examQuestions.length,
+
+              set_name:
+                examIdentifier
+
+            }
+
+          ]);
 
 
-        if (leaderboardError) {
+        /* ==========================
+           COMPLETED EXAMS + BADGE
+        ========================== */
+
+        if (
+          !leaderboardError
+        ) {
+
+          await recordLiveExamCompletion();
+
+        } else {
 
           console.error(
             "Leaderboard insert error:",
             leaderboardError
           );
 
-        } else {
-
           /*
-            =========================================
-            EXAM COMPLETION + BADGE
-            =========================================
-
-            Only successful real exam completion
-            increments completedExams.
-
-            Practice Mode NEVER reaches here.
-
-            completedExamSets prevents the same
-            exam set from incrementing twice.
+            If leaderboard failed,
+            we DO NOT increment completedExams.
           */
-
-          await recordExamCompletionAndBadge();
 
         }
 
       }
 
 
-      /* =========================================
+      /* ==========================================
          COIN BOX
-      ========================================== */
+      =========================================== */
 
       const coinBox =
         document.getElementById(
@@ -1919,35 +3056,43 @@
           'hidden'
         );
 
+
         document.getElementById(
           'coin-reward-text'
         ).innerHTML =
+
           `🎉 बधाई छ! तपाईंले ${totalScore.toFixed(1)} अंक ल्याएर <b>${earnedCoins} कोइन</b> पुरस्कार पाउनुभयो!`;
 
-        coinBox.style.background =
-          'linear-gradient(135deg, #fefce8 0%, #fef9c3 100%)';
+      }
 
-        coinBox.style.borderColor =
-          '#fde047';
 
-      } else if (!isPracticeMode) {
+      else if (
+        !isPracticeMode
+      ) {
 
         coinBox.classList.remove(
           'hidden'
         );
 
+
         document.getElementById(
           'coin-reward-text'
         ).innerHTML =
+
           `💡 ५० भन्दा कम अंक आएकाले यसपटक कुनै कोइन प्राप्त भएन। फेरि प्रयास गर्नुहोला!`;
+
 
         coinBox.style.background =
           '#fef2f2';
 
+
         coinBox.style.borderColor =
           '#fecaca';
 
-      } else {
+      }
+
+
+      else {
 
         coinBox.classList.add(
           'hidden'
@@ -1956,9 +3101,9 @@
       }
 
 
-      /* =========================================
-         STATUS MESSAGE
-      ========================================== */
+      /* ==========================================
+         STATUS
+      =========================================== */
 
       const statusBox =
         document.getElementById(
@@ -1966,7 +3111,9 @@
         );
 
 
-      if (totalScore < 45) {
+      if (
+        totalScore < 45
+      ) {
 
         statusBox.style.background =
           '#fef2f2';
@@ -1980,7 +3127,9 @@
         statusBox.innerText =
           'असाफल! अभ्यास अझै मजबुत गर्नुहोला। 🎯';
 
-      } else {
+      }
+
+      else {
 
         statusBox.style.background =
           '#f0fdf4';
@@ -1997,34 +3146,39 @@
       }
 
 
-      /* =========================================
+      /* ==========================================
          RESULT DATA
-      ========================================== */
+      =========================================== */
 
       document.getElementById(
         'rep-name'
       ).innerText =
         candidateName;
 
+
       document.getElementById(
         'rep-time-info'
       ).innerText =
         `सम्पन्न समय: ${completionDate}`;
+
 
       document.getElementById(
         'rep-correct'
       ).innerText =
         correct;
 
+
       document.getElementById(
         'rep-wrong'
       ).innerText =
         wrong;
 
+
       document.getElementById(
         'rep-skipped'
       ).innerText =
         skipped;
+
 
       document.getElementById(
         'rep-score'
@@ -2032,436 +3186,58 @@
         totalScore.toFixed(1);
 
 
-      /* =========================================
+      /* ==========================================
          REVIEW
-      ========================================== */
+      =========================================== */
 
       renderReviewList('all');
+
+
+      /* ==========================================
+         LEADERBOARD
+      =========================================== */
 
       fetchLeaderboard();
 
     }
 
 
-    /* =========================================
-       EXAM COMPLETION + EXAM WARRIOR BADGE
-    ========================================== */
-
-    async function recordExamCompletionAndBadge() {
-
-      if (!auth.currentUser) {
-        return;
-      }
-
-
-      const uid =
-        auth.currentUser.uid;
-
-      const userRef =
-        doc(db, "users", uid);
-
-
-      try {
-
-        let newlyUnlocked = false;
-
-
-        /*
-          Firestore transaction:
-          एउटै set बाट completedExams दोहोरिन नदिने।
-        */
-
-        await runTransaction(
-          db,
-          async (transaction) => {
-
-            const snap =
-              await transaction.get(
-                userRef
-              );
-
-
-            if (!snap.exists()) {
-
-              throw new Error(
-                "User document not found."
-              );
-
-            }
-
-
-            const data =
-              snap.data() || {};
-
-
-            let completedExams =
-              Number(
-                data.completedExams ||
-                data.examsCompleted ||
-                0
-              );
-
-
-            const completedExamSets =
-              data.completedExamSets || {};
-
-
-            const badges =
-              data.badges || {};
-
-
-            /*
-              एउटै exam set पहिले count भएको छ?
-            */
-
-            const alreadyCompletedThisSet =
-              completedExamSets[
-                examIdentifier
-              ] === true;
-
-
-            if (!alreadyCompletedThisSet) {
-
-              completedExams += 1;
-
-
-              completedExamSets[
-                examIdentifier
-              ] = true;
-
-            }
-
-
-            /*
-              Existing badge normalize
-            */
-
-            const oldBadge =
-              badges[EXAM_BADGE.id];
-
-
-            const alreadyUnlocked =
-              oldBadge === true ||
-              oldBadge?.unlocked === true;
-
-
-            /*
-              Badge progress
-              */
-
-            const badgeProgress =
-              Math.min(
-                completedExams,
-                EXAM_BADGE.target
-              );
-
-
-            /*
-              यदि target पुगिसकेको छ भने unlock
-            */
-
-            if (
-              completedExams >=
-                EXAM_BADGE.target &&
-              !alreadyUnlocked
-            ) {
-
-              badges[
-                EXAM_BADGE.id
-              ] = {
-
-                unlocked: true,
-
-                progress:
-                  EXAM_BADGE.target,
-
-                target:
-                  EXAM_BADGE.target,
-
-                unlockedAt:
-                  new Date().toISOString()
-
-              };
-
-
-              newlyUnlocked = true;
-
-            } else if (alreadyUnlocked) {
-
-              /*
-                पुरानो unlocked badge भए पनि
-                progress लाई target मा normalize।
-              */
-
-              badges[
-                EXAM_BADGE.id
-              ] = {
-
-                unlocked: true,
-
-                progress:
-                  EXAM_BADGE.target,
-
-                target:
-                  EXAM_BADGE.target,
-
-                unlockedAt:
-                  oldBadge?.unlockedAt ||
-                  new Date().toISOString()
-
-              };
-
-            } else {
-
-              badges[
-                EXAM_BADGE.id
-              ] = {
-
-                unlocked: false,
-
-                progress:
-                  badgeProgress,
-
-                target:
-                  EXAM_BADGE.target
-
-              };
-
-            }
-
-
-            /*
-              Firestore update
-            */
-
-            transaction.update(
-              userRef,
-              {
-
-                completedExams:
-                  completedExams,
-
-                completedExamSets:
-                  completedExamSets,
-
-                badges:
-                  badges
-
-              }
-            );
-
-          }
-        );
-
-
-        /*
-          Badge unlock popup
-        */
-
-        if (newlyUnlocked) {
-
-          queueAchievementPopup(
-            EXAM_BADGE
-          );
-
-        }
-
-      } catch (error) {
-
-        console.error(
-          "Exam completion / badge error:",
-          error
-        );
-
-      }
-
-    }
-
-
-    /* =========================================
-       ACHIEVEMENT POPUP QUEUE
-    ========================================== */
-
-    function queueAchievementPopup(
-      badge
-    ) {
-
-      achievementPopupQueue.push(
-        badge
-      );
-
-      processAchievementPopupQueue();
-
-    }
-
-
-    function processAchievementPopupQueue() {
-
-      if (
-        achievementPopupShowing ||
-        achievementPopupQueue.length === 0
-      ) {
-        return;
-      }
-
-
-      const badge =
-        achievementPopupQueue.shift();
-
-
-      achievementPopupShowing = true;
-
-
-      showAchievementUnlocked(
-        badge
-      );
-
-    }
-
-
-    function showAchievementUnlocked(
-      badge
-    ) {
-
-      let popup =
-        document.getElementById(
-          "achievement-unlocked-popup"
-        );
-
-
-      if (!popup) {
-
-        popup =
-          document.createElement(
-            "div"
-          );
-
-        popup.id =
-          "achievement-unlocked-popup";
-
-
-        popup.innerHTML = `
-
-          <div class="achievement-popup-card">
-
-            <div class="achievement-popup-icon">
-              <i id="achievement-popup-icon"
-                 class="fa-solid fa-trophy"></i>
-            </div>
-
-            <div class="achievement-popup-label">
-              ACHIEVEMENT UNLOCKED!
-            </div>
-
-            <h3 id="achievement-popup-name"></h3>
-
-            <p id="achievement-popup-en"></p>
-
-            <button id="achievement-popup-close">
-              शानदार! 🎉
-            </button>
-
-          </div>
-
-        `;
-
-
-        document.body.appendChild(
-          popup
-        );
-
-
-        document.getElementById(
-          "achievement-popup-close"
-        ).onclick =
-          closeAchievementPopup;
-
-      }
-
-
-      document.getElementById(
-        "achievement-popup-icon"
-      ).className =
-        `fa-solid ${badge.icon}`;
-
-
-      document.getElementById(
-        "achievement-popup-name"
-      ).innerText =
-        badge.name;
-
-
-      document.getElementById(
-        "achievement-popup-en"
-      ).innerText =
-        badge.english;
-
-
-      popup.classList.add(
-        "active"
-      );
-
-    }
-
-
-    function closeAchievementPopup() {
-
-      const popup =
-        document.getElementById(
-          "achievement-unlocked-popup"
-        );
-
-
-      if (popup) {
-
-        popup.classList.remove(
-          "active"
-        );
-
-      }
-
-
-      achievementPopupShowing =
-        false;
-
-
-      setTimeout(() => {
-
-        processAchievementPopupQueue();
-
-      }, 250);
-
-    }
-
-
-    /* =========================================
+    /* ==========================================
        REVIEW FILTER
-    ========================================== */
+    =========================================== */
 
-    window.filterReview = function(type) {
+    window.filterReview =
+      function (type) {
 
-      document
-        .querySelectorAll('.filter-btn')
-        .forEach(btn =>
-          btn.classList.remove('active')
+        document
+          .querySelectorAll(
+            '.filter-btn'
+          )
+          .forEach(
+            btn =>
+              btn.classList.remove(
+                'active'
+              )
+          );
+
+
+        document.getElementById(
+          `filter-${type}`
+        ).classList.add(
+          'active'
         );
 
 
-      document.getElementById(
-        `filter-${type}`
-      ).classList.add('active');
+        renderReviewList(
+          type
+        );
+
+      };
 
 
-      renderReviewList(
-        type
-      );
-
-    };
-
-
-    /* =========================================
+    /* ==========================================
        REVIEW LIST
-    ========================================== */
+    =========================================== */
 
     function renderReviewList(
       filterType
@@ -2472,14 +3248,18 @@
           'review-container'
         );
 
-      container.innerHTML = '';
+
+      container.innerHTML =
+        '';
 
 
       let filtered =
         evaluatedQuestionsList;
 
 
-      if (filterType === 'right') {
+      if (
+        filterType === 'right'
+      ) {
 
         filtered =
           evaluatedQuestionsList.filter(
@@ -2487,7 +3267,9 @@
               item.status === 'right'
           );
 
-      } else if (
+      }
+
+      else if (
         filterType === 'wrong'
       ) {
 
@@ -2497,7 +3279,9 @@
               item.status === 'wrong'
           );
 
-      } else if (
+      }
+
+      else if (
         filterType === 'skipped'
       ) {
 
@@ -2510,10 +3294,13 @@
       }
 
 
-      if (filtered.length === 0) {
+      if (
+        filtered.length === 0
+      ) {
 
         container.innerHTML =
-          '<p style="text-align: center; color: #64748b; padding: 20px; font-size: 12px;">कुनै प्रश्न फेला परेन।</p>';
+
+          '<p style="text-align:center;color:#64748b;padding:20px;font-size:12px;">कुनै प्रश्न फेला परेन।</p>';
 
         return;
 
@@ -2540,7 +3327,9 @@
             ansColor =
               '#059669';
 
-          } else if (
+          }
+
+          else if (
             item.status === 'wrong'
           ) {
 
@@ -2550,7 +3339,9 @@
             ansColor =
               '#dc2626';
 
-          } else {
+          }
+
+          else {
 
             borderColor =
               '#fde68a';
@@ -2563,27 +3354,58 @@
 
           container.innerHTML += `
 
-            <div style="background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid ${borderColor}; margin-bottom: 8px; text-align: left;">
+            <div style="
+              background:#f8fafc;
+              padding:10px;
+              border-radius:10px;
+              border:1px solid ${borderColor};
+              margin-bottom:8px;
+              text-align:left;
+            ">
 
-              <p style="font-weight: 700; color: #0f172a; margin-bottom: 2px;">
+              <p style="
+                font-weight:700;
+                color:#0f172a;
+                margin-bottom:2px;
+              ">
                 Q${item.index}: ${item.question}
               </p>
 
-              <p style="color: #64748b; margin-top: 4px;">
+              <p style="
+                color:#64748b;
+                margin-top:4px;
+              ">
                 तपाईंको उत्तर:
-                <span style="font-weight: 700; color: ${ansColor};">
+                <span style="
+                  font-weight:700;
+                  color:${ansColor};
+                ">
                   ${item.userAns}
                 </span>
               </p>
 
-              <p style="color: #059669; font-weight: 600; margin-top: 2px;">
-                सही उत्तर: ${item.correctAns}
+              <p style="
+                color:#059669;
+                font-weight:600;
+                margin-top:2px;
+              ">
+                सही उत्तर:
+                ${item.correctAns}
               </p>
 
               ${
                 item.explanation
                   ? `
-                    <p style="font-size: 10px; color: #475569; margin-top: 4px; font-style: italic; background: #ffffff; padding: 6px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <p style="
+                      font-size:10px;
+                      color:#475569;
+                      margin-top:4px;
+                      font-style:italic;
+                      background:#ffffff;
+                      padding:6px;
+                      border-radius:6px;
+                      border:1px solid #e2e8f0;
+                    ">
                       📌 ${item.explanation}
                     </p>
                   `
@@ -2598,24 +3420,32 @@
       );
 
 
-      if (window.renderMathInElement) {
+      if (
+        window.renderMathInElement
+      ) {
 
         renderMathInElement(
           container,
           {
+
             delimiters: [
+
               {
                 left: '$$',
                 right: '$$',
                 display: true
               },
+
               {
                 left: '$',
                 right: '$',
                 display: false
               }
+
             ],
+
             throwOnError: false
+
           }
         );
 
@@ -2624,29 +3454,34 @@
     }
 
 
-    /* =========================================
+    /* ==========================================
        LEADERBOARD
-    ========================================== */
+       
+       SUPABASE
+    =========================================== */
 
     async function fetchLeaderboard() {
 
       const {
         data,
         error
-      } =
-        await supabaseClient
-          .from('exam_leaderboard')
-          .select('*')
-          .eq(
-            'set_name',
-            examIdentifier
-          )
-          .order(
-            'score',
-            {
-              ascending: false
-            }
-          );
+      } = await supabaseClient
+
+        .from('exam_leaderboard')
+
+        .select('*')
+
+        .eq(
+          'set_name',
+          examIdentifier
+        )
+
+        .order(
+          'score',
+          {
+            ascending: false
+          }
+        );
 
 
       const containers = [
@@ -2665,9 +3500,8 @@
       containers.forEach(
         lbContainer => {
 
-          if (!lbContainer) {
+          if (!lbContainer)
             return;
-          }
 
 
           lbContainer.innerHTML =
@@ -2681,7 +3515,8 @@
           ) {
 
             lbContainer.innerHTML =
-              '<p style="color: #64748b; text-align: center; font-size: 12px; padding: 4px;">हाल कुनै रेकर्ड छैन।</p>';
+
+              '<p style="color:#64748b;text-align:center;font-size:12px;padding:4px;">हाल कुनै रेकर्ड छैन।</p>';
 
             return;
 
@@ -2710,11 +3545,17 @@
 
                 <div class="lb-row">
 
-                  <span style="font-weight: 700; color: #1e293b;">
+                  <span style="
+                    font-weight:700;
+                    color:#1e293b;
+                  ">
                     ${i + 1}. ${displayName}
                   </span>
 
-                  <span style="color: #2563eb; font-weight: 800;">
+                  <span style="
+                    color:#2563eb;
+                    font-weight:800;
+                  ">
                     ${item.score} अंक
                   </span>
 
@@ -2731,77 +3572,88 @@
     }
 
 
-    /* =========================================
+    /* ==========================================
        REVIEW MODAL
-    ========================================== */
+    =========================================== */
 
-    window.openReviewModal = function() {
+    window.openReviewModal =
+      function () {
 
-      document.getElementById(
-        'reviewModal'
-      ).classList.add(
-        'active'
-      );
+        document.getElementById(
+          'reviewModal'
+        ).classList.add(
+          'active'
+        );
 
-    };
-
-
-    window.closeReviewModal = function() {
-
-      document.getElementById(
-        'reviewModal'
-      ).classList.remove(
-        'active'
-      );
-
-    };
+      };
 
 
-    /* =========================================
+    window.closeReviewModal =
+      function () {
+
+        document.getElementById(
+          'reviewModal'
+        ).classList.remove(
+          'active'
+        );
+
+      };
+
+
+    /* ==========================================
        PDF
-    ========================================== */
+    =========================================== */
 
-    window.downloadPDF = function() {
-      window.print();
-    };
+    window.downloadPDF =
+      function () {
+
+        window.print();
+
+      };
 
 
-    /* =========================================
+    /* ==========================================
        REPORT MODAL
-    ========================================== */
+    =========================================== */
 
-    window.openReportModal = function() {
+    window.openReportModal =
+      function () {
 
-      document.getElementById(
-        'reportModal'
-      ).classList.add(
-        'active'
-      );
+        document.getElementById(
+          'reportModal'
+        ).classList.add(
+          'active'
+        );
 
-    };
-
-
-    window.closeReportModal = function() {
-
-      document.getElementById(
-        'reportModal'
-      ).classList.remove(
-        'active'
-      );
-
-      document.getElementById(
-        'reportReason'
-      ).value = '';
-
-    };
+      };
 
 
-    /* =========================================
+    window.closeReportModal =
+      function () {
+
+        document.getElementById(
+          'reportModal'
+        ).classList.remove(
+          'active'
+        );
+
+
+        document.getElementById(
+          'reportReason'
+        ).value =
+          '';
+
+      };
+
+
+    /* ==========================================
        REPORT QUESTION
-    ========================================== */
+       
+       SUPABASE
+    =========================================== */
 
     window.submitQuestionReport =
-      async function() {
+      async function () {
 
         const reason =
           document.getElementById(
@@ -2812,13 +3664,19 @@
         if (!reason) {
 
           showSuccessPopup(
+
             'कृपया समस्या के हो लेख्नुहोस्!',
+
             '',
+
             'warning',
+
             'अपूरो विवरण'
+
           );
 
           return;
+
         }
 
 
@@ -2826,63 +3684,65 @@
           examQuestions[currentIdx];
 
 
-        if (!currentQ) {
-
-          showSuccessPopup(
-            'प्रश्न फेला परेन।',
-            '',
-            'error',
-            'त्रुटि'
-          );
-
-          return;
-
-        }
-
-
         const {
           error
-        } =
-          await supabaseClient
-            .from('reported_questions')
-            .insert([
-              {
+        } = await supabaseClient
 
-                question_id:
-                  currentQ.id,
+          .from('reported_questions')
 
-                question_text:
-                  currentQ.question,
+          .insert([
 
-                reason:
-                  reason,
+            {
 
-                status:
-                  'Pending'
+              question_id:
+                currentQ.id,
 
-              }
-            ]);
+              question_text:
+                currentQ.question,
+
+              reason:
+                reason,
+
+              status:
+                'Pending'
+
+            }
+
+          ]);
 
 
         if (error) {
 
           showSuccessPopup(
+
             'रिपोर्ट पठाउन असफल भयो: ' +
-              error.message,
+            error.message,
+
             '',
+
             'error',
+
             'त्रुटि'
+
           );
 
-        } else {
+        }
+
+        else {
 
           closeReportModal();
 
+
           showSuccessPopup(
+
             'सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏',
+
             '',
+
             'success',
+
             'सफल'
+
           );
 
         }
@@ -2890,13 +3750,15 @@
       };
 
 
-    /* =========================================
-       TAB / MINIMIZE PROTECTION
-    ========================================== */
+    /* ==========================================
+       VISIBILITY CHANGE
+       
+       LIVE EXAM AUTO SUBMIT
+    =========================================== */
 
     document.addEventListener(
       "visibilitychange",
-      function() {
+      function () {
 
         const examScreen =
           document.getElementById(
@@ -2912,13 +3774,20 @@
           !isPracticeMode
         ) {
 
-          if (document.hidden) {
+          if (
+            document.hidden
+          ) {
 
             showSuccessPopup(
+
               "⚠️ चेतावनी: तपाईंले परीक्षाको tab छोड्नुभयो वा minimize गर्नुभयो! तपाईंको परीक्षा स्वतः submit हुँदैछ।",
+
               '',
+
               'warning',
+
               'चेतावनी'
+
             );
 
 
@@ -2937,13 +3806,13 @@
     );
 
 
-    /* =========================================
-       BACK BUTTON PROTECTION
-    ========================================== */
+    /* ==========================================
+       BACK BUTTON
+    =========================================== */
 
     window.addEventListener(
       'popstate',
-      function(event) {
+      function (event) {
 
         const examScreen =
           document.getElementById(
@@ -2960,17 +3829,22 @@
         ) {
 
           showConfirmPopup(
+
             "⚠️ सावधान! तपाईं परीक्षा दिँदै हुनुहुन्छ, back जाँदा परीक्षा स्वतः submit हुनेछ। क्यान्सिल गर्न चाहनुहुन्छ?",
+
             () => {
 
               clearInterval(
                 timerInterval
               );
 
+
               submitExam();
 
             },
+
             "सावधान!"
+
           );
 
 
@@ -2986,13 +3860,13 @@
     );
 
 
-    /* =========================================
+    /* ==========================================
        BEFORE UNLOAD
-    ========================================== */
+    =========================================== */
 
     window.addEventListener(
       'beforeunload',
-      function(e) {
+      function (e) {
 
         const examScreen =
           document.getElementById(
@@ -3013,10 +3887,9 @@
           e.returnValue = '';
 
           /*
-            Browser unload हुँदा async Firebase/
-            Supabase operation guaranteed हुँदैन।
-            तर submissionHandled protection ले same-page
-            double submit रोक्छ।
+            submitExam has its own guard,
+            so this won't duplicate completion
+            if another submit is already running.
           */
 
           submitExam();
@@ -3029,7 +3902,8 @@
   </script>
 
 
+  <!-- GLOBAL COMPONENTS -->
   <script src="components.js"></script>
 
 </body>
-  </html>
+</html>
