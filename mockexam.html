@@ -88,20 +88,6 @@
     }
     .btn-primary:active { background: #1d4ed8; }
 
-    .btn-practice {
-      width: 100%;
-      background: #10b981;
-      color: white;
-      font-weight: 700;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-      margin-top: 10px;
-    }
-
     .btn-secondary {
       background: #f1f5f9;
       color: #475569;
@@ -111,22 +97,6 @@
       border: none;
       cursor: pointer;
       font-size: 13px;
-    }
-
-    .filter-btn {
-      background: #f1f5f9;
-      color: #475569;
-      border: 1px solid #cbd5e1;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .filter-btn.active {
-      background: #2563eb;
-      color: white;
-      border-color: #2563eb;
     }
 
     .option-card {
@@ -247,7 +217,7 @@
         <li>कुल समय: <strong>४५ मिनेट</strong></li>
         <li>सही उत्तरको: <strong>+२ अंक</strong></li>
         <li>गलत उत्तरको: <strong>२०% माइनस (-०.४ अंक)</strong></li>
-        <li><strong>कोइन रिवार्ड:</strong> ५०%-६०% (10 Coins), ६०%-७०% (20 Coins), ७०%-80% (30 Coins), ८०%-९०% (40 Coins), ९०%-१००% (50 Coins)</li>
+        <li><strong>कोइन रिवार्ड:</strong> ५०%-६०% (10 Coins), ६०%-७०% (20 Coins), ७०%-८०% (30 Coins), ८०%-९०% (40 Coins), ९०%-१००% (50 Coins)</li>
       </ul>
 
       <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 13px; margin-bottom: 16px;" id="set-badge-title">
@@ -326,7 +296,6 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // URL बाट `set` प्यारामिटर तान्ने (जस्तै: mockexam.html?set=kharidar_mocktest1)
     const urlParams = new URLSearchParams(window.location.search);
     const activeSet = urlParams.get('set') || 'kharidar_mocktest1';
 
@@ -338,7 +307,17 @@
     let currentIdx = 0;
     let userAnswers = {}; 
     let timerInterval;
-    let timeLeftSeconds = 45 * 60; // ४५ मिनेट
+    let timeLeftSeconds = 45 * 60; 
+
+    // बलियो Shuffle Algorithm जसले array का element हरूलाई राम्ररी फ्याँक्छ (Shuffle)
+    function shuffleArray(array) {
+      let arr = [...array]; // नयाँ Array सिर्जना गर्ने (Deep Copy) ताकि original data प्रभावित नहोस्
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
 
     document.addEventListener("DOMContentLoaded", () => {
       onAuthStateChanged(auth, async (user) => {
@@ -354,7 +333,6 @@
 
     window.startExam = async function() {
       try {
-        // quizzes टेबलबाट topic को आधारमा प्रश्न फेच गर्ने
         let { data, error } = await supabaseClient
           .from('quizzes')
           .select('*')
@@ -365,7 +343,23 @@
           return;
         }
 
-        examQuestions = data;
+        // १. प्रश्नहरूको अर्डर रेन्डम (Shuffle) गर्ने
+        let randomizedQuestions = shuffleArray(data);
+
+        // २. प्रत्येक प्रश्नको अप्सनहरूलाई पनि रेन्डम (Shuffle) गर्ने
+        examQuestions = randomizedQuestions.map(q => {
+          let options = q.options || [q.option_a, q.option_b, q.option_c, q.option_d];
+          // खाली अप्सनहरूलाई हटाउने
+          options = options.filter(opt => opt !== null && opt !== undefined && opt !== "");
+          
+          let shuffledOptions = shuffleArray(options);
+          return {
+            ...q,
+            shuffledOptions: shuffledOptions,
+            correctAnswer: q.answer || q.correct_answer
+          };
+        });
+
         document.getElementById('reg-screen').classList.add('hidden');
         document.getElementById('exam-screen').classList.remove('hidden');
         document.getElementById('timer-box').classList.remove('hidden');
@@ -398,12 +392,11 @@
       let qText = q.question || q.question_text || '';
       document.getElementById('exam-question').innerHTML = qText;
 
-      let options = q.options || [q.option_a, q.option_b, q.option_c, q.option_d];
       const container = document.getElementById('exam-options');
       container.innerHTML = '';
 
-      options.forEach(opt => {
-        if (!opt) return;
+      // अब shuffledOptions प्रयोग भएको छ, जसले गर्दा अप्सन जहिले नयाँ क्रममा देखिन्छ
+      q.shuffledOptions.forEach(opt => {
         const isSelected = userAnswers[currentIdx] === opt;
         const btn = document.createElement('button');
         btn.className = `option-card ${isSelected ? 'selected' : ''}`;
@@ -447,22 +440,19 @@
       let correct = 0, wrong = 0;
       examQuestions.forEach((q, idx) => {
         const userAns = userAnswers[idx];
-        const correctAns = q.answer || q.correct_answer;
-        if (userAns && userAns.trim() === correctAns.trim()) {
+        if (userAns && userAns.trim() === q.correctAnswer.trim()) {
           correct++;
         } else if (userAns) {
           wrong++;
         }
       });
 
-      // मार्किङ: सहीको २ अंक, गलतको २०% (-०.४ अंक)
       let totalScore = (correct * 2) - (wrong * 0.4);
       if (totalScore < 0) totalScore = 0;
 
       let maxPossibleScore = examQuestions.length * 2;
       let percentage = maxPossibleScore > 0 ? (totalScore / maxPossibleScore) * 100 : 0;
 
-      // कोइन निर्धारण (तपाईंको नियम अनुसार)
       let earnedCoins = 0;
       if (percentage >= 90) earnedCoins = 50;
       else if (percentage >= 80) earnedCoins = 40;
@@ -476,7 +466,6 @@
       document.getElementById('rep-score').innerText = totalScore.toFixed(1);
       document.getElementById('rep-coins').innerText = `🪙 ${earnedCoins} Coins पाउनुभयो`;
 
-      // लिडरबोर्डमा सेभ गर्ने
       if (userEmail) {
         await supabaseClient.from('exam_leaderboard').insert([{ 
           username: userEmail, 
