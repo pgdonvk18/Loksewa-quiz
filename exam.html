@@ -270,7 +270,7 @@
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">📋 उत्तर तथा समीक्षा</h3>
         <button onclick="closeReviewModal()" style="background: none; border: none; font-size: 16px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div id="review-container" style="flex: 1; overflow-y: auto; font-size: 11px;"></div>
+      <div id="review-container" style="flex: 1; overflow-y: auto; font-size: 12px;"></div>
       <button onclick="closeReviewModal()" class="btn-primary" style="margin-top: 10px; padding: 10px;">बन्द गर्नुहोस्</button>
     </div>
   </div>
@@ -363,7 +363,7 @@
     </div>
   </main>
 
-  <!-- Global Custom Success/Error/Warning Modal (components.js style integration) -->
+  <!-- Global Custom Success/Error/Warning Modal -->
   <div id="customGlobalModal" class="cg-modal-overlay">
     <div class="cg-modal-card">
       <div id="cgModalIconBox" class="cg-icon-box success">
@@ -449,7 +449,7 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const rawSet = urlParams.get('set') || 'set_1'; 
-    const currentSet = rawSet.toLowerCase();
+    const currentSet = rawSet.toLowerCase().replace(/\s+/g, '_');
     const setNumberMatch = currentSet.match(/\d+/);
     const setNum = setNumberMatch ? setNumberMatch[0] : '1';
     const prettyExamName = `Pre Qualifying Test Set ${setNum}`;
@@ -481,7 +481,6 @@
       }
     };
 
-    // Global Popup Definitions (components.js functions)
     window.showSuccessPopup = function(message, redirectUrl, type = 'success', titleText = '') {
       const modal = document.getElementById('customGlobalModal');
       const msgEl = document.getElementById('cgModalMessage');
@@ -565,11 +564,21 @@
     window.startExam = async function(practice = false) {
       isPracticeMode = practice;
       try {
-        let { data } = await supabaseClient.from('quizzes').select('*').ilike('topic', currentSet);
+        let { data, error } = await supabaseClient.from('quizzes').select('*').ilike('topic', currentSet);
         if (!data || data.length === 0) {
-          let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', rawSet);
+          let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', examIdentifier);
           data = retry.data;
         }
+        if (!data || data.length === 0) {
+          let retryRaw = await supabaseClient.from('quizzes').select('*').ilike('topic', rawSet);
+          data = retryRaw.data;
+        }
+
+        if (!data || data.length === 0) {
+          showSuccessPopup('यो सेटको लागि डेटाबेसमा प्रश्नहरू भेटिएनन्।', '', 'error', 'प्रश्न भेटिएन ⚠️');
+          return;
+        }
+
         examQuestions = data;
         document.getElementById('reg-screen').classList.add('hidden');
         document.getElementById('exam-screen').classList.remove('hidden');
@@ -659,11 +668,13 @@
     async function submitExam() {
       document.getElementById('exam-screen').classList.add('hidden');
       document.getElementById('result-screen').classList.remove('hidden');
+      
       let correct = 0, wrong = 0;
       examQuestions.forEach((q, idx) => {
         if (userAnswers[idx] === q.answer) correct++;
         else wrong++;
       });
+      
       document.getElementById('rep-name').innerText = candidateName;
       document.getElementById('rep-set').innerText = prettyExamName;
       
@@ -671,7 +682,33 @@
         { username: userEmail, set_name: examIdentifier, score: correct, total: examQuestions.length }
       ], { onConflict: 'username,set_name' });
 
+      // उत्तर समीक्षा स्वचालित रूपमा निर्माण गर्ने
+      buildReviewContent();
       fetchLeaderboard();
+    }
+
+    function buildReviewContent() {
+      const reviewContainer = document.getElementById('review-container');
+      if (!reviewContainer) return;
+      
+      reviewContainer.innerHTML = '';
+      examQuestions.forEach((q, idx) => {
+        const userAns = userAnswers[idx];
+        const isCorrect = userAns === q.answer;
+        
+        let card = document.createElement('div');
+        card.style.cssText = "background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 12px; margin-bottom: 10px;";
+        
+        card.innerHTML = `
+          <p style="font-weight: 700; color: #0f172a; margin-bottom: 6px;">Q${idx + 1}: ${q.question}</p>
+          <p style="font-size: 11px; color: ${userAns ? (isCorrect ? '#16a34a' : '#dc2626') : '#64748b'}; font-weight: 600; margin-bottom: 4px;">
+            तपाईंको उत्तर: ${userAns || 'छैन (Skipped)'} ${isCorrect ? '✅' : '❌'}
+          </p>
+          ${!isCorrect ? `<p style="font-size: 11px; color: #16a34a; font-weight: 600;">सहि उत्तर: ${q.answer}</p>` : ''}
+        `;
+        reviewContainer.appendChild(card);
+      });
+      if (window.renderMathInElement) renderMathInElement(reviewContainer, { throwOnError: false });
     }
 
     async function fetchLeaderboard() {
