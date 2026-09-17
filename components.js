@@ -1,11 +1,12 @@
 import { doc, updateDoc, increment, collection, addDoc, serverTimestamp, getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// यदि components.js मा पहिल्यै db इन्स्टन्स छ भने त्यसैलाई प्रयोग गर्नुहोस्, नभए getFirestore() प्रयोग गर्नुहोस्।
+/**
  * युजरको कोइन अपडेट गर्ने र स्वचालित रूपमा coin_history मा रेकर्ड राख्ने फंक्सन
  * @param {object} db - Firestore database instance
  * @param {string} userId - Firebase User UID
  * @param {number} amount - कोइनको मात्रा (बढाउँदा सकारात्मक जस्तै 50, घटाउँदा नकारात्मक जस्तै -20)
  * @param {string} description - कारण (जस्तै: "Speed Blitz खेल जित बापत")
+ */
 export async function updateUserCoinsWithHistory(db, userId, amount, description) {
   try {
     if (!userId) return;
@@ -34,7 +35,7 @@ export async function updateUserCoinsWithHistory(db, userId, amount, description
   }
 }
 
-// // Global Components (Chat, Footer, Floating Emojis, Room Config, Bottom Nav & Other Pages Header)
+// Global Components (Chat, Footer, Floating Emojis, Room Config, Bottom Nav & Other Pages Header)
 (function() {
   // Inject CSS styles dynamically for all global components
   const style = document.createElement('style');
@@ -266,7 +267,7 @@ export async function updateUserCoinsWithHistory(db, userId, amount, description
 window.selectedMaxPlayers = 4;
 window.selectedTotalRounds = 3;
 
-function loadCreateRoomCard(containerId) {
+window.loadCreateRoomCard = function(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
@@ -337,9 +338,9 @@ function loadCreateRoomCard(containerId) {
       window.selectedTotalRounds = parseInt(e.target.getAttribute('data-value'));
     });
   });
-}
+};
 
-function loadBottomNav(activePage) {
+window.loadBottomNav = function(activePage) {
   if (!document.getElementById('bottom-nav-style')) {
     const styleElem = document.createElement('style');
     styleElem.id = 'bottom-nav-style';
@@ -397,7 +398,7 @@ function loadBottomNav(activePage) {
     </div>
   `;
   document.body.insertAdjacentHTML('beforeend', navHTML);
-}
+};
 
 // पपअप र मोडल कोड
 document.addEventListener("DOMContentLoaded", () => {
@@ -510,7 +511,7 @@ window.showSuccessPopup = function(message, redirectUrl, type = 'success', title
   }
 };
 
-// कन्फर्मेसन (Cancel / OK) पपअपको लागि ग्लोबल फंक्सन (सुधारेको)
+// कन्फर्मेसन (Cancel / OK) पपअपको लागि ग्लोबल फंक्सन
 window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्टि गर्नुहोस् ⚠️') {
   const modal = document.getElementById('customConfirmModal');
   const msgEl = document.getElementById('cgConfirmMessage');
