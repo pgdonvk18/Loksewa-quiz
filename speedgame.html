@@ -48,6 +48,7 @@
     
     .btn-primary { background: #2563eb; color: white; width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); transition: background 0.2s; }
     .btn-primary:hover { background: #1d4ed8; }
+    .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
 
     /* Inline Leaderboard Styles */
     .leaderboard-section { margin-top: 20px; border-top: 2px dashed #e2e8f0; padding-top: 20px; }
@@ -101,9 +102,7 @@
       <!-- Question Card -->
       <div class="card">
         <div id="questionText" class="question-text">प्रश्नहरू लोड हुँदैछन्...</div>
-        <div class="options-list" id="optionsList">
-          <!-- Dynamic Options -->
-        </div>
+        <div class="options-list" id="optionsList"></div>
       </div>
     </div>
 
@@ -153,7 +152,6 @@
     const auth = getAuth(app);  
     const db = getFirestore(app);  
 
-    // ==== Supabase Credentials Setup ====
     const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     
@@ -190,8 +188,9 @@
       }
     });
 
-    // प्रश्नहरू फायरबेसबाट तान्ने र शफल गर्ने
+    // प्रश्नहरू फायरबेसबाट तान्ने फंक्शन
     async function fetchAllQuestions() {
+      if (allQuestions.length > 0) return true;
       try {
         const querySnapshot = await fsGetDocs(fsCollection(db, "quizzes"));
         querySnapshot.forEach((docSnap) => {
@@ -201,17 +200,30 @@
           }
         });
         allQuestions.sort(() => Math.random() - 0.5);
+        return allQuestions.length > 0;
       } catch (err) {
         console.error("Error fetching questions: ", err);
+        return false;
       }
     }
 
+    // ब्याकग्राउन्डमा तुरुन्तै फेच गर्न सुरु गर्ने
     fetchAllQuestions();
 
     document.getElementById('startBtn').addEventListener('click', async () => {
+      const startBtn = document.getElementById('startBtn');
+      startBtn.disabled = true;
+      startBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> लोड हुँदैछ...`;
+
+      // यदि प्रश्नहरू पहिले नै लोड भइसकेका छैनन् भने फेरि लोड हुने प्रतीक्षा गर्ने
       if (allQuestions.length === 0) {
-        alert("प्रश्नहरू लोड हुँदैछन्, कृपया १ सेकेन्ड पर्खनुहोस्!");
-        return;
+        const success = await fetchAllQuestions();
+        if (!success || allQuestions.length === 0) {
+          alert("प्रश्नहरू लोड हुन सकेनन्। कृपया इन्टरनेट कनेक्सन चेक गर्नुहोस्!");
+          startBtn.disabled = false;
+          startBtn.innerHTML = `<i class="fa-solid fa-play"></i> खेल सुरु गर्नुहोस् 🚀`;
+          return;
+        }
       }
 
       document.getElementById('startScreen').classList.add('hidden');
@@ -305,7 +317,6 @@
       document.getElementById('gameOverScreen').classList.remove('hidden');
       document.getElementById('finalScoreDisplay').innerText = score;
 
-      // १. Supabase मा स्कोर सेभ गर्ने
       if (supabaseClient && currentUser) {
         try {
           await supabaseClient
@@ -326,7 +337,6 @@
         }
       }
 
-      // २. लिडरबोर्ड डाटा फेच गरेर देखाउने
       fetchAndShowLeaderboard();
     }
 
@@ -358,7 +368,7 @@
           let rankClass = '';
           if (rank === 1) rankClass = 'rank-1';
           else if (rank === 2) rankClass = 'rank-2';
-          else if (rank === 3) rankClass = 'rank-3';
+          else if (rank === 3) rankClass, rankClass = 'rank-3';
 
           html += `
             <div class="leaderboard-item">
