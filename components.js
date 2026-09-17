@@ -1,13 +1,11 @@
 import { doc, updateDoc, increment, collection, addDoc, serverTimestamp, getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // यदि components.js मा पहिल्यै db इन्स्टन्स छ भने त्यसैलाई प्रयोग गर्नुहोस्, नभए getFirestore() प्रयोग गर्नुहोस्।
-/**
  * युजरको कोइन अपडेट गर्ने र स्वचालित रूपमा coin_history मा रेकर्ड राख्ने फंक्सन
  * @param {object} db - Firestore database instance
  * @param {string} userId - Firebase User UID
  * @param {number} amount - कोइनको मात्रा (बढाउँदा सकारात्मक जस्तै 50, घटाउँदा नकारात्मक जस्तै -20)
  * @param {string} description - कारण (जस्तै: "Speed Blitz खेल जित बापत")
- */
 export async function updateUserCoinsWithHistory(db, userId, amount, description) {
   try {
     if (!userId) return;
