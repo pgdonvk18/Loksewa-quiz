@@ -255,7 +255,7 @@
         </h3>
         <button onclick="closeReportModal()" style="background: #f1f5f9; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">यो प्रश्न वा उत्तरमा केही त्रुटि वा समस्या भए तल लेखी पठाउनुहोस्:</p>
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">यो प्रश्न या उत्तरमा केही त्रुटि वा समस्या भए तल लेखी पठाउनुहोस्:</p>
       <textarea id="reportReason" placeholder="उदा: सही उत्तर मिलेको छैन वा अप्सन गलत छ..." style="min-height: 110px; margin-bottom: 16px; width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; outline: none; background: #f8fafc; color: #1e293b; font-family: inherit; resize: none;"></textarea>
       <div style="display: flex; gap: 10px;">
         <button onclick="submitQuestionReport()" style="flex: 1; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);">पठाउनुहोस् 🚀</button>
@@ -285,35 +285,12 @@
     </div>
   </div>
 
-  <!-- COIN HISTORY MODAL -->
-  <div id="coinHistoryModal" class="modal-overlay">
-    <div class="modal-card" style="max-width: 450px; width: 95%; max-height: 80vh; display: flex; flex-direction: column; padding: 18px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
-        <h3 style="font-size: 16px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-coins" style="color: #eab308;"></i> कोइन इतिहास (Coin History)
-        </h3>
-        <button onclick="closeCoinHistoryModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      
-      <div id="coin-history-container" style="flex: 1; overflow-y: auto; padding-right: 4px; font-size: 12px; max-height: 50vh;">
-        <p style="text-align: center; color: #64748b; padding: 20px;">लोड हुँदैछ...</p>
-      </div>
-      
-      <button onclick="closeCoinHistoryModal()" class="btn-primary" style="margin-top: 12px; padding: 10px;">बन्द गर्नुहोस्</button>
-    </div>
-  </div>
-
   <!-- HEADER -->
   <header class="app-header">
     <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
     <h1 id="header-title">🇳🇵 LoksewaQuest</h1>
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <button onclick="openCoinHistoryModal()" style="background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #facc15; padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-        <i class="fa-solid fa-coins"></i> History
-      </button>
-      <div id="timer-box" class="timer-badge hidden">
-        ⏳ <span id="time-left">45:00</span>
-      </div>
+    <div id="timer-box" class="timer-badge hidden">
+      ⏳ <span id="time-left">45:00</span>
     </div>
   </header>
 
@@ -452,7 +429,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, collection, addTimestamp, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -499,6 +476,8 @@
     let isPracticeMode = false;
     let examStartTime = null;
     let evaluatedQuestionsList = [];
+    
+    // Auto-submit tracking variable
     let examStartedActive = false;
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -582,23 +561,20 @@
             return;
           }
 
-          // Deduct 25 coins
+          // Update Coins in User Document
           await updateDoc(userRef, {
             coins: currentCoins - 25
           });
 
-          // Log coin transaction (Deduct) in Firebase subcollection
-          try {
-            const historyRef = collection(db, "users", auth.currentUser.uid, "coin_history");
-            await addDoc(historyRef, {
-              amount: -25,
-              type: 'deduct',
-              description: `परीक्षा शुल्क (${prettyExamName})`,
-              timestamp: serverTimestamp()
-            });
-          } catch(e) {
-            console.error("Coin history log error:", e);
-          }
+          // --- FIREBASE COIN HISTORY (DEDUCTION) ---
+          await addDoc(collection(db, "coin_history"), {
+            userId: auth.currentUser.uid,
+            userEmail: userEmail,
+            amount: -25,
+            type: "exam_fee",
+            description: `${prettyExamName} परीक्षा शुल्क (Exam Fee)`,
+            timestamp: serverTimestamp()
+          });
         }
 
         let { data, error } = await supabaseClient
@@ -759,26 +735,26 @@
         else if (totalScore >= 60) earnedCoins = 20;
         else if (totalScore >= 50) earnedCoins = 10;
 
-        if (auth.currentUser) {
+        if (earnedCoins > 0 && auth.currentUser) {
           try {
             const userRef = doc(db, "users", auth.currentUser.uid);
             const userSnap = await getDoc(userRef);
             let existingCoins = userSnap.exists() ? (userSnap.data().coins || 0) : 0;
             
-            if (earnedCoins > 0) {
-              await updateDoc(userRef, {
-                coins: existingCoins + earnedCoins
-              });
+            await updateDoc(userRef, {
+              coins: existingCoins + earnedCoins
+            });
 
-              // Log reward coin transaction
-              const historyRef = collection(db, "users", auth.currentUser.uid, "coin_history");
-              await addDoc(historyRef, {
-                amount: earnedCoins,
-                type: 'reward',
-                description: `परीक्षा पुरस्कार (${prettyExamName}) - अंक: ${totalScore.toFixed(1)}`,
-                timestamp: serverTimestamp()
-              });
-            }
+            // --- FIREBASE COIN HISTORY (REWARD) ---
+            await addDoc(collection(db, "coin_history"), {
+              userId: auth.currentUser.uid,
+              userEmail: userEmail,
+              amount: earnedCoins,
+              type: "exam_reward",
+              description: `${prettyExamName} परीक्षा पुरस्कार (${totalScore.toFixed(1)} अंक)`,
+              timestamp: serverTimestamp()
+            });
+
           } catch (e) {
             console.error("Coin update error:", e);
           }
@@ -938,60 +914,6 @@
       });
     }
 
-    // --- Coin History Functions ---
-    window.openCoinHistoryModal = async function() {
-      if (!auth.currentUser) {
-        document.getElementById('login-modal').classList.add('active');
-        return;
-      }
-      document.getElementById('coinHistoryModal').classList.add('active');
-      const container = document.getElementById('coin-history-container');
-      container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">लोड हुँदैछ...</p>';
-
-      try {
-        const historyRef = collection(db, "users", auth.currentUser.uid, "coin_history");
-        const qQuery = query(historyRef, orderBy('timestamp', 'desc'));
-        const querySnapshot = await getDocs(qQuery);
-
-        if (querySnapshot.empty) {
-          container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 20px;">कोइन कारोबारको कुनै इतिहास छैन।</p>';
-          return;
-        }
-
-        container.innerHTML = '';
-        querySnapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          const isAdd = data.amount > 0;
-          const sign = isAdd ? '+' : '';
-          const color = isAdd ? '#16a34a' : '#dc2626';
-          const bg = isAdd ? '#f0fdf4' : '#fef2f2';
-          const border = isAdd ? '#bbf7d0' : '#fecaca';
-          
-          let dateStr = 'भर्खरै';
-          if (data.timestamp && data.timestamp.toDate) {
-            dateStr = data.timestamp.toDate().toLocaleString();
-          }
-
-          container.innerHTML += `
-            <div style="background: ${bg}; border: 1px solid ${border}; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <p style="font-weight: 700; color: #1e293b; font-size: 12px;">${data.description || 'कोइन परिवर्तन'}</p>
-                <p style="color: #64748b; font-size: 10px; margin-top: 2px;">${dateStr}</p>
-              </div>
-              <span style="font-weight: 800; color: ${color}; font-size: 13px;">${sign}${data.amount} 🪙</span>
-            </div>
-          `;
-        });
-      } catch (err) {
-        console.error("Fetch coin history error:", err);
-        container.innerHTML = '<p style="text-align: center; color: #dc2626; padding: 20px;">इतिहास लोड गर्न असफल भयो।</p>';
-      }
-    }
-
-    window.closeCoinHistoryModal = function() {
-      document.getElementById('coinHistoryModal').classList.remove('active');
-    }
-
     window.openReviewModal = function() {
       document.getElementById('reviewModal').classList.add('active');
     }
@@ -1038,7 +960,6 @@
       }
     }
 
-    // --- Auto-Submit & Tab Switch Protection Logic ---
     document.addEventListener("visibilitychange", function() {
       const examScreen = document.getElementById('exam-screen');
       if (examStartedActive && !examScreen.classList.contains('hidden') && !isPracticeMode) {
