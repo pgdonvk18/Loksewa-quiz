@@ -171,22 +171,6 @@
       font-size: 13px;
     }
 
-    .filter-btn {
-      background: #f1f5f9;
-      color: #475569;
-      border: 1px solid #cbd5e1;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .filter-btn.active {
-      background: #2563eb;
-      color: white;
-      border-color: #2563eb;
-    }
-
     .option-card {
       width: 100%;
       text-align: left;
@@ -379,6 +363,69 @@
     </div>
   </main>
 
+  <!-- Global Custom Success/Error/Warning Modal (components.js style integration) -->
+  <div id="customGlobalModal" class="cg-modal-overlay">
+    <div class="cg-modal-card">
+      <div id="cgModalIconBox" class="cg-icon-box success">
+        <i id="cgModalIcon" class="fa-solid fa-check"></i>
+      </div>
+      <h3 id="cgModalTitle" class="cg-title">सफल भयो!</h3>
+      <p id="cgModalMessage" class="cg-message">तपाईंको कार्य सफलतापूर्वक पूरा भयो।</p>
+      <button id="cgModalBtn" class="cg-btn">ठीक छ</button>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div id="customConfirmModal" class="cg-modal-overlay">
+    <div class="cg-modal-card">
+      <div class="cg-icon-box warning">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 id="cgConfirmTitle" class="cg-title">पुष्टि गर्नुहोस्</h3>
+      <p id="cgConfirmMessage" class="cg-message">के तपाईं यो कार्य गर्न चाहनुहुन्छ?</p>
+      <div style="display: flex; gap: 10px;">
+        <button id="cgCancelBtn" class="cg-btn cg-btn-secondary">रद्द गर्ने</button>
+        <button id="cgOkBtn" class="cg-btn">हुन्छ (OK)</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .cg-modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px); z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.25s ease-in-out;
+    }
+    .cg-modal-overlay.active { opacity: 1; visibility: visible; }
+    .cg-modal-card {
+      background: #ffffff; width: 90%; max-width: 360px; border-radius: 24px;
+      padding: 26px 20px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      transform: scale(0.9) translateY(15px); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 1px solid #f1f5f9;
+    }
+    .cg-modal-overlay.active .cg-modal-card { transform: scale(1) translateY(0); }
+    .cg-icon-box {
+      width: 58px; height: 58px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px auto;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+    }
+    .cg-icon-box.success { background: #dcfce7; color: #16a34a; }
+    .cg-icon-box.error { background: #fee2e2; color: #dc2626; }
+    .cg-icon-box.warning { background: #fef3c7; color: #d97706; }
+    .cg-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+    .cg-message { font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px; }
+    .cg-btn {
+      flex: 1; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 12px;
+      font-weight: 700; font-size: 13.5px; cursor: pointer; transition: background 0.2s, transform 0.1s;
+    }
+    .cg-btn:hover { background: #1d4ed8; }
+    .cg-btn:active { transform: scale(0.97); }
+    .cg-btn-secondary { background: #f1f5f9; color: #475569; }
+    .cg-btn-secondary:hover { background: #e2e8f0; }
+  </style>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -413,9 +460,8 @@
 
     let candidateName = '', userEmail = '', examQuestions = [], currentIdx = 0, userAnswers = {};
     let timerInterval, timeLeftSeconds = 45 * 60, isPracticeMode = false;
-    let currentLang = 'ne'; // Default Nepali
+    let currentLang = 'ne'; 
 
-    // Basic Translation Dictionary for UI Labels
     const translations = {
       en: {
         examStart: "Start Exam 🚀",
@@ -433,6 +479,63 @@
         prev: "⬅️ अघिल्लो",
         leaderboard: "🏆 लिडरबोर्ड"
       }
+    };
+
+    // Global Popup Definitions (components.js functions)
+    window.showSuccessPopup = function(message, redirectUrl, type = 'success', titleText = '') {
+      const modal = document.getElementById('customGlobalModal');
+      const msgEl = document.getElementById('cgModalMessage');
+      const titleEl = document.getElementById('cgModalTitle');
+      const iconBox = document.getElementById('cgModalIconBox');
+      const iconEl = document.getElementById('cgModalIcon');
+      const okBtn = document.getElementById('cgModalBtn');
+      
+      if (msgEl) msgEl.textContent = message;
+      iconBox.className = `cg-icon-box ${type}`;
+      if (type === 'success') {
+        if (!titleText) titleText = 'सफल भयो! 🎉';
+        iconEl.className = 'fa-solid fa-check';
+      } else if (type === 'error') {
+        if (!titleText) titleText = 'त्रुटि (Error)! ❌';
+        iconEl.className = 'fa-solid fa-triangle-exclamation';
+      } else if (type === 'warning') {
+        if (!titleText) titleText = 'सचेत गराइएको छ! ⚠️';
+        iconEl.className = 'fa-solid fa-circle-exclamation';
+      }
+      if (titleEl) titleEl.textContent = titleText;
+      if (modal) modal.classList.add('active');
+
+      if (okBtn) {
+        okBtn.onclick = function() {
+          modal.classList.remove('active');
+          if (redirectUrl) {
+            setTimeout(() => { window.location.href = redirectUrl; }, 200);
+          }
+        };
+      }
+    };
+
+    window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्टि गर्नुहोस् ⚠️') {
+      const modal = document.getElementById('customConfirmModal');
+      const msgEl = document.getElementById('cgConfirmMessage');
+      const titleEl = document.getElementById('cgConfirmTitle');
+      const okBtn = document.getElementById('cgOkBtn');
+      const cancelBtn = document.getElementById('cgCancelBtn');
+
+      if (msgEl) msgEl.textContent = message;
+      if (titleEl) titleEl.textContent = titleText;
+      if (modal) modal.classList.add('active');
+
+      okBtn.onclick = function() {
+        modal.classList.remove('active');
+        if (typeof onConfirm === 'function') {
+          onConfirm();
+        }
+      };
+
+      cancelBtn.onclick = function() {
+        modal.classList.remove('active');
+      };
     };
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -475,7 +578,9 @@
           startTimer();
         }
         loadExamQuestion();
-      } catch (err) { alert('त्रुटि: ' + err.message); }
+      } catch (err) { 
+        showSuccessPopup('त्रुटि: ' + err.message, '', 'error');
+      }
     }
 
     window.startPracticeMode = () => startExam(true);
@@ -484,7 +589,7 @@
       timerInterval = setInterval(() => {
         if (timeLeftSeconds <= 0) { clearInterval(timerInterval); submitExam(); return; }
         timeLeftSeconds--;
-        let m = Math.floor(timeLeftSeconds / 60), s = timeLeftSeconds % 65; // fix formatting
+        let m = Math.floor(timeLeftSeconds / 60), s = timeLeftSeconds % 60;
         document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
       }, 1000);
     }
@@ -493,7 +598,6 @@
       const q = examQuestions[currentIdx];
       document.getElementById('q-tracker').innerText = `Question ${currentIdx + 1} of ${examQuestions.length}`;
       
-      // Handle Question text based on language selection
       let questionText = q.question;
       let optionsList = q.options;
       
@@ -502,14 +606,12 @@
         optionsList = q.options_en || q.options;
       }
       
-      document.getElementById('exam-questioninnerHTML' in document.getElementById('exam-question') ? 'innerHTML' : 'innerText') = questionText;
       document.getElementById('exam-question').innerHTML = questionText;
 
       const container = document.getElementById('exam-options');
       container.innerHTML = '';
       
       optionsList.forEach((opt, oIndex) => {
-        // Map original option value back if English view is active
         const originalOpt = q.options[oIndex];
         const isSelected = userAnswers[currentIdx] === originalOpt;
         
@@ -530,9 +632,17 @@
     }
 
     window.prevExamQuestion = () => { if (currentIdx > 0) { currentIdx--; loadExamQuestion(); } };
+    
     window.nextExamQuestion = () => {
-      if (currentIdx < examQuestions.length - 1) { currentIdx++; loadExamQuestion(); }
-      else if (confirm("के तपाईं परीक्षा बुझाउन चाहनुहुन्छ? / Do you want to submit the exam?")) { clearInterval(timerInterval); submitExam(); }
+      if (currentIdx < examQuestions.length - 1) { 
+        currentIdx++; 
+        loadExamQuestion(); 
+      } else {
+        showConfirmPopup("के तपाईं परीक्षा बुझाउन चाहनुहुन्छ? / Do you want to submit the exam?", () => {
+          clearInterval(timerInterval);
+          submitExam();
+        }, "परीक्षा बुझाउने 📋");
+      }
     };
 
     window.toggleLanguage = function() {
@@ -540,7 +650,6 @@
       switchEl.classList.toggle('en-active');
       currentLang = currentLang === 'ne' ? 'en' : 'ne';
       
-      // Update UI elements text
       document.getElementById('start-exam-btn').innerText = translations[currentLang].examStart;
       document.getElementById('lb-title').innerText = translations[currentLang].leaderboard;
       
@@ -558,7 +667,6 @@
       document.getElementById('rep-name').innerText = candidateName;
       document.getElementById('rep-set').innerText = prettyExamName;
       
-      // Save score to Supabase leaderboard
       await supabaseClient.from('exam_leaderboard').upsert([
         { username: userEmail, set_name: examIdentifier, score: correct, total: examQuestions.length }
       ], { onConflict: 'username,set_name' });
@@ -581,9 +689,10 @@
     window.closeReviewModal = () => document.getElementById('reviewModal').classList.remove('active');
     window.openReportModal = () => document.getElementById('reportModal').classList.add('active');
     window.closeReportModal = () => document.getElementById('reportModal').classList.remove('active');
+    
     window.submitQuestionReport = async function() {
-      alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद!');
       closeReportModal();
+      showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद!', '', 'success', 'धन्यवाद! 🙌');
     }
   </script>
 </body>
