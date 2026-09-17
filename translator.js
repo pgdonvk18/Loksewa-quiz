@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+Document.addEventListener("DOMContentLoaded", () => {
   // 1. Google Translate Element को लागि आवश्यक hidden div बनाउने
   if (!document.getElementById('google_translate_element')) {
     const hiddenDiv = document.createElement('div');
@@ -15,19 +15,20 @@ document.addEventListener("DOMContentLoaded", () => {
       .lang-switch-container {
         display: flex;
         align-items: center;
-        background: #f1f5f9;
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 20px;
         padding: 2px;
         position: relative;
         cursor: pointer;
-        border: 1px solid #cbd5e1;
-        margin-left: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-left: auto; /* हेडरमा दायाँतर्फ धकेल्न */
+        flex-shrink: 0;
       }
       .lang-option {
         padding: 4px 8px;
         font-size: 11px;
         font-weight: 800;
-        color: #475569;
+        color: #ffffff;
         z-index: 2;
         user-select: none;
       }
@@ -37,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         left: 2px;
         width: 28px;
         height: 24px;
-        background: #2563eb;
+        background: #ffffff;
         border-radius: 14px;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1;
@@ -46,10 +47,10 @@ document.addEventListener("DOMContentLoaded", () => {
         transform: translateX(28px);
       }
       .lang-switch-container.en-active .lang-option:last-child {
-        color: #ffffff;
+        color: #1e3a8a;
       }
       .lang-switch-container:not(.en-active) .lang-option:first-child {
-        color: #ffffff;
+        color: #1e3a8a;
       }
     `;
     document.head.appendChild(style);
@@ -65,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="lang-option">EN</span>
       </div>
     `;
-    // हेडरको सबैभन्दा अन्त्यमा (दायाँतिर) थप्ने
+    // हेडरको सबैभन्दा अन्त्यमा थप्ने
     header.insertAdjacentHTML('beforeend', toggleHTML);
   }
 
