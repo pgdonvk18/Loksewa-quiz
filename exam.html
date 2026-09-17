@@ -300,7 +300,6 @@
     <div id="reg-screen" class="card space-y-4">
       <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">परीक्षा विवरण:</h2>
       
-      <!-- नियम तथा कोइन सिस्टमको जानकारी (तपाईंको आवश्यकता अनुसार अझ ठूला र प्रष्ट अक्षरहरू) -->
       <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #cbd5e1; border-left: 5px solid #2563eb; padding: 16px; border-radius: 14px; margin-bottom: 16px;">
         <h3 style="font-size: 14px; font-weight: 800; color: #1e3a8a; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-circle-info" style="color: #2563eb; font-size: 16px;"></i> परीक्षा नियम तथा कोइन व्यवस्था (Rules & Rewards)
@@ -477,6 +476,9 @@
     let isPracticeMode = false;
     let examStartTime = null;
     let evaluatedQuestionsList = [];
+    
+    // Auto-submit tracking variable
+    let examStartedActive = false;
 
     document.addEventListener("DOMContentLoaded", () => {
       onAuthStateChanged(auth, async (user) => {
@@ -530,6 +532,14 @@
           return;
         }
 
+        // Live exam ko bela 25 coin katine confirmation popup
+        if (!isPracticeMode) {
+          let confirmCoin = confirm("⚠️ चेतावनी: परीक्षा सुरु गर्न तपाईंको खाताबाट २५ कोइन (25 Coins) काटिनेछ। के तपाईं अगाडि बढ्न चाहनुहुन्छ?");
+          if (!confirmCoin) {
+            return; // User le cancel garyo vane exam suru hudaina
+          }
+        }
+
         if (!isPracticeMode) {
           const userRef = doc(db, "users", auth.currentUser.uid);
           const userSnap = await getDoc(userRef);
@@ -577,6 +587,10 @@
         document.getElementById('reg-screen').classList.add('hidden');
         document.getElementById('exam-screen').classList.remove('hidden');
         
+        // Active exam state flag true garne (Auto-submit ko lagi)
+        examStartedActive = true;
+        history.pushState(null, null, window.location.href);
+
         if (!isPracticeMode) {
           document.getElementById('timer-box').classList.remove('hidden');
           document.getElementById('mode-badge').innerText = `${prettyExamName} Live Exam`;
@@ -664,11 +678,13 @@
       } else {
         if (typeof showConfirmPopup === 'function') {
           showConfirmPopup("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?", () => {
+            examStartedActive = false; // Stop auto-submit trigger after deliberate submission
             if (!isPracticeMode) clearInterval(timerInterval);
             submitExam();
           }, "परीक्षा बुझाउने?");
         } else {
           if (confirm("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?")) {
+            examStartedActive = false;
             if (!isPracticeMode) clearInterval(timerInterval);
             submitExam();
           }
@@ -677,6 +693,7 @@
     }
 
     async function submitExam() {
+      examStartedActive = false;
       document.getElementById('exam-screen').classList.add('hidden');
       document.getElementById('timer-box').classList.add('hidden');
       document.getElementById('result-screen').classList.remove('hidden');
@@ -946,6 +963,40 @@
         }
       }
     }
+
+    // --- Auto-Submit & Tab Switch Protection Logic ---
+    document.addEventListener("visibilitychange", function() {
+      const examScreen = document.getElementById('exam-screen');
+      if (examStartedActive && !examScreen.classList.contains('hidden') && !isPracticeMode) {
+        if (document.hidden) {
+          alert("⚠️ चेतावनी: तपाईंले परीक्षाको tab छोड्नुभयो वा minimize गर्नुभयो! तपाईंको परीक्षा स्वतः submit हुँदैछ।");
+          clearInterval(timerInterval);
+          submitExam();
+        }
+      }
+    });
+
+    window.addEventListener('popstate', function(event) {
+      const examScreen = document.getElementById('exam-screen');
+      if (examStartedActive && !examScreen.classList.contains('hidden') && !isPracticeMode) {
+        let confirmLeave = confirm("⚠️ सावधान! तपाईं परीक्षा दिँदै हुनुहुन्छ, back जाँदा परीक्षा स्वतः submit हुनेछ। क्यान्सिल गर्न चाहनुहुन्छ?");
+        if (confirmLeave) {
+          clearInterval(timerInterval);
+          submitExam();
+        } else {
+          history.pushState(null, null, window.location.href);
+        }
+      }
+    });
+
+    window.addEventListener('beforeunload', function (e) {
+      const examScreen = document.getElementById('exam-screen');
+      if (examStartedActive && !examScreen.classList.contains('hidden') && !isPracticeMode) {
+        e.preventDefault();
+        e.returnValue = '';
+        submitExam();
+      }
+    });
   </script>
   <script src="components.js"></script>
 </body>
