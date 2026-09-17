@@ -1,248 +1,247 @@
-<!DOCTYPE html>
-<html lang="ne">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LoksewaQuest - Quiz Lobby</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background: #f8fafc; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+<!DOCTYPE html>  
+<html lang="ne">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
+  <title id="page-title">LoksewaQuest - Quiz Lobby</title>  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+  <style>  
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }  
+    body { background-color: #f8fafc; color: #0f172a; margin: 0; padding-bottom: 40px; overflow-x: hidden; }  
     
-    .container { width: 100%; max-width: 480px; margin-top: 10px; }
+    /* Website Standard Header */
+    .app-header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #ffffff; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }  
+    .app-header h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }  
+    .back-btn { background: rgba(255, 255, 255, 0.15); color: #ffffff; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; font-size: 14px; transition: background 0.2s; }  
+    .back-btn:hover { background: rgba(255, 255, 255, 0.25); }  
+
+    .main-wrapper { max-width: 500px; margin: 0 auto; padding: 20px 16px; width: 100%; }  
     
-    /* Top Header with Back Button */
-    .top-nav { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 480px; margin-bottom: 16px; }
-    .back-btn { background: white; border: 1px solid #e2e8f0; color: #0f2a4a; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: all 0.2s; }
-    .back-btn:hover { background: #f1f5f9; }
+    .header-intro { text-align: center; margin-bottom: 20px; }
+    .header-intro h2 { font-size: 18px; font-weight: 800; color: #1e293b; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header-intro p { font-size: 12px; color: #64748b; margin-top: 4px; font-weight: 600; }
 
-    .header { text-align: center; margin-bottom: 20px; }
-    .header h2 { font-size: 22px; font-weight: 800; color: #0f2a4a; }
-    .header p { font-size: 13px; color: #64748b; margin-top: 4px; }
+    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 22px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); }  
+    .card h3 { font-size: 14px; font-weight: 800; margin-bottom: 14px; color: #1e40af; display: flex; align-items: center; gap: 8px; }
 
-    .card { background: white; padding: 18px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 14px; border: 1px solid #e2e8f0; }
-    .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1e40af; display: flex; align-items: center; gap: 8px; }
-
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
-    .form-control { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; outline: none; transition: border 0.2s; }
-    .form-control:focus { border-color: #2563eb; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .form-control { width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 14px; font-weight: 600; color: #0f172a; outline: none; transition: border 0.2s, background 0.2s; background: #f8fafc; }  
+    .form-control:focus { border-color: #2563eb; background: #ffffff; }
 
     /* Attractive Sliding Range Selector */
-    .range-slider-container { background: #f8fafc; padding: 12px 14px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 12px; }
-    .range-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: #0f2a4a; margin-bottom: 8px; }
-    .range-header span#selectedRoundsVal { color: #2563eb; font-size: 14px; }
+    .slider-container { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 14px; margin-bottom: 16px; }  
+    .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }  
+    .slider-label { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.3px; }  
+    .slider-value-badge { background: #2563eb; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; }  
     
-    input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-    input[type=range]:focus { outline: none; }
-    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: #cbd5e1; border-radius: 4px; }
-    input[type=range]::-webkit-slider-thumb { height: 20px; width: 20px; border-radius: 50%; background: #2563eb; cursor: pointer; -webkit-appearance: none; margin-top: -6px; box-shadow: 0 2px 6px rgba(37,99,235,0.4); transition: transform 0.1s; }
+    input[type=range] { width: 100%; height: 8px; background: #cbd5e1; border-radius: 4px; outline: none; -webkit-appearance: none; }  
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #2563eb; cursor: pointer; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4); transition: transform 0.1s; }  
     input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
 
-    .btn-success { background: #16a34a; color: white; margin-top: 4px; width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+    .btn-success { background: #16a34a; color: white; width: 100%; padding: 14px 24px; border: none; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); transition: transform 0.1s, background 0.2s; }  
     .btn-success:hover { background: #15803d; }
+    .btn-success:active { transform: scale(0.98); }
     
-    .divider { text-align: center; margin: 14px 0; font-size: 12px; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
-  </style>
-</head>
-<body>
+    .divider { text-align: center; margin: 16px 0; font-size: 11px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; position: relative; }
+    .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 35%; height: 1px; background: #e2e8f0; }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+  </style>  
+</head>  
+<body>  
 
-  <div class="top-nav">
-    <button class="back-btn" onclick="window.location.href='games.html'" title="पछाडि जानुहोस्"><i class="fa-solid fa-arrow-left"></i></button>
-    <span style="font-size: 13px; font-weight: 700; color: #64748b;">Lobby</span>
-    <div style="width: 38px;"></div> <!-- Alignment placeholder -->
-  </div>
+  <header class="app-header">  
+    <a href="games.html" class="back-btn" title="पछाडि जानुहोस्"><i class="fa-solid fa-arrow-left"></i></a>  
+    <h1>LoksewaQuest - 1v1 Battle</h1>  
+    <div style="width: 38px;"></div>  
+  </header>  
 
-  <div class="container">
-    <div class="header">
-      <h2><i class="fa-solid fa-gamepad" style="color: #2563eb;"></i> Loksewa 1v1 Battle</h2>
-      <p>आफ्नो साथीहरूसँग रियल-टाइम क्विज प्रतिस्पर्धा गर्नुहोस्</p>
-    </div>
+  <main class="main-wrapper">  
+    <div class="header-intro">  
+      <h2><i class="fa-solid fa-gamepad" style="color: #2563eb;"></i> लाइभ प्रतिस्पर्धा</h2>  
+      <p>आफ्ना साथीहरूसँग रियल-टाइम क्विज लडाइँ खेल्नुहोस्</p>  
+    </div>  
 
-    <!-- Create Room Card with Sliding Rounds Selector -->
-    <div class="card">
-      <h3><i class="fa-solid fa-plus-circle"></i> नयाँ रुम बनाउनुहोस् (Create Room)</h3>
+    <!-- Create Room Card -->
+    <div class="card">  
+      <h3><i class="fa-solid fa-circle-plus" style="color: #16a34a;"></i> नयाँ रुम बनाउनुहोस् (Create Room)</h3>  
       
-      <div class="form-group">
-        <label>खेलाडी संख्या (Max Players):</label>
-        <select id="maxPlayersInput" class="form-control">
-          <option value="2">२ जना (1v1)</option>
-          <option value="3">३ जना</option>
-          <option value="4" selected>४ जना</option>
-        </select>
-      </div>
+      <div class="form-group">  
+        <label>खेलाडी संख्या (Max Players)</label>  
+        <select id="maxPlayersInput" class="form-control">  
+          <option value="2">२ जना (1v1)</option>  
+          <option value="3">३ जना</option>  
+          <option value="4" selected>४ जना</option>  
+        </select>  
+      </div>  
 
-      <div class="range-slider-container">
-        <div class="range-header">
-          <label style="margin:0; font-size:12px; color:#475569;">जम्मा प्रश्न/राउन्ड (Total Rounds):</label>
-          <span id="selectedRoundsVal">5 राउन्ड</span>
-        </div>
-        <input type="range" id="totalRoundsRange" min="1" max="10" value="5" step="1">
-        <div style="display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; margin-top: 4px;">
-          <span>1</span>
-          <span>5</span>
-          <span>10</span>
-        </div>
-      </div>
+      <div class="slider-container">  
+        <div class="slider-header">  
+          <span class="slider-label">जम्मा प्रश्न/राउन्ड</span>  
+          <span id="selectedRoundsVal" class="slider-value-badge">5 राउन्ड</span>  
+        </div>  
+        <input type="range" id="totalRoundsRange" min="1" max="10" value="5" step="1">  
+        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-top: 6px; font-weight: 700;">  
+          <span>1</span>  
+          <span>5</span>  
+          <span>10</span>  
+        </div>  
+      </div>  
 
-      <button class="btn-success" id="createRoomBtn"><i class="fa-solid fa-circle-plus"></i> रुम सिर्जना गर्नुहोस्</button>
-    </div>
+      <button class="btn-success" id="createRoomBtn"><i class="fa-solid fa-plus"></i> रुम सिर्जना गर्नुहोस् 🚀</button>  
+    </div>  
 
-    <div class="divider">अथवा</div>
+    <div class="divider">अथवा</div>  
 
     <!-- Join Room Card -->
-    <div class="card">
-      <h3><i class="fa-solid fa-right-to-bracket"></i> रुममा जोइन हुनुहोस् (Join Room)</h3>
-      <div class="form-group">
-        <label>रुम कोड (Room Code):</label>
-        <input type="text" id="roomCodeInput" class="form-control" placeholder="जस्तै: ABCD12" autocomplete="off">
-      </div>
-      <button class="btn-success" id="joinRoomBtn"><i class="fa-solid fa-arrow-right-to-bracket"></i> रुममा छिर्नुहोस्</button>
-    </div>
-  </div>
+    <div class="card">  
+      <h3><i class="fa-solid fa-right-to-bracket" style="color: #2563eb;"></i> रुममा जोइन हुनुहोस् (Join Room)</h3>  
+      <div class="form-group">  
+        <label>रुम कोड (Room Code)</label>  
+        <input type="text" id="roomCodeInput" class="form-control" placeholder="उदा: ABCD12" autocomplete="off" style="text-transform: uppercase;">  
+      </div>  
+      <button class="btn-success" id="joinRoomBtn" style="background: #2563eb; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);"><i class="fa-solid fa-arrow-right-to-bracket"></i> रुममा छिर्नुहोस् 🎮</button>  
+    </div>  
+  </main>  
 
-  <!-- Components Script -->
-  <script src="components.js"></script>
+  <script src="components.js"></script>  
 
-  <!-- Firebase & Main Logic Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <script type="module">  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
+    import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-      authDomain: "loksewaquest-227b6.firebaseapp.com",
-      projectId: "loksewaquest-227b6",
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",
-      messagingSenderId: "779234903809",
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-    };
+    const firebaseConfig = {  
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",  
+      authDomain: "loksewaquest-227b6.firebaseapp.com",  
+      projectId: "loksewaquest-227b6",  
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",  
+      messagingSenderId: "779234903809",  
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"  
+    };  
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);  
+    const auth = getAuth(app);  
+    const db = getFirestore(app);  
 
-    let currentUser = null;
-    let currentUserName = "Aspirant";
+    let currentUser = null;  
+    let currentUserName = "Aspirant";  
 
-    // Sliding range live value update
-    const roundsRange = document.getElementById('totalRoundsRange');
-    const roundsValDisplay = document.getElementById('selectedRoundsVal');
-    roundsRange.addEventListener('input', (e) => {
-      roundsValDisplay.innerText = `${e.target.value} राउन्ड`;
-    });
+    const roundsRange = document.getElementById('totalRoundsRange');  
+    const roundsValDisplay = document.getElementById('selectedRoundsVal');  
+    roundsRange.addEventListener('input', (e) => {  
+      roundsValDisplay.innerText = `${e.target.value} राउन्ड`;  
+    });  
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        currentUserName = user.displayName || user.email.split('@')[0];
-        try {
-          const userSnap = await getDoc(doc(db, "users", user.uid));
-          if (userSnap.exists() && userSnap.data().name) {
-            currentUserName = userSnap.data().name;
-          }
-        } catch (e) { console.log(e); }
-      } else {
-        window.location.href = "login.html";
-      }
-    });
+    onAuthStateChanged(auth, async (user) => {  
+      if (user) {  
+        currentUser = user;  
+        currentUserName = user.displayName || user.email.split('@')[0];  
+        try {  
+          const userSnap = await getDoc(doc(db, "users", user.uid));  
+          if (userSnap.exists() && userSnap.data().name) {  
+            currentUserName = userSnap.data().name;  
+          }  
+        } catch (e) { console.log(e); }  
+      } else {  
+        window.location.href = "login.html";  
+      }  
+    });  
 
-    function generateRoomCode() {
-      return Math.random().toString(36).substring(2, 8).toUpperCase();
-    }
+    function generateRoomCode() {  
+      return Math.random().toString(36).substring(2, 8).toUpperCase();  
+    }  
 
-    // Create Room Logic
-    document.getElementById('createRoomBtn').addEventListener('click', async () => {
-      if (!currentUser) return;
-      const roomId = generateRoomCode();
-      const maxPlayers = parseInt(document.getElementById('maxPlayersInput').value);
-      const totalRounds = parseInt(roundsRange.value);
+    document.getElementById('createRoomBtn').addEventListener('click', async () => {  
+      if (!currentUser) return;  
+      const roomId = generateRoomCode();  
+      const maxPlayers = parseInt(document.getElementById('maxPlayersInput').value);  
+      const totalRounds = parseInt(roundsRange.value);  
 
-      const roomData = {
-        roomId: roomId,
-        hostId: currentUser.uid,
-        status: "waiting",
-        settings: { 
-          maxPlayers: maxPlayers, 
-          totalRounds: totalRounds 
-        },
-        players: [
-          { uid: currentUser.uid, name: currentUserName, score: 0 }
-        ],
-        currentRound: 1,
-        currentTurnIndex: 0,
-        createdAt: new Date()
-      };
+      const roomData = {  
+        roomId: roomId,  
+        hostId: currentUser.uid,  
+        status: "waiting",  
+        settings: {   
+          maxPlayers: maxPlayers,   
+          totalRounds: totalRounds   
+        },  
+        players: [  
+          { uid: currentUser.uid, name: currentUserName, score: 0 }  
+        ],  
+        currentRound: 1,  
+        currentTurnIndex: 0,  
+        createdAt: new Date()  
+      };  
 
-      try {
-        await setDoc(doc(db, "quiz_rooms", roomId), roomData);
-        window.location.href = `quizgame.html?room=${roomId}`;
-      } catch (err) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup("रुम बनाउन सकिएन: " + err.message, null, 'error', 'त्रुटि! ❌');
-        } else {
-          alert("रुम बनाउन सकिएन: " + err.message);
-        }
-      }
-    });
+      try {  
+        await setDoc(doc(db, "quiz_rooms", roomId), roomData);  
+        window.location.href = `quizgame.html?room=${roomId}`;  
+      } catch (err) {  
+        if (typeof showSuccessPopup === 'function') {  
+          showSuccessPopup("रुम बनाउन सकिएन: " + err.message, null, 'error', 'त्रुटि! ❌');  
+        } else {  
+          alert("रुम बनाउन सकिएन: " + err.message);  
+        }  
+      }  
+    });  
 
-    // Join Room Logic
-    document.getElementById('joinRoomBtn').addEventListener('click', async () => {
-      if (!currentUser) return;
-      const roomCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();
-      
-      if (!roomCode) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup("कृपया रुम कोड राख्नुहोस्!", null, 'warning', 'ध्यान दिनुहोस् ⚠️');
-        } else {
-          alert("कृपया रुम कोड राख्नुहोस्!");
-        }
-        return;
-      }
+    document.getElementById('joinRoomBtn').addEventListener('click', async () => {  
+      if (!currentUser) return;  
+      const roomCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();  
+        
+      if (!roomCode) {  
+        if (typeof showSuccessPopup === 'function') {  
+          showSuccessPopup("कृपया रुम कोड राख्नुहोस्!", null, 'warning', 'ध्यान दिनुहोस् ⚠️');  
+        } else {  
+          alert("कृपया रुम कोड राख्नुहोस्!");  
+        }  
+        return;  
+      }  
 
-      const roomRef = doc(db, "quiz_rooms", roomCode);
-      const roomSnap = await getDoc(roomRef);
+      const roomRef = doc(db, "quiz_rooms", roomCode);  
+      const roomSnap = await getDoc(roomRef);  
 
-      if (!roomSnap.exists()) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup("यो कोड भएको रुम फेला परेन!", null, 'error', 'फेला परेन ❌');
-        } else {
-          alert("यो कोड भएको रुम फेला परेन!");
-        }
-        return;
-      }
+      if (!roomSnap.exists()) {  
+        if (typeof showSuccessPopup === 'function') {  
+          showSuccessPopup("यो कोड भएको रुम फेला परेन!", null, 'error', 'फेला परेन ❌');  
+        } else {  
+          alert("यो कोड भएको रुम फेला परेन!");  
+        }  
+        return;  
+      }  
 
-      const roomData = roomSnap.data();
-      if (roomData.status !== "waiting") {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup("यो गेम अलरेडी सुरु भइसकेको छ!", null, 'warning', 'सूचना ⚠️');
-        } else {
-          alert("यो गेम अलरेडी सुरु भइसकेको छ!");
-        }
-        return;
-      }
+      const roomData = roomSnap.data();  
+      if (roomData.status !== "waiting") {  
+        if (typeof showSuccessPopup === 'function') {  
+          showSuccessPopup("यो गेम अलरेडी सुरु भइसकेको छ!", null, 'warning', 'सूचना ⚠️');  
+        } else {  
+          alert("यो गेम अलरेडी सुरु भइसकेको छ!");  
+        }  
+        return;  
+      }  
 
-      if (roomData.players.length >= roomData.settings.maxPlayers) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup("यो रुम भरिइसकेको छ (Full)!", null, 'warning', 'रुम भरियो ⚠️');
-        } else {
-          alert("यो रुम भरिइसकेको छ (Full)!");
-        }
-        return;
-      }
+      if (roomData.players.length >= roomData.settings.maxPlayers) {  
+        if (typeof showSuccessPopup === 'function') {  
+          showSuccessPopup("यो रुम भरिइसकेको छ (Full)!", null, 'warning', 'रुम भरियो ⚠️');  
+        } else {  
+          alert("यो रुम भरिइसकेको छ (Full)!");  
+        }  
+        return;  
+      }  
 
-      const alreadyJoined = roomData.players.some(p => p.uid === currentUser.uid);
-      if (!alreadyJoined) {
-        await updateDoc(roomRef, {
-          players: arrayUnion({ uid: currentUser.uid, name: currentUserName, score: 0 })
-        });
-      }
+      const alreadyJoined = roomData.players.some(p => p.uid === currentUser.uid);  
+      if (!alreadyJoined) {  
+        await updateDoc(roomRef, {  
+          players: arrayUnion({ uid: currentUser.uid, name: currentUserName, score: 0 })  
+        });  
+      }  
 
-      window.location.href = `quizgame.html?room=${roomCode}`;
-    });
-  </script>
+      window.location.href = `quizgame.html?room=${roomCode}`;  
+    });  
+  </script>  
 
-</body>
-</html>
+</body>  
+</html>  
