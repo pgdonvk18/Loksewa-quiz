@@ -105,7 +105,7 @@
       animation: marquee 25s linear infinite;
     }
     .ticker-text:hover {
-      animation-play-state: paused; /* माउस राख्दा रोकिने */
+      animation-play-state: paused;
     }
     @keyframes marquee {
       0% { transform: translate(0, 0); }
@@ -187,6 +187,30 @@
       margin-top: 2px;
       word-break: break-all;
     }
+    
+    /* 🪙 Sidebar Coins Badge Style (प्रोफाइलको तल कोइन देखाउने डिजाइन) */
+    .sidebar-coins-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #fef3c7;
+      color: #b45309;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 5px;
+      text-decoration: none;
+      border: 1px solid #fde68a;
+      transition: transform 0.2s;
+    }
+    .sidebar-coins-badge:active {
+      transform: scale(0.95);
+    }
+    .sidebar-coins-badge i {
+      color: #f59e0b;
+    }
+
     .close-sidebar {
       background: #f1f5f9;
       border: none;
@@ -621,6 +645,10 @@
           <div class="sidebar-text">
             <h4 id="sidebarName">युजर लोड हुँदैछ...</h4>
             <p id="sidebarEmail">email@example.com</p>
+            <!-- 🪙 प्रोफाइलको तल कोइन ब्याज (क्लिक गर्दा coins.html खुल्ने) -->
+            <a href="coins.html" class="sidebar-coins-badge" id="sidebarCoinsBadge">
+              <i class="fa-solid fa-coins"></i> <span id="sidebarCoinsCount">0</span> Coins
+            </a>
           </div>
         </div>
         <button class="close-sidebar" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
@@ -841,7 +869,7 @@
 
     menuBtn.addEventListener('click', toggleSidebar);
     closeSidebar.addEventListener('click', toggleSidebar);
-    sidebarOverlay.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click,', toggleSidebar);
 
     // सुपाबेसबाट पछिल्लो लाइभ सूचना तान्ने फंक्सन
     async function fetchLatestNotification() {
@@ -860,16 +888,12 @@
       }
     }
 
-    // पेज लोड हुँदा सूचना कल गर्ने
     fetchLatestNotification();
 
-    // इमेलको आधारमा एड्मिन प्यानल देखाउने फंक्सन
     async function checkAdminRole(user) {
       try {
         if (!user || !user.email) return;
-
         const adminEmails = ["pgprajwal11@gmail.com"]; 
-
         if (adminEmails.includes(user.email.toLowerCase())) {
           const adminLink = document.getElementById('adminSidebarLink');
           if (adminLink) {
@@ -881,36 +905,38 @@
       }
     }
 
-    // युजरको डेटा फेच गर्ने र नाम तथा Accuracy देखाउने
+    // युजरको डेटा, नाम, कोइन र Accuracy फेच गर्ने
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const email = user.email || "No Email";
         let name = user.displayName || "Officer";
+        let userCoins = 0;
         
         try {
           const docRef = doc(db, "users", user.uid);
           const docSnap = await getDoc(docRef);
-          if (docSnap.exists() && docSnap.data().name) {
-            name = docSnap.data().name;
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            if (userData.name) name = userData.name;
+            if (userData.coins !== undefined) userCoins = userData.coins;
           }
         } catch (err) {
           console.error("Error fetching user data:", err);
         }
 
-        // साइडबार र मुख्य पेजमा नाम अपडेट गर्ने
+        // साइडबारमा नाम, इमेल र कोइन अपडेट गर्ने
         document.getElementById('sidebarName').textContent = name;
         document.getElementById('sidebarEmail').textContent = email;
+        document.getElementById('sidebarCoinsCount').textContent = userCoins;
         document.getElementById('greetingName').textContent = `शुभ प्रभात, ${name}! 👋`;
 
         const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) || "LK";
         document.getElementById('sidebarAvatar').textContent = initials;
         document.getElementById('userInitial').textContent = initials;
 
-        // Check admin privilege
         checkAdminRole(user);
 
-        // Supabase बाट युजरको वास्तविक accuracy वा total solved निकाल्ने
-        let accuracy = 75; // डिफल्ट बेसलाइन
+        let accuracy = 75;
         try {
           let { data: userStat } = await supabase
             .from('user_stats')
@@ -925,7 +951,6 @@
           console.error("Stats error:", e);
         }
 
-        // Circular progress मा Accuracy प्रतिशत सेट गर्ने
         document.getElementById('accuracyVal').textContent = accuracy + "%";
         document.getElementById('accuracyCircle').style.background = `conic-gradient(#16a34a ${accuracy * 3.6}deg, #e2e8f0 0deg)`;
 
@@ -934,7 +959,6 @@
       }
     });
 
-    // Logout Functionality
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       try {
         await signOut(auth);
@@ -944,7 +968,6 @@
       }
     });
 
-    // Dark Mode Toggle Logic
     const darkModeToggle = document.getElementById('darkModeToggle');
     if (localStorage.getItem('theme') === 'dark') {
       darkModeToggle.checked = true;
