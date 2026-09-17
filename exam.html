@@ -14,6 +14,13 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    /* Google Translate Banner र Tooltip पूर्ण रूपमा लुकाउन */
+    .goog-te-banner-frame.skiptranslate { display: none !important; }
+    body { top: 0px !important; }
+    .goog-tooltip { display: none !important; }
+    .goog-tooltip:hover { display: none !important; }
+    .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -27,7 +34,6 @@
       padding-bottom: 60px;
     }
 
-    /* Table Styles for Quiz */
     .quiz-table {
       width: 100%;
       border-collapse: collapse;
@@ -48,15 +54,31 @@
     .app-header {
       background: #1e3a8a;
       color: #ffffff;
-      padding: 20px 16px;
+      padding: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #1e40af;
+      gap: 10px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow: hidden;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
     }
     .app-header h1 {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .back-btn {
       background: rgba(255, 255, 255, 0.1);
@@ -70,6 +92,51 @@
       justify-content: center;
       cursor: pointer;
       text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    /* Modern Attractive Language Switcher */
+    .lang-switch-container {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 2px;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      height: 32px;
+      width: 90px;
+    }
+    .lang-option {
+      flex: 1;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      z-index: 2;
+      user-select: none;
+    }
+    .lang-slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 42px;
+      height: 26px;
+      background: #ffffff;
+      border-radius: 14px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .lang-switch-container.en-active .lang-slider {
+      transform: translateX(42px);
+    }
+    .lang-switch-container.en-active .lang-option:last-child {
+      color: #1e3a8a;
+    }
+    .lang-switch-container:not(.en-active) .lang-option:first-child {
+      color: #1e3a8a;
     }
 
     .main-wrapper {
@@ -195,48 +262,6 @@
       margin-bottom: 8px;
     }
 
-    /* Language Switcher Toggle Styles */
-    .lang-switch-container {
-      display: inline-flex;
-      align-items: center;
-      background: #f1f5f9;
-      border-radius: 20px;
-      padding: 2px;
-      position: relative;
-      cursor: pointer;
-      border: 1px solid #cbd5e1;
-      margin-bottom: 12px;
-    }
-    .lang-option {
-      padding: 4px 10px;
-      font-size: 11px;
-      font-weight: 800;
-      color: #475569;
-      z-index: 2;
-      user-select: none;
-    }
-    .lang-slider {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 32px;
-      height: 24px;
-      background: #2563eb;
-      border-radius: 14px;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1;
-    }
-    .lang-switch-container.en-active .lang-slider {
-      transform: translateX(32px);
-    }
-    .lang-switch-container.en-active .lang-option:last-child {
-      color: #ffffff;
-    }
-    .lang-switch-container:not(.en-active) .lang-option:first-child {
-      color: #ffffff;
-    }
-
-    /* Attractive Modern Popup Modal Animations */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -306,7 +331,7 @@
     </div>
   </div>
 
-  <!-- REVIEW DETAILS MODAL (समीक्षा पपअप) -->
+  <!-- REVIEW DETAILS MODAL -->
   <div id="reviewModal" class="modal-overlay">
     <div class="modal-card" style="max-width: 500px; width: 95%; height: 85vh; display: flex; flex-direction: column; padding: 16px;">
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
@@ -314,7 +339,6 @@
         <button onclick="closeReviewModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
       </div>
       
-      <!-- Filter Buttons -->
       <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
         <button onclick="filterReview('all')" id="filter-all" class="filter-btn active">सबै (All)</button>
         <button onclick="filterReview('right')" id="filter-right" class="filter-btn">मिलाइएका (Right)</button>
@@ -322,7 +346,6 @@
         <button onclick="filterReview('skipped')" id="filter-skipped" class="filter-btn">छोडेका (Skipped)</button>
       </div>
 
-      <!-- Scrollable Review List Container -->
       <div id="review-container" style="flex: 1; overflow-y: auto; padding-right: 4px; font-size: 11px;"></div>
       
       <button onclick="closeReviewModal()" class="btn-primary" style="margin-top: 10px; padding: 10px;">बन्द गर्नुहोस्</button>
@@ -331,10 +354,17 @@
 
   <!-- HEADER -->
   <header class="app-header">
-    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1 id="header-title">🇳🇵 LoksewaQuest</h1>
-    <div id="timer-box" class="timer-badge hidden">
-      ⏳ <span id="time-left">45:00</span>
+    <div class="header-left">
+      <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+      <h1 id="header-title">🇳🇵 LoksewaQuest</h1>
+    </div>
+    <div class="header-right">
+      <!-- Language Switch Toggle (डार्क मोडको छे우मा माथि राखिएको) -->
+      <div id="lang-switch" class="lang-switch-container" onclick="toggleLanguage()">
+        <div class="lang-slider"></div>
+        <span class="lang-option">नेपाली</span>
+        <span class="lang-option">English</span>
+      </div>
     </div>
   </header>
 
@@ -377,14 +407,12 @@
     <div id="exam-screen" class="card hidden space-y-4">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
         <span id="q-tracker" style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">Question 1</span>
-        <span id="mode-badge" style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">Exam</span>
-      </div>
-
-      <!-- Language Switch Toggle (प्रश्नको ठ्याक्कै माथि राखिएको) -->
-      <div id="lang-switch" class="lang-switch-container" onclick="toggleLanguage()">
-        <div class="lang-slider"></div>
-        <span class="lang-option">नेपाली</span>
-        <span class="lang-option">English</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div id="timer-box" class="timer-badge hidden">
+            ⏳ <span id="time-left">45:00</span>
+          </div>
+          <span id="mode-badge" style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">Exam</span>
+        </div>
       </div>
 
       <h3 id="exam-question" style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.5;">Loading...</h3>
@@ -402,7 +430,7 @@
       </div>
     </div>
 
-    <!-- RESULT SCREEN (CERTIFICATE STYLE) -->
+    <!-- RESULT SCREEN -->
     <div id="result-screen" class="hidden space-y-4">
       <div id="pdf-report-content" class="card space-y-4" style="background: #ffffff; border: 2px solid #2563eb; border-radius: 20px; text-align: center; padding: 24px 16px;">
         <div style="font-size: 28px; color: #2563eb; margin-bottom: 4px;"><i class="fa-solid fa-award"></i></div>
@@ -434,7 +462,6 @@
           </div>
         </div>
 
-        <!-- Dynamic Status Message Box -->
         <div id="status-message-box" style="padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 700; margin-bottom: 14px;"></div>
 
         <button onclick="openReviewModal()" class="btn-secondary" style="width: 100%; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; padding: 10px;">
@@ -507,7 +534,6 @@
     let examStartTime = null;
     let evaluatedQuestionsList = [];
 
-    // Language State Variable
     let currentLang = 'ne';
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -570,11 +596,7 @@
         if (error || !data || data.length === 0) {
           let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', rawSet);
           if (retry.error || !retry.data || retry.data.length === 0) {
-            if (typeof showSuccessPopup === 'function') {
-              showSuccessPopup(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`, '', 'error', 'त्रुटि');
-            } else {
-              alert(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
-            }
+            alert(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
             return;
           }
           data = retry.data;
@@ -588,20 +610,16 @@
         
         if (!isPracticeMode) {
           document.getElementById('timer-box').classList.remove('hidden');
-          document.getElementById('mode-badge').innerText = `${prettyExamName} Live Exam`;
+          document.getElementById('mode-badge').innerText = `Live Exam`;
           startTimer();
         } else {
           document.getElementById('timer-box').classList.add('hidden');
-          document.getElementById('mode-badge').innerText = `${prettyExamName} Practice Mode`;
+          document.getElementById('mode-badge').innerText = `Practice Mode`;
         }
 
         loadExamQuestion();
       } catch (err) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup('त्रुटि: ' + err.message, '', 'error', 'त्रुटि');
-        } else {
-          alert('त्रुटि: ' + err.message);
-        }
+        alert('त्रुटि: ' + err.message);
       }
     }
 
@@ -658,7 +676,6 @@
       document.getElementById('prev-btn').style.display = currentIdx === 0 ? 'none' : 'block';
       document.getElementById('next-btn').innerText = currentIdx === examQuestions.length - 1 ? 'परीक्षा बुझाउने (Submit)' : 'अर्को ➡️';
 
-      // यदि पहिले नै English मोडमा छ भने नयाँ प्रश्न लोड हुँदा पनि स्वतः अनुवाद लागू गर्ने
       if (currentLang === 'en') {
         setTimeout(() => triggerGoogleTranslate('en'), 200);
       }
@@ -676,21 +693,13 @@
         currentIdx++;
         loadExamQuestion();
       } else {
-        if (typeof showConfirmPopup === 'function') {
-          showConfirmPopup("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?", () => {
-            if (!isPracticeMode) clearInterval(timerInterval);
-            submitExam();
-          }, "परीक्षा बुझाउने?");
-        } else {
-          if (confirm("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?")) {
-            if (!isPracticeMode) clearInterval(timerInterval);
-            submitExam();
-          }
+        if (confirm("के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?")) {
+          if (!isPracticeMode) clearInterval(timerInterval);
+          submitExam();
         }
       }
     }
 
-    // Language Toggle Functions
     window.toggleLanguage = function() {
       const switchEl = document.getElementById('lang-switch');
       if (!switchEl) return;
@@ -713,7 +722,6 @@
 
     async function submitExam() {
       document.getElementById('exam-screen').classList.add('hidden');
-      document.getElementById('timer-box').classList.add('hidden');
       document.getElementById('result-screen').classList.remove('hidden');
 
       let correct = 0, wrong = 0, skipped = 0;
@@ -911,11 +919,7 @@
     window.submitQuestionReport = async function() {
       const reason = document.getElementById('reportReason').value.trim();
       if (!reason) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup('कृपया समस्या के हो लेख्नुहोस्!', '', 'warning', 'अपूरो विवरण');
-        } else {
-          alert('कृपया समस्या के हो लेख्नुहोस्!');
-        }
+        alert('कृपया समस्या के हो लेख्नुहोस्!');
         return;
       }
 
@@ -930,18 +934,10 @@
         }]);
 
       if (error) {
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message, '', 'error', 'त्रुटि');
-        } else {
-          alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
-        }
+        alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
       } else {
         closeReportModal();
-        if (typeof showSuccessPopup === 'function') {
-          showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏', '', 'success', 'सफल');
-        } else {
-          alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
-        }
+        alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
       }
     }
   </script>
@@ -961,3 +957,35 @@
   <script src="components.js"></script>
 </body>
 </html>
+```Hajurle vaneko kura anusar (language switcher/slider लाई dark mode icon ko xeu ma upper right ma rakhne, tyeslai ramro design garne, ra Google Translate prompt/banner hataune), yeta code ko layout update garidiyeko chu.
+
+### 1. HTML Layout (Header Section)
+Top header ma **Dark Mode toggle** ra **Language switcher** lai eutai flex container ma rakheera right side ma align gareko chu, jasle garda tyo dark mode icon ko xeu ma dekhincha.
+
+```html
+<header class="app-header">
+    <div class="header-left">
+        <button class="back-btn" aria-label="Back">
+            <svg>...</svg>
+        </button>
+        <h1>LoksewaQuest - NEPAL GEOGRAPHY</h1>
+    </div>
+    
+    <!-- Upper Right Header Actions (Dark Mode + Language Slider) -->
+    <div class="header-actions">
+        <!-- Language Switcher Slider -->
+        <div class="lang-slider-container">
+            <input type="checkbox" id="langToggle" class="lang-checkbox">
+            <label for="langToggle" class="lang-slider">
+                <span class="lang-option ne">नेपाली</span>
+                <span class="lang-option en">English</span>
+                <span class="slider-ball"></span>
+            </label>
+        </div>
+
+        <!-- Dark Mode Toggle -->
+        <button id="darkModeToggle" class="dark-mode-btn" aria-label="Toggle Dark Mode">
+            🌙
+        </button>
+    </div>
+</header>
