@@ -31,11 +31,14 @@
     .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 22px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); }  
     .question-text { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
 
-    .options-list { display: flex; flex-direction: column; gap: 10px; }
+    .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
     .option-btn { width: 100%; text-align: left; background: #f8fafc; border: 1.5px solid #cbd5e1; padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; color: #334155; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: space-between; }
     .option-btn:hover { background: #eff6ff; border-color: #2563eb; color: #1e40af; }
     .option-btn.correct { background: #dcfce7 !important; border-color: #16a34a !important; color: #15803d !important; }
     .option-btn.wrong { background: #fee2e2 !important; border-color: #dc2626 !important; color: #b91c1c !important; }
+
+    .skip-btn { background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1; width: 100%; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .skip-btn:hover { background: #e2e8f0; color: #1e293b; }
 
     .screen-center { text-align: center; padding: 20px 10px; }
     .screen-center h2 { font-size: 20px; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
@@ -62,6 +65,20 @@
     .score-badge { background: #eff6ff; color: #2563eb; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid #dbeafe; }
 
     .reward-banner { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 10px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; justify-content: center; }
+
+    /* Custom Review Modal Popup */
+    .custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+    .modal-content { background: #ffffff; width: 100%; max-width: 450px; border-radius: 20px; padding: 20px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+    .modal-header h3 { font-size: 16px; font-weight: 800; color: #1e293b; }
+    .close-modal { background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; }
+    .review-list { overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px; }
+    .review-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; }
+    .review-q { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+    .review-ans { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+    .ans-user { color: #dc2626; }
+    .ans-user.correct-mark { color: #16a34a; }
+    .ans-right { color: #16a34a; }
 
     .hidden { display: none !important; }
   </style>  
@@ -110,6 +127,7 @@
       <div class="card">
         <div id="questionText" class="question-text">प्रश्नहरू लोड हुँदैछन्...</div>
         <div class="options-list" id="optionsList"></div>
+        <button class="skip-btn" id="skipBtn" onclick="handleSkipQuestion()"><i class="fa-solid fa-forward"></i> स्किप गर्नुहोस् (Skip)</button>
       </div>
     </div>
 
@@ -126,9 +144,12 @@
         <i class="fa-solid fa-coins" style="color: #ca8a04; font-size: 16px;"></i> बधाई छ! तपाईं लिडरबोर्डमा सफल हुनुभयो (+५० कोइन थपियो!)
       </div>
 
-      <div style="display: flex; gap: 10px; margin-bottom: 16px;">
-        <button class="btn-primary" onclick="window.location.reload()"><i class="fa-solid fa-rotate-right"></i> फेरि खेल्नुहोस्</button>
-        <button class="btn-primary" onclick="window.location.href='games.html'" style="background: #64748b;"><i class="fa-solid fa-house"></i> मेनु</button>
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+        <button class="btn-primary" onclick="openReviewPopup()"><i class="fa-solid fa-list-check"></i> उत्तरहरू हेर्नुहोस् (Review Answers)</button>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-primary" onclick="window.location.reload()"><i class="fa-solid fa-rotate-right"></i> फेरि खेल्नुहोस्</button>
+          <button class="btn-primary" onclick="window.location.href='games.html'" style="background: #64748b;"><i class="fa-solid fa-house"></i> मेनु</button>
+        </div>
       </div>
 
       <div class="leaderboard-section">
@@ -144,12 +165,31 @@
 
   </main>  
 
+  <!-- Review Popup Modal -->
+  <div id="reviewModal" class="custom-modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>तपाईंको खेलको समीक्षा (Review)</h3>
+        <button class="close-modal" onclick="closeReviewPopup()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="review-list" id="reviewListContainer">
+        <!-- Dynamic Review Items -->
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <script type="module">  
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
     import { getFirestore, doc as fsDoc, getDoc as fsGetDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
+    
+    // components.js लाई सुरक्षित रूपमा फेच गर्ने वा इम्पोर्ट गर्ने प्रयास
+    let componentsModule = null;
+    try {
+      componentsModule = await import('./components.js').catch(() => null);
+    } catch (e) { console.log("components.js not found or ignored."); }
 
     const firebaseConfig = {  
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",  
@@ -180,12 +220,18 @@
     let allQuestions = [];
     let usedQuestionIndices = new Set();
     let score = 0;
+    let skippedCount = 0;
+    let wrongCount = 0;
     let timeLeft = 60;
     let timerInterval = null;
     let gameActive = false;
     let mainLbType = 'daily';
     let endLbType = 'daily';
     const GAME_SET_NAME = 'Speed Blitz (1 Min)';
+
+    // खेलमा खेलाडीले खेलेका प्रश्न र उत्तरहरूको इतिहास रेकर्ड राख्न
+    let gameSessionHistory = [];
+    let currentQuestionData = null;
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -245,8 +291,11 @@
 
       gameActive = true;
       score = 0;
+      skippedCount = 0;
+      wrongCount = 0;
       timeLeft = 60;
       usedQuestionIndices.clear();
+      gameSessionHistory = [];
 
       startTimer();
       loadNextQuestion();
@@ -279,10 +328,6 @@
       usedQuestionIndices.add(randomIndex);
       const q = allQuestions[randomIndex];
 
-      document.getElementById('questionText').innerText = q.question || "प्रश्न उपलब्ध छैन";
-      const optionsContainer = document.getElementById('optionsList');
-      optionsContainer.innerHTML = '';
-
       let optsArray = [];
       if (Array.isArray(q.options)) {
         optsArray = q.options;
@@ -293,6 +338,18 @@
       }
 
       const correctAns = String(q.answer || '').trim();
+
+      currentQuestionData = {
+        question: q.question || "प्रश्न उपलब्ध छैन",
+        options: optsArray,
+        answer: correctAns,
+        userAnswer: null,
+        status: 'unanswered'
+      };
+
+      document.getElementById('questionText').innerText = currentQuestionData.question;
+      const optionsContainer = document.getElementById('optionsList');
+      optionsContainer.innerHTML = '';
 
       optsArray.forEach((optText) => {
         const btn = document.createElement('button');
@@ -307,29 +364,45 @@
                             (correctAns.toUpperCase() === 'D' && optText === optsArray[3])
                           ));
 
-        btn.onclick = () => handleAnswerClick(isCorrect, btn);
+        btn.onclick = () => handleAnswerClick(isCorrect, optText, btn);
         optionsContainer.appendChild(btn);
       });
     }
 
-    function handleAnswerClick(isCorrect, selectedBtn) {
+    function handleAnswerClick(isCorrect, optText, selectedBtn) {
       if (!gameActive) return;
 
       const allBtns = document.querySelectorAll('.option-btn');
       allBtns.forEach(b => b.disabled = true);
 
+      currentQuestionData.userAnswer = optText;
+
       if (isCorrect) {
         selectedBtn.classList.add('correct');
         score++;
+        currentQuestionData.status = 'correct';
         document.getElementById('scoreVal').innerText = score;
       } else {
         selectedBtn.classList.add('wrong');
+        wrongCount++;
+        currentQuestionData.status = 'wrong';
       }
+
+      gameSessionHistory.push(currentQuestionData);
 
       setTimeout(() => {
         if (gameActive) loadNextQuestion();
       }, 400);
     }
+
+    window.handleSkipQuestion = function() {
+      if (!gameActive) return;
+      skippedCount++;
+      currentQuestionData.userAnswer = 'स्किप गरिएको (Skipped)';
+      currentQuestionData.status = 'skipped';
+      gameSessionHistory.push(currentQuestionData);
+      loadNextQuestion();
+    };
 
     async function endGame() {
       gameActive = false;
@@ -347,9 +420,9 @@
                 set_name: GAME_SET_NAME, 
                 score: score, 
                 correct_count: score, 
-                wrong_count: 0, 
-                skipped_count: 0, 
-                total_questions: score,
+                wrong_count: wrongCount, 
+                skipped_count: skippedCount, 
+                total_questions: score + wrongCount + skippedCount,
                 created_at: new Date()
               }
             ]);
@@ -359,6 +432,41 @@
       }
 
       fetchAndShowLeaderboard('end', endLbType);
+    }
+
+    window.openReviewPopup = function() {
+      const container = document.getElementById('reviewListContainer');
+      container.innerHTML = '';
+
+      if (gameSessionHistory.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: #64748b; font-size: 13px; padding: 20px;">कुनै प्रश्नको इतिहास छैन।</div>`;
+      } else {
+        gameSessionHistory.forEach((item, idx) => {
+          let userAnsClass = 'ans-user';
+          if (item.status === 'correct') userAnsClass = 'ans-user correct-mark';
+
+          container.innerHTML += `
+            <div class="review-item">
+              <div class="review-q">प्र. ${idx + 1}: ${item.question}</div>
+              <div class="review-ans ${userAnsClass}">तपाईंको उत्तर: ${item.userAnswer}</div>
+              <div class="review-ans ans-right">सही उत्तर: ${item.answer}</div>
+            </div>
+          `;
+        });
+      }
+
+      // यदि components.js मा showSuccessPopup वा showConfirmPopup उपलब्ध छ भने तिनलाई प्रयोग गर्न सकिन्छ, 
+      // अन्यथा हाम्रो custom-modal डिभ प्रदर्शन गर्नेछ:
+      if (componentsModule && typeof componentsModule.showSuccessPopup === 'function') {
+        // यदि components.js को प्रयोग गर्ने नै हो भने:
+        componentsModule.showSuccessPopup("यहाँ तपाईंको समीक्षा सूची उपलब्ध छ!");
+      }
+      
+      document.getElementById('reviewModal').classList.remove('hidden');
+    }
+
+    window.closeReviewPopup = function() {
+      document.getElementById('reviewModal').classList.add('hidden');
     }
 
     window.switchMainLeaderboard = function(type) {
@@ -395,7 +503,6 @@
       }
 
       try {
-        // केवल 'Speed Blitz (1 Min)' सेटको मात्र डाटा फिल्टर गरेर तान्ने
         let query = supabaseClient
           .from('exam_leaderboard')
           .select('username, set_name, score, created_at')
