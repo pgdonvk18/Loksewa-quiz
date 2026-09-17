@@ -64,6 +64,11 @@
     .clickable-box { cursor: pointer; transition: transform 0.1s, background-color 0.2s; }
     .clickable-box:hover { background-color: #f1f5f9 !important; transform: translateY(-2px); border-color: #2563eb !important; }
     .hidden { display: none !important; }  
+
+    /* 🛑 गुगल ट्रान्सलेटको माथिल्लो ब्यानर र स्पेस पूर्ण रूपमा लुकाउन */
+    .goog-te-banner-frame { display: none !important; }
+    body { top: 0px !important; position: static !important; }
+    .skiptranslate { display: none !important; }
   </style>  
 </head>  
 <body>  
@@ -253,7 +258,7 @@
     let wrongQuestionsList = [];  
     let isMistakeRetry = false;  
     let seenQuestionIds = new Set();  
-    let evaluatedResults = []; // सबै प्रश्नहरूको अन्तिम नतिजा स्टोर गर्न
+    let evaluatedResults = []; 
 
     document.addEventListener("DOMContentLoaded", () => {  
       onAuthStateChanged(auth, async (user) => {  
@@ -404,7 +409,6 @@
 
     window.closeReviewModal = function() { document.getElementById('reviewModal').classList.remove('active'); }
 
-    // छुट्टाछुट्टै फिल्टर गरेर पपअपमा देखाउने फंक्सन
     window.openFilteredReview = function(type) {
       let filtered = evaluatedResults;
       let titleText = "सबै उत्तरहरूको समीक्षा (Review)";
@@ -601,10 +605,7 @@
       });  
     }  
   </script>
-  <script src="components.js"></script>  <script src="translator.js"></script>
-
-</body>  
-</html>
-
+  <script src="components.js"></script>  
+  <script src="translator.js"></script>
 </body>  
 </html>
