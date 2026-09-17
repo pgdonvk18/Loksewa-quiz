@@ -190,7 +190,6 @@
       margin-bottom: 8px;
     }
 
-    /* Modern Attractive Popup Modals */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -230,7 +229,7 @@
   <!-- LOGIN WARNING MODAL -->
   <div id="login-modal" class="modal-overlay">
     <div class="modal-card" style="text-align: center;">
-      <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px; box-shadow: 0 10px 15px -3px rgba(37,99,235,0.15);">
+      <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">
         <i class="fa-solid fa-lock"></i>
       </div>
       <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">लगइन आवश्यक छ!</h3>
@@ -239,6 +238,16 @@
       </p>
       <button onclick="redirectToLogin()" class="btn-primary" style="margin-bottom: 8px;">लगइन पेजमा जानुहोस् 🚀</button>
       <a href="dashboard.html" style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none; padding: 6px;">ड्यासबोर्डमा फर्कनुहोस्</a>
+    </div>
+  </div>
+
+  <!-- INSUFFICIENT COINS MODAL -->
+  <div id="insufficientCoinsModal" class="modal-overlay">
+    <div class="modal-card" style="text-align: center;">
+      <div style="width: 56px; height: 56px; background: #fee2e2; color: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">अपर्याप्त कोइन!</h3>
+      <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px;">यो मोक टेस्ट दिनको लागि ५० कोइन आवश्यक पर्छ, तर तपाईंसँग पर्याप्त कोइन छैन।</p>
+      <button onclick="closeModals()" class="btn-primary">बुझें 👍</button>
     </div>
   </div>
 
@@ -254,13 +263,13 @@
       <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">यो प्रश्न वा उत्तरमा केही त्रुटि वा समस्या भए तल लेखी पठाउनुहोस्:</p>
       <textarea id="reportReason" placeholder="उदा: सही उत्तर मिलेको छैन वा अप्सन गलत छ..." style="min-height: 110px; margin-bottom: 16px; width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; outline: none; background: #f8fafc; color: #1e293b; font-family: inherit; resize: none;"></textarea>
       <div style="display: flex; gap: 10px;">
-        <button onclick="submitQuestionReport()" style="flex: 1; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);">पठाउनुहोस् 🚀</button>
+        <button onclick="submitQuestionReport()" style="flex: 1; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px;">पठाउनुहोस् 🚀</button>
         <button onclick="closeReportModal()" style="flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px;">रद्द गर्नुहोस्</button>
       </div>
     </div>
   </div>
 
-  <!-- REVIEW DETAILS MODAL (समीक्षा पपअप) -->
+  <!-- REVIEW DETAILS MODAL -->
   <div id="reviewModal" class="modal-overlay">
     <div class="modal-card" style="max-width: 500px; width: 95%; height: 85vh; display: flex; flex-direction: column; padding: 16px;">
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
@@ -268,7 +277,6 @@
         <button onclick="closeReviewModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
       </div>
       
-      <!-- Filter Buttons -->
       <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
         <button onclick="filterReview('all')" id="filter-all" class="filter-btn active">सबै (All)</button>
         <button onclick="filterReview('right')" id="filter-right" class="filter-btn">मिलाइएका (Right)</button>
@@ -276,7 +284,6 @@
         <button onclick="filterReview('skipped')" id="filter-skipped" class="filter-btn">छोडेका (Skipped)</button>
       </div>
 
-      <!-- Scrollable Review List Container -->
       <div id="review-container" style="flex: 1; overflow-y: auto; padding-right: 4px; font-size: 11px;"></div>
       
       <button onclick="closeReviewModal()" class="btn-primary" style="margin-top: 10px; padding: 10px;">बन्द गर्नुहोस्</button>
@@ -286,9 +293,14 @@
   <!-- HEADER -->
   <header class="app-header">
     <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1 id="header-title">🇳🇵 LoksewaQuest Mock Exam</h1>
-    <div id="timer-box" class="timer-badge hidden">
-      ⏳ <span id="time-left">45:00</span>
+    <h1 id="header-title">🇳🇵 Kharidar Mock Test 1</h1>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="background: rgba(255,255,255,0.15); padding: 5px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">
+        🪙 <span id="user-coin-balance">0</span>
+      </div>
+      <div id="timer-box" class="timer-badge hidden">
+        ⏳ <span id="time-left">45:00</span>
+      </div>
     </div>
   </header>
 
@@ -298,10 +310,10 @@
     <div id="reg-screen" class="card">
       <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">परीक्षाको नियमहरू:</h2>
       <ul style="font-size: 12px; color: #475569; margin-left: 18px; margin-bottom: 16px; line-height: 1.6;">
+        <li>शुल्क: <strong>५० कोइन</strong> (परीक्षा सुरु गर्दा काटिनेछ)</li>
         <li>कुल समय: <strong>४५ मिनेट</strong></li>
         <li>सही उत्तरको: <strong>+२ अंक</strong></li>
         <li>गलत उत्तरको: <strong>२०% माइनस (-०.४ अंक)</strong></li>
-        <li><strong>कोइन रिवार्ड:</strong> ५०%-६०% (10 Coins), ६०%-७०% (20 Coins), ७०%-८०% (30 Coins), ८०%-९०% (40 Coins), ९०%-१००% (50 Coins)</li>
       </ul>
 
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
@@ -313,16 +325,16 @@
       </div>
 
       <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 13px; margin-bottom: 16px;" id="set-badge-title">
-        🎯 सेट लोड हुँदैछ...
+        🎯 Kharidar Mock Test 1
       </div>
 
       <div id="already-given-box" class="hidden" style="background: #fef2f2; border: 1px solid #fecaca; padding: 14px; border-radius: 12px; margin-bottom: 16px; text-align: center;">
         <p style="color: #dc2626; font-weight: 800; font-size: 13px; margin-bottom: 4px;">🚫 तपाईंले यो परीक्षा पहिले नै दिसक्नुभएको छ!</p>
-        <p style="color: #7f1d1d; font-size: 11px; margin-bottom: 10px;">तपाईंले अभ्यास गर्न सक्नुहुन्छ (लिडरबोर्डमा कोइन जोडिने छैन)।</p>
+        <p style="color: #7f1d1d; font-size: 11px; margin-bottom: 10px;">तपाईं अभ्यास मोड प्रयोग गर्न सक्नुहुन्छ (कोइन काटिने वा थपिने छैन)।</p>
         <button onclick="startPracticeMode()" class="btn-practice">अभ्यास गर्नुहोस् (Practice Mode) 💡</button>
       </div>
 
-      <button id="start-exam-btn" onclick="startExam(false)" class="btn-primary">परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀</button>
+      <button id="start-exam-btn" onclick="validateAndStartExam()" class="btn-primary">परीक्षा सुरु गर्नुहोस् (50 Coins) 🚀</button>
       
       <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 16px;">
         <h3 style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">🏆 लिडरबोर्ड</h3>
@@ -399,6 +411,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -411,6 +424,7 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     setPersistence(auth, browserSessionPersistence).catch((error) => {
       console.error("Persistence Error: ", error);
@@ -423,11 +437,15 @@
     const urlParams = new URLSearchParams(window.location.search);
     const activeSet = urlParams.get('set') || 'kharidar_mocktest1';
 
-    document.getElementById('set-badge-title').innerText = `🎯 परीक्षा सेट: ${activeSet}`;
-    document.getElementById('header-title').innerText = `🇳🇵 LoksewaQuest - ${activeSet}`;
+    const displayNameSet = activeSet === 'kharidar_mocktest1' ? 'Kharidar Mock Test 1' : activeSet;
 
+    document.getElementById('set-badge-title').innerText = `🎯 परीक्षा सेट: ${displayNameSet}`;
+    document.getElementById('header-title').innerText = `🇳🇵 ${displayNameSet}`;
+
+    let currentUserUid = null;
     let candidateName = '';
     let userEmail = '';
+    let userCoins = 0;
     let examQuestions = [];
     let currentIdx = 0;
     let userAnswers = {}; 
@@ -436,7 +454,6 @@
     let isPracticeMode = false;
     let evaluatedQuestionsList = [];
 
-    // Shuffle Algorithm
     function shuffleArray(array) {
       let arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -449,9 +466,11 @@
     document.addEventListener("DOMContentLoaded", () => {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
+          currentUserUid = user.uid;
           candidateName = user.displayName || user.email.split('@')[0];
           userEmail = user.email;
           document.getElementById('profile-display-name').innerText = candidateName;
+          await fetchUserCoins(user.uid);
           await checkIfExamAlreadyGiven(userEmail);
         } else {
           document.getElementById('login-modal').classList.add('active');
@@ -463,6 +482,19 @@
 
     window.redirectToLogin = function() {
       window.location.href = 'login.html';
+    }
+
+    async function fetchUserCoins(uid) {
+      try {
+        const userDocRef = doc(db, "users", uid);
+        const userSnap = await getDoc(userDocRef);
+        if (userSnap.exists()) {
+          userCoins = userSnap.data().coins || 0;
+          document.getElementById('user-coin-balance').innerText = userCoins;
+        }
+      } catch (err) {
+        console.error("Error fetching coins:", err);
+      }
     }
 
     async function checkIfExamAlreadyGiven(email) {
@@ -482,14 +514,34 @@
       }
     }
 
+    window.validateAndStartExam = async function() {
+      if (!currentUserUid || !userEmail) {
+        document.getElementById('login-modal').classList.add('active');
+        return;
+      }
+
+      if (userCoins < 50) {
+        document.getElementById('insufficientCoinsModal').classList.add('active');
+        return;
+      }
+
+      // ५० कोइन काट्ने
+      try {
+        const userDocRef = doc(db, "users", currentUserUid);
+        await updateDoc(userDocRef, {
+          coins: increment(-50)
+        });
+        await fetchUserCoins(currentUserUid);
+        startExam(false);
+      } catch (err) {
+        console.error("Coin deduction error:", err);
+        alert("कोइन काट्नमा समस्या आयो। कृपया फेरि प्रयास गर्नुहोस्।");
+      }
+    }
+
     window.startExam = async function(practice = false) {
       isPracticeMode = practice;
       try {
-        if (!userEmail) {
-          document.getElementById('login-modal').classList.add('active');
-          return;
-        }
-
         let { data, error } = await supabaseClient
           .from('quizzes')
           .select('*')
@@ -516,11 +568,11 @@
         
         if (!isPracticeMode) {
           document.getElementById('timer-box').classList.remove('hidden');
-          document.getElementById('mode-badge').innerText = `${activeSet} Live Exam`;
+          document.getElementById('mode-badge').innerText = `${displayNameSet} Live Exam`;
           startTimer();
         } else {
           document.getElementById('timer-box').classList.add('hidden');
-          document.getElementById('mode-badge').innerText = `${activeSet} Practice Mode`;
+          document.getElementById('mode-badge').innerText = `${displayNameSet} Practice Mode`;
         }
 
         loadExamQuestion();
@@ -643,12 +695,17 @@
 
       if (isPracticeMode) {
         document.getElementById('report-main-title').innerText = 'LOKSEWAQUEST PRACTICE REPORT';
-        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${activeSet} (अभ्यास मोड)`;
-        earnedCoins = 0; // अभ्यास मोडमा कोइन पाइँदैन
+        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${displayNameSet} (अभ्यास मोड)`;
+        earnedCoins = 0; 
       } else {
         document.getElementById('report-main-title').innerText = 'LOKSEWAQUEST CERTIFICATE';
-        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${activeSet}`;
+        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${displayNameSet}`;
         
+        if (earnedCoins > 0 && currentUserUid) {
+          const userDocRef = doc(db, "users", currentUserUid);
+          await updateDoc(userDocRef, { coins: increment(earnedCoins) });
+        }
+
         if (userEmail) {
           await supabaseClient.from('exam_leaderboard').insert([{ 
             username: userEmail, 
@@ -679,6 +736,7 @@
 
       renderReviewList('all');
       fetchLeaderboard();
+      if(currentUserUid) fetchUserCoins(currentUserUid);
     }
 
     window.filterReview = function(type) {
@@ -750,6 +808,7 @@
     window.downloadPDF = function() { window.print(); }
     window.openReportModal = function() { document.getElementById('reportModal').classList.add('active'); }
     window.closeReportModal = function() { document.getElementById('reportModal').classList.remove('active'); document.getElementById('reportReason').value = ''; }
+    window.closeModals = function() { document.getElementById('insufficientCoinsModal').classList.remove('active'); }
 
     window.submitQuestionReport = async function() {
       const reason = document.getElementById('reportReason').value.trim();
