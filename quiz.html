@@ -65,7 +65,7 @@
     .clickable-box:hover { background-color: #f1f5f9 !important; transform: translateY(-2px); border-color: #2563eb !important; }
     .hidden { display: none !important; }  
 
-    /* 🛑 गुगल ट्रान्सलेटको माथिल्लो ब्यानर र स्पेस पूर्ण रूपमा लुकाउन */
+    /* गुगल ट्रान्सलेटको माथिल्लो ब्यानर र स्पेस पूर्ण रूपमा लुकाउन */
     .goog-te-banner-frame { display: none !important; }
     body { top: 0px !important; position: static !important; }
     .skiptranslate { display: none !important; }
@@ -526,13 +526,17 @@
       if (!isMistakeRetry && userId && correct > 0) {
         try {
           const coinsToAdd = correct; 
-          // यहाँ components.js को अपडेट फंक्सन प्रयोग गरिएको छ (कोइन र ट्रान्जेक्सन हिस्ट्री दुवै रेकर्ड हुन्छ)
-          await updateUserCoinsWithHistory(db, userId, coinsToAdd, `${activeConfig.title} क्विज अभ्यास पुरस्कार बापत`);
           
-          coinEarnedMessage = `🎉 बधाई छ! तपाईंले यो अभ्यासमा ${correct} वटा प्रश्न मिलाउनु भएकोले ${coinsToAdd} कोइन प्राप्त गर्नुभयो!`;
+          // components.js को फंक्सन सुरक्षित रूपमा प्रयोग गरिएको (एरर नआउने गरी)
+          if (typeof updateUserCoinsWithHistory === 'function') {
+            await updateUserCoinsWithHistory(db, userId, coinsToAdd, `${activeConfig.title} क्विज अभ्यास पुरस्कार बापत`);
+            coinEarnedMessage = `🎉 बधाई छ! तपाईंले यो अभ्यासमा ${correct} वटा प्रश्न मिलाउनु भएकोले ${coinsToAdd} कोइन प्राप्त गर्नुभयो!`;
+          } else {
+            coinEarnedMessage = `🎉 बधाई छ! तपाईंले ${correct} वटा प्रश्न मिलाउनु भयो!`;
+          }
         } catch (err) {
           console.error("Coin update error:", err);
-          coinEarnedMessage = "⚠️ कोइन र इतिहास अपडेट गर्दा केही समस्या आयो।";
+          coinEarnedMessage = "⚠️ कोइन अपडेट गर्दा केही समस्या आयो तर तपाईंको प्रगति रेकर्ड भयो।";
         }
       } else if (isMistakeRetry) {
         coinEarnedMessage = "ℹ️ यो बिग्रिएका प्रश्नहरूको पुन: अभ्यास भएकोले कोइन थप गरिएको छैन।";
@@ -606,6 +610,6 @@
     }  
   </script>
   <script src="components.js"></script>  
-  <script type= "module" src="translator.js"></script>
+  <script type="module" src="translator.js"></script>
 </body>  
 </html>
