@@ -267,7 +267,6 @@
 
     /* =====================================================
        ACHIEVEMENTS
-       DIRECTLY BELOW COINS
     ====================================================== */
 
     .achievements-section {
@@ -467,7 +466,7 @@
     }
 
 
-    /* Check */
+    /* Check / Lock */
 
     .badge-check,
     .badge-lock {
@@ -1173,8 +1172,7 @@
 
 
     <!-- ===================================================
-         🏆 ACHIEVEMENTS
-         DIRECTLY UNDER COINS
+         ACHIEVEMENTS
     ==================================================== -->
 
     <div class="achievements-section">
@@ -1593,7 +1591,7 @@
 
 
     const SUPABASE_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeXJpZGVka2lhcmd1dnVycHhxIiwiaWF0IjoxNzg5MDE4NjYyLCJleHAiOjIxMDQ1OTQ2NjZ9.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzIiwicmVmIjoiZWR5aXJkZWRraWFyZ3V2dXJweHF1IiwiaWF0IjoxNzg5MDE4NjYyLCJleHAiOjIxMDQ1OTQ2NjZ9.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
 
 
     const supabase =
@@ -1835,6 +1833,11 @@
 
     /* ===================================================
        PROCESS BADGES
+       
+       IMPORTANT:
+       - Existing practiceSolved is used.
+       - Existing unlocked badges are preserved.
+       - Progress + target are stored even after unlock.
     ==================================================== */
 
     async function processBadges(
@@ -1860,30 +1863,68 @@
           );
 
 
-        const alreadyUnlocked =
-          existing[badge.id]?.unlocked === true;
+        const existingBadge =
+          existing[badge.id] || {};
 
+
+        const alreadyUnlocked =
+          existingBadge === true ||
+          existingBadge.unlocked === true;
+
+
+        const reached =
+          currentValue >= badge.target;
+
+
+        /* ---------------------------------------------
+           UNLOCKED
+        ---------------------------------------------- */
 
         if (
-          currentValue >= badge.target ||
+          reached ||
           alreadyUnlocked
         ) {
 
-          if (!alreadyUnlocked) {
+          const unlockData = {
 
-            const unlockData = {
+            unlocked: true,
 
-              unlocked: true,
+            progress:
+              Math.min(
+                currentValue,
+                badge.target
+              ),
 
-              unlockedAt:
-                new Date().toISOString()
+            target:
+              badge.target,
 
-            };
+            unlockedAt:
+              existingBadge.unlockedAt ||
+              new Date().toISOString()
+
+          };
 
 
-            updated[badge.id] =
-              unlockData;
+          updated[badge.id] =
+            unlockData;
 
+
+          /*
+             Always normalize the Firestore record.
+             This is important for old badges which may
+             only contain { unlocked: true }.
+          */
+
+          const needsUpdate =
+            existingBadge.unlocked !== true ||
+            Number(existingBadge.progress || 0) !==
+              unlockData.progress ||
+            Number(existingBadge.target || 0) !==
+              unlockData.target ||
+            !existingBadge.unlockedAt;
+
+
+          if (needsUpdate) {
 
             firestoreUpdates[
               `badges.${badge.id}`
@@ -1893,22 +1934,60 @@
 
         }
 
+
+        /* ---------------------------------------------
+           LOCKED
+        ---------------------------------------------- */
+
         else {
 
-          updated[badge.id] = {
+          const lockedData = {
 
             unlocked: false,
 
-            progress: currentValue,
+            progress:
+              Math.min(
+                currentValue,
+                badge.target
+              ),
 
-            target: badge.target
+            target:
+              badge.target
 
           };
+
+
+          updated[badge.id] =
+            lockedData;
+
+
+          /*
+             Save progress so the badge remains
+             synchronized with the current metric.
+          */
+
+          if (
+            existingBadge.unlocked !== false ||
+            Number(existingBadge.progress || 0) !==
+              lockedData.progress ||
+            Number(existingBadge.target || 0) !==
+              lockedData.target
+          ) {
+
+            firestoreUpdates[
+              `badges.${badge.id}`
+            ] = lockedData;
+
+          }
 
         }
 
       });
 
+
+      /* ---------------------------------------------
+         SAVE BADGE CHANGES
+      ---------------------------------------------- */
 
       if (
         Object.keys(firestoreUpdates).length > 0
@@ -1921,11 +2000,18 @@
             firestoreUpdates
           );
 
-        } catch (error) {
 
           console.log(
+            "Badges synchronized successfully."
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(
             "Badge save error:",
-            error.message
+            error
           );
 
         }
@@ -1940,6 +2026,10 @@
 
     /* ===================================================
        RENDER BADGES
+       
+       IMPORTANT:
+       Badge progress is calculated from metrics,
+       especially Firestore practiceSolved.
     ==================================================== */
 
     function renderBadges(
@@ -1976,15 +2066,29 @@
           value >= badge.target;
 
 
-        if (unlocked)
+        if (unlocked) {
+
           unlockedCount++;
+
+        }
+
+
+        /*
+           Never allow progress to exceed target.
+        */
+
+        const displayProgress =
+          Math.min(
+            value,
+            badge.target
+          );
 
 
         const progress =
           Math.min(
             100,
             Math.round(
-              (value / badge.target) * 100
+              (displayProgress / badge.target) * 100
             )
           );
 
@@ -2053,8 +2157,8 @@
 
             ${
               unlocked
-              ? "✓ Earned"
-              : `${Math.min(value,badge.target)}/${badge.target}`
+              ? `✓ Earned ${badge.target}/${badge.target}`
+              : `${displayProgress}/${badge.target}`
             }
 
           </div>
@@ -2128,11 +2232,18 @@
           value >= badge.target;
 
 
+        const displayProgress =
+          Math.min(
+            value,
+            badge.target
+          );
+
+
         const progress =
           Math.min(
             100,
             Math.round(
-              (value / badge.target) * 100
+              (displayProgress / badge.target) * 100
             )
           );
 
@@ -2191,7 +2302,7 @@
         document.getElementById(
           "modalProgressText"
         ).textContent =
-          `${Math.min(value,badge.target)} / ${badge.target} ${getMetricLabel(badge.metric)}`;
+          `${displayProgress} / ${badge.target} ${getMetricLabel(badge.metric)}`;
 
 
         document.getElementById(
@@ -2266,7 +2377,9 @@
           userEmail.split("@")[0];
 
 
-        /* USER FIRESTORE DATA */
+        /* =================================================
+           USER FIRESTORE DATA
+        ================================================== */
 
         let userData = {};
 
@@ -2295,9 +2408,13 @@
               userDocSnap.data();
 
 
+            /* ---------------------------------------------
+               COINS
+            ---------------------------------------------- */
+
             const userCoins =
               userData.coins !== undefined
-              ? userData.coins
+              ? Number(userData.coins)
               : 0;
 
 
@@ -2306,6 +2423,10 @@
             ).textContent =
               userCoins;
 
+
+            /* ---------------------------------------------
+               NAME
+            ---------------------------------------------- */
 
             if (userData.name) {
 
@@ -2329,6 +2450,10 @@
 
             }
 
+
+            /* ---------------------------------------------
+               PHOTO
+            ---------------------------------------------- */
 
             if (
               userData.photoURL
@@ -2377,7 +2502,13 @@
                 userEmail,
 
               coins:
-                0
+                0,
+
+              practiceSolved:
+                0,
+
+              badges:
+                {}
 
             };
 
@@ -2385,7 +2516,9 @@
             await setDoc(
               userDocRef,
               userData,
-              { merge: true }
+              {
+                merge: true
+              }
             );
 
           }
@@ -2419,6 +2552,10 @@
           let totalTimeMinutes = 0;
 
 
+          /* ---------------------------------------------
+             USER STATS
+          ---------------------------------------------- */
+
           const {
             data: userStatData
           } =
@@ -2448,6 +2585,10 @@
 
           }
 
+
+          /* ---------------------------------------------
+             EXAM LEADERBOARD
+          ---------------------------------------------- */
 
           const {
             data: examLbData
@@ -2487,7 +2628,9 @@
           }
 
 
-          /* DISPLAY STATS */
+          /* =================================================
+             DISPLAY STATS
+          ================================================== */
 
           document.getElementById(
             "totalSolved"
@@ -2528,12 +2671,116 @@
           }
 
 
-          /* BADGE METRICS */
+          /* =================================================
+             BADGE METRICS
+
+             IMPORTANT FIX:
+             Question badges DO NOT use
+             totalSolvedCount.
+
+             They use Firestore:
+             users/{uid}.practiceSolved
+          ================================================== */
+
+          const practiceSolved =
+            Number(
+              userData.practiceSolved || 0
+            );
+
 
           const metrics = {
 
+            /*
+              This is specifically for badges.
+              It counts practice questions answered
+              through the practice system.
+            */
+
             solved:
-              totalSolvedCount,
+              practiceSolved,
+
+
+            coins:
+              Number(
+                userData.coins || 0
+              ),
+
+
+            exams:
+              Number(
+                userData.completedExams ||
+                userData.examsCompleted ||
+                0
+              ),
+
+
+            streak:
+              Number(
+                userData.streakDays ||
+                0
+              )
+
+          };
+
+
+          console.log(
+            "Badge metrics:",
+            metrics
+          );
+
+
+          /* =================================================
+             PROCESS BADGES
+
+             This also repairs old badge records
+             which only had unlocked:true but
+             no progress/target.
+          ================================================== */
+
+          const finalBadgeState =
+            await processBadges(
+              userDocRef,
+              userData,
+              metrics
+            );
+
+
+          /* =================================================
+             RENDER
+          ================================================== */
+
+          renderBadges(
+            finalBadgeState,
+            metrics
+          );
+
+
+        }
+
+        catch (dbError) {
+
+          console.error(
+            "Supabase / stats error:",
+            dbError
+          );
+
+
+          /*
+             Even if Supabase fails,
+             badge progress should still work
+             from Firestore.
+          */
+
+          const practiceSolved =
+            Number(
+              userData.practiceSolved || 0
+            );
+
+
+          const fallbackMetrics = {
+
+            solved:
+              practiceSolved,
 
             coins:
               Number(
@@ -2556,58 +2803,16 @@
           };
 
 
-          /* PROCESS */
-
-          const finalBadgeState =
+          const fallbackBadgeState =
             await processBadges(
               userDocRef,
               userData,
-              metrics
+              fallbackMetrics
             );
 
 
-          /* RENDER */
-
           renderBadges(
-            finalBadgeState,
-            metrics
-          );
-
-
-        }
-
-        catch (dbError) {
-
-          console.log(
-            "Supabase error:",
-            dbError.message
-          );
-
-
-          const fallbackMetrics = {
-
-            solved: 0,
-
-            coins:
-              Number(
-                userData.coins || 0
-              ),
-
-            exams:
-              Number(
-                userData.completedExams || 0
-              ),
-
-            streak:
-              Number(
-                userData.streakDays || 0
-              )
-
-          };
-
-
-          renderBadges(
-            userData.badges || {},
+            fallbackBadgeState,
             fallbackMetrics
           );
 
@@ -2634,6 +2839,9 @@
           false;
 
         input.focus();
+
+
+        input.select();
 
 
         document.getElementById(
@@ -2955,6 +3163,15 @@
               window.location.href =
                 "login.html";
 
+            })
+
+            .catch(error => {
+
+              console.error(
+                "Logout error:",
+                error
+              );
+
             });
 
         }
@@ -2963,4 +3180,4 @@
   </script>
 
 </body>
-</html>
+            </html>
