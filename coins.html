@@ -40,6 +40,7 @@
     .history-icon.spend { background: #fee2e2; color: #dc2626; }
 
     .history-info .title { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 2px; }
+    .history-info .source-tag { font-size: 11px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 3px; }
     .history-info .date { font-size: 10px; font-weight: 600; color: #64748b; }
 
     .history-amount { font-size: 14px; font-weight: 800; }
@@ -87,7 +88,7 @@
   <script type="module">  
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
-    import { getFirestore, doc as fsDoc, getDoc as fsGetDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
+    import { getFirestore, doc as fsDoc, getDoc as fsGetDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
     
     const firebaseConfig = {  
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",  
@@ -107,7 +108,7 @@
         try {
           const container = document.getElementById('historyContainer');
           
-          // १. युजरको मुख्य कागजात (users -> uid) बाट कुल कोइन ल्याउने
+          // १. युजरको मुख्य कागजातबाट कुल कोइन ल्याउने
           const userRef = fsDoc(db, "users", user.uid);
           const userSnap = await fsGetDoc(userRef);
           
@@ -117,23 +118,48 @@
             document.getElementById('totalCoinsVal').innerText = totalCoins;
           }
 
-          // २. सब-कलेक्सनबाट ट्रान्जेक्सन इतिहास फेच गर्ने प्रयास गर्ने
+          // २. सब-कलेक्सनबाट ट्रान्जेक्सन इतिहास फेच गर्ने (सम्भव भए मितिअनुसार क्रमबद्ध गरी)
           const historyRef = collection(db, "users", user.uid, "coin_history");
-          const querySnapshot = await getDocs(historyRef);
+          let querySnapshot;
+          try {
+            const q = query(historyRef, orderBy("created_at", "desc"));
+            querySnapshot = await getDocs(q);
+          } catch (ordErr) {
+            // यदि index मिलेन भने सामान्य getDocs प्रयोग गर्ने
+            querySnapshot = await getDocs(historyRef);
+          }
 
           let html = '';
           let txCount = 0;
 
           if (!querySnapshot.empty) {
-            // यदि सब-कलेक्सनमा इतिहास फेला पर्यो भने तिनीहरूलाई लिस्ट गर्ने
             txCount = querySnapshot.size;
             querySnapshot.forEach((doc) => {
               const item = doc.data();
               const isEarn = item.type === 'earn' || item.amount > 0;
               const sign = isEarn ? '+' : '';
               const iconClass = isEarn ? 'earn' : 'spend';
-              const iconSymbol = isEarn ? 'fa-arrow-down' : 'fa-arrow-up';
+              const iconSymbol = isEarn ? (item.source === 'quiz' ? 'fa-pen-to-square' : (item.source === 'leaderboard' ? 'fa-trophy' : 'fa-arrow-down')) : 'fa-arrow-up';
               const amountClass = isEarn ? 'earn' : 'spend';
+
+              // स्रोत (Source) वा माध्यम पहिचान गर्ने र मिलाउने
+              let sourceText = "";
+              let descText = item.description || "";
+
+              if (item.source) {
+                switch(item.source.toLowerCase()) {
+                  case 'quiz': sourceText = '📝 क्विज अभ्यासबाट'; break;
+                  case 'leaderboard': sourceText = '🏆 लिडरबोर्ड पुरस्कार'; break;
+                  case 'daily_login': sourceText = '🎁 दैनिक बोनस (Daily Login)'; break;
+                  case 'admin': sourceText = '⚡ प्रशासक (Admin) द्वारा प्रदत्त'; break;
+                  default: sourceText = `📌 ${item.source}`;
+                }
+              } else {
+                // यदि source फिल्ड छैन भने description वा ტიपको आधारमा अनुमान लगाउने
+                if (descText.toLowerCase().includes('quiz')) sourceText = '📝 क्विज कम्पिटिशन';
+                else if (descText.toLowerCase().includes('leaderboard')) sourceText = '🏆 लिडरबोर्ड';
+                else sourceText = isEarn ? '🎁 कोइन आर्जन' : '🛍️ कोइन खर्च';
+              }
 
               let dateStr = 'हालसालै';
               if (item.created_at) {
@@ -150,7 +176,8 @@
                       <i class="fa-solid ${iconSymbol}"></i>
                     </div>
                     <div class="history-info">
-                      <div class="title">${item.description || (isEarn ? 'कोइन प्राप्त भयो' : 'कोइन खर्च भयो')}</div>
+                      <span class="source-tag">${sourceText}</span>
+                      <div class="title">${descText || (isEarn ? 'कोइन प्राप्त भयो' : 'कोइन खर्च भयो')}</div>
                       <div class="date">${dateStr}</div>
                     </div>
                   </div>
@@ -159,7 +186,7 @@
               `;
             });
           } else {
-            // यदि छुट्टै इतिहास छैन तर युजरसँग कोइन छ वा छैन भने, कुल ब्यालेन्सको आधारमा एउटा कार्ड देखाइदिने
+            // यदि इतिहास छैन भने ब्यालेन्स कार्ड देखाउने
             txCount = 1;
             html = `
               <div class="history-item">
@@ -168,8 +195,9 @@
                     <i class="fa-solid fa-coins"></i>
                   </div>
                   <div class="history-info">
-                    <div class="title">वालेट जम्मा ब्यालेन्स (Total Balance)</div>
-                    <div class="date">हालको कुल मौज्दात</div>
+                    <span class="source-tag">💼 वालेट ब्यालेन्स</span>
+                    <div class="title">हालको जम्मा कुल मौज्दात</div>
+                    <div class="date">अद्यावधिक गरिएको</div>
                   </div>
                 </div>
                 <div class="history-amount earn">+${totalCoins} कोइन</div>
@@ -196,4 +224,4 @@
   </script>  
 
 </body>  
-</html>  
+</html>
