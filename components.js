@@ -117,7 +117,7 @@
     <div class="chat-drawer" id="globalChatDrawer">
       <div class="chat-header-bar">
         <span>ग्रुप च्याट</span>
-        <button class="close-chat" onclick="toggleGlobalChat()"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" class="close-chat" id="closeChatBtn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="chat-messages" id="globalChatMessagesContainer">
         <div style="text-align: center; color: #94a3b8; font-size: 11px;">च्याट लोड हुँदैछ...</div>
@@ -167,9 +167,19 @@
 
   document.body.appendChild(containerDiv);
 
+  // सुधारेको र भरपर्दो toggleGlobalChat फंक्सन
   window.toggleGlobalChat = function() {
-    document.getElementById('globalChatDrawer').classList.toggle('open');
+    const chatDrawer = document.getElementById('globalChatDrawer');
+    if (chatDrawer) {
+      chatDrawer.classList.toggle('open');
+    }
   };
+
+  // बन्द गर्ने बटनमा इभेन्ट जोडिएको
+  const closeChatBtn = document.getElementById('closeChatBtn');
+  if (closeChatBtn) {
+    closeChatBtn.addEventListener('click', window.toggleGlobalChat);
+  }
 
   window.triggerGlobalFloatingEmoji = function(emojiChar) {
     const container = document.getElementById('globalFloatingEmojiContainer');
@@ -464,7 +474,7 @@ window.showSuccessPopup = function(message, redirectUrl, type = 'success', title
   }
 };
 
-// कन्फर्मेसन (Cancel / OK) पपअपको लागि ग्लोबल फंक्सन
+// कन्फर्मेसन (Cancel / OK) पपअपको लागि ग्लोबल फंक्सन (सुधारेको)
 window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्टि गर्नुहोस् ⚠️') {
   const modal = document.getElementById('customConfirmModal');
   const msgEl = document.getElementById('cgConfirmMessage');
@@ -484,7 +494,8 @@ window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्
   };
 
   cancelBtn.onclick = function() {
-    modal.classList.remaining ? '' : modal.classList.remove('active');
-    document.getElementById('customConfirmModal').classList.remove('active');
+    if (modal) {
+      modal.classList.remove('active'); // बग फिक्स गरिएको भाग
+    }
   };
 };
