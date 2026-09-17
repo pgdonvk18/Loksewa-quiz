@@ -1,4 +1,4 @@
-// // Global Components (Chat, Footer, Floating Emojis, Room Config, Bottom Nav & Other Pages Header)
+// // Global Components (Chat, Footer, Floating Emojis, Room Config, Bottom Nav & Coin History System)
 (function() {
   // Inject CSS styles dynamically for all global components
   const style = document.createElement('style');
@@ -167,7 +167,6 @@
 
   document.body.appendChild(containerDiv);
 
-  // सुधारेको र भरपर्दो toggleGlobalChat फंक्सन
   window.toggleGlobalChat = function() {
     const chatDrawer = document.getElementById('globalChatDrawer');
     if (chatDrawer) {
@@ -175,7 +174,6 @@
     }
   };
 
-  // बन्द गर्ने बटनमा इभेन्ट जोडिएको
   const closeChatBtn = document.getElementById('closeChatBtn');
   if (closeChatBtn) {
     closeChatBtn.addEventListener('click', window.toggleGlobalChat);
@@ -200,7 +198,7 @@
   };
 
   window.sendGlobalQuickEmoji = function(emoji) {
-    triggerGlobalFloatingEmoji(emoji);
+    window.triggerGlobalFloatingEmoji(emoji);
     if (window.sendChatMessageToDB) {
       window.sendChatMessageToDB(emoji);
     }
@@ -216,7 +214,7 @@
       input.value = '';
 
       if (/^\p{Emoji}+$/u.test(text)) {
-        triggerGlobalFloatingEmoji(text);
+        window.triggerGlobalFloatingEmoji(text);
       }
 
       if (window.sendChatMessageToDB) {
@@ -225,6 +223,37 @@
     });
   }
 })();
+
+// 🪙 युजरको कोइन अपडेट गर्ने र Firestore मा History सेभ गर्ने ग्लोबल फंक्सन
+import { doc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+window.updateUserCoinsWithHistory = async function(db, userId, amount, description) {
+  try {
+    if (!userId) return;
+
+    // १. मुख्य युजरको कोइन ब्यालेन्स अपडेट गर्ने
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
+      coins: increment(amount)
+    });
+
+    // २. कोइन बढेको वा घटेको आधारमा type छुट्याउने ('earn' वा 'spend')
+    const type = amount >= 0 ? 'earn' : 'spend';
+    const historyRef = collection(db, "users", userId, "coin_history");
+    
+    // ३. सब-कलेक्शन (coin_history) मा रेकर्ड सेभ गर्ने
+    await addDoc(historyRef, {
+      amount: Math.abs(amount),
+      description: description,
+      type: type,
+      created_at: serverTimestamp()
+    });
+
+    console.log("Coin updated and history logged successfully!");
+  } catch (error) {
+    console.error("Error updating coins with history:", error);
+  }
+};
 
 // ग्लोबल कन्फिगरेसन चरहरू (Variables)
 window.selectedMaxPlayers = 4;
@@ -363,7 +392,7 @@ function loadBottomNav(activePage) {
   document.body.insertAdjacentHTML('beforeend', navHTML);
 }
 
-// सुधारेको पपअप र मोडल कोड
+// पपअप र मोडल कोड
 document.addEventListener("DOMContentLoaded", () => {
   if (!document.getElementById('customGlobalModal')) {
     const modalHTML = `
@@ -474,7 +503,7 @@ window.showSuccessPopup = function(message, redirectUrl, type = 'success', title
   }
 };
 
-// कन्फर्मेसन (Cancel / OK) पपअपको लागि ग्लोबल फंक्सन (सुधारेको)
+// कन्फर्मेसन (Cancel / OK) पपअपको लागि ग्लोबल फंक्सन
 window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्टि गर्नुहोस् ⚠️') {
   const modal = document.getElementById('customConfirmModal');
   const msgEl = document.getElementById('cgConfirmMessage');
@@ -495,7 +524,7 @@ window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्
 
   cancelBtn.onclick = function() {
     if (modal) {
-      modal.classList.remove('active'); // बग फिक्स गरिएको भाग
+      modal.classList.remove('active');
     }
   };
 };
