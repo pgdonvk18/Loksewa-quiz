@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .lang-switch-container {
         display: inline-flex;
         align-items: center;
-        background: rgba(241, 245, 249, 0.8);
+        background: rgba(241, 245, 249, 0.9);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         border-radius: 30px;
@@ -32,20 +32,20 @@ document.addEventListener("DOMContentLoaded", () => {
         box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
       }
       .lang-option {
-        padding: 6px 14px;
-        font-size: 12px;
+        padding: 6px 12px;
+        font-size: 11px;
         font-weight: 800;
         color: #64748b;
         z-index: 2;
         user-select: none;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.5px;
         transition: color 0.2s ease;
       }
       .lang-slider {
         position: absolute;
         top: 3px;
         left: 3px;
-        width: 44px;
+        width: 36px;
         height: 28px;
         background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
         border-radius: 20px;
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
       }
       .lang-switch-container.en-active .lang-slider {
-        transform: translateX(44px);
+        transform: translateX(36px);
       }
       .lang-switch-container.en-active .lang-option:last-child {
         color: #ffffff;
@@ -71,14 +71,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.head.appendChild(style);
   }
 
-  // 3. Quiz Screen को भित्र प्रश्न देखाउने ठाउँको ठ्याक्कै माथि Professional Slide Toggle Button राख्ने
+  // 3. Quiz Screen को भित्र प्रश्न देखाउने ठाउँको ठ्याक्कै माथि Professional Slide Toggle Button राख्ने (NP / EN)
   const quizScreen = document.getElementById('quiz-screen');
   if (quizScreen && !document.getElementById('lang-switch')) {
     const toggleHTML = `
       <div id="lang-switch" class="lang-switch-container" onclick="toggleLanguage()" title="भाषा परिवर्तन गर्नुहोस् / Change Language">
         <div class="lang-slider"></div>
-        <span class="lang-option">नेपाली</span>
-        <span class="lang-option">English</span>
+        <span class="lang-option">NP</span>
+        <span class="lang-option">EN</span>
       </div>
     `;
     const progressSection = quizScreen.querySelector('.progress-section');
