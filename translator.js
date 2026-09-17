@@ -71,11 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.head.appendChild(style);
   }
 
-  // 3. Quiz Screen को भित्र प्रश्न देखाउने ठाउँको ठ्याक्कै माथि Professional Slide Toggle Button राख्ने (NP / EN)
+  // 3. Quiz Screen मा 'notranslate' क्लाससहित टगल राख्ने (ताकि गुगलले यसलाई अनुवाद नगरोस्)
   const quizScreen = document.getElementById('quiz-screen');
   if (quizScreen && !document.getElementById('lang-switch')) {
     const toggleHTML = `
-      <div id="lang-switch" class="lang-switch-container" onclick="toggleLanguage()" title="भाषा परिवर्तन गर्नुहोस् / Change Language">
+      <div id="lang-switch" class="lang-switch-container notranslate" onclick="toggleLanguage()" title="भाषा परिवर्तन गर्नुहोस् / Change Language">
         <div class="lang-slider"></div>
         <span class="lang-option">NP</span>
         <span class="lang-option">EN</span>
