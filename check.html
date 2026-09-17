@@ -22,7 +22,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -36,10 +35,6 @@
       margin: 0;
       padding-bottom: 60px;
     }
-
-    /* =========================
-       HEADER
-    ========================== */
 
     .app-header {
       background: #1e3a8a;
@@ -89,10 +84,6 @@
       flex-shrink: 0;
     }
 
-    /* =========================
-       MAIN
-    ========================== */
-
     .main-wrapper {
       background-color: #ffffff;
       border-top-left-radius: 28px;
@@ -111,10 +102,6 @@
       margin-bottom: 16px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
     }
-
-    /* =========================
-       BUTTONS
-    ========================== */
 
     .btn-primary {
       width: 100%;
@@ -153,10 +140,6 @@
       font-size: 13px;
     }
 
-    /* =========================
-       OPTIONS
-    ========================== */
-
     .option-card {
       width: 100%;
       text-align: left;
@@ -185,10 +168,6 @@
       border-color: #2563eb;
       color: #1d4ed8;
     }
-
-    /* =========================
-       QUIZ LANGUAGE TOGGLE
-    ========================== */
 
     .quiz-language-wrapper {
       display: flex;
@@ -224,12 +203,6 @@
       box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
     }
 
-    .quiz-language-btn:active {
-      transform: scale(0.96);
-    }
-
-    /* Translation loading */
-
     .translation-loading {
       padding: 12px;
       background: #f8fafc;
@@ -254,14 +227,8 @@
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { transform: rotate(360deg); }
     }
-
-    /* =========================
-       TIMER
-    ========================== */
 
     .timer-badge {
       background: #fef2f2;
@@ -273,10 +240,6 @@
       font-weight: 700;
       font-size: 13px;
     }
-
-    /* =========================
-       LEADERBOARD
-    ========================== */
 
     .lb-row {
       display: flex;
@@ -290,24 +253,13 @@
       margin-bottom: 8px;
     }
 
-    /* =========================
-       MODALS
-    ========================== */
-
     .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      opacity: 0;
-      visibility: hidden;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; opacity: 0; visibility: hidden;
       transition: all 0.3s ease;
     }
 
@@ -336,650 +288,186 @@
       display: none !important;
     }
 
-    /* =========================
-       GLOBAL CUSTOM MODAL
-    ========================== */
-
     .cg-modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.25s ease-in-out;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px);
+      z-index: 99999; display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.25s ease-in-out;
     }
-
-    .cg-modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
+    .cg-modal-overlay.active { opacity: 1; visibility: visible; }
     .cg-modal-card {
-      background: #ffffff;
-      width: 90%;
-      max-width: 360px;
-      border-radius: 24px;
-      padding: 26px 20px;
-      text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      transform: scale(0.9) translateY(15px);
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: #ffffff; width: 90%; max-width: 360px; border-radius: 24px;
+      padding: 26px 20px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      transform: scale(0.9) translateY(15px); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       border: 1px solid #f1f5f9;
     }
-
-    .cg-modal-overlay.active .cg-modal-card {
-      transform: scale(1) translateY(0);
-    }
-
+    .cg-modal-overlay.active .cg-modal-card { transform: scale(1) translateY(0); }
     .cg-icon-box {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      margin: 0 auto 16px auto;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+      width: 58px; height: 58px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px auto;
     }
-
-    .cg-icon-box.success {
-      background: #dcfce7;
-      color: #16a34a;
-    }
-
-    .cg-icon-box.error {
-      background: #fee2e2;
-      color: #dc2626;
-    }
-
-    .cg-icon-box.warning {
-      background: #fef3c7;
-      color: #d97706;
-    }
-
-    .cg-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 6px;
-    }
-
-    .cg-message {
-      font-size: 13px;
-      color: #64748b;
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
+    .cg-icon-box.success { background: #dcfce7; color: #16a34a; }
+    .cg-icon-box.error { background: #fee2e2; color: #dc2626; }
+    .cg-icon-box.warning { background: #fef3c7; color: #d97706; }
+    .cg-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+    .cg-message { font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px; }
     .cg-btn {
-      flex: 1;
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 13.5px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      flex: 1; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 12px;
+      font-weight: 700; font-size: 13.5px; cursor: pointer;
     }
-
-    .cg-btn:hover {
-      background: #1d4ed8;
-    }
-
-    .cg-btn:active {
-      transform: scale(0.97);
-    }
-
-    .cg-btn-secondary {
-      background: #f1f5f9;
-      color: #475569;
-    }
-
-    .cg-btn-secondary:hover {
-      background: #e2e8f0;
-    }
-
+    .cg-btn-secondary { background: #f1f5f9; color: #475569; }
   </style>
 </head>
 
 <body>
 
-  <!-- =========================
-       LOGIN WARNING MODAL
-  ========================== -->
-
+  <!-- LOGIN WARNING MODAL -->
   <div id="login-modal" class="modal-overlay">
     <div class="modal-card" style="text-align: center;">
-
-      <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
-        लगइन आवश्यक छ!
-      </h3>
-
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-        तपाईंले परीक्षा दिन वा लिडरबोर्डमा नाम राख्नको लागि पहिले लगइन गर्नुपर्ने हुन्छ।
-      </p>
-
-      <button onclick="redirectToLogin()" class="btn-primary" style="margin-bottom: 8px;">
-        लगइन पेजमा जानुहोस् 🚀
-      </button>
-
-      <a
-        href="dashboard.html"
-        style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none;">
-        ड्यासबोर्डमा फर्कनुहोस्
-      </a>
-
+      <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">लगइन आवश्यक छ!</h3>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">तपाईंले परीक्षा दिन वा लिडरबोर्डमा नाम राख्नको लागि पहिले लगइन गर्नुपर्ने हुन्छ।</p>
+      <button onclick="redirectToLogin()" class="btn-primary" style="margin-bottom: 8px;">लगइन पेजमा जानुहोस् 🚀</button>
+      <a href="dashboard.html" style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none;">ड्यासबोर्डमा फर्कनुहोस्</a>
     </div>
   </div>
 
-
-  <!-- =========================
-       REPORT QUESTION MODAL
-  ========================== -->
-
+  <!-- REPORT QUESTION MODAL -->
   <div id="reportModal" class="modal-overlay">
-
     <div class="modal-card">
-
-      <h3 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 12px;">
-        प्रश्न रिपोर्ट गर्नुहोस्
-      </h3>
-
-      <textarea
-        id="reportReason"
-        placeholder="त्रुटि यहाँ लेख्नुहोस्..."
-        style="min-height: 100px; width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; margin-bottom: 16px; resize: none;">
-      </textarea>
-
+      <h3 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 12px;">प्रश्न रिपोर्ट गर्नुहोस्</h3>
+      <textarea id="reportReason" placeholder="त्रुटि यहाँ लेख्नुहोस्..." style="min-height: 100px; width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; margin-bottom: 16px; resize: none;"></textarea>
       <div style="display: flex; gap: 10px;">
-
-        <button
-          onclick="submitQuestionReport()"
-          class="btn-primary"
-          style="flex: 1; padding: 10px;">
-          पठाउनुहोस्
-        </button>
-
-        <button
-          onclick="closeReportModal()"
-          class="btn-secondary"
-          style="flex: 1;">
-          रद्द गर्नुहोस्
-        </button>
-
+        <button onclick="submitQuestionReport()" class="btn-primary" style="flex: 1; padding: 10px;">पठाउनुहोस्</button>
+        <button onclick="closeReportModal()" class="btn-secondary" style="flex: 1;">रद्द गर्नुहोस्</button>
       </div>
-
     </div>
   </div>
 
-
-  <!-- =========================
-       REVIEW MODAL
-  ========================== -->
-
+  <!-- REVIEW MODAL -->
   <div id="reviewModal" class="modal-overlay">
-
-    <div
-      class="modal-card"
-      style="max-width: 500px; width: 95%; height: 85vh; display: flex; flex-direction: column; padding: 16px;">
-
-      <div
-        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
-
-        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">
-          📋 उत्तर तथा समीक्षा
-        </h3>
-
-        <button
-          onclick="closeReviewModal()"
-          style="background: none; border: none; font-size: 16px; cursor: pointer;">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-
+    <div class="modal-card" style="max-width: 500px; width: 95%; height: 85vh; display: flex; flex-direction: column; padding: 16px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">📋 उत्तर तथा समीक्षा</h3>
+        <button onclick="closeReviewModal()" style="background: none; border: none; font-size: 16px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-
-      <div
-        id="review-container"
-        style="flex: 1; overflow-y: auto; font-size: 11px;">
-      </div>
-
-      <button
-        onclick="closeReviewModal()"
-        class="btn-primary"
-        style="margin-top: 10px; padding: 10px;">
-        बन्द गर्नुहोस्
-      </button>
-
+      <div id="review-container" style="flex: 1; overflow-y: auto; font-size: 12px;"></div>
+      <button onclick="closeReviewModal()" class="btn-primary" style="margin-top: 10px; padding: 10px;">बन्द गर्नुहोस्</button>
     </div>
   </div>
 
-
-  <!-- =========================
-       HEADER
-  ========================== -->
-
+  <!-- HEADER -->
   <header class="app-header">
-
     <div class="header-left">
-
-      <a href="dashboard.html" class="back-btn">
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
-
-      <h1 id="header-title">
-        🇳🇵 LoksewaQuest
-      </h1>
-
+      <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+      <h1 id="header-title">🇳🇵 LoksewaQuest</h1>
     </div>
-
-    <!-- Header language switcher REMOVED -->
-
   </header>
 
-
   <main class="main-wrapper">
-
-
-    <!-- =========================
-         REGISTRATION SCREEN
-    ========================== -->
-
+    <!-- REGISTRATION SCREEN -->
     <div id="reg-screen" class="card space-y-4">
-
-      <h2
-        style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">
-        परीक्षा विवरण:
-      </h2>
-
-
-      <div
-        style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-
+      <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">परीक्षा विवरण:</h2>
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
         <div>
-
-          <p
-            style="font-size: 11px; color: #64748b; font-weight: 600;">
-            लगइन गरिएको प्रयोगकर्ता
-          </p>
-
-          <p
-            id="profile-display-name"
-            style="font-size: 15px; font-weight: 800; color: #1e293b;">
-            चेक गर्दैछ...
-          </p>
-
+          <p style="font-size: 11px; color: #64748b; font-weight: 600;">लगइन गरिएको प्रयोगकर्ता</p>
+          <p id="profile-display-name" style="font-size: 15px; font-weight: 800; color: #1e293b;">चेक गर्दैछ...</p>
         </div>
-
-        <i
-          class="fa-solid fa-user-check"
-          style="color: #2563eb; font-size: 20px;">
-        </i>
-
+        <i class="fa-solid fa-user-check" style="color: #2563eb; font-size: 20px;"></i>
       </div>
-
 
       <div style="margin-bottom: 16px;">
-
-        <div
-          id="set-badge-title"
-          style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 13px;">
+        <div id="set-badge-title" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 13px;">
           🎯 लोड हुँदैछ...
         </div>
-
       </div>
 
-
-      <div
-        id="already-given-box"
-        class="hidden"
-        style="background: #fef2f2; border: 1px solid #fecaca; padding: 14px; border-radius: 12px; margin-bottom: 16px; text-align: center;">
-
-        <p
-          style="color: #dc2626; font-weight: 800; font-size: 13px; margin-bottom: 4px;">
-          🚫 तपाईंले यो परीक्षा पहिले नै दिसक्नुभएको छ!
-        </p>
-
-        <button
-          onclick="startPracticeMode()"
-          class="btn-practice">
-          अभ्यास गर्नुहोस् (Practice Mode) 💡
-        </button>
-
+      <div id="already-given-box" class="hidden" style="background: #fef2f2; border: 1px solid #fecaca; padding: 14px; border-radius: 12px; margin-bottom: 16px; text-align: center;">
+        <p style="color: #dc2626; font-weight: 800; font-size: 13px; margin-bottom: 4px;">🚫 तपाईंले यो परीक्षा पहिले नै दिसक्नुभएको छ!</p>
+        <button onclick="startPracticeMode()" class="btn-practice">अभ्यास गर्नुहोस् (Practice Mode) 💡</button>
       </div>
 
+      <button id="start-exam-btn" onclick="startExam(false)" class="btn-primary">परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀</button>
 
-      <button
-        id="start-exam-btn"
-        onclick="startExam(false)"
-        class="btn-primary">
-        परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀
-      </button>
-
-
-      <div
-        style="border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 16px;">
-
-        <h3
-          id="lb-title"
-          style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">
-          🏆 लिडरबोर्ड
-        </h3>
-
-        <div
-          id="home-leaderboard"
-          class="max-h-48 overflow-y-auto">
-        </div>
-
+      <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 16px;">
+        <h3 id="lb-title" style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">🏆 लिडरबोर्ड</h3>
+        <div id="home-leaderboard" class="max-h-48 overflow-y-auto"></div>
       </div>
-
     </div>
 
-
-    <!-- =========================
-         EXAM SCREEN
-    ========================== -->
-
-    <div
-      id="exam-screen"
-      class="card hidden space-y-4">
-
-
-      <!-- Question tracker -->
-
-      <div
-        style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
-
-        <span
-          id="q-tracker"
-          style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">
-          Question 1
-        </span>
-
-
-        <div
-          style="display: flex; align-items: center; gap: 8px;">
-
-          <div
-            id="timer-box"
-            class="timer-badge hidden">
-            ⏳
-            <span id="time-left">45:00</span>
-          </div>
-
-          <span
-            id="mode-badge"
-            style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
-            Exam
-          </span>
-
+    <!-- EXAM SCREEN -->
+    <div id="exam-screen" class="card hidden space-y-4">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
+        <span id="q-tracker" style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">Question 1</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div id="timer-box" class="timer-badge hidden">⏳ <span id="time-left">45:00</span></div>
+          <span id="mode-badge" style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">Exam</span>
         </div>
-
       </div>
-
-
-      <!-- =========================
-           QUIZ LANGUAGE TOGGLE
-      ========================== -->
 
       <div class="quiz-language-wrapper">
-
         <div class="quiz-language-bar">
-
-          <button
-            id="quiz-ne-btn"
-            class="quiz-language-btn active"
-            onclick="setQuizLanguage('ne')">
-            🇳🇵 नेपाली
-          </button>
-
-          <button
-            id="quiz-en-btn"
-            class="quiz-language-btn"
-            onclick="setQuizLanguage('en')">
-            🇬🇧 English
-          </button>
-
+          <button id="quiz-ne-btn" class="quiz-language-btn active" onclick="setQuizLanguage('ne')">🇳🇵 नेपाली</button>
+          <button id="quiz-en-btn" class="quiz-language-btn" onclick="setQuizLanguage('en')">🇬🇧 English</button>
         </div>
-
       </div>
 
-
-      <!-- Question -->
-
-      <h3
-        id="exam-question"
-        style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.5;">
-        Loading...
-      </h3>
-
-
-      <!-- Options -->
-
+      <h3 id="exam-question" style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.5;">Loading...</h3>
       <div id="exam-options"></div>
 
-
-      <!-- Report -->
-
       <div style="margin-top: 12px;">
-
-        <button
-          onclick="openReportModal()"
-          style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer;">
-
-          <i class="fa-solid fa-triangle-exclamation"></i>
-
-          यो प्रश्न रिपोर्ट गर्नुहोस्
-
+        <button onclick="openReportModal()" style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer;">
+          <i class="fa-solid fa-triangle-exclamation"></i> यो प्रश्न रिपोर्ट गर्नुहोस्
         </button>
-
       </div>
 
-
-      <!-- Navigation -->
-
-      <div
-        style="display: flex; justify-content: space-between; padding-top: 14px; border-top: 1px solid #f1f5f9; margin-top: 10px;">
-
-        <button
-          onclick="prevExamQuestion()"
-          id="prev-btn"
-          class="btn-secondary">
-          ⬅️ अघिल्लो
-        </button>
-
-
-        <button
-          onclick="nextExamQuestion()"
-          id="next-btn"
-          class="btn-primary"
-          style="width: auto; padding: 10px 20px;">
-          अर्को ➡️
-        </button>
-
+      <div style="display: flex; justify-content: space-between; padding-top: 14px; border-top: 1px solid #f1f5f9; margin-top: 10px;">
+        <button onclick="prevExamQuestion()" id="prev-btn" class="btn-secondary">⬅️ अघिल्लो</button>
+        <button onclick="nextExamQuestion()" id="next-btn" class="btn-primary" style="width: auto; padding: 10px 20px;">अर्को ➡️</button>
       </div>
-
     </div>
 
-
-    <!-- =========================
-         RESULT SCREEN
-    ========================== -->
-
-    <div
-      id="result-screen"
-      class="hidden space-y-4">
-
-      <div
-        id="pdf-report-content"
-        class="card space-y-4"
-        style="background: #ffffff; border: 2px solid #2563eb; border-radius: 20px; text-align: center; padding: 24px 16px;">
-
-        <h2
-          id="report-main-title"
-          style="font-size: 16px; font-weight: 800; color: #1e3a8a;">
-          LOKSEWAQUEST CERTIFICATE OF COMPLETION
-        </h2>
-
-
-        <div
-          style="margin: 16px 0; border-top: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; padding: 12px 0;">
-
-          <p
-            id="rep-name"
-            style="font-size: 16px; color: #0f172a; font-weight: 800;">
-          </p>
-
-          <p
-            id="rep-set"
-            style="font-size: 12px; color: #2563eb; font-weight: 700; margin-top: 2px;">
-          </p>
-
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden space-y-4">
+      <div id="pdf-report-content" class="card space-y-4" style="background: #ffffff; border: 2px solid #2563eb; border-radius: 20px; text-align: center; padding: 24px 16px;">
+        <h2 id="report-main-title" style="font-size: 16px; font-weight: 800; color: #1e3a8a;">LOKSEWAQUEST CERTIFICATE OF COMPLETION</h2>
+        <div style="margin: 16px 0; border-top: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; padding: 12px 0;">
+          <p id="rep-name" style="font-size: 16px; color: #0f172a; font-weight: 800;"></p>
+          <p id="rep-set" style="font-size: 12px; color: #2563eb; font-weight: 700; margin-top: 2px;"></p>
         </div>
-
-
-        <button
-          onclick="openReviewModal()"
-          class="btn-secondary"
-          style="width: 100%; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; padding: 10px;">
+        <button onclick="openReviewModal()" class="btn-secondary" style="width: 100%; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; padding: 10px;">
           📋 उत्तर तथा समीक्षा हेर्नुहोस् (View Solutions)
         </button>
-
       </div>
-
-
-      <button
-        onclick="location.href='dashboard.html'"
-        class="btn-primary">
-        🔄 ड्यासबोर्डमा फर्कनुहोस्
-      </button>
-
+      <button onclick="location.href='dashboard.html'" class="btn-primary">🔄 ड्यासबोर्डमा फर्कनुहोस्</button>
     </div>
-
   </main>
 
-
-  <!-- =========================
-       GLOBAL SUCCESS MODAL
-  ========================== -->
-
+  <!-- GLOBAL SUCCESS MODAL -->
   <div id="customGlobalModal" class="cg-modal-overlay">
-
     <div class="cg-modal-card">
-
-      <div
-        id="cgModalIconBox"
-        class="cg-icon-box success">
-
-        <i
-          id="cgModalIcon"
-          class="fa-solid fa-check">
-        </i>
-
-      </div>
-
-      <h3
-        id="cgModalTitle"
-        class="cg-title">
-        सफल भयो!
-      </h3>
-
-      <p
-        id="cgModalMessage"
-        class="cg-message">
-        तपाईंको कार्य सफलतापूर्वक पूरा भयो।
-      </p>
-
-      <button
-        id="cgModalBtn"
-        class="cg-btn">
-        ठीक छ
-      </button>
-
+      <div id="cgModalIconBox" class="cg-icon-box success"><i id="cgModalIcon" class="fa-solid fa-check"></i></div>
+      <h3 id="cgModalTitle" class="cg-title">सफल भयो!</h3>
+      <p id="cgModalMessage" class="cg-message">तपाईंको कार्य सफलतापूर्वक पूरा भयो।</p>
+      <button id="cgModalBtn" class="cg-btn">ठीक छ</button>
     </div>
-
   </div>
 
-
-  <!-- =========================
-       CONFIRM MODAL
-  ========================== -->
-
+  <!-- CONFIRM MODAL -->
   <div id="customConfirmModal" class="cg-modal-overlay">
-
     <div class="cg-modal-card">
-
-      <div class="cg-icon-box warning">
-
-        <i class="fa-solid fa-triangle-exclamation"></i>
-
-      </div>
-
-      <h3
-        id="cgConfirmTitle"
-        class="cg-title">
-        पुष्टि गर्नुहोस्
-      </h3>
-
-      <p
-        id="cgConfirmMessage"
-        class="cg-message">
-        के तपाईं यो कार्य गर्न चाहनुहुन्छ?
-      </p>
-
+      <div class="cg-icon-box warning"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <h3 id="cgConfirmTitle" class="cg-title">पुष्टि गर्नुहोस्</h3>
+      <p id="cgConfirmMessage" class="cg-message">के तपाईं यो कार्य गर्न चाहनुहुन्छ?</p>
       <div style="display: flex; gap: 10px;">
-
-        <button
-          id="cgCancelBtn"
-          class="cg-btn cg-btn-secondary">
-          रद्द गर्ने
-        </button>
-
-        <button
-          id="cgOkBtn"
-          class="cg-btn">
-          हुन्छ (OK)
-        </button>
-
+        <button id="cgCancelBtn" class="cg-btn cg-btn-secondary">रद्द गर्ने</button>
+        <button id="cgOkBtn" class="cg-btn">हुन्छ (OK)</button>
       </div>
-
     </div>
-
   </div>
-
-
-  <!-- =========================
-       JAVASCRIPT
-  ========================== -->
 
   <script type="module">
-
-    import {
-      initializeApp
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-    import {
-      getAuth,
-      onAuthStateChanged,
-      setPersistence,
-      browserSessionPersistence
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-
-    /* =========================
-       FIREBASE
-    ========================== */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -990,1540 +478,284 @@
       appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
     };
 
-
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    setPersistence(auth, browserSessionPersistence);
 
-    setPersistence(
-      auth,
-      browserSessionPersistence
-    );
+    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Dynamic URL Parameter Handling (e.g., ?set=nepal_history)
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentSet = (urlParams.get('set') || 'set_1').toLowerCase().trim();
+    
+    // Formatting Title based on set name
+    let prettyExamName = `Model Exam: ${currentSet.replace(/_/g, ' ').toUpperCase()}`;
+    const examIdentifier = currentSet;
 
-    /* =========================
-       SUPABASE
-    ========================== */
+    document.getElementById('header-title').innerText = `🇳🇵 LoksewaQuest`;
+    document.getElementById('set-badge-title').innerText = `🎯 ${prettyExamName}`;
 
-    const SUPABASE_URL =
-      'https://edyirdedkiarguvurpxq.supabase.co';
-
-    const SUPABASE_ANON_KEY =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmxlIiwicmVmIjoiZWR5aXJkZWRraWFyZ3V2dXJweHEiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4OTAxODY2MiwiZXhwIjoxMjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
-
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-      );
-
-
-    /* =========================
-       EXAM SET
-    ========================== */
-
-    const urlParams =
-      new URLSearchParams(window.location.search);
-
-    const rawSet =
-      urlParams.get('set') || 'set_1';
-
-    const currentSet =
-      rawSet.toLowerCase();
-
-    const setNumberMatch =
-      currentSet.match(/\d+/);
-
-    const setNum =
-      setNumberMatch
-        ? setNumberMatch[0]
-        : '1';
-
-    const prettyExamName =
-      `Pre Qualifying Test Set ${setNum}`;
-
-    const examIdentifier =
-      `set_${setNum}`;
-
-
-    document.getElementById('header-title').innerText =
-      `🇳🇵 LoksewaQuest`;
-
-    document.getElementById('set-badge-title').innerText =
-      `🎯 ${prettyExamName} (Model Exam)`;
-
-
-    /* =========================
-       VARIABLES
-    ========================== */
-
-    let candidateName = '';
-    let userEmail = '';
-
-    let examQuestions = [];
-
-    let currentIdx = 0;
-
-    let userAnswers = {};
-
-    let timerInterval;
-
-    let timeLeftSeconds =
-      45 * 60;
-
-    let isPracticeMode =
-      false;
-
-    /*
-      ne = Nepali
-      en = English
-    */
-    let currentLang = 'ne';
-
-
-    /* =========================
-       UI TRANSLATIONS
-    ========================== */
+    let candidateName = '', userEmail = '', examQuestions = [], currentIdx = 0, userAnswers = {};
+    let timerInterval, timeLeftSeconds = 45 * 60, isPracticeMode = false, currentLang = 'ne';
 
     const translations = {
-
-      en: {
-        examStart: "Start Exam 🚀",
-        practice: "Practice Mode 💡",
-        submit: "Submit",
-        next: "Next ➡️",
-        prev: "⬅️ Previous",
-        leaderboard: "🏆 Leaderboard"
-      },
-
-      ne: {
-        examStart: "परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀",
-        practice: "अभ्यास गर्नुहोस् (Practice Mode) 💡",
-        submit: "बुझाउने (Submit)",
-        next: "अर्को ➡️",
-        prev: "⬅️ अघिल्लो",
-        leaderboard: "🏆 लिडरबोर्ड"
-      }
-
+      en: { examStart: "Start Exam 🚀", practice: "Practice Mode 💡", submit: "Submit", next: "Next ➡️", prev: "⬅️ Previous", leaderboard: "🏆 Leaderboard" },
+      ne: { examStart: "परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀", practice: "अभ्यास गर्नुहोस् (Practice Mode) 💡", submit: "बुझाउने (Submit)", next: "अर्को ➡️", prev: "⬅️ अघिल्लो", leaderboard: "🏆 लिडरबोर्ड" }
     };
 
-
-    /* =====================================================
-       AUTOMATIC TRANSLATION SYSTEM
-    ====================================================== */
-
-
-    /*
-      Translation cache key.
-
-      Browser localStorage मा save हुन्छ।
-
-      Example:
-      loksewa_translation_नेपालको राजधानी कुन हो?
-    */
-
-    function getTranslationCacheKey(text) {
-
-      return 'loksewa_translation_' +
-        text.trim();
-
-    }
-
-
-    /*
-      Get cached translation
-    */
-
-    function getCachedTranslation(text) {
-
-      try {
-
-        const key =
-          getTranslationCacheKey(text);
-
-        const cached =
-          localStorage.getItem(key);
-
-        return cached || null;
-
-      } catch (error) {
-
-        console.warn(
-          'Cache read error:',
-          error
-        );
-
-        return null;
-      }
-
-    }
-
-
-    /*
-      Save translation
-    */
-
-    function saveCachedTranslation(
-      original,
-      translated
-    ) {
-
-      try {
-
-        const key =
-          getTranslationCacheKey(original);
-
-        localStorage.setItem(
-          key,
-          translated
-        );
-
-      } catch (error) {
-
-        console.warn(
-          'Cache save error:',
-          error
-        );
-
-      }
-
-    }
-
-
-    /*
-      Translate Nepali text → English
-
-      MyMemory API प्रयोग गरिएको छ।
-    */
+    function getTranslationCacheKey(text) { return 'loksewa_translation_' + text.trim(); }
+    function getCachedTranslation(text) { try { return localStorage.getItem(getTranslationCacheKey(text)); } catch { return null; } }
+    function saveCachedTranslation(original, translated) { try { localStorage.setItem(getTranslationCacheKey(original), translated); } catch {} }
 
     async function translateText(text) {
-
-      if (!text) {
-        return text;
-      }
-
-
-      /*
-        पहिले cache check
-      */
-
-      const cached =
-        getCachedTranslation(text);
-
-      if (cached) {
-
-        return cached;
-
-      }
-
-
-      /*
-        API request
-      */
-
+      if (!text) return text;
+      const cached = getCachedTranslation(text);
+      if (cached) return cached;
       try {
-
-        const url =
-          `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ne|en`;
-
-        const response =
-          await fetch(url);
-
-        if (!response.ok) {
-
-          throw new Error(
-            'Translation API failed'
-          );
-
-        }
-
-
-        const data =
-          await response.json();
-
-
-        const translated =
-          data?.responseData?.translatedText;
-
-
-        if (
-          !translated ||
-          translated.trim() === ''
-        ) {
-
-          return text;
-
-        }
-
-
-        /*
-          Cache translation
-        */
-
-        saveCachedTranslation(
-          text,
-          translated
-        );
-
-
+        const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ne|en`);
+        if (!response.ok) throw new Error('Translation failed');
+        const data = await response.json();
+        const translated = data?.responseData?.translatedText;
+        if (!translated || translated.trim() === '') return text;
+        saveCachedTranslation(text, translated);
         return translated;
-
-
-      } catch (error) {
-
-        console.error(
-          'Translation error:',
-          error
-        );
-
-        /*
-          Translation fail भए
-          original Nepali return
-        */
-
-        return text;
-
-      }
-
+      } catch { return text; }
     }
-
-
-    /*
-      Translate complete question
-
-      Question + all options
-    */
 
     async function translateQuestion(q) {
-
-      const translatedQuestion =
-        await translateText(
-          q.question
-        );
-
-
-      /*
-        Options एकैपटक translate
-      */
-
-      const translatedOptions =
-        await Promise.all(
-
-          q.options.map(
-            option =>
-              translateText(option)
-          )
-
-        );
-
-
-      return {
-
-        question:
-          translatedQuestion,
-
-        options:
-          translatedOptions
-
-      };
-
+      const translatedQuestion = await translateText(q.question);
+      const translatedOptions = await Promise.all(q.options.map(opt => translateText(opt)));
+      return { question: translatedQuestion, options: translatedOptions };
     }
 
-
-    /* =========================
-       POPUP FUNCTIONS
-    ========================== */
-
-    window.showSuccessPopup =
-      function(
-        message,
-        redirectUrl,
-        type = 'success',
-        titleText = ''
-      ) {
-
-        const modal =
-          document.getElementById(
-            'customGlobalModal'
-          );
-
-        const msgEl =
-          document.getElementById(
-            'cgModalMessage'
-          );
-
-        const titleEl =
-          document.getElementById(
-            'cgModalTitle'
-          );
-
-        const iconBox =
-          document.getElementById(
-            'cgModalIconBox'
-          );
-
-        const iconEl =
-          document.getElementById(
-            'cgModalIcon'
-          );
-
-        const okBtn =
-          document.getElementById(
-            'cgModalBtn'
-          );
-
-
-        if (msgEl) {
-
-          msgEl.textContent =
-            message;
-
-        }
-
-
-        iconBox.className =
-          `cg-icon-box ${type}`;
-
-
-        if (type === 'success') {
-
-          if (!titleText) {
-            titleText =
-              'सफल भयो! 🎉';
-          }
-
-          iconEl.className =
-            'fa-solid fa-check';
-
-        }
-
-
-        else if (type === 'error') {
-
-          if (!titleText) {
-            titleText =
-              'त्रुटि (Error)! ❌';
-          }
-
-          iconEl.className =
-            'fa-solid fa-triangle-exclamation';
-
-        }
-
-
-        else if (type === 'warning') {
-
-          if (!titleText) {
-            titleText =
-              'सचेत गराइएको छ! ⚠️';
-          }
-
-          iconEl.className =
-            'fa-solid fa-circle-exclamation';
-
-        }
-
-
-        if (titleEl) {
-
-          titleEl.textContent =
-            titleText;
-
-        }
-
-
-        if (modal) {
-
-          modal.classList.add(
-            'active'
-          );
-
-        }
-
-
-        if (okBtn) {
-
-          okBtn.onclick =
-            function() {
-
-              modal.classList.remove(
-                'active'
-              );
-
-              if (redirectUrl) {
-
-                setTimeout(
-                  () => {
-
-                    window.location.href =
-                      redirectUrl;
-
-                  },
-                  200
-                );
-
-              }
-
-            };
-
-        }
-
+    window.showSuccessPopup = function(message, redirectUrl, type = 'success', titleText = '') {
+      const modal = document.getElementById('customGlobalModal');
+      document.getElementById('cgModalMessage').textContent = message;
+      document.getElementById('cgModalIconBox').className = `cg-icon-box ${type}`;
+      document.getElementById('cgModalTitle').textContent = titleText || (type === 'success' ? 'सफल भयो! 🎉' : 'त्रुटि (Error)! ❌');
+      modal.classList.add('active');
+      document.getElementById('cgModalBtn').onclick = () => {
+        modal.classList.remove('active');
+        if (redirectUrl) setTimeout(() => window.location.href = redirectUrl, 200);
       };
+    };
 
+    window.showConfirmPopup = function(message, onConfirm, titleText = 'पुष्टि गर्नुहोस् ⚠️') {
+      const modal = document.getElementById('customConfirmModal');
+      document.getElementById('cgConfirmMessage').textContent = message;
+      document.getElementById('cgConfirmTitle').textContent = titleText;
+      modal.classList.add('active');
+      document.getElementById('cgOkBtn').onclick = () => { modal.classList.remove('active'); if (onConfirm) onConfirm(); };
+      document.getElementById('cgCancelBtn').onclick = () => modal.classList.remove('active');
+    };
 
-    window.showConfirmPopup =
-      function(
-        message,
-        onConfirm,
-        titleText = 'पुष्टि गर्नुहोस् ⚠️'
-      ) {
-
-        const modal =
-          document.getElementById(
-            'customConfirmModal'
-          );
-
-        const msgEl =
-          document.getElementById(
-            'cgConfirmMessage'
-          );
-
-        const titleEl =
-          document.getElementById(
-            'cgConfirmTitle'
-          );
-
-        const okBtn =
-          document.getElementById(
-            'cgOkBtn'
-          );
-
-        const cancelBtn =
-          document.getElementById(
-            'cgCancelBtn'
-          );
-
-
-        if (msgEl) {
-
-          msgEl.textContent =
-            message;
-
+    document.addEventListener("DOMContentLoaded", () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          candidateName = user.displayName || user.email.split('@')[0];
+          userEmail = user.email;
+          document.getElementById('profile-display-name').innerText = candidateName;
+          await checkIfExamAlreadyGiven(userEmail);
+        } else {
+          document.getElementById('login-modal').classList.add('active');
         }
+      });
+      fetchLeaderboard();
+    });
 
+    window.redirectToLogin = () => window.location.href = 'login.html';
 
-        if (titleEl) {
-
-          titleEl.textContent =
-            titleText;
-
-        }
-
-
-        if (modal) {
-
-          modal.classList.add(
-            'active'
-          );
-
-        }
-
-
-        okBtn.onclick =
-          function() {
-
-            modal.classList.remove(
-              'active'
-            );
-
-            if (
-              typeof onConfirm ===
-              'function'
-            ) {
-
-              onConfirm();
-
-            }
-
-          };
-
-
-        cancelBtn.onclick =
-          function() {
-
-            modal.classList.remove(
-              'active'
-            );
-
-          };
-
-      };
-
-
-    /* =========================
-       AUTH
-    ========================== */
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      () => {
-
-        onAuthStateChanged(
-          auth,
-          async (user) => {
-
-            if (user) {
-
-              candidateName =
-                user.displayName ||
-                user.email.split('@')[0];
-
-              userEmail =
-                user.email;
-
-
-              document.getElementById(
-                'profile-display-name'
-              ).innerText =
-                candidateName;
-
-
-              await checkIfExamAlreadyGiven(
-                userEmail
-              );
-
-            }
-
-            else {
-
-              document.getElementById(
-                'login-modal'
-              ).classList.add(
-                'active'
-              );
-
-            }
-
-          }
-        );
-
-
-        fetchLeaderboard();
-
+    async function checkIfExamAlreadyGiven(email) {
+      const { data } = await supabaseClient.from('exam_leaderboard').select('*').eq('username', email).eq('set_name', examIdentifier);
+      if (data && data.length > 0) {
+        document.getElementById('start-exam-btn').classList.add('hidden');
+        document.getElementById('already-given-box').classList.remove('hidden');
       }
-    );
-
-
-    window.redirectToLogin =
-      () => {
-
-        window.location.href =
-          'login.html';
-
-      };
-
-
-    /* =========================
-       CHECK EXISTING EXAM
-    ========================== */
-
-    async function checkIfExamAlreadyGiven(
-      email
-    ) {
-
-      const { data } =
-        await supabaseClient
-          .from('exam_leaderboard')
-          .select('*')
-          .eq('username', email)
-          .eq('set_name', examIdentifier);
-
-
-      if (
-        data &&
-        data.length > 0
-      ) {
-
-        document.getElementById(
-          'start-exam-btn'
-        ).classList.add(
-          'hidden'
-        );
-
-
-        document.getElementById(
-          'already-given-box'
-        ).classList.remove(
-          'hidden'
-        );
-
-      }
-
     }
 
-
-    /* =========================
-       START EXAM
-    ========================== */
-
-    window.startExam =
-      async function(
-        practice = false
-      ) {
-
-        isPracticeMode =
-          practice;
-
-
-        try {
-
-          let { data } =
-            await supabaseClient
-              .from('quizzes')
-              .select('*')
-              .ilike(
-                'topic',
-                currentSet
-              );
-
-
-          if (
-            !data ||
-            data.length === 0
-          ) {
-
-            let retry =
-              await supabaseClient
-                .from('quizzes')
-                .select('*')
-                .ilike(
-                  'topic',
-                  rawSet
-                );
-
-            data =
-              retry.data;
-
-          }
-
-
-          examQuestions =
-            data || [];
-
-
-          if (
-            examQuestions.length === 0
-          ) {
-
-            showSuccessPopup(
-              'यस सेटमा कुनै प्रश्न भेटिएन।',
-              '',
-              'error'
-            );
-
-            return;
-
-          }
-
-
-          /*
-            Reset exam
-          */
-
-          currentIdx = 0;
-
-          userAnswers = {};
-
-
-          document.getElementById(
-            'reg-screen'
-          ).classList.add(
-            'hidden'
-          );
-
-
-          document.getElementById(
-            'exam-screen'
-          ).classList.remove(
-            'hidden'
-          );
-
-
-          if (!isPracticeMode) {
-
-            document.getElementById(
-              'timer-box'
-            ).classList.remove(
-              'hidden'
-            );
-
-            startTimer();
-
-          }
-
-
-          loadExamQuestion();
-
+    window.startExam = async function(practice = false) {
+      isPracticeMode = practice;
+      try {
+        let { data } = await supabaseClient.from('quizzes').select('*').ilike('topic', currentSet);
+        if (!data || data.length === 0) {
+          let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', urlParams.get('set') || 'set_1');
+          data = retry.data;
         }
-
-
-        catch (err) {
-
-          showSuccessPopup(
-            'त्रुटि: ' + err.message,
-            '',
-            'error'
-          );
-
-        }
-
-      };
-
-
-    window.startPracticeMode =
-      () =>
-        startExam(true);
-
-
-    /* =========================
-       TIMER
-    ========================== */
-
-    function startTimer() {
-
-      timerInterval =
-        setInterval(
-          () => {
-
-            if (
-              timeLeftSeconds <= 0
-            ) {
-
-              clearInterval(
-                timerInterval
-              );
-
-              submitExam();
-
-              return;
-
-            }
-
-
-            timeLeftSeconds--;
-
-
-            const m =
-              Math.floor(
-                timeLeftSeconds / 60
-              );
-
-            const s =
-              timeLeftSeconds % 60;
-
-
-            document.getElementById(
-              'time-left'
-            ).innerText =
-              `${m}:${s < 10 ? '0' : ''}${s}`;
-
-          },
-          1000
-        );
-
-    }
-
-
-    /* =====================================================
-       LANGUAGE TOGGLE
-    ====================================================== */
-
-    window.setQuizLanguage =
-      function(lang) {
-
-        /*
-          Only quiz language changes.
-          Header / dashboard / whole app unchanged.
-        */
-
-        currentLang =
-          lang;
-
-
-        document.getElementById(
-          'quiz-ne-btn'
-        ).classList.toggle(
-          'active',
-          lang === 'ne'
-        );
-
-
-        document.getElementById(
-          'quiz-en-btn'
-        ).classList.toggle(
-          'active',
-          lang === 'en'
-        );
-
-
-        loadExamQuestion();
-
-      };
-
-
-    /* =====================================================
-       LOAD QUESTION
-    ====================================================== */
-
-    window.loadExamQuestion =
-      async function() {
-
-        if (
-          !examQuestions ||
-          examQuestions.length === 0
-        ) {
+        examQuestions = data || [];
+        if (examQuestions.length === 0) {
+          showSuccessPopup('यस सेटमा कुनै प्रश्न भेटिएन।', '', 'error');
           return;
         }
-
-
-        const q =
-          examQuestions[currentIdx];
-
-
-        /*
-          Question tracker
-        */
-
-        document.getElementById(
-          'q-tracker'
-        ).innerText =
-          `Question ${currentIdx + 1} of ${examQuestions.length}`;
-
-
-        /*
-          Nepali default
-        */
-
-        let questionText =
-          q.question;
-
-        let optionsList =
-          q.options;
-
-
-        /* =================================================
-           NEPALI MODE
-        ================================================== */
-
-        if (
-          currentLang === 'ne'
-        ) {
-
-          document.getElementById(
-            'exam-question'
-          ).innerHTML =
-            questionText;
-
-
-          renderOptions(
-            optionsList,
-            q
-          );
-
+        currentIdx = 0;
+        userAnswers = {};
+        document.getElementById('reg-screen').classList.add('hidden');
+        document.getElementById('exam-screen').classList.remove('hidden');
+        if (!isPracticeMode) {
+          document.getElementById('timer-box').classList.remove('hidden');
+          startTimer();
         }
-
-
-        /* =================================================
-           ENGLISH MODE
-        ================================================== */
-
-        else {
-
-          /*
-            Loading UI
-          */
-
-          document.getElementById(
-            'exam-question'
-          ).innerHTML = `
-
-            <div class="translation-loading">
-
-              <span class="translation-spinner"></span>
-
-              Translating question...
-
-            </div>
-
-          `;
-
-
-          document.getElementById(
-            'exam-options'
-          ).innerHTML = `
-
-            <div class="translation-loading">
-
-              <span class="translation-spinner"></span>
-
-              Translating options...
-
-            </div>
-
-          `;
-
-
-          try {
-
-            const translated =
-              await translateQuestion(q);
-
-
-            /*
-              Important:
-
-              User might change question
-              while translation is happening.
-
-              So check current index again.
-            */
-
-            if (
-              currentLang !== 'en'
-            ) {
-              return;
-            }
-
-
-            questionText =
-              translated.question;
-
-            optionsList =
-              translated.options;
-
-
-            document.getElementById(
-              'exam-question'
-            ).innerHTML =
-              questionText;
-
-
-            renderOptions(
-              optionsList,
-              q
-            );
-
-          }
-
-
-          catch (error) {
-
-            console.error(
-              error
-            );
-
-
-            /*
-              Fallback to Nepali
-            */
-
-            document.getElementById(
-              'exam-question'
-            ).innerHTML =
-              q.question;
-
-
-            renderOptions(
-              q.options,
-              q
-            );
-
-          }
-
-        }
-
-
-        /*
-          KaTeX
-        */
-
-        if (
-          window.renderMathInElement
-        ) {
-
-          renderMathInElement(
-            document.body,
-            {
-              throwOnError: false
-            }
-          );
-
-        }
-
-
-        /*
-          Previous button
-        */
-
-        document.getElementById(
-          'prev-btn'
-        ).style.display =
-          currentIdx === 0
-            ? 'none'
-            : 'block';
-
-
-        /*
-          Next / Submit button
-        */
-
-        document.getElementById(
-          'next-btn'
-        ).innerText =
-
-          currentIdx ===
-          examQuestions.length - 1
-
-            ? translations[currentLang].submit
-
-            : translations[currentLang].next;
-
-      };
-
-
-    /* =====================================================
-       RENDER OPTIONS
-    ====================================================== */
-
-    function renderOptions(
-      optionsList,
-      q
-    ) {
-
-      const container =
-        document.getElementById(
-          'exam-options'
-        );
-
-
-      container.innerHTML = '';
-
-
-      optionsList.forEach(
-        (opt, oIndex) => {
-
-          /*
-            IMPORTANT:
-
-            optionsList may be English.
-
-            But originalOpt is ALWAYS
-            Nepali option from Supabase.
-          */
-
-          const originalOpt =
-            q.options[oIndex];
-
-
-          const isSelected =
-            userAnswers[currentIdx] ===
-            originalOpt;
-
-
-          const btn =
-            document.createElement(
-              'button'
-            );
-
-
-          btn.className =
-            `option-card ${
-              isSelected
-                ? 'selected'
-                : ''
-            }`;
-
-
-          btn.innerHTML = `
-
-            <i class="fa-regular ${
-              isSelected
-                ? 'fa-square-check'
-                : 'fa-square'
-            }"></i>
-
-            <span>${opt}</span>
-
-          `;
-
-
-          btn.onclick =
-            () => {
-
-              /*
-                SAVE ORIGINAL NEPALI VALUE
-
-                This makes scoring work
-                in both languages.
-              */
-
-              userAnswers[currentIdx] =
-                originalOpt;
-
-
-              loadExamQuestion();
-
-            };
-
-
-          container.appendChild(
-            btn
-          );
-
-        }
-      );
-
+        loadExamQuestion();
+      } catch (err) {
+        showSuccessPopup('त्रुटि: ' + err.message, '', 'error');
+      }
+    };
+
+    window.startPracticeMode = () => startExam(true);
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        if (timeLeftSeconds <= 0) { clearInterval(timerInterval); submitExam(); return; }
+        timeLeftSeconds--;
+        const m = Math.floor(timeLeftSeconds / 60), s = timeLeftSeconds % 60;
+        document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+      }, 1000);
     }
 
+    window.setQuizLanguage = function(lang) {
+      currentLang = lang;
+      document.getElementById('quiz-ne-btn').classList.toggle('active', lang === 'ne');
+      document.getElementById('quiz-en-btn').classList.toggle('active', lang === 'en');
+      loadExamQuestion();
+    };
 
-    /* =========================
-       PREVIOUS
-    ========================== */
+    window.loadExamQuestion = async function() {
+      if (!examQuestions || examQuestions.length === 0) return;
+      const q = examQuestions[currentIdx];
+      document.getElementById('q-tracker').innerText = `Question ${currentIdx + 1} of ${examQuestions.length}`;
+      
+      let questionText = q.question, optionsList = q.options;
 
-    window.prevExamQuestion =
-      () => {
-
-        if (
-          currentIdx > 0
-        ) {
-
-          currentIdx--;
-
-          loadExamQuestion();
-
+      if (currentLang === 'ne') {
+        document.getElementById('exam-question').innerHTML = questionText;
+        renderOptions(optionsList, q);
+      } else {
+        document.getElementById('exam-question').innerHTML = `<div class="translation-loading"><span class="translation-spinner"></span>Translating question...</div>`;
+        document.getElementById('exam-options').innerHTML = `<div class="translation-loading"><span class="translation-spinner"></span>Translating options...</div>`;
+        try {
+          const translated = await translateQuestion(q);
+          if (currentLang !== 'en') return;
+          questionText = translated.question;
+          optionsList = translated.options;
+          document.getElementById('exam-question').innerHTML = questionText;
+          renderOptions(optionsList, q);
+        } catch {
+          document.getElementById('exam-question').innerHTML = q.question;
+          renderOptions(q.options, q);
         }
+      }
 
-      };
+      if (window.renderMathInElement) renderMathInElement(document.body, { throwOnError: false });
+      document.getElementById('prev-btn').style.display = currentIdx === 0 ? 'none' : 'block';
+      document.getElementById('next-btn').innerText = currentIdx === examQuestions.length - 1 ? translations[currentLang].submit : translations[currentLang].next;
+    };
 
+    function renderOptions(optionsList, q) {
+      const container = document.getElementById('exam-options');
+      container.innerHTML = '';
+      optionsList.forEach((opt, oIndex) => {
+        const originalOpt = q.options[oIndex];
+        const isSelected = userAnswers[currentIdx] === originalOpt;
+        const btn = document.createElement('button');
+        btn.className = `option-card ${isSelected ? 'selected' : ''}`;
+        btn.innerHTML = `<i class="fa-regular ${isSelected ? 'fa-square-check' : 'fa-square'}"></i> <span>${opt}</span>`;
+        btn.onclick = () => { userAnswers[currentIdx] = originalOpt; loadExamQuestion(); };
+        container.appendChild(btn);
+      });
+    }
 
-    /* =========================
-       NEXT
-    ========================== */
-
-    window.nextExamQuestion =
-      () => {
-
-        if (
-          currentIdx <
-          examQuestions.length - 1
-        ) {
-
-          currentIdx++;
-
-          loadExamQuestion();
-
-        }
-
-
-        else {
-
-          const confirmMessage =
-            currentLang === 'en'
-
-              ? 'Do you want to submit the exam?'
-
-              : 'के तपाईं परीक्षा बुझाउन चाहनुहुन्छ?';
-
-
-          const confirmTitle =
-            currentLang === 'en'
-
-              ? 'Submit Exam 📋'
-
-              : 'परीक्षा बुझाउने 📋';
-
-
-          showConfirmPopup(
-
-            confirmMessage,
-
-            () => {
-
-              clearInterval(
-                timerInterval
-              );
-
-              submitExam();
-
-            },
-
-            confirmTitle
-
-          );
-
-        }
-
-      };
-
-
-    /* =========================
-       SUBMIT EXAM
-    ========================== */
+    window.prevExamQuestion = () => { if (currentIdx > 0) { currentIdx--; loadExamQuestion(); } };
+    
+    window.nextExamQuestion = () => {
+      if (currentIdx < examQuestions.length - 1) {
+        currentIdx++;
+        loadExamQuestion();
+      } else {
+        showConfirmPopup(
+          currentLang === 'en' ? 'Do you want to submit the exam?' : 'के तपाईं परीक्षा बुझाउन चाहनुहुन्छ?',
+          () => { clearInterval(timerInterval); submitExam(); },
+          currentLang === 'en' ? 'Submit Exam 📋' : 'परीक्षा बुझाउने 📋'
+        );
+      }
+    };
 
     async function submitExam() {
+      document.getElementById('exam-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('hidden');
+      let correct = 0, wrong = 0;
+      examQuestions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.answer) correct++;
+        else wrong++;
+      });
+      document.getElementById('rep-name').innerText = candidateName;
+      document.getElementById('rep-set').innerText = prettyExamName;
 
-      document.getElementById(
-        'exam-screen'
-      ).classList.add(
-        'hidden'
-      );
-
-
-      document.getElementById(
-        'result-screen'
-      ).classList.remove(
-        'hidden'
-      );
-
-
-      let correct = 0;
-      let wrong = 0;
-
-
-      /*
-        Scoring uses original Nepali
-        answer values.
-
-        Therefore English translation
-        does NOT affect scoring.
-      */
-
-      examQuestions.forEach(
-        (q, idx) => {
-
-          if (
-            userAnswers[idx] ===
-            q.answer
-          ) {
-
-            correct++;
-
-          }
-
-          else {
-
-            wrong++;
-
-          }
-
-        }
-      );
-
-
-      document.getElementById(
-        'rep-name'
-      ).innerText =
-        candidateName;
-
-
-      document.getElementById(
-        'rep-set'
-      ).innerText =
-        prettyExamName;
-
-
-      await supabaseClient
-        .from('exam_leaderboard')
-        .upsert(
-          [
-            {
-              username:
-                userEmail,
-
-              set_name:
-                examIdentifier,
-
-              score:
-                correct,
-
-              total:
-                examQuestions.length
-            }
-          ],
-          {
-            onConflict:
-              'username,set_name'
-          }
-        );
-
+      await supabaseClient.from('exam_leaderboard').upsert([
+        { username: userEmail, set_name: examIdentifier, score: correct, total: examQuestions.length }
+      ], { onConflict: 'username,set_name' });
 
       fetchLeaderboard();
-
     }
-
-
-    /* =========================
-       LEADERBOARD
-    ========================== */
 
     async function fetchLeaderboard() {
-
-      const { data } =
-        await supabaseClient
-          .from('exam_leaderboard')
-          .select('*')
-          .eq(
-            'set_name',
-            examIdentifier
-          )
-          .order(
-            'score',
-            {
-              ascending: false
-            }
-          );
-
-
-      const container =
-        document.getElementById(
-          'home-leaderboard'
-        );
-
-
-      if (!container) {
+      const { data } = await supabaseClient.from('exam_leaderboard').select('*').eq('set_name', examIdentifier).order('score', { ascending: false });
+      const container = document.getElementById('home-leaderboard');
+      if (!container) return;
+      container.innerHTML = '';
+      if (!data || data.length === 0) {
+        container.innerHTML = '<p style="color:#64748b; text-align:center; font-size:12px;">रेकर्ड छैन।</p>';
         return;
       }
-
-
-      container.innerHTML =
-        '';
-
-
-      if (
-        !data ||
-        data.length === 0
-      ) {
-
-        container.innerHTML = `
-
-          <p
-            style="
-              color:#64748b;
-              text-align:center;
-              font-size:12px;
-            ">
-            रेकर्ड छैन।
-          </p>
-
-        `;
-
-        return;
-
-      }
-
-
-      data.forEach(
-        (item, i) => {
-
-          container.innerHTML += `
-
-            <div class="lb-row">
-
-              <span
-                style="font-weight:700;">
-                ${i + 1}.
-                ${item.username.split('@')[0]}
-              </span>
-
-              <span
-                style="
-                  color:#2563eb;
-                  font-weight:800;">
-                ${item.score} अंक
-              </span>
-
-            </div>
-
-          `;
-
-        }
-      );
-
+      data.forEach((item, i) => {
+        container.innerHTML += `<div class="lb-row"><span style="font-weight:700;">${i + 1}. ${item.username.split('@')[0]}</span><span style="color:#2563eb; font-weight:800;">${item.score} अंक</span></div>`;
+      });
     }
 
+    // Review Modal Complete Logic Integration
+    window.openReviewModal = () => {
+      const container = document.getElementById('review-container');
+      container.innerHTML = '';
 
-    /* =========================
-       REVIEW MODAL
-    ========================== */
+      examQuestions.forEach((q, idx) => {
+        const userAns = userAnswers[idx];
+        const isCorrect = userAns === q.answer;
+        
+        let optionsHtml = '';
+        q.options.forEach(opt => {
+          let badge = '';
+          if (opt === q.answer) {
+            badge = '<span style="color: #16a34a; font-weight: 700;"> (सही उत्तर ✅)</span>';
+          } else if (opt === userAns && !isCorrect) {
+            badge = '<span style="color: #dc2626; font-weight: 700;"> (तपाईंको उत्तर ❌)</span>';
+          } else if (opt === userAns && isCorrect) {
+            badge = '<span style="color: #16a34a; font-weight: 700;"> (तपाईंको उत्तर ✅)</span>';
+          }
+          optionsHtml += `<div style="padding: 3px 0; font-size: 11px; color: #475569;">• ${opt} ${badge}</div>`;
+        });
 
-    window.openReviewModal =
-      () => {
+        container.innerHTML += `
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+            <p style="font-weight: 700; color: #1e293b; margin-bottom: 6px;">प्रश्न ${idx + 1}: ${q.question}</p>
+            <div style="margin-left: 6px; margin-bottom: 8px;">${optionsHtml}</div>
+            <p style="font-size: 11px; color: ${isCorrect ? '#16a34a' : '#dc2626'}; font-weight: 700;">
+              स्थिति: ${isCorrect ? 'मिलाउनुभयो ✅' : 'मिलाउनुभएन ❌'}
+            </p>
+          </div>
+        `;
+      });
 
-        document.getElementById(
-          'reviewModal'
-        ).classList.add(
-          'active'
-        );
+      document.getElementById('reviewModal').classList.add('active');
+    };
 
-      };
-
-
-    window.closeReviewModal =
-      () => {
-
-        document.getElementById(
-          'reviewModal'
-        ).classList.remove(
-          'active'
-        );
-
-      };
-
-
-    /* =========================
-       REPORT MODAL
-    ========================== */
-
-    window.openReportModal =
-      () => {
-
-        document.getElementById(
-          'reportModal'
-        ).classList.add(
-          'active'
-        );
-
-      };
-
-
-    window.closeReportModal =
-      () => {
-
-        document.getElementById(
-          'reportModal'
-        ).classList.remove(
-          'active'
-        );
-
-      };
-
-
-    window.submitQuestionReport =
-      async function() {
-
-        closeReportModal();
-
-
-        showSuccessPopup(
-          'सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद!',
-          '',
-          'success',
-          'धन्यवाद! 🙌'
-        );
-
-      };
-
-
+    window.closeReviewModal = () => document.getElementById('reviewModal').classList.remove('active');
+    window.openReportModal = () => document.getElementById('reportModal').classList.add('active');
+    window.closeReportModal = () => document.getElementById('reportModal').classList.remove('active');
+    
+    window.submitQuestionReport = async function() {
+      closeReportModal();
+      showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद!', '', 'success', 'धन्यवाद! 🙌');
+    };
   </script>
-
 </body>
-  </html>
+</html>
