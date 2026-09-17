@@ -214,6 +214,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
     import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
     import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { updateUserCoinsWithHistory } from './components.js';
   
     const firebaseConfig = {  
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",  
@@ -524,15 +525,14 @@
       let coinEarnedMessage = "";
       if (!isMistakeRetry && userId && correct > 0) {
         try {
-          const userDocRef = doc(db, "users", userId);
           const coinsToAdd = correct; 
-          await updateDoc(userDocRef, {
-            coins: increment(coinsToAdd)
-          });
+          // यहाँ components.js को अपडेट फंक्सन प्रयोग गरिएको छ (कोइन र ट्रान्जेक्सन हिस्ट्री दुवै रेकर्ड हुन्छ)
+          await updateUserCoinsWithHistory(db, userId, coinsToAdd, `${activeConfig.title} क्विज अभ्यास पुरस्कार बापत`);
+          
           coinEarnedMessage = `🎉 बधाई छ! तपाईंले यो अभ्यासमा ${correct} वटा प्रश्न मिलाउनु भएकोले ${coinsToAdd} कोइन प्राप्त गर्नुभयो!`;
         } catch (err) {
           console.error("Coin update error:", err);
-          coinEarnedMessage = "⚠️ कोइन अपडेट गर्दा केही समस्या आयो।";
+          coinEarnedMessage = "⚠️ कोइन र इतिहास अपडेट गर्दा केही समस्या आयो।";
         }
       } else if (isMistakeRetry) {
         coinEarnedMessage = "ℹ️ यो बिग्रिएका प्रश्नहरूको पुन: अभ्यास भएकोले कोइन थप गरिएको छैन।";
