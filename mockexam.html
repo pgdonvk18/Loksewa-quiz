@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LoksewaQuest - Mock Exam & Practice</title>
+  <title>LoksewaQuest - Mock Exam & Coins Reward</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
@@ -164,6 +164,20 @@
       font-size: 13px;
     }
 
+    .coin-badge {
+      background: #f59e0b;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+      margin: 10px 0;
+    }
+
     .lb-row {
       display: flex;
       justify-content: space-between;
@@ -221,7 +235,7 @@
       </div>
       <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">लगइन आवश्यक छ!</h3>
       <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px;">
-        तपाईंले परीक्षा दिन वा लिडरबोर्डमा नाम राख्नको लागि पहिले लगइन गर्नुपर्ने हुन्छ।
+        तपाईंले परीक्षा दिन वा कोइन/लिडरबोर्डमा नाम राख्नको लागि पहिले लगइन गर्नुपर्ने हुन्छ।
       </p>
       <button onclick="redirectToLogin()" class="btn-primary" style="margin-bottom: 8px;">लगइन पेजमा जानुहोस् 🚀</button>
       <a href="dashboard.html" style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none; padding: 6px;">ड्यासबोर्डमा फर्कनुहोस्</a>
@@ -272,7 +286,7 @@
   <!-- HEADER -->
   <header class="app-header">
     <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1 id="header-title">🇳🇵 LoksewaQuest</h1>
+    <h1 id="header-title">🇳🇵 LoksewaQuest Mock Exam</h1>
     <div id="timer-box" class="timer-badge hidden">
       ⏳ <span id="time-left">45:00</span>
     </div>
@@ -280,10 +294,16 @@
 
   <main class="main-wrapper">
     
-    <!-- REGISTRATION & SET SELECTION SCREEN -->
+    <!-- REGISTRATION & SET SCREEN -->
     <div id="reg-screen" class="card">
-      <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">परीक्षा विवरण:</h2>
-      
+      <h2 style="font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">परीक्षाको नियमहरू:</h2>
+      <ul style="font-size: 12px; color: #475569; margin-left: 18px; margin-bottom: 16px; line-height: 1.6;">
+        <li>कुल समय: <strong>४५ मिनेट</strong></li>
+        <li>सही उत्तरको: <strong>+२ अंक</strong></li>
+        <li>गलत उत्तरको: <strong>२०% माइनस (-०.४ अंक)</strong></li>
+        <li><strong>कोइन रिवार्ड:</strong> ५०%-६०% (10 Coins), ६०%-७०% (20 Coins), ७०%-८०% (30 Coins), ८०%-९०% (40 Coins), ९०%-१००% (50 Coins)</li>
+      </ul>
+
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
         <div>
           <p style="font-size: 11px; color: #64748b; font-weight: 600;">लगइन गरिएको प्रयोगकर्ता</p>
@@ -292,23 +312,20 @@
         <i class="fa-solid fa-user-check" style="color: #2563eb; font-size: 20px;"></i>
       </div>
 
-      <div style="margin-bottom: 16px;">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 4px;">परीक्षा सेट:</label>
-        <div id="set-badge-title" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 13px;">
-          🎯 लोड हुँदैछ...
-        </div>
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 13px; margin-bottom: 16px;" id="set-badge-title">
+        🎯 सेट लोड हुँदैछ...
       </div>
 
       <div id="already-given-box" class="hidden" style="background: #fef2f2; border: 1px solid #fecaca; padding: 14px; border-radius: 12px; margin-bottom: 16px; text-align: center;">
         <p style="color: #dc2626; font-weight: 800; font-size: 13px; margin-bottom: 4px;">🚫 तपाईंले यो परीक्षा पहिले नै दिसक्नुभएको छ!</p>
-        <p style="color: #7f1d1d; font-size: 11px; margin-bottom: 10px;">तपाईंले अभ्यास गर्न सक्नुहुन्छ (लिडरबोर्डमा जोडिने छैन)।</p>
+        <p style="color: #7f1d1d; font-size: 11px; margin-bottom: 10px;">तपाईंले अभ्यास गर्न सक्नुहुन्छ (लिडरबोर्डमा कोइन जोडिने छैन)।</p>
         <button onclick="startPracticeMode()" class="btn-practice">अभ्यास गर्नुहोस् (Practice Mode) 💡</button>
       </div>
 
       <button id="start-exam-btn" onclick="startExam(false)" class="btn-primary">परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀</button>
-
+      
       <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 16px;">
-        <h3 id="lb-title" style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">🏆 लिडरबोर्ड</h3>
+        <h3 style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">🏆 लिडरबोर्ड</h3>
         <div id="home-leaderboard"></div>
       </div>
     </div>
@@ -317,7 +334,7 @@
     <div id="exam-screen" class="card hidden">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 12px;">
         <span id="q-tracker" style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">Question 1</span>
-        <span id="mode-badge" style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">Exam</span>
+        <span id="mode-badge" style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">Live Exam</span>
       </div>
 
       <h3 id="exam-question" style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.5; margin-bottom: 14px;">Loading...</h3>
@@ -337,22 +354,26 @@
 
     <!-- RESULT SCREEN -->
     <div id="result-screen" class="hidden">
-      <div id="pdf-report-content" class="card" style="background: #ffffff; border: 2px solid #2563eb; border-radius: 20px; text-align: center; padding: 24px 16px; margin-bottom: 16px;">
+      <div id="pdf-report-content" class="card" style="border: 2px solid #2563eb; border-radius: 20px; text-align: center; padding: 24px 16px; margin-bottom: 16px; background: #ffffff;">
         <div style="font-size: 28px; color: #2563eb; margin-bottom: 4px;"><i class="fa-solid fa-award"></i></div>
         <h2 id="report-main-title" style="font-size: 18px; font-weight: 800; color: #1e3a8a;">LOKSEWAQUEST CERTIFICATE</h2>
         <p style="font-size: 11px; color: #64748b; margin-top: 2px;">परीक्षा सफलतापूर्वक सम्पन्न भएको छ।</p>
         
-        <div style="margin: 16px 0; border-top: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; padding: 12px 0;">
-          <p id="rep-name" style="font-size: 16px; color: #0f172a; font-weight: 800;"></p>
+        <div style="margin: 14px 0;">
+          <div class="coin-badge" id="rep-coins">🪙 0 Coins पाउनुभयो</div>
+        </div>
+
+        <div style="margin: 12px 0; border-top: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; padding: 10px 0;">
+          <p id="rep-name" style="font-size: 15px; color: #0f172a; font-weight: 800;"></p>
           <p id="rep-set" style="font-size: 12px; color: #2563eb; font-weight: 700; margin-top: 2px;"></p>
           <p id="rep-time-info" style="font-size: 11px; color: #64748b; margin-top: 4px;"></p>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; margin-bottom: 12px;">
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;"><p style="font-size: 10px; color: #64748b;">सही</p><p id="rep-correct" style="font-size: 14px; font-weight: 800; color: #059669;">0</p></div>
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;"><p style="font-size: 10px; color: #64748b;">गलत</p><p id="rep-wrong" style="font-size: 14px; font-weight: 800; color: #dc2626;">0</p></div>
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;"><p style="font-size: 10px; color: #64748b;">छोडेको</p><p id="rep-skipped" style="font-size: 14px; font-weight: 800; color: #d97706;">0</p></div>
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px; border: 1px solid #f1f5f9;"><p style="font-size: 10px; color: #64748b;">कुल अंक</p><p id="rep-score" style="font-size: 14px; font-weight: 800; color: #2563eb;">0</p></div>
+          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px;"><p style="font-size: 10px; color: #64748b;">सही</p><p id="rep-correct" style="font-size: 14px; font-weight: 800; color: #059669;">0</p></div>
+          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px;"><p style="font-size: 10px; color: #64748b;">गलत</p><p id="rep-wrong" style="font-size: 14px; font-weight: 800; color: #dc2626;">0</p></div>
+          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px;"><p style="font-size: 10px; color: #64748b;">छोडेको</p><p id="rep-skipped" style="font-size: 14px; font-weight: 800; color: #d97706;">0</p></div>
+          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px;"><p style="font-size: 10px; color: #64748b;">कुल अंक</p><p id="rep-score" style="font-size: 14px; font-weight: 800; color: #2563eb;">0</p></div>
         </div>
 
         <div id="status-message-box" style="padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 700; margin-bottom: 14px;"></div>
@@ -400,18 +421,10 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const urlParams = new URLSearchParams(window.location.search);
-    const rawSet = urlParams.get('set') || 'set_1'; 
-    const currentSet = rawSet.toLowerCase();
+    const activeSet = urlParams.get('set') || 'kharidar_mocktest1';
 
-    const setNumberMatch = currentSet.match(/\d+/);
-    const setNum = setNumberMatch ? setNumberMatch[0] : '1';
-
-    const prettyExamName = `Pre Qualifying Test Set ${setNum}`;
-    const examIdentifier = `set_${setNum}`;
-
-    document.getElementById('header-title').innerText = `🇳🇵 LoksewaQuest - ${prettyExamName}`;
-    document.getElementById('set-badge-title').innerText = `🎯 ${prettyExamName} (Model Exam)`;
-    document.getElementById('lb-title').innerText = `🏆 ${prettyExamName} लिडरबोर्ड`;
+    document.getElementById('set-badge-title').innerText = `🎯 परीक्षा सेट: ${activeSet}`;
+    document.getElementById('header-title').innerText = `🇳🇵 LoksewaQuest - ${activeSet}`;
 
     let candidateName = '';
     let userEmail = '';
@@ -419,11 +432,11 @@
     let currentIdx = 0;
     let userAnswers = {}; 
     let timerInterval;
-    let timeLeftSeconds = 45 * 60;
+    let timeLeftSeconds = 45 * 60; 
     let isPracticeMode = false;
     let evaluatedQuestionsList = [];
 
-    // Fisher-Yates Shuffle Algorithm (प्रश्न र अप्सन रेन्डम बनाउन)
+    // Shuffle Algorithm
     function shuffleArray(array) {
       let arr = [...array];
       for (let i = arr.length - 1; i > 0; i--) {
@@ -458,7 +471,7 @@
         .from('exam_leaderboard')
         .select('*')
         .eq('username', email)
-        .eq('set_name', examIdentifier);
+        .eq('set_name', activeSet);
 
       if (data && data.length > 0) {
         document.getElementById('start-exam-btn').classList.add('hidden');
@@ -480,18 +493,13 @@
         let { data, error } = await supabaseClient
           .from('quizzes')
           .select('*')
-          .ilike('topic', currentSet);
+          .ilike('topic', activeSet);
         
         if (error || !data || data.length === 0) {
-          let retry = await supabaseClient.from('quizzes').select('*').ilike('topic', rawSet);
-          if (retry.error || !retry.data || retry.data.length === 0) {
-            alert(`डेटाबेसमा ${prettyExamName} का प्रश्नहरू भेटिएनन्!`);
-            return;
-          }
-          data = retry.data;
+          alert('यो सेटमा कुनै प्रश्न फेला परेन!');
+          return;
         }
 
-        // प्रश्नहरू र विकल्पहरूलाई पूर्ण रूपमा Shuffle गर्ने
         let randomizedQuestions = shuffleArray(data);
         examQuestions = randomizedQuestions.map(q => {
           let options = q.options || [q.option_a, q.option_b, q.option_c, q.option_d];
@@ -508,11 +516,11 @@
         
         if (!isPracticeMode) {
           document.getElementById('timer-box').classList.remove('hidden');
-          document.getElementById('mode-badge').innerText = `${prettyExamName} Live Exam`;
+          document.getElementById('mode-badge').innerText = `${activeSet} Live Exam`;
           startTimer();
         } else {
           document.getElementById('timer-box').classList.add('hidden');
-          document.getElementById('mode-badge').innerText = `${prettyExamName} Practice Mode`;
+          document.getElementById('mode-badge').innerText = `${activeSet} Practice Mode`;
         }
 
         loadExamQuestion();
@@ -621,25 +629,39 @@
       let totalScore = (correct * 2) - (wrong * 0.4);
       if (totalScore < 0) totalScore = 0;
 
+      let maxPossibleScore = examQuestions.length * 2;
+      let percentage = maxPossibleScore > 0 ? (totalScore / maxPossibleScore) * 100 : 0;
+
+      let earnedCoins = 0;
+      if (percentage >= 90) earnedCoins = 50;
+      else if (percentage >= 80) earnedCoins = 40;
+      else if (percentage >= 70) earnedCoins = 30;
+      else if (percentage >= 60) earnedCoins = 20;
+      else if (percentage >= 50) earnedCoins = 10;
+
       const completionDate = new Date().toLocaleString();
 
       if (isPracticeMode) {
         document.getElementById('report-main-title').innerText = 'LOKSEWAQUEST PRACTICE REPORT';
-        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${prettyExamName} (अभ्यास मोड)`;
+        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${activeSet} (अभ्यास मोड)`;
+        earnedCoins = 0; // अभ्यास मोडमा कोइन पाइँदैन
       } else {
         document.getElementById('report-main-title').innerText = 'LOKSEWAQUEST CERTIFICATE';
-        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${prettyExamName}`;
+        document.getElementById('rep-set').innerText = `परीक्षा सेट: ${activeSet}`;
         
-        await supabaseClient.from('exam_leaderboard').insert([{ 
-          username: userEmail, 
-          score: Number(totalScore.toFixed(1)), 
-          total_questions: examQuestions.length,
-          set_name: examIdentifier 
-        }]);
+        if (userEmail) {
+          await supabaseClient.from('exam_leaderboard').insert([{ 
+            username: userEmail, 
+            score: Number(totalScore.toFixed(1)), 
+            total_questions: examQuestions.length,
+            set_name: activeSet,
+            coins: earnedCoins
+          }]);
+        }
       }
 
       const statusBox = document.getElementById('status-message-box');
-      if (totalScore < 45) {
+      if (percentage < 50) {
         statusBox.style.background = '#fef2f2'; statusBox.style.border = '1px solid #fecaca'; statusBox.style.color = '#dc2626';
         statusBox.innerText = 'असाफल! अभ्यास अझै मजबुत गर्नुहोला। 🎯';
       } else {
@@ -653,6 +675,7 @@
       document.getElementById('rep-wrong').innerText = wrong;
       document.getElementById('rep-skipped').innerText = skipped;
       document.getElementById('rep-score').innerText = totalScore.toFixed(1);
+      document.getElementById('rep-coins').innerText = `🪙 ${earnedCoins} Coins पाउनुभयो`;
 
       renderReviewList('all');
       fetchLeaderboard();
@@ -699,7 +722,7 @@
       const { data } = await supabaseClient
         .from('exam_leaderboard')
         .select('*')
-        .eq('set_name', examIdentifier)
+        .eq('set_name', activeSet)
         .order('score', { ascending: false });
 
       const containers = [document.getElementById('home-leaderboard'), document.getElementById('result-leaderboard')];
@@ -707,7 +730,7 @@
         if (!lbContainer) return;
         lbContainer.innerHTML = '';
         if (!data || data.length === 0) {
-          lbContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 12px; padding: 4px;">हाल कुनै रेकर्ड छैन।</p>';
+          lbContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 12px; padding: 4px;">कुनै रेकर्ड छैन।</p>';
           return;
         }
         data.forEach((item, i) => {
@@ -715,7 +738,7 @@
           lbContainer.innerHTML += `
             <div class="lb-row">
               <span style="font-weight: 700; color: #1e293b;">${i+1}. ${name}</span>
-              <span style="color: #2563eb; font-weight: 800;">${item.score} अंक</span>
+              <span style="color: #2563eb; font-weight: 800;">${item.score} अंक (${item.coins || 0} 🪙)</span>
             </div>
           `;
         });
