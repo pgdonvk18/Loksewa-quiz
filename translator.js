@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(hiddenDiv);
   }
 
-  // 2. Slide Toggle को CSS Style इन्जेक्ट गर्ने
+  // 2. Slide Toggle को CSS Style इन्जेक्ट गर्ने (र गुगलको ब्यानर लुकाउने)
   if (!document.getElementById('lang-switch-style')) {
     const style = document.createElement('style');
     style.id = 'lang-switch-style';
@@ -51,6 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
       .lang-switch-container:not(.en-active) .lang-option:first-child {
         color: #ffffff;
       }
+      /* गुगल ट्रान्सलेटले माथि थप्ने ब्यानर र स्पेस हटाउनको लागि */
+      .goog-te-banner-frame { display: none !important; }
+      body { top: 0px !important; }
+      .skiptranslate { display: none !important; }
     `;
     document.head.appendChild(style);
   }
@@ -65,14 +69,27 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="lang-option">English</span>
       </div>
     `;
-    // प्रगतिको बार (progress section) पछि र प्रश्न (quiz-question) भन्दा अगाडि इन्सर्ट गर्ने
     const progressSection = quizScreen.querySelector('.progress-section');
     if (progressSection) {
       progressSection.insertAdjacentHTML('afterend', toggleHTML);
     }
   }
 
-  // 4. Google Translate Script लोड गर्ने
+  // 4. पहिले नै अंग्रेजी छनोट भएको छ भने स्विचको स्टेट मिलाउने
+  setTimeout(() => {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      if (cookie.trim().startsWith('googtrans=')) {
+        if (cookie.includes('/ne/en')) {
+          currentLang = 'en';
+          const switchEl = document.getElementById('lang-switch');
+          if (switchEl) switchEl.classList.add('en-active');
+        }
+      }
+    }
+  }, 300);
+
+  // 5. Google Translate Script लोड गर्ने
   if (!document.getElementById('google-translate-api')) {
     const script1 = document.createElement('script');
     script1.type = 'text/javascript';
@@ -113,6 +130,7 @@ function triggerGoogleTranslate(lang) {
     selectField.value = lang;
     selectField.dispatchEvent(new Event('change'));
   } else {
-    setTimeout(() => triggerGoogleTranslate(lang), 500);
+    // यदि ड्रपडाउन अझै लोड भइसकेको छैन भने अलिकति पछि फेري प्रयास गर्ने
+    setTimeout(() => triggerGoogleTranslate(lang), 300);
   }
 }
