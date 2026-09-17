@@ -864,7 +864,7 @@
 
     window.submitQuestionReport = async function() {
       const reason = document.getElementById('reportReason').value.trim();
-      if (!reason) { alert('कृपया समस्या क्या हो लेख्नुहोस्!'); return; }
+      if (!reason) { showConfirmPopup('कृपया समस्या क्या हो लेख्नुहोस्!'); return; }
 
       const currentQ = examQuestions[currentIdx];
       const { error } = await supabaseClient.from('reported_questions').insert([{ 
@@ -875,10 +875,10 @@
       }]);
 
       if (error) {
-        alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+        showConfirmPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message);
       } else {
         closeReportModal();
-        alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
+        showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
       }
     }
   </script>
