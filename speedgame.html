@@ -45,7 +45,6 @@
     .btn-primary:hover { background: #1d4ed8; }
     .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
 
-    /* Leaderboard Styling & Tabs */
     .leaderboard-section { margin-top: 15px; border-top: 2px dashed #e2e8f0; padding-top: 14px; text-align: left; }
     .lb-tabs { display: flex; gap: 6px; margin-bottom: 12px; background: #f1f5f9; padding: 4px; border-radius: 12px; }
     .lb-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 700; border: none; background: transparent; color: #64748b; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: center; }
@@ -77,14 +76,13 @@
 
   <main class="main-wrapper">  
 
-    <!-- 1. Start Screen (यहीं अब सुरुमै लिडरबोर्ड देखिनेछ) -->
+    <!-- 1. Start Screen -->
     <div id="startScreen" class="card screen-center">
       <div style="font-size: 40px; color: #2563eb; margin-bottom: 10px;"><i class="fa-solid fa-bolt"></i></div>
       <h2>गति परीक्षण (Speed Blitz)</h2>
       <p>१ मिनेटमा धेरै भन्दा धेरै प्रश्न मिलाउनुहोस्!</p>
       <button class="btn-primary" id="startBtn" style="margin-bottom: 15px;"><i class="fa-solid fa-play"></i> खेल सुरु गर्नुहोस् 🚀</button>
 
-      <!-- सुरुको स्क्रिनमा नै लिडरबोर्ड देखाउने सेक्सन -->
       <div class="leaderboard-section">
         <div class="lb-tabs">
           <button class="lb-tab active" id="startDailyTab" onclick="switchMainLeaderboard('daily')">दैनिक (Daily)</button>
@@ -187,6 +185,7 @@
     let gameActive = false;
     let mainLbType = 'daily';
     let endLbType = 'daily';
+    const GAME_SET_NAME = 'Speed Blitz (1 Min)';
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -223,7 +222,6 @@
       }
     }
 
-    // पेज खुल्नेबित्तिकै प्रश्नहरू र मुख्य स्क्रिनको लिडरबोर्ड लोड गर्ने
     fetchSupabaseQuestions();
     fetchAndShowLeaderboard('main', 'daily');
 
@@ -346,7 +344,7 @@
             .insert([
               { 
                 username: currentUserName, 
-                set_name: 'Speed Blitz (1 Min)', 
+                set_name: GAME_SET_NAME, 
                 score: score, 
                 correct_count: score, 
                 wrong_count: 0, 
@@ -397,9 +395,11 @@
       }
 
       try {
+        // केवल 'Speed Blitz (1 Min)' सेटको मात्र डाटा फिल्टर गरेर तान्ने
         let query = supabaseClient
           .from('exam_leaderboard')
           .select('username, set_name, score, created_at')
+          .eq('set_name', GAME_SET_NAME)
           .order('score', { ascending: false });
 
         if (type === 'daily') {
@@ -436,7 +436,7 @@
                 <div class="rank-badge ${rankClass}">${rank}</div>
                 <div>
                   <div class="username">${item.username || 'अज्ञात'}</div>
-                  <div class="set-name">${item.set_name || 'जेनेरल'}</div>
+                  <div class="set-name">${item.set_name}</div>
                 </div>
               </div>
               <div class="score-badge">${item.score} अङ्क</div>
