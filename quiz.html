@@ -532,15 +532,13 @@
             coins: increment(coinsToAdd)
           });
 
-          // २. कोइन प्राप्त गरेको इतिहास (Coin History) सेभ गर्ने
-          const historyRef = collection(db, "users", userId, "coin_history");
-          await addDoc(historyRef, {
-            amount: coinsToAdd,
-            source_topic: activeConfig.title,
-            set_key: currentSet,
-            type: "earned_quiz",
-            description: 'quiz practice बाट प्राप्ति',
-        created_at: serverTimestamp()
+          // ट्रान्जेक्सन इतिहास थप्ने (कोइन प्राप्त भएको)
+          await addDoc(collection(db, "users", currentUserUid, "coin_history"), {
+            amount: earnedCoins,
+            type: 'earn',
+            source: 'exam_reward',
+            description: `Quiz Practice बापत`,
+            created_at: serverTimestamp()
           });
 
           coinEarnedMessage = `🎉 बधाई छ! तपाईंले यो अभ्यासमा ${correct} वटा प्रश्न मिलाउनु भएकोले ${coinsToAdd} कोइन प्राप्त गर्नुभयो र इतिहासमा सेभ भयो!`;
