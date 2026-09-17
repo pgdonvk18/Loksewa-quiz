@@ -13,22 +13,21 @@ document.addEventListener("DOMContentLoaded", () => {
     style.id = 'lang-switch-style';
     style.innerHTML = `
       .lang-switch-container {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        background: rgba(255, 255, 255, 0.2);
+        background: #f1f5f9;
         border-radius: 20px;
         padding: 2px;
         position: relative;
         cursor: pointer;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        margin-left: auto; /* हेडरमा दायाँतर्फ धकेल्न */
-        flex-shrink: 0;
+        border: 1px solid #cbd5e1;
+        margin-bottom: 12px;
       }
       .lang-option {
-        padding: 4px 8px;
+        padding: 4px 10px;
         font-size: 11px;
         font-weight: 800;
-        color: #ffffff;
+        color: #475569;
         z-index: 2;
         user-select: none;
       }
@@ -36,38 +35,41 @@ document.addEventListener("DOMContentLoaded", () => {
         position: absolute;
         top: 2px;
         left: 2px;
-        width: 28px;
+        width: 32px;
         height: 24px;
-        background: #ffffff;
+        background: #2563eb;
         border-radius: 14px;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1;
       }
       .lang-switch-container.en-active .lang-slider {
-        transform: translateX(28px);
+        transform: translateX(32px);
       }
       .lang-switch-container.en-active .lang-option:last-child {
-        color: #1e3a8a;
+        color: #ffffff;
       }
       .lang-switch-container:not(.en-active) .lang-option:first-child {
-        color: #1e3a8a;
+        color: #ffffff;
       }
     `;
     document.head.appendChild(style);
   }
 
-  // 3. Header (.top-nav वा .app-header) को दायाँतिर Slide Toggle Button राख्ने
-  const header = document.querySelector('.top-nav') || document.querySelector('.app-header');
-  if (header && !document.getElementById('lang-switch')) {
+  // 3. Quiz Screen को भित्र प्रश्न देखाउने ठाउँको ठ्याक्कै माथि Slide Toggle Button राख्ने
+  const quizScreen = document.getElementById('quiz-screen');
+  if (quizScreen && !document.getElementById('lang-switch')) {
     const toggleHTML = `
       <div id="lang-switch" class="lang-switch-container" onclick="toggleLanguage()">
         <div class="lang-slider"></div>
-        <span class="lang-option">ने</span>
-        <span class="lang-option">EN</span>
+        <span class="lang-option">नेपाली</span>
+        <span class="lang-option">English</span>
       </div>
     `;
-    // हेडरको सबैभन्दा अन्त्यमा थप्ने
-    header.insertAdjacentHTML('beforeend', toggleHTML);
+    // प्रगतिको बार (progress section) पछि र प्रश्न (quiz-question) भन्दा अगाडि इन्सर्ट गर्ने
+    const progressSection = quizScreen.querySelector('.progress-section');
+    if (progressSection) {
+      progressSection.insertAdjacentHTML('afterend', toggleHTML);
+    }
   }
 
   // 4. Google Translate Script लोड गर्ने
