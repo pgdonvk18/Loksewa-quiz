@@ -1,3 +1,44 @@
+import { doc, updateDoc, increment, collection, addDoc, serverTimestamp, getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// यदि components.js मा पहिल्यै db इन्स्टन्स छ भने त्यसैलाई प्रयोग गर्नुहोस्, नभए getFirestore() प्रयोग गर्नुहोस्।
+// (तपाईंको प्रोजेक्टको db इन्स्टन्स अनुसार मिलाउनुहोला)
+
+/**
+ * युजरको कोइन अपडेट गर्ने र स्वचालित रूपमा coin_history मा रेकर्ड राख्ने फंक्सन
+ * @param {object} db - Firestore database instance
+ * @param {string} userId - Firebase User UID
+ * @param {number} amount - कोइनको मात्रा (बढाउँदा सकारात्मक जस्तै 50, घटाउँदा नकारात्मक जस्तै -20)
+ * @param {string} description - कारण (जस्तै: "Speed Blitz खेल जित बापत")
+ */
+export async function updateUserCoinsWithHistory(db, userId, amount, description) {
+  try {
+    if (!userId) return;
+
+    const userRef = doc(db, "users", userId);
+    
+    // १. मुख्य युजरको 'coins' field लाई increment/decrement गर्ने
+    await updateDoc(userRef, {
+      coins: increment(amount)
+    });
+
+    // २. ट्रान्जेक्सन इतिहास (coin_history) सब-कलेक्सनमा सेभ गर्ने
+    const type = amount >= 0 ? 'earn' : 'spend';
+    const historyRef = collection(db, "users", userId, "coin_history");
+    
+    await addDoc(historyRef, {
+      amount: Math.abs(amount), // सधैं पोजिटिभ नम्बर सेभ हुन्छ, type ले earn/spend छुट्याउँछ
+      description: description,
+      type: type, // 'earn' वा 'spend'
+      created_at: serverTimestamp()
+    });
+
+    console.log("Coin updated and history logged successfully!");
+  } catch (error) {
+    console.error("Error updating coins with history:", error);
+  }
+}
+
+
 // // Global Components (Chat, Footer, Floating Emojis, Room Config, Bottom Nav & Other Pages Header)
 (function() {
   // Inject CSS styles dynamically for all global components
