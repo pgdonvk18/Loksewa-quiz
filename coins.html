@@ -69,7 +69,7 @@
       <div class="wallet-balance">
         <i class="fa-solid fa-coins"></i> <span id="totalCoinsVal">0</span>
       </div>
-      <div class="wallet-subtext">💡 दैनिक लिडरबोर्ड जितेर अझै कोइन कमाउनुहोस्!</div>
+      <div class="wallet-subtext">💡 दैनिक परीक्षा र क्विज खेलेर कोइन कमाउनुहोस्!</div>
     </div>
 
     <!-- History Section -->
@@ -87,7 +87,7 @@
   <script type="module">  
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
-    import { getFirestore, doc as fsDoc, getDoc as fsGetDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
+    import { getFirestore, doc as fsDoc, getDoc as fsGetDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
     
     const firebaseConfig = {  
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",  
@@ -117,25 +117,27 @@
             document.getElementById('totalCoinsVal').innerText = totalCoins;
           }
 
-          // २. सब-कलेक्सनबाट ट्रान्जेक्सन इतिहास फेच गर्ने प्रयास गर्ने
+          // २. सब-कलेक्सनबाट ट्रान्जेक्सन इतिहास फेच गर्ने (created_at को आधारमा नयाँ देखि पुरानो desc मा)
           const historyRef = collection(db, "users", user.uid, "coin_history");
-          const querySnapshot = await getDocs(historyRef);
+          const q = query(historyRef, orderBy("created_at", "desc"));
+          const querySnapshot = await getDocs(q);
 
           let html = '';
           let txCount = 0;
 
           if (!querySnapshot.empty) {
-            // यदि सब-कलेक्सनमा इतिहास फेला पर्यो भने तिनीहरूलाई लिस्ट गर्ने
             txCount = querySnapshot.size;
             querySnapshot.forEach((doc) => {
               const item = doc.data();
-              const isEarn = item.type === 'earn' || item.amount > 0;
-              const sign = isEarn ? '+' : '';
+              
+              // amount सकारात्मक वा type earn/reward भए income, अन्यथा spend मानिनेछ
+              const isEarn = item.amount > 0 || item.type === 'earned_quiz' || item.type === 'exam_reward';
+              const sign = item.amount > 0 ? '+' : '';
               const iconClass = isEarn ? 'earn' : 'spend';
               const iconSymbol = isEarn ? 'fa-arrow-down' : 'fa-arrow-up';
               const amountClass = isEarn ? 'earn' : 'spend';
 
-              let dateStr = 'हालसालै';
+              let dateStr = 'भर्खरै';
               if (item.created_at) {
                 const dateObj = item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at);
                 if (!isNaN(dateObj)) {
@@ -150,7 +152,7 @@
                       <i class="fa-solid ${iconSymbol}"></i>
                     </div>
                     <div class="history-info">
-                      <div class="title">${item.description || (isEarn ? 'कोइन प्राप्त भयो' : 'कोइन खर्च भयो')}</div>
+                      <div class="title">${item.description || item.source_topic || (isEarn ? 'कोइन प्राप्त भयो' : 'कोइन खर्च भयो')}</div>
                       <div class="date">${dateStr}</div>
                     </div>
                   </div>
@@ -159,7 +161,6 @@
               `;
             });
           } else {
-            // यदि छुट्टै इतिहास छैन तर युजरसँग कोइन छ वा छैन भने, कुल ब्यालेन्सको आधारमा एउटा कार्ड देखाइदिने
             txCount = 1;
             html = `
               <div class="history-item">
@@ -185,7 +186,7 @@
           document.getElementById('historyContainer').innerHTML = `
             <div class="empty-state">
               <i class="fa-solid fa-triangle-exclamation"></i>
-              <p>डाटा लोड गर्दा समस्या भयो।</p>
+              <p>डाटा लोड गर्दा समस्या भयो। (Index आवश्यक हुन सक्छ)</p>
             </div>
           `;
         }
