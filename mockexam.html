@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Exam Quiz Game</title>
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #4338ca;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .options-list li {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .options-list li:hover {
+            background: #eef2ff;
+            border-color: var(--primary-color);
+        }
+
+        .options-list li.selected {
+            background: #e0e7ff;
+            border-color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #4b5563;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        .timer {
+            color: var(--danger-color);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .result-box {
+            text-align: center;
+        }
+
+        .coin-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .leaderboard-table th, .leaderboard-table td {
+            border: 1px solid #e5e7eb;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .leaderboard-table th {
+            background-color: #f3f4f6;
+        }
+
+        .loading-text {
+            text-align: center;
+            font-size: 16px;
+            color: #4b5563;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="start-screen">
+            <h1 id="exam-title-heading">Loksewa / Mock Exam Quiz</h1>
+            <p><strong>नियमहरू:</strong></p>
+            <ul>
+                <li>कुल समय: ४५ मिनेट</li>
+                <li>सही उत्तरको: +२ अंक</li>
+                <li>गलत उत्तरको: २०% माइनस (-०.४ अंक)</li>
+                <li>अंक अनुसार कोइन पुरस्कार:
+                    <ul style="margin-left: 20px; font-size: 13px; color: #4b5563;">
+                        <li>५०% देखि ६०%: १० कोइन</li>
+                        <li>६०% देखि ७०%: २० कोइन</li>
+                        <li>७०% देखि ८०%: ३० कोइन</li>
+                        <li>८०% देखि ९०%: ४० कोइन</li>
+                        <li>९०% देखि १००%: ५० कोइन</li>
+                    </ul>
+                </li>
+            </ul>
+            <button class="btn" id="start-btn" onclick="startQuiz()" disabled>प्रश्नहरू लोड हुँदैछ...</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <div class="quiz-header">
+                <span id="question-count">प्रश्न: १/०</span>
+                <span class="timer" id="time-left">समय: ४५:००</span>
+            </div>
+            <h3 id="question-text">प्रश्न यहाँ देखिनेछ...</h3>
+            <ul class="options-list" id="options-container">
+                <!-- अप्सनहरू यहाँ लोड हुन्छन् -->
+            </ul>
+            <button class="btn" id="next-btn" onclick="nextQuestion()">अर्को प्रश्न</button>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden result-box">
+            <h2>परीक्षा समाप्त भयो!</h2>
+            <p id="score-display">तपाईको प्राप्तांक: ०</p>
+            <p id="percentage-display">प्रतिशत: ०%</p>
+            <div id="coin-reward-container">
+                <div class="coin-badge" id="coin-display">तपाईले पाउनुभएको कोइन: ०</div>
+            </div>
+
+            <h3>लिडरबोर्ड (Leaderboard)</h3>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>स्थान</th>
+                        <th>नाम</th>
+                        <th>अंक</th>
+                        <th>कोइन</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    <!-- लिडरबोर्ड डेटा यहाँ बस्छ -->
+                </tbody>
+            </table>
+            <button class="btn" onclick="window.location.href='mock.html'">मोक टेस्ट पेजमा फर्कनुहोस्</button>
+        </div>
+    </div>
+
+    <script>
+        // Supabase सेटअप (तपाईंको credentials अनुसार)
+        const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let timer;
+        let timeLeft = 45 * 60; // ४५ मिनेट सेकेन्डमा
+
+        // URL बाट 'set' प्यारामिटर तान्ने (जस्तै: ?set=kharidar_mocktest1)
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeSetId = urlParams.get('set') || 'kharidar_mocktest1';
+
+        // DOM Elements
+        const startScreen = document.getElementById("start-screen");
+        const quizScreen = document.getElementById("quiz-screen");
+        const resultScreen = document.getElementById("result-screen");
+        const questionText = document.getElementById("question-text");
+        const optionsContainer = document.getElementById("options-container");
+        const questionCount = document.getElementById("question-count");
+        const timeLeftDisplay = document.getElementById("time-left");
+        const scoreDisplay = document.getElementById("score-display");
+        const percentageDisplay = document.getElementById("percentage-display");
+        const coinDisplay = document.getElementById("coin-display");
+        const leaderboardBody = document.getElementById("leaderboard-body");
+        const startBtn = document.getElementById("start-btn");
+
+        // पेज लोड हुँदा Supabase बाट प्रश्नहरू तानेर ल्याउने
+        async function fetchQuestions() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('quizzes')
+                    .select('*')
+                    .ilike('topic', activeSetId);
+
+                if (error) {
+                    console.error("Supabase Error:", error);
+                    startBtn.innerText = "प्रश्न लोड गर्न असफल भयो!";
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    startBtn.innerText = "यो सेटमा कुनै प्रश्न छैन!";
+                    return;
+                }
+
+                questions = data;
+                startBtn.innerText = "क्विज सुरु गर्नुहोस् 🚀";
+                startBtn.disabled = false;
+            } catch (err) {
+                console.error("Error fetching questions:", err);
+                startBtn.innerText = "त्रुटि देखियो!";
+            }
+        }
+
+        window.onload = () => {
+            fetchQuestions();
+        };
+
+        function startQuiz() {
+            if (questions.length === 0) return;
+            startScreen.classList.add("hidden");
+            quizScreen.classList.remove("hidden");
+            currentQuestionIndex = 0;
+            score = 0;
+            timeLeft = 45 * 60;
+            startTimer();
+            loadQuestion();
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    endQuiz();
+                } else {
+                    timeLeft--;
+                    let minutes = Math.floor(timeLeft / 60);
+                    let seconds = timeLeft % 60;
+                    timeLeftDisplay.innerText = `समय: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                }
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            selectedOption = null;
+            let currentQ = questions[currentQuestionIndex];
+            
+            // Supabase को स्तम्भ (columns) अनुसार नाम मिलाइएको छ
+            let qText = currentQ.question || currentQ.question_text || "प्रश्न उपलब्ध छैन";
+            let options = currentQ.options || [currentQ.option_a, currentQ.option_b, currentQ.option_c, currentQ.option_d];
+
+            questionText.innerText = `${currentQuestionIndex + 1}. ${qText}`;
+            questionCount.innerText = `प्रश्न: ${currentQuestionIndex + 1}/${questions.length}`;
+            
+            optionsContainer.innerHTML = "";
+            options.forEach((opt, index) => {
+                if (opt) {
+                    let li = document.createElement("li");
+                    li.innerText = opt;
+                    li.onclick = () => selectOption(opt, li);
+                    optionsContainer.appendChild(li);
+                }
+            });
+        }
+
+        function selectOption(optionValue, element) {
+            document.querySelectorAll(".options-list li").forEach(li => li.classList.remove("selected"));
+            element.classList.add("selected");
+            selectedOption = optionValue;
+        }
+
+        function nextQuestion() {
+            if (selectedOption !== null) {
+                let currentQ = questions[currentQIndexCheck()];
+                let correctAnswer = currentQ.answer || currentQ.correct_answer;
+
+                if (selectedOption.trim() === correctAnswer.trim()) {
+                    score += 2; // सही भए २ अंक
+                } else {
+                    score -= (2 * 0.2); // गलत भए २०% माइनस (-०.४ अंक)
+                }
+            }
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                clearInterval(timer);
+                endQuiz();
+            }
+        }
+
+        function currentQIndexCheck() {
+            return currentQuestionIndex;
+        }
+
+        function endQuiz() {
+            quizScreen.classList.add("hidden");
+            resultScreen.classList.remove("hidden");
+
+            let maxScore = questions.length * 2;
+            let percentage = maxScore > 0 ? Math.max(0, (score / maxScore) * 100) : 0;
+
+            scoreDisplay.innerText = `तपाईको प्राप्तांक: ${score.toFixed(1)} / ${maxScore}`;
+            percentageDisplay.innerText = `प्रतिशत: ${percentage.toFixed(1)}%`;
+
+            // तपाईंले तोक्नुभएको कोइनको नियम अनुसार:
+            let coins = 0;
+            if (percentage >= 90 && percentage <= 100) coins = 50;
+            else if (percentage >= 80) coins = 40;
+            else if (percentage >= 70) coins = 30;
+            else if (percentage >= 60) coins = 20;
+            else if (percentage >= 50) coins = 10;
+
+            coinDisplay.innerText = `तपाईले पाउनुभएको कोइन: 🪙 ${coins} Coins`;
+
+            updateLeaderboard(score, coins);
+        }
+
+        function updateLeaderboard(userScore, userCoins) {
+            let dummyData = [
+                { name: "सुभाष अधिकारी", score: questions.length * 2 * 0.95, coins: 50 },
+                { name: "पुजा शर्मा", score: questions.length * 2 * 0.75, coins: 30 },
+                { name: "रमेश कार्की", score: questions.length * 2 * 0.55, coins: 10 },
+                { name: "तपाईं (Prajwal)", score: userScore, coins: userCoins }
+            ];
+
+            dummyData.sort((a, b) => b.score - a.score);
+
+            leaderboardBody.innerHTML = "";
+            dummyData.forEach((item, index) => {
+                let row = `<tr>
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>${item.score.toFixed(1)}</td>
+                    <td>🪙 ${item.coins}</td>
+                </tr>`;
+                leaderboardBody.innerHTML += row;
+            });
+        }
+    </script>
+</body>
+</html>
