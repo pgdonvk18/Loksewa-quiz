@@ -141,7 +141,7 @@
       </div>
 
       <div id="rewardMsgBox" class="hidden reward-banner">
-        <i class="fa-solid fa-coins" style="color: #ca8a04; font-size: 16px;"></i> बधाई छ! तपाईं लिडरबोर्डमा सफल हुनुभयो (+५० कोइन थपियो!)
+        <i class="fa-solid fa-coins" style="color: #ca8a04; font-size: 16px;"></i> तपाईं दैनिक लिडरबोर्डको शीर्ष ३ मा हुनुहुन्छ! रातको १२ बजे कोइन जम्मा हुनेछ।
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
@@ -172,9 +172,7 @@
         <h3>तपाईंको खेलको समीक्षा (Review)</h3>
         <button class="close-modal" onclick="closeReviewPopup()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="review-list" id="reviewListContainer">
-        <!-- Dynamic Review Items -->
-      </div>
+      <div class="review-list" id="reviewListContainer"></div>
     </div>
   </div>
 
@@ -185,7 +183,6 @@
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
     import { getFirestore, doc as fsDoc, getDoc as fsGetDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
     
-    // components.js लाई सुरक्षित रूपमा फेच गर्ने वा इम्पोर्ट गर्ने प्रयास
     let componentsModule = null;
     try {
       componentsModule = await import('./components.js').catch(() => null);
@@ -229,7 +226,6 @@
     let endLbType = 'daily';
     const GAME_SET_NAME = 'Speed Blitz (1 Min)';
 
-    // खेलमा खेलाडीले खेलेका प्रश्न र उत्तरहरूको इतिहास रेकर्ड राख्न
     let gameSessionHistory = [];
     let currentQuestionData = null;
 
@@ -410,24 +406,52 @@
       document.getElementById('gameOverScreen').classList.remove('hidden');
       document.getElementById('finalScoreDisplay').innerText = score;
 
-      if (supabaseClient) {
+      if (supabaseClient && currentUserName) {
         try {
-          await supabaseClient
+          // पहिले यो युजरको यो set_name को लागि लिडरबोर्डमा रेकर्ड छ कि छैन चेक गर्ने
+          const { data: existingData, error: fetchErr } = await supabaseClient
             .from('exam_leaderboard')
-            .insert([
-              { 
-                username: currentUserName, 
-                set_name: GAME_SET_NAME, 
-                score: score, 
-                correct_count: score, 
-                wrong_count: wrongCount, 
-                skipped_count: skippedCount, 
-                total_questions: score + wrongCount + skippedCount,
-                created_at: new Date()
-              }
-            ]);
+            .select('id, score')
+            .eq('username', currentUserName)
+            .eq('set_name', GAME_SET_NAME)
+            .maybeSingle();
+
+          if (fetchErr) console.error(fetchErr);
+
+          if (existingData) {
+            // यदि पुरानो रेकर्ड छ र नयाँ स्कोर बढी छ भने मात्र अपडेट गर्ने (Rewrite/Update)
+            if (score > existingData.score) {
+              await supabaseClient
+                .from('exam_leaderboard')
+                .update({ 
+                  score: score, 
+                  correct_count: score, 
+                  wrong_count: wrongCount, 
+                  skipped_count: skippedCount, 
+                  total_questions: score + wrongCount + skippedCount,
+                  created_at: new Date()
+                })
+                .eq('id', existingData.id);
+            }
+          } else {
+            // छैन भने नयाँ इन्सर्ट गर्ने
+            await supabaseClient
+              .from('exam_leaderboard')
+              .insert([
+                { 
+                  username: currentUserName, 
+                  set_name: GAME_SET_NAME, 
+                  score: score, 
+                  correct_count: score, 
+                  wrong_count: wrongCount, 
+                  skipped_count: skippedCount, 
+                  total_questions: score + wrongCount + skippedCount,
+                  created_at: new Date()
+                }
+              ]);
+          }
         } catch (err) {
-          console.error("Supabase Save Error: ", err);
+          console.error("Supabase Save/Update Error: ", err);
         }
       }
 
@@ -453,13 +477,6 @@
             </div>
           `;
         });
-      }
-
-      // यदि components.js मा showSuccessPopup वा showConfirmPopup उपलब्ध छ भने तिनलाई प्रयोग गर्न सकिन्छ, 
-      // अन्यथा हाम्रो custom-modal डिभ प्रदर्शन गर्नेछ:
-      if (componentsModule && typeof componentsModule.showSuccessPopup === 'function') {
-        // यदि components.js को प्रयोग गर्ने नै हो भने:
-        componentsModule.showSuccessPopup("यहाँ तपाईंको समीक्षा सूची उपलब्ध छ!");
       }
       
       document.getElementById('reviewModal').classList.remove('hidden');
@@ -510,7 +527,9 @@
           .order('score', { ascending: false });
 
         if (type === 'daily') {
-          const todayStr = new Date().toISOString().split('T')[0];
+          // नेपाली समय (NPT = UTC +5:45) अनुसार आजको मिति निकाल्ने
+          const nowNpt = new Date(new Date().getTime() + (5.75 * 60 * 60 * 1000));
+          const todayStr = nowNpt.toISOString().split('T')[0];
           query = query.gte('created_at', todayStr + 'T00:00:00');
         }
 
@@ -553,14 +572,11 @@
 
         container.innerHTML = html;
 
-        if (targetScreen === 'end' && type === 'daily' && userInTop3 && currentUserId) {
+        // खेल सकिएपछि (end screen मा) युजर टप ३ मा छ भने तुरुन्त कोइन नदिई 'रातको १२ बजे जम्मा हुनेछ' भन्ने मेसेज मात्र देखाउने
+        if (targetScreen === 'end' && type === 'daily' && userInTop3) {
           document.getElementById('rewardMsgBox').classList.remove('hidden');
-          try {
-            const userRef = fsDoc(db, "users", currentUserId);
-            await updateDoc(userRef, { coins: increment(50) });
-          } catch (e) {
-            console.log("Coin update error:", e);
-          }
+          // नोट: रातको १२ बजे कोइन वितरणको लागि ब्याकइन्ड (Supabase Cron/Edge Function वा तपाईंको मुख्य सर्भर स्क्रिप्ट) मार्फत 
+          // दैनिक १२ बजे यो लिडरबोर्ड चेक गरेर शीर्ष ३ मा रहेका युजरहरूको Firebase 'coins' बढाउने स्वचालित व्यवस्था मिलाउनुपर्छ।
         }
 
       } catch (err) {
