@@ -1,3209 +1,4086 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LoksewaQuest - Mock Exam & Coins Reward</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>LoksewaQuest - Mock Exam</title>
 
-  <!-- KaTeX -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
-    onload="renderMathInElement(document.body);"></script>
+<!-- =========================
+     LIBRARIES
+========================= -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:#f5f7fb;
+    color:#172033;
+    min-height:100vh;
+}
+
+button{
+    font-family:inherit;
+}
+
+.app-header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    height:64px;
+    background:linear-gradient(135deg,#3413aa,#5b21d6);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    padding:0 14px;
+    box-shadow:0 4px 15px rgba(52,19,170,.2);
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+}
+
+.back-btn{
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:12px;
+    background:rgba(255,255,255,.15);
+    color:#fff;
+    cursor:pointer;
+    font-size:17px;
+}
+
+.header-title{
+    font-size:15px;
+    font-weight:800;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:190px;
+}
+
+.header-right{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.coin-pill{
+    background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:20px;
+    padding:7px 10px;
+    font-size:12px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.timer{
+    background:#fff;
+    color:#3413aa;
+    border-radius:10px;
+    padding:7px 9px;
+    font-size:12px;
+    font-weight:800;
+    min-width:65px;
+    text-align:center;
+}
+
+.container{
+    width:100%;
+    max-width:760px;
+    margin:auto;
+    padding:18px 14px 40px;
+}
+
+.card{
+    background:#fff;
+    border-radius:20px;
+    padding:18px;
+    margin-bottom:15px;
+    box-shadow:0 5px 25px rgba(15,23,42,.06);
+    border:1px solid #edf0f6;
+}
+
+.exam-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 11px;
+    background:#f0ebff;
+    color:#4c1d95;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:800;
+    margin-bottom:12px;
+}
+
+.hero-title{
+    font-size:22px;
+    line-height:1.3;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.subtitle{
+    color:#64748b;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.rules{
+    margin-top:16px;
+    display:grid;
+    gap:9px;
+}
+
+.rule{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    font-size:12px;
+    color:#475569;
+    line-height:1.5;
+}
+
+.rule i{
+    color:#5b21d6;
+    margin-top:3px;
+}
+
+.user-box{
+    background:#f8f7ff;
+    border:1px solid #e8e1ff;
+    border-radius:14px;
+    padding:12px;
+    margin-top:15px;
+}
+
+.user-label{
+    font-size:10px;
+    color:#64748b;
+    margin-bottom:3px;
+}
+
+.user-email{
+    font-size:13px;
+    font-weight:800;
+    color:#3413aa;
+    word-break:break-all;
+}
+
+.primary-btn{
+    width:100%;
+    border:none;
+    border-radius:14px;
+    padding:14px;
+    background:linear-gradient(135deg,#3413aa,#6329db);
+    color:#fff;
+    font-size:14px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 7px 18px rgba(52,19,170,.2);
+}
+
+.primary-btn:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+.secondary-btn{
+    width:100%;
+    border:1px solid #ddd6fe;
+    border-radius:14px;
+    padding:12px;
+    background:#fff;
+    color:#4c1d95;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.button-row{
+    display:flex;
+    gap:9px;
+    margin-top:14px;
+}
+
+.button-row button{
+    flex:1;
+}
+
+.section-title{
+    font-size:14px;
+    font-weight:800;
+    margin-bottom:11px;
+}
+
+.notice{
+    padding:11px 12px;
+    border-radius:12px;
+    background:#fff7ed;
+    color:#9a3412;
+    font-size:11px;
+    line-height:1.5;
+    margin-top:13px;
+}
+
+.success-notice{
+    background:#ecfdf5;
+    color:#047857;
+}
+
+.warning-notice{
+    background:#fff7ed;
+    color:#c2410c;
+}
+
+/* =========================
+   LEADERBOARD
+========================= */
+
+.leaderboard-card{
+    margin-top:15px;
+}
+
+.lb-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:11px 4px;
+    border-bottom:1px solid #eef2f7;
+    font-size:11px;
+}
+
+.lb-row:last-child{
+    border-bottom:none;
+}
+
+.lb-rank{
+    width:28px;
+    height:28px;
+    border-radius:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f1f5f9;
+    font-weight:800;
+    flex-shrink:0;
+}
+
+.lb-user{
+    flex:1;
+    min-width:0;
+}
+
+.lb-name{
+    font-weight:800;
+    color:#1e293b;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.lb-score{
+    text-align:right;
+    font-weight:800;
+    color:#2563eb;
+    white-space:nowrap;
+}
+
+.empty-lb{
+    text-align:center;
+    color:#64748b;
+    font-size:11px;
+    padding:15px 4px;
+}
+
+/* =========================
+   EXAM
+========================= */
+
+.exam-progress-wrap{
+    margin-bottom:15px;
+}
+
+.progress-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:11px;
+    font-weight:800;
+    color:#64748b;
+    margin-bottom:8px;
+}
+
+.progress{
+    height:7px;
+    background:#e2e8f0;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:100%;
+    background:linear-gradient(90deg,#3413aa,#7c3aed);
+    width:0%;
+    transition:.25s;
+}
+
+.mode-badge{
+    display:inline-block;
+    padding:6px 9px;
+    background:#ecfdf5;
+    color:#047857;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:800;
+    margin-bottom:12px;
+}
+
+.question-number{
+    font-size:11px;
+    font-weight:800;
+    color:#64748b;
+    margin-bottom:8px;
+}
+
+.question{
+    font-size:17px;
+    line-height:1.65;
+    font-weight:800;
+    color:#172033;
+    margin-bottom:16px;
+}
+
+.options{
+    display:grid;
+    gap:10px;
+}
+
+.option{
+    width:100%;
+    border:1px solid #e2e8f0;
+    background:#fff;
+    border-radius:14px;
+    padding:13px;
+    text-align:left;
+    cursor:pointer;
+    display:flex;
+    align-items:flex-start;
+    gap:11px;
+    font-size:13px;
+    line-height:1.5;
+    transition:.18s;
+}
+
+.option:hover{
+    border-color:#a78bfa;
+    background:#faf8ff;
+}
+
+.option.selected{
+    border-color:#5b21d6;
+    background:#f4f0ff;
+}
+
+.option-letter{
+    width:28px;
+    height:28px;
+    flex-shrink:0;
+    border-radius:9px;
+    background:#f1f5f9;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    color:#475569;
+}
+
+.option.selected .option-letter{
+    background:#5b21d6;
+    color:#fff;
+}
+
+.exam-actions{
+    display:flex;
+    gap:9px;
+    margin-top:18px;
+}
+
+.exam-actions button{
+    border:none;
+    border-radius:13px;
+    padding:12px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:800;
+}
+
+.prev-btn{
+    background:#f1f5f9;
+    color:#475569;
+    flex:1;
+}
+
+.next-btn{
+    background:#3413aa;
+    color:#fff;
+    flex:1.5;
+}
+
+.report-btn{
+    margin-top:13px;
+    width:100%;
+    padding:10px;
+    background:#fff;
+    border:1px solid #fecaca;
+    color:#dc2626;
+    border-radius:12px;
+    font-size:11px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+/* =========================
+   RESULT
+========================= */
+
+.result-score{
+    text-align:center;
+    padding:10px 0 20px;
+}
+
+.score-circle{
+    width:125px;
+    height:125px;
+    border-radius:50%;
+    margin:0 auto 15px;
+    background:linear-gradient(135deg,#3413aa,#7c3aed);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    box-shadow:0 12px 30px rgba(52,19,170,.2);
+}
+
+.score-value{
+    font-size:28px;
+    font-weight:800;
+}
+
+.score-label{
+    font-size:10px;
+    opacity:.85;
+}
+
+.result-title{
+    font-size:20px;
+    font-weight:800;
+    margin-bottom:4px;
+}
+
+.result-sub{
+    color:#64748b;
+    font-size:12px;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+    margin-top:16px;
+}
+
+.stat{
+    background:#f8fafc;
+    border-radius:13px;
+    padding:12px 5px;
+    text-align:center;
+}
+
+.stat-value{
+    font-size:18px;
+    font-weight:800;
+}
+
+.stat-label{
+    font-size:9px;
+    color:#64748b;
+    margin-top:3px;
+}
+
+.green{
+    color:#059669;
+}
+
+.red{
+    color:#dc2626;
+}
+
+.orange{
+    color:#ea580c;
+}
+
+.blue{
+    color:#2563eb;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    z-index:5000;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:100%;
+    max-width:430px;
+    background:#fff;
+    border-radius:20px;
+    padding:20px;
+    max-height:90vh;
+    overflow:auto;
+}
+
+.modal-title{
+    font-size:17px;
+    font-weight:800;
+    margin-bottom:8px;
+}
+
+.modal-text{
+    font-size:12px;
+    color:#64748b;
+    line-height:1.6;
+}
+
+.close-modal{
+    width:100%;
+    margin-top:13px;
+    border:none;
+    background:#f1f5f9;
+    padding:12px;
+    border-radius:12px;
+    font-weight:800;
+    color:#475569;
+    cursor:pointer;
+}
+
+textarea{
+    width:100%;
+    min-height:110px;
+    margin-top:12px;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:12px;
+    resize:none;
+    font-family:inherit;
+    outline:none;
+}
+
+.review-item{
+    padding:13px;
+    border-radius:13px;
+    margin-bottom:10px;
+    background:#f8fafc;
+    font-size:12px;
+    line-height:1.6;
+}
+
+.review-q{
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.review-correct{
+    color:#047857;
+}
+
+.review-wrong{
+    color:#dc2626;
+}
+
+.review-skip{
+    color:#d97706;
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+.login-icon{
+    width:55px;
+    height:55px;
+    border-radius:17px;
+    background:#f0ebff;
+    color:#5b21d6;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+    margin-bottom:13px;
+}
+
+/* =========================
+   HIDDEN
+========================= */
+
+.hidden{
+    display:none !important;
+}
+
+.loading{
+    text-align:center;
+    padding:25px;
+    color:#64748b;
+    font-size:12px;
+}
+
+.spinner{
+    width:24px;
+    height:24px;
+    border:3px solid #ddd6fe;
+    border-top-color:#5b21d6;
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+    margin:0 auto 10px;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg);}
+}
+
+@media(max-width:480px){
+
+    .header-title{
+        max-width:135px;
     }
 
-    body {
-      background-color: #0f172a;
-      color: #0f172a;
-      margin: 0;
-      padding-bottom: 60px;
+    .hero-title{
+        font-size:20px;
     }
 
-    .app-header {
-      background: #1e3a8a;
-      color: #ffffff;
-      padding: 20px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #1e40af;
+    .question{
+        font-size:16px;
     }
 
-    .app-header h1 {
-      font-size: 15px;
-      font-weight: 700;
+    .stats-grid{
+        gap:6px;
     }
 
-    .back-btn {
-      background: rgba(255, 255, 255, 0.1);
-      color: #ffffff;
-      border: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      text-decoration: none;
-    }
+}
 
-    .main-wrapper {
-      background-color: #ffffff;
-      border-top-left-radius: 28px;
-      border-top-right-radius: 28px;
-      padding: 20px 16px;
-      min-height: 90vh;
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-      margin-top: 10px;
-    }
-
-    .card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-    }
-
-    .btn-primary {
-      width: 100%;
-      background: #2563eb;
-      color: white;
-      font-weight: 700;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-      transition: background 0.2s;
-    }
-
-    .btn-primary:active {
-      background: #1d4ed8;
-    }
-
-    .btn-practice {
-      width: 100%;
-      background: #10b981;
-      color: white;
-      font-weight: 700;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-      margin-top: 10px;
-    }
-
-    .btn-secondary {
-      background: #f1f5f9;
-      color: #475569;
-      font-weight: 700;
-      padding: 10px 16px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-    }
-
-    .filter-btn {
-      background: #f1f5f9;
-      color: #475569;
-      border: 1px solid #cbd5e1;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .filter-btn.active {
-      background: #2563eb;
-      color: white;
-      border-color: #2563eb;
-    }
-
-    .option-card {
-      width: 100%;
-      text-align: left;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      background: #ffffff;
-      color: #1e293b;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.2s;
-    }
-
-    .option-card.selected {
-      background: #eff6ff;
-      border-color: #2563eb;
-      color: #1d4ed8;
-    }
-
-    .timer-badge {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #dc2626;
-      padding: 6px 10px;
-      border-radius: 10px;
-      font-family: monospace;
-      font-weight: 700;
-      font-size: 13px;
-    }
-
-    .coin-badge {
-      background: #f59e0b;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 800;
-      font-size: 14px;
-      box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
-      margin: 10px 0;
-    }
-
-    .lb-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #f8fafc;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #f1f5f9;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-card {
-      background: #ffffff;
-      width: 90%;
-      max-width: 400px;
-      border-radius: 24px;
-      padding: 24px 22px;
-      text-align: left;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transform: translateY(20px) scale(0.95);
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .modal-overlay.active .modal-card {
-      transform: translateY(0) scale(1);
-    }
-
-    /* =========================================
-       ACHIEVEMENT UNLOCKED POPUP
-       ========================================= */
-
-    #achievement-unlocked-popup {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.78);
-      backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10001;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      padding: 20px;
-    }
-
-    #achievement-unlocked-popup.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .achievement-popup-card {
-      width: 92%;
-      max-width: 360px;
-      background: #ffffff;
-      border-radius: 26px;
-      padding: 28px 22px 22px;
-      text-align: center;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
-      transform: translateY(20px) scale(0.94);
-      transition: transform 0.35s cubic-bezier(.34, 1.56, .64, 1);
-    }
-
-    #achievement-unlocked-popup.active .achievement-popup-card {
-      transform: translateY(0) scale(1);
-    }
-
-    .achievement-popup-icon {
-      width: 76px;
-      height: 76px;
-      margin: 0 auto 14px;
-      border-radius: 22px;
-      background: linear-gradient(135deg, #dbeafe, #eff6ff);
-      color: #2563eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 34px;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.18);
-    }
-
-    .achievement-popup-label {
-      font-size: 10px;
-      font-weight: 900;
-      letter-spacing: 1.2px;
-      color: #2563eb;
-      margin-bottom: 6px;
-    }
-
-    .achievement-popup-card h3 {
-      font-size: 20px;
-      font-weight: 900;
-      color: #0f172a;
-      margin-bottom: 4px;
-    }
-
-    .achievement-popup-card p {
-      font-size: 12px;
-      color: #64748b;
-      margin-bottom: 18px;
-    }
-
-    .achievement-popup-card button {
-      width: 100%;
-      border: 0;
-      border-radius: 12px;
-      padding: 12px;
-      background: #2563eb;
-      color: #fff;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    /* Achievement progress on result */
-    .exam-badge-progress {
-      background: linear-gradient(135deg, #eff6ff, #f8fafc);
-      border: 1px solid #bfdbfe;
-      border-radius: 14px;
-      padding: 12px;
-      margin-top: 12px;
-      text-align: left;
-    }
-
-    .exam-badge-progress-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 800;
-      color: #1e3a8a;
-      margin-bottom: 8px;
-    }
-
-    .exam-badge-progress-bar {
-      height: 8px;
-      background: #dbeafe;
-      border-radius: 99px;
-      overflow: hidden;
-    }
-
-    .exam-badge-progress-fill {
-      height: 100%;
-      width: 0%;
-      background: #2563eb;
-      border-radius: 99px;
-      transition: width 0.5s ease;
-    }
-
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-
-      #pdf-report-content,
-      #pdf-report-content * {
-        visibility: visible;
-      }
-
-      #pdf-report-content {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        background: #ffffff !important;
-        border: 2px solid #2563eb !important;
-        box-shadow: none !important;
-      }
-
-      .no-print {
-        display: none !important;
-      }
-    }
-
-    .hidden {
-      display: none !important;
-    }
-  </style>
+</style>
 </head>
 
 <body>
 
-  <!-- LOGIN WARNING MODAL -->
-  <div id="login-modal" class="modal-overlay">
-    <div class="modal-card" style="text-align: center;">
-      <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">
-        <i class="fa-solid fa-lock"></i>
-      </div>
+<!-- =========================
+     HEADER
+========================= -->
 
-      <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
-        लगइन आवश्यक छ!
-      </h3>
+<header class="app-header">
 
-      <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px;">
-        तपाईंले परीक्षा दिन वा कोइन/लिडरबोर्डमा नाम राख्नको लागि पहिले लगइन गर्नुपर्ने हुन्छ।
-      </p>
+    <div class="header-left">
 
-      <button onclick="redirectToLogin()" class="btn-primary" style="margin-bottom: 8px;">
-        लगइन पेजमा जानुहोस् 🚀
-      </button>
-
-      <a href="dashboard.html"
-        style="display: block; font-size: 12px; color: #64748b; font-weight: 700; text-decoration: none; padding: 6px;">
-        ड्यासबोर्डमा फर्कनुहोस्
-      </a>
-    </div>
-  </div>
-
-  <!-- INSUFFICIENT COINS MODAL -->
-  <div id="insufficientCoinsModal" class="modal-overlay">
-    <div class="modal-card" style="text-align: center;">
-
-      <div style="width: 56px; height: 56px; background: #fee2e2; color: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-      </div>
-
-      <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
-        अपर्याप्त कोइन!
-      </h3>
-
-      <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px;">
-        यो मोक टेस्ट दिनको लागि ५० कोइन आवश्यक पर्छ, तर तपाईंसँग पर्याप्त कोइन छैन।
-      </p>
-
-      <button onclick="closeModals()" class="btn-primary">
-        बुझें 👍
-      </button>
-    </div>
-  </div>
-
-  <!-- REPORT QUESTION MODAL -->
-  <div id="reportModal" class="modal-overlay">
-    <div class="modal-card">
-
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
-        <h3 style="font-size: 16px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
-          प्रश्न रिपोर्ट गर्नुहोस्
-        </h3>
-
-        <button onclick="closeReportModal()"
-          style="background: #f1f5f9; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center;">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">
-        यो प्रश्न वा उत्तरमा केही त्रुटि वा समस्या भए तल लेखी पठाउनुहोस्:
-      </p>
-
-      <textarea id="reportReason"
-        placeholder="उदा: सही उत्तर मिलेको छैन वा अप्सन गलत छ..."
-        style="min-height: 110px; margin-bottom: 16px; width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; outline: none; background: #f8fafc; color: #1e293b; font-family: inherit; resize: none;"></textarea>
-
-      <div style="display: flex; gap: 10px;">
-        <button onclick="submitQuestionReport()"
-          style="flex: 1; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px;">
-          पठाउनुहोस् 🚀
+        <button class="back-btn" onclick="goDashboard()">
+            <i class="fa-solid fa-arrow-left"></i>
         </button>
 
-        <button onclick="closeReportModal()"
-          style="flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px;">
-          रद्द गर्नुहोस्
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- REVIEW DETAILS MODAL -->
-  <div id="reviewModal" class="modal-overlay">
-    <div class="modal-card"
-      style="max-width: 500px; width: 95%; height: 85vh; display: flex; flex-direction: column; padding: 16px;">
-
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
-        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">
-          📋 उत्तर तथा समीक्षा
-        </h3>
-
-        <button onclick="closeReviewModal()"
-          style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
-        <button onclick="filterReview('all')" id="filter-all" class="filter-btn active">
-          सबै (All)
-        </button>
-
-        <button onclick="filterReview('right')" id="filter-right" class="filter-btn">
-          मिलाइएका (Right)
-        </button>
-
-        <button onclick="filterReview('wrong')" id="filter-wrong" class="filter-btn">
-          बिग्रिएका (Wrong)
-        </button>
-
-        <button onclick="filterReview('skipped')" id="filter-skipped" class="filter-btn">
-          छोडेका (Skipped)
-        </button>
-      </div>
-
-      <div id="review-container"
-        style="flex: 1; overflow-y: auto; padding-right: 4px; font-size: 11px;">
-      </div>
-
-      <button onclick="closeReviewModal()" class="btn-primary"
-        style="margin-top: 10px; padding: 10px;">
-        बन्द गर्नुहोस्
-      </button>
-    </div>
-  </div>
-
-  <!-- ACHIEVEMENT UNLOCKED POPUP -->
-  <div id="achievement-unlocked-popup">
-
-    <div class="achievement-popup-card">
-
-      <div class="achievement-popup-icon">
-        <i id="achievement-popup-icon" class="fa-solid fa-shield-halved"></i>
-      </div>
-
-      <div class="achievement-popup-label">
-        ACHIEVEMENT UNLOCKED!
-      </div>
-
-      <h3 id="achievement-popup-name">
-        परीक्षा योद्धा
-      </h3>
-
-      <p id="achievement-popup-en">
-        Exam Warrior
-      </p>
-
-      <button id="achievement-popup-close">
-        शानदार! 🎉
-      </button>
-
-    </div>
-  </div>
-
-  <!-- HEADER -->
-  <header class="app-header">
-
-    <a href="dashboard.html" class="back-btn">
-      <i class="fa-solid fa-arrow-left"></i>
-    </a>
-
-    <h1 id="header-title">
-      🇳🇵 Kharidar Mock Test 1
-    </h1>
-
-    <div style="display: flex; align-items: center; gap: 10px;">
-
-      <div style="background: rgba(255,255,255,0.15); padding: 5px 10px; border-radius: 12px; font-size: 12px; font-weight: 700;">
-        🪙 <span id="user-coin-balance">0</span>
-      </div>
-
-      <div id="timer-box" class="timer-badge hidden">
-        ⏳ <span id="time-left">45:00</span>
-      </div>
-
-    </div>
-  </header>
-
-  <main class="main-wrapper">
-
-    <!-- REGISTRATION & SET SCREEN -->
-    <div id="reg-screen" class="card">
-
-      <!-- RULES -->
-      <div style="background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%); border: 1px solid #bfdbfe; border-radius: 14px; padding: 16px; margin-bottom: 16px;">
-
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-
-          <div style="width: 32px; height: 32px; background: #2563eb; color: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px;">
-            <i class="fa-solid fa-shield-halved"></i>
-          </div>
-
-          <h2 style="font-size: 15px; font-weight: 800; color: #1e3a8a;">
-            परीक्षा निर्देशिका तथा नियमहरू
-          </h2>
-
+        <div class="header-title" id="header-title">
+            🇳🇵 Mock Exam
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+    </div>
 
-          <div style="background: #ffffff; padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 10px; color: #64748b; font-weight: 700;">
-              प्रवेश शुल्क
-            </div>
+    <div class="header-right">
 
-            <div style="font-size: 13px; font-weight: 800; color: #dc2626;">
-              <i class="fa-solid fa-coins"></i> ५० कोइन काटिने
-            </div>
-          </div>
-
-          <div style="background: #ffffff; padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 10px; color: #64748b; font-weight: 700;">
-              निर्धारित समय
-            </div>
-
-            <div style="font-size: 13px; font-weight: 800; color: #2563eb;">
-              <i class="fa-regular fa-clock"></i> ४५ मिनेट
-            </div>
-          </div>
-
-          <div style="background: #ffffff; padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 10px; color: #64748b; font-weight: 700;">
-              सही उत्तर
-            </div>
-
-            <div style="font-size: 13px; font-weight: 800; color: #059669;">
-              <i class="fa-solid fa-circle-check"></i> +२ अंक
-            </div>
-          </div>
-
-          <div style="background: #ffffff; padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 10px; color: #64748b; font-weight: 700;">
-              गलत उत्तर (Negative)
-            </div>
-
-            <div style="font-size: 13px; font-weight: 800; color: #dc2626;">
-              <i class="fa-solid fa-circle-xmark"></i> -०.४ अंक (२०%)
-            </div>
-          </div>
-
+        <div class="coin-pill">
+            🪙 <span id="user-coin-balance">0</span>
         </div>
 
-        <!-- REWARD -->
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px;">
-
-          <p style="font-size: 11px; font-weight: 800; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
-            <i class="fa-solid fa-award" style="color: #f59e0b;"></i>
-            नतिजा अनुसार कोइन पुरस्कार प्रणाली:
-          </p>
-
-          <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11px;">
-
-            <div style="display: flex; justify-content: space-between; padding: 3px 6px; background: #f8fafc; border-radius: 6px;">
-              <span style="color: #475569; font-weight: 600;">⭐ ९०% वा सोभन्दा बढी (90%+)</span>
-              <span style="color: #d97706; font-weight: 800;">+५० कोइन 🪙</span>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; padding: 3px 6px; background: #f8fafc; border-radius: 6px;">
-              <span style="color: #475569; font-weight: 600;">⭐ ८०% देखि ८९% सम्म (80%+)</span>
-              <span style="color: #d97706; font-weight: 800;">+४० कोइन 🪙</span>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; padding: 3px 6px; background: #f8fafc; border-radius: 6px;">
-              <span style="color: #475569; font-weight: 600;">⭐ ७०% देखि ७९% सम्म (70%+)</span>
-              <span style="color: #d97706; font-weight: 800;">+३० कोइन 🪙</span>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; padding: 3px 6px; background: #f8fafc; border-radius: 6px;">
-              <span style="color: #475569; font-weight: 600;">⭐ ६०% देखि ६९% सम्म (60%+)</span>
-              <span style="color: #d97706; font-weight: 800;">+२० कोइन 🪙</span>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; padding: 3px 6px; background: #f8fafc; border-radius: 6px;">
-              <span style="color: #475569; font-weight: 600;">⭐ ५०% देखि ५९% सम्म (50%+)</span>
-              <span style="color: #d97706; font-weight: 800;">+१० कोइन 🪙</span>
-            </div>
-
-          </div>
+        <div class="timer hidden" id="timer-box">
+            <i class="fa-regular fa-clock"></i>
+            <span id="timer">45:00</span>
         </div>
 
-      </div>
+    </div>
 
-      <!-- USER -->
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+</header>
 
-        <div>
-          <p style="font-size: 11px; color: #64748b; font-weight: 600;">
-            लगइन गरिएको प्रयोगकर्ता
-          </p>
 
-          <p id="profile-display-name"
-            style="font-size: 15px; font-weight: 800; color: #1e293b;">
-            चेक गर्दैछ...
-          </p>
+<div class="container">
+
+<!-- =====================================================
+     REGISTRATION / HOME
+===================================================== -->
+
+<section id="reg-screen">
+
+    <div class="card">
+
+        <div class="exam-badge">
+            <i class="fa-solid fa-bolt"></i>
+            <span id="set-badge-title">🎯 परीक्षा सेट</span>
         </div>
 
-        <i class="fa-solid fa-user-check"
-          style="color: #2563eb; font-size: 20px;"></i>
-      </div>
+        <h1 class="hero-title">
+            Mock Examination
+        </h1>
 
-      <!-- SET -->
-      <div id="set-badge-title"
-        style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 13px; margin-bottom: 16px;">
-        🎯 Kharidar Mock Test 1
-      </div>
-
-      <!-- ALREADY GIVEN -->
-      <div id="already-given-box"
-        class="hidden"
-        style="background: #fef2f2; border: 1px solid #fecaca; padding: 14px; border-radius: 12px; margin-bottom: 16px; text-align: center;">
-
-        <p style="color: #dc2626; font-weight: 800; font-size: 13px; margin-bottom: 4px;">
-          🚫 तपाईंले यो परीक्षा पहिले नै दिसक्नुभएको छ!
+        <p class="subtitle">
+            वास्तविक Loksewa परीक्षा जस्तै वातावरणमा आफ्नो तयारी जाँच गर्नुहोस्।
         </p>
 
-        <p style="color: #7f1d1d; font-size: 11px; margin-bottom: 10px;">
-          तपाईं अभ्यास मोड प्रयोग गर्न सक्नुहुन्छ (कोइन काटिने वा थपिने छैन)।
-        </p>
+        <div class="rules">
 
-        <button onclick="startPracticeMode()" class="btn-practice">
-          अभ्यास गर्नुहोस् (Practice Mode) 💡
-        </button>
-      </div>
-
-      <button id="start-exam-btn"
-        onclick="validateAndStartExam()"
-        class="btn-primary">
-        परीक्षा सुरु गर्नुहोस् (50 Coins) 🚀
-      </button>
-
-      <!-- LEADERBOARD -->
-      <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 16px;">
-
-        <h3 style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">
-          🏆 लिडरबोर्ड
-        </h3>
-
-        <div id="home-leaderboard"></div>
-
-      </div>
-    </div>
-
-    <!-- EXAM SCREEN -->
-    <div id="exam-screen" class="card hidden">
-
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 12px;">
-
-        <span id="q-tracker"
-          style="background: #f1f5f9; color: #334155; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">
-          Question 1
-        </span>
-
-        <span id="mode-badge"
-          style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
-          Live Exam
-        </span>
-
-      </div>
-
-      <h3 id="exam-question"
-        style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.5; margin-bottom: 14px;">
-        Loading...
-      </h3>
-
-      <div id="exam-options"></div>
-
-      <div style="margin-top: 12px;">
-
-        <button onclick="openReportModal()"
-          style="background: #fee2e2; color: #991b1b; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-
-          <i class="fa-solid fa-triangle-exclamation"></i>
-          यो प्रश्न रिपोर्ट गर्नुहोस्
-
-        </button>
-
-      </div>
-
-      <div style="display: flex; justify-content: space-between; padding-top: 14px; border-top: 1px solid #f1f5f9; margin-top: 14px;">
-
-        <button onclick="prevExamQuestion()"
-          id="prev-btn"
-          class="btn-secondary">
-          ⬅️ अघिल्लो
-        </button>
-
-        <button onclick="nextExamQuestion()"
-          id="next-btn"
-          class="btn-primary"
-          style="width: auto; padding: 10px 20px;">
-          अर्को ➡️
-        </button>
-
-      </div>
-    </div>
-
-    <!-- RESULT SCREEN -->
-    <div id="result-screen" class="hidden">
-
-      <div id="pdf-report-content"
-        class="card"
-        style="border: 2px solid #2563eb; border-radius: 20px; text-align: center; padding: 24px 16px; margin-bottom: 16px; background: #ffffff;">
-
-        <div style="font-size: 28px; color: #2563eb; margin-bottom: 4px;">
-          <i class="fa-solid fa-award"></i>
-        </div>
-
-        <h2 id="report-main-title"
-          style="font-size: 18px; font-weight: 800; color: #1e3a8a;">
-          LOKSEWAQUEST CERTIFICATE
-        </h2>
-
-        <p style="font-size: 11px; color: #64748b; margin-top: 2px;">
-          परीक्षा सफलतापूर्वक सम्पन्न भएको छ।
-        </p>
-
-        <div style="margin: 14px 0;">
-          <div class="coin-badge" id="rep-coins">
-            🪙 0 Coins पाउनुभयो
-          </div>
-        </div>
-
-        <div style="margin: 12px 0; border-top: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1; padding: 10px 0;">
-
-          <p id="rep-name"
-            style="font-size: 15px; color: #0f172a; font-weight: 800;">
-          </p>
-
-          <p id="rep-set"
-            style="font-size: 12px; color: #2563eb; font-weight: 700; margin-top: 2px;">
-          </p>
-
-          <p id="rep-time-info"
-            style="font-size: 11px; color: #64748b; margin-top: 4px;">
-          </p>
-
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; margin-bottom: 12px;">
-
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px;">
-            <p style="font-size: 10px; color: #64748b;">सही</p>
-            <p id="rep-correct" style="font-size: 14px; font-weight: 800; color: #059669;">0</p>
-          </div>
-
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px;">
-            <p style="font-size: 10px; color: #64748b;">गलत</p>
-            <p id="rep-wrong" style="font-size: 14px; font-weight: 800; color: #dc2626;">0</p>
-          </div>
-
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px;">
-            <p style="font-size: 10px; color: #64748b;">छोडेको</p>
-            <p id="rep-skipped" style="font-size: 14px; font-weight: 800; color: #d97706;">0</p>
-          </div>
-
-          <div style="background: #f8fafc; padding: 8px 4px; border-radius: 10px;">
-            <p style="font-size: 10px; color: #64748b;">कुल अंक</p>
-            <p id="rep-score" style="font-size: 14px; font-weight: 800; color: #2563eb;">0</p>
-          </div>
-
-        </div>
-
-        <div id="status-message-box"
-          style="padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 700; margin-bottom: 14px;">
-        </div>
-
-        <!-- BADGE PROGRESS -->
-        <div id="exam-badge-progress-box" class="exam-badge-progress hidden">
-
-          <div class="exam-badge-progress-title">
-            <i class="fa-solid fa-shield-halved"></i>
-
-            <span>
-              परीक्षा योद्धा — <span id="exam-badge-count">0/5</span>
-            </span>
-          </div>
-
-          <div class="exam-badge-progress-bar">
-            <div id="exam-badge-progress-fill"
-              class="exam-badge-progress-fill">
+            <div class="rule">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>कुल समय: <b>45 मिनेट</b></span>
             </div>
-          </div>
 
-          <div id="exam-badge-progress-text"
-            style="font-size: 10px; color: #64748b; margin-top: 6px; text-align: center;">
-            ५ वटा Live Exam पूरा गर्नुहोस्
-          </div>
+            <div class="rule">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>सही उत्तर: <b>+2 अंक</b></span>
+            </div>
+
+            <div class="rule">
+                <i class="fa-solid fa-circle-xmark"></i>
+                <span>गलत उत्तर: <b>-0.4 अंक</b></span>
+            </div>
+
+            <div class="rule">
+                <i class="fa-solid fa-forward"></i>
+                <span>छोडेको प्रश्नमा <b>अंक काटिँदैन</b></span>
+            </div>
+
+            <div class="rule">
+                <i class="fa-solid fa-coins"></i>
+                <span>Live Exam सुरु गर्न <b>50 coins</b> लाग्नेछ</span>
+            </div>
+
+            <div class="rule">
+                <i class="fa-solid fa-rotate"></i>
+                <span>पहिले दिइसकेको परीक्षा फेरि <b>Practice Mode</b> मा गर्न सकिन्छ</span>
+            </div>
 
         </div>
 
-        <button onclick="openReviewModal()"
-          class="btn-secondary"
-          style="width: 100%; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; padding: 10px; margin-top: 12px;">
-          📋 उत्तर तथा समीक्षा हेर्नुहोस् (View Solutions)
+        <div id="login-warning" class="notice warning-notice hidden">
+            Mock Exam सुरु गर्न पहिले login गर्नुहोस्।
+        </div>
+
+        <div id="user-box" class="user-box hidden">
+
+            <div class="user-label">
+                LOGGED IN AS
+            </div>
+
+            <div class="user-email" id="logged-user-email">
+                Loading...
+            </div>
+
+        </div>
+
+        <div id="already-given-box" class="notice success-notice hidden">
+            तपाईंले यो परीक्षा पहिले नै दिनुभएको छ।
+            अब यो <b>Practice Mode</b> मा खुल्नेछ।
+        </div>
+
+        <div id="exam-loading" class="loading">
+            <div class="spinner"></div>
+            परीक्षा तयार हुँदैछ...
+        </div>
+
+        <button
+            id="start-exam-btn"
+            class="primary-btn hidden"
+            onclick="startExam()">
+
+            🚀 परीक्षा सुरु गर्नुहोस्
+
         </button>
-
-      </div>
-
-      <!-- RESULT BUTTONS -->
-      <div style="display: flex; gap: 8px; margin-bottom: 16px;" class="no-print">
-
-        <button onclick="downloadPDF()"
-          style="width: 50%; background: #059669; color: white; font-weight: 700; padding: 12px; border-radius: 12px; border: none; cursor: pointer; font-size: 13px;">
-          📥 प्रिन्ट / PDF
-        </button>
-
-        <button onclick="location.href='dashboard.html'"
-          class="btn-primary"
-          style="width: 50%;">
-          🔄 ड्यासबोर्ड
-        </button>
-
-      </div>
-
-      <!-- LEADERBOARD -->
-      <div class="card no-print">
-
-        <h3 style="font-size: 12px; font-weight: 800; color: #2563eb; margin-bottom: 8px;">
-          🏆 लिडरबोर्ड
-        </h3>
-
-        <div id="result-leaderboard"></div>
-
-      </div>
 
     </div>
 
-  </main>
 
-  <script type="module">
+    <!-- HOME LEADERBOARD -->
 
-    /* =========================================================
-       FIREBASE
-       ========================================================= */
+    <div class="card leaderboard-card">
 
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        <div class="section-title">
+            🏆 Leaderboard
+        </div>
 
-    import {
-      getAuth,
-      onAuthStateChanged,
-      setPersistence,
-      browserSessionPersistence
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        <div class="subtitle" style="margin-bottom:8px;">
+            यस परीक्षा सेटमा उत्कृष्ट प्रदर्शन
+        </div>
 
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      updateDoc,
-      increment,
-      collection,
-      addDoc,
-      serverTimestamp,
-      runTransaction
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        <div id="home-leaderboard">
+
+            <div class="loading">
+                Loading leaderboard...
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-      authDomain: "loksewaquest-227b6.firebaseapp.com",
-      projectId: "loksewaquest-227b6",
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",
-      messagingSenderId: "779234903809",
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-    };
+<!-- =====================================================
+     EXAM SCREEN
+===================================================== -->
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+<section id="exam-screen" class="hidden">
 
-    setPersistence(auth, browserSessionPersistence).catch((error) => {
-      console.error("Persistence Error:", error);
-    });
+    <div class="card">
+
+        <div class="exam-progress-wrap">
+
+            <div class="progress-top">
+
+                <span id="question-counter">
+                    प्रश्न 1 / 1
+                </span>
+
+                <span id="progress-percent">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    id="progress-bar">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="mode-badge" id="mode-badge">
+            LIVE EXAM
+        </div>
+
+        <div class="question-number">
+            QUESTION
+        </div>
+
+        <div
+            class="question"
+            id="question-text">
+        </div>
+
+        <div
+            class="options"
+            id="options-container">
+        </div>
+
+        <button
+            class="report-btn"
+            onclick="openReportModal()">
+
+            <i class="fa-solid fa-flag"></i>
+            प्रश्नमा समस्या रिपोर्ट गर्नुहोस्
+
+        </button>
+
+        <div class="exam-actions">
+
+            <button
+                class="prev-btn"
+                id="prev-btn"
+                onclick="previousQuestion()">
+
+                <i class="fa-solid fa-arrow-left"></i>
+                पछाडि
+
+            </button>
+
+            <button
+                class="next-btn"
+                id="next-btn"
+                onclick="nextQuestion()">
+
+                अर्को
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
 
 
-    /* =========================================================
-       SUPABASE
-       QUESTIONS ARE STILL FETCHED FROM SUPABASE
-       ========================================================= */
+<!-- =====================================================
+     RESULT SCREEN
+===================================================== -->
 
-    const SUPABASE_URL =
-      'https://edyirdedkiarguvurpxq.supabase.co';
+<section id="result-screen" class="hidden">
 
-    const SUPABASE_ANON_KEY =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+    <div class="card">
 
-    const supabaseClient =
-      window.supabase.createClient(
+        <div class="result-score">
+
+            <div class="score-circle">
+
+                <div
+                    class="score-value"
+                    id="final-score">
+                    0
+                </div>
+
+                <div class="score-label">
+                    SCORE
+                </div>
+
+            </div>
+
+            <div class="result-title">
+                परीक्षा सम्पन्न भयो 🎉
+            </div>
+
+            <div
+                class="result-sub"
+                id="result-message">
+                राम्रो प्रयास!
+            </div>
+
+        </div>
+
+
+        <div class="stats-grid">
+
+            <div class="stat">
+
+                <div
+                    class="stat-value green"
+                    id="correct-count">
+                    0
+                </div>
+
+                <div class="stat-label">
+                    सही
+                </div>
+
+            </div>
+
+            <div class="stat">
+
+                <div
+                    class="stat-value red"
+                    id="wrong-count">
+                    0
+                </div>
+
+                <div class="stat-label">
+                    गलत
+                </div>
+
+            </div>
+
+            <div class="stat">
+
+                <div
+                    class="stat-value orange"
+                    id="skipped-count">
+                    0
+                </div>
+
+                <div class="stat-label">
+                    छोडिएको
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="notice success-notice" id="reward-box">
+            🎁 Reward calculation हुँदैछ...
+        </div>
+
+
+        <div class="button-row">
+
+            <button
+                class="secondary-btn"
+                onclick="openReviewModal()">
+
+                <i class="fa-solid fa-list-check"></i>
+                Review
+
+            </button>
+
+            <button
+                class="secondary-btn"
+                onclick="printResult()">
+
+                <i class="fa-solid fa-file-pdf"></i>
+                Report
+
+            </button>
+
+        </div>
+
+        <button
+            class="primary-btn"
+            style="margin-top:10px;"
+            onclick="goDashboard()">
+
+            <i class="fa-solid fa-house"></i>
+            Dashboard
+
+        </button>
+
+    </div>
+
+
+    <!-- RESULT LEADERBOARD -->
+
+    <div class="card leaderboard-card">
+
+        <div class="section-title">
+            🏆 Leaderboard
+        </div>
+
+        <div id="result-leaderboard">
+
+            <div class="loading">
+                Loading leaderboard...
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<!-- =====================================================
+     LOGIN MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="login-modal">
+
+    <div class="modal-box">
+
+        <div class="login-icon">
+            <i class="fa-solid fa-lock"></i>
+        </div>
+
+        <div class="modal-title">
+            Login आवश्यक छ
+        </div>
+
+        <div class="modal-text">
+            Mock Exam मा सहभागी हुन आफ्नो LoksewaQuest account मा login गर्नुहोस्।
+        </div>
+
+        <button
+            class="primary-btn"
+            style="margin-top:15px;"
+            onclick="goLogin()">
+
+            Login गर्नुहोस्
+
+        </button>
+
+        <button
+            class="close-modal"
+            onclick="closeModal('login-modal')">
+
+            बन्द गर्नुहोस्
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     INSUFFICIENT COINS MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="coins-modal">
+
+    <div class="modal-box">
+
+        <div class="login-icon">
+            🪙
+        </div>
+
+        <div class="modal-title">
+            Coins पर्याप्त छैन
+        </div>
+
+        <div class="modal-text">
+
+            Live Mock Exam सुरु गर्न
+            <b>50 coins</b>
+            आवश्यक छ।
+
+            <br><br>
+
+            तपाईंको balance:
+            <b id="modal-coin-balance">0</b>
+
+        </div>
+
+        <button
+            class="close-modal"
+            onclick="closeModal('coins-modal')">
+
+            बन्द गर्नुहोस्
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     REPORT MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="report-modal">
+
+    <div class="modal-box">
+
+        <div class="modal-title">
+            🚩 प्रश्न Report गर्नुहोस्
+        </div>
+
+        <div class="modal-text">
+            यो प्रश्नमा के समस्या छ?
+        </div>
+
+        <textarea
+            id="report-text"
+            placeholder="जस्तै: Answer गलत छ, question अस्पष्ट छ...">
+        </textarea>
+
+        <button
+            class="primary-btn"
+            style="margin-top:10px;"
+            onclick="submitReport()">
+
+            Report पठाउनुहोस्
+
+        </button>
+
+        <button
+            class="close-modal"
+            onclick="closeModal('report-modal')">
+
+            Cancel
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     REVIEW MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="review-modal">
+
+    <div class="modal-box">
+
+        <div class="modal-title">
+            📋 Answer Review
+        </div>
+
+        <div
+            id="review-container"
+            style="margin-top:14px;">
+        </div>
+
+        <button
+            class="close-modal"
+            onclick="closeModal('review-modal')">
+
+            बन्द गर्नुहोस्
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+    'https://edyirdedkiarguvurpxq.supabase.co';
+
+const SUPABASE_ANON_KEY =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeXJpZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+
+const supabaseClient =
+    window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_ANON_KEY
-      );
+    );
 
 
-    /* =========================================================
-       EXAM SET
-       ========================================================= */
+/* =========================================================
+   FIREBASE
+========================================================= */
 
-    const urlParams =
-      new URLSearchParams(window.location.search);
+const firebaseConfig = {
 
-    const activeSet =
-      urlParams.get('set') || 'kharidar_mocktest1';
+    apiKey:
+        "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
 
-    const displayNameSet =
-      activeSet === 'kharidar_mocktest1'
+    authDomain:
+        "loksewaquest-227b6.firebaseapp.com",
+
+    projectId:
+        "loksewaquest-227b6",
+
+    storageBucket:
+        "loksewaquest-227b6.firebasestorage.app",
+
+    messagingSenderId:
+        "779234903809",
+
+    appId:
+        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
+/* =========================================================
+   EXAM SET
+========================================================= */
+
+const urlParams =
+    new URLSearchParams(window.location.search);
+
+const activeSet =
+    urlParams.get('set') ||
+    'kharidar_mocktest1';
+
+const displayNameSet =
+    activeSet === 'kharidar_mocktest1'
         ? 'Kharidar Mock Test 1'
         : activeSet;
 
 
-    document.getElementById('set-badge-title').innerText =
-      `🎯 परीक्षा सेट: ${displayNameSet}`;
+/* =========================================================
+   STATE
+========================================================= */
 
-    document.getElementById('header-title').innerText =
-      `🇳🇵 ${displayNameSet}`;
+let currentUser = null;
 
+let userEmail = '';
 
-    /* =========================================================
-       USER / EXAM STATE
-       ========================================================= */
+let userCoins = 0;
 
-    let currentUserUid = null;
-    let candidateName = '';
-    let userEmail = '';
-    let userCoins = 0;
+let examQuestions = [];
 
-    let examQuestions = [];
-    let currentIdx = 0;
-    let userAnswers = {};
+let currentQuestionIndex = 0;
 
-    let timerInterval;
-    let timeLeftSeconds = 45 * 60;
+let userAnswers = [];
 
-    let isPracticeMode = false;
-    let evaluatedQuestionsList = [];
+let examStarted = false;
 
-    /* Prevent duplicate completion */
-    let submitInProgress = false;
-    let completionRecorded = false;
+let examFinished = false;
 
+let practiceMode = false;
 
-    /* =========================================================
-       EXAM BADGE CONFIG
-       ========================================================= */
+let timerInterval = null;
 
-    const EXAM_BADGE = {
-      id: 'exam_warrior',
-      name: 'परीक्षा योद्धा',
-      english: 'Exam Warrior',
-      icon: 'fa-shield-halved',
-      target: 5
-    };
+let remainingSeconds = 45 * 60;
+
+let submittedToLeaderboard = false;
+
+let reportQuestionIndex = null;
 
 
-    /* =========================================================
-       ARRAY SHUFFLE
-       ========================================================= */
+/* =========================================================
+   DOM
+========================================================= */
 
-    function shuffleArray(array) {
-      let arr = [...array];
+const regScreen =
+    document.getElementById('reg-screen');
 
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+const examScreen =
+    document.getElementById('exam-screen');
+
+const resultScreen =
+    document.getElementById('result-screen');
+
+const startBtn =
+    document.getElementById('start-exam-btn');
+
+
+/* =========================================================
+   HELPER
+========================================================= */
+
+function escapeHtml(value){
+
+    if(value === null || value === undefined){
+        return '';
+    }
+
+    return String(value)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+}
+
+
+function shuffleArray(array){
+
+    const arr = [...array];
+
+    for(let i = arr.length - 1; i > 0; i--){
+
+        const j =
+            Math.floor(Math.random() * (i + 1));
 
         [arr[i], arr[j]] =
-          [arr[j], arr[i]];
-      }
-
-      return arr;
+            [arr[j], arr[i]];
     }
 
+    return arr;
+}
 
-    /* =========================================================
-       ACHIEVEMENT POPUP
-       ========================================================= */
 
-    function showAchievementUnlocked(badge) {
+function normalizeText(value){
 
-      let popup =
+    return String(value ?? '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g,' ');
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+document.getElementById('set-badge-title')
+    .innerText =
+    `🎯 परीक्षा सेट: ${displayNameSet}`;
+
+document.getElementById('header-title')
+    .innerText =
+    `🇳🇵 ${displayNameSet}`;
+
+
+/* =========================================================
+   FIREBASE AUTH
+========================================================= */
+
+auth.onAuthStateChanged(async user => {
+
+    currentUser = user;
+
+    if(user){
+
+        userEmail =
+            user.email || '';
+
         document.getElementById(
-          "achievement-unlocked-popup"
+            'logged-user-email'
+        ).innerText =
+            userEmail;
+
+        document.getElementById(
+            'user-box'
+        ).classList.remove('hidden');
+
+        document.getElementById(
+            'login-warning'
+        ).classList.add('hidden');
+
+        await loadUserCoins(user.uid);
+
+        await checkIfExamAlreadyGiven(userEmail);
+
+    }else{
+
+        userEmail = '';
+
+        document.getElementById(
+            'login-warning'
+        ).classList.remove('hidden');
+
+        document.getElementById(
+            'user-box'
+        ).classList.add('hidden');
+
+        startBtn.classList.add('hidden');
+
+    }
+
+    finishInitialLoading();
+
+});
+
+
+/* =========================================================
+   LOAD USER COINS
+========================================================= */
+
+async function loadUserCoins(uid){
+
+    try{
+
+        const snap =
+            await db
+                .collection('users')
+                .doc(uid)
+                .get();
+
+        if(snap.exists){
+
+            const data = snap.data() || {};
+
+            userCoins =
+                Number(
+                    data.coins ??
+                    data.coinBalance ??
+                    0
+                );
+
+        }else{
+
+            userCoins = 0;
+
+        }
+
+        updateCoinUI();
+
+    }catch(error){
+
+        console.error(
+            '❌ FIREBASE COIN ERROR:',
+            error
         );
 
-      document.getElementById(
-        "achievement-popup-icon"
-      ).className =
-        `fa-solid ${badge.icon}`;
+        userCoins = 0;
 
-      document.getElementById(
-        "achievement-popup-name"
-      ).innerText =
-        badge.name;
+        updateCoinUI();
 
-      document.getElementById(
-        "achievement-popup-en"
-      ).innerText =
-        badge.english;
-
-      popup.classList.add("active");
     }
 
+}
 
-    function closeAchievementPopup() {
 
-      const popup =
-        document.getElementById(
-          "achievement-unlocked-popup"
-        );
-
-      if (popup) {
-        popup.classList.remove("active");
-      }
-    }
-
+function updateCoinUI(){
 
     document.getElementById(
-      "achievement-popup-close"
-    ).onclick =
-      closeAchievementPopup;
+        'user-coin-balance'
+    ).innerText =
+    userCoins;
+
+    document.getElementById(
+        'modal-coin-balance'
+    ).innerText =
+    userCoins;
+
+}
 
 
-    /* =========================================================
-       UPDATE BADGE PROGRESS UI
-       ========================================================= */
+/* =========================================================
+   INITIAL LOADING
+========================================================= */
 
-    function updateExamBadgeUI(completedCount) {
+let questionsLoaded = false;
 
-      const box =
+let authLoaded = false;
+
+function finishInitialLoading(){
+
+    authLoaded = true;
+
+    if(questionsLoaded){
+
         document.getElementById(
-          'exam-badge-progress-box'
-        );
+            'exam-loading'
+        ).classList.add('hidden');
 
-      const countEl =
-        document.getElementById(
-          'exam-badge-count'
-        );
+        prepareStartButton();
 
-      const fill =
-        document.getElementById(
-          'exam-badge-progress-fill'
-        );
-
-      const text =
-        document.getElementById(
-          'exam-badge-progress-text'
-        );
-
-      if (!box) return;
-
-      box.classList.remove('hidden');
-
-      const safeCount =
-        Math.min(
-          Math.max(Number(completedCount) || 0, 0),
-          EXAM_BADGE.target
-        );
-
-      const percentage =
-        (safeCount / EXAM_BADGE.target) * 100;
-
-      countEl.innerText =
-        `${safeCount}/${EXAM_BADGE.target}`;
-
-      fill.style.width =
-        `${percentage}%`;
-
-      if (safeCount >= EXAM_BADGE.target) {
-
-        text.innerText =
-          '🏆 परीक्षा योद्धा Badge Unlock भयो!';
-
-      } else {
-
-        const remaining =
-          EXAM_BADGE.target - safeCount;
-
-        text.innerText =
-          `${remaining} वटा Live Exam बाँकी`;
-      }
     }
 
-
-    /* =========================================================
-       RECORD LIVE EXAM COMPLETION
-       
-       IMPORTANT:
-       Practice Mode does NOT call this function.
-       ========================================================= */
-
-    async function recordLiveExamCompletion() {
-
-      if (!currentUserUid) {
-        return {
-          success: false,
-          newlyUnlocked: false,
-          completedCount: 0
-        };
-      }
-
-      const userRef =
-        doc(
-          db,
-          "users",
-          currentUserUid
-        );
-
-      try {
-
-        const result =
-          await runTransaction(
-            db,
-            async (transaction) => {
-
-              const snap =
-                await transaction.get(userRef);
-
-              const data =
-                snap.exists()
-                  ? snap.data()
-                  : {};
-
-              /*
-               * Support old field too.
-               */
-              const currentCompleted =
-                Number(
-                  data.completedExams ??
-                  data.examsCompleted ??
-                  0
-                );
-
-              const newCompleted =
-                currentCompleted + 1;
+}
 
 
-              /*
-               * Existing badges preserve गर्ने
-               */
-              const existingBadges =
-                data.badges &&
-                typeof data.badges === 'object'
-                  ? data.badges
-                  : {};
+/* =========================================================
+   LOAD QUESTIONS FROM SUPABASE
+========================================================= */
 
-              const oldBadge =
-                existingBadges[
-                  EXAM_BADGE.id
-                ];
+async function loadQuestions(){
 
-
-              const alreadyUnlocked =
-                oldBadge === true ||
-                oldBadge?.unlocked === true;
-
-
-              const updatedBadges =
-                {
-                  ...existingBadges
-                };
-
-
-              let newlyUnlocked =
-                false;
-
-
-              /* =========================
-                 BADGE UNLOCK
-                 ========================= */
-
-              if (
-                newCompleted >=
-                EXAM_BADGE.target
-              ) {
-
-                newlyUnlocked =
-                  !alreadyUnlocked;
-
-
-                let unlockedAt;
-
-                if (
-                  oldBadge &&
-                  typeof oldBadge === 'object' &&
-                  oldBadge.unlockedAt
-                ) {
-
-                  unlockedAt =
-                    oldBadge.unlockedAt;
-
-                } else {
-
-                  unlockedAt =
-                    new Date().toISOString();
-                }
-
-
-                updatedBadges[
-                  EXAM_BADGE.id
-                ] = {
-
-                  unlocked: true,
-
-                  progress:
-                    EXAM_BADGE.target,
-
-                  target:
-                    EXAM_BADGE.target,
-
-                  unlockedAt:
-                    unlockedAt
-                };
-
-
-              } else {
-
-                updatedBadges[
-                  EXAM_BADGE.id
-                ] = {
-
-                  ...(oldBadge &&
-                    typeof oldBadge === 'object'
-                      ? oldBadge
-                      : {}),
-
-                  unlocked: false,
-
-                  progress:
-                    newCompleted,
-
-                  target:
-                    EXAM_BADGE.target
-                };
-              }
-
-
-              /*
-               * Save completion + badge
-               */
-              transaction.set(
-                userRef,
-                {
-                  completedExams:
-                    newCompleted,
-
-                  lastExamCompletedAt:
-                    serverTimestamp(),
-
-                  badges:
-                    updatedBadges
-
-                },
-                {
-                  merge: true
-                }
-              );
-
-
-              return {
-                newCompleted:
-                  newCompleted,
-
-                newlyUnlocked:
-                  newlyUnlocked
-              };
-            }
-          );
-
+    try{
 
         console.log(
-          "Exam completion recorded:",
-          result
+            '📚 Loading questions for:',
+            activeSet
         );
 
-
-        return {
-          success: true,
-          newlyUnlocked:
-            result.newlyUnlocked,
-          completedCount:
-            result.newCompleted
-        };
-
-
-      } catch (error) {
-
-        console.error(
-          "Exam completion/badge error:",
-          error
-        );
-
-        return {
-          success: false,
-          newlyUnlocked: false,
-          completedCount: 0
-        };
-      }
-    }
-
-
-    /* =========================================================
-       AUTH
-       ========================================================= */
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      () => {
-
-        onAuthStateChanged(
-          auth,
-          async (user) => {
-
-            if (user) {
-
-              currentUserUid =
-                user.uid;
-
-              candidateName =
-                user.displayName ||
-                user.email.split('@')[0];
-
-              userEmail =
-                user.email;
-
-
-              document.getElementById(
-                'profile-display-name'
-              ).innerText =
-                candidateName;
-
-
-              await fetchUserCoins(
-                user.uid
-              );
-
-
-              await checkIfExamAlreadyGiven(
-                userEmail
-              );
-
-            } else {
-
-              document.getElementById(
-                'login-modal'
-              ).classList.add('active');
-
-
-              document.getElementById(
-                'profile-display-name'
-              ).innerText =
-                'लगइन गरिएको छैन';
-            }
-          }
-        );
-
-
-        fetchLeaderboard();
-      }
-    );
-
-
-    /* =========================================================
-       LOGIN
-       ========================================================= */
-
-    window.redirectToLogin =
-      function() {
-
-        window.location.href =
-          'login.html';
-      };
-
-
-    /* =========================================================
-       FETCH USER COINS
-       ========================================================= */
-
-    async function fetchUserCoins(uid) {
-
-      try {
-
-        const userDocRef =
-          doc(
-            db,
-            "users",
-            uid
-          );
-
-        const userSnap =
-          await getDoc(
-            userDocRef
-          );
-
-
-        if (userSnap.exists()) {
-
-          userCoins =
-            Number(
-              userSnap.data().coins || 0
-            );
-
-
-          document.getElementById(
-            'user-coin-balance'
-          ).innerText =
-            userCoins;
-        }
-
-      } catch (err) {
-
-        console.error(
-          "Error fetching coins:",
-          err
-        );
-      }
-    }
-
-
-    /* =========================================================
-       CHECK ALREADY GIVEN THIS SET
-       ========================================================= */
-
-    async function checkIfExamAlreadyGiven(
-      email
-    ) {
-
-      if (!email) return;
-
-
-      const { data, error } =
-        await supabaseClient
-          .from('exam_leaderboard')
-          .select('*')
-          .eq('username', email)
-          .eq('set_name', activeSet);
-
-
-      if (error) {
-
-        console.error(
-          "Exam check error:",
-          error
-        );
-
-        return;
-      }
-
-
-      if (
-        data &&
-        data.length > 0
-      ) {
-
-        document.getElementById(
-          'start-exam-btn'
-        ).classList.add('hidden');
-
-
-        document.getElementById(
-          'already-given-box'
-        ).classList.remove('hidden');
-
-      } else {
-
-        document.getElementById(
-          'start-exam-btn'
-        ).classList.remove('hidden');
-
-
-        document.getElementById(
-          'already-given-box'
-        ).classList.add('hidden');
-      }
-    }
-
-
-    /* =========================================================
-       VALIDATE + START LIVE EXAM
-       ========================================================= */
-
-    window.validateAndStartExam =
-      async function() {
-
-        if (
-          !currentUserUid ||
-          !userEmail
-        ) {
-
-          document.getElementById(
-            'login-modal'
-          ).classList.add('active');
-
-          return;
-        }
-
-
-        if (userCoins < 50) {
-
-          document.getElementById(
-            'insufficientCoinsModal'
-          ).classList.add('active');
-
-          return;
-        }
-
-
-        try {
-
-          const userDocRef =
-            doc(
-              db,
-              "users",
-              currentUserUid
-            );
-
-
-          /*
-           * 50 coins काट्ने
-           */
-          await updateDoc(
-            userDocRef,
-            {
-              coins:
-                increment(-50)
-            }
-          );
-
-
-          /*
-           * Coin history
-           */
-          await addDoc(
-            collection(
-              db,
-              "users",
-              currentUserUid,
-              "coin_history"
-            ),
-            {
-              amount: -50,
-              type: 'spend',
-              source: 'exam_fee',
-              description:
-                `मोक टेस्ट (${displayNameSet}) परीक्षा शुल्क`,
-              created_at:
-                serverTimestamp()
-            }
-          );
-
-
-          await fetchUserCoins(
-            currentUserUid
-          );
-
-
-          startExam(false);
-
-
-        } catch (err) {
-
-          console.error(
-            "Coin deduction error:",
-            err
-          );
-
-          alert(
-            "कोइन काट्नमा समस्या आयो। कृपया फेरि प्रयास गर्नुहोस्।"
-          );
-        }
-      };
-
-
-    /* =========================================================
-       START EXAM
-       
-       QUESTIONS REMAIN FROM SUPABASE
-       ========================================================= */
-
-    window.startExam =
-      async function(
-        practice = false
-      ) {
-
-        isPracticeMode =
-          practice;
-
-
-        try {
-
-          /*
-           * IMPORTANT:
-           * Questions are fetched from Supabase.
-           */
-          let {
+        const {
             data,
             error
-          } =
-            await supabaseClient
-              .from('quizzes')
-              .select('*')
-              .ilike(
+        } =
+        await supabaseClient
+            .from('quizzes')
+            .select('*')
+            .ilike(
                 'topic',
                 activeSet
-              );
-
-
-          if (
-            error ||
-            !data ||
-            data.length === 0
-          ) {
-
-            alert(
-              'यो सेटमा कुनै प्रश्न फेला परेन!'
             );
+
+        if(error){
+
+            console.error(
+                '❌ QUESTION LOAD ERROR:',
+                error
+            );
+
+            document.getElementById(
+                'exam-loading'
+            ).innerHTML =
+            `
+                <div style="color:#dc2626;">
+                    प्रश्न load हुन सकेन।
+                    <br><br>
+                    ${escapeHtml(error.message)}
+                </div>
+            `;
 
             return;
-          }
 
+        }
 
-          /*
-           * Questions shuffle
-           */
-          let randomizedQuestions =
-            shuffleArray(data);
-
-
-          /*
-           * Options shuffle
-           */
-          examQuestions =
-            randomizedQuestions.map(
-              q => {
-
-                let options =
-                  q.options ||
-                  [
-                    q.option_a,
-                    q.option_b,
-                    q.option_c,
-                    q.option_d
-                  ];
-
-
-                options =
-                  options.filter(
-                    opt =>
-                      opt !== null &&
-                      opt !== undefined &&
-                      opt !== ""
-                  );
-
-
-                return {
-
-                  ...q,
-
-                  shuffledOptions:
-                    shuffleArray(
-                      options
-                    ),
-
-                  correctAnswer:
-                    q.answer ||
-                    q.correct_answer
-                };
-              }
-            );
-
-
-          /*
-           * Reset exam state
-           */
-          currentIdx = 0;
-          userAnswers = {};
-          evaluatedQuestionsList = [];
-
-
-          /*
-           * Reset submit guard for new page session
-           */
-          submitInProgress = false;
-          completionRecorded = false;
-
-
-          document.getElementById(
-            'reg-screen'
-          ).classList.add('hidden');
-
-
-          document.getElementById(
-            'exam-screen'
-          ).classList.remove('hidden');
-
-
-          if (!isPracticeMode) {
+        if(!data || data.length === 0){
 
             document.getElementById(
-              'timer-box'
-            ).classList.remove('hidden');
+                'exam-loading'
+            ).innerHTML =
+            `
+                <div style="color:#dc2626;">
+                    यो set का प्रश्नहरू भेटिएनन्।
+                    <br><br>
+                    Set: <b>${escapeHtml(activeSet)}</b>
+                </div>
+            `;
+
+            return;
 
-
-            document.getElementById(
-              'mode-badge'
-            ).innerText =
-              `${displayNameSet} Live Exam`;
-
-
-            timeLeftSeconds =
-              45 * 60;
-
-
-            document.getElementById(
-              'time-left'
-            ).innerText =
-              '45:00';
-
-
-            startTimer();
-
-          } else {
-
-            document.getElementById(
-              'timer-box'
-            ).classList.add('hidden');
-
-
-            document.getElementById(
-              'mode-badge'
-            ).innerText =
-              `${displayNameSet} Practice Mode`;
-          }
-
-
-          loadExamQuestion();
-
-
-        } catch (err) {
-
-          console.error(
-            "Start exam error:",
-            err
-          );
-
-          alert(
-            'त्रुटि: ' +
-            err.message
-          );
-        }
-      };
-
-
-    /* =========================================================
-       PRACTICE MODE
-       ========================================================= */
-
-    window.startPracticeMode =
-      function() {
-
-        startExam(true);
-      };
-
-
-    /* =========================================================
-       TIMER
-       ========================================================= */
-
-    function startTimer() {
-
-      clearInterval(
-        timerInterval
-      );
-
-
-      timerInterval =
-        setInterval(
-          () => {
-
-            if (
-              timeLeftSeconds <= 0
-            ) {
-
-              clearInterval(
-                timerInterval
-              );
-
-
-              submitExam();
-
-              return;
-            }
-
-
-            timeLeftSeconds--;
-
-
-            let m =
-              Math.floor(
-                timeLeftSeconds / 60
-              );
-
-
-            let s =
-              timeLeftSeconds % 60;
-
-
-            document.getElementById(
-              'time-left'
-            ).innerText =
-              `${m}:${s < 10 ? '0' : ''}${s}`;
-
-          },
-          1000
-        );
-    }
-
-
-    /* =========================================================
-       LOAD QUESTION
-       ========================================================= */
-
-    window.loadExamQuestion =
-      function() {
-
-        const q =
-          examQuestions[
-            currentIdx
-          ];
-
-
-        if (!q) return;
-
-
-        document.getElementById(
-          'q-tracker'
-        ).innerText =
-          `Question ${currentIdx + 1} of ${examQuestions.length}`;
-
-
-        document.getElementById(
-          'exam-question'
-        ).innerHTML =
-          q.question ||
-          q.question_text ||
-          '';
-
-
-        const container =
-          document.getElementById(
-            'exam-options'
-          );
-
-
-        container.innerHTML =
-          '';
-
-
-        q.shuffledOptions
-          .forEach(
-            opt => {
-
-              const isSelected =
-                userAnswers[
-                  currentIdx
-                ] === opt;
-
-
-              const btn =
-                document.createElement(
-                  'button'
-                );
-
-
-              btn.className =
-                `option-card ${
-                  isSelected
-                    ? 'selected'
-                    : ''
-                }`;
-
-
-              btn.innerHTML =
-                `<i class="fa-regular ${
-                  isSelected
-                    ? 'fa-square-check'
-                    : 'fa-square'
-                }"></i>
-                 <span>${opt}</span>`;
-
-
-              btn.onclick =
-                () => {
-
-                  userAnswers[
-                    currentIdx
-                  ] = opt;
-
-                  loadExamQuestion();
-                };
-
-
-              container.appendChild(
-                btn
-              );
-            }
-          );
-
-
-        if (
-          window.renderMathInElement
-        ) {
-
-          renderMathInElement(
-            document.body,
-            {
-              delimiters: [
-                {
-                  left: '$',
-                  right: '$',
-                  display: false
-                }
-              ],
-              throwOnError: false
-            }
-          );
-        }
-
-
-        document.getElementById(
-          'prev-btn'
-        ).style.display =
-          currentIdx === 0
-            ? 'none'
-            : 'block';
-
-
-        document.getElementById(
-          'next-btn'
-        ).innerText =
-          currentIdx ===
-          examQuestions.length - 1
-            ? 'परीक्षा बुझाउने (Submit)'
-            : 'अर्को ➡️';
-      };
-
-
-    /* =========================================================
-       PREVIOUS
-       ========================================================= */
-
-    window.prevExamQuestion =
-      function() {
-
-        if (
-          currentIdx > 0
-        ) {
-
-          currentIdx--;
-
-          loadExamQuestion();
-        }
-      };
-
-
-    /* =========================================================
-       NEXT / SUBMIT
-       ========================================================= */
-
-    window.nextExamQuestion =
-      function() {
-
-        if (
-          currentIdx <
-          examQuestions.length - 1
-        ) {
-
-          currentIdx++;
-
-          loadExamQuestion();
-
-        } else {
-
-          if (
-            confirm(
-              "के तपाईं परीक्षा बुझाउन (Submit) चाहनुहुन्छ?"
-            )
-          ) {
-
-            if (!isPracticeMode) {
-
-              clearInterval(
-                timerInterval
-              );
-            }
-
-            submitExam();
-          }
-        }
-      };
-
-
-    /* =========================================================
-       SUBMIT EXAM
-       ========================================================= */
-
-    async function submitExam() {
-
-      /*
-       * Prevent duplicate submit.
-       */
-      if (
-        submitInProgress ||
-        completionRecorded
-      ) {
-
-        console.log(
-          "Submit already processed."
-        );
-
-        return;
-      }
-
-
-      submitInProgress = true;
-
-
-      try {
-
-        clearInterval(
-          timerInterval
-        );
-
-
-        document.getElementById(
-          'exam-screen'
-        ).classList.add('hidden');
-
-
-        document.getElementById(
-          'timer-box'
-        ).classList.add('hidden');
-
-
-        document.getElementById(
-          'result-screen'
-        ).classList.remove('hidden');
-
-
-        let correct = 0;
-        let wrong = 0;
-        let skipped = 0;
-
-
-        evaluatedQuestionsList =
-          [];
-
-
-        /* =========================
-           EVALUATE QUESTIONS
-           ========================= */
-
-        examQuestions.forEach(
-          (q, idx) => {
-
-            const userAns =
-              userAnswers[idx];
-
-            const correctAns =
-              q.correctAnswer;
-
-
-            const isCorrect =
-              userAns &&
-              correctAns &&
-              userAns.trim() ===
-              correctAns.trim();
-
-
-            let status =
-              'skipped';
-
-
-            if (!userAns) {
-
-              skipped++;
-
-              status =
-                'skipped';
-
-            } else if (
-              isCorrect
-            ) {
-
-              correct++;
-
-              status =
-                'right';
-
-            } else {
-
-              wrong++;
-
-              status =
-                'wrong';
-            }
-
-
-            evaluatedQuestionsList.push(
-              {
-                index: idx + 1,
-
-                question:
-                  q.question ||
-                  q.question_text,
-
-                userAns:
-                  userAns ||
-                  'छोडेको',
-
-                correctAns:
-                  correctAns,
-
-                explanation:
-                  q.explanation ||
-                  '',
-
-                status:
-                  status
-              }
-            );
-          }
-        );
-
-
-        /* =========================
-           SCORE
-           ========================= */
-
-        let totalScore =
-          (correct * 2) -
-          (wrong * 0.4);
-
-
-        if (
-          totalScore < 0
-        ) {
-
-          totalScore = 0;
-        }
-
-
-        let maxPossibleScore =
-          examQuestions.length * 2;
-
-
-        let percentage =
-          maxPossibleScore > 0
-            ? (
-                totalScore /
-                maxPossibleScore
-              ) * 100
-            : 0;
-
-
-        /* =========================
-           COIN REWARD
-           ========================= */
-
-        let earnedCoins = 0;
-
-
-        if (
-          percentage >= 90
-        ) {
-
-          earnedCoins = 50;
-
-        } else if (
-          percentage >= 80
-        ) {
-
-          earnedCoins = 40;
-
-        } else if (
-          percentage >= 70
-        ) {
-
-          earnedCoins = 30;
-
-        } else if (
-          percentage >= 60
-        ) {
-
-          earnedCoins = 20;
-
-        } else if (
-          percentage >= 50
-        ) {
-
-          earnedCoins = 10;
-        }
-
-
-        const completionDate =
-          new Date()
-            .toLocaleString();
-
-
-        /* =========================
-           PRACTICE MODE
-           ========================= */
-
-        if (
-          isPracticeMode
-        ) {
-
-          document.getElementById(
-            'report-main-title'
-          ).innerText =
-            'LOKSEWAQUEST PRACTICE REPORT';
-
-
-          document.getElementById(
-            'rep-set'
-          ).innerText =
-            `परीक्षा सेट: ${displayNameSet} (अभ्यास मोड)`;
-
-
-          earnedCoins = 0;
-
-
-          /*
-           * IMPORTANT:
-           * Practice does NOT increase
-           * completedExams.
-           */
-          await loadExistingExamBadgeProgress();
-
-        }
-
-
-        /* =========================
-           LIVE EXAM
-           ========================= */
-
-        else {
-
-          document.getElementById(
-            'report-main-title'
-          ).innerText =
-            'LOKSEWAQUEST CERTIFICATE';
-
-
-          document.getElementById(
-            'rep-set'
-          ).innerText =
-            `परीक्षा सेट: ${displayNameSet}`;
-
-
-          /* =========================
-             ADD REWARD COINS
-             ========================= */
-
-          if (
-            earnedCoins > 0 &&
-            currentUserUid
-          ) {
-
-            const userDocRef =
-              doc(
-                db,
-                "users",
-                currentUserUid
-              );
-
-
-            await updateDoc(
-              userDocRef,
-              {
-                coins:
-                  increment(
-                    earnedCoins
-                  )
-              }
-            );
-
-
-            await addDoc(
-              collection(
-                db,
-                "users",
-                currentUserUid,
-                "coin_history"
-              ),
-              {
-                amount:
-                  earnedCoins,
-
-                type:
-                  'earn',
-
-                source:
-                  'exam_reward',
-
-                description:
-                  `मोक टेस्ट (${displayNameSet}) मा ${percentage.toFixed(0)}% ल्याए बापत`,
-
-                created_at:
-                  serverTimestamp()
-              }
-            );
-          }
-
-
-          /* =========================
-             LEADERBOARD
-             ========================= */
-
-          let leaderboardSuccess =
-            false;
-
-
-          if (userEmail) {
-
-            const {
-              error:
-                leaderboardError
-            } =
-              await supabaseClient
-                .from(
-                  'exam_leaderboard'
-                )
-                .insert(
-                  [{
-                    username:
-                      userEmail,
-
-                    score:
-                      Number(
-                        totalScore.toFixed(1)
-                      ),
-
-                    total_questions:
-                      examQuestions.length,
-
-                    set_name:
-                      activeSet,
-
-                    coins:
-                      earnedCoins
-                  }]
-                );
-
-
-            if (
-              leaderboardError
-            ) {
-
-              console.error(
-                "Leaderboard insert error:",
-                leaderboardError
-              );
-
-            } else {
-
-              leaderboardSuccess =
-                true;
-            }
-          }
-
-
-          /* =========================
-             EXAM BADGE COMPLETION
-             ========================= */
-
-          /*
-           * Only record completion after
-           * successful leaderboard insert.
-           */
-          if (
-            leaderboardSuccess &&
-            currentUserUid &&
-            !completionRecorded
-          ) {
-
-            const badgeResult =
-              await recordLiveExamCompletion();
-
-
-            if (
-              badgeResult.success
-            ) {
-
-              completionRecorded =
-                true;
-
-
-              updateExamBadgeUI(
-                badgeResult.completedCount
-              );
-
-
-              /*
-               * Show popup only when
-               * newly unlocked.
-               */
-              if (
-                badgeResult.newlyUnlocked
-              ) {
-
-                setTimeout(
-                  () => {
-
-                    showAchievementUnlocked(
-                      EXAM_BADGE
-                    );
-
-                  },
-                  400
-                );
-              }
-
-            } else {
-
-              /*
-               * Leaderboard already saved,
-               * but Firestore badge failed.
-               */
-              console.warn(
-                "Exam badge progress could not be saved."
-              );
-            }
-
-          } else if (
-            !leaderboardSuccess
-          ) {
-
-            console.warn(
-              "Exam completion not recorded because leaderboard insert failed."
-            );
-          }
-
-        }
-
-
-        /* =========================
-           STATUS MESSAGE
-           ========================= */
-
-        const statusBox =
-          document.getElementById(
-            'status-message-box'
-          );
-
-
-        if (
-          percentage < 50
-        ) {
-
-          statusBox.style.background =
-            '#fef2f2';
-
-          statusBox.style.border =
-            '1px solid #fecaca';
-
-          statusBox.style.color =
-            '#dc2626';
-
-          statusBox.innerText =
-            'असाफल! अभ्यास अझै मजबुत गर्नुहोला। 🎯';
-
-        } else {
-
-          statusBox.style.background =
-            '#f0fdf4';
-
-          statusBox.style.border =
-            '1px solid #bbf7d0';
-
-          statusBox.style.color =
-            '#16a34a';
-
-          statusBox.innerText =
-            'धेरै राम्रो! प्रगति जारी राख्नुहोला। 🌟';
-        }
-
-
-        /* =========================
-           RESULT DATA
-           ========================= */
-
-        document.getElementById(
-          'rep-name'
-        ).innerText =
-          candidateName;
-
-
-        document.getElementById(
-          'rep-time-info'
-        ).innerText =
-          `सम्पन्न समय: ${completionDate}`;
-
-
-        document.getElementById(
-          'rep-correct'
-        ).innerText =
-          correct;
-
-
-        document.getElementById(
-          'rep-wrong'
-        ).innerText =
-          wrong;
-
-
-        document.getElementById(
-          'rep-skipped'
-        ).innerText =
-          skipped;
-
-
-        document.getElementById(
-          'rep-score'
-        ).innerText =
-          totalScore.toFixed(1);
-
-
-        document.getElementById(
-          'rep-coins'
-        ).innerText =
-          `🪙 ${earnedCoins} Coins पाउनुभयो`;
-
-
-        /* =========================
-           REVIEW
-           ========================= */
-
-        renderReviewList(
-          'all'
-        );
-
-
-        fetchLeaderboard();
-
-
-        if (
-          currentUserUid
-        ) {
-
-          fetchUserCoins(
-            currentUserUid
-          );
         }
 
 
         /*
-         * Refresh already-given state
+         * Convert database rows into a flexible format.
+         * This supports common column names so existing
+         * Supabase question structure does not need to change.
          */
-        if (
-          !isPracticeMode &&
-          userEmail
-        ) {
 
-          await checkIfExamAlreadyGiven(
-            userEmail
-          );
+        examQuestions =
+            data.map((row,index) => {
+
+                let options = [];
+
+                /*
+                 * Array based options
+                 */
+
+                if(Array.isArray(row.options)){
+
+                    options =
+                        row.options.map(
+                            (x,i) => ({
+                                text:
+                                    typeof x === 'object'
+                                        ? (
+                                            x.text ??
+                                            x.option ??
+                                            x.value ??
+                                            ''
+                                        )
+                                        : x,
+                                originalIndex:i
+                            })
+                        );
+
+                }
+
+                /*
+                 * JSON string options
+                 */
+
+                else if(
+                    typeof row.options === 'string'
+                ){
+
+                    try{
+
+                        const parsed =
+                            JSON.parse(row.options);
+
+                        if(Array.isArray(parsed)){
+
+                            options =
+                                parsed.map(
+                                    (x,i) => ({
+                                        text:
+                                            typeof x === 'object'
+                                                ? (
+                                                    x.text ??
+                                                    x.option ??
+                                                    x.value ??
+                                                    ''
+                                                )
+                                                : x,
+                                        originalIndex:i
+                                    })
+                                );
+
+                        }
+
+                    }catch(e){
+
+                        // ignore invalid JSON
+
+                    }
+
+                }
+
+
+                /*
+                 * option_a / option_b / option_c / option_d
+                 */
+
+                if(options.length === 0){
+
+                    const possibleOptions = [
+                        row.option_a,
+                        row.option_b,
+                        row.option_c,
+                        row.option_d
+                    ];
+
+                    options =
+                        possibleOptions
+                            .filter(
+                                x =>
+                                    x !== null &&
+                                    x !== undefined &&
+                                    String(x).trim() !== ''
+                            )
+                            .map(
+                                (x,i) => ({
+                                    text:String(x),
+                                    originalIndex:i
+                                })
+                            );
+
+                }
+
+
+                /*
+                 * Other possible option naming
+                 */
+
+                if(options.length === 0){
+
+                    const possibleOptions = [
+                        row.option1,
+                        row.option2,
+                        row.option3,
+                        row.option4
+                    ];
+
+                    options =
+                        possibleOptions
+                            .filter(
+                                x =>
+                                    x !== null &&
+                                    x !== undefined &&
+                                    String(x).trim() !== ''
+                            )
+                            .map(
+                                (x,i) => ({
+                                    text:String(x),
+                                    originalIndex:i
+                                })
+                            );
+
+                }
+
+
+                /*
+                 * Correct answer
+                 */
+
+                const correctAnswer =
+                    row.correct_answer ??
+                    row.correctAnswer ??
+                    row.answer ??
+                    row.correct_option ??
+                    row.correctOption ??
+                    row.correct;
+
+
+                /*
+                 * Determine correct option index.
+                 */
+
+                let correctIndex = -1;
+
+
+                if(
+                    typeof correctAnswer === 'number'
+                ){
+
+                    correctIndex =
+                        correctAnswer;
+
+                }
+
+
+                else if(
+                    typeof correctAnswer === 'string'
+                ){
+
+                    const ca =
+                        correctAnswer.trim();
+
+                    /*
+                     * A/B/C/D
+                     */
+
+                    if(/^[ABCD]$/i.test(ca)){
+
+                        correctIndex =
+                            ca.toUpperCase()
+                              .charCodeAt(0) - 65;
+
+                    }
+
+                    /*
+                     * 0/1/2/3
+                     */
+
+                    else if(
+                        /^[0-3]$/.test(ca)
+                    ){
+
+                        correctIndex =
+                            Number(ca);
+
+                    }
+
+                    /*
+                     * Correct answer text
+                     */
+
+                    else{
+
+                        const found =
+                            options.findIndex(
+                                opt =>
+                                    normalizeText(
+                                        opt.text
+                                    ) ===
+                                    normalizeText(
+                                        ca
+                                    )
+                            );
+
+                        if(found >= 0){
+
+                            correctIndex = found;
+
+                        }
+
+                    }
+
+                }
+
+
+                /*
+                 * If original correct answer is
+                 * text but options were not found,
+                 * keep -1 instead of guessing.
+                 */
+
+                const questionText =
+                    row.question ??
+                    row.question_text ??
+                    row.questionText ??
+                    row.text ??
+                    `Question ${index + 1}`;
+
+
+                return {
+
+                    ...row,
+
+                    question:
+                        questionText,
+
+                    options:
+                        shuffleArray(options),
+
+                    correctAnswer:
+                        correctAnswer,
+
+                    correctIndex:
+
+                        /*
+                         * We need to remap the answer
+                         * after shuffling below.
+                         */
+
+                        correctIndex,
+
+                    explanation:
+                        row.explanation ??
+                        row.explain ??
+                        ''
+
+                };
+
+            });
+
+
+        /*
+         * IMPORTANT:
+         * Because options are shuffled, remap correct answer
+         * based on the actual answer text/index.
+         */
+
+        examQuestions =
+            examQuestions.map(question => {
+
+                const originalOptions =
+                    question.options;
+
+                /*
+                 * If correctAnswer is text,
+                 * find the shuffled option.
+                 */
+
+                if(
+                    typeof question.correctAnswer ===
+                    'string'
+                ){
+
+                    const answer =
+                        question.correctAnswer.trim();
+
+                    let idx =
+                        originalOptions.findIndex(
+                            opt =>
+                                normalizeText(opt.text) ===
+                                normalizeText(answer)
+                        );
+
+                    if(idx >= 0){
+
+                        question.correctIndex = idx;
+
+                    }else if(
+                        /^[ABCD]$/i.test(answer)
+                    ){
+
+                        const target =
+                            answer.toUpperCase()
+                                  .charCodeAt(0)-65;
+
+                        /*
+                         * The originalIndex is retained
+                         * through the shuffle.
+                         */
+
+                        idx =
+                            originalOptions.findIndex(
+                                opt =>
+                                    opt.originalIndex ===
+                                    target
+                            );
+
+                        question.correctIndex =
+                            idx;
+
+                    }else if(
+                        /^[0-3]$/.test(answer)
+                    ){
+
+                        const target =
+                            Number(answer);
+
+                        idx =
+                            originalOptions.findIndex(
+                                opt =>
+                                    opt.originalIndex ===
+                                    target
+                            );
+
+                        question.correctIndex =
+                            idx;
+
+                    }
+
+                }
+
+                else if(
+                    typeof question.correctAnswer ===
+                    'number'
+                ){
+
+                    const idx =
+                        originalOptions.findIndex(
+                            opt =>
+                                opt.originalIndex ===
+                                question.correctAnswer
+                        );
+
+                    if(idx >= 0){
+
+                        question.correctIndex =
+                            idx;
+
+                    }
+
+                }
+
+                return question;
+
+            });
+
+
+        /*
+         * Shuffle questions.
+         */
+
+        examQuestions =
+            shuffleArray(examQuestions);
+
+
+        userAnswers =
+            new Array(
+                examQuestions.length
+            ).fill(null);
+
+
+        questionsLoaded = true;
+
+
+        console.log(
+            `✅ ${examQuestions.length} questions loaded`
+        );
+
+
+        /*
+         * Load leaderboard immediately.
+         */
+
+        await fetchLeaderboard();
+
+
+        if(authLoaded){
+
+            finishInitialLoading();
+
         }
 
 
-      } catch (error) {
+    }catch(error){
 
         console.error(
-          "Submit error:",
-          error
+            '❌ QUESTION SYSTEM ERROR:',
+            error
+        );
+
+        document.getElementById(
+            'exam-loading'
+        ).innerHTML =
+        `
+            <div style="color:#dc2626;">
+                प्रश्न load गर्दा error भयो।
+                <br><br>
+                ${escapeHtml(error.message)}
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   PREPARE START BUTTON
+========================================================= */
+
+function prepareStartButton(){
+
+    if(!currentUser){
+
+        startBtn.classList.add('hidden');
+
+        return;
+
+    }
+
+    startBtn.classList.remove('hidden');
+
+    startBtn.innerHTML =
+        practiceMode
+            ? '📚 Practice सुरु गर्नुहोस्'
+            : '🚀 परीक्षा सुरु गर्नुहोस्';
+
+
+    document.getElementById(
+        'exam-loading'
+    ).classList.add('hidden');
+
+}
+
+
+/* =========================================================
+   CHECK PREVIOUS EXAM
+========================================================= */
+
+async function checkIfExamAlreadyGiven(email){
+
+    if(!email){
+
+        practiceMode = false;
+
+        return;
+
+    }
+
+    try{
+
+        /*
+         * Case-insensitive matching is used here.
+         */
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .from('exam_leaderboard')
+            .select('id,username,set_name,score')
+            .ilike(
+                'username',
+                email
+            )
+            .ilike(
+                'set_name',
+                activeSet
+            )
+            .limit(1);
+
+
+        if(error){
+
+            console.error(
+                '❌ PREVIOUS EXAM CHECK ERROR:',
+                error
+            );
+
+            /*
+             * Do not block exam because leaderboard
+             * permission might be unavailable.
+             */
+
+            practiceMode = false;
+
+            return;
+
+        }
+
+
+        if(data && data.length > 0){
+
+            practiceMode = true;
+
+            document.getElementById(
+                'already-given-box'
+            ).classList.remove('hidden');
+
+        }else{
+
+            practiceMode = false;
+
+        }
+
+        prepareStartButton();
+
+    }catch(error){
+
+        console.error(
+            '❌ CHECK EXAM ERROR:',
+            error
+        );
+
+        practiceMode = false;
+
+    }
+
+}
+
+
+/* =========================================================
+   START EXAM
+========================================================= */
+
+async function startExam(){
+
+    if(!currentUser){
+
+        document.getElementById(
+            'login-modal'
+        ).classList.add('show');
+
+        return;
+
+    }
+
+
+    if(!examQuestions.length){
+
+        alert('प्रश्नहरू अझै load भएका छैनन्।');
+
+        return;
+
+    }
+
+
+    /*
+     * Practice mode doesn't cost coins.
+     */
+
+    if(!practiceMode){
+
+        if(userCoins < 50){
+
+            document.getElementById(
+                'coins-modal'
+            ).classList.add('show');
+
+            return;
+
+        }
+
+
+        /*
+         * Deduct 50 coins.
+         */
+
+        const success =
+            await deductCoins(50);
+
+        if(!success){
+
+            alert(
+                'Coins काट्न सकिएन। फेरि प्रयास गर्नुहोस्।'
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    examStarted = true;
+
+    examFinished = false;
+
+    currentQuestionIndex = 0;
+
+    userAnswers =
+        new Array(
+            examQuestions.length
+        ).fill(null);
+
+    remainingSeconds =
+        45 * 60;
+
+
+    regScreen.classList.add('hidden');
+
+    resultScreen.classList.add('hidden');
+
+    examScreen.classList.remove('hidden');
+
+    document.getElementById(
+        'timer-box'
+    ).classList.remove('hidden');
+
+
+    document.getElementById(
+        'mode-badge'
+    ).innerText =
+        practiceMode
+            ? '📚 PRACTICE MODE'
+            : '🔴 LIVE EXAM';
+
+
+    renderQuestion();
+
+    startTimer();
+
+}
+
+
+/* =========================================================
+   DEDUCT COINS
+========================================================= */
+
+async function deductCoins(amount){
+
+    if(!currentUser){
+
+        return false;
+
+    }
+
+    try{
+
+        const userRef =
+            db.collection('users')
+              .doc(currentUser.uid);
+
+
+        const result =
+            await db.runTransaction(
+                async transaction => {
+
+                    const snap =
+                        await transaction.get(
+                            userRef
+                        );
+
+                    if(!snap.exists){
+
+                        throw new Error(
+                            'User document भेटिएन।'
+                        );
+
+                    }
+
+                    const data =
+                        snap.data() || {};
+
+                    const currentCoins =
+                        Number(
+                            data.coins ??
+                            data.coinBalance ??
+                            0
+                        );
+
+                    if(currentCoins < amount){
+
+                        throw new Error(
+                            'INSUFFICIENT_COINS'
+                        );
+
+                    }
+
+                    const newCoins =
+                        currentCoins - amount;
+
+
+                    transaction.update(
+                        userRef,
+                        {
+                            coins:newCoins
+                        }
+                    );
+
+
+                    return newCoins;
+
+                }
+            );
+
+
+        userCoins = Number(result);
+
+        updateCoinUI();
+
+        return true;
+
+
+    }catch(error){
+
+        console.error(
+            '❌ COIN DEDUCTION ERROR:',
+            error
+        );
+
+        if(
+            error.message ===
+            'INSUFFICIENT_COINS'
+        ){
+
+            document.getElementById(
+                'coins-modal'
+            ).classList.add('show');
+
+        }
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+function startTimer(){
+
+    clearInterval(timerInterval);
+
+    updateTimer();
+
+
+    timerInterval =
+        setInterval(() => {
+
+            remainingSeconds--;
+
+            updateTimer();
+
+
+            if(
+                remainingSeconds <= 0
+            ){
+
+                clearInterval(
+                    timerInterval
+                );
+
+                alert(
+                    '⏰ समय सकियो। परीक्षा submit हुँदैछ।'
+                );
+
+                finishExam();
+
+            }
+
+        },1000);
+
+}
+
+
+function updateTimer(){
+
+    const minutes =
+        Math.floor(
+            remainingSeconds / 60
+        );
+
+    const seconds =
+        remainingSeconds % 60;
+
+
+    document.getElementById(
+        'timer'
+    ).innerText =
+        String(minutes).padStart(2,'0') +
+        ':' +
+        String(seconds).padStart(2,'0');
+
+
+    if(remainingSeconds <= 300){
+
+        document.getElementById(
+            'timer-box'
+        ).style.background =
+            '#fee2e2';
+
+        document.getElementById(
+            'timer-box'
+        ).style.color =
+            '#dc2626';
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER QUESTION
+========================================================= */
+
+function renderQuestion(){
+
+    const q =
+        examQuestions[
+            currentQuestionIndex
+        ];
+
+    if(!q){
+
+        return;
+
+    }
+
+
+    const total =
+        examQuestions.length;
+
+    const number =
+        currentQuestionIndex + 1;
+
+
+    document.getElementById(
+        'question-counter'
+    ).innerText =
+        `प्रश्न ${number} / ${total}`;
+
+
+    const percent =
+        Math.round(
+            (number / total) * 100
+        );
+
+
+    document.getElementById(
+        'progress-percent'
+    ).innerText =
+        `${percent}%`;
+
+
+    document.getElementById(
+        'progress-bar'
+    ).style.width =
+        `${percent}%`;
+
+
+    document.getElementById(
+        'question-text'
+    ).innerHTML =
+        escapeHtml(
+            q.question
+        );
+
+
+    const container =
+        document.getElementById(
+            'options-container'
+        );
+
+    container.innerHTML = '';
+
+
+    const letters =
+        ['A','B','C','D','E','F'];
+
+
+    q.options.forEach(
+        (option,index) => {
+
+            const button =
+                document.createElement(
+                    'button'
+                );
+
+            button.className =
+                'option';
+
+
+            if(
+                userAnswers[
+                    currentQuestionIndex
+                ] === index
+            ){
+
+                button.classList.add(
+                    'selected'
+                );
+
+            }
+
+
+            button.innerHTML =
+            `
+                <span class="option-letter">
+                    ${letters[index] || index+1}
+                </span>
+
+                <span>
+                    ${escapeHtml(option.text)}
+                </span>
+            `;
+
+
+            button.onclick = () =>
+                selectAnswer(index);
+
+
+            container.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        'prev-btn'
+    ).disabled =
+        currentQuestionIndex === 0;
+
+
+    const nextBtn =
+        document.getElementById(
+            'next-btn'
+        );
+
+
+    if(
+        currentQuestionIndex ===
+        total - 1
+    ){
+
+        nextBtn.innerHTML =
+            'Submit परीक्षा <i class="fa-solid fa-check"></i>';
+
+    }else{
+
+        nextBtn.innerHTML =
+            'अर्को <i class="fa-solid fa-arrow-right"></i>';
+
+    }
+
+}
+
+
+/* =========================================================
+   SELECT ANSWER
+========================================================= */
+
+function selectAnswer(index){
+
+    userAnswers[
+        currentQuestionIndex
+    ] = index;
+
+    renderQuestion();
+
+}
+
+
+/* =========================================================
+   NEXT
+========================================================= */
+
+function nextQuestion(){
+
+    if(
+        currentQuestionIndex <
+        examQuestions.length - 1
+    ){
+
+        currentQuestionIndex++;
+
+        renderQuestion();
+
+    }else{
+
+        const confirmSubmit =
+            confirm(
+                'के तपाईं परीक्षा submit गर्न चाहनुहुन्छ?'
+            );
+
+        if(confirmSubmit){
+
+            finishExam();
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   PREVIOUS
+========================================================= */
+
+function previousQuestion(){
+
+    if(
+        currentQuestionIndex > 0
+    ){
+
+        currentQuestionIndex--;
+
+        renderQuestion();
+
+    }
+
+}
+
+
+/* =========================================================
+   FINISH EXAM
+========================================================= */
+
+async function finishExam(){
+
+    if(examFinished){
+
+        return;
+
+    }
+
+    examFinished = true;
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    /*
+     * Calculate result.
+     */
+
+    let correct = 0;
+
+    let wrong = 0;
+
+    let skipped = 0;
+
+
+    examQuestions.forEach(
+        (q,index) => {
+
+            const answer =
+                userAnswers[index];
+
+
+            if(
+                answer === null ||
+                answer === undefined
+            ){
+
+                skipped++;
+
+            }
+
+            else if(
+                answer === q.correctIndex
+            ){
+
+                correct++;
+
+            }
+
+            else{
+
+                wrong++;
+
+            }
+
+        }
+    );
+
+
+    const total =
+        examQuestions.length;
+
+
+    let totalScore =
+        (correct * 2) -
+        (wrong * 0.4);
+
+
+    if(totalScore < 0){
+
+        totalScore = 0;
+
+    }
+
+
+    totalScore =
+        Number(
+            totalScore.toFixed(1)
+        );
+
+
+    const percentage =
+        total > 0
+            ? (correct / total) * 100
+            : 0;
+
+
+    /*
+     * Practice mode doesn't reward coins
+     * and doesn't write leaderboard.
+     */
+
+    let earnedCoins = 0;
+
+
+    if(!practiceMode){
+
+        earnedCoins =
+            calculateReward(
+                percentage
+            );
+
+
+        if(earnedCoins > 0){
+
+            await addCoins(
+                earnedCoins
+            );
+
+        }
+
+    }
+
+
+    /*
+     * Save leaderboard ONLY for LIVE EXAM.
+     */
+
+    if(
+        !practiceMode &&
+        !submittedToLeaderboard
+    ){
+
+        submittedToLeaderboard = true;
+
+        await saveLeaderboard({
+            score:totalScore,
+            correct,
+            wrong,
+            skipped,
+            total
+        });
+
+
+        /*
+         * Exam Warrior badge / completion.
+         */
+
+        await markExamCompleted();
+
+    }
+
+
+    /*
+     * Show result.
+     */
+
+    showResult({
+        score:totalScore,
+        correct,
+        wrong,
+        skipped,
+        total,
+        percentage,
+        earnedCoins
+    });
+
+}
+
+
+/* =========================================================
+   REWARD
+========================================================= */
+
+function calculateReward(percentage){
+
+    if(percentage >= 90){
+
+        return 50;
+
+    }
+
+    if(percentage >= 80){
+
+        return 40;
+
+    }
+
+    if(percentage >= 70){
+
+        return 30;
+
+    }
+
+    if(percentage >= 60){
+
+        return 20;
+
+    }
+
+    if(percentage >= 50){
+
+        return 10;
+
+    }
+
+    return 0;
+
+}
+
+
+/* =========================================================
+   ADD COINS
+========================================================= */
+
+async function addCoins(amount){
+
+    if(
+        !currentUser ||
+        !amount
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const userRef =
+            db.collection('users')
+              .doc(currentUser.uid);
+
+
+        await db.runTransaction(
+            async transaction => {
+
+                const snap =
+                    await transaction.get(
+                        userRef
+                    );
+
+                if(!snap.exists){
+
+                    return;
+
+                }
+
+                const data =
+                    snap.data() || {};
+
+                const currentCoins =
+                    Number(
+                        data.coins ??
+                        data.coinBalance ??
+                        0
+                    );
+
+
+                transaction.update(
+                    userRef,
+                    {
+                        coins:
+                            currentCoins +
+                            amount
+                    }
+                );
+
+            }
+        );
+
+
+        userCoins += amount;
+
+        updateCoinUI();
+
+
+    }catch(error){
+
+        console.error(
+            '❌ REWARD COIN ERROR:',
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE LEADERBOARD
+========================================================= */
+
+async function saveLeaderboard(result){
+
+    if(!userEmail){
+
+        console.warn(
+            '⚠️ No email. Leaderboard skipped.'
+        );
+
+        return false;
+
+    }
+
+
+    /*
+     * IMPORTANT:
+     *
+     * Your exam_leaderboard table DOES NOT HAVE
+     * a coins column.
+     *
+     * Therefore coins are NOT inserted here.
+     */
+
+    const payload = {
+
+        username:
+            userEmail,
+
+        set_name:
+            activeSet,
+
+        score:
+            Number(result.score),
+
+        correct_count:
+            Number(result.correct),
+
+        wrong_count:
+            Number(result.wrong),
+
+        skipped_count:
+            Number(result.skipped),
+
+        total_questions:
+            Number(result.total)
+
+    };
+
+
+    console.log(
+        '📤 LEADERBOARD INSERT:',
+        payload
+    );
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .from('exam_leaderboard')
+            .insert([payload])
+            .select();
+
+
+        if(error){
+
+            console.error(
+                '❌ LEADERBOARD INSERT ERROR:',
+                error
+            );
+
+            console.error(
+                'CODE:',
+                error.code
+            );
+
+            console.error(
+                'MESSAGE:',
+                error.message
+            );
+
+            console.error(
+                'DETAILS:',
+                error.details
+            );
+
+            console.error(
+                'HINT:',
+                error.hint
+            );
+
+
+            /*
+             * Do not stop showing result.
+             */
+
+            return false;
+
+        }
+
+
+        console.log(
+            '✅ LEADERBOARD SAVED:',
+            data
+        );
+
+
+        /*
+         * Refresh leaderboard.
+         */
+
+        await fetchLeaderboard();
+
+        return true;
+
+
+    }catch(error){
+
+        console.error(
+            '❌ LEADERBOARD SYSTEM ERROR:',
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   FETCH LEADERBOARD
+========================================================= */
+
+async function fetchLeaderboard(){
+
+    console.log(
+        '🏆 Loading leaderboard:',
+        activeSet
+    );
+
+
+    const containers = [
+
+        document.getElementById(
+            'home-leaderboard'
+        ),
+
+        document.getElementById(
+            'result-leaderboard'
+        )
+
+    ];
+
+
+    try{
+
+        /*
+         * IMPORTANT:
+         *
+         * Use ilike instead of eq so
+         * Kharidar_mocktest1 / Kharidar_MockTest1
+         * style case differences don't hide results.
+         */
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .from('exam_leaderboard')
+            .select(`
+                id,
+                username,
+                set_name,
+                score,
+                correct_count,
+                wrong_count,
+                skipped_count,
+                total_questions,
+                created_at
+            `)
+            .ilike(
+                'set_name',
+                activeSet
+            )
+            .order(
+                'score',
+                {
+                    ascending:false
+                }
+            );
+
+
+        if(error){
+
+            console.error(
+                '❌ LEADERBOARD SELECT ERROR:',
+                error
+            );
+
+            console.error(
+                'CODE:',
+                error.code
+            );
+
+            console.error(
+                'MESSAGE:',
+                error.message
+            );
+
+            console.error(
+                'DETAILS:',
+                error.details
+            );
+
+            console.error(
+                'HINT:',
+                error.hint
+            );
+
+
+            containers.forEach(
+                container => {
+
+                    if(!container){
+
+                        return;
+
+                    }
+
+                    container.innerHTML =
+                    `
+                        <div class="empty-lb">
+                            <i class="fa-solid fa-triangle-exclamation"
+                               style="color:#dc2626;"></i>
+
+                            <br><br>
+
+                            Leaderboard load हुन सकेन।
+
+                            <br>
+
+                            <small>
+                                ${escapeHtml(
+                                    error.message ||
+                                    'Database error'
+                                )}
+                            </small>
+                        </div>
+                    `;
+
+                }
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            '🏆 LEADERBOARD DATA:',
+            data
+        );
+
+
+        containers.forEach(
+            container => {
+
+                if(!container){
+
+                    return;
+
+                }
+
+
+                container.innerHTML = '';
+
+
+                if(
+                    !data ||
+                    data.length === 0
+                ){
+
+                    container.innerHTML =
+                    `
+                        <div class="empty-lb">
+                            🏆 यस सेटको leaderboard
+                            मा अझै record छैन।
+                        </div>
+                    `;
+
+                    return;
+
+                }
+
+
+                data.forEach(
+                    (item,index) => {
+
+                        let name =
+                            item.username ||
+                            'Anonymous';
+
+
+                        if(
+                            name.includes('@')
+                        ){
+
+                            name =
+                                name.split('@')[0];
+
+                        }
+
+
+                        /*
+                         * Hide excessive long usernames.
+                         */
+
+                        name =
+                            name.length > 20
+                                ? name.substring(
+                                    0,
+                                    20
+                                  ) + '...'
+                                : name;
+
+
+                        let medal = '';
+
+                        if(index === 0){
+
+                            medal = '🥇';
+
+                        }else if(index === 1){
+
+                            medal = '🥈';
+
+                        }else if(index === 2){
+
+                            medal = '🥉';
+
+                        }
+
+
+                        container.innerHTML +=
+                        `
+                            <div class="lb-row">
+
+                                <div class="lb-rank">
+                                    ${medal || index + 1}
+                                </div>
+
+                                <div class="lb-user">
+
+                                    <div class="lb-name">
+                                        ${escapeHtml(name)}
+                                    </div>
+
+                                    <div style="
+                                        color:#94a3b8;
+                                        font-size:9px;
+                                        margin-top:2px;
+                                    ">
+                                        ${item.correct_count ?? 0}
+                                        सही /
+                                        ${item.total_questions ?? 0}
+                                        प्रश्न
+                                    </div>
+
+                                </div>
+
+                                <div class="lb-score">
+
+                                    ${Number(
+                                        item.score ?? 0
+                                    ).toFixed(1)}
+                                    अंक
+
+                                </div>
+
+                            </div>
+                        `;
+
+                    }
+                );
+
+            }
+        );
+
+
+    }catch(error){
+
+        console.error(
+            '❌ LEADERBOARD FETCH SYSTEM ERROR:',
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MARK EXAM COMPLETED / EXAM WARRIOR
+========================================================= */
+
+async function markExamCompleted(){
+
+    if(!currentUser){
+
+        return;
+
+    }
+
+
+    try{
+
+        const userRef =
+            db.collection('users')
+              .doc(currentUser.uid);
+
+
+        await db.runTransaction(
+            async transaction => {
+
+                const snap =
+                    await transaction.get(
+                        userRef
+                    );
+
+                if(!snap.exists){
+
+                    return;
+
+                }
+
+                const data =
+                    snap.data() || {};
+
+
+                const current =
+                    Number(
+                        data.completedExams ??
+                        data.examsCompleted ??
+                        0
+                    );
+
+
+                const newCount =
+                    current + 1;
+
+
+                /*
+                 * Keep both fields for compatibility
+                 * with old dashboard/profile code.
+                 */
+
+                transaction.set(
+                    userRef,
+                    {
+                        completedExams:
+                            newCount,
+
+                        examsCompleted:
+                            newCount
+                    },
+                    {
+                        merge:true
+                    }
+                );
+
+
+                /*
+                 * Exam Warrior badge after 5 completed
+                 * LIVE exams.
+                 */
+
+                if(newCount >= 5){
+
+                    transaction.set(
+                        userRef,
+                        {
+                            badges:{
+                                exam_warrior:true
+                            }
+                        },
+                        {
+                            merge:true
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+
+        console.log(
+            '🏅 Exam completion updated'
+        );
+
+
+    }catch(error){
+
+        console.error(
+            '❌ EXAM BADGE ERROR:',
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SHOW RESULT
+========================================================= */
+
+function showResult(result){
+
+    examScreen.classList.add(
+        'hidden'
+    );
+
+    resultScreen.classList.remove(
+        'hidden'
+    );
+
+    document.getElementById(
+        'timer-box'
+    ).classList.add('hidden');
+
+
+    document.getElementById(
+        'final-score'
+    ).innerText =
+        result.score;
+
+
+    document.getElementById(
+        'correct-count'
+    ).innerText =
+        result.correct;
+
+
+    document.getElementById(
+        'wrong-count'
+    ).innerText =
+        result.wrong;
+
+
+    document.getElementById(
+        'skipped-count'
+    ).innerText =
+        result.skipped;
+
+
+    let message =
+        'राम्रो प्रयास!';
+
+
+    if(result.percentage >= 90){
+
+        message =
+            '🔥 उत्कृष्ट प्रदर्शन!';
+
+    }
+
+    else if(result.percentage >= 80){
+
+        message =
+            '🎉 धेरै राम्रो प्रदर्शन!';
+
+    }
+
+    else if(result.percentage >= 70){
+
+        message =
+            '👏 राम्रो प्रदर्शन!';
+
+    }
+
+    else if(result.percentage >= 50){
+
+        message =
+            '💪 अझै अभ्यास गर्नुहोस्!';
+
+    }
+
+    else{
+
+        message =
+            '📚 अभ्यास जारी राख्नुहोस्!';
+
+    }
+
+
+    document.getElementById(
+        'result-message'
+    ).innerText =
+        message;
+
+
+    const rewardBox =
+        document.getElementById(
+            'reward-box'
+        );
+
+
+    if(practiceMode){
+
+        rewardBox.innerHTML =
+            `
+                📚 <b>Practice Mode</b><br>
+                Practice mode मा coins reward दिइँदैन।
+            `;
+
+    }
+
+    else if(result.earnedCoins > 0){
+
+        rewardBox.innerHTML =
+            `
+                🎁 तपाईंले
+                <b>${result.earnedCoins} 🪙 coins</b>
+                कमाउनुभयो!
+            `;
+
+    }
+
+    else{
+
+        rewardBox.innerHTML =
+            `
+                📚 यो पटक reward threshold पुगेन।
+                अर्को पटक अझ राम्रो गर्नुहोस्!
+            `;
+
+    }
+
+
+    /*
+     * Refresh leaderboard after result.
+     */
+
+    fetchLeaderboard();
+
+}
+
+
+/* =========================================================
+   REVIEW
+========================================================= */
+
+function openReviewModal(){
+
+    const container =
+        document.getElementById(
+            'review-container'
+        );
+
+
+    container.innerHTML = '';
+
+
+    examQuestions.forEach(
+        (q,index) => {
+
+            const answer =
+                userAnswers[index];
+
+
+            let statusClass =
+                '';
+
+            let statusText =
+                '';
+
+
+            if(
+                answer === null ||
+                answer === undefined
+            ){
+
+                statusClass =
+                    'review-skip';
+
+                statusText =
+                    '⏭️ छोडिएको';
+
+            }
+
+            else if(
+                answer === q.correctIndex
+            ){
+
+                statusClass =
+                    'review-correct';
+
+                statusText =
+                    '✅ सही';
+
+            }
+
+            else{
+
+                statusClass =
+                    'review-wrong';
+
+                statusText =
+                    '❌ गलत';
+
+            }
+
+
+            const userAnswerText =
+                answer !== null &&
+                answer !== undefined &&
+                q.options[answer]
+                    ? q.options[answer].text
+                    : 'उत्तर दिइएन';
+
+
+            const correctAnswerText =
+                q.correctIndex >= 0 &&
+                q.options[q.correctIndex]
+                    ? q.options[
+                        q.correctIndex
+                      ].text
+                    : 'Correct answer उपलब्ध छैन';
+
+
+            container.innerHTML +=
+            `
+                <div class="review-item">
+
+                    <div class="review-q">
+                        ${index + 1}.
+                        ${escapeHtml(
+                            q.question
+                        )}
+                    </div>
+
+                    <div class="${statusClass}">
+                        ${statusText}
+                    </div>
+
+                    <div style="
+                        margin-top:6px;
+                        color:#475569;
+                    ">
+                        तपाईंको उत्तर:
+                        <b>
+                            ${escapeHtml(
+                                userAnswerText
+                            )}
+                        </b>
+                    </div>
+
+                    <div style="
+                        margin-top:3px;
+                        color:#047857;
+                    ">
+                        सही उत्तर:
+                        <b>
+                            ${escapeHtml(
+                                correctAnswerText
+                            )}
+                        </b>
+                    </div>
+
+                    ${
+                        q.explanation
+                            ? `
+                                <div style="
+                                    margin-top:7px;
+                                    color:#64748b;
+                                    font-size:11px;
+                                ">
+                                    💡
+                                    ${escapeHtml(
+                                        q.explanation
+                                    )}
+                                </div>
+                              `
+                            : ''
+                    }
+
+                </div>
+            `;
+
+        }
+    );
+
+
+    document.getElementById(
+        'review-modal'
+    ).classList.add('show');
+
+}
+
+
+/* =========================================================
+   REPORT
+========================================================= */
+
+function openReportModal(){
+
+    reportQuestionIndex =
+        currentQuestionIndex;
+
+    document.getElementById(
+        'report-text'
+    ).value = '';
+
+    document.getElementById(
+        'report-modal'
+    ).classList.add('show');
+
+}
+
+
+async function submitReport(){
+
+    const text =
+        document.getElementById(
+            'report-text'
+        ).value.trim();
+
+
+    if(!text){
+
+        alert(
+            'कृपया report reason लेख्नुहोस्।'
+        );
+
+        return;
+
+    }
+
+
+    const question =
+        examQuestions[
+            reportQuestionIndex
+        ];
+
+
+    try{
+
+        /*
+         * This uses Supabase table "question_reports"
+         * if it exists.
+         *
+         * If you don't have this table, the report will
+         * simply show the error and won't affect the exam.
+         */
+
+        const {
+            error
+        } =
+        await supabaseClient
+            .from('question_reports')
+            .insert([{
+
+                question:
+                    question?.question ||
+                    '',
+
+                question_id:
+                    question?.id ??
+                    null,
+
+                report:
+                    text,
+
+                username:
+                    userEmail || null,
+
+                topic:
+                    activeSet
+
+            }]);
+
+
+        if(error){
+
+            console.error(
+                '❌ REPORT ERROR:',
+                error
+            );
+
+            alert(
+                'Report save हुन सकेन।'
+            );
+
+            return;
+
+        }
+
+
+        alert(
+            '✅ Report पठाइयो। धन्यवाद!'
+        );
+
+
+        closeModal(
+            'report-modal'
+        );
+
+
+    }catch(error){
+
+        console.error(
+            '❌ REPORT SYSTEM ERROR:',
+            error
         );
 
         alert(
-          "परीक्षा submit गर्दा समस्या आयो। कृपया console हेर्नुहोस्।"
+            'Report पठाउँदा error भयो।'
         );
-
-      }
 
     }
 
-
-    /* =========================================================
-       LOAD EXISTING BADGE PROGRESS
-       Used for Practice result only.
-       It DOES NOT increase anything.
-       ========================================================= */
-
-    async function loadExistingExamBadgeProgress() {
-
-      if (!currentUserUid) return;
+}
 
 
-      try {
+/* =========================================================
+   MODAL
+========================================================= */
 
-        const userRef =
-          doc(
-            db,
-            "users",
-            currentUserUid
-          );
+function closeModal(id){
 
+    document
+        .getElementById(id)
+        .classList.remove('show');
 
-        const snap =
-          await getDoc(
-            userRef
-          );
+}
 
 
-        if (
-          !snap.exists()
-        ) {
+function goLogin(){
 
-          updateExamBadgeUI(0);
+    window.location.href =
+        'login.html';
 
-          return;
-        }
+}
 
 
-        const data =
-          snap.data();
+function goDashboard(){
+
+    window.location.href =
+        'dashboard.html';
+
+}
 
 
-        const completed =
-          Number(
-            data.completedExams ??
-            data.examsCompleted ??
-            0
-          );
+/* =========================================================
+   PRINT / PDF
+========================================================= */
 
+function printResult(){
 
-        updateExamBadgeUI(
-          completed
+    const result =
+        document.getElementById(
+            'result-screen'
         );
 
 
-      } catch (error) {
+    const original =
+        document.body.innerHTML;
 
-        console.error(
-          "Badge progress fetch error:",
-          error
-        );
-      }
+
+    document.body.innerHTML =
+    `
+        <div style="
+            max-width:700px;
+            margin:30px auto;
+            font-family:Arial,sans-serif;
+            padding:20px;
+        ">
+
+            <h1>
+                🇳🇵 LoksewaQuest
+            </h1>
+
+            <h2>
+                ${escapeHtml(
+                    displayNameSet
+                )}
+            </h2>
+
+            <hr>
+
+            <h3>
+                Score:
+                ${
+                    document.getElementById(
+                        'final-score'
+                    ).innerText
+                }
+            </h3>
+
+            <p>
+                सही:
+                ${
+                    document.getElementById(
+                        'correct-count'
+                    ).innerText
+                }
+            </p>
+
+            <p>
+                गलत:
+                ${
+                    document.getElementById(
+                        'wrong-count'
+                    ).innerText
+                }
+            </p>
+
+            <p>
+                छोडिएको:
+                ${
+                    document.getElementById(
+                        'skipped-count'
+                    ).innerText
+                }
+            </p>
+
+            <br>
+
+            <p>
+                User:
+                ${escapeHtml(
+                    userEmail
+                )}
+            </p>
+
+            <p>
+                Generated by LoksewaQuest
+            </p>
+
+        </div>
+    `;
+
+
+    window.print();
+
+
+    document.body.innerHTML =
+        original;
+
+
+    /*
+     * Re-load page after print so all
+     * event listeners are restored.
+     */
+
+    window.location.reload();
+
+}
+
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+document.addEventListener(
+    'DOMContentLoaded',
+    async () => {
+
+        /*
+         * Leaderboard can load independently of Firebase.
+         */
+
+        await fetchLeaderboard();
+
+        /*
+         * Questions remain from Supabase.
+         */
+
+        await loadQuestions();
+
     }
+);
 
-
-    /* =========================================================
-       REVIEW FILTER
-       ========================================================= */
-
-    window.filterReview =
-      function(type) {
-
-        document
-          .querySelectorAll(
-            '.filter-btn'
-          )
-          .forEach(
-            btn =>
-              btn.classList.remove(
-                'active'
-              )
-          );
-
-
-        document.getElementById(
-          `filter-${type}`
-        ).classList.add(
-          'active'
-        );
-
-
-        renderReviewList(
-          type
-        );
-      };
-
-
-    /* =========================================================
-       REVIEW LIST
-       ========================================================= */
-
-    function renderReviewList(
-      filterType
-    ) {
-
-      const container =
-        document.getElementById(
-          'review-container'
-        );
-
-
-      container.innerHTML =
-        '';
-
-
-      let filtered =
-        evaluatedQuestionsList;
-
-
-      if (
-        filterType === 'right'
-      ) {
-
-        filtered =
-          evaluatedQuestionsList
-            .filter(
-              i =>
-                i.status === 'right'
-            );
-
-      } else if (
-        filterType === 'wrong'
-      ) {
-
-        filtered =
-          evaluatedQuestionsList
-            .filter(
-              i =>
-                i.status === 'wrong'
-            );
-
-      } else if (
-        filterType === 'skipped'
-      ) {
-
-        filtered =
-          evaluatedQuestionsList
-            .filter(
-              i =>
-                i.status === 'skipped'
-            );
-      }
-
-
-      if (
-        filtered.length === 0
-      ) {
-
-        container.innerHTML =
-          '<p style="text-align: center; color: #64748b; padding: 20px; font-size: 12px;">कुनै प्रश्न फेला परेन।</p>';
-
-        return;
-      }
-
-
-      filtered.forEach(
-        item => {
-
-          let borderColor =
-            '#cbd5e1';
-
-          let ansColor =
-            '#0f172a';
-
-
-          if (
-            item.status === 'right'
-          ) {
-
-            borderColor =
-              '#bbf7d0';
-
-            ansColor =
-              '#059669';
-
-          } else if (
-            item.status === 'wrong'
-          ) {
-
-            borderColor =
-              '#fecaca';
-
-            ansColor =
-              '#dc2626';
-
-          } else {
-
-            borderColor =
-              '#fde68a';
-
-            ansColor =
-              '#d97706';
-          }
-
-
-          container.innerHTML += `
-
-            <div style="
-              background: #f8fafc;
-              padding: 10px;
-              border-radius: 10px;
-              border: 1px solid ${borderColor};
-              margin-bottom: 8px;
-              text-align: left;
-            ">
-
-              <p style="
-                font-weight: 700;
-                color: #0f172a;
-                margin-bottom: 2px;
-              ">
-                Q${item.index}: ${item.question}
-              </p>
-
-              <p style="
-                color: #64748b;
-                margin-top: 4px;
-              ">
-                तपाईंको उत्तर:
-
-                <span style="
-                  font-weight: 700;
-                  color: ${ansColor};
-                ">
-                  ${item.userAns}
-                </span>
-              </p>
-
-              <p style="
-                color: #059669;
-                font-weight: 600;
-                margin-top: 2px;
-              ">
-                सही उत्तर: ${item.correctAns}
-              </p>
-
-              ${
-                item.explanation
-                  ? `
-                    <p style="
-                      font-size: 10px;
-                      color: #475569;
-                      margin-top: 4px;
-                      font-style: italic;
-                      background: #ffffff;
-                      padding: 6px;
-                      border-radius: 6px;
-                      border: 1px solid #e2e8f0;
-                    ">
-                      📌 ${item.explanation}
-                    </p>
-                  `
-                  : ''
-              }
-
-            </div>
-          `;
-        }
-      );
-    }
-
-
-    /* =========================================================
-       LEADERBOARD
-       ========================================================= */
-
-    async function fetchLeaderboard() {
-
-      const {
-        data,
-        error
-      } =
-        await supabaseClient
-          .from(
-            'exam_leaderboard'
-          )
-          .select('*')
-          .eq(
-            'set_name',
-            activeSet
-          )
-          .order(
-            'score',
-            {
-              ascending: false
-            }
-          );
-
-
-      if (error) {
-
-        console.error(
-          "Leaderboard fetch error:",
-          error
-        );
-      }
-
-
-      const containers = [
-        document.getElementById(
-          'home-leaderboard'
-        ),
-        document.getElementById(
-          'result-leaderboard'
-        )
-      ];
-
-
-      containers.forEach(
-        lbContainer => {
-
-          if (!lbContainer)
-            return;
-
-
-          lbContainer.innerHTML =
-            '';
-
-
-          if (
-            !data ||
-            data.length === 0
-          ) {
-
-            lbContainer.innerHTML =
-              '<p style="color: #64748b; text-align: center; font-size: 12px; padding: 4px;">कुनै रेकर्ड छैन।</p>';
-
-            return;
-          }
-
-
-          data.forEach(
-            (item, i) => {
-
-              let name =
-                item.username.includes('@')
-                  ? item.username.split('@')[0]
-                  : item.username;
-
-
-              lbContainer.innerHTML += `
-
-                <div class="lb-row">
-
-                  <span style="
-                    font-weight: 700;
-                    color: #1e293b;
-                  ">
-                    ${i + 1}. ${name}
-                  </span>
-
-                  <span style="
-                    color: #2563eb;
-                    font-weight: 800;
-                  ">
-                    ${item.score} अंक
-                    (${item.coins || 0} 🪙)
-                  </span>
-
-                </div>
-              `;
-            }
-          );
-        }
-      );
-    }
-
-
-    /* =========================================================
-       MODALS
-       ========================================================= */
-
-    window.openReviewModal =
-      function() {
-
-        document.getElementById(
-          'reviewModal'
-        ).classList.add(
-          'active'
-        );
-      };
-
-
-    window.closeReviewModal =
-      function() {
-
-        document.getElementById(
-          'reviewModal'
-        ).classList.remove(
-          'active'
-        );
-      };
-
-
-    window.downloadPDF =
-      function() {
-
-        window.print();
-      };
-
-
-    window.openReportModal =
-      function() {
-
-        document.getElementById(
-          'reportModal'
-        ).classList.add(
-          'active'
-        );
-      };
-
-
-    window.closeReportModal =
-      function() {
-
-        document.getElementById(
-          'reportModal'
-        ).classList.remove(
-          'active'
-        );
-
-        document.getElementById(
-          'reportReason'
-        ).value =
-          '';
-      };
-
-
-    window.closeModals =
-      function() {
-
-        document.getElementById(
-          'insufficientCoinsModal'
-        ).classList.remove(
-          'active'
-        );
-      };
-
-
-    /* =========================================================
-       REPORT QUESTION
-       ========================================================= */
-
-    window.submitQuestionReport =
-      async function() {
-
-        const reason =
-          document.getElementById(
-            'reportReason'
-          ).value.trim();
-
-
-        if (!reason) {
-
-          alert(
-            'कृपया समस्या के हो लेख्नुहोस्!'
-          );
-
-          return;
-        }
-
-
-        const currentQ =
-          examQuestions[
-            currentIdx
-          ];
-
-
-        const {
-          error
-        } =
-          await supabaseClient
-            .from(
-              'reported_questions'
-            )
-            .insert(
-              [{
-                question_id:
-                  currentQ.id || 1,
-
-                question_text:
-                  currentQ.question ||
-                  currentQ.question_text,
-
-                reason:
-                  reason,
-
-                status:
-                  'Pending'
-              }]
-            );
-
-
-        if (error) {
-
-          alert(
-            'रिपोर्ट पठाउन असफल भयो: ' +
-            error.message
-          );
-
-        } else {
-
-          closeReportModal();
-
-          alert(
-            'सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏'
-          );
-        }
-      };
-
-  </script>
+</script>
 
 </body>
   </html>
