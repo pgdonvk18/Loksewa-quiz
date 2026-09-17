@@ -100,7 +100,7 @@
 
       <!-- Question Card -->
       <div class="card">
-        <div id="questionText" class="question-text">प्रश्न लोड हुँदैछ...</div>
+        <div id="questionText" class="question-text">प्रश्नहरू लोड हुँदैछन्...</div>
         <div class="options-list" id="optionsList">
           <!-- Dynamic Options -->
         </div>
@@ -125,7 +125,7 @@
       <div class="leaderboard-section">
         <h3><i class="fa-solid fa-medal" style="color: #eab308;"></i> लिडरबोर्ड (Top Scores)</h3>
         <div id="inlineLeaderboardContainer">
-          <div style="text-align: center; font-size: 12px; color: #64748b; padding: 15px;">डाटा लोड हुँदैछ...</div>
+          <div style="text-align: center; font-size: 12px; color: #64748b; padding: 15px;">लिडरबोर्ड लोड हुँदैछ...</div>
         </div>
       </div>
     </div>
@@ -135,7 +135,6 @@
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
-  <!-- Firebase (Authentication को लागि मात्र यदि आवश्यक भएमा) र गेम लजिक -->
   <script type="module">  
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
@@ -154,10 +153,18 @@
     const auth = getAuth(app);  
     const db = getFirestore(app);  
 
-    // Supabase Credentials (तपाईंको Supabase URL र Key यहाँ राख्नुहोला)
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // ==== Supabase Credentials Setup ====
+    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+    
+    let supabaseClient = null;
+    try {
+      if (typeof supabase !== 'undefined') {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (e) {
+      console.log("Supabase Init Error:", e);
+    }
 
     let currentUser = null;
     let currentUserName = "Aspirant";
@@ -298,8 +305,8 @@
       document.getElementById('gameOverScreen').classList.remove('hidden');
       document.getElementById('finalScoreDisplay').innerText = score;
 
-      // १. Supabase को exam_leaderboard मा स्कोर सेभ (Insert) गर्ने
-      if (currentUser) {
+      // १. Supabase मा स्कोर सेभ गर्ने
+      if (supabaseClient && currentUser) {
         try {
           await supabaseClient
             .from('exam_leaderboard')
@@ -319,18 +326,24 @@
         }
       }
 
-      // २. Supabase बाट नै लिडरबोर्ड डाटा फेच गरेर गेमको तल देखाउने
+      // २. लिडरबोर्ड डाटा फेच गरेर देखाउने
       fetchAndShowLeaderboard();
     }
 
     async function fetchAndShowLeaderboard() {
       const container = document.getElementById('inlineLeaderboardContainer');
+      
+      if (!supabaseClient) {
+        container.innerHTML = `<div style="text-align: center; font-size: 12px; color: #64748b; padding: 10px;">Supabase जडान भएको छैन।</div>`;
+        return;
+      }
+
       try {
         const { data, error } = await supabaseClient
           .from('exam_leaderboard')
           .select('username, set_name, score')
           .order('score', { ascending: false })
-          .limit(10); // टप १० जना देखाउने
+          .limit(10);
 
         if (error) throw error;
 
