@@ -486,11 +486,10 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Dynamic URL Parameter Handling (e.g., ?set=nepal_history)
+    // Dynamic URL Parameter Handling (?set=nepal_history)
     const urlParams = new URLSearchParams(window.location.search);
     const currentSet = (urlParams.get('set') || 'set_1').toLowerCase().trim();
     
-    // Formatting Title based on set name
     let prettyExamName = `Model Exam: ${currentSet.replace(/_/g, ' ').toUpperCase()}`;
     const examIdentifier = currentSet;
 
@@ -524,10 +523,22 @@
       } catch { return text; }
     }
 
+    // सुधार गरिएको विकल्प अनुवाद लजिक
     async function translateQuestion(q) {
       const translatedQuestion = await translateText(q.question);
-      const translatedOptions = await Promise.all(q.options.map(opt => translateText(opt)));
-      return { question: translatedQuestion, options: translatedOptions };
+      
+      const translatedOptions = await Promise.all(
+        q.options.map(async (option, index) => {
+          const prefix = `(${String.fromCharCode(65 + index)}) `;
+          const translatedOpt = await translateText(option);
+          return translatedOpt;
+        })
+      );
+
+      return {
+        question: translatedQuestion,
+        options: translatedOptions
+      };
     }
 
     window.showSuccessPopup = function(message, redirectUrl, type = 'success', titleText = '') {
@@ -712,7 +723,7 @@
       });
     }
 
-    // Review Modal Complete Logic Integration
+    // Review Modal Logic
     window.openReviewModal = () => {
       const container = document.getElementById('review-container');
       container.innerHTML = '';
