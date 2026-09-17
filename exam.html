@@ -477,7 +477,6 @@
     let examStartTime = null;
     let evaluatedQuestionsList = [];
     
-    // Auto-submit tracking variable
     let examStartedActive = false;
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -566,10 +565,8 @@
             coins: currentCoins - 25
           });
 
-          // --- FIREBASE COIN HISTORY (DEDUCTION) ---
-          await addDoc(collection(db, "coin_history"), {
-            userId: auth.currentUser.uid,
-            userEmail: userEmail,
+          // --- FIREBASE SUB-COLLECTION COIN HISTORY (DEDUCTION) ---
+          await addDoc(collection(db, "users", auth.currentUser.uid, "coin_history"), {
             amount: -25,
             type: "exam_fee",
             description: `${prettyExamName} परीक्षा शुल्क (Exam Fee)`,
@@ -745,10 +742,8 @@
               coins: existingCoins + earnedCoins
             });
 
-            // --- FIREBASE COIN HISTORY (REWARD) ---
-            await addDoc(collection(db, "coin_history"), {
-              userId: auth.currentUser.uid,
-              userEmail: userEmail,
+            // --- FIREBASE SUB-COLLECTION COIN HISTORY (REWARD) ---
+            await addDoc(collection(db, "users", auth.currentUser.uid, "coin_history"), {
               amount: earnedCoins,
               type: "exam_reward",
               description: `${prettyExamName} परीक्षा पुरस्कार (${totalScore.toFixed(1)} अंक)`,
