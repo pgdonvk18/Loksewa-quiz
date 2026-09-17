@@ -74,7 +74,7 @@
 
     <!-- History Section -->
     <div class="section-title">
-      <span> ट्रान्जेक्सन इतिहास (Transaction History)</span>
+      <span>ट्रान्जेक्सन इतिहास (Transaction History)</span>
       <span id="totalTxCount">0 ट्रान्जेक्सन</span>
     </div>
 
@@ -84,12 +84,10 @@
 
   </main>  
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <script type="module">  
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
-    import { getFirestore, doc as fsDoc, getDoc as fsGetDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
+    import { getFirestore, doc as fsDoc, getDoc as fsGetDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
     
     const firebaseConfig = {  
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",  
@@ -104,112 +102,97 @@
     const auth = getAuth(app);  
     const db = getFirestore(app);  
 
-    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
-    
-    let supabaseClient = null;
-    try {
-      if (typeof supabase !== 'undefined') {
-        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      }
-    } catch (e) { console.log("Supabase Init Error:", e); }
-
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // १. युजरको कुल कोइन Firebase बाट ल्याउने
         try {
-          const userSnap = await fsGetDoc(fsDoc(db, "users", user.uid));
+          const container = document.getElementById('historyContainer');
+          
+          // १. युजरको मुख्य कागजात (users -> uid) बाट कुल कोइन ल्याउने
+          const userRef = fsDoc(db, "users", user.uid);
+          const userSnap = await fsGetDoc(userRef);
+          
+          let totalCoins = 0;
           if (userSnap.exists()) {
-            const userData = userSnap.data();
-            const totalCoins = userData.coins || 0;
+            totalCoins = userSnap.data().coins || 0;
             document.getElementById('totalCoinsVal').innerText = totalCoins;
           }
-        } catch (e) {
-          console.error("Error fetching user coins:", e);
-        }
 
-        // २. कोइन इतिहास (Coin History) Supabase वा Firestore बाट लोड गर्ने
-        loadCoinHistory(user.displayName || user.email);
+          // २. सब-कलेक्सनबाट ट्रान्जेक्सन इतिहास फेच गर्ने प्रयास गर्ने
+          const historyRef = collection(db, "users", user.uid, "coin_history");
+          const querySnapshot = await getDocs(historyRef);
+
+          let html = '';
+          let txCount = 0;
+
+          if (!querySnapshot.empty) {
+            // यदि सब-कलेक्सनमा इतिहास फेला पर्यो भने तिनीहरूलाई लिस्ट गर्ने
+            txCount = querySnapshot.size;
+            querySnapshot.forEach((doc) => {
+              const item = doc.data();
+              const isEarn = item.type === 'earn' || item.amount > 0;
+              const sign = isEarn ? '+' : '';
+              const iconClass = isEarn ? 'earn' : 'spend';
+              const iconSymbol = isEarn ? 'fa-arrow-down' : 'fa-arrow-up';
+              const amountClass = isEarn ? 'earn' : 'spend';
+
+              let dateStr = 'हालसालै';
+              if (item.created_at) {
+                const dateObj = item.created_at.toDate ? item.created_at.toDate() : new Date(item.created_at);
+                if (!isNaN(dateObj)) {
+                  dateStr = dateObj.toLocaleDateString('ne-NP') + ' ' + dateObj.toLocaleTimeString('ne-NP', {hour: '2-digit', minute:'2-digit'});
+                }
+              }
+
+              html += `
+                <div class="history-item">
+                  <div class="history-left">
+                    <div class="history-icon ${iconClass}">
+                      <i class="fa-solid ${iconSymbol}"></i>
+                    </div>
+                    <div class="history-info">
+                      <div class="title">${item.description || (isEarn ? 'कोइन प्राप्त भयो' : 'कोइन खर्च भयो')}</div>
+                      <div class="date">${dateStr}</div>
+                    </div>
+                  </div>
+                  <div class="history-amount ${amountClass}">${sign}${item.amount} कोइन</div>
+                </div>
+              `;
+            });
+          } else {
+            // यदि छुट्टै इतिहास छैन तर युजरसँग कोइन छ वा छैन भने, कुल ब्यालेन्सको आधारमा एउटा कार्ड देखाइदिने
+            txCount = 1;
+            html = `
+              <div class="history-item">
+                <div class="history-left">
+                  <div class="history-icon earn">
+                    <i class="fa-solid fa-coins"></i>
+                  </div>
+                  <div class="history-info">
+                    <div class="title">वालेट जम्मा ब्यालेन्स (Total Balance)</div>
+                    <div class="date">हालको कुल मौज्दात</div>
+                  </div>
+                </div>
+                <div class="history-amount earn">+${totalCoins} कोइन</div>
+              </div>
+            `;
+          }
+
+          document.getElementById('totalTxCount').innerText = `${txCount} ट्रान्जेक्सन`;
+          container.innerHTML = html;
+
+        } catch (e) {
+          console.error("Error loading coins:", e);
+          document.getElementById('historyContainer').innerHTML = `
+            <div class="empty-state">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <p>डाटा लोड गर्दा समस्या भयो।</p>
+            </div>
+          `;
+        }
       } else {
         window.location.href = "login.html";
       }
     });
-
-    async function loadCoinHistory(username) {
-      const container = document.getElementById('historyContainer');
-      
-      if (!supabaseClient) {
-        container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i><p>डाटाबेस जडान असफल भयो।</p></div>`;
-        return;
-      }
-
-      try {
-        // यहाँ 'coin_history' नामको टेबलबाट युजरको ट्रान्जेक्सन फेच गरिन्छ
-        // (यदि तपाईंले Supabase मा coin_history टेबल बनाउनुभएको छ भने त्यसले काम गर्छ)
-        const { data, error } = await supabaseClient
-          .from('coin_history')
-          .select('*')
-          .eq('username', username)
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-
-        if (!data || data.length === 0) {
-          // यदि छुट्टै इतिहास छैन भने, ड्यासबोर्ड वा लिडरबोर्डको आधारमा एउटा जेनेरिक वा डेमो ट्रान्जेक्सन देखाउन सकिन्छ
-          // वा खाली स्टेट देखाइन्छ:
-          container.innerHTML = `
-            <div class="empty-state">
-              <i class="fa-solid fa-receipt"></i>
-              <p>तपाईंको हालसम्म कुनै कोइन ट्रान्जेक्सन छैन।</p>
-            </div>
-          `;
-          document.getElementById('totalTxCount').innerText = `० ट्रान्जेक्सन`;
-          return;
-        }
-
-        document.getElementById('totalTxCount').innerText = `${data.length} ट्रान्जेक्सन`;
-        let html = '';
-
-        data.forEach(item => {
-          const isEarn = item.type === 'earn' || item.amount > 0;
-          const sign = isEarn ? '+' : '';
-          const iconClass = isEarn ? 'earn' : 'spend';
-          const iconSymbol = isEarn ? 'fa-arrow-down' : 'fa-arrow-up';
-          const amountClass = isEarn ? 'earn' : 'spend';
-
-          // मिति ढाँचा मिलाउने
-          const dateObj = new Date(item.created_at);
-          const dateStr = !isNaN(dateObj) ? dateObj.toLocaleDateString('ne-NP') + ' ' + dateObj.toLocaleTimeString('ne-NP', {hour: '2-digit', minute:'2-digit'}) : 'भर्खरै';
-
-          html += `
-            <div class="history-item">
-              <div class="history-left">
-                <div class="history-icon ${iconClass}">
-                  <i class="fa-solid ${iconSymbol}"></i>
-                </div>
-                <div class="history-info">
-                  <div class="title">${item.description || (isEarn ? 'कोइन प्राप्त भयो' : 'कोइन खर्च भयो')}</div>
-                  <div class="date">${dateStr}</div>
-                </div>
-              </div>
-              <div class="history-amount ${amountClass}">${sign}${item.amount} कोइन</div>
-            </div>
-          `;
-        });
-
-        container.innerHTML = html;
-
-      } catch (err) {
-        console.error("Error fetching coin history:", err);
-        // यदि Supabase मा टेबल नभए test को लागि डेमो देखाउने वा एरर मेसेज दिने
-        container.innerHTML = `
-          <div class="empty-state">
-            <i class="fa-solid fa-coins"></i>
-            <p>इतिहास फेला परेन। (तपाईंले Supabase मा 'coin_history' टेबल बनाउनुपर्ने हुन सक्छ)</p>
-          </div>
-        `;
-      }
-    }
   </script>  
 
 </body>  
