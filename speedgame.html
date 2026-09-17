@@ -10,7 +10,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }  
     body { background-color: #f8fafc; color: #0f172a; margin: 0; padding-bottom: 40px; overflow-x: hidden; }  
     
-    /* Website Header */
     .app-header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #ffffff; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }  
     .app-header h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }  
     .back-btn { background: rgba(255, 255, 255, 0.15); color: #ffffff; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; font-size: 14px; transition: background 0.2s; }  
@@ -18,7 +17,6 @@
 
     .main-wrapper { max-width: 500px; margin: 0 auto; padding: 20px 16px; width: 100%; }  
 
-    /* Game HUD (Timer & Score Board) */
     .game-hud { display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px 20px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
     .hud-box { text-align: center; }
     .hud-title { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -30,18 +28,15 @@
       to { transform: scale(1.08); }
     }
 
-    /* Question Card */
     .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 22px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); }  
     .question-text { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
 
-    /* Options Styling */
     .options-list { display: flex; flex-direction: column; gap: 10px; }
     .option-btn { width: 100%; text-align: left; background: #f8fafc; border: 1.5px solid #cbd5e1; padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; color: #334155; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: space-between; }
     .option-btn:hover { background: #eff6ff; border-color: #2563eb; color: #1e40af; }
     .option-btn.correct { background: #dcfce7 !important; border-color: #16a34a !important; color: #15803d !important; }
     .option-btn.wrong { background: #fee2e2 !important; border-color: #dc2626 !important; color: #b91c1c !important; }
 
-    /* Start Screen & Game Over Overlay */
     .screen-center { text-align: center; padding: 30px 10px; }
     .screen-center h2 { font-size: 22px; font-weight: 800; color: #1e293b; margin-bottom: 10px; }
     .screen-center p { font-size: 13px; color: #64748b; margin-bottom: 24px; font-weight: 600; line-height: 1.5; }
@@ -50,7 +45,6 @@
     .btn-primary:hover { background: #1d4ed8; }
     .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
 
-    /* Leaderboard Styling & Tabs */
     .leaderboard-section { margin-top: 20px; border-top: 2px dashed #e2e8f0; padding-top: 16px; }
     .lb-tabs { display: flex; gap: 8px; margin-bottom: 14px; background: #f1f5f9; padding: 4px; border-radius: 12px; }
     .lb-tab { flex: 1; padding: 8px; font-size: 12px; font-weight: 700; border: none; background: transparent; color: #64748b; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
@@ -199,7 +193,6 @@
       }
     });
 
-    // Supabase को quizzes टेबलबाट प्रश्नहरू तान्ने
     async function fetchSupabaseQuestions() {
       if (allQuestions.length > 0) return true;
       if (!supabaseClient) return false;
@@ -211,10 +204,10 @@
 
         if (error) throw error;
 
-        if (data && Array.isArray(data)) {
+        if (data && Array.isArray(data) && data.length > 0) {
           allQuestions = data;
           allQuestions.sort(() => Math.random() - 0.5);
-          return allQuestions.length > 0;
+          return true;
         }
         return false;
       } catch (err) {
@@ -223,6 +216,7 @@
       }
     }
 
+    // पेज लोड हुनेबित्तिकै प्रश्नहरू तान्न सुरु गर्ने
     fetchSupabaseQuestions();
 
     document.getElementById('startBtn').addEventListener('click', async () => {
@@ -233,7 +227,7 @@
       if (allQuestions.length === 0) {
         const success = await fetchSupabaseQuestions();
         if (!success || allQuestions.length === 0) {
-          alert("Supabase को 'quizzes' टेबलमा प्रश्नहरू फेला परेनन्!");
+          alert("Supabase को 'quizzes' टेबलबाट प्रश्नहरू फेला परेनन् वा इन्टरनेट जडान समस्या भयो!");
           startBtn.disabled = false;
           startBtn.innerHTML = `<i class="fa-solid fa-play"></i> खेल सुरु गर्नुहोस् 🚀`;
           return;
@@ -284,32 +278,36 @@
       usedQuestionIndices.add(randomIndex);
       const q = allQuestions[randomIndex];
 
-      document.getElementById('questionTextлиги' || 'questionText').innerText = q.question || "प्रश्न उपलब्ध छैन";
+      document.getElementById('questionText').innerText = q.question || "प्रश्न उपलब्ध छैन";
       const optionsContainer = document.getElementById('optionsList');
       optionsContainer.innerHTML = '';
 
-      // options स्तम्भ (jsonb) बाट विकल्पहरू निकाल्ने (जस्तै array वा object हुन सक्छ)
       let optsArray = [];
       if (Array.isArray(q.options)) {
         optsArray = q.options;
       } else if (typeof q.options === 'object' && q.options !== null) {
         optsArray = Object.values(q.options);
+      } else if (typeof q.options === 'string') {
+        try {
+          optsArray = JSON.parse(q.options);
+        } catch (e) {
+          optsArray = [];
+        }
       }
 
-      const correctAns = String(q.answer).trim();
+      const correctAns = String(q.answer || '').trim();
 
       optsArray.forEach((optText) => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.innerText = optText;
         
-        // सही उत्तर म्याच गर्ने (चाहे अप्सनको टेक्स्ट मिल्छ वा A, B, C, D)
         const isCorrect = (String(optText).trim().toLowerCase() === correctAns.toLowerCase()) || 
                           (correctAns.length === 1 && (
-                            (correctAns === 'A' && optText === optsArray[0]) ||
-                            (correctAns === 'B' && optText === optsArray[1]) ||
-                            (correctAns === 'C' && optText === optsArray[2]) ||
-                            (correctAns === 'D' && optText === optsArray[3])
+                            (correctAns.toUpperCase() === 'A' && optText === optsArray[0]) ||
+                            (correctAns.toUpperCase() === 'B' && optText === optsArray[1]) ||
+                            (correctAns.toUpperCase() === 'C' && optText === optsArray[2]) ||
+                            (correctAns.toUpperCase() === 'D' && optText === optsArray[3])
                           ));
 
         btn.onclick = () => handleAnswerClick(isCorrect, btn);
@@ -437,7 +435,6 @@
 
         container.innerHTML = html;
 
-        // दैनिक लिडरबोर्डको टप ३ मा पर्दा ५० कोइन जोड्ने प्रणाली
         if (currentLbType === 'daily' && userInTop3Daily && currentUserId) {
           document.getElementById('rewardMsgBox').classList.remove('hidden');
           try {
