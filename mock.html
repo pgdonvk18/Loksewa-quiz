@@ -24,7 +24,6 @@
     .category-left { display: flex; align-items: center; gap: 14px; }  
     .category-icon { width: 44px; height: 44px; border-radius: 12px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; }  
     
-    .badge-upcoming { background: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid #fde68a; }  
     .badge-active { background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid #dbeafe; }  
 
     .set-list-container { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }  
@@ -114,20 +113,20 @@
       </div>  
 
       <div id="kharidar-sets" class="set-list-container hidden">  
-        <a href="mock.html?set=kharidar_mocktest1" class="set-card" id="card-kharidar-1">  
+        <div onclick="requestExamStart('kharidar_mocktest1')" class="set-card" id="card-kharidar-1">  
           <div>  
             <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Mock Test Set 1</p>  
             <p id="desc-kharidar-1" style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
           </div>  
           <span style="background: #2563eb; color: white; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700;">सुरु गर्नुहोस्</span>  
-        </a>  
-        <a href="mock.html?set=kharidar_mocktest2" class="set-card" id="card-kharidar-2">  
+        </div>  
+        <div onclick="requestExamStart('kharidar_mocktest2')" class="set-card" id="card-kharidar-2">  
           <div>  
             <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Mock Test Set 2</p>  
             <p id="desc-kharidar-2" style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
           </div>  
           <span style="background: #2563eb; color: white; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700;">सुरु गर्नुहोस्</span>  
-        </a>  
+        </div>  
       </div>  
 
       <!-- NAASU CATEGORY -->
@@ -146,20 +145,20 @@
       </div>  
 
       <div id="naasu-sets" class="set-list-container hidden">  
-        <a href="mock.html?set=naasu_mocktest1" class="set-card" id="card-naasu-1">  
+        <div onclick="requestExamStart('naasu_mocktest1')" class="set-card" id="card-naasu-1">  
           <div>  
             <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Mock Test Set 1</p>  
             <p id="desc-naasu-1" style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
           </div>  
           <span style="background: #2563eb; color: white; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700;">सुरु गर्नुहोस्</span>  
-        </a>  
-        <a href="mock.html?set=naasu_mocktest2" class="set-card" id="card-naasu-2">  
+        </div>  
+        <div onclick="requestExamStart('naasu_mocktest2')" class="set-card" id="card-naasu-2">  
           <div>  
             <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Mock Test Set 2</p>  
             <p id="desc-naasu-2" style="font-size: 11px; color: #64748b;">शुल्क: ५० कोइन</p>  
           </div>  
           <span style="background: #2563eb; color: white; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700;">सुरु गर्नुहोस्</span>  
-        </a>  
+        </div>  
       </div>  
     </div>  
 
@@ -204,42 +203,41 @@
     let currentUserUid = null;  
     let userCoins = 0;  
     let quizQuestions = [];
-    let activeSetId = '';
+    let pendingSetId = '';
 
     document.addEventListener("DOMContentLoaded", async () => {  
-      const urlParams = new URLSearchParams(window.location.search);
-      activeSetId = urlParams.get('set');
-
       onAuthStateChanged(auth, async (user) => {  
         if (user) {  
           currentUserUid = user.uid;  
           await fetchUserCoins(user.uid);  
-
-          // यदि URL मा सेट छ भने सिधै क्विज प्रक्रिया सुरु गर्ने
-          if (activeSetId) {
-            handleExamInitialization(activeSetId);
-          }
         } else {  
           currentUserUid = null;  
           document.getElementById('user-coin-balance').innerText = '0';  
-          if (activeSetId) {
-            document.getElementById('login-modal').classList.add('active');
-          }
         }  
       });  
 
-      if (!activeSetId) {
-        await checkAvailableSets();
-      }
+      await checkAvailableSets();
     });  
 
-    async function handleExamInitialization(setId) {
-      if (!currentUserUid) return;
+    window.requestExamStart = function(setId) {
+      if (!currentUserUid) {
+        document.getElementById('login-modal').classList.add('active');
+        return;
+      }
+
+      pendingSetId = setId;
 
       if (userCoins < 50) {
         document.getElementById('insufficientCoinsModal').classList.add('active');
         return;
       }
+
+      document.getElementById('coinConfirmModal').classList.add('active');
+    }
+
+    window.proceedWithExam = async function() {
+      document.getElementById('coinConfirmModal').classList.remove('active');
+      if (!currentUserUid || !pendingSetId) return;
 
       // ५० कोइन काट्ने
       try {  
@@ -250,7 +248,7 @@
         await fetchUserCoins(currentUserUid);
 
         // प्रश्नहरू लोड गर्ने
-        await loadQuizQuestions(setId);
+        await loadQuizQuestions(pendingSetId);
       } catch (err) {  
         console.error("Coin deduction error:", err);  
         alert("केही प्राविधिक समस्या आयो। कृपया फेरि प्रयास गर्नुहोस्।");  
@@ -323,7 +321,6 @@
 
         if (error || !data || data.length === 0) {
           alert("यो सेटको प्रश्नहरू फेला परेनन्।");
-          window.location.href = 'mock.html';
           return;
         }
 
@@ -344,7 +341,9 @@
 
       quizQuestions.forEach((q, index) => {
         let optionsHtml = '';
-        const options = [q.option_a, q.option_b, q.option_c, q.option_d];
+        // Supabase टेबलमा options एउटा Array को रूपमा वा अलग-अलग कलमको रूपमा हुन सक्छ, 
+        // यहाँ q.options (array) वा छुट्टै अप्सनहरूलाई ह्यान्डल गरिएको छ:
+        let options = q.options || [q.option_a, q.option_b, q.option_c, q.option_d];
         
         options.forEach((opt) => {
           if(opt) {
@@ -357,9 +356,12 @@
           }
         });
 
+        // सही उत्तरको field Supabase मा 'answer' वा 'correct_answer' हुन सक्छ
+        let correctAnswer = q.answer || q.correct_answer || '';
+
         container.innerHTML += `
-          <div class="question-box" data-index="${index}" data-correct="${q.correct_answer}">
-            <p class="question-title">प्रश्न ${index + 1}: ${q.question_text}</p>
+          <div class="question-box" data-index="${index}" data-correct="${correctAnswer}">
+            <p class="question-title">प्रश्न ${index + 1}: ${q.question || q.question_text}</p>
             ${optionsHtml}
           </div>
         `;
@@ -391,7 +393,7 @@
         rewardMessage = "उत्कृष्ट! तपाईंले ८०% देखि ९०% बीचमा ल्याएर ४० कोइन पाउनुभयो! 🎁";
       } else {
         earnedCoins = 0;
-        rewardMessage = "तपाईंले ४५ अंकभन्दा कम ल्याउनुभएकोले यसपटक कोइन पाउनུभएन। अझै मेहनत गर्नुहोस्! 💪";
+        rewardMessage = "तपाईंले ४५ अंकभन्दा कम ल्याउनुभएकोले यसपटक कोइन पाउनुभएन। अझै मेहनत गर्नुहोस्! 💪";
       }
 
       if (earnedCoins > 0 && currentUserUid) {
@@ -415,7 +417,6 @@
       document.getElementById('coinConfirmModal').classList.remove('active');  
       document.getElementById('insufficientCoinsModal').classList.remove('active');  
       document.getElementById('login-modal').classList.remove('active');  
-      window.location.href = 'mock.html';
     }  
   </script>  
   <script src="components.js"></script>
