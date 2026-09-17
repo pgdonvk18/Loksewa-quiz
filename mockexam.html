@@ -464,9 +464,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    
-    // components.js बाट कोइन र इतिहास अपडेट गर्ने फंक्सन इम्पोर्ट गरिएको
-    import { updateUserCoinsWithHistory } from './components.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -580,9 +577,12 @@
         return;
       }
 
-      // ५० कोइन काट्ने र इतिहास (coin_history) मा रेकर्ड राख्ने
+      // ५० कोइन काट्ने
       try {
-        await updateUserCoinsWithHistory(db, currentUserUid, -50, `${displayNameSet} परीक्षा शुल्क बापत`);
+        const userDocRef = doc(db, "users", currentUserUid);
+        await updateDoc(userDocRef, {
+          coins: increment(-50)
+        });
         await fetchUserCoins(currentUserUid);
         startExam(false);
       } catch (err) {
@@ -754,8 +754,8 @@
         document.getElementById('rep-set').innerText = `परीक्षा सेट: ${displayNameSet}`;
         
         if (earnedCoins > 0 && currentUserUid) {
-          // कोइन थप्ने र इतिहास (coin_history) मा रेकर्ड राख्ने
-          await updateUserCoinsWithHistory(db, currentUserUid, earnedCoins, `${displayNameSet} परीक्षा पुरस्कार बापत`);
+          const userDocRef = doc(db, "users", currentUserUid);
+          await updateDoc(userDocRef, { coins: increment(earnedCoins) });
         }
 
         if (userEmail) {
@@ -864,7 +864,7 @@
 
     window.submitQuestionReport = async function() {
       const reason = document.getElementById('reportReason').value.trim();
-      if (!reason) { alert('कृपया समस्या के हो लेख्नुहोस्!'); return; }
+      if (!reason) { showConfirmPopup('कृपया समस्या क्या हो लेख्नुहोस्!'); return; }
 
       const currentQ = examQuestions[currentIdx];
       const { error } = await supabaseClient.from('reported_questions').insert([{ 
@@ -875,10 +875,10 @@
       }]);
 
       if (error) {
-        alert('रिपोर्ट पठाउन असफल भयो: ' + error.message);
+        showConfirmPopup('रिपोर्ट पठाउन असफल भयो: ' + error.message);
       } else {
         closeReportModal();
-        alert('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
+        showSuccessPopup('सफलतापूर्वक रिपोर्ट पठाइयो! धन्यवाद! 🙏');
       }
     }
   </script>
