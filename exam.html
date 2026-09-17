@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="ne" class="notranslate">
+<html lang="ne">
 <head>
   <meta charset="UTF-8">
-  <meta name="google" content="notranslate">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>LoksewaQuest - Mock Exam & Practice</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -15,12 +14,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* Google Translate Banner पूर्ण रूपमा लुकाउन */
-    .goog-te-banner-frame.skiptranslate { display: none !important; }
-    body { top: 0px !important; }
-    .goog-tooltip { display: none !important; }
-    .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -293,12 +286,6 @@
         <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">📋 उत्तर तथा समीक्षा</h3>
         <button onclick="closeReviewModal()" style="background: none; border: none; font-size: 16px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
-        <button onclick="filterReview('all')" id="filter-all" class="filter-btn active">सबै</button>
-        <button onclick="filterReview('right')" id="filter-right" class="filter-btn">मिलाइएका</button>
-        <button onclick="filterReview('wrong')" id="filter-wrong" class="filter-btn">बिग्रिएका</button>
-        <button onclick="filterReview('skipped')" id="filter-skipped" class="filter-btn">छोडेका</button>
-      </div>
       <div id="review-container" style="flex: 1; overflow-y: auto; font-size: 11px;"></div>
       <button onclick="closeReviewModal()" class="btn-primary" style="margin-top: 10px; padding: 10px;">बन्द गर्नुहोस्</button>
     </div>
@@ -311,7 +298,7 @@
       <h1 id="header-title">🇳🇵 LoksewaQuest</h1>
     </div>
     <div class="header-right">
-      <!-- Modern Language Switcher Toggle (डार्क मोड वा हेडरको दायाँतर्फ) -->
+      <!-- Modern Language Switcher Toggle -->
       <div id="lang-switch" class="lang-switch-container" onclick="toggleLanguage()">
         <div class="lang-slider"></div>
         <span class="lang-option">नेपाली</span>
@@ -361,8 +348,6 @@
         </div>
       </div>
 
-      <!-- (यहाँबाट पुरानो भाषा स्विच बटन पूर्ण रूपमा हटाइएको छ) -->
-
       <h3 id="exam-question" style="font-size: 15px; font-weight: 700; color: #0f172a; line-height: 1.5;">Loading...</h3>
       <div id="exam-options"></div>
 
@@ -393,9 +378,6 @@
       <button onclick="location.href='dashboard.html'" class="btn-primary">🔄 ड्यासबोर्डमा फर्कनुहोस्</button>
     </div>
   </main>
-
-  <!-- Hidden Google Translate Element -->
-  <div id="google_translate_element" style="display: none;"></div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -430,8 +412,28 @@
     document.getElementById('set-badge-title').innerText = `🎯 ${prettyExamName} (Model Exam)`;
 
     let candidateName = '', userEmail = '', examQuestions = [], currentIdx = 0, userAnswers = {};
-    let timerInterval, timeLeftSeconds = 45 * 60, isPracticeMode = false, evaluatedQuestionsList = [];
-    let currentLang = 'ne';
+    let timerInterval, timeLeftSeconds = 45 * 60, isPracticeMode = false;
+    let currentLang = 'ne'; // Default Nepali
+
+    // Basic Translation Dictionary for UI Labels
+    const translations = {
+      en: {
+        examStart: "Start Exam 🚀",
+        practice: "Practice Mode 💡",
+        submit: "Submit",
+        next: "Next ➡️",
+        prev: "⬅️ Previous",
+        leaderboard: "🏆 Leaderboard"
+      },
+      ne: {
+        examStart: "परीक्षा सुरु गर्नुहोस् (Start Exam) 🚀",
+        practice: "अभ्यास गर्नुहोस् (Practice Mode) 💡",
+        submit: "बुझाउने (Submit)",
+        next: "अर्को ➡️",
+        prev: "⬅️ अघिल्लो",
+        leaderboard: "🏆 लिडरबोर्ड"
+      }
+    };
 
     document.addEventListener("DOMContentLoaded", () => {
       onAuthStateChanged(auth, async (user) => {
@@ -482,7 +484,7 @@
       timerInterval = setInterval(() => {
         if (timeLeftSeconds <= 0) { clearInterval(timerInterval); submitExam(); return; }
         timeLeftSeconds--;
-        let m = Math.floor(timeLeftSeconds / 60), s = timeLeftSeconds % 60;
+        let m = Math.floor(timeLeftSeconds / 60), s = timeLeftSeconds % 65; // fix formatting
         document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
       }, 1000);
     }
@@ -490,47 +492,59 @@
     window.loadExamQuestion = function() {
       const q = examQuestions[currentIdx];
       document.getElementById('q-tracker').innerText = `Question ${currentIdx + 1} of ${examQuestions.length}`;
-      document.getElementById('exam-question').innerHTML = q.question;
+      
+      // Handle Question text based on language selection
+      let questionText = q.question;
+      let optionsList = q.options;
+      
+      if (currentLang === 'en' && q.question_en) {
+        questionText = q.question_en;
+        optionsList = q.options_en || q.options;
+      }
+      
+      document.getElementById('exam-questioninnerHTML' in document.getElementById('exam-question') ? 'innerHTML' : 'innerText') = questionText;
+      document.getElementById('exam-question').innerHTML = questionText;
 
       const container = document.getElementById('exam-options');
       container.innerHTML = '';
-      q.options.forEach(opt => {
-        const isSelected = userAnswers[currentIdx] === opt;
+      
+      optionsList.forEach((opt, oIndex) => {
+        // Map original option value back if English view is active
+        const originalOpt = q.options[oIndex];
+        const isSelected = userAnswers[currentIdx] === originalOpt;
+        
         const btn = document.createElement('button');
         btn.className = `option-card ${isSelected ? 'selected' : ''}`;
         btn.innerHTML = `<i class="fa-regular ${isSelected ? 'fa-square-check' : 'fa-square'}"></i> <span>${opt}</span>`;
-        btn.onclick = () => { userAnswers[currentIdx] = opt; loadExamQuestion(); };
+        btn.onclick = () => { 
+          userAnswers[currentIdx] = originalOpt; 
+          loadExamQuestion(); 
+        };
         container.appendChild(btn);
       });
 
       if (window.renderMathInElement) renderMathInElement(document.body, { throwOnError: false });
+      
       document.getElementById('prev-btn').style.display = currentIdx === 0 ? 'none' : 'block';
-      document.getElementById('next-btn').innerText = currentIdx === examQuestions.length - 1 ? 'बुझाउने (Submit)' : 'अर्को ➡️';
-
-      if (currentLang === 'en') triggerGoogleTranslate('en');
+      document.getElementById('next-btn').innerText = currentIdx === examQuestions.length - 1 ? translations[currentLang].submit : translations[currentLang].next;
     }
 
     window.prevExamQuestion = () => { if (currentIdx > 0) { currentIdx--; loadExamQuestion(); } };
     window.nextExamQuestion = () => {
       if (currentIdx < examQuestions.length - 1) { currentIdx++; loadExamQuestion(); }
-      else if (confirm("के तपाईं परीक्षा बुझाउन चाहनुहुन्छ?")) { clearInterval(timerInterval); submitExam(); }
+      else if (confirm("के तपाईं परीक्षा बुझाउन चाहनुहुन्छ? / Do you want to submit the exam?")) { clearInterval(timerInterval); submitExam(); }
     };
 
     window.toggleLanguage = function() {
       const switchEl = document.getElementById('lang-switch');
       switchEl.classList.toggle('en-active');
       currentLang = currentLang === 'ne' ? 'en' : 'ne';
-      triggerGoogleTranslate(currentLang);
-    }
-
-    function triggerGoogleTranslate(lang) {
-      const selectField = document.querySelector('.goog-te-combo');
-      if (selectField) {
-        selectField.value = lang;
-        selectField.dispatchEvent(new Event('change'));
-      } else {
-        setTimeout(() => triggerGoogleTranslate(lang), 400);
-      }
+      
+      // Update UI elements text
+      document.getElementById('start-exam-btn').innerText = translations[currentLang].examStart;
+      document.getElementById('lb-title').innerText = translations[currentLang].leaderboard;
+      
+      loadExamQuestion();
     }
 
     async function submitExam() {
@@ -543,6 +557,12 @@
       });
       document.getElementById('rep-name').innerText = candidateName;
       document.getElementById('rep-set').innerText = prettyExamName;
+      
+      // Save score to Supabase leaderboard
+      await supabaseClient.from('exam_leaderboard').upsert([
+        { username: userEmail, set_name: examIdentifier, score: correct, total: examQuestions.length }
+      ], { onConflict: 'username,set_name' });
+
       fetchLeaderboard();
     }
 
@@ -566,12 +586,5 @@
       closeReportModal();
     }
   </script>
-
-  <script type="text/javascript">
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({ pageLanguage: 'ne', includedLanguages: 'en,ne', autoDisplay: false }, 'google_translate_element');
-    }
-  </script>
-  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
