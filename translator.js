@@ -1,4 +1,4 @@
-Document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   // 1. Google Translate Element को लागि आवश्यक hidden div बनाउने
   if (!document.getElementById('google_translate_element')) {
     const hiddenDiv = document.createElement('div');
