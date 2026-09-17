@@ -1,5 +1,5 @@
-// 1. Google Translate Element को लागि आवश्यक hidden div र style अटोमेटिक थप्ने
 document.addEventListener("DOMContentLoaded", () => {
+  // 1. Google Translate Element को लागि आवश्यक hidden div बनाउने
   if (!document.getElementById('google_translate_element')) {
     const hiddenDiv = document.createElement('div');
     hiddenDiv.id = 'google_translate_element';
@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(hiddenDiv);
   }
 
-  // CSS Style लाई पनि JS बाटै अटोमेटिक इन्जेक्ट गर्ने (अलग CSS लेखिराख्नु पर्दैन)
+  // 2. Slide Toggle को CSS Style इन्जेक्ट गर्ने
   if (!document.getElementById('lang-switch-style')) {
     const style = document.createElement('style');
     style.id = 'lang-switch-style';
@@ -15,19 +15,19 @@ document.addEventListener("DOMContentLoaded", () => {
       .lang-switch-container {
         display: flex;
         align-items: center;
-        background: rgba(255, 255, 255, 0.15);
+        background: #f1f5f9;
         border-radius: 20px;
         padding: 2px;
         position: relative;
         cursor: pointer;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid #cbd5e1;
         margin-left: 8px;
       }
       .lang-option {
         padding: 4px 8px;
         font-size: 11px;
         font-weight: 800;
-        color: #ffffff;
+        color: #475569;
         z-index: 2;
         user-select: none;
       }
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
         left: 2px;
         width: 28px;
         height: 24px;
-        background: #ffffff;
+        background: #2563eb;
         border-radius: 14px;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1;
@@ -45,13 +45,19 @@ document.addEventListener("DOMContentLoaded", () => {
       .lang-switch-container.en-active .lang-slider {
         transform: translateX(28px);
       }
+      .lang-switch-container.en-active .lang-option:last-child {
+        color: #ffffff;
+      }
+      .lang-switch-container:not(.en-active) .lang-option:first-child {
+        color: #ffffff;
+      }
     `;
     document.head.appendChild(style);
   }
 
-  // 2. Header मा Slide Toggle Button राख्ने
-  const headerRight = document.querySelector('.app-header') ? document.querySelector('.app-header').lastElementChild : null;
-  if (headerRight && !document.getElementById('lang-switch')) {
+  // 3. Header (.top-nav वा .app-header) को दायाँतिर Slide Toggle Button राख्ने
+  const header = document.querySelector('.top-nav') || document.querySelector('.app-header');
+  if (header && !document.getElementById('lang-switch')) {
     const toggleHTML = `
       <div id="lang-switch" class="lang-switch-container" onclick="toggleLanguage()">
         <div class="lang-slider"></div>
@@ -59,10 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="lang-option">EN</span>
       </div>
     `;
-    headerRight.insertAdjacentHTML('afterbegin', toggleHTML);
+    // हेडरको सबैभन्दा अन्त्यमा (दायाँतिर) थप्ने
+    header.insertAdjacentHTML('beforeend', toggleHTML);
   }
 
-  // 3. Google Translate Script लोड गर्ने
+  // 4. Google Translate Script लोड गर्ने
   if (!document.getElementById('google-translate-api')) {
     const script1 = document.createElement('script');
     script1.type = 'text/javascript';
@@ -85,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// 4. भाषा परिवर्तन गर्ने फंक्सन
+// भाषा परिवर्तन गर्ने फंक्सन
 let currentLang = 'ne';
 function toggleLanguage() {
   const switchEl = document.getElementById('lang-switch');
@@ -103,7 +110,6 @@ function triggerGoogleTranslate(lang) {
     selectField.value = lang;
     selectField.dispatchEvent(new Event('change'));
   } else {
-    // यदि Google को इन्जिन लोड भइसकेको छैन भने ०.५ सेकेन्डपछि फेरि प्रयास गर्ने
     setTimeout(() => triggerGoogleTranslate(lang), 500);
   }
 }
