@@ -16,12 +16,14 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     
-    /* Google Translate fix: mathi aune white bar hatauna ra body ko top margin fix gareko */
-    html { top: 0 !important; }
-    body { background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; top: 0 !important; position: static !important; }
-    .goog-te-banner-frame { display: none !important; visibility: hidden !important; }
+    /* Google Translate fix: माथि आउने white bar र space लाई पूर्ण रूपमा हटाउन */
+    html { top: 0 !important; position: static !important; }
+    body { background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; top: 0 !important; position: static !important; margin-top: 0 !important; }
+    
+    .goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; border: none !important; }
     #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
     .goog-text-highlight { background-color: none !important; box-shadow: none !important; }
+    body > .skiptranslate { display: none !important; }
 
     footer, .global-site-footer, #globalFooter {
       display: none !important;
@@ -33,7 +35,7 @@
     .chat-toggle-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
     
     /* Professional Custom Language Switcher Styling */
-    #google_translate_element { display: none !important; } /* Default ugly widget लाई लुकाएको */
+    #google_translate_element { display: none !important; } 
     
     .custom-lang-switcher {
       display: flex;
@@ -252,11 +254,9 @@
         btnEN.classList.remove('active');
       }
 
-      // Method 1: Google Translate cookie set garera translate garni
       document.cookie = `googtrans=/ne/${langCode}; path=/; domain=${document.domain}`;
       document.cookie = `googtrans=/ne/${langCode}; path=/;`;
 
-      // Method 2: Dropdown select box lai trigger garni
       const selectBox = document.querySelector('.goog-te-combo');
       if (selectBox) {
         selectBox.value = langCode;
@@ -269,7 +269,6 @@
       }
     }
 
-    // Page load huda active state maintain garni cookie ko adhar ma
     window.addEventListener('DOMContentLoaded', () => {
       const match = document.cookie.match(new RegExp('(^| )googtrans=([^;]+)'));
       if (match) {
@@ -282,6 +281,20 @@
           document.getElementById('btnLangEN')?.classList.remove('active');
         }
       }
+
+      // Google Translate ले body मा inline style (top: 32px) हाल्न नदिन Observer
+      const observer = new MutationObserver(() => {
+        if (document.body.style.top && document.body.style.top !== '0px') {
+          document.body.style.setProperty('top', '0px', 'important');
+          document.body.style.setProperty('position', 'static', 'important');
+        }
+        if (document.documentElement.style.top && document.documentElement.style.top !== '0px') {
+          document.documentElement.style.setProperty('top', '0px', 'important');
+          document.documentElement.style.setProperty('position', 'static', 'important');
+        }
+      });
+      observer.observe(document.body, { attributes: true, attributeFilter: ['style'] });
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
     });
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
