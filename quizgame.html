@@ -346,7 +346,6 @@
     async function distributeCoinsForGame(room) {
       if (!room.players || !Array.isArray(room.players)) return;
       
-      // sessionStorage मार्फत चेक गर्ने ताकि यो गेमको लागि reward एक पटक मात्र बाँडियोस्
       const rewardKey = `coin_distributed_${roomId}`;
       if (sessionStorage.getItem(rewardKey) === 'true') return;
 
@@ -377,6 +376,17 @@
               coins: currentCoins + totalEarnedForThisPlayer
             });
             
+            // सहि तरिकाले मिलाइएको कोइन इतिहास (Coin history) राख्ने कोड
+            const historyRef = collection(db, "users", currentUser.uid, "coin_history");
+            await addDoc(historyRef, {
+              amount: totalEarnedForThisPlayer,
+              source_topic: room.settings?.topic || 'all',
+              set_key: roomId,
+              type: "earned_quiz",
+              description: 'quiz practice बाट प्राप्ति',
+              created_at: serverTimestamp()
+            });
+            
             sessionStorage.setItem(rewardKey, 'true');
             showToast(`🎉 बधाई छ! तपाईँले यो खेलबाट ${totalEarnedForThisPlayer} कोइन प्राप्त गर्नुभयो! (स्कोर्स: ${player.score})`);
           } catch (err) {
@@ -385,42 +395,6 @@
         }
       }
     }
-
-    /* Coin history */
-
-          const historyRef =
-            collection(
-              db,
-              "users",
-              userId,
-              "coin_history"
-            );
-
-
-          await addDoc(
-            historyRef,
-            {
-
-              amount:
-                coinsToAdd,
-
-              source_topic:
-                activeConfig.title,
-
-              set_key:
-                currentSet,
-
-              type:
-                "earned_quiz",
-
-              description:
-                'quiz practice बाट प्राप्ति',
-
-              created_at:
-                serverTimestamp()
-
-            }
-          );
 
     function renderMathContent(elementId) {
       setTimeout(() => {
@@ -705,7 +679,6 @@
       const roomRef = doc(db, "quiz_rooms", roomId);
       let resetPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
 
-      // रिमम्याच हुँदा sessionStorage को कोइन लक हटाइनेछ
       sessionStorage.removeItem(`coin_distributed_${roomId}`);
 
       try {
