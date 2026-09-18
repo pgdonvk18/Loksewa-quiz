@@ -1506,63 +1506,74 @@
 
 
     /* =========================
-       NOTIFICATIONS
-    ========================= */
+   NOTIFICATIONS
+========================= */
 
-    async function fetchLatestNotification() {
+async function fetchLatestNotification() {
 
-      try {
+  try {
 
-        const {
-          data,
-          error
-        } = await supabase
+    const {
+      data,
+      error
+    } = await supabase
+      .from('notifications')
+      .select('message')
+      .order('id', {
+        ascending: false
+      })
+      .limit(1);
 
-          .from('notifications')
+    if (error) {
 
-          .select('message')
+      console.error(
+        "Notification error:",
+        error
+      );
 
-          .order('id', {
-            ascending: false
-          })
+      return;
+    }
 
-          .limit(1);
+    const ticker =
+      document.getElementById(
+        'live-ticker-text'
+      );
 
+    if (!ticker) return;
 
-        if (error) {
+    if (data && data.length > 0) {
 
-          console.error(
-            "Notification error:",
-            error
-          );
+      ticker.textContent =
+        data[0].message;
 
-          return;
+    } else {
 
-        }
-
-
-        if (data && data.length > 0) {
-
-          document.getElementById(
-            'live-ticker-text'
-          ).textContent =
-            data[0].message;
-
-        }
-
-      } catch (err) {
-
-        console.error(
-          "Notification fetch error:",
-          err
-        );
-
-      }
+      ticker.textContent =
+        "LoksewaQuest मा स्वागत छ! नयाँ सूचनाहरू चाँडै अपडेट हुनेछ।";
 
     }
 
+  } catch (err) {
 
-    fetchLatestNotification();
+    console.error(
+      "Notification fetch error:",
+      err
+    );
+
+  }
+
+}
+
+
+// Page load हुँदा तुरुन्त notification ल्याउने
+fetchLatestNotification();
+
+
+// प्रत्येक 30 seconds मा नयाँ notification check गर्ने
+setInterval(
+  fetchLatestNotification,
+  30000
+);
 
 
     /* =========================
