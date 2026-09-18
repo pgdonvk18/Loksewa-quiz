@@ -16,7 +16,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     
-    /* Google Translate fix: माथि आउने white bar र space लाई पूर्ण रूपमा हटाउन */
+    /* Google Translate fix: माथि आउने white bar, space र spinning loader हरूलाई हटाउन */
     html { top: 0 !important; position: static !important; }
     body { background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; top: 0 !important; position: static !important; margin-top: 0 !important; }
     
@@ -24,6 +24,9 @@
     #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
     .goog-text-highlight { background-color: none !important; box-shadow: none !important; }
     body > .skiptranslate { display: none !important; }
+    
+    /* Google Translate loading spinner fix */
+    .goog-te-spinner-pos, .goog-te-spinner { display: none !important; }
 
     footer, .global-site-footer, #globalFooter {
       display: none !important;
@@ -34,7 +37,6 @@
     .header-btns { display: flex; gap: 8px; align-items: center; }
     .chat-toggle-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
     
-    /* Professional Custom Language Switcher Styling */
     #google_translate_element { display: none !important; } 
     
     .custom-lang-switcher {
@@ -166,10 +168,8 @@
       <span class="room-badge" id="roomCodeDisplay">ROOM: ----</span>
     </div>
     <div class="header-btns">
-      <!-- Hidden Google Translate Element for functionality -->
       <div id="google_translate_element"></div>
       
-      <!-- Attractive & Professional Custom Language Switcher UI -->
       <div class="custom-lang-switcher" id="customLangSwitcher">
         <button class="lang-option-btn active" id="btnLangNE" onclick="changeLanguage('ne')">नेपा</button>
         <button class="lang-option-btn" id="btnLangEN" onclick="changeLanguage('en')">ENG</button>
@@ -230,7 +230,6 @@
     </div>
   </div>
 
-  <!-- Google Translate Widget Script Initialization & Custom Switcher Logic -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
@@ -241,7 +240,6 @@
       }, 'google_translate_element');
     }
 
-    // Professional Custom Language Switcher Function with Cookie Trigger
     function changeLanguage(langCode) {
       const btnNE = document.getElementById('btnLangNE');
       const btnEN = document.getElementById('btnLangEN');
@@ -282,7 +280,6 @@
         }
       }
 
-      // Google Translate ले body मा inline style (top: 32px) हाल्न नदिन Observer
       const observer = new MutationObserver(() => {
         if (document.body.style.top && document.body.style.top !== '0px') {
           document.body.style.setProperty('top', '0px', 'important');
@@ -461,7 +458,15 @@
 
         initGameListener();
         initChatListener();
-        window.addEventListener('beforeunload', handleUserLeave);
+        
+        // Google Translate ले DOM रिफ्रेस गर्दा beforeunload ले काम बिगारिरहेको थियो, 
+        // त्यसैले यसलाई सुरक्षित बनाउन visibilitychange र pagehide इभेन्ट प्रयोग गरिएको छ।
+        window.addEventListener('pagehide', handleUserLeave);
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'hidden') {
+            // ट्याब बन्द वा मिनिमाइज हुँदाको सेफ चेक
+          }
+        });
       } else {
         window.location.href = "login.html";
       }
