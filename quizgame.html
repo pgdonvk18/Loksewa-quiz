@@ -24,7 +24,10 @@
 
     .game-header { background: #0f2a4a; color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 10; }
     .room-badge { background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
-    .chat-toggle-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .header-btns { display: flex; gap: 8px; align-items: center; }
+    .chat-toggle-btn, .lang-toggle-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .lang-toggle-btn { background: #059669; }
+    .lang-toggle-btn:hover { background: #047857; }
 
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
     .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; position: relative; }
@@ -124,7 +127,10 @@
       <h3>Loksewa Arena</h3>
       <span class="room-badge" id="roomCodeDisplay">ROOM: ----</span>
     </div>
-    <button class="chat-toggle-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i> च्याट</button>
+    <div class="header-btns">
+      <button class="lang-toggle-btn" id="langToggleBtn" onclick="toggleQuizLanguage()"><i class="fa-solid fa-language"></i> EN / NE</button>
+      <button class="chat-toggle-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i> च्याट</button>
+    </div>
   </div>
 
   <div class="game-layout">
@@ -216,7 +222,11 @@
     let questionTimerInterval = null;
     let lastProcessedNotificationId = null;
     let isAnswerSubmitting = false;
-    let coinAlreadyDistributed = false; // दोहोरो कोइन नजोडिनको लागि
+    let coinAlreadyDistributed = false; 
+
+    // Language Toggle state for Quiz section only ('ne' or 'en')
+    let currentQuizLang = 'ne';
+    let translatedQuizCache = { question: "", options: [], correctAnswer: "" };
 
     const topicDisplayNames = {
       "all": "सबै विषयबाट मिक्स (All Topics Random)",
@@ -230,12 +240,46 @@
       "Budget2083-84": "आर्थिक वर्ष २०८३/८४ को बजेट"
     };
 
-    // ==========================================
-    // कोइन वितरण गर्ने फिक्स गरिएको लजिक (प्रत्येक युजरले आफ्नो कोइन आफैँ अपडेट गर्ने)
-    // ==========================================
+    // Google MyMemory API helper to translate quiz text between Nepali and English
+    async function translateText(text, targetLang) {
+      if (!text) return "";
+      if (targetLang === 'ne') return text; // Default is Nepali from DB
+      try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ne|en`);
+        const data = await res.json();
+        if (data && data.responseData && data.responseData.translatedText) {
+          return data.responseData.translatedText;
+        }
+      } catch (e) {
+        console.error("Translation error:", e);
+      }
+      return text;
+    }
+
+    window.toggleQuizLanguage = async function() {
+      currentQuizLang = (currentQuizLang === 'ne') ? 'en' : 'ne';
+      const btn = document.getElementById('langToggleBtn');
+      btn.innerHTML = `<i class="fa-solid fa-language"></i> ${currentQuizLang === 'en' ? 'EN (Active)' : 'नेपाली (Active)'}`;
+
+      if (roomDataGlobal && roomDataGlobal.status === 'playing' && roomDataGlobal.currentQuestion) {
+        const q = roomDataGlobal.currentQuestion;
+        if (currentQuizLang === 'en') {
+          showToast("Translating quiz to English...");
+          const tQuestion = await translateText(q.text, 'en');
+          let tOptions = [];
+          for (let opt of q.options) {
+            tOptions.push(await translateText(opt, 'en'));
+          }
+          const tCorrect = await translateText(q.correctAnswer, 'en');
+          translatedQuizCache = { question: tQuestion, options: tOptions, correctAnswer: tCorrect };
+        }
+        renderGameUI(roomDataGlobal);
+      }
+    };
+
     async function distributeCoinsForGame(room) {
       if (!room.players || !Array.isArray(room.players)) return;
-      if (coinAlreadyDistributed) return; // एउटै गेममा दुई पटक नजोडियोस्
+      if (coinAlreadyDistributed) return; 
       coinAlreadyDistributed = true;
 
       let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
@@ -243,15 +287,14 @@
       for (let i = 0; i < sortedPlayers.length; i++) {
         let player = sortedPlayers[i];
         
-        let calculatedCoins = 10; // बेस कोइन
+        let calculatedCoins = 10; 
         if (i === 0) {
-          calculatedCoins += 40; // प्रथम हुनेलाई बोनस
+          calculatedCoins += 40; 
         }
 
         let scoreEarned = player.score > 0 ? player.score : 0;
         let totalEarnedForThisPlayer = calculatedCoins + scoreEarned;
 
-        // यदि यो लूपमा आएको खेलाडी अहिलेको डिभाइस चलाइरहेको युजर हो भने, उसले आफ्नो कोइन सुरक्षित रूपमा अपडेट गर्छ
         if (player.uid && currentUser && player.uid === currentUser.uid) {
           try {
             const userRef = doc(db, "users", currentUser.uid);
@@ -267,14 +310,12 @@
             });
             
             showToast(`🎉 बधाई छ! तपाईँले यो खेलबाट ${totalEarnedForThisPlayer} कोइन प्राप्त गर्नुभयो! (स्कोर्स: ${player.score})`);
-            console.log(`आफ्नो कोइन সফল रूपमा थपियो: ${totalEarnedForThisPlayer}`);
           } catch (err) {
             console.error("कोइन अपडेट गर्दा त्रुटी आयो:", err);
           }
         }
       }
     }
-    // ==========================================
 
     function renderMathContent(elementId) {
       setTimeout(() => {
@@ -385,20 +426,27 @@
           showToast(newRoomData.latestNotification.text);
         }
 
+        // Check if question changed to reset cache translation if needed
+        if (roomDataGlobal && roomDataGlobal.currentQuestion && newRoomData.currentQuestion) {
+          if (roomDataGlobal.currentQuestion.id !== newRoomData.currentQuestion.id) {
+            currentQuizLang = 'ne'; // Reset language to Nepali on new question
+            document.getElementById('langToggleBtn').innerHTML = `<i class="fa-solid fa-language"></i> नेपाली (Active)`;
+          }
+        }
+
         roomDataGlobal = newRoomData;
         
-        // यदि गेम समाप्त भएको छ भने कोइन वितरण गर्ने फंक्सन कल गर्ने
         if (roomDataGlobal.status === 'finished') {
           await distributeCoinsForGame(roomDataGlobal);
         } else {
-          coinAlreadyDistributed = false; // नयाँ खेल सुरु हुँदा रिसेट हुने
+          coinAlreadyDistributed = false; 
         }
 
         renderGameUI(roomDataGlobal);
       });
     }
 
-    function renderGameUI(room) {
+    async function renderGameUI(room) {
       const gameBody = document.getElementById('gameBody');
       const scoreInfo = document.getElementById('scoreboardInfo');
       const totalRounds = room.settings?.totalRounds || 3;
@@ -479,15 +527,23 @@
         let currentQCount = room.questionCount || 1;
         let currentRoundNum = Math.floor((currentQCount - 1) / playerCount) + 1;
 
+        // Apply translation if English is active
+        let displayQuestionText = q.text;
+        let displayOptions = q.options;
+        if (currentQuizLang === 'en' && translatedQuizCache.question) {
+          displayQuestionText = translatedQuizCache.question;
+          displayOptions = translatedQuizCache.options;
+        }
+
         gameBody.innerHTML = `
           <div class="card question-box" id="activeQuestionCard">
             <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px;">
               <span>राउन्ड: ${currentRoundNum} / ${totalRounds} (प्रश्न: ${currentQCount}/${totalQuestionsPlanned})</span>
               <span>पालो: <b style="color: ${isMyTurn ? '#2563eb' : '#0f2a4a'}">${isMyTurn ? 'तपाईँको पालो!' : currentTurnPlayer.name + ' को पालो'}</b></span>
             </div>
-            <h4 id="questionTextRender">${escapeHTML(q.text)}</h4>
+            <h4 id="questionTextRender">${escapeHTML(displayQuestionText)}</h4>
             <div class="options-grid" id="optionsGrid">
-              ${q.options.map(opt => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt.replace(/'/g, "\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
+              ${displayOptions.map((opt, index) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${q.options[index].replace(/'/g, "\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
             </div>
             ${isMyTurn ? `
               <div class="action-row">
