@@ -8,18 +8,14 @@
 
   <title>LoksewaQuest - Performance Analytics</title>
 
-  <!-- Global Components -->
   <script src="components.js"></script>
 
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
-  <!-- Font Awesome -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -35,8 +31,6 @@
       color: #1f2937;
       padding-bottom: 90px;
     }
-
-    /* ================= HEADER ================= */
 
     .top-header {
       background: linear-gradient(135deg, #3413aa, #5b21d6);
@@ -134,15 +128,11 @@
       max-width: 240px;
     }
 
-    /* ================= MAIN ================= */
-
     .container {
       width: min(1100px, calc(100% - 28px));
       margin: -12px auto 0;
       position: relative;
     }
-
-    /* ================= SUMMARY ================= */
 
     .summary-grid {
       display: grid;
@@ -195,8 +185,6 @@
       font-weight: 600;
     }
 
-    /* ================= SECTION ================= */
-
     .section {
       margin-top: 18px;
     }
@@ -226,8 +214,6 @@
       border: 1px solid #eeeef5;
       box-shadow: 0 5px 20px rgba(0,0,0,.045);
     }
-
-    /* ================= QUICK STATS ================= */
 
     .quick-grid {
       display: grid;
@@ -268,8 +254,6 @@
       color: #e49a12;
     }
 
-    /* ================= CHART ================= */
-
     .chart-box {
       height: 250px;
       position: relative;
@@ -292,8 +276,6 @@
       display: block;
       color: #c8cbd5;
     }
-
-    /* ================= SET PERFORMANCE ================= */
 
     .set-item {
       border: 1px solid #eeeef4;
@@ -345,8 +327,6 @@
       color: #9297a4;
       font-size: 9px;
     }
-
-    /* ================= HISTORY ================= */
 
     .history-item {
       display: flex;
@@ -409,8 +389,6 @@
       margin-top: 2px;
     }
 
-    /* ================= RECOMMENDATION ================= */
-
     .recommendation {
       display: flex;
       gap: 11px;
@@ -450,8 +428,6 @@
       line-height: 1.5;
     }
 
-    /* ================= LOADING ================= */
-
     #loadingScreen {
       position: fixed;
       inset: 0;
@@ -485,8 +461,6 @@
       }
     }
 
-    /* ================= ERROR ================= */
-
     #errorBox {
       display: none;
       background: #fff3f3;
@@ -498,8 +472,6 @@
       font-size: 11px;
       line-height: 1.5;
     }
-
-    /* ================= DESKTOP ================= */
 
     @media (min-width: 700px) {
 
@@ -522,14 +494,10 @@
 
 <body>
 
-<!-- ================= LOADING ================= -->
-
 <div id="loadingScreen">
   <div class="loader"></div>
   <p id="loadingText">तपाईंको analytics तयार हुँदैछ...</p>
 </div>
-
-<!-- ================= HEADER ================= -->
 
 <header class="top-header">
 
@@ -565,10 +533,7 @@
 
 </header>
 
-
 <main class="container">
-
-  <!-- ================= SUMMARY ================= -->
 
   <section class="section">
 
@@ -610,13 +575,7 @@
 
   </section>
 
-
-  <!-- ================= ERROR ================= -->
-
   <div id="errorBox"></div>
-
-
-  <!-- ================= QUICK STATS ================= -->
 
   <section class="section">
 
@@ -650,9 +609,6 @@
 
   </section>
 
-
-  <!-- ================= CHARTS ================= -->
-
   <section class="section">
 
     <div class="analytics-grid">
@@ -673,7 +629,6 @@
         </div>
 
       </div>
-
 
       <div>
 
@@ -696,9 +651,6 @@
 
   </section>
 
-
-  <!-- ================= SET PERFORMANCE ================= -->
-
   <section class="section">
 
     <div class="section-title">
@@ -717,9 +669,6 @@
 
   </section>
 
-
-  <!-- ================= SMART RECOMMENDATIONS ================= -->
-
   <section class="section">
 
     <div class="section-title">
@@ -737,9 +686,6 @@
     </div>
 
   </section>
-
-
-  <!-- ================= RECENT HISTORY ================= -->
 
   <section class="section">
 
@@ -761,7 +707,6 @@
 
 </main>
 
-
 <script type="module">
 
   /* =====================================================
@@ -777,6 +722,12 @@
     onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
 
   const firebaseConfig = {
     apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -789,7 +740,10 @@
 
 
   const app = initializeApp(firebaseConfig);
+
   const auth = getAuth(app);
+
+  const db = getFirestore(app);
 
 
   /* =====================================================
@@ -810,32 +764,40 @@
 
     if (window.supabase) {
 
-      supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
+      supabaseClient =
+        window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_KEY
+        );
 
       return;
+
     }
 
-    const script = document.createElement("script");
+
+    const script =
+      document.createElement("script");
 
     script.src =
       "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
     document.head.appendChild(script);
 
+
     await new Promise((resolve, reject) => {
 
       script.onload = resolve;
+
       script.onerror = reject;
 
     });
 
-    supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+
+    supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
 
   }
 
@@ -854,22 +816,30 @@
 
   let authResolved = false;
 
+  let firestoreUserName = "";
+
 
   /* =====================================================
      DOM HELPERS
   ===================================================== */
 
   function $(id) {
+
     return document.getElementById(id);
+
   }
 
 
   function hideLoading() {
 
-    const loading = $("loadingScreen");
+    const loading =
+      $("loadingScreen");
 
     if (loading) {
-      loading.style.display = "none";
+
+      loading.style.display =
+        "none";
+
     }
 
   }
@@ -878,18 +848,22 @@
   function showLoading(message) {
 
     $("loadingText").textContent =
-      message || "Loading...";
+      message ||
+      "Loading...";
 
-    $("loadingScreen").style.display = "flex";
+    $("loadingScreen").style.display =
+      "flex";
 
   }
 
 
   function showError(message) {
 
-    const box = $("errorBox");
+    const box =
+      $("errorBox");
 
-    box.style.display = "block";
+    box.style.display =
+      "block";
 
     box.innerHTML = `
       <strong>
@@ -897,18 +871,76 @@
         Analytics error
       </strong>
       <br>
-      ${message}
+      ${escapeHtml(message)}
     `;
+
+  }
+
+
+  function escapeHtml(value) {
+
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  /* =====================================================
+     GET FIRESTORE USER NAME
+     
+     This is important for OLD leaderboard records.
+     
+     Old records were saved like:
+       username = Firestore user's name
+     
+     New records will use:
+       user_uid = Firebase UID
+  ===================================================== */
+
+  async function loadFirestoreUserName(user) {
+
+    firestoreUserName = "";
+
+    try {
+
+      const userRef =
+        doc(
+          db,
+          "users",
+          user.uid
+        );
+
+      const snapshot =
+        await getDoc(userRef);
+
+      if (snapshot.exists()) {
+
+        const data =
+          snapshot.data();
+
+        firestoreUserName =
+          String(data.name || "").trim();
+
+      }
+
+    } catch (error) {
+
+      console.warn(
+        "Could not load Firestore user name:",
+        error
+      );
+
+    }
 
   }
 
 
   /* =====================================================
      AUTH STATE
-     
-     IMPORTANT:
-     Don't immediately redirect when Firebase first returns
-     null. This prevents analysis → login → dashboard loop.
   ===================================================== */
 
   onAuthStateChanged(auth, async (user) => {
@@ -933,6 +965,8 @@
 
         await initSupabase();
 
+        await loadFirestoreUserName(user);
+
         await loadAnalytics(user);
 
         hideLoading();
@@ -954,13 +988,9 @@
       }
 
       return;
+
     }
 
-
-    /*
-      Firebase may temporarily report null while restoring
-      authentication. Give it some time before redirecting.
-    */
 
     $("userEmailDisplay").textContent =
       "Checking login...";
@@ -989,80 +1019,194 @@
 
 
   /* =====================================================
+     SELECT COLUMNS
+  ===================================================== */
+
+  const LEADERBOARD_COLUMNS = `
+    id,
+    username,
+    user_uid,
+    set_name,
+    score,
+    correct_count,
+    wrong_count,
+    skipped_count,
+    total_questions,
+    created_at
+  `;
+
+
+  /* =====================================================
      LOAD ANALYTICS
+     
+     NEW DATA:
+       user_uid = Firebase UID
+     
+     OLD DATA:
+       username = Firebase email
+       OR
+       username = Firestore user's name
+     
+     Therefore both are loaded and merged.
   ===================================================== */
 
   async function loadAnalytics(user) {
 
-    showLoading("Loading your exam analytics...");
+    showLoading(
+      "Loading your exam analytics..."
+    );
 
-    const email = user.email;
+
+    const email =
+      String(user.email || "").trim();
+
+    const uid =
+      String(user.uid || "").trim();
 
 
-    if (!email) {
+    if (!uid) {
 
       throw new Error(
-        "Your Firebase account does not have an email address."
+        "Your Firebase account UID could not be found."
       );
 
     }
 
 
     console.log(
-      "Loading leaderboard data for:",
-      email
+      "Loading analytics for UID:",
+      uid
     );
 
 
-    const {
-      data,
-      error
-    } = await supabaseClient
+    const queries = [];
 
-      .from("exam_leaderboard")
 
-      .select(`
-        id,
-        username,
-        set_name,
-        score,
-        correct_count,
-        wrong_count,
-        skipped_count,
-        total_questions,
-        created_at
-      `)
+    /* =================================================
+       NEW RECORDS
+       ================================ ================= */
 
-      .eq("username", email)
+    queries.push(
+      supabaseClient
+        .from("exam_leaderboard")
+        .select(LEADERBOARD_COLUMNS)
+        .eq("user_uid", uid)
+    );
 
-      .order(
-        "created_at",
-        {
-          ascending: true
-        }
+
+    /* =================================================
+       OLD RECORDS SAVED USING EMAIL
+    ================================================= */
+
+    if (email) {
+
+      queries.push(
+        supabaseClient
+          .from("exam_leaderboard")
+          .select(LEADERBOARD_COLUMNS)
+          .eq("username", email)
+      );
+
+    }
+
+
+    /* =================================================
+       OLD RECORDS SAVED USING FIRESTORE NAME
+    ================================================= */
+
+    if (firestoreUserName) {
+
+      queries.push(
+        supabaseClient
+          .from("exam_leaderboard")
+          .select(LEADERBOARD_COLUMNS)
+          .eq(
+            "username",
+            firestoreUserName
+          )
+      );
+
+    }
+
+
+    const results =
+      await Promise.all(queries);
+
+
+    const errors =
+      results.filter(
+        result => result.error
       );
 
 
-    if (error) {
+    /*
+      If user_uid column has not been created yet,
+      the new UID query may fail.
 
-      console.error(
-        "Supabase error:",
-        error
+      We still allow the old email/name queries
+      to work so old analytics are not lost.
+    */
+
+    const usableResults =
+      results.filter(
+        result =>
+          !result.error &&
+          Array.isArray(result.data)
       );
+
+
+    if (!usableResults.length) {
+
+      const firstError =
+        errors[0]?.error;
 
       throw new Error(
-        error.message ||
+        firstError?.message ||
         "Could not fetch exam leaderboard data."
       );
 
     }
 
 
-    examData = data || [];
+    /* =================================================
+       MERGE + REMOVE DUPLICATES
+    ================================================= */
+
+    const merged =
+      new Map();
+
+
+    usableResults.forEach(result => {
+
+      result.data.forEach(row => {
+
+        if (!row || !row.id) {
+          return;
+        }
+
+        merged.set(
+          String(row.id),
+          row
+        );
+
+      });
+
+    });
+
+
+    examData =
+      Array.from(merged.values());
+
+
+    examData.sort(
+      (a, b) =>
+        new Date(a.created_at || 0) -
+        new Date(b.created_at || 0)
+    );
 
 
     console.log(
-      "Analytics rows:",
+      "Analytics rows after merging old + new:",
       examData
     );
 
@@ -1102,11 +1246,15 @@
 
 
     let totalCorrect = 0;
+
     let totalWrong = 0;
+
     let totalSkipped = 0;
+
     let totalQuestions = 0;
 
     let bestScore = 0;
+
     let scoreSum = 0;
 
 
@@ -1138,8 +1286,11 @@
 
       scoreSum += score;
 
+
       if (score > bestScore) {
+
         bestScore = score;
+
       }
 
     });
@@ -1194,34 +1345,42 @@
   function renderCharts() {
 
     if (scoreChart) {
+
       scoreChart.destroy();
+
+      scoreChart = null;
+
     }
 
+
     if (accuracyChart) {
+
       accuracyChart.destroy();
+
+      accuracyChart = null;
+
     }
 
 
     const labels =
-      examData.map((exam, index) => {
-
-        return "Exam " + (index + 1);
-
-      });
+      examData.map(
+        (exam, index) =>
+          "Exam " + (index + 1)
+      );
 
 
     const scores =
-      examData.map(exam => {
-
-        return Number(exam.score) || 0;
-
-      });
+      examData.map(
+        exam =>
+          Number(exam.score) || 0
+      );
 
 
     const correct =
       examData.reduce(
         (sum, exam) =>
-          sum + (Number(exam.correct_count) || 0),
+          sum +
+          (Number(exam.correct_count) || 0),
         0
       );
 
@@ -1229,7 +1388,8 @@
     const wrong =
       examData.reduce(
         (sum, exam) =>
-          sum + (Number(exam.wrong_count) || 0),
+          sum +
+          (Number(exam.wrong_count) || 0),
         0
       );
 
@@ -1237,7 +1397,8 @@
     const skipped =
       examData.reduce(
         (sum, exam) =>
-          sum + (Number(exam.skipped_count) || 0),
+          sum +
+          (Number(exam.skipped_count) || 0),
         0
       );
 
@@ -1246,130 +1407,73 @@
       $("scoreTrendChart");
 
 
-    scoreChart =
-      new Chart(scoreCanvas, {
+    if (scoreCanvas) {
 
-        type: "line",
+      scoreChart =
+        new Chart(
+          scoreCanvas,
+          {
 
-        data: {
+            type: "line",
 
-          labels,
+            data: {
 
-          datasets: [
+              labels,
 
-            {
-              label: "Score",
+              datasets: [
 
-              data: scores,
+                {
+                  label: "Score",
 
-              borderWidth: 3,
+                  data: scores,
 
-              tension: .35,
+                  borderWidth: 3,
 
-              fill: true,
+                  tension: .35,
 
-              pointRadius: 4,
+                  fill: true,
 
-              pointHoverRadius: 6
-            }
+                  pointRadius: 4,
 
-          ]
+                  pointHoverRadius: 6
+                }
 
-        },
-
-        options: {
-
-          responsive: true,
-
-          maintainAspectRatio: false,
-
-          plugins: {
-
-            legend: {
-              display: false
-            }
-
-          },
-
-          scales: {
-
-            y: {
-
-              beginAtZero: true,
-
-              grid: {
-                color: "#eeeeF4"
-              }
+              ]
 
             },
 
-            x: {
+            options: {
 
-              grid: {
-                display: false
-              }
+              responsive: true,
 
-            }
+              maintainAspectRatio: false,
 
-          }
+              plugins: {
 
-        }
+                legend: {
+                  display: false
+                }
 
-      });
+              },
 
+              scales: {
 
-    accuracyChart =
-      new Chart(
+                y: {
 
-        $("accuracyPieChart"),
+                  beginAtZero: true,
 
-        {
-
-          type: "doughnut",
-
-          data: {
-
-            labels: [
-              "Correct",
-              "Wrong",
-              "Skipped"
-            ],
-
-            datasets: [
-
-              {
-                data: [
-                  correct,
-                  wrong,
-                  skipped
-                ],
-
-                borderWidth: 0
-              }
-
-            ]
-
-          },
-
-          options: {
-
-            responsive: true,
-
-            maintainAspectRatio: false,
-
-            cutout: "68%",
-
-            plugins: {
-
-              legend: {
-
-                position: "bottom",
-
-                labels: {
-                  boxWidth: 10,
-                  font: {
-                    size: 10
+                  grid: {
+                    color: "#eeeeF4"
                   }
+
+                },
+
+                x: {
+
+                  grid: {
+                    display: false
+                  }
+
                 }
 
               }
@@ -1377,10 +1481,82 @@
             }
 
           }
+        );
 
-        }
+    }
 
-      );
+
+    const accuracyCanvas =
+      $("accuracyPieChart");
+
+
+    if (accuracyCanvas) {
+
+      accuracyChart =
+        new Chart(
+          accuracyCanvas,
+          {
+
+            type: "doughnut",
+
+            data: {
+
+              labels: [
+                "Correct",
+                "Wrong",
+                "Skipped"
+              ],
+
+              datasets: [
+
+                {
+                  data: [
+                    correct,
+                    wrong,
+                    skipped
+                  ],
+
+                  borderWidth: 0
+                }
+
+              ]
+
+            },
+
+            options: {
+
+              responsive: true,
+
+              maintainAspectRatio: false,
+
+              cutout: "68%",
+
+              plugins: {
+
+                legend: {
+
+                  position: "bottom",
+
+                  labels: {
+
+                    boxWidth: 10,
+
+                    font: {
+                      size: 10
+                    }
+
+                  }
+
+                }
+
+              }
+
+            }
+
+          }
+        );
+
+    }
 
   }
 
@@ -1427,10 +1603,15 @@
         sets[setName] = {
 
           attempts: 0,
+
           score: 0,
+
           correct: 0,
+
           wrong: 0,
+
           skipped: 0,
+
           questions: 0
 
         };
@@ -1470,15 +1651,12 @@
 
 
     entries
-
       .sort(
         (a,b) =>
           (b[1].score / b[1].attempts) -
           (a[1].score / a[1].attempts)
       )
-
       .forEach(([name, data]) => {
-
 
         const avgScore =
           data.attempts > 0
@@ -1505,7 +1683,9 @@
           <div class="set-top">
 
             <div class="set-name">
-              ${formatSetName(name)}
+              ${escapeHtml(
+                formatSetName(name)
+              )}
             </div>
 
             <div class="set-score">
@@ -1518,7 +1698,10 @@
 
             <div
               class="progress-fill"
-              style="width:${Math.min(accuracy,100)}%">
+              style="width:${Math.min(
+                Math.max(accuracy,0),
+                100
+              )}%">
             </div>
 
           </div>
@@ -1530,7 +1713,8 @@
             </span>
 
             <span>
-              ${data.attempts} attempt${data.attempts > 1 ? "s" : ""}
+              ${data.attempts}
+              attempt${data.attempts > 1 ? "s" : ""}
             </span>
 
           </div>
@@ -1565,7 +1749,9 @@
           </div>
 
           <div>
-            <strong>Start your first Mock Test</strong>
+            <strong>
+              Start your first Mock Test
+            </strong>
 
             <p>
               Complete a mock test and your personal
@@ -1582,8 +1768,11 @@
 
 
     let correct = 0;
+
     let wrong = 0;
+
     let skipped = 0;
+
     let questions = 0;
 
 
@@ -1696,7 +1885,8 @@
       const recentAverage =
         recent.reduce(
           (sum, exam) =>
-            sum + (Number(exam.score) || 0),
+            sum +
+            (Number(exam.score) || 0),
           0
         ) / recent.length;
 
@@ -1714,7 +1904,8 @@
       const oldAverage =
         old.reduce(
           (sum, exam) =>
-            sum + (Number(exam.score) || 0),
+            sum +
+            (Number(exam.score) || 0),
           0
         ) / old.length;
 
@@ -1725,7 +1916,8 @@
 
           icon: "fa-arrow-trend-up",
 
-          title: "Your recent performance is improving",
+          title:
+            "Your recent performance is improving",
 
           text:
             "Your recent mock-test scores are higher than your earlier average. Keep following the same study routine."
@@ -1747,6 +1939,7 @@
         const item =
           document.createElement("div");
 
+
         item.className =
           "recommendation";
 
@@ -1755,18 +1948,18 @@
 
           <div class="recommendation-icon">
 
-            <i class="fa-solid ${rec.icon}"></i>
+            <i class="fa-solid ${escapeHtml(rec.icon)}"></i>
 
           </div>
 
           <div>
 
             <strong>
-              ${rec.title}
+              ${escapeHtml(rec.title)}
             </strong>
 
             <p>
-              ${rec.text}
+              ${escapeHtml(rec.text)}
             </p>
 
           </div>
@@ -1826,22 +2019,17 @@
       const score =
         Number(exam.score) || 0;
 
-
       const correct =
         Number(exam.correct_count) || 0;
-
 
       const wrong =
         Number(exam.wrong_count) || 0;
 
-
       const skipped =
         Number(exam.skipped_count) || 0;
 
-
       const total =
         Number(exam.total_questions) || 0;
-
 
       const date =
         formatDate(exam.created_at);
@@ -1863,22 +2051,22 @@
 
         </div>
 
-
         <div class="history-main">
 
           <strong>
-            ${formatSetName(exam.set_name)}
+            ${escapeHtml(
+              formatSetName(exam.set_name)
+            )}
           </strong>
 
           <span>
-            ${date} •
+            ${escapeHtml(date)} •
             ${correct} correct •
             ${wrong} wrong •
             ${skipped} skipped
           </span>
 
         </div>
-
 
         <div class="history-score">
 
@@ -1909,11 +2097,13 @@
   function formatSetName(name) {
 
     if (!name) {
+
       return "Mock Test";
+
     }
 
 
-    return name
+    return String(name)
 
       .replace(/_/g, " ")
 
@@ -1927,7 +2117,9 @@
   function formatDate(dateString) {
 
     if (!dateString) {
+
       return "Unknown date";
+
     }
 
 
@@ -1936,7 +2128,9 @@
 
 
     if (isNaN(date.getTime())) {
+
       return "Unknown date";
+
     }
 
 
@@ -1976,63 +2170,65 @@
      REFRESH
   ===================================================== */
 
-  window.refreshAnalytics = async function() {
+  window.refreshAnalytics =
+    async function() {
 
-    if (!currentUser) {
+      if (!currentUser) {
 
-      console.log(
-        "Refresh ignored: user not ready"
-      );
+        console.log(
+          "Refresh ignored: user not ready"
+        );
 
-      return;
+        return;
 
-    }
-
-
-    try {
-
-      showLoading(
-        "Refreshing your analytics..."
-      );
-
-      $("errorBox").style.display =
-        "none";
+      }
 
 
-      await loadAnalytics(
-        currentUser
-      );
+      try {
+
+        showLoading(
+          "Refreshing your analytics..."
+        );
 
 
-      hideLoading();
+        $("errorBox").style.display =
+          "none";
 
-    } catch (error) {
 
-      console.error(
-        "Refresh error:",
-        error
-      );
+        await loadFirestoreUserName(
+          currentUser
+        );
 
-      hideLoading();
 
-      showError(
-        error.message ||
-        "Failed to refresh analytics."
-      );
+        await loadAnalytics(
+          currentUser
+        );
 
-    }
 
-  };
+        hideLoading();
+
+      } catch (error) {
+
+        console.error(
+          "Refresh error:",
+          error
+        );
+
+        hideLoading();
+
+        showError(
+          error.message ||
+          "Failed to refresh analytics."
+        );
+
+      }
+
+    };
 
 
   /* =====================================================
      BOTTOM NAV
   ===================================================== */
-
-  /*
-    Keep this at the END so that Firebase auth
-    initialization starts cleanly first.
-  */
 
   window.addEventListener(
     "load",
@@ -2066,4 +2262,4 @@
 </script>
 
 </body>
-  </html>
+</html>
