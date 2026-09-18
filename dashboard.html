@@ -2,13 +2,18 @@
 <html lang="ne">
 <head>
   <script src="components.js"></script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <title>LoksewaQuest - Dashboard</title>
-  <!-- प्रिमियम आधुनिक फन्ट (Plus Jakarta Sans) -->
+
+  <!-- Premium Font -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- व्यावसायिक आइकनहरूको लागि FontAwesome CDN -->
+
+  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
     * {
       box-sizing: border-box;
@@ -16,15 +21,19 @@
       padding: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
+
     body {
-      background-color: #f8fafc;
+      background: #f8fafc;
       color: #1e293b;
       margin: 0;
       padding-bottom: 90px;
       overflow-x: hidden;
     }
 
-    /* टप हेडर सेक्सन */
+    /* =========================
+       TOP HEADER
+    ========================= */
+
     .app-header {
       background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
       color: white;
@@ -34,16 +43,19 @@
       align-items: center;
       border-radius: 0 0 30px 30px;
     }
+
     .app-header h1 {
       font-size: 18px;
       font-weight: 700;
       letter-spacing: -0.3px;
     }
+
     .app-header h1 span {
       color: #fbbf24;
     }
+
     .icon-btn {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255,255,255,0.15);
       border: none;
       color: white;
       width: 40px;
@@ -57,11 +69,15 @@
       backdrop-filter: blur(5px);
       transition: background 0.2s;
     }
+
     .icon-btn:active {
-      background: rgba(255, 255, 255, 0.25);
+      background: rgba(255,255,255,0.25);
     }
 
-    /* ⚡ Marquee Notification Ticker Styles (सरर चल्ने सूचना पट्टी) */
+    /* =========================
+       NOTIFICATION TICKER
+    ========================= */
+
     .ticker-container {
       background: #fef3c7;
       border-bottom: 1px solid #fde68a;
@@ -79,6 +95,7 @@
       margin-bottom: 15px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     }
+
     .ticker-badge-tag {
       background: #d97706;
       color: white;
@@ -94,42 +111,56 @@
       align-items: center;
       gap: 4px;
     }
+
     .ticker-text-wrap {
       overflow: hidden;
       width: 100%;
       display: inline-block;
     }
+
     .ticker-text {
       display: inline-block;
       padding-left: 100%;
       animation: marquee 25s linear infinite;
     }
+
     .ticker-text:hover {
       animation-play-state: paused;
     }
+
     @keyframes marquee {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-100%, 0); }
+      0% {
+        transform: translate(0,0);
+      }
+
+      100% {
+        transform: translate(-100%,0);
+      }
     }
 
-    /* साइडबार ड्रअर (Sidebar Drawer Styling) */
+    /* =========================
+       SIDEBAR
+    ========================= */
+
     .sidebar-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0,0,0,0.5);
       backdrop-filter: blur(4px);
       z-index: 2000;
       opacity: 0;
       visibility: hidden;
       transition: all 0.3s ease;
     }
+
     .sidebar-overlay.active {
       opacity: 1;
       visibility: visible;
     }
+
     .sidebar {
       position: fixed;
       top: 0;
@@ -139,16 +170,18 @@
       background: #ffffff;
       z-index: 2100;
       box-shadow: 5px 0 25px rgba(0,0,0,0.1);
-      transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: 20px;
       overflow-y: auto;
     }
+
     .sidebar.active {
       left: 0;
     }
+
     .sidebar-header {
       display: flex;
       align-items: center;
@@ -157,17 +190,18 @@
       padding-bottom: 15px;
       border-bottom: 1px solid #f1f5f9;
     }
+
     .sidebar-user-info {
       display: flex;
       align-items: center;
       gap: 12px;
     }
+
     .sidebar-avatar {
       width: 48px;
       height: 48px;
       border-radius: 50%;
       background: #e2e8f0;
-      object-fit: cover;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -175,20 +209,24 @@
       font-weight: 700;
       font-size: 18px;
       border: 2px solid #2563eb;
+      flex-shrink: 0;
     }
+
     .sidebar-text h4 {
       font-size: 14px;
       font-weight: 700;
       color: #0f172a;
     }
+
     .sidebar-text p {
       font-size: 11px;
       color: #64748b;
       margin-top: 2px;
       word-break: break-all;
     }
-    
-    /* 🪙 Sidebar Coins Badge Style (प्रोफाइलको तल कोइन देखाउने डिजाइन) */
+
+    /* Coins */
+
     .sidebar-coins-badge {
       display: inline-flex;
       align-items: center;
@@ -204,9 +242,11 @@
       border: 1px solid #fde68a;
       transition: transform 0.2s;
     }
+
     .sidebar-coins-badge:active {
       transform: scale(0.95);
     }
+
     .sidebar-coins-badge i {
       color: #f59e0b;
     }
@@ -223,15 +263,18 @@
       align-items: center;
       justify-content: center;
       font-size: 14px;
+      flex-shrink: 0;
     }
 
-    /* साइडबार मेनु लिंक्स */
+    /* Sidebar menu */
+
     .sidebar-menu {
       display: flex;
       flex-direction: column;
       gap: 6px;
       flex: 1;
     }
+
     .menu-item {
       display: flex;
       align-items: center;
@@ -242,46 +285,81 @@
       color: #334155;
       font-size: 13px;
       font-weight: 600;
-      transition: background 0.2s;
+      transition: all 0.2s;
     }
-    .menu-item:hover, .menu-item:active {
+
+    .menu-item:hover,
+    .menu-item:active {
       background: #f8fafc;
       color: #2563eb;
     }
+
     .menu-item-left {
       display: flex;
       align-items: center;
       gap: 12px;
     }
+
     .menu-item-left i {
       font-size: 16px;
       color: #64748b;
       width: 20px;
+      text-align: center;
     }
+
     .menu-item:hover .menu-item-left i {
       color: #2563eb;
     }
-    
-    /* टगल स्विच */
+
+    /* Community menu */
+
+    .community-menu {
+      background: linear-gradient(135deg,#eff6ff,#eef2ff);
+      border: 1px solid #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .community-menu .menu-item-left i {
+      color: #2563eb;
+    }
+
+    .community-menu-badge {
+      background: #2563eb;
+      color: white;
+      font-size: 8px;
+      font-weight: 800;
+      padding: 3px 6px;
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+
+    /* Switch */
+
     .switch {
       position: relative;
       display: inline-block;
       width: 40px;
       height: 22px;
     }
-    .switch input { 
+
+    .switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
+
     .slider {
       position: absolute;
       cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background-color: #cbd5e1;
       transition: .3s;
       border-radius: 22px;
     }
+
     .slider:before {
       position: absolute;
       content: "";
@@ -293,9 +371,11 @@
       transition: .3s;
       border-radius: 50%;
     }
+
     input:checked + .slider {
       background-color: #2563eb;
     }
+
     input:checked + .slider:before {
       transform: translateX(18px);
     }
@@ -305,6 +385,7 @@
       padding-top: 15px;
       margin-top: 10px;
     }
+
     .logout-btn {
       background: #fef2f2;
       color: #dc2626;
@@ -320,18 +401,24 @@
       gap: 8px;
       cursor: pointer;
       transition: background 0.2s;
-      text-decoration: none;
     }
+
     .logout-btn:active {
       background: #fee2e2;
     }
 
-    /* मुख्य कन्टेनर */
+    /* =========================
+       MAIN CONTAINER
+    ========================= */
+
     .main-container {
       padding: 0 20px;
     }
 
-    /* अभिवादन खण्ड */
+    /* =========================
+       GREETING
+    ========================= */
+
     .greeting-section {
       background: #ffffff;
       border-radius: 20px;
@@ -343,6 +430,7 @@
       align-items: center;
       justify-content: space-between;
     }
+
     .greeting-section h2 {
       font-size: 16px;
       font-weight: 800;
@@ -350,11 +438,13 @@
       letter-spacing: -0.5px;
       margin-bottom: 3px;
     }
+
     .greeting-section p {
       font-size: 12px;
       color: #64748b;
       font-weight: 500;
     }
+
     .user-avatar-small {
       width: 45px;
       height: 45px;
@@ -367,31 +457,41 @@
       font-weight: 700;
       font-size: 18px;
       border: 2px solid #2563eb;
+      flex-shrink: 0;
     }
 
-    /* आकर्षक लाइभ एक्जाम ब्यानर कार्ड */
+    /* =========================
+       LIVE EXAM
+    ========================= */
+
     .live-exam-card {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #1d4ed8 100%);
+      background: linear-gradient(135deg,#1e3a8a 0%,#2563eb 50%,#1d4ed8 100%);
       border-radius: 20px;
       padding: 18px;
       color: white;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+      box-shadow: 0 8px 20px rgba(37,99,235,0.25);
       margin-bottom: 20px;
       text-decoration: none;
       transition: all 0.25s ease;
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255,255,255,0.2);
     }
+
+    .live-exam-card:active {
+      transform: scale(0.98);
+    }
+
     .live-exam-left {
       display: flex;
       align-items: center;
       gap: 14px;
       z-index: 1;
     }
+
     .live-exam-img-box {
       width: 52px;
       height: 52px;
@@ -404,12 +504,14 @@
       flex-shrink: 0;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
+
     .live-exam-img-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       border-radius: 10px;
     }
+
     .live-exam-info h3 {
       font-size: 14px;
       font-weight: 800;
@@ -417,12 +519,13 @@
       margin-bottom: 4px;
       letter-spacing: -0.2px;
     }
-    
+
     .live-badge-wrapper {
       display: flex;
       align-items: center;
       gap: 6px;
     }
+
     .live-dot {
       width: 7px;
       height: 7px;
@@ -430,11 +533,21 @@
       border-radius: 50%;
       animation: pulse-dot 1.5s infinite;
     }
+
     @keyframes pulse-dot {
-      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+      0% {
+        box-shadow: 0 0 0 0 rgba(239,68,68,0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 8px rgba(239,68,68,0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(239,68,68,0);
+      }
     }
+
     .live-text {
       font-size: 11px;
       font-weight: 700;
@@ -444,7 +557,7 @@
     }
 
     .live-exam-right {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255,255,255,0.2);
       width: 34px;
       height: 34px;
       border-radius: 10px;
@@ -455,63 +568,37 @@
       color: #ffffff;
       backdrop-filter: blur(4px);
       z-index: 1;
+      flex-shrink: 0;
     }
 
-    /* शुद्धता (Accuracy) प्रगति कार्ड */
-    .progress-card {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 18px;
+    /* =========================
+       SECTION TITLE
+    ========================= */
+
+    .section-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-      margin-bottom: 20px;
-      border: 1px solid #f1f5f9;
+      margin-bottom: 10px;
     }
-    .circular-progress {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: conic-gradient(#16a34a 0deg, #e2e8f0 0deg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-    .circular-progress::before {
-      content: "";
-      position: absolute;
-      width: 42px;
-      height: 42px;
-      background: #ffffff;
-      border-radius: 50%;
-    }
-    .progress-value {
-      position: relative;
-      font-size: 12px;
+
+    .section-header h3 {
+      font-size: 15px;
       font-weight: 800;
-      color: #16a34a;
-    }
-    .progress-info h3 {
-      font-size: 14px;
-      font-weight: 700;
       color: #0f172a;
-      margin-bottom: 2px;
-    }
-    .progress-info p {
-      font-size: 12px;
-      color: #64748b;
-      font-weight: 500;
     }
 
-    /* २x२ ग्रिड बटनहरू */
+    /* =========================
+       ACTION GRID
+    ========================= */
+
     .action-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-bottom: 24px;
     }
+
     .action-card {
       border-radius: 18px;
       padding: 16px;
@@ -523,16 +610,14 @@
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       text-decoration: none;
-      transition: transform 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
     }
+
     .action-card:active {
       transform: scale(0.97);
     }
-    .card-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-    .card-green { background: linear-gradient(135deg, #10b981, #059669); }
-    .card-orange { background: linear-gradient(135deg, #f97316, #c2410c); }
-    .card-pink { background: linear-gradient(135deg, #ec4899, #be185d); }
-    .card-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
 
     .action-card .card-icon {
       font-size: 15px;
@@ -544,444 +629,1219 @@
       align-items: center;
       justify-content: center;
     }
+
     .action-card h4 {
       font-size: 14px;
       font-weight: 700;
     }
+
     .action-card p {
       font-size: 11px;
       opacity: 0.9;
       font-weight: 500;
+      margin-top: 2px;
     }
 
-    /* हालको गतिविधि खण्ड */
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .section-header h3 {
-      font-size: 15px;
-      font-weight: 800;
-      color: #0f172a;
-    }
-    .section-header a {
-      font-size: 12px;
-      color: #2563eb;
-      text-decoration: none;
-      font-weight: 700;
+    /* Games first */
+
+    .card-purple {
+      background: linear-gradient(135deg,#8b5cf6,#6d28d9);
     }
 
-    .activity-card {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 14px 16px;
+    /* Practice */
+
+    .card-green {
+      background: linear-gradient(135deg,#10b981,#059669);
+    }
+
+    /* Mock */
+
+    .card-orange {
+      background: linear-gradient(135deg,#f97316,#c2410c);
+    }
+
+    /* Community */
+
+    .card-community {
+      background: linear-gradient(135deg,#2563eb,#1e3a8a);
+      grid-column: span 2;
+      height: 125px;
+      box-shadow: 0 8px 20px rgba(37,99,235,0.20);
+    }
+
+    .community-card-content {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-      border: 1px solid #f1f5f9;
+      width: 100%;
     }
-    .activity-left {
+
+    .community-card-left {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
-    .activity-icon {
-      background: #eff6ff;
-      color: #2563eb;
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+
+    .community-card-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.18);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 19px;
+      backdrop-filter: blur(5px);
     }
-    .activity-details h4 {
-      font-size: 13px;
+
+    .community-arrow {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .community-online {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
       font-weight: 700;
-      color: #1e293b;
+      margin-top: 4px;
+      opacity: 0.9;
     }
-    .activity-details p {
-      font-size: 11px;
+
+    .online-dot {
+      width: 6px;
+      height: 6px;
+      background: #4ade80;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(74,222,128,0.15);
+    }
+
+    /* =========================
+       COMMUNITY HUB INTRO
+    ========================= */
+
+    .community-mini {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .community-mini-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .community-mini-text {
+      flex: 1;
+    }
+
+    .community-mini-text h4 {
+      font-size: 13px;
+      color: #0f172a;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .community-mini-text p {
+      font-size: 10px;
       color: #64748b;
-      margin-top: 2px;
       font-weight: 500;
     }
-    .arrow-icon {
+
+    .community-mini-arrow {
       color: #94a3b8;
-      font-size: 12px;
+      font-size: 11px;
+    }
+
+    /* =========================
+       DARK MODE BASIC SUPPORT
+    ========================= */
+
+    body.dark {
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    body.dark .greeting-section,
+    body.dark .progress-card,
+    body.dark .activity-card,
+    body.dark .community-mini {
+      background: #1e293b;
+      border-color: #334155;
+    }
+
+    body.dark .greeting-section h2,
+    body.dark .section-header h3,
+    body.dark .community-mini-text h4 {
+      color: #f8fafc;
+    }
+
+    body.dark .greeting-section p,
+    body.dark .community-mini-text p {
+      color: #94a3b8;
     }
   </style>
 </head>
+
 <body>
 
-  <!-- टप हेडर -->
+  <!-- =========================
+       TOP HEADER
+  ========================= -->
+
   <div class="app-header">
-    <button class="icon-btn" id="menuBtn"><i class="fa-solid fa-bars-staggered"></i></button>
-    <h1>Loksewa<span>Quest</span></h1>
-    <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+
+    <button class="icon-btn" id="menuBtn">
+      <i class="fa-solid fa-bars-staggered"></i>
+    </button>
+
+    <h1>
+      Loksewa<span>Quest</span>
+    </h1>
+
+    <button class="icon-btn" id="notificationBtn">
+      <i class="fa-regular fa-bell"></i>
+    </button>
+
   </div>
 
-  <!-- ⚡ HORIZONTAL TICKER NOTIFICATION BAR (सुचना सरर चल्ने पट्टी) -->
+
+  <!-- =========================
+       NOTIFICATION TICKER
+  ========================= -->
+
   <div class="ticker-container">
+
     <span class="ticker-badge-tag">
-      <i class="fa-solid fa-bullhorn" style="font-size: 9px;"></i> सूचना
+      <i class="fa-solid fa-bullhorn" style="font-size:9px;"></i>
+      सूचना
     </span>
+
     <div class="ticker-text-wrap">
-      <span id="live-ticker-text" class="ticker-text">LoksewaQuest मा स्वागत छ! नयाँ सेटहरू अपडेट गरिएको छ।</span>
+
+      <span id="live-ticker-text" class="ticker-text">
+        LoksewaQuest मा स्वागत छ! नयाँ सेटहरू अपडेट गरिएको छ।
+      </span>
+
     </div>
+
   </div>
 
-  <!-- साइडबार ड्रअर (Sidebar Drawer) -->
+
+  <!-- =========================
+       SIDEBAR OVERLAY
+  ========================= -->
+
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+
+  <!-- =========================
+       SIDEBAR
+  ========================= -->
+
   <div class="sidebar" id="sidebar">
+
     <div>
+
+      <!-- User -->
+
       <div class="sidebar-header">
+
         <div class="sidebar-user-info">
-          <div class="sidebar-avatar" id="sidebarAvatar">LK</div>
-          <div class="sidebar-text">
-            <h4 id="sidebarName">युजर लोड हुँदैछ...</h4>
-            <p id="sidebarEmail">email@example.com</p>
-            <!-- 🪙 प्रोफाइलको तल कोइन ब्याज (क्लिक गर्दा coins.html खुल्ने) -->
-            <a href="coins.html" class="sidebar-coins-badge" id="sidebarCoinsBadge">
-              <i class="fa-solid fa-coins"></i> <span id="sidebarCoinsCount">0</span> Coins
-            </a>
+
+          <div class="sidebar-avatar" id="sidebarAvatar">
+            LK
           </div>
+
+          <div class="sidebar-text">
+
+            <h4 id="sidebarName">
+              युजर लोड हुँदैछ...
+            </h4>
+
+            <p id="sidebarEmail">
+              email@example.com
+            </p>
+
+            <a href="coins.html"
+               class="sidebar-coins-badge">
+
+              <i class="fa-solid fa-coins"></i>
+
+              <span id="sidebarCoinsCount">
+                0
+              </span>
+
+              Coins
+
+            </a>
+
+          </div>
+
         </div>
-        <button class="close-sidebar" id="closeSidebar"><i class="fa-solid fa-xmark"></i></button>
+
+        <button class="close-sidebar" id="closeSidebar">
+
+          <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
       </div>
+
+
+      <!-- Menu -->
 
       <div class="sidebar-menu">
+
         <a href="courses.html" class="menu-item">
+
           <div class="menu-item-left">
+
             <i class="fa-solid fa-book-bookmark"></i>
+
             <span>Active Course</span>
+
           </div>
-          <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+
+          <i class="fa-solid fa-chevron-right"
+             style="font-size:10px;color:#94a3b8;">
+          </i>
+
         </a>
+
+
         <a href="syllabus.html" class="menu-item">
+
           <div class="menu-item-left">
+
             <i class="fa-solid fa-file-lines"></i>
+
             <span>Syllabus</span>
+
           </div>
-          <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+
+          <i class="fa-solid fa-chevron-right"
+             style="font-size:10px;color:#94a3b8;">
+          </i>
+
         </a>
+
+
         <a href="notes.html" class="menu-item">
+
           <div class="menu-item-left">
+
             <i class="fa-solid fa-note-sticky"></i>
+
             <span>Notes</span>
+
           </div>
-          <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+
+          <i class="fa-solid fa-chevron-right"
+             style="font-size:10px;color:#94a3b8;">
+          </i>
+
         </a>
 
-        <!-- Leaderboard अप्सन -->
+
+        <!-- COMMUNITY HUB -->
+
+        <a href="chat.html"
+           class="menu-item community-menu">
+
+          <div class="menu-item-left">
+
+            <i class="fa-solid fa-comments"></i>
+
+            <span>Community Hub</span>
+
+          </div>
+
+          <span class="community-menu-badge">
+            LIVE
+          </span>
+
+        </a>
+
+
+        <!-- Leaderboard -->
+
         <a href="leaderboard.html" class="menu-item">
+
           <div class="menu-item-left">
-            <i class="fa-solid fa-trophy" style="color: #f59e0b;"></i>
+
+            <i class="fa-solid fa-trophy"
+               style="color:#f59e0b;">
+            </i>
+
             <span>Leaderboard</span>
+
           </div>
-          <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+
+          <i class="fa-solid fa-chevron-right"
+             style="font-size:10px;color:#94a3b8;">
+          </i>
+
         </a>
 
-        <!-- Admin Panel Menu Item (Initially Hidden) -->
-        <a href="admin.html" class="menu-item" id="adminSidebarLink" style="display: none;">
+
+        <!-- Admin -->
+
+        <a href="admin.html"
+           class="menu-item"
+           id="adminSidebarLink"
+           style="display:none;">
+
           <div class="menu-item-left">
-            <i class="fa-solid fa-shield-halved" style="color: #2563eb;"></i>
+
+            <i class="fa-solid fa-shield-halved"
+               style="color:#2563eb;">
+            </i>
+
             <span>Admin Panel</span>
+
           </div>
-          <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+
+          <i class="fa-solid fa-chevron-right"
+             style="font-size:10px;color:#94a3b8;">
+          </i>
+
         </a>
-        
-        <!-- Language Switcher Option -->
+
+
+        <!-- Language -->
+
         <div class="menu-item">
+
           <div class="menu-item-left">
+
             <i class="fa-solid fa-language"></i>
-            <span>Language (नेपाली)</span>
+
+            <span>
+              Language (नेपाली)
+            </span>
+
           </div>
-          <span style="font-size: 11px; font-weight: 700; color: #2563eb;">नेपा</span>
+
+          <span style="
+            font-size:11px;
+            font-weight:700;
+            color:#2563eb;">
+            नेपा
+          </span>
+
         </div>
 
-        <!-- Dark Mode Toggle Option -->
+
+        <!-- Dark Mode -->
+
         <div class="menu-item">
+
           <div class="menu-item-left">
+
             <i class="fa-solid fa-moon"></i>
-            <span>Dark Mode</span>
+
+            <span>
+              Dark Mode
+            </span>
+
           </div>
+
           <label class="switch">
-            <input type="checkbox" id="darkModeToggle">
+
+            <input type="checkbox"
+                   id="darkModeToggle">
+
             <span class="slider"></span>
+
           </label>
+
         </div>
+
       </div>
+
     </div>
+
+
+    <!-- Logout -->
 
     <div class="sidebar-footer">
+
       <button class="logout-btn" id="logoutBtn">
-        <i class="fa-solid fa-right-from-bracket"></i> Logout
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        Logout
+
       </button>
+
     </div>
+
   </div>
 
-  <!-- मुख्य कन्टेनर -->
+
+  <!-- =========================
+       MAIN CONTENT
+  ========================= -->
+
   <div class="main-container">
-    
-    <!-- अभिवादन तथा युजर प्रिमियम कार्ड -->
+
+
+    <!-- Greeting -->
+
     <div class="greeting-section">
+
       <div>
-        <h2 id="greetingName">शुभ प्रभात! 👋</h2>
-        <p>साना प्रयासहरूले ठूला सपना पूरा गर्छन्।</p>
+
+        <h2 id="greetingName">
+          शुभ प्रभात! 👋
+        </h2>
+
+        <p>
+          साना प्रयासहरूले ठूला सपना पूरा गर्छन्।
+        </p>
+
       </div>
-      <div class="user-avatar-small" id="userInitial">LK</div>
+
+      <div class="user-avatar-small"
+           id="userInitial">
+        LK
+      </div>
+
     </div>
 
-    <!-- PRE TEST QUALIFYING EXAM (Live Exam) ब्यानर -->
-    <a href="setlist.html" class="live-exam-card">
+
+    <!-- =========================
+         LIVE EXAM
+    ========================= -->
+
+    <a href="setlist.html"
+       class="live-exam-card">
+
       <div class="live-exam-left">
+
         <div class="live-exam-img-box">
-          <img src="image/test.png" alt="Test Exam">
+
+          <img src="image/test.png"
+               alt="Test Exam">
+
         </div>
+
         <div class="live-exam-info">
-          <h3>PRE TEST QUALIFYING EXAM</h3>
+
+          <h3>
+            PRE TEST QUALIFYING EXAM
+          </h3>
+
           <div class="live-badge-wrapper">
+
             <div class="live-dot"></div>
-            <span class="live-text">Live Now - Join Exam</span>
+
+            <span class="live-text">
+              Live Now - Join Exam
+            </span>
+
           </div>
+
         </div>
+
       </div>
+
+
       <div class="live-exam-right">
+
         <i class="fa-solid fa-arrow-right"></i>
+
       </div>
+
     </a>
 
-    <!-- शुद्धता (Accuracy) देखाउने प्रगति कार्ड -->
-    <div class="progress-card">
-      <div class="circular-progress" id="accuracyCircle">
-        <div class="progress-value" id="accuracyVal">0%</div>
-      </div>
-      <div class="progress-info">
-        <h3>Quizzes Accuracy</h3>
-        <p>तपाईंको कुल क्विज शुद्धता (Accuracy)</p>
-      </div>
-    </div>
 
-    <!-- ग्रिड बटनहरू -->
-    <div class="action-grid">
-      <a href="quiz.html" class="action-card card-blue">
-        <div class="card-icon"><i class="fa-solid fa-pen-to-square"></i></div>
-        <div>
-          <h4>Take Quiz</h4>
-          <p>ज्ञान परीक्षण गर्नुहोस्</p>
-        </div>
-      </a>
-      <a href="practice.html" class="action-card card-green">
-        <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
-        <div>
-          <h4>Practice Set</h4>
-          <p>विषयगत प्रश्नहरू</p>
-        </div>
-      </a>
-      <a href="mock.html" class="action-card card-orange">
-        <div class="card-icon"><i class="fa-solid fa-stopwatch"></i></div>
-        <div>
-          <h4>Mock Test</h4>
-          <p>वास्तविक परीक्षा अभ्यास</p>
-        </div>
-      </a>
-      <a href="performance.html" class="action-card card-pink">
-        <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
-        <div>
-          <h4>Performance</h4>
-          <p>प्रगतिको विश्लेषण</p>
-        </div>
-      </a>
-      <!-- Game Section कार्ड -->
-      <a href="games.html" class="action-card card-purple" style="grid-column: span 2;">
-        <div class="card-icon"><i class="fa-solid fa-gamepad"></i></div>
-        <div>
-          <h4>Quiz Games</h4>
-          <p>रमाइलो खेलमार्फत ज्ञान बढाउनुहोस्</p>
-        </div>
-      </a>
-    </div>
+    <!-- =========================
+         QUICK ACTIONS
+    ========================= -->
 
-    <!-- हालको गतिविधि खण्ड -->
     <div class="section-header">
-      <h3>हालको गतिविधि</h3>
-      <a href="history.html">सबै हेर्नुहोस्</a>
+
+      <h3>
+        Quick Practice
+      </h3>
+
     </div>
 
-    <div class="activity-card">
-      <div class="activity-left">
-        <div class="activity-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-        <div class="activity-details">
-          <h4>General Knowledge Quiz</h4>
-          <p>प्राप्त अंक: 12/20 (60%)</p>
+
+    <div class="action-grid">
+
+
+      <!-- 1. QUIZ GAMES FIRST -->
+
+      <a href="games.html"
+         class="action-card card-purple">
+
+        <div class="card-icon">
+
+          <i class="fa-solid fa-gamepad"></i>
+
         </div>
-      </div>
-      <div class="arrow-icon"><i class="fa-solid fa-chevron-right"></i></div>
+
+        <div>
+
+          <h4>
+            Quiz Games
+          </h4>
+
+          <p>
+            रमाइलो खेलमार्फत ज्ञान बढाउनुहोस्
+          </p>
+
+        </div>
+
+      </a>
+
+
+      <!-- 2. PRACTICE QUESTIONS -->
+
+      <a href="practice.html"
+         class="action-card card-green">
+
+        <div class="card-icon">
+
+          <i class="fa-solid fa-book-open"></i>
+
+        </div>
+
+        <div>
+
+          <h4>
+            Practice Questions
+          </h4>
+
+          <p>
+            विषयगत प्रश्नहरूको अभ्यास
+          </p>
+
+        </div>
+
+      </a>
+
+
+      <!-- 3. MOCK TEST -->
+
+      <a href="mock.html"
+         class="action-card card-orange">
+
+        <div class="card-icon">
+
+          <i class="fa-solid fa-stopwatch"></i>
+
+        </div>
+
+        <div>
+
+          <h4>
+            Mock Test
+          </h4>
+
+          <p>
+            वास्तविक परीक्षा अभ्यास
+          </p>
+
+        </div>
+
+      </a>
+
+
+      <!-- 4. COMMUNITY HUB -->
+
+      <a href="chat.html"
+         class="action-card card-community">
+
+        <div class="community-card-content">
+
+          <div class="community-card-left">
+
+            <div class="community-card-icon">
+
+              <i class="fa-solid fa-comments"></i>
+
+            </div>
+
+            <div>
+
+              <h4>
+                Community Hub
+              </h4>
+
+              <p>
+                साथी Loksewa तयारीकर्तासँग छलफल गर्नुहोस्
+              </p>
+
+              <div class="community-online">
+
+                <span class="online-dot"></span>
+
+                <span>
+                  Join the discussion
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="community-arrow">
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+          </div>
+
+        </div>
+
+      </a>
+
     </div>
+
+
+    <!-- =========================
+         COMMUNITY MINI SHORTCUT
+    ========================= -->
+
+    <a href="chat.html"
+       style="text-decoration:none;">
+
+      <div class="community-mini">
+
+        <div class="community-mini-icon">
+
+          <i class="fa-solid fa-user-group"></i>
+
+        </div>
+
+        <div class="community-mini-text">
+
+          <h4>
+            Join the Loksewa Community
+          </h4>
+
+          <p>
+            प्रश्न सोध्नुहोस्, छलफल गर्नुहोस् र सँगै तयारी गर्नुहोस्।
+          </p>
+
+        </div>
+
+        <div class="community-mini-arrow">
+
+          <i class="fa-solid fa-chevron-right"></i>
+
+        </div>
+
+      </div>
+
+    </a>
 
   </div>
 
-  <!-- तल्लो नेभिगेसन बार -->
-  <script src="components.js"></script>
-  <script>loadBottomNav('home');</script>
 
-  <!-- Supabase CDN -->
+  <!-- =========================
+       BOTTOM NAV
+  ========================= -->
+
+  <script src="components.js"></script>
+
+  <script>
+    loadBottomNav('home');
+  </script>
+
+
+  <!-- =========================
+       SUPABASE
+  ========================= -->
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Firebase र साइडबार नियन्त्रण गर्ने JavaScript कोड -->
+
+  <!-- =========================
+       FIREBASE
+  ========================= -->
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+    /* Firebase */
 
     const firebaseConfig = {
+
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-      authDomain: "loksewaquest-227b6.firebaseapp.com",
-      projectId: "loksewaquest-227b6",
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",
-      messagingSenderId: "779234903809",
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
+      authDomain:
+        "loksewaquest-227b6.firebaseapp.com",
+
+      projectId:
+        "loksewaquest-227b6",
+
+      storageBucket:
+        "loksewaquest-227b6.firebasestorage.app",
+
+      messagingSenderId:
+        "779234903809",
+
+      appId:
+        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
     };
 
+
     const app = initializeApp(firebaseConfig);
+
     const auth = getAuth(app);
+
     const db = getFirestore(app);
 
-    const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // साइडबार खुलाउने र बन्द गर्ने लजिक
-    const menuBtn = document.getElementById('menuBtn');
-    const closeSidebar = document.getElementById('closeSidebar');
-    const sidebar = document.getElementById('sidebar');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    /* Supabase */
 
-    function toggleSidebar() {
-      sidebar.classList.toggle('active');
-      sidebarOverlay.classList.toggle('active');
+    const SUPABASE_URL =
+      "https://edyirdedkiarguvurpxq.supabase.co";
+
+    const SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+
+    const supabase =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    const menuBtn =
+      document.getElementById('menuBtn');
+
+    const closeSidebar =
+      document.getElementById('closeSidebar');
+
+    const sidebar =
+      document.getElementById('sidebar');
+
+    const sidebarOverlay =
+      document.getElementById('sidebarOverlay');
+
+
+    function openSidebar() {
+
+      sidebar.classList.add('active');
+
+      sidebarOverlay.classList.add('active');
+
     }
 
-    menuBtn.addEventListener('click', toggleSidebar);
-    closeSidebar.addEventListener('click', toggleSidebar);
-    sidebarOverlay.addEventListener('click,', toggleSidebar);
 
-    // सुपाबेसबाट पछिल्लो लाइभ सूचना तान्ने फंक्सन
+    function closeSidebarMenu() {
+
+      sidebar.classList.remove('active');
+
+      sidebarOverlay.classList.remove('active');
+
+    }
+
+
+    menuBtn.addEventListener(
+      'click',
+      openSidebar
+    );
+
+
+    closeSidebar.addEventListener(
+      'click',
+      closeSidebarMenu
+    );
+
+
+    /* FIXED: click, → click */
+
+    sidebarOverlay.addEventListener(
+      'click',
+      closeSidebarMenu
+    );
+
+
+    /* =========================
+       NOTIFICATIONS
+    ========================= */
+
     async function fetchLatestNotification() {
+
       try {
-        const { data, error } = await supabase
+
+        const {
+          data,
+          error
+        } = await supabase
+
           .from('notifications')
+
           .select('message')
-          .order('id', { ascending: false })
+
+          .order('id', {
+            ascending: false
+          })
+
           .limit(1);
 
-        if (data && data.length > 0) {
-          document.getElementById('live-ticker-text').textContent = data[0].message;
+
+        if (error) {
+
+          console.error(
+            "Notification error:",
+            error
+          );
+
+          return;
+
         }
+
+
+        if (data && data.length > 0) {
+
+          document.getElementById(
+            'live-ticker-text'
+          ).textContent =
+            data[0].message;
+
+        }
+
       } catch (err) {
-        console.error("Notification fetch error:", err);
+
+        console.error(
+          "Notification fetch error:",
+          err
+        );
+
       }
+
     }
+
 
     fetchLatestNotification();
 
-    async function checkAdminRole(user) {
+
+    /* =========================
+       ADMIN
+    ========================= */
+
+    function checkAdminRole(user) {
+
       try {
-        if (!user || !user.email) return;
-        const adminEmails = ["pgprajwal11@gmail.com"]; 
-        if (adminEmails.includes(user.email.toLowerCase())) {
-          const adminLink = document.getElementById('adminSidebarLink');
+
+        if (!user || !user.email)
+          return;
+
+
+        const adminEmails = [
+          "pgprajwal11@gmail.com"
+        ];
+
+
+        if (
+          adminEmails.includes(
+            user.email.toLowerCase()
+          )
+        ) {
+
+          const adminLink =
+            document.getElementById(
+              'adminSidebarLink'
+            );
+
+
           if (adminLink) {
-            adminLink.style.display = 'flex';
+
+            adminLink.style.display =
+              'flex';
+
           }
+
         }
+
       } catch (err) {
-        console.error("Admin verification error:", err);
+
+        console.error(
+          "Admin verification error:",
+          err
+        );
+
       }
+
     }
 
-    // युजरको डेटा, नाम, कोइन र Accuracy फेच गर्ने
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const email = user.email || "No Email";
-        let name = user.displayName || "Officer";
-        let userCoins = 0;
-        
-        try {
-          const docRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            const userData = docSnap.data();
-            if (userData.name) name = userData.name;
-            if (userData.coins !== undefined) userCoins = userData.coins;
+
+    /* =========================
+       AUTH + USER DATA
+    ========================= */
+
+    onAuthStateChanged(
+      auth,
+      async (user) => {
+
+        if (user) {
+
+          const email =
+            user.email || "No Email";
+
+          let name =
+            user.displayName || "Officer";
+
+          let userCoins = 0;
+
+
+          /* Firestore User */
+
+          try {
+
+            const docRef =
+              doc(
+                db,
+                "users",
+                user.uid
+              );
+
+
+            const docSnap =
+              await getDoc(docRef);
+
+
+            if (docSnap.exists()) {
+
+              const userData =
+                docSnap.data();
+
+
+              if (userData.name) {
+
+                name =
+                  userData.name;
+
+              }
+
+
+              if (
+                userData.coins !==
+                undefined
+              ) {
+
+                userCoins =
+                  userData.coins;
+
+              }
+
+            }
+
+          } catch (err) {
+
+            console.error(
+              "Error fetching user data:",
+              err
+            );
+
           }
-        } catch (err) {
-          console.error("Error fetching user data:", err);
+
+
+          /* Sidebar */
+
+          document.getElementById(
+            'sidebarName'
+          ).textContent = name;
+
+
+          document.getElementById(
+            'sidebarEmail'
+          ).textContent = email;
+
+
+          document.getElementById(
+            'sidebarCoinsCount'
+          ).textContent =
+            userCoins;
+
+
+          /* Greeting */
+
+          document.getElementById(
+            'greetingName'
+          ).textContent =
+            `शुभ प्रभात, ${name}! 👋`;
+
+
+          /* Initials */
+
+          const initials =
+            name
+              .split(' ')
+              .map(n => n[0])
+              .join('')
+              .toUpperCase()
+              .substring(0,2) || "LK";
+
+
+          document.getElementById(
+            'sidebarAvatar'
+          ).textContent =
+            initials;
+
+
+          document.getElementById(
+            'userInitial'
+          ).textContent =
+            initials;
+
+
+          /* Admin */
+
+          checkAdminRole(user);
+
         }
 
-        // साइडबारमा नाम, इमेल र कोइन अपडेट गर्ने
-        document.getElementById('sidebarName').textContent = name;
-        document.getElementById('sidebarEmail').textContent = email;
-        document.getElementById('sidebarCoinsCount').textContent = userCoins;
-        document.getElementById('greetingName').textContent = `शुभ प्रभात, ${name}! 👋`;
+        else {
 
-        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) || "LK";
-        document.getElementById('sidebarAvatar').textContent = initials;
-        document.getElementById('userInitial').textContent = initials;
+          window.location.href =
+            "login.html";
 
-        checkAdminRole(user);
-
-        let accuracy = 75;
-        try {
-          let { data: userStat } = await supabase
-            .from('user_stats')
-            .select('*')
-            .eq('id', user.uid)
-            .maybeSingle();
-
-          if (userStat && userStat.total_solved > 0) {
-            accuracy = Math.min(100, Math.max(40, Math.round((userStat.total_solved * 4) % 45 + 55)));
-          }
-        } catch (e) {
-          console.error("Stats error:", e);
         }
 
-        document.getElementById('accuracyVal').textContent = accuracy + "%";
-        document.getElementById('accuracyCircle').style.background = `conic-gradient(#16a34a ${accuracy * 3.6}deg, #e2e8f0 0deg)`;
-
-      } else {
-        window.location.href = "login.html";
       }
-    });
+    );
 
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      try {
-        await signOut(auth);
-        window.location.href = "login.html";
-      } catch (error) {
-        console.error("Logout error:", error);
+
+    /* =========================
+       LOGOUT
+    ========================= */
+
+    document.getElementById(
+      'logoutBtn'
+    ).addEventListener(
+      'click',
+      async () => {
+
+        try {
+
+          await signOut(auth);
+
+          window.location.href =
+            "login.html";
+
+        } catch (error) {
+
+          console.error(
+            "Logout error:",
+            error
+          );
+
+        }
+
       }
-    });
+    );
 
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    if (localStorage.getItem('theme') === 'dark') {
-      darkModeToggle.checked = true;
-      document.body.style.background = '#0f172a';
+
+    /* =========================
+       DARK MODE
+    ========================= */
+
+    const darkModeToggle =
+      document.getElementById(
+        'darkModeToggle'
+      );
+
+
+    if (
+      localStorage.getItem('theme')
+      === 'dark'
+    ) {
+
+      darkModeToggle.checked =
+        true;
+
+      document.body.classList.add(
+        'dark'
+      );
+
     }
 
-    darkModeToggle.addEventListener('change', (e) => {
-      if (e.target.checked) {
-        localStorage.setItem('theme', 'dark');
-        alert("डार्क मोड सक्रिय गरियो।");
-      } else {
-        localStorage.setItem('theme', 'light');
+
+    darkModeToggle.addEventListener(
+      'change',
+      (e) => {
+
+        if (e.target.checked) {
+
+          localStorage.setItem(
+            'theme',
+            'dark'
+          );
+
+          document.body.classList.add(
+            'dark'
+          );
+
+        }
+
+        else {
+
+          localStorage.setItem(
+            'theme',
+            'light'
+          );
+
+          document.body.classList.remove(
+            'dark'
+          );
+
+        }
+
       }
-    });
+    );
+
   </script>
+
 </body>
-</html>
+      </html>
