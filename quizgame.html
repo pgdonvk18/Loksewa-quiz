@@ -228,17 +228,18 @@
     </div>
   </div>
 
-  <!-- Google Translate Widget Script Initialization -->
+  <!-- Google Translate Widget Script Initialization & Custom Switcher Logic -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'ne',
         includedLanguages: 'en,ne',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
       }, 'google_translate_element');
     }
 
-    // Custom Function to trigger Google Translate via professional buttons
+    // Professional Custom Language Switcher Function with Cookie Trigger
     function changeLanguage(langCode) {
       const btnNE = document.getElementById('btnLangNE');
       const btnEN = document.getElementById('btnLangEN');
@@ -251,15 +252,37 @@
         btnEN.classList.remove('active');
       }
 
-      // Google Translate widget ko dropdown select element khojera value change garne script
-      setTimeout(() => {
-        const selectBox = document.querySelector('.goog-te-combo');
-        if (selectBox) {
-          selectBox.value = langCode;
-          selectBox.dispatchEvent(new Event('change'));
-        }
-      }, 200);
+      // Method 1: Google Translate cookie set garera translate garni
+      document.cookie = `googtrans=/ne/${langCode}; path=/; domain=${document.domain}`;
+      document.cookie = `googtrans=/ne/${langCode}; path=/;`;
+
+      // Method 2: Dropdown select box lai trigger garni
+      const selectBox = document.querySelector('.goog-te-combo');
+      if (selectBox) {
+        selectBox.value = langCode;
+        selectBox.dispatchEvent(new Event('change'));
+        selectBox.dispatchEvent(new Event('input'));
+      } else {
+        setTimeout(() => {
+          location.reload();
+        }, 150);
+      }
     }
+
+    // Page load huda active state maintain garni cookie ko adhar ma
+    window.addEventListener('DOMContentLoaded', () => {
+      const match = document.cookie.match(new RegExp('(^| )googtrans=([^;]+)'));
+      if (match) {
+        const currentLang = match[2].split('/')[2];
+        if (currentLang === 'en') {
+          document.getElementById('btnLangEN')?.classList.add('active');
+          document.getElementById('btnLangNE')?.classList.remove('active');
+        } else {
+          document.getElementById('btnLangNE')?.classList.add('active');
+          document.getElementById('btnLangEN')?.classList.remove('active');
+        }
+      }
+    });
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
@@ -565,7 +588,7 @@
             </div>
             <h4 id="questionTextRender">${escapeHTML(q.text)}</h4>
             <div class="options-grid" id="optionsGrid">
-              ${q.options.map((opt) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt.replace(/'/g, "\\тена")}', false)">${escapeHTML(opt)}</button>`).join('')}
+              ${q.options.map((opt) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt.replace(/'/g, "\\\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
             </div>
             ${isMyTurn ? `
               <div class="action-row">
