@@ -1,372 +1,591 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
+  <script src="components.js"></script>
+
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <title>LoksewaQuest - Dashboard</title>
 
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#3413aa">
+  <!-- Premium Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- Global Components -->
-  <script src="components.js"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     body {
-      font-family: "Plus Jakarta Sans", sans-serif;
-      background: #f5f7fb;
-      color: #172033;
-      min-height: 100vh;
+      background: #f8fafc;
+      color: #1e293b;
+      margin: 0;
+      padding-bottom: 90px;
       overflow-x: hidden;
-      transition: background .25s ease, color .25s ease;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    button {
-      font-family: inherit;
     }
 
     /* =========================
-       HEADER
+       TOP HEADER
     ========================= */
 
-    .top-header {
-      position: sticky;
+    .app-header {
+      background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
+      color: white;
+      padding: 24px 20px 35px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 0 0 30px 30px;
+    }
+
+    .app-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .app-header h1 span {
+      color: #fbbf24;
+    }
+
+    .icon-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      transition: background 0.2s;
+    }
+
+    .icon-btn:active {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* =========================
+       NOTIFICATION TICKER
+    ========================= */
+
+    .ticker-container {
+      background: #fef3c7;
+      border-bottom: 1px solid #fde68a;
+      border-top: 1px solid #fde68a;
+      color: #92400e;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+
+    .ticker-badge-tag {
+      background: #d97706;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      margin-right: 12px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ticker-text-wrap {
+      overflow: hidden;
+      width: 100%;
+      display: inline-block;
+    }
+
+    .ticker-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 25s linear infinite;
+    }
+
+    .ticker-text:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translate(0,0);
+      }
+
+      100% {
+        transform: translate(-100%,0);
+      }
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .sidebar-overlay {
+      position: fixed;
       top: 0;
-      z-index: 100;
-      height: 68px;
-      background: rgba(255,255,255,.92);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(20,25,50,.06);
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100%;
+      background: #ffffff;
+      z-index: 2100;
+      box-shadow: 5px 0 25px rgba(0,0,0,0.1);
+      transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 18px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #f1f5f9;
     }
 
-    .brand {
+    .sidebar-user-info {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 12px;
     }
 
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 13px;
-      background: linear-gradient(135deg, #3413aa, #6948e8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 17px;
-      box-shadow: 0 7px 18px rgba(52,19,170,.25);
-    }
-
-    .brand-text {
-      font-size: 17px;
-      font-weight: 800;
-      color: #20263a;
-    }
-
-    .brand-text span {
-      color: #3413aa;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .coin-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: #fff7dc;
-      color: #9b6a00;
-      padding: 8px 11px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .coin-pill i {
-      color: #f2ae18;
-    }
-
-    .profile-btn {
-      width: 39px;
-      height: 39px;
+    .sidebar-avatar {
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      border: 0;
-      background: linear-gradient(135deg, #3413aa, #6948e8);
-      color: white;
+      background: #e2e8f0;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: #1e40af;
+      font-weight: 700;
+      font-size: 18px;
+      border: 2px solid #2563eb;
+      flex-shrink: 0;
+    }
+
+    .sidebar-text h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .sidebar-text p {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+      word-break: break-all;
+    }
+
+    /* Coins */
+
+    .sidebar-coins-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #fef3c7;
+      color: #b45309;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 5px;
+      text-decoration: none;
+      border: 1px solid #fde68a;
+      transition: transform 0.2s;
+    }
+
+    .sidebar-coins-badge:active {
+      transform: scale(0.95);
+    }
+
+    .sidebar-coins-badge i {
+      color: #f59e0b;
+    }
+
+    .close-sidebar {
+      background: #f1f5f9;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      color: #64748b;
       cursor: pointer;
-      box-shadow: 0 5px 15px rgba(52,19,170,.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    /* Sidebar menu */
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .menu-item:hover,
+    .menu-item:active {
+      background: #f8fafc;
+      color: #2563eb;
+    }
+
+    .menu-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .menu-item-left i {
+      font-size: 16px;
+      color: #64748b;
+      width: 20px;
+      text-align: center;
+    }
+
+    .menu-item:hover .menu-item-left i {
+      color: #2563eb;
+    }
+
+    /* Community menu */
+
+    .community-menu {
+      background: linear-gradient(135deg,#eff6ff,#eef2ff);
+      border: 1px solid #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .community-menu .menu-item-left i {
+      color: #2563eb;
+    }
+
+    .community-menu-badge {
+      background: #2563eb;
+      color: white;
+      font-size: 8px;
+      font-weight: 800;
+      padding: 3px 6px;
+      border-radius: 10px;
+      text-transform: uppercase;
+    }
+
+    /* Switch */
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      transition: .3s;
+      border-radius: 22px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #2563eb;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid #f1f5f9;
+      padding-top: 15px;
+      margin-top: 10px;
+    }
+
+    .logout-btn {
+      background: #fef2f2;
+      color: #dc2626;
+      width: 100%;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:active {
+      background: #fee2e2;
     }
 
     /* =========================
-       PAGE
+       MAIN CONTAINER
     ========================= */
 
-    .page {
-      width: min(100%, 980px);
-      margin: auto;
-      padding: 22px 16px 105px;
+    .main-container {
+      padding: 0 20px;
     }
 
     /* =========================
        GREETING
     ========================= */
 
-    .welcome {
+    .greeting-section {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      border: 1px solid #f1f5f9;
       margin-bottom: 20px;
-    }
-
-    .welcome-small {
-      font-size: 13px;
-      color: #7d8497;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
-    .welcome h1 {
-      font-size: 26px;
-      line-height: 1.2;
-      font-weight: 800;
-      letter-spacing: -.7px;
-      color: #171d31;
-    }
-
-    .welcome h1 span {
-      color: #3413aa;
-    }
-
-    .welcome p {
-      margin-top: 7px;
-      color: #777f93;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    /* =========================
-       NOTICE TICKER
-    ========================= */
-
-    .notice-card {
-      background: linear-gradient(135deg, #3413aa, #5e3bdb);
-      color: white;
-      border-radius: 18px;
-      padding: 13px 15px;
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      margin-bottom: 18px;
-      box-shadow: 0 12px 28px rgba(52,19,170,.18);
-      overflow: hidden;
-    }
-
-    .notice-icon {
-      width: 34px;
-      height: 34px;
-      min-width: 34px;
-      background: rgba(255,255,255,.15);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .notice-content {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .notice-title {
-      font-size: 9px;
-      font-weight: 800;
-      opacity: .72;
-      letter-spacing: .7px;
-      margin-bottom: 2px;
-    }
-
-    #notificationText {
-      font-size: 12px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* =========================
-       LIVE PRE-TEST
-    ========================= */
-
-    .section-heading {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 11px;
     }
 
-    .section-heading h2 {
+    .greeting-section h2 {
       font-size: 16px;
       font-weight: 800;
-      color: #20263a;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      margin-bottom: 3px;
     }
 
-    .section-heading span {
-      font-size: 11px;
-      color: #858ca0;
-      font-weight: 600;
+    .greeting-section p {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
     }
 
-    .live-test {
-      position: relative;
-      overflow: hidden;
-      border-radius: 21px;
-      padding: 20px;
-      color: white;
-      background:
-        radial-gradient(circle at 90% 10%, rgba(255,255,255,.16), transparent 28%),
-        linear-gradient(135deg, #17133f 0%, #3413aa 55%, #6240df 100%);
-      box-shadow: 0 15px 35px rgba(52,19,170,.2);
-      margin-bottom: 25px;
-    }
-
-    .live-test::after {
-      content: "";
-      position: absolute;
-      width: 150px;
-      height: 150px;
-      border: 1px solid rgba(255,255,255,.08);
+    .user-avatar-small {
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
-      right: -55px;
-      bottom: -65px;
-    }
-
-    .live-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,.13);
-      border: 1px solid rgba(255,255,255,.12);
-      padding: 6px 9px;
-      border-radius: 20px;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: .5px;
-      margin-bottom: 12px;
-    }
-
-    .live-dot {
-      width: 6px;
-      height: 6px;
-      background: #65f39d;
-      border-radius: 50%;
-      box-shadow: 0 0 0 4px rgba(101,243,157,.12);
-    }
-
-    .live-test h3 {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 7px;
-    }
-
-    .live-test p {
-      color: rgba(255,255,255,.72);
-      font-size: 11px;
-      line-height: 1.5;
-      max-width: 500px;
-    }
-
-    .live-info {
+      background: #e2e8f0;
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin: 16px 0;
-    }
-
-    .live-info span {
-      background: rgba(255,255,255,.1);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 10px;
-      padding: 7px 9px;
-      font-size: 10px;
-      font-weight: 700;
-    }
-
-    .live-info i {
-      margin-right: 4px;
-      opacity: .8;
-    }
-
-    .start-test-btn {
-      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      background: white;
-      color: #3413aa;
-      border-radius: 12px;
-      padding: 11px 15px;
-      font-size: 11px;
-      font-weight: 800;
-      transition: transform .18s ease;
-    }
-
-    .start-test-btn:active {
-      transform: scale(.96);
+      color: #1e40af;
+      font-weight: 700;
+      font-size: 18px;
+      border: 2px solid #2563eb;
+      flex-shrink: 0;
     }
 
     /* =========================
-       QUICK PRACTICE
+       LIVE EXAM
     ========================= */
 
-    .quick-title {
-      margin-bottom: 11px;
+    .live-exam-card {
+      background: linear-gradient(135deg,#1e3a8a 0%,#2563eb 50%,#1d4ed8 100%);
+      border-radius: 20px;
+      padding: 18px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 20px rgba(37,99,235,0.25);
+      margin-bottom: 20px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
-    .quick-title h2 {
-      font-size: 17px;
+    .live-exam-card:active {
+      transform: scale(0.98);
+    }
+
+    .live-exam-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 1;
+    }
+
+    .live-exam-img-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: #ffffff;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .live-exam-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .live-exam-info h3 {
+      font-size: 14px;
       font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 4px;
+      letter-spacing: -0.2px;
     }
 
-    .quick-title p {
-      color: #858ca0;
+    .live-badge-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      animation: pulse-dot 1.5s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0% {
+        box-shadow: 0 0 0 0 rgba(239,68,68,0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 8px rgba(239,68,68,0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(239,68,68,0);
+      }
+    }
+
+    .live-text {
       font-size: 11px;
-      margin-top: 3px;
+      font-weight: 700;
+      color: #fca5a5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .live-exam-right {
+      background: rgba(255,255,255,0.2);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: #ffffff;
+      backdrop-filter: blur(4px);
+      z-index: 1;
+      flex-shrink: 0;
+    }
+
+    /* =========================
+       SECTION TITLE
+    ========================= */
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .section-header h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
     }
 
     /* =========================
@@ -375,495 +594,215 @@
 
     .action-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 14px;
+      margin-bottom: 24px;
     }
 
     .action-card {
-      position: relative;
-      min-height: 145px;
-      background: white;
-      border: 1px solid #edf0f5;
-      border-radius: 19px;
+      border-radius: 18px;
       padding: 16px;
+      color: white;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      height: 115px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
       overflow: hidden;
-      box-shadow: 0 7px 22px rgba(25,32,55,.045);
-      transition: transform .18s ease, box-shadow .18s ease;
     }
 
     .action-card:active {
-      transform: scale(.97);
+      transform: scale(0.97);
     }
 
-    .action-card:hover {
-      box-shadow: 0 12px 28px rgba(25,32,55,.08);
-    }
-
-    .action-icon {
-      width: 43px;
-      height: 43px;
-      border-radius: 13px;
+    .action-card .card-icon {
+      font-size: 15px;
+      background: rgba(255,255,255,0.2);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 17px;
-      margin-bottom: 12px;
     }
 
-    .games-icon {
-      color: #d15a00;
-      background: #fff0df;
-    }
-
-    .practice-icon {
-      color: #2367c8;
-      background: #eaf3ff;
-    }
-
-    .mock-icon {
-      color: #6b31b8;
-      background: #f2e9ff;
-    }
-
-    .community-icon {
-      color: #087d70;
-      background: #e2faf6;
-    }
-
-    .action-card h3 {
-      font-size: 13px;
-      font-weight: 800;
-      margin-bottom: 4px;
-      color: #20263a;
+    .action-card h4 {
+      font-size: 14px;
+      font-weight: 700;
     }
 
     .action-card p {
-      font-size: 10px;
-      color: #858ca0;
-      line-height: 1.45;
-    }
-
-    .card-arrow {
-      position: absolute;
-      right: 14px;
-      bottom: 14px;
-      width: 27px;
-      height: 27px;
-      border-radius: 50%;
-      background: #f5f6fa;
-      color: #6d7487;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-    }
-
-    /* =========================
-       DAILY CHALLENGE
-    ========================= */
-
-    .daily-challenge-card {
-      position: relative;
-      display: block;
-      overflow: hidden;
-      border-radius: 21px;
-      padding: 18px;
+      font-size: 11px;
+      opacity: 0.9;
+      font-weight: 500;
       margin-top: 2px;
-      color: white;
-      background:
-        radial-gradient(circle at 92% 12%, rgba(255,255,255,.16), transparent 25%),
-        linear-gradient(135deg, #25105e 0%, #4b1db4 55%, #743ee8 100%);
-      box-shadow: 0 14px 32px rgba(74,29,180,.2);
-      transition: transform .18s ease;
     }
 
-    .daily-challenge-card:active {
-      transform: scale(.975);
+    /* Games first */
+
+    .card-purple {
+      background: linear-gradient(135deg,#8b5cf6,#6d28d9);
     }
 
-    .daily-challenge-card::before {
-      content: "";
-      position: absolute;
-      width: 115px;
-      height: 115px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.08);
-      right: -40px;
-      top: -55px;
+    /* Practice */
+
+    .card-green {
+      background: linear-gradient(135deg,#10b981,#059669);
     }
 
-    .daily-challenge-card::after {
-      content: "";
-      position: absolute;
-      width: 75px;
-      height: 75px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.035);
-      left: -28px;
-      bottom: -35px;
+    /* Mock */
+
+    .card-orange {
+      background: linear-gradient(135deg,#f97316,#c2410c);
     }
 
-    .daily-challenge-content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+    /* Community */
+
+    .card-community {
+      background: linear-gradient(135deg,#2563eb,#1e3a8a);
+      grid-column: span 2;
+      height: 125px;
+      box-shadow: 0 8px 20px rgba(37,99,235,0.20);
     }
 
-    .daily-challenge-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .daily-challenge-icon {
-      width: 48px;
-      height: 48px;
-      min-width: 48px;
-      border-radius: 15px;
-      background: rgba(255,255,255,.13);
-      border: 1px solid rgba(255,255,255,.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      color: #ffd45e;
-    }
-
-    .daily-challenge-text {
-      min-width: 0;
-    }
-
-    .daily-label {
-      font-size: 8px;
-      letter-spacing: 1px;
-      font-weight: 800;
-      opacity: .68;
-      margin-bottom: 4px;
-    }
-
-    .daily-challenge-text h4 {
-      font-size: 14px;
-      font-weight: 800;
-      line-height: 1.35;
-      margin-bottom: 3px;
-    }
-
-    .daily-challenge-text p {
-      font-size: 9px;
-      line-height: 1.4;
-      color: rgba(255,255,255,.67);
-    }
-
-    .daily-arrow {
-      width: 34px;
-      height: 34px;
-      min-width: 34px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.13);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-    }
-
-    .daily-bottom {
-      position: relative;
-      z-index: 2;
-      border-top: 1px solid rgba(255,255,255,.1);
-      margin-top: 15px;
-      padding-top: 11px;
+    .community-card-content {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 9px;
-      color: rgba(255,255,255,.68);
-    }
-
-    .daily-bottom i {
-      color: #ffd45e;
-      margin-right: 4px;
-    }
-
-    .start-text {
-      color: white;
-      font-weight: 800;
-      font-size: 10px;
-    }
-
-    /* =========================
-       SIDEBAR
-    ========================= */
-
-    .sidebar {
-      position: fixed;
-      z-index: 300;
-      top: 0;
-      left: -310px;
-      width: 290px;
-      max-width: 85vw;
-      height: 100vh;
-      background: white;
-      box-shadow: 15px 0 40px rgba(0,0,0,.14);
-      transition: left .28s ease;
-      padding: 22px 16px;
-      overflow-y: auto;
-    }
-
-    .sidebar.open {
-      left: 0;
-    }
-
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 4px 4px 18px;
-      border-bottom: 1px solid #edf0f5;
-      margin-bottom: 12px;
-    }
-
-    .sidebar-brand {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    .sidebar-brand-icon {
-      width: 37px;
-      height: 37px;
-      border-radius: 11px;
-      background: linear-gradient(135deg,#3413aa,#6948e8);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-
-    .sidebar-brand strong {
-      font-size: 14px;
-    }
-
-    .close-sidebar {
-      width: 34px;
-      height: 34px;
-      border: 0;
-      background: #f5f6fa;
-      color: #6e7486;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .menu-label {
-      font-size: 9px;
-      font-weight: 800;
-      color: #9ba1b1;
-      letter-spacing: .8px;
-      padding: 12px 9px 7px;
-    }
-
-    .menu-item {
       width: 100%;
+    }
+
+    .community-card-left {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 10px;
-      border-radius: 12px;
-      margin-bottom: 3px;
-      color: #4c5366;
+    }
+
+    .community-card-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      backdrop-filter: blur(5px);
+    }
+
+    .community-arrow {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 12px;
+    }
+
+    .community-online {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
       font-weight: 700;
-      cursor: pointer;
-      transition: background .18s ease;
+      margin-top: 4px;
+      opacity: 0.9;
     }
 
-    .menu-item:hover,
-    .menu-item:active {
-      background: #f3f0ff;
-      color: #3413aa;
-    }
-
-    .menu-item i {
-      width: 20px;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    .menu-item .live-menu {
-      margin-left: auto;
-      background: #e8fff1;
-      color: #16864b;
-      font-size: 8px;
-      padding: 4px 6px;
-      border-radius: 7px;
-      font-weight: 800;
-    }
-
-    .sidebar-overlay {
-      position: fixed;
-      z-index: 250;
-      inset: 0;
-      background: rgba(13,17,35,.42);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity .25s ease;
-    }
-
-    .sidebar-overlay.show {
-      opacity: 1;
-      visibility: visible;
+    .online-dot {
+      width: 6px;
+      height: 6px;
+      background: #4ade80;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(74,222,128,0.15);
     }
 
     /* =========================
-       DESKTOP
+       NOTES CARD
     ========================= */
 
-    @media (min-width: 700px) {
-      .page {
-        padding-left: 24px;
-        padding-right: 24px;
-      }
+    .notes-mini {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
 
-      .action-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
+    .notes-mini:active {
+      transform: scale(0.98);
+    }
 
-      .action-card {
-        min-height: 165px;
-      }
+    .notes-mini-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #ecfdf5;
+      color: #059669;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .notes-mini-text {
+      flex: 1;
+    }
+
+    .notes-mini-text h4 {
+      font-size: 13px;
+      color: #0f172a;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .notes-mini-text p {
+      font-size: 10px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .notes-mini-arrow {
+      color: #94a3b8;
+      font-size: 11px;
     }
 
     /* =========================
-       DARK MODE
+       DARK MODE BASIC SUPPORT
     ========================= */
 
     body.dark {
-      background: #0e1019;
-      color: #f2f3f8;
+      background: #0f172a;
+      color: #e2e8f0;
     }
 
-    body.dark .top-header {
-      background: rgba(16,18,29,.92);
-      border-bottom-color: rgba(255,255,255,.06);
+    body.dark .greeting-section,
+    body.dark .notes-mini {
+      background: #1e293b;
+      border-color: #334155;
     }
 
-    body.dark .brand-text,
-    body.dark .welcome h1,
-    body.dark .section-heading h2,
-    body.dark .quick-title h2,
-    body.dark .action-card h3 {
-      color: #f4f5fa;
+    body.dark .greeting-section h2,
+    body.dark .section-header h3,
+    body.dark .notes-mini-text h4 {
+      color: #f8fafc;
     }
 
-    body.dark .welcome-small,
-    body.dark .welcome p,
-    body.dark .section-heading span,
-    body.dark .quick-title p,
-    body.dark .action-card p {
-      color: #8e95a8;
-    }
-
-    body.dark .action-card {
-      background: #171a26;
-      border-color: #252a39;
-      box-shadow: none;
-    }
-
-    body.dark .card-arrow {
-      background: #222634;
-      color: #a4aabd;
-    }
-
-    body.dark .sidebar {
-      background: #151822;
-    }
-
-    body.dark .sidebar-header {
-      border-bottom-color: #282d3b;
-    }
-
-    body.dark .menu-item {
-      color: #b5bbcb;
-    }
-
-    body.dark .menu-item:hover,
-    body.dark .menu-item:active {
-      background: #211b3c;
-      color: #c9baff;
-    }
-
-    body.dark .close-sidebar {
-      background: #222634;
-      color: #c2c7d3;
-    }
-
-    /* =========================
-       LOADING
-    ========================= */
-
-    .loading-overlay {
-      position: fixed;
-      z-index: 9999;
-      inset: 0;
-      background: #f7f8fb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity .3s ease;
-    }
-
-    .loading-overlay.hide {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .loader-box {
-      text-align: center;
-    }
-
-    .loader-logo {
-      width: 58px;
-      height: 58px;
-      border-radius: 17px;
-      background: linear-gradient(135deg,#3413aa,#6948e8);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: auto;
-      font-size: 22px;
-      box-shadow: 0 10px 25px rgba(52,19,170,.25);
-    }
-
-    .loader-box p {
-      margin-top: 12px;
-      font-size: 11px;
-      color: #7f8698;
-      font-weight: 700;
-    }
-
-    .loader-spinner {
-      width: 19px;
-      height: 19px;
-      border: 2px solid #ddd8f5;
-      border-top-color: #3413aa;
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-      margin: 12px auto 0;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+    body.dark .greeting-section p,
+    body.dark .notes-mini-text p {
+      color: #94a3b8;
     }
   </style>
 </head>
@@ -871,280 +810,414 @@
 <body>
 
   <!-- =========================
-       LOADING
+       TOP HEADER
   ========================= -->
 
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="loader-box">
-      <div class="loader-logo">
-        <i class="fa-solid fa-graduation-cap"></i>
-      </div>
-      <p>LoksewaQuest loading...</p>
-      <div class="loader-spinner"></div>
-    </div>
+  <div class="app-header">
+
+    <button class="icon-btn" id="menuBtn">
+      <i class="fa-solid fa-bars-staggered"></i>
+    </button>
+
+    <h1>
+      Loksewa<span>Quest</span>
+    </h1>
+
+    <button class="icon-btn" id="notificationBtn">
+      <i class="fa-regular fa-bell"></i>
+    </button>
+
   </div>
+
+
+  <!-- =========================
+       NOTIFICATION TICKER
+  ========================= -->
+
+  <div class="ticker-container">
+
+    <span class="ticker-badge-tag">
+      <i class="fa-solid fa-bullhorn" style="font-size:9px;"></i>
+      सूचना
+    </span>
+
+    <div class="ticker-text-wrap">
+
+      <span id="live-ticker-text" class="ticker-text">
+        LoksewaQuest मा स्वागत छ! नयाँ सेटहरू अपडेट गरिएको छ।
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       SIDEBAR OVERLAY
+  ========================= -->
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 
   <!-- =========================
        SIDEBAR
   ========================= -->
 
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="sidebar" id="sidebar">
 
-  <aside class="sidebar" id="sidebar">
+    <div>
 
-    <div class="sidebar-header">
-      <div class="sidebar-brand">
-        <div class="sidebar-brand-icon">
-          <i class="fa-solid fa-graduation-cap"></i>
+      <!-- User -->
+
+      <div class="sidebar-header">
+
+        <div class="sidebar-user-info">
+
+          <div class="sidebar-avatar" id="sidebarAvatar">
+            LK
+          </div>
+
+          <div class="sidebar-text">
+
+            <h4 id="sidebarName">
+              युजर लोड हुँदैछ...
+            </h4>
+
+            <p id="sidebarEmail">
+              email@example.com
+            </p>
+
+            <a href="coins.html"
+               class="sidebar-coins-badge">
+
+              <i class="fa-solid fa-coins"></i>
+
+              <span id="sidebarCoinsCount">
+                0
+              </span>
+
+              Coins
+
+            </a>
+
+          </div>
+
         </div>
-        <strong>LoksewaQuest</strong>
+
+        <button class="close-sidebar" id="closeSidebar">
+
+          <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
       </div>
 
-      <button class="close-sidebar" id="closeSidebar">
-        <i class="fa-solid fa-xmark"></i>
+
+      <!-- Menu -->
+
+      <div class="sidebar-menu">
+
+        <a href="courses.html" class="menu-item">
+
+          <div class="menu-item-left">
+
+            <i class="fa-solid fa-book-bookmark"></i>
+
+            <span>Active Course</span>
+
+          </div>
+
+          <i class="fa-solid fa-chevron-right"
+             style="font-size:10px;color:#94a3b8;">
+          </i>
+
+        </a>
+
+
+        <a href="syllabus.html" class="menu-item">
+
+          <div class="menu-item-left">
+
+            <i class="fa-solid fa-file-lines"></i>
+
+            <span>Syllabus</span>
+
+          </div>
+
+          <i class="fa-solid fa-chevron-right"
+             style="font-size:10px;color:#94a3b8;">
+          </i>
+
+        </a>
+
+
+        <a href="notes.html" class="menu-item">
+
+          <div class="menu-item-left">
+
+            <i class="fa-solid fa-note-sticky"></i>
+
+            <span>Notes</span>
+
+          </div>
+
+          <i class="fa-solid fa-chevron-right"
+             style="font-size:10px;color:#94a3b8;">
+          </i>
+
+        </a>
+
+
+        <!-- COMMUNITY HUB -->
+
+        <a href="chat.html"
+           class="menu-item community-menu">
+
+          <div class="menu-item-left">
+
+            <i class="fa-solid fa-comments"></i>
+
+            <span>Community Hub</span>
+
+          </div>
+
+          <span class="community-menu-badge">
+            LIVE
+          </span>
+
+        </a>
+
+
+        <!-- Leaderboard -->
+
+        <a href="leaderboard.html" class="menu-item">
+
+          <div class="menu-item-left">
+
+            <i class="fa-solid fa-trophy"
+               style="color:#f59e0b;">
+            </i>
+
+            <span>Leaderboard</span>
+
+          </div>
+
+          <i class="fa-solid fa-chevron-right"
+             style="font-size:10px;color:#94a3b8;">
+          </i>
+
+        </a>
+
+
+        <!-- Admin -->
+
+        <a href="admin.html"
+           class="menu-item"
+           id="adminSidebarLink"
+           style="display:none;">
+
+          <div class="menu-item-left">
+
+            <i class="fa-solid fa-shield-halved"
+               style="color:#2563eb;">
+            </i>
+
+            <span>Admin Panel</span>
+
+          </div>
+
+          <i class="fa-solid fa-chevron-right"
+             style="font-size:10px;color:#94a3b8;">
+          </i>
+
+        </a>
+
+
+        <!-- Language -->
+
+        <div class="menu-item">
+
+          <div class="menu-item-left">
+
+            <i class="fa-solid fa-language"></i>
+
+            <span>
+              Language (नेपाली)
+            </span>
+
+          </div>
+
+          <span style="
+            font-size:11px;
+            font-weight:700;
+            color:#2563eb;">
+            नेपा
+          </span>
+
+        </div>
+
+
+        <!-- Dark Mode -->
+
+        <div class="menu-item">
+
+          <div class="menu-item-left">
+
+            <i class="fa-solid fa-moon"></i>
+
+            <span>
+              Dark Mode
+            </span>
+
+          </div>
+
+          <label class="switch">
+
+            <input type="checkbox"
+                   id="darkModeToggle">
+
+            <span class="slider"></span>
+
+          </label>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Logout -->
+
+    <div class="sidebar-footer">
+
+      <button class="logout-btn" id="logoutBtn">
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        Logout
+
       </button>
+
     </div>
 
-    <div class="menu-label">LEARN</div>
+  </div>
 
-    <a href="course.html" class="menu-item">
-      <i class="fa-solid fa-book-open"></i>
-      <span>Active Course</span>
-    </a>
-
-    <a href="syllabus.html" class="menu-item">
-      <i class="fa-solid fa-list-check"></i>
-      <span>Syllabus</span>
-    </a>
-
-    <a href="notes.html" class="menu-item">
-      <i class="fa-solid fa-file-lines"></i>
-      <span>Notes</span>
-    </a>
-
-    <div class="menu-label">COMMUNITY</div>
-
-    <!-- COMMUNITY HUB -->
-    <a href="chat.html" class="menu-item">
-      <i class="fa-solid fa-comments"></i>
-      <span>Community Hub</span>
-      <span class="live-menu">LIVE</span>
-    </a>
-
-    <a href="leaderboard.html" class="menu-item">
-      <i class="fa-solid fa-ranking-star"></i>
-      <span>Leaderboard</span>
-    </a>
-
-    <div class="menu-label">SETTINGS</div>
-
-    <div class="menu-item" id="languageBtn">
-      <i class="fa-solid fa-language"></i>
-      <span>Language</span>
-    </div>
-
-    <div class="menu-item" id="darkModeBtn">
-      <i class="fa-solid fa-moon"></i>
-      <span>Dark Mode</span>
-    </div>
-
-    <div class="menu-item" id="logoutBtn">
-      <i class="fa-solid fa-right-from-bracket"></i>
-      <span>Logout</span>
-    </div>
-
-    <div class="menu-label admin-label" style="display:none;">
-      ADMIN
-    </div>
-
-    <a href="admin.html"
-       class="menu-item admin-menu"
-       style="display:none;">
-      <i class="fa-solid fa-shield-halved"></i>
-      <span>Admin Panel</span>
-    </a>
-
-  </aside>
 
   <!-- =========================
-       HEADER
+       MAIN CONTENT
   ========================= -->
 
-  <header class="top-header">
+  <div class="main-container">
 
-    <div class="brand">
-
-      <button
-        class="profile-btn"
-        id="menuBtn"
-        style="width:40px;height:40px;background:#f2efff;color:#3413aa;box-shadow:none;">
-        <i class="fa-solid fa-bars"></i>
-      </button>
-
-      <div class="brand-text">
-        Loksewa<span>Quest</span>
-      </div>
-
-    </div>
-
-    <div class="header-right">
-
-      <div class="coin-pill">
-        <i class="fa-solid fa-coins"></i>
-        <span id="coinCount">0</span>
-      </div>
-
-      <button class="profile-btn" id="profileBtn">
-        <i class="fa-solid fa-user"></i>
-      </button>
-
-    </div>
-
-  </header>
-
-  <!-- =========================
-       MAIN PAGE
-  ========================= -->
-
-  <main class="page">
 
     <!-- Greeting -->
 
-    <section class="welcome">
+    <div class="greeting-section">
 
-      <div class="welcome-small">
-        शुभ–प्रभात 👋
+      <div>
+
+        <h2 id="greetingName">
+          शुभ प्रभात! 👋
+        </h2>
+
+        <p>
+          साना प्रयासहरूले ठूला सपना पूरा गर्छन्।
+        </p>
+
       </div>
 
-      <h1>
-        नमस्ते, <span id="userName">Learner</span>!
-      </h1>
-
-      <p>
-        आज पनि आफ्नो Loksewa तयारीलाई एक कदम अगाडि बढाऔँ।
-      </p>
-
-    </section>
-
-
-    <!-- Notice -->
-
-    <div class="notice-card">
-
-      <div class="notice-icon">
-        <i class="fa-solid fa-bullhorn"></i>
-      </div>
-
-      <div class="notice-content">
-        <div class="notice-title">
-          सूचना
-        </div>
-
-        <div id="notificationText">
-          नयाँ अभ्यास प्रश्नहरू उपलब्ध छन्।
-        </div>
+      <div class="user-avatar-small"
+           id="userInitial">
+        LK
       </div>
 
     </div>
 
 
     <!-- =========================
-         LIVE PRE TEST
+         LIVE EXAM
     ========================= -->
 
-    <div class="section-heading">
+    <a href="setlist.html"
+       class="live-exam-card">
 
-      <h2>Live Pre-Test</h2>
+      <div class="live-exam-left">
 
-      <span>
-        तयारी जाँच्नुहोस्
-      </span>
+        <div class="live-exam-img-box">
 
-    </div>
+          <img src="image/test.png"
+               alt="Test Exam">
 
-    <section class="live-test">
+        </div>
 
-      <div class="live-badge">
-        <span class="live-dot"></span>
-        LIVE PRACTICE
+        <div class="live-exam-info">
+
+          <h3>
+            PRE TEST QUALIFYING EXAM
+          </h3>
+
+          <div class="live-badge-wrapper">
+
+            <div class="live-dot"></div>
+
+            <span class="live-text">
+              Live Now - Join Exam
+            </span>
+
+          </div>
+
+        </div>
+
       </div>
+
+
+      <div class="live-exam-right">
+
+        <i class="fa-solid fa-arrow-right"></i>
+
+      </div>
+
+    </a>
+
+
+    <!-- =========================
+         QUICK ACTIONS
+    ========================= -->
+
+    <div class="section-header">
 
       <h3>
-        आजको Pre-Test सुरु गर्नुहोस्
+        Quick Practice
       </h3>
-
-      <p>
-        छोटो test दिएर आफ्नो तयारी, accuracy र speed जाँच गर्नुहोस्।
-      </p>
-
-      <div class="live-info">
-
-        <span>
-          <i class="fa-solid fa-list-ol"></i>
-          10 Questions
-        </span>
-
-        <span>
-          <i class="fa-regular fa-clock"></i>
-          Quick Test
-        </span>
-
-        <span>
-          <i class="fa-solid fa-coins"></i>
-          Earn Coins
-        </span>
-
-      </div>
-
-      <a href="quiz.html" class="start-test-btn">
-        Start Pre-Test
-        <i class="fa-solid fa-arrow-right"></i>
-      </a>
-
-    </section>
-
-
-    <!-- =========================
-         QUICK PRACTICE
-    ========================= -->
-
-    <div class="quick-title">
-
-      <h2>Quick Practice</h2>
-
-      <p>
-        आफ्नो तयारी अनुसार अभ्यास गर्नुहोस्।
-      </p>
 
     </div>
 
-
-    <!-- =========================
-         ACTION GRID
-    ========================= -->
 
     <div class="action-grid">
 
-      <!-- 1. QUIZ GAMES -->
 
-      <a href="games.html" class="action-card">
+      <!-- 1. QUIZ GAMES FIRST -->
 
-        <div>
-          <div class="action-icon games-icon">
-            <i class="fa-solid fa-gamepad"></i>
-          </div>
+      <a href="games.html"
+         class="action-card card-purple">
 
-          <h3>
-            Quiz Games
-          </h3>
+        <div class="card-icon">
 
-          <p>
-            रमाइलो तरिकाले quiz खेल्दै सिक्नुहोस्।
-          </p>
+          <i class="fa-solid fa-gamepad"></i>
+
         </div>
 
-        <div class="card-arrow">
-          <i class="fa-solid fa-arrow-right"></i>
+        <div>
+
+          <h4>
+            Quiz Games
+          </h4>
+
+          <p>
+            रमाइलो खेलमार्फत ज्ञान बढाउनुहोस्
+          </p>
+
         </div>
 
       </a>
@@ -1152,24 +1225,25 @@
 
       <!-- 2. PRACTICE QUESTIONS -->
 
-      <a href="practice.html" class="action-card">
+      <a href="practice.html"
+         class="action-card card-green">
 
-        <div>
-          <div class="action-icon practice-icon">
-            <i class="fa-solid fa-circle-question"></i>
-          </div>
+        <div class="card-icon">
 
-          <h3>
-            Practice Questions
-          </h3>
+          <i class="fa-solid fa-book-open"></i>
 
-          <p>
-            विषयअनुसार प्रश्नहरू अभ्यास गर्नुहोस्।
-          </p>
         </div>
 
-        <div class="card-arrow">
-          <i class="fa-solid fa-arrow-right"></i>
+        <div>
+
+          <h4>
+            Practice Questions
+          </h4>
+
+          <p>
+            विषयगत प्रश्नहरूको अभ्यास
+          </p>
+
         </div>
 
       </a>
@@ -1177,24 +1251,25 @@
 
       <!-- 3. MOCK TEST -->
 
-      <a href="mock.html" class="action-card">
+      <a href="mock.html"
+         class="action-card card-orange">
 
-        <div>
-          <div class="action-icon mock-icon">
-            <i class="fa-solid fa-file-circle-check"></i>
-          </div>
+        <div class="card-icon">
 
-          <h3>
-            Mock Test
-          </h3>
+          <i class="fa-solid fa-stopwatch"></i>
 
-          <p>
-            वास्तविक परीक्षाजस्तै test practice गर्नुहोस्।
-          </p>
         </div>
 
-        <div class="card-arrow">
-          <i class="fa-solid fa-arrow-right"></i>
+        <div>
+
+          <h4>
+            Mock Test
+          </h4>
+
+          <p>
+            वास्तविक परीक्षा अभ्यास
+          </p>
+
         </div>
 
       </a>
@@ -1202,24 +1277,50 @@
 
       <!-- 4. COMMUNITY HUB -->
 
-      <a href="chat.html" class="action-card">
+      <a href="chat.html"
+         class="action-card card-community">
 
-        <div>
-          <div class="action-icon community-icon">
-            <i class="fa-solid fa-users"></i>
+        <div class="community-card-content">
+
+          <div class="community-card-left">
+
+            <div class="community-card-icon">
+
+              <i class="fa-solid fa-comments"></i>
+
+            </div>
+
+            <div>
+
+              <h4>
+                Community Hub
+              </h4>
+
+              <p>
+                साथी Loksewa तयारीकर्तासँग छलफल गर्नुहोस्
+              </p>
+
+              <div class="community-online">
+
+                <span class="online-dot"></span>
+
+                <span>
+                  Join the discussion
+                </span>
+
+              </div>
+
+            </div>
+
           </div>
 
-          <h3>
-            Community Hub
-          </h3>
 
-          <p>
-            साथीहरूसँग छलफल गर्नुहोस् र सिकाइ share गर्नुहोस्।
-          </p>
-        </div>
+          <div class="community-arrow">
 
-        <div class="card-arrow">
-          <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right"></i>
+
+          </div>
+
         </div>
 
       </a>
@@ -1228,59 +1329,58 @@
 
 
     <!-- =========================
-         DAILY CHALLENGE
+         NOTES CARD
+         Replaced duplicate Community Hub
     ========================= -->
 
-    <a href="quiz.html" class="daily-challenge-card">
+    <a href="notes.html"
+       class="notes-mini">
 
-      <div class="daily-challenge-content">
+      <div class="notes-mini-icon">
 
-        <div class="daily-challenge-left">
-
-          <div class="daily-challenge-icon">
-            <i class="fa-solid fa-fire"></i>
-          </div>
-
-          <div class="daily-challenge-text">
-
-            <div class="daily-label">
-              DAILY CHALLENGE
-            </div>
-
-            <h4>
-              आजको Challenge पूरा गर्नुहोस्
-            </h4>
-
-            <p>
-              छोटो Quiz खेलेर आफ्नो तयारी जाँच्नुहोस्।
-            </p>
-
-          </div>
-
-        </div>
-
-        <div class="daily-arrow">
-          <i class="fa-solid fa-arrow-right"></i>
-        </div>
+        <i class="fa-solid fa-note-sticky"></i>
 
       </div>
 
-      <div class="daily-bottom">
+      <div class="notes-mini-text">
 
-        <span>
-          <i class="fa-solid fa-bolt"></i>
-          Learn • Practice • Improve
-        </span>
+        <h4>
+          Study Notes
+        </h4>
 
-        <span class="start-text">
-          Start
-        </span>
+        <p>
+          महत्वपूर्ण Notes हेर्नुहोस् र आफ्नो तयारी अझ राम्रो बनाउनुहोस्।
+        </p>
+
+      </div>
+
+      <div class="notes-mini-arrow">
+
+        <i class="fa-solid fa-chevron-right"></i>
 
       </div>
 
     </a>
 
-  </main>
+  </div>
+
+
+  <!-- =========================
+       BOTTOM NAV
+  ========================= -->
+
+  <script src="components.js"></script>
+
+  <script>
+    loadBottomNav('home');
+  </script>
+
+
+  <!-- =========================
+       SUPABASE
+  ========================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
   <!-- =========================
@@ -1302,26 +1402,30 @@
     import {
       getFirestore,
       doc,
-      getDoc,
-      collection,
-      query,
-      orderBy,
-      limit,
-      onSnapshot
+      getDoc
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
-    /* =========================
-       FIREBASE CONFIG
-    ========================= */
+    /* Firebase */
 
     const firebaseConfig = {
+
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-      authDomain: "loksewaquest-227b6.firebaseapp.com",
-      projectId: "loksewaquest-227b6",
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",
-      messagingSenderId: "779234903809",
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
+      authDomain:
+        "loksewaquest-227b6.firebaseapp.com",
+
+      projectId:
+        "loksewaquest-227b6",
+
+      storageBucket:
+        "loksewaquest-227b6.firebasestorage.app",
+
+      messagingSenderId:
+        "779234903809",
+
+      appId:
+        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
     };
 
 
@@ -1332,228 +1436,338 @@
     const db = getFirestore(app);
 
 
+    /* Supabase */
+
+    const SUPABASE_URL =
+      "https://edyirdedkiarguvurpxq.supabase.co";
+
+    const SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwiaWF0IjoxNzg5MDE4NjYyLCJleHAiOjIxMDQ1OTQ2NjJ9.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+
+    const supabase =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
     /* =========================
-       ELEMENTS
+       SIDEBAR
     ========================= */
 
-    const loadingOverlay =
-      document.getElementById("loadingOverlay");
+    const menuBtn =
+      document.getElementById('menuBtn');
 
-    const userName =
-      document.getElementById("userName");
+    const closeSidebar =
+      document.getElementById('closeSidebar');
 
-    const coinCount =
-      document.getElementById("coinCount");
+    const sidebar =
+      document.getElementById('sidebar');
 
-    const notificationText =
-      document.getElementById("notificationText");
+    const sidebarOverlay =
+      document.getElementById('sidebarOverlay');
+
+
+    function openSidebar() {
+
+      sidebar.classList.add('active');
+
+      sidebarOverlay.classList.add('active');
+
+    }
+
+
+    function closeSidebarMenu() {
+
+      sidebar.classList.remove('active');
+
+      sidebarOverlay.classList.remove('active');
+
+    }
+
+
+    menuBtn.addEventListener(
+      'click',
+      openSidebar
+    );
+
+
+    closeSidebar.addEventListener(
+      'click',
+      closeSidebarMenu
+    );
+
+
+    sidebarOverlay.addEventListener(
+      'click',
+      closeSidebarMenu
+    );
 
 
     /* =========================
-       AUTH
+       NOTIFICATIONS
     ========================= */
 
-    onAuthStateChanged(auth, async (user) => {
-
-      if (!user) {
-
-        window.location.href = "index.html";
-
-        return;
-      }
-
+    async function fetchLatestNotification() {
 
       try {
 
-        const userRef =
-          doc(db, "users", user.uid);
+        const {
+          data,
+          error
+        } = await supabase
 
-        const userSnap =
-          await getDoc(userRef);
+          .from('notifications')
 
+          .select('message')
 
-        if (userSnap.exists()) {
+          .order('id', {
+            ascending: false
+          })
 
-          const data =
-            userSnap.data();
-
-
-          /* USER NAME */
-
-          const name =
-            data.name ||
-            data.displayName ||
-            user.displayName ||
-            "Learner";
-
-          userName.textContent =
-            name.split(" ")[0];
+          .limit(1);
 
 
-          /* COINS */
+        if (error) {
 
-          coinCount.textContent =
-            Number(data.coins || 0);
+          console.error(
+            "Notification error:",
+            error
+          );
 
-
-          /* ADMIN */
-
-          const adminEmail =
-            "pgprajwal11@gmail.com";
-
-          if (user.email === adminEmail) {
-
-            document.querySelector(".admin-menu").style.display =
-              "flex";
-
-            document.querySelector(".admin-label").style.display =
-              "block";
-          }
-
-        } else {
-
-          userName.textContent =
-            user.displayName?.split(" ")[0] ||
-            "Learner";
+          return;
 
         }
 
-      } catch (error) {
+
+        if (data && data.length > 0) {
+
+          document.getElementById(
+            'live-ticker-text'
+          ).textContent =
+            data[0].message;
+
+        }
+
+      } catch (err) {
 
         console.error(
-          "User loading error:",
-          error
+          "Notification fetch error:",
+          err
         );
 
-        userName.textContent =
-          user.displayName?.split(" ")[0] ||
-          "Learner";
       }
 
+    }
 
-      /* Remove loading */
 
-      setTimeout(() => {
-
-        loadingOverlay.classList.add("hide");
-
-      }, 350);
-
-    });
+    fetchLatestNotification();
 
 
     /* =========================
-       NOTIFICATION TICKER
+       ADMIN
     ========================= */
 
-    try {
+    function checkAdminRole(user) {
 
-      const noticeQuery = query(
-        collection(db, "notifications"),
-        orderBy("createdAt", "desc"),
-        limit(10)
-      );
+      try {
 
-
-      onSnapshot(
-        noticeQuery,
-        (snapshot) => {
-
-          if (snapshot.empty) {
-
-            notificationText.textContent =
-              "नयाँ अभ्यास प्रश्नहरू उपलब्ध छन्।";
-
-            return;
-          }
+        if (!user || !user.email)
+          return;
 
 
-          const notices = [];
-
-          snapshot.forEach((doc) => {
-
-            const data = doc.data();
-
-            if (data.message) {
-
-              notices.push(data.message);
-
-            } else if (data.title) {
-
-              notices.push(data.title);
-
-            }
-
-          });
+        const adminEmails = [
+          "pgprajwal11@gmail.com"
+        ];
 
 
-          if (notices.length) {
+        if (
+          adminEmails.includes(
+            user.email.toLowerCase()
+          )
+        ) {
 
-            let index = 0;
+          const adminLink =
+            document.getElementById(
+              'adminSidebarLink'
+            );
 
-            notificationText.textContent =
-              notices[index];
 
+          if (adminLink) {
 
-            if (notices.length > 1) {
-
-              setInterval(() => {
-
-                index =
-                  (index + 1) % notices.length;
-
-                notificationText.style.opacity = "0";
-
-                setTimeout(() => {
-
-                  notificationText.textContent =
-                    notices[index];
-
-                  notificationText.style.opacity = "1";
-
-                }, 180);
-
-              }, 4500);
-
-            }
+            adminLink.style.display =
+              'flex';
 
           }
-
-        },
-        (error) => {
-
-          console.log(
-            "Notification listener:",
-            error.message
-          );
 
         }
-      );
 
-    } catch (error) {
+      } catch (err) {
 
-      console.log(
-        "Notification setup error:",
-        error
-      );
+        console.error(
+          "Admin verification error:",
+          err
+        );
+
+      }
 
     }
+
+
+    /* =========================
+       AUTH + USER DATA
+    ========================= */
+
+    onAuthStateChanged(
+      auth,
+      async (user) => {
+
+        if (user) {
+
+          const email =
+            user.email || "No Email";
+
+          let name =
+            user.displayName || "Officer";
+
+          let userCoins = 0;
+
+
+          /* Firestore User */
+
+          try {
+
+            const docRef =
+              doc(
+                db,
+                "users",
+                user.uid
+              );
+
+
+            const docSnap =
+              await getDoc(docRef);
+
+
+            if (docSnap.exists()) {
+
+              const userData =
+                docSnap.data();
+
+
+              if (userData.name) {
+
+                name =
+                  userData.name;
+
+              }
+
+
+              if (
+                userData.coins !==
+                undefined
+              ) {
+
+                userCoins =
+                  userData.coins;
+
+              }
+
+            }
+
+          } catch (err) {
+
+            console.error(
+              "Error fetching user data:",
+              err
+            );
+
+          }
+
+
+          /* Sidebar */
+
+          document.getElementById(
+            'sidebarName'
+          ).textContent = name;
+
+
+          document.getElementById(
+            'sidebarEmail'
+          ).textContent = email;
+
+
+          document.getElementById(
+            'sidebarCoinsCount'
+          ).textContent =
+            userCoins;
+
+
+          /* Greeting */
+
+          document.getElementById(
+            'greetingName'
+          ).textContent =
+            `शुभ प्रभात, ${name}! 👋`;
+
+
+          /* Initials */
+
+          const initials =
+            name
+              .split(' ')
+              .map(n => n[0])
+              .join('')
+              .toUpperCase()
+              .substring(0,2) || "LK";
+
+
+          document.getElementById(
+            'sidebarAvatar'
+          ).textContent =
+            initials;
+
+
+          document.getElementById(
+            'userInitial'
+          ).textContent =
+            initials;
+
+
+          /* Admin */
+
+          checkAdminRole(user);
+
+        }
+
+        else {
+
+          window.location.href =
+            "login.html";
+
+        }
+
+      }
+    );
 
 
     /* =========================
        LOGOUT
     ========================= */
 
-    document
-      .getElementById("logoutBtn")
-      .addEventListener("click", async () => {
+    document.getElementById(
+      'logoutBtn'
+    ).addEventListener(
+      'click',
+      async () => {
 
         try {
 
           await signOut(auth);
 
           window.location.href =
-            "index.html";
+            "login.html";
 
         } catch (error) {
 
@@ -1562,167 +1776,71 @@
             error
           );
 
-          alert("Logout गर्न सकिएन। फेरि प्रयास गर्नुहोस्।");
-
         }
-
-      });
-
-
-    /* =========================
-       PROFILE
-    ========================= */
-
-    document
-      .getElementById("profileBtn")
-      .addEventListener("click", () => {
-
-        window.location.href =
-          "profile.html";
-
-      });
-
-
-    /* =========================
-       SIDEBAR
-    ========================= */
-
-    const sidebar =
-      document.getElementById("sidebar");
-
-    const sidebarOverlay =
-      document.getElementById("sidebarOverlay");
-
-    const menuBtn =
-      document.getElementById("menuBtn");
-
-    const closeSidebar =
-      document.getElementById("closeSidebar");
-
-
-    function toggleSidebar() {
-
-      sidebar.classList.toggle("open");
-
-      sidebarOverlay.classList.toggle("show");
-
-    }
-
-
-    menuBtn.addEventListener(
-      "click",
-      toggleSidebar
-    );
-
-
-    closeSidebar.addEventListener(
-      "click",
-      toggleSidebar
-    );
-
-
-    sidebarOverlay.addEventListener(
-      "click",
-      toggleSidebar
-    );
-
-
-    /* Close sidebar after navigation */
-
-    document
-      .querySelectorAll(".sidebar .menu-item")
-      .forEach((item) => {
-
-        item.addEventListener(
-          "click",
-          () => {
-
-            sidebar.classList.remove("open");
-
-            sidebarOverlay.classList.remove("show");
-
-          }
-        );
-
-      });
-
-
-    /* =========================
-       DARK MODE
-    ========================= */
-
-    const darkModeBtn =
-      document.getElementById("darkModeBtn");
-
-
-    const savedTheme =
-      localStorage.getItem("loksewaquest-theme");
-
-
-    if (savedTheme === "dark") {
-
-      document.body.classList.add("dark");
-
-    }
-
-
-    darkModeBtn.addEventListener(
-      "click",
-      () => {
-
-        document.body.classList.toggle("dark");
-
-
-        const isDark =
-          document.body.classList.contains("dark");
-
-
-        localStorage.setItem(
-          "loksewaquest-theme",
-          isDark ? "dark" : "light"
-        );
 
       }
     );
 
 
     /* =========================
-       LANGUAGE
+       DARK MODE
     ========================= */
 
-    document
-      .getElementById("languageBtn")
-      .addEventListener("click", () => {
-
-        /*
-          यहाँ तपाईंले पछि Nepali / English
-          language toggle जोड्न सक्नुहुन्छ।
-        */
-
-        alert(
-          "Language option चाँडै उपलब्ध हुनेछ।"
-        );
-
-      });
+    const darkModeToggle =
+      document.getElementById(
+        'darkModeToggle'
+      );
 
 
-  </script>
+    if (
+      localStorage.getItem('theme')
+      === 'dark'
+    ) {
 
+      darkModeToggle.checked =
+        true;
 
-  <!-- =========================
-       GLOBAL BOTTOM NAV
-  ========================= -->
-
-  <script>
-
-    if (typeof loadBottomNav === "function") {
-
-      loadBottomNav("home");
+      document.body.classList.add(
+        'dark'
+      );
 
     }
 
+
+    darkModeToggle.addEventListener(
+      'change',
+      (e) => {
+
+        if (e.target.checked) {
+
+          localStorage.setItem(
+            'theme',
+            'dark'
+          );
+
+          document.body.classList.add(
+            'dark'
+          );
+
+        }
+
+        else {
+
+          localStorage.setItem(
+            'theme',
+            'light'
+          );
+
+          document.body.classList.remove(
+            'dark'
+          );
+
+        }
+
+      }
+    );
+
   </script>
 
-
 </body>
-</html>
+        </html>
