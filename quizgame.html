@@ -260,10 +260,6 @@
         selectBox.value = langCode;
         selectBox.dispatchEvent(new Event('change'));
         selectBox.dispatchEvent(new Event('input'));
-      } else {
-        setTimeout(() => {
-          location.reload();
-        }, 150);
       }
     }
 
@@ -334,7 +330,6 @@
     let questionTimerInterval = null;
     let lastProcessedNotificationId = null;
     let isAnswerSubmitting = false;
-    let coinAlreadyDistributed = false; 
 
     const topicDisplayNames = {
       "all": "सबै विषयबाट मिक्स (All Topics Random)",
@@ -350,8 +345,10 @@
 
     async function distributeCoinsForGame(room) {
       if (!room.players || !Array.isArray(room.players)) return;
-      if (coinAlreadyDistributed) return; 
-      coinAlreadyDistributed = true;
+      
+      // sessionStorage मार्फत चेक गर्ने ताकि यो गेमको लागि reward एक पटक मात्र बाँडियोस्
+      const rewardKey = `coin_distributed_${roomId}`;
+      if (sessionStorage.getItem(rewardKey) === 'true') return;
 
       let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
       
@@ -380,6 +377,7 @@
               coins: currentCoins + totalEarnedForThisPlayer
             });
             
+            sessionStorage.setItem(rewardKey, 'true');
             showToast(`🎉 बधाई छ! तपाईँले यो खेलबाट ${totalEarnedForThisPlayer} कोइन प्राप्त गर्नुभयो! (स्कोर्स: ${player.score})`);
           } catch (err) {
             console.error("कोइन अपडेट गर्दा त्रुटी आयो:", err);
@@ -459,14 +457,7 @@
         initGameListener();
         initChatListener();
         
-        // Google Translate ले DOM रिफ्रेस गर्दा beforeunload ले काम बिगारिरहेको थियो, 
-        // त्यसैले यसलाई सुरक्षित बनाउन visibilitychange र pagehide इभेन्ट प्रयोग गरिएको छ।
         window.addEventListener('pagehide', handleUserLeave);
-        document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'hidden') {
-            // ट्याब बन्द वा मिनिमाइज हुँदाको सेफ चेक
-          }
-        });
       } else {
         window.location.href = "login.html";
       }
@@ -509,8 +500,6 @@
         
         if (roomDataGlobal.status === 'finished') {
           await distributeCoinsForGame(roomDataGlobal);
-        } else {
-          coinAlreadyDistributed = false; 
         }
 
         renderGameUI(roomDataGlobal);
@@ -606,7 +595,7 @@
             </div>
             <h4 id="questionTextRender">${escapeHTML(q.text)}</h4>
             <div class="options-grid" id="optionsGrid">
-              ${q.options.map((opt) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt.replace(/'/g, "\\\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
+              ${q.options.map((opt) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt.replace(/'/g, "\\\\OrCallback")}', false)">${escapeHTML(opt)}</button>`).join('')}
             </div>
             ${isMyTurn ? `
               <div class="action-row">
@@ -679,6 +668,9 @@
       if (!roomDataGlobal || currentUser.uid !== roomDataGlobal.hostId) return;
       const roomRef = doc(db, "quiz_rooms", roomId);
       let resetPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
+
+      // रिमम्याच हुँदा sessionStorage को कोइन लक हटाइनेछ
+      sessionStorage.removeItem(`coin_distributed_${roomId}`);
 
       try {
         await updateDoc(roomRef, {
@@ -901,6 +893,8 @@
       let chosenTopic = roomDataGlobal.settings?.topic || 'all';
       const firstQ = await fetchQuestionByTopic(chosenTopic, []);
       let initialPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
+
+      sessionStorage.removeItem(`coin_distributed_${roomId}`);
 
       try {
         await updateDoc(roomRef, {
