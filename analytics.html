@@ -2,15 +2,24 @@
 <html lang="ne">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <title>LoksewaQuest - Performance Analytics</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Global Components -->
+  <script src="components.js"></script>
 
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+  <!-- Font Awesome -->
   <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -18,26 +27,26 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     body {
-      background: #f8fafc;
-      color: #1e293b;
-      min-height: 100vh;
-      padding-bottom: 100px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #f5f6fb;
+      color: #1f2937;
+      padding-bottom: 90px;
     }
 
     /* ================= HEADER ================= */
 
-    .analytics-header {
-      background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
-      padding: 22px 18px 38px;
-      border-radius: 0 0 30px 30px;
+    .top-header {
+      background: linear-gradient(135deg, #3413aa, #5b21d6);
       color: white;
+      padding: 24px 18px 30px;
+      border-radius: 0 0 28px 28px;
+      box-shadow: 0 8px 25px rgba(52, 19, 170, 0.18);
     }
 
-    .nav-bar {
+    .header-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -45,47 +54,92 @@
     }
 
     .back-btn {
-      background: rgba(255,255,255,.15);
-      border: none;
       width: 40px;
       height: 40px;
-      border-radius: 12px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.12);
       color: white;
-      font-size: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-decoration: none;
+      cursor: pointer;
     }
 
-    .nav-bar h2 {
-      font-size: 17px;
+    .header-title {
+      text-align: center;
+      flex: 1;
+    }
+
+    .header-title h1 {
+      font-size: 20px;
       font-weight: 800;
     }
 
-    .header-subtitle {
-      font-size: 12px;
-      color: #dbeafe;
-      line-height: 1.6;
+    .header-title p {
+      font-size: 11px;
+      opacity: .8;
+      margin-top: 4px;
     }
 
-    .user-pill {
-      margin-top: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
+    .refresh-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,.25);
       background: rgba(255,255,255,.12);
-      padding: 7px 11px;
-      border-radius: 20px;
-      font-size: 10px;
-      color: #e0e7ff;
+      color: white;
+      cursor: pointer;
     }
 
-    /* ================= CONTAINER ================= */
+    .user-box {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.15);
+      padding: 12px 14px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .user-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: white;
+      color: #3413aa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+
+    .user-info {
+      min-width: 0;
+    }
+
+    .user-info small {
+      display: block;
+      opacity: .7;
+      font-size: 10px;
+    }
+
+    .user-info span {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 240px;
+    }
+
+    /* ================= MAIN ================= */
 
     .container {
-      padding: 0 16px;
-      margin-top: -20px;
+      width: min(1100px, calc(100% - 28px));
+      margin: -12px auto 0;
+      position: relative;
     }
 
     /* ================= SUMMARY ================= */
@@ -93,236 +147,203 @@
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 12px;
     }
 
-    .sum-card {
-      background: #fff;
-      border-radius: 18px;
-      padding: 15px;
-      box-shadow: 0 5px 18px rgba(15,23,42,.06);
-      border: 1px solid #eef2f7;
-    }
-
-    .sum-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-
-    .sum-card i {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-
-    .sum-card:nth-child(1) i {
-      background: #eff6ff;
-      color: #2563eb;
-    }
-
-    .sum-card:nth-child(2) i {
-      background: #ecfdf5;
-      color: #16a34a;
-    }
-
-    .sum-card:nth-child(3) i {
-      background: #fff7ed;
-      color: #ea580c;
-    }
-
-    .sum-card:nth-child(4) i {
-      background: #fefce8;
-      color: #ca8a04;
-    }
-
-    .sum-card h4 {
-      font-size: 10px;
-      color: #64748b;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .sum-card span {
-      font-size: 21px;
-      font-weight: 800;
-      color: #0f172a;
-    }
-
-    .sum-card small {
-      display: block;
-      margin-top: 2px;
-      color: #94a3b8;
-      font-size: 9px;
-    }
-
-    /* ================= CARDS ================= */
-
-    .card-box {
-      background: #fff;
-      border-radius: 20px;
+    .summary-card {
+      background: white;
+      border-radius: 19px;
       padding: 17px;
-      box-shadow: 0 5px 20px rgba(15,23,42,.045);
-      border: 1px solid #eef2f7;
-      margin-bottom: 16px;
-    }
-
-    .card-title {
-      font-size: 14px;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card-title i {
-      color: #2563eb;
-    }
-
-    .chart-container {
+      box-shadow: 0 5px 20px rgba(0,0,0,.055);
+      border: 1px solid #eeeef5;
       position: relative;
-      height: 220px;
-      width: 100%;
-    }
-
-    /* ================= PERFORMANCE HERO ================= */
-
-    .performance-card {
-      background: linear-gradient(135deg,#1d4ed8,#4338ca);
-      color: white;
-      border-radius: 22px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 10px 25px rgba(37,99,235,.18);
-    }
-
-    .performance-label {
-      font-size: 11px;
-      color: #dbeafe;
-      font-weight: 600;
-    }
-
-    .performance-score {
-      font-size: 36px;
-      font-weight: 800;
-      margin: 5px 0;
-    }
-
-    .performance-message {
-      font-size: 11px;
-      color: #dbeafe;
-      line-height: 1.6;
-    }
-
-    .performance-progress {
-      height: 7px;
-      background: rgba(255,255,255,.2);
-      border-radius: 20px;
-      margin-top: 15px;
       overflow: hidden;
     }
 
-    .performance-progress div {
-      height: 100%;
+    .summary-card::after {
+      content: "";
+      position: absolute;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: rgba(52,19,170,.05);
+      right: -20px;
+      bottom: -20px;
+    }
+
+    .summary-icon {
+      width: 35px;
+      height: 35px;
+      border-radius: 11px;
+      background: #f0ebff;
+      color: #3413aa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 11px;
+    }
+
+    .summary-card h3 {
+      font-size: 23px;
+      font-weight: 800;
+    }
+
+    .summary-card p {
+      font-size: 10px;
+      color: #8b91a1;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    /* ================= SECTION ================= */
+
+    .section {
+      margin-top: 18px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 2px 10px;
+    }
+
+    .section-title h2 {
+      font-size: 15px;
+      font-weight: 800;
+      color: #222;
+    }
+
+    .section-title span {
+      font-size: 10px;
+      color: #8a8f9c;
+    }
+
+    .card {
       background: white;
       border-radius: 20px;
-      width: 0%;
-      transition: width .8s ease;
+      padding: 17px;
+      border: 1px solid #eeeef5;
+      box-shadow: 0 5px 20px rgba(0,0,0,.045);
     }
 
-    /* ================= MINI STATS ================= */
+    /* ================= QUICK STATS ================= */
 
-    .mini-grid {
+    .quick-grid {
       display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 8px;
-      margin-bottom: 16px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
     }
 
-    .mini-card {
-      background: white;
-      border: 1px solid #eef2f7;
-      border-radius: 15px;
-      padding: 12px 7px;
+    .quick-stat {
       text-align: center;
+      background: #f8f8fc;
+      border-radius: 14px;
+      padding: 13px 5px;
     }
 
-    .mini-card i {
-      font-size: 13px;
-      color: #64748b;
-      margin-bottom: 5px;
-    }
-
-    .mini-card strong {
+    .quick-stat strong {
       display: block;
-      font-size: 14px;
+      font-size: 18px;
       font-weight: 800;
-      color: #0f172a;
     }
 
-    .mini-card span {
+    .quick-stat span {
       display: block;
+      margin-top: 4px;
+      color: #8a8f9c;
       font-size: 9px;
-      color: #94a3b8;
-      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .correct {
+      color: #159447;
+    }
+
+    .wrong {
+      color: #e34040;
+    }
+
+    .skipped {
+      color: #e49a12;
+    }
+
+    /* ================= CHART ================= */
+
+    .chart-box {
+      height: 250px;
+      position: relative;
+    }
+
+    .chart-box.small {
+      height: 230px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 35px 15px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .empty i {
+      font-size: 30px;
+      margin-bottom: 10px;
+      display: block;
+      color: #c8cbd5;
     }
 
     /* ================= SET PERFORMANCE ================= */
 
     .set-item {
-      padding: 13px 0;
-      border-bottom: 1px solid #f1f5f9;
+      border: 1px solid #eeeef4;
+      border-radius: 15px;
+      padding: 13px;
+      margin-bottom: 10px;
     }
 
     .set-item:last-child {
-      border-bottom: none;
+      margin-bottom: 0;
     }
 
     .set-top {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 7px;
+      gap: 10px;
+      margin-bottom: 9px;
     }
 
     .set-name {
       font-size: 12px;
-      font-weight: 700;
-      color: #334155;
-      max-width: 70%;
+      font-weight: 800;
     }
 
     .set-score {
       font-size: 12px;
       font-weight: 800;
-      color: #2563eb;
+      color: #3413aa;
     }
 
-    .set-progress {
+    .progress {
       height: 7px;
-      background: #f1f5f9;
+      background: #eeeef5;
       border-radius: 20px;
       overflow: hidden;
     }
 
-    .set-progress div {
+    .progress-fill {
       height: 100%;
+      background: linear-gradient(90deg,#3413aa,#7c3aed);
       border-radius: 20px;
       transition: width .7s ease;
     }
 
     .set-meta {
-      margin-top: 5px;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 7px;
+      color: #9297a4;
       font-size: 9px;
-      color: #94a3b8;
     }
 
     /* ================= HISTORY ================= */
@@ -332,44 +353,42 @@
       align-items: center;
       gap: 11px;
       padding: 12px 0;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f0f0f4;
     }
 
     .history-item:last-child {
       border-bottom: none;
     }
 
-    .history-rank {
-      width: 35px;
-      height: 35px;
-      border-radius: 11px;
-      background: #eff6ff;
-      color: #2563eb;
+    .history-icon {
+      width: 37px;
+      height: 37px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      background: #f0ebff;
+      color: #3413aa;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      font-weight: 800;
-      flex-shrink: 0;
     }
 
-    .history-info {
+    .history-main {
       flex: 1;
       min-width: 0;
     }
 
-    .history-name {
+    .history-main strong {
+      display: block;
       font-size: 11px;
-      font-weight: 700;
-      color: #334155;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .history-date {
+    .history-main span {
+      display: block;
       font-size: 9px;
-      color: #94a3b8;
+      color: #969ba8;
       margin-top: 3px;
     }
 
@@ -380,133 +399,122 @@
     .history-score strong {
       display: block;
       font-size: 13px;
-      font-weight: 800;
-      color: #2563eb;
+      color: #3413aa;
     }
 
     .history-score span {
-      font-size: 9px;
-      color: #64748b;
-    }
-
-    /* ================= FOCUS ================= */
-
-    .focus-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 11px;
-      background: #fffbeb;
-      border: 1px solid #fef3c7;
-      padding: 12px;
-      border-radius: 14px;
-      margin-bottom: 9px;
-    }
-
-    .focus-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .focus-item i {
-      color: #d97706;
-      font-size: 15px;
+      display: block;
+      font-size: 8px;
+      color: #999;
       margin-top: 2px;
     }
 
-    .focus-text h5 {
-      font-size: 12px;
-      font-weight: 800;
-      color: #92400e;
-      margin-bottom: 3px;
+    /* ================= RECOMMENDATION ================= */
+
+    .recommendation {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+      padding: 12px;
+      border-radius: 15px;
+      background: #faf9ff;
+      border: 1px solid #eeeafd;
+      margin-bottom: 9px;
     }
 
-    .focus-text p {
-      font-size: 10px;
-      color: #b45309;
-      line-height: 1.55;
+    .recommendation:last-child {
+      margin-bottom: 0;
     }
 
-    /* ================= EMPTY / LOADING ================= */
+    .recommendation-icon {
+      width: 35px;
+      height: 35px;
+      flex-shrink: 0;
+      border-radius: 11px;
+      background: #ede8ff;
+      color: #3413aa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    .loading {
-      text-align: center;
-      padding: 35px 10px;
-      color: #64748b;
+    .recommendation strong {
       font-size: 11px;
+      display: block;
     }
 
-    .loading i {
-      font-size: 25px;
-      margin-bottom: 10px;
-      color: #2563eb;
+    .recommendation p {
+      font-size: 9px;
+      color: #7e8491;
+      margin-top: 4px;
+      line-height: 1.5;
     }
 
-    .error-box {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #991b1b;
-      padding: 13px;
-      border-radius: 14px;
-      font-size: 11px;
-      line-height: 1.6;
-    }
+    /* ================= LOADING ================= */
 
-    .empty-box {
-      text-align: center;
-      padding: 30px 15px;
-      color: #64748b;
-    }
-
-    .empty-box i {
-      font-size: 30px;
-      color: #cbd5e1;
-      margin-bottom: 10px;
-    }
-
-    .empty-box h4 {
-      font-size: 13px;
-      color: #475569;
-      margin-bottom: 5px;
-    }
-
-    .empty-box p {
-      font-size: 10px;
-    }
-
-    /* ================= REFRESH ================= */
-
-    .refresh-btn {
+    #loadingScreen {
       position: fixed;
-      right: 18px;
-      bottom: 88px;
-      width: 46px;
-      height: 46px;
-      border: none;
-      border-radius: 50%;
-      background: #2563eb;
-      color: white;
-      font-size: 15px;
-      box-shadow: 0 8px 20px rgba(37,99,235,.3);
-      z-index: 20;
-      cursor: pointer;
+      inset: 0;
+      background: #f5f6fb;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
-    .refresh-btn.loading-spin i {
+    .loader {
+      width: 45px;
+      height: 45px;
+      border: 4px solid #e4defc;
+      border-top-color: #3413aa;
+      border-radius: 50%;
       animation: spin .8s linear infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    #loadingScreen p {
+      margin-top: 13px;
+      font-size: 12px;
+      color: #777;
+      font-weight: 600;
     }
 
-    @media (min-width: 700px) {
-      .container {
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
+    }
+
+    /* ================= ERROR ================= */
+
+    #errorBox {
+      display: none;
+      background: #fff3f3;
+      border: 1px solid #ffd4d4;
+      color: #c53030;
+      border-radius: 16px;
+      padding: 15px;
+      margin-top: 18px;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    /* ================= DESKTOP ================= */
+
+    @media (min-width: 700px) {
 
       .summary-grid {
-        grid-template-columns: repeat(4,1fr);
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .analytics-grid {
+        display: grid;
+        grid-template-columns: 1.3fr .7fr;
+        gap: 18px;
+      }
+
+      .container {
+        margin-top: -15px;
       }
     }
   </style>
@@ -514,241 +522,170 @@
 
 <body>
 
-  <!-- ================= HEADER ================= -->
+<!-- ================= LOADING ================= -->
 
-  <div class="analytics-header">
+<div id="loadingScreen">
+  <div class="loader"></div>
+  <p id="loadingText">तपाईंको analytics तयार हुँदैछ...</p>
+</div>
 
-    <div class="nav-bar">
+<!-- ================= HEADER ================= -->
 
-      <a href="dashboard.html" class="back-btn">
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
+<header class="top-header">
 
-      <h2>Performance Analytics</h2>
+  <div class="header-top">
 
-      <div style="width:40px;"></div>
+    <button class="back-btn" onclick="goBack()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
 
+    <div class="header-title">
+      <h1>Performance Analytics</h1>
+      <p>Your Loksewa Quest journey</p>
     </div>
 
-    <p class="header-subtitle">
-      तपाईंले दिएका Mock Exams को वास्तविक प्रदर्शन विश्लेषण
-    </p>
+    <button class="refresh-btn" onclick="refreshAnalytics()">
+      <i class="fa-solid fa-rotate"></i>
+    </button>
 
-    <div class="user-pill">
+  </div>
+
+  <div class="user-box">
+
+    <div class="user-icon">
       <i class="fa-solid fa-user"></i>
-      <span id="userEmailDisplay">Loading...</span>
+    </div>
+
+    <div class="user-info">
+      <small>Logged in as</small>
+      <span id="userEmailDisplay">Checking account...</span>
     </div>
 
   </div>
 
-
-  <div class="container">
-
-    <!-- ================= PERFORMANCE ================= -->
-
-    <div class="performance-card">
-
-      <div class="performance-label">
-        OVERALL EXAM PERFORMANCE
-      </div>
-
-      <div class="performance-score" id="overallAccuracy">
-        0%
-      </div>
-
-      <div class="performance-message" id="performanceMessage">
-        तपाईंको exam performance तयार हुँदैछ...
-      </div>
-
-      <div class="performance-progress">
-        <div id="overallProgress"></div>
-      </div>
-
-    </div>
+</header>
 
 
-    <!-- ================= SUMMARY ================= -->
+<main class="container">
+
+  <!-- ================= SUMMARY ================= -->
+
+  <section class="section">
 
     <div class="summary-grid">
 
-      <div class="sum-card">
-
-        <div class="sum-top">
-          <i class="fa-solid fa-file-pen"></i>
+      <div class="summary-card">
+        <div class="summary-icon">
+          <i class="fa-solid fa-file-circle-check"></i>
         </div>
-
-        <h4>Total Exams</h4>
-        <span id="totalExams">0</span>
-        <small>Mock exams</small>
-
+        <h3 id="anaTotalSolved">0</h3>
+        <p>EXAMS COMPLETED</p>
       </div>
 
-
-      <div class="sum-card">
-
-        <div class="sum-top">
-          <i class="fa-solid fa-circle-check"></i>
-        </div>
-
-        <h4>Questions</h4>
-        <span id="totalQuestions">0</span>
-        <small>Answered</small>
-
-      </div>
-
-
-      <div class="sum-card">
-
-        <div class="sum-top">
+      <div class="summary-card">
+        <div class="summary-icon">
           <i class="fa-solid fa-bullseye"></i>
         </div>
-
-        <h4>Accuracy</h4>
-        <span id="accuracyValue">0%</span>
-        <small>Overall</small>
-
+        <h3 id="anaAccuracy">0%</h3>
+        <p>OVERALL ACCURACY</p>
       </div>
 
-
-      <div class="sum-card">
-
-        <div class="sum-top">
+      <div class="summary-card">
+        <div class="summary-icon">
           <i class="fa-solid fa-trophy"></i>
         </div>
+        <h3 id="anaBestScore">0</h3>
+        <p>BEST SCORE</p>
+      </div>
 
-        <h4>Best Score</h4>
-        <span id="bestScore">0</span>
-        <small id="bestScoreSet">No exam yet</small>
-
+      <div class="summary-card">
+        <div class="summary-icon">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+        <h3 id="anaAverageScore">0</h3>
+        <p>AVERAGE SCORE</p>
       </div>
 
     </div>
 
+  </section>
 
-    <!-- ================= MINI STATS ================= -->
 
-    <div class="mini-grid">
+  <!-- ================= ERROR ================= -->
 
-      <div class="mini-card">
-        <i class="fa-solid fa-chart-line"></i>
-        <strong id="averageScore">0</strong>
-        <span>Average Score</span>
-      </div>
+  <div id="errorBox"></div>
 
-      <div class="mini-card">
-        <i class="fa-solid fa-check"></i>
-        <strong id="correctCount">0</strong>
-        <span>Correct</span>
-      </div>
 
-      <div class="mini-card">
-        <i class="fa-solid fa-xmark"></i>
-        <strong id="wrongCount">0</strong>
-        <span>Wrong</span>
-      </div>
+  <!-- ================= QUICK STATS ================= -->
 
+  <section class="section">
+
+    <div class="section-title">
+      <h2>Question Breakdown</h2>
+      <span>All exams</span>
     </div>
 
+    <div class="card">
 
-    <!-- ================= SCORE TREND ================= -->
+      <div class="quick-grid">
 
-    <div class="card-box">
+        <div class="quick-stat">
+          <strong class="correct" id="totalCorrect">0</strong>
+          <span>Correct</span>
+        </div>
 
-      <div class="card-title">
-        <i class="fa-solid fa-chart-line"></i>
-        Score Trend
-      </div>
+        <div class="quick-stat">
+          <strong class="wrong" id="totalWrong">0</strong>
+          <span>Wrong</span>
+        </div>
 
-      <div class="chart-container">
-        <canvas id="scoreTrendChart"></canvas>
-      </div>
-
-    </div>
-
-
-    <!-- ================= ANSWER DISTRIBUTION ================= -->
-
-    <div class="card-box">
-
-      <div class="card-title">
-        <i class="fa-solid fa-chart-pie"></i>
-        Answer Distribution
-      </div>
-
-      <div class="chart-container">
-        <canvas id="answerPieChart"></canvas>
-      </div>
-
-    </div>
-
-
-    <!-- ================= SET PERFORMANCE ================= -->
-
-    <div class="card-box">
-
-      <div class="card-title">
-        <i class="fa-solid fa-layer-group"></i>
-        Set-wise Performance
-      </div>
-
-      <div id="setPerformance">
-
-        <div class="loading">
-          <i class="fa-solid fa-spinner fa-spin"></i>
-          <br>
-          Set performance loading...
+        <div class="quick-stat">
+          <strong class="skipped" id="totalSkipped">0</strong>
+          <span>Skipped</span>
         </div>
 
       </div>
 
     </div>
 
+  </section>
 
-    <!-- ================= RECENT EXAMS ================= -->
 
-    <div class="card-box">
+  <!-- ================= CHARTS ================= -->
 
-      <div class="card-title">
-        <i class="fa-solid fa-clock-rotate-left"></i>
-        Recent Exam History
-      </div>
+  <section class="section">
 
-      <div id="examHistory">
+    <div class="analytics-grid">
 
-        <div class="loading">
-          <i class="fa-solid fa-spinner fa-spin"></i>
-          <br>
-          Exam history loading...
+      <div>
+
+        <div class="section-title">
+          <h2>Score Progress</h2>
+          <span>Exam by exam</span>
+        </div>
+
+        <div class="card">
+
+          <div class="chart-box">
+            <canvas id="scoreTrendChart"></canvas>
+          </div>
+
         </div>
 
       </div>
 
-    </div>
 
+      <div>
 
-    <!-- ================= SMART RECOMMENDATION ================= -->
+        <div class="section-title">
+          <h2>Answer Accuracy</h2>
+          <span>Questions</span>
+        </div>
 
-    <div class="card-box">
+        <div class="card">
 
-      <div class="card-title">
-        <i class="fa-solid fa-lightbulb"></i>
-        Smart Improvement
-      </div>
-
-      <div id="focusRecommendationList">
-
-        <div class="focus-item">
-
-          <i class="fa-solid fa-spinner fa-spin"></i>
-
-          <div class="focus-text">
-
-            <h5>विश्लेषण हुँदैछ...</h5>
-
-            <p>
-              तपाईंको exam records हेरेर personalized सुझाव तयार गरिँदैछ।
-            </p>
-
+          <div class="chart-box small">
+            <canvas id="accuracyPieChart"></canvas>
           </div>
 
         </div>
@@ -757,1200 +694,1376 @@
 
     </div>
 
-
-  </div>
-
-
-  <!-- Refresh -->
-
-  <button class="refresh-btn" id="refreshBtn" title="Refresh Analytics">
-
-    <i class="fa-solid fa-rotate"></i>
-
-  </button>
+  </section>
 
 
-  <!-- Bottom Navigation -->
+  <!-- ================= SET PERFORMANCE ================= -->
 
-  <script src="components.js"></script>
+  <section class="section">
 
-  <script>
-    if (typeof loadBottomNav === "function") {
-      loadBottomNav('analytics');
-    }
-  </script>
+    <div class="section-title">
+      <h2>Set-wise Performance</h2>
+      <span id="setCount">0 sets</span>
+    </div>
 
+    <div class="card" id="setPerformance">
 
-  <!-- Supabase -->
+      <div class="empty">
+        <i class="fa-solid fa-chart-simple"></i>
+        No exam data available yet.
+      </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    </div>
 
-
-  <!-- Firebase -->
-
-  <script type="module">
-
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-    import {
-      getAuth,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  </section>
 
 
-    /* =========================================================
-       FIREBASE
-    ========================================================= */
+  <!-- ================= SMART RECOMMENDATIONS ================= -->
 
-    const firebaseConfig = {
+  <section class="section">
 
-      apiKey: "AIzaSyCkCkCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+    <div class="section-title">
+      <h2>Smart Recommendations</h2>
+      <span>Based on your results</span>
+    </div>
 
-      authDomain: "loksewaquest-227b6.firebaseapp.com",
+    <div class="card" id="recommendations">
 
-      projectId: "loksewaquest-227b6",
+      <div class="empty">
+        <i class="fa-solid fa-lightbulb"></i>
+        Complete some exams to unlock recommendations.
+      </div>
 
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+    </div>
 
-      messagingSenderId: "779234903809",
-
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-
-    };
-
-
-    const app = initializeApp(firebaseConfig);
-
-    const auth = getAuth(app);
+  </section>
 
 
-    /* =========================================================
-       SUPABASE
-    ========================================================= */
+  <!-- ================= RECENT HISTORY ================= -->
 
-    const SUPABASE_URL =
-      "https://edyirdedkiarguvurpxq.supabase.co";
+  <section class="section">
 
-    const SUPABASE_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+    <div class="section-title">
+      <h2>Recent Exam History</h2>
+      <span>Latest attempts</span>
+    </div>
+
+    <div class="card" id="examHistory">
+
+      <div class="empty">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        No exam history found.
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
 
 
-    const supabase =
-      window.supabase.createClient(
+<script type="module">
+
+  /* =====================================================
+     FIREBASE
+  ===================================================== */
+
+  import {
+    initializeApp
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+    authDomain: "loksewaquest-227b6.firebaseapp.com",
+    projectId: "loksewaquest-227b6",
+    storageBucket: "loksewaquest-227b6.firebasestorage.app",
+    messagingSenderId: "779234903809",
+    appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+  };
+
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+
+  /* =====================================================
+     SUPABASE
+  ===================================================== */
+
+  const SUPABASE_URL =
+    "https://edyirdedkiarguvurpxq.supabase.co";
+
+  const SUPABASE_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+
+  let supabaseClient = null;
+
+
+  async function initSupabase() {
+
+    if (window.supabase) {
+
+      supabaseClient = window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
       );
 
-
-    /* =========================================================
-       CHART INSTANCES
-    ========================================================= */
-
-    let trendChart = null;
-    let pieChart = null;
-
-
-    /* =========================================================
-       ESCAPE HTML
-    ========================================================= */
-
-    function escapeHTML(value) {
-
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
+      return;
     }
 
+    const script = document.createElement("script");
 
-    /* =========================================================
-       FORMAT SET NAME
-    ========================================================= */
+    script.src =
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
-    function formatSetName(name) {
+    document.head.appendChild(script);
 
-      if (!name) return "Unknown Exam";
+    await new Promise((resolve, reject) => {
 
-      return String(name)
-        .replace(/_/g, " ")
-        .replace(/-/g, " ")
-        .replace(/\b\w/g, c => c.toUpperCase());
+      script.onload = resolve;
+      script.onerror = reject;
 
+    });
+
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+  }
+
+
+  /* =====================================================
+     GLOBAL VARIABLES
+  ===================================================== */
+
+  let currentUser = null;
+
+  let examData = [];
+
+  let scoreChart = null;
+
+  let accuracyChart = null;
+
+  let authResolved = false;
+
+
+  /* =====================================================
+     DOM HELPERS
+  ===================================================== */
+
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+
+  function hideLoading() {
+
+    const loading = $("loadingScreen");
+
+    if (loading) {
+      loading.style.display = "none";
     }
 
-
-    /* =========================================================
-       DATE FORMAT
-    ========================================================= */
-
-    function formatDate(dateString) {
-
-      if (!dateString) return "Unknown date";
-
-      const date = new Date(dateString);
-
-      if (isNaN(date.getTime())) {
-        return "Unknown date";
-      }
-
-      return date.toLocaleDateString("ne-NP", {
-        year: "numeric",
-        month: "short",
-        day: "numeric"
-      });
-
-    }
+  }
 
 
-    /* =========================================================
-       EMPTY STATE
-    ========================================================= */
+  function showLoading(message) {
 
-    function showEmptyState() {
+    $("loadingText").textContent =
+      message || "Loading...";
 
-      document.getElementById("overallAccuracy").textContent = "0%";
+    $("loadingScreen").style.display = "flex";
 
-      document.getElementById("overallProgress").style.width = "0%";
-
-      document.getElementById("totalExams").textContent = "0";
-
-      document.getElementById("totalQuestions").textContent = "0";
-
-      document.getElementById("accuracyValue").textContent = "0%";
-
-      document.getElementById("bestScore").textContent = "0";
-
-      document.getElementById("bestScoreSet").textContent =
-        "No exam yet";
-
-      document.getElementById("averageScore").textContent = "0";
-
-      document.getElementById("correctCount").textContent = "0";
-
-      document.getElementById("wrongCount").textContent = "0";
+  }
 
 
-      document.getElementById("performanceMessage").textContent =
-        "अहिलेसम्म कुनै Mock Exam record भेटिएन। एउटा exam दिएपछि यहाँ तपाईंको वास्तविक performance देखिनेछ।";
+  function showError(message) {
+
+    const box = $("errorBox");
+
+    box.style.display = "block";
+
+    box.innerHTML = `
+      <strong>
+        <i class="fa-solid fa-circle-exclamation"></i>
+        Analytics error
+      </strong>
+      <br>
+      ${message}
+    `;
+
+  }
 
 
-      document.getElementById("setPerformance").innerHTML = `
+  /* =====================================================
+     AUTH STATE
+     
+     IMPORTANT:
+     Don't immediately redirect when Firebase first returns
+     null. This prevents analysis → login → dashboard loop.
+  ===================================================== */
 
-        <div class="empty-box">
+  onAuthStateChanged(auth, async (user) => {
 
-          <i class="fa-solid fa-chart-simple"></i>
+    authResolved = true;
 
-          <h4>अझै exam record छैन</h4>
-
-          <p>
-            Mock Exam दिएपछि यहाँ set-wise performance देखिनेछ।
-          </p>
-
-        </div>
-
-      `;
-
-
-      document.getElementById("examHistory").innerHTML = `
-
-        <div class="empty-box">
-
-          <i class="fa-solid fa-clock-rotate-left"></i>
-
-          <h4>No Exam History</h4>
-
-          <p>
-            तपाईंले दिएको exam यहाँ देखिनेछ।
-          </p>
-
-        </div>
-
-      `;
+    console.log(
+      "Analysis Auth State:",
+      user ? user.email : "NO USER"
+    );
 
 
-      document.getElementById("focusRecommendationList").innerHTML = `
+    if (user) {
 
-        <div class="focus-item">
+      currentUser = user;
 
-          <i class="fa-solid fa-lightbulb"></i>
-
-          <div class="focus-text">
-
-            <h5>पहिलो Mock Exam दिनुहोस्</h5>
-
-            <p>
-              तपाईंको वास्तविक performance analysis सुरु गर्न कम्तीमा एउटा exam आवश्यक छ।
-            </p>
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-
-    /* =========================================================
-       LOAD ANALYTICS
-    ========================================================= */
-
-    async function loadAnalytics(user) {
-
-      const refreshBtn =
-        document.getElementById("refreshBtn");
-
-      refreshBtn.classList.add("loading-spin");
+      $("userEmailDisplay").textContent =
+        user.email || "Logged in";
 
 
       try {
 
-        const email = user.email;
+        await initSupabase();
 
-        document.getElementById("userEmailDisplay").textContent =
-          email || "User";
+        await loadAnalytics(user);
 
+        hideLoading();
 
-        /*
-         IMPORTANT:
+      } catch (error) {
 
-         exam_leaderboard columns:
-
-         id
-         username
-         set_name
-         score
-         correct_count
-         wrong_count
-         skipped_count
-         total_questions
-         created_at
-        */
-
-        const {
-          data,
+        console.error(
+          "Analytics initialization error:",
           error
-        } = await supabase
-
-          .from("exam_leaderboard")
-
-          .select(`
-            id,
-            username,
-            set_name,
-            score,
-            correct_count,
-            wrong_count,
-            skipped_count,
-            total_questions,
-            created_at
-          `)
-
-          .eq("username", email)
-
-          .order("created_at", {
-            ascending: true
-          });
-
-
-        if (error) {
-
-          console.error(
-            "Supabase Analytics Error:",
-            error
-          );
-
-          document.getElementById("examHistory").innerHTML = `
-
-            <div class="error-box">
-
-              <strong>
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                Analytics load भएन
-              </strong>
-
-              <br><br>
-
-              ${escapeHTML(error.message)}
-
-              <br><br>
-
-              <small>
-                Supabase RLS / API key / table permission जाँच गर्नुहोस्।
-              </small>
-
-            </div>
-
-          `;
-
-          return;
-        }
-
-
-        const exams = data || [];
-
-
-        console.log(
-          "Analytics exam records:",
-          exams
         );
 
-
-        if (exams.length === 0) {
-
-          showEmptyState();
-
-          return;
-
-        }
-
-
-        /* =====================================================
-           BASIC TOTALS
-        ===================================================== */
-
-        const totalExams = exams.length;
-
-
-        const totalQuestions =
-          exams.reduce(
-            (sum, e) =>
-              sum + Number(e.total_questions || 0),
-            0
-          );
-
-
-        const totalCorrect =
-          exams.reduce(
-            (sum, e) =>
-              sum + Number(e.correct_count || 0),
-            0
-          );
-
-
-        const totalWrong =
-          exams.reduce(
-            (sum, e) =>
-              sum + Number(e.wrong_count || 0),
-            0
-          );
-
-
-        const totalSkipped =
-          exams.reduce(
-            (sum, e) =>
-              sum + Number(e.skipped_count || 0),
-            0
-          );
-
-
-        const accuracy =
-          totalQuestions > 0
-            ? Math.round(
-                (totalCorrect / totalQuestions) * 100
-              )
-            : 0;
-
-
-        const averageScore =
-          exams.reduce(
-            (sum, e) =>
-              sum + Number(e.score || 0),
-            0
-          ) / totalExams;
-
-
-        /* =====================================================
-           BEST SCORE
-        ===================================================== */
-
-        const bestExam =
-          [...exams].sort(
-            (a, b) =>
-              Number(b.score || 0) -
-              Number(a.score || 0)
-          )[0];
-
-
-        /* =====================================================
-           SUMMARY UI
-        ===================================================== */
-
-        document.getElementById("totalExams")
-          .textContent = totalExams;
-
-
-        document.getElementById("totalQuestions")
-          .textContent = totalQuestions;
-
-
-        document.getElementById("accuracyValue")
-          .textContent = accuracy + "%";
-
-
-        document.getElementById("bestScore")
-          .textContent =
-            Number(bestExam.score || 0)
-              .toFixed(1);
-
-
-        document.getElementById("bestScoreSet")
-          .textContent =
-            formatSetName(bestExam.set_name);
-
-
-        document.getElementById("averageScore")
-          .textContent =
-            averageScore.toFixed(1);
-
-
-        document.getElementById("correctCount")
-          .textContent = totalCorrect;
-
-
-        document.getElementById("wrongCount")
-          .textContent = totalWrong;
-
-
-        document.getElementById("overallAccuracy")
-          .textContent = accuracy + "%";
-
-
-        document.getElementById("overallProgress")
-          .style.width =
-            Math.min(100, accuracy) + "%";
-
-
-        /* =====================================================
-           PERFORMANCE MESSAGE
-        ===================================================== */
-
-        let performanceMessage = "";
-
-
-        if (accuracy >= 90) {
-
-          performanceMessage =
-            "तपाईंको exam accuracy धेरै उच्च छ। अब consistency र difficult questions मा focus गर्न सकिन्छ।";
-
-        }
-
-        else if (accuracy >= 80) {
-
-          performanceMessage =
-            "तपाईंको performance राम्रो छ। केही गलत भएका प्रश्नहरू review गर्दा अझ सुधार गर्न सकिन्छ।";
-
-        }
-
-        else if (accuracy >= 70) {
-
-          performanceMessage =
-            "तपाईंको आधार राम्रो देखिन्छ। नियमित mock test र mistake review ले accuracy बढाउन सक्छ।";
-
-        }
-
-        else if (accuracy >= 50) {
-
-          performanceMessage =
-            "अझै सुधारको राम्रो ठाउँ छ। गलत र skipped questions लाई प्राथमिकता दिएर पुनः अभ्यास गर्नुहोस्।";
-
-        }
-
-        else {
-
-          performanceMessage =
-            "अहिले fundamentals र नियमित practice मा focus गर्नु उपयोगी हुनेछ।";
-
-        }
-
-
-        document.getElementById("performanceMessage")
-          .textContent = performanceMessage;
-
-
-        /* =====================================================
-           CHART 1 — SCORE TREND
-        ===================================================== */
-
-        const trendLabels =
-          exams.map(
-            (e, index) =>
-              "#" + (index + 1)
-          );
-
-
-        const trendScores =
-          exams.map(
-            e =>
-              Number(e.score || 0)
-          );
-
-
-        const trendCtx =
-          document
-            .getElementById("scoreTrendChart")
-            .getContext("2d");
-
-
-        if (trendChart) {
-          trendChart.destroy();
-        }
-
-
-        trendChart = new Chart(
-          trendCtx,
-          {
-
-            type: "line",
-
-            data: {
-
-              labels: trendLabels,
-
-              datasets: [{
-
-                label: "Score",
-
-                data: trendScores,
-
-                borderColor: "#2563eb",
-
-                backgroundColor:
-                  "rgba(37,99,235,.10)",
-
-                fill: true,
-
-                tension: .35,
-
-                pointRadius: 4,
-
-                pointHoverRadius: 6,
-
-                borderWidth: 3
-
-              }]
-
-            },
-
-            options: {
-
-              responsive: true,
-
-              maintainAspectRatio: false,
-
-              plugins: {
-
-                legend: {
-                  display: false
-                }
-
-              },
-
-              scales: {
-
-                y: {
-
-                  beginAtZero: true,
-
-                  grid: {
-                    color: "#f1f5f9"
-                  }
-
-                },
-
-                x: {
-
-                  grid: {
-                    display: false
-                  }
-
-                }
-
-              }
-
-            }
-
-          }
+        hideLoading();
+
+        showError(
+          error.message ||
+          "Unable to load analytics."
         );
-
-
-        /* =====================================================
-           CHART 2 — ANSWER DISTRIBUTION
-        ===================================================== */
-
-        const pieCtx =
-          document
-            .getElementById("answerPieChart")
-            .getContext("2d");
-
-
-        if (pieChart) {
-          pieChart.destroy();
-        }
-
-
-        pieChart = new Chart(
-          pieCtx,
-          {
-
-            type: "doughnut",
-
-            data: {
-
-              labels: [
-                "Correct",
-                "Wrong",
-                "Skipped"
-              ],
-
-              datasets: [{
-
-                data: [
-                  totalCorrect,
-                  totalWrong,
-                  totalSkipped
-                ],
-
-                backgroundColor: [
-                  "#16a34a",
-                  "#dc2626",
-                  "#f59e0b"
-                ],
-
-                borderWidth: 0,
-
-                hoverOffset: 5
-
-              }]
-
-            },
-
-            options: {
-
-              responsive: true,
-
-              maintainAspectRatio: false,
-
-              cutout: "68%",
-
-              plugins: {
-
-                legend: {
-
-                  position: "bottom",
-
-                  labels: {
-
-                    boxWidth: 12,
-
-                    font: {
-                      family:
-                        "Plus Jakarta Sans",
-                      size: 11,
-                      weight: "600"
-                    }
-
-                  }
-
-                }
-
-              }
-
-            }
-
-          }
-        );
-
-
-        /* =====================================================
-           SET-WISE PERFORMANCE
-        ===================================================== */
-
-        const setMap = {};
-
-
-        exams.forEach(exam => {
-
-          const set =
-            exam.set_name || "Unknown";
-
-
-          if (!setMap[set]) {
-
-            setMap[set] = {
-
-              exams: 0,
-              questions: 0,
-              correct: 0,
-              score: 0
-
-            };
-
-          }
-
-
-          setMap[set].exams++;
-
-          setMap[set].questions +=
-            Number(exam.total_questions || 0);
-
-          setMap[set].correct +=
-            Number(exam.correct_count || 0);
-
-          setMap[set].score +=
-            Number(exam.score || 0);
-
-        });
-
-
-        const setEntries =
-          Object.entries(setMap)
-            .map(([name, value]) => {
-
-              const setAccuracy =
-                value.questions > 0
-                  ? Math.round(
-                      (value.correct /
-                       value.questions) * 100
-                    )
-                  : 0;
-
-
-              return {
-                name,
-                ...value,
-                accuracy: setAccuracy
-              };
-
-            })
-            .sort(
-              (a,b) =>
-                b.accuracy - a.accuracy
-            );
-
-
-        const setContainer =
-          document.getElementById(
-            "setPerformance"
-          );
-
-
-        setContainer.innerHTML = "";
-
-
-        setEntries.forEach((set, index) => {
-
-          let barColor = "#2563eb";
-
-          if (set.accuracy >= 80) {
-            barColor = "#16a34a";
-          }
-
-          else if (set.accuracy < 50) {
-            barColor = "#dc2626";
-          }
-
-          setContainer.innerHTML += `
-
-            <div class="set-item">
-
-              <div class="set-top">
-
-                <span class="set-name">
-                  ${escapeHTML(
-                    formatSetName(set.name)
-                  )}
-                </span>
-
-                <span class="set-score">
-                  ${set.accuracy}%
-                </span>
-
-              </div>
-
-              <div class="set-progress">
-
-                <div
-                  style="
-                    width:${set.accuracy}%;
-                    background:${barColor};
-                  ">
-                </div>
-
-              </div>
-
-              <div class="set-meta">
-
-                ${set.exams} exam
-                •
-                ${set.correct}/${set.questions} correct
-                •
-                Avg score:
-                ${(set.score / set.exams).toFixed(1)}
-
-              </div>
-
-            </div>
-
-          `;
-
-        });
-
-
-        /* =====================================================
-           RECENT HISTORY
-        ===================================================== */
-
-        const recentExams =
-          [...exams]
-            .reverse()
-            .slice(0, 8);
-
-
-        const history =
-          document.getElementById(
-            "examHistory"
-          );
-
-
-        history.innerHTML = "";
-
-
-        recentExams.forEach(
-          (exam, index) => {
-
-            const score =
-              Number(exam.score || 0);
-
-
-            const questions =
-              Number(
-                exam.total_questions || 0
-              );
-
-
-            const correct =
-              Number(
-                exam.correct_count || 0
-              );
-
-
-            const examAccuracy =
-              questions > 0
-                ? Math.round(
-                    (correct / questions) * 100
-                  )
-                : 0;
-
-
-            history.innerHTML += `
-
-              <div class="history-item">
-
-                <div class="history-rank">
-
-                  ${index === 0
-                    ? "🆕"
-                    : "#" + (index + 1)}
-
-                </div>
-
-                <div class="history-info">
-
-                  <div class="history-name">
-
-                    ${escapeHTML(
-                      formatSetName(
-                        exam.set_name
-                      )
-                    )}
-
-                  </div>
-
-                  <div class="history-date">
-
-                    ${formatDate(
-                      exam.created_at
-                    )}
-
-                  </div>
-
-                </div>
-
-                <div class="history-score">
-
-                  <strong>
-                    ${score.toFixed(1)}
-                  </strong>
-
-                  <span>
-                    ${examAccuracy}% accuracy
-                  </span>
-
-                </div>
-
-              </div>
-
-            `;
-
-          }
-        );
-
-
-        /* =====================================================
-           SMART RECOMMENDATIONS
-        ===================================================== */
-
-        const recommendations = [];
-
-
-        /* Accuracy */
-
-        if (accuracy < 60) {
-
-          recommendations.push({
-
-            icon: "fa-book-open",
-
-            title: "Fundamentals मा focus गर्नुहोस्",
-
-            desc:
-              `तपाईंको overall accuracy ${accuracy}% छ। पहिले concept-based questions मा accuracy बढाउने लक्ष्य राख्नुहोस्।`
-
-          });
-
-        }
-
-        else if (accuracy < 80) {
-
-          recommendations.push({
-
-            icon: "fa-bullseye",
-
-            title: "Accuracy सुधार्ने focus",
-
-            desc:
-              `तपाईंको accuracy ${accuracy}% छ। गलत भएका प्रश्नहरूको कारण पत्ता लगाएर पुनः अभ्यास गर्नुहोस्।`
-
-          });
-
-        }
-
-        else {
-
-          recommendations.push({
-
-            icon: "fa-medal",
-
-            title: "Strong performance",
-
-            desc:
-              `तपाईंको overall accuracy ${accuracy}% छ। अब कठिन र tricky questions मा focus गर्न सकिन्छ।`
-
-          });
-
-        }
-
-
-        /* Wrong */
-
-        if (totalWrong > 0) {
-
-          recommendations.push({
-
-            icon: "fa-circle-xmark",
-
-            title: "Wrong answers review गर्नुहोस्",
-
-            desc:
-              `तपाईंले कुल ${totalWrong} प्रश्न गलत गर्नुभएको छ। यी प्रश्नहरू फेरि review गर्नु उपयोगी हुन्छ।`
-
-          });
-
-        }
-
-
-        /* Skipped */
-
-        if (totalSkipped > 0) {
-
-          recommendations.push({
-
-            icon: "fa-forward",
-
-            title: "Skipped questions कम गर्नुहोस्",
-
-            desc:
-              `कुल ${totalSkipped} प्रश्न skip भएका छन्। समय व्यवस्थापन सुधार्दा attempt rate बढ्न सक्छ।`
-
-          });
-
-        }
-
-
-        /* Best set */
-
-        if (setEntries.length > 0) {
-
-          const weakSet =
-            [...setEntries]
-              .sort(
-                (a,b) =>
-                  a.accuracy - b.accuracy
-              )[0];
-
-
-          if (weakSet.accuracy < 70) {
-
-            recommendations.push({
-
-              icon: "fa-triangle-exclamation",
-
-              title:
-                `${formatSetName(
-                  weakSet.name
-                )} मा पुनः अभ्यास`,
-
-              desc:
-                `यस set मा तपाईंको accuracy ${weakSet.accuracy}% छ। यो topic/set लाई priority दिनुहोस्।`
-
-            });
-
-          }
-
-        }
-
-
-        const focusList =
-          document.getElementById(
-            "focusRecommendationList"
-          );
-
-
-        focusList.innerHTML = "";
-
-
-        recommendations
-          .slice(0,4)
-          .forEach(item => {
-
-            focusList.innerHTML += `
-
-              <div class="focus-item">
-
-                <i class="fa-solid ${item.icon}"></i>
-
-                <div class="focus-text">
-
-                  <h5>
-                    ${escapeHTML(item.title)}
-                  </h5>
-
-                  <p>
-                    ${escapeHTML(item.desc)}
-                  </p>
-
-                </div>
-
-              </div>
-
-            `;
-
-          });
-
 
       }
 
-      catch (err) {
+      return;
+    }
 
-        console.error(
-          "Analytics error:",
-          err
+
+    /*
+      Firebase may temporarily report null while restoring
+      authentication. Give it some time before redirecting.
+    */
+
+    $("userEmailDisplay").textContent =
+      "Checking login...";
+
+    $("loadingText").textContent =
+      "Checking your login session...";
+
+
+    setTimeout(() => {
+
+      if (!auth.currentUser) {
+
+        console.log(
+          "No authenticated user. Redirecting to login."
         );
 
+        window.location.replace(
+          "login.html?redirect=analysis.html"
+        );
 
-        document.getElementById(
-          "examHistory"
-        ).innerHTML = `
+      }
 
-          <div class="error-box">
+    }, 3000);
 
-            <strong>
-              <i class="fa-solid fa-triangle-exclamation"></i>
-              Something went wrong
-            </strong>
+  });
 
-            <br><br>
 
-            ${escapeHTML(err.message)}
+  /* =====================================================
+     LOAD ANALYTICS
+  ===================================================== */
+
+  async function loadAnalytics(user) {
+
+    showLoading("Loading your exam analytics...");
+
+    const email = user.email;
+
+
+    if (!email) {
+
+      throw new Error(
+        "Your Firebase account does not have an email address."
+      );
+
+    }
+
+
+    console.log(
+      "Loading leaderboard data for:",
+      email
+    );
+
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+
+      .from("exam_leaderboard")
+
+      .select(`
+        id,
+        username,
+        set_name,
+        score,
+        correct_count,
+        wrong_count,
+        skipped_count,
+        total_questions,
+        created_at
+      `)
+
+      .eq("username", email)
+
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
+
+
+    if (error) {
+
+      console.error(
+        "Supabase error:",
+        error
+      );
+
+      throw new Error(
+        error.message ||
+        "Could not fetch exam leaderboard data."
+      );
+
+    }
+
+
+    examData = data || [];
+
+
+    console.log(
+      "Analytics rows:",
+      examData
+    );
+
+
+    renderAnalytics();
+
+  }
+
+
+  /* =====================================================
+     RENDER EVERYTHING
+  ===================================================== */
+
+  function renderAnalytics() {
+
+    calculateSummary();
+
+    renderCharts();
+
+    renderSetPerformance();
+
+    renderRecommendations();
+
+    renderHistory();
+
+  }
+
+
+  /* =====================================================
+     SUMMARY
+  ===================================================== */
+
+  function calculateSummary() {
+
+    const totalExams =
+      examData.length;
+
+
+    let totalCorrect = 0;
+    let totalWrong = 0;
+    let totalSkipped = 0;
+    let totalQuestions = 0;
+
+    let bestScore = 0;
+    let scoreSum = 0;
+
+
+    examData.forEach(exam => {
+
+      const correct =
+        Number(exam.correct_count) || 0;
+
+      const wrong =
+        Number(exam.wrong_count) || 0;
+
+      const skipped =
+        Number(exam.skipped_count) || 0;
+
+      const questions =
+        Number(exam.total_questions) || 0;
+
+      const score =
+        Number(exam.score) || 0;
+
+
+      totalCorrect += correct;
+
+      totalWrong += wrong;
+
+      totalSkipped += skipped;
+
+      totalQuestions += questions;
+
+      scoreSum += score;
+
+      if (score > bestScore) {
+        bestScore = score;
+      }
+
+    });
+
+
+    const accuracy =
+      totalQuestions > 0
+        ? (totalCorrect / totalQuestions) * 100
+        : 0;
+
+
+    const averageScore =
+      totalExams > 0
+        ? scoreSum / totalExams
+        : 0;
+
+
+    $("anaTotalSolved").textContent =
+      totalExams;
+
+
+    $("anaAccuracy").textContent =
+      accuracy.toFixed(1) + "%";
+
+
+    $("anaBestScore").textContent =
+      bestScore.toFixed(1);
+
+
+    $("anaAverageScore").textContent =
+      averageScore.toFixed(1);
+
+
+    $("totalCorrect").textContent =
+      totalCorrect;
+
+
+    $("totalWrong").textContent =
+      totalWrong;
+
+
+    $("totalSkipped").textContent =
+      totalSkipped;
+
+  }
+
+
+  /* =====================================================
+     CHARTS
+  ===================================================== */
+
+  function renderCharts() {
+
+    if (scoreChart) {
+      scoreChart.destroy();
+    }
+
+    if (accuracyChart) {
+      accuracyChart.destroy();
+    }
+
+
+    const labels =
+      examData.map((exam, index) => {
+
+        return "Exam " + (index + 1);
+
+      });
+
+
+    const scores =
+      examData.map(exam => {
+
+        return Number(exam.score) || 0;
+
+      });
+
+
+    const correct =
+      examData.reduce(
+        (sum, exam) =>
+          sum + (Number(exam.correct_count) || 0),
+        0
+      );
+
+
+    const wrong =
+      examData.reduce(
+        (sum, exam) =>
+          sum + (Number(exam.wrong_count) || 0),
+        0
+      );
+
+
+    const skipped =
+      examData.reduce(
+        (sum, exam) =>
+          sum + (Number(exam.skipped_count) || 0),
+        0
+      );
+
+
+    const scoreCanvas =
+      $("scoreTrendChart");
+
+
+    scoreChart =
+      new Chart(scoreCanvas, {
+
+        type: "line",
+
+        data: {
+
+          labels,
+
+          datasets: [
+
+            {
+              label: "Score",
+
+              data: scores,
+
+              borderWidth: 3,
+
+              tension: .35,
+
+              fill: true,
+
+              pointRadius: 4,
+
+              pointHoverRadius: 6
+            }
+
+          ]
+
+        },
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+          plugins: {
+
+            legend: {
+              display: false
+            }
+
+          },
+
+          scales: {
+
+            y: {
+
+              beginAtZero: true,
+
+              grid: {
+                color: "#eeeeF4"
+              }
+
+            },
+
+            x: {
+
+              grid: {
+                display: false
+              }
+
+            }
+
+          }
+
+        }
+
+      });
+
+
+    accuracyChart =
+      new Chart(
+
+        $("accuracyPieChart"),
+
+        {
+
+          type: "doughnut",
+
+          data: {
+
+            labels: [
+              "Correct",
+              "Wrong",
+              "Skipped"
+            ],
+
+            datasets: [
+
+              {
+                data: [
+                  correct,
+                  wrong,
+                  skipped
+                ],
+
+                borderWidth: 0
+              }
+
+            ]
+
+          },
+
+          options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            cutout: "68%",
+
+            plugins: {
+
+              legend: {
+
+                position: "bottom",
+
+                labels: {
+                  boxWidth: 10,
+                  font: {
+                    size: 10
+                  }
+                }
+
+              }
+
+            }
+
+          }
+
+        }
+
+      );
+
+  }
+
+
+  /* =====================================================
+     SET PERFORMANCE
+  ===================================================== */
+
+  function renderSetPerformance() {
+
+    const container =
+      $("setPerformance");
+
+
+    if (!examData.length) {
+
+      container.innerHTML = `
+        <div class="empty">
+          <i class="fa-solid fa-chart-simple"></i>
+          Complete your first mock test to see
+          set-wise performance.
+        </div>
+      `;
+
+      $("setCount").textContent =
+        "0 sets";
+
+      return;
+
+    }
+
+
+    const sets = {};
+
+
+    examData.forEach(exam => {
+
+      const setName =
+        exam.set_name || "Unknown Set";
+
+
+      if (!sets[setName]) {
+
+        sets[setName] = {
+
+          attempts: 0,
+          score: 0,
+          correct: 0,
+          wrong: 0,
+          skipped: 0,
+          questions: 0
+
+        };
+
+      }
+
+
+      sets[setName].attempts++;
+
+      sets[setName].score +=
+        Number(exam.score) || 0;
+
+      sets[setName].correct +=
+        Number(exam.correct_count) || 0;
+
+      sets[setName].wrong +=
+        Number(exam.wrong_count) || 0;
+
+      sets[setName].skipped +=
+        Number(exam.skipped_count) || 0;
+
+      sets[setName].questions +=
+        Number(exam.total_questions) || 0;
+
+    });
+
+
+    const entries =
+      Object.entries(sets);
+
+
+    $("setCount").textContent =
+      entries.length + " sets";
+
+
+    container.innerHTML = "";
+
+
+    entries
+
+      .sort(
+        (a,b) =>
+          (b[1].score / b[1].attempts) -
+          (a[1].score / a[1].attempts)
+      )
+
+      .forEach(([name, data]) => {
+
+
+        const avgScore =
+          data.attempts > 0
+            ? data.score / data.attempts
+            : 0;
+
+
+        const accuracy =
+          data.questions > 0
+            ? (data.correct / data.questions) * 100
+            : 0;
+
+
+        const item =
+          document.createElement("div");
+
+
+        item.className =
+          "set-item";
+
+
+        item.innerHTML = `
+
+          <div class="set-top">
+
+            <div class="set-name">
+              ${formatSetName(name)}
+            </div>
+
+            <div class="set-score">
+              ${avgScore.toFixed(1)}
+            </div>
+
+          </div>
+
+          <div class="progress">
+
+            <div
+              class="progress-fill"
+              style="width:${Math.min(accuracy,100)}%">
+            </div>
+
+          </div>
+
+          <div class="set-meta">
+
+            <span>
+              Accuracy ${accuracy.toFixed(1)}%
+            </span>
+
+            <span>
+              ${data.attempts} attempt${data.attempts > 1 ? "s" : ""}
+            </span>
 
           </div>
 
         `;
 
-      }
 
-      finally {
+        container.appendChild(item);
 
-        refreshBtn.classList.remove(
-          "loading-spin"
+      });
+
+  }
+
+
+  /* =====================================================
+     SMART RECOMMENDATIONS
+  ===================================================== */
+
+  function renderRecommendations() {
+
+    const container =
+      $("recommendations");
+
+
+    if (!examData.length) {
+
+      container.innerHTML = `
+        <div class="recommendation">
+
+          <div class="recommendation-icon">
+            <i class="fa-solid fa-rocket"></i>
+          </div>
+
+          <div>
+            <strong>Start your first Mock Test</strong>
+
+            <p>
+              Complete a mock test and your personal
+              performance insights will appear here.
+            </p>
+          </div>
+
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    let correct = 0;
+    let wrong = 0;
+    let skipped = 0;
+    let questions = 0;
+
+
+    examData.forEach(exam => {
+
+      correct +=
+        Number(exam.correct_count) || 0;
+
+      wrong +=
+        Number(exam.wrong_count) || 0;
+
+      skipped +=
+        Number(exam.skipped_count) || 0;
+
+      questions +=
+        Number(exam.total_questions) || 0;
+
+    });
+
+
+    const accuracy =
+      questions > 0
+        ? (correct / questions) * 100
+        : 0;
+
+
+    const recommendations = [];
+
+
+    if (accuracy < 60) {
+
+      recommendations.push({
+
+        icon: "fa-book-open",
+
+        title: "Strengthen your basics",
+
+        text:
+          "Your overall accuracy is below 60%. Revise concepts before attempting more timed tests."
+
+      });
+
+    } else if (accuracy < 75) {
+
+      recommendations.push({
+
+        icon: "fa-bullseye",
+
+        title: "Work on accuracy",
+
+        text:
+          "Your base is developing. Focus on reducing avoidable mistakes and reviewing wrong answers."
+
+      });
+
+    } else {
+
+      recommendations.push({
+
+        icon: "fa-fire",
+
+        title: "Keep your momentum",
+
+        text:
+          "Your accuracy is strong. Continue mixed mock tests while focusing on difficult questions."
+
+      });
+
+    }
+
+
+    if (wrong > correct * .35) {
+
+      recommendations.push({
+
+        icon: "fa-triangle-exclamation",
+
+        title: "Reduce negative marking",
+
+        text:
+          "A relatively high number of wrong answers can reduce your final score. Avoid blind guessing."
+
+      });
+
+    }
+
+
+    if (skipped > correct * .35) {
+
+      recommendations.push({
+
+        icon: "fa-clock",
+
+        title: "Improve question attempt strategy",
+
+        text:
+          "You are skipping a noticeable number of questions. Practice easier questions first and manage time carefully."
+
+      });
+
+    }
+
+
+    if (examData.length >= 3) {
+
+      const recent =
+        examData.slice(-3);
+
+
+      const recentAverage =
+        recent.reduce(
+          (sum, exam) =>
+            sum + (Number(exam.score) || 0),
+          0
+        ) / recent.length;
+
+
+      const old =
+        examData.slice(
+          0,
+          Math.max(
+            1,
+            examData.length - 3
+          )
         );
+
+
+      const oldAverage =
+        old.reduce(
+          (sum, exam) =>
+            sum + (Number(exam.score) || 0),
+          0
+        ) / old.length;
+
+
+      if (recentAverage > oldAverage) {
+
+        recommendations.push({
+
+          icon: "fa-arrow-trend-up",
+
+          title: "Your recent performance is improving",
+
+          text:
+            "Your recent mock-test scores are higher than your earlier average. Keep following the same study routine."
+
+        });
 
       }
 
     }
 
 
-    /* =========================================================
-       AUTH
-    ========================================================= */
-
-    onAuthStateChanged(
-      auth,
-      async user => {
-
-        if (!user) {
-
-          window.location.href =
-            "login.html";
-
-          return;
-
-        }
+    container.innerHTML = "";
 
 
-        await loadAnalytics(user);
+    recommendations
+      .slice(0,3)
+      .forEach(rec => {
 
+        const item =
+          document.createElement("div");
+
+        item.className =
+          "recommendation";
+
+
+        item.innerHTML = `
+
+          <div class="recommendation-icon">
+
+            <i class="fa-solid ${rec.icon}"></i>
+
+          </div>
+
+          <div>
+
+            <strong>
+              ${rec.title}
+            </strong>
+
+            <p>
+              ${rec.text}
+            </p>
+
+          </div>
+
+        `;
+
+
+        container.appendChild(item);
+
+      });
+
+  }
+
+
+  /* =====================================================
+     HISTORY
+  ===================================================== */
+
+  function renderHistory() {
+
+    const container =
+      $("examHistory");
+
+
+    if (!examData.length) {
+
+      container.innerHTML = `
+        <div class="empty">
+
+          <i class="fa-solid fa-clock-rotate-left"></i>
+
+          No exam history found yet.
+
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    const recent =
+      [...examData]
+        .sort(
+          (a,b) =>
+            new Date(b.created_at) -
+            new Date(a.created_at)
+        )
+        .slice(0,10);
+
+
+    container.innerHTML = "";
+
+
+    recent.forEach(exam => {
+
+      const score =
+        Number(exam.score) || 0;
+
+
+      const correct =
+        Number(exam.correct_count) || 0;
+
+
+      const wrong =
+        Number(exam.wrong_count) || 0;
+
+
+      const skipped =
+        Number(exam.skipped_count) || 0;
+
+
+      const total =
+        Number(exam.total_questions) || 0;
+
+
+      const date =
+        formatDate(exam.created_at);
+
+
+      const item =
+        document.createElement("div");
+
+
+      item.className =
+        "history-item";
+
+
+      item.innerHTML = `
+
+        <div class="history-icon">
+
+          <i class="fa-solid fa-file-lines"></i>
+
+        </div>
+
+
+        <div class="history-main">
+
+          <strong>
+            ${formatSetName(exam.set_name)}
+          </strong>
+
+          <span>
+            ${date} •
+            ${correct} correct •
+            ${wrong} wrong •
+            ${skipped} skipped
+          </span>
+
+        </div>
+
+
+        <div class="history-score">
+
+          <strong>
+            ${score.toFixed(1)}
+          </strong>
+
+          <span>
+            / ${total}
+          </span>
+
+        </div>
+
+      `;
+
+
+      container.appendChild(item);
+
+    });
+
+  }
+
+
+  /* =====================================================
+     HELPERS
+  ===================================================== */
+
+  function formatSetName(name) {
+
+    if (!name) {
+      return "Mock Test";
+    }
+
+
+    return name
+
+      .replace(/_/g, " ")
+
+      .replace(/\b\w/g, char =>
+        char.toUpperCase()
+      );
+
+  }
+
+
+  function formatDate(dateString) {
+
+    if (!dateString) {
+      return "Unknown date";
+    }
+
+
+    const date =
+      new Date(dateString);
+
+
+    if (isNaN(date.getTime())) {
+      return "Unknown date";
+    }
+
+
+    return date.toLocaleDateString(
+      "en-IN",
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
       }
     );
 
+  }
 
-    /* =========================================================
-       REFRESH BUTTON
-    ========================================================= */
 
-    document
-      .getElementById("refreshBtn")
-      .addEventListener(
-        "click",
-        async () => {
+  /* =====================================================
+     NAVIGATION
+  ===================================================== */
 
-          const user = auth.currentUser;
+  window.goBack = function() {
 
-          if (user) {
+    if (history.length > 1) {
 
-            await loadAnalytics(user);
+      history.back();
 
-          }
+    } else {
 
-        }
+      window.location.href =
+        "dashboard.html";
+
+    }
+
+  };
+
+
+  /* =====================================================
+     REFRESH
+  ===================================================== */
+
+  window.refreshAnalytics = async function() {
+
+    if (!currentUser) {
+
+      console.log(
+        "Refresh ignored: user not ready"
       );
 
-  </script>
+      return;
+
+    }
+
+
+    try {
+
+      showLoading(
+        "Refreshing your analytics..."
+      );
+
+      $("errorBox").style.display =
+        "none";
+
+
+      await loadAnalytics(
+        currentUser
+      );
+
+
+      hideLoading();
+
+    } catch (error) {
+
+      console.error(
+        "Refresh error:",
+        error
+      );
+
+      hideLoading();
+
+      showError(
+        error.message ||
+        "Failed to refresh analytics."
+      );
+
+    }
+
+  };
+
+
+  /* =====================================================
+     BOTTOM NAV
+  ===================================================== */
+
+  /*
+    Keep this at the END so that Firebase auth
+    initialization starts cleanly first.
+  */
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      try {
+
+        if (
+          typeof window.loadBottomNav ===
+          "function"
+        ) {
+
+          window.loadBottomNav(
+            "analytics"
+          );
+
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "Bottom nav error:",
+          error
+        );
+
+      }
+
+    }
+  );
+
+</script>
 
 </body>
-</html>
+  </html>
