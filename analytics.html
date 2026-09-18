@@ -47,7 +47,8 @@
       margin-bottom: 18px;
     }
 
-    .back-btn {
+    .back-btn,
+    .refresh-btn {
       width: 40px;
       height: 40px;
       border-radius: 13px;
@@ -74,16 +75,6 @@
       font-size: 11px;
       opacity: .8;
       margin-top: 4px;
-    }
-
-    .refresh-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 13px;
-      border: 1px solid rgba(255,255,255,.25);
-      background: rgba(255,255,255,.12);
-      color: white;
-      cursor: pointer;
     }
 
     .user-box {
@@ -277,6 +268,78 @@
       color: #c8cbd5;
     }
 
+    /* =========================================
+       SET PERFORMANCE
+    ========================================= */
+
+    .performance-category {
+      margin-bottom: 20px;
+    }
+
+    .performance-category:last-child {
+      margin-bottom: 0;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 13px;
+      margin-bottom: 10px;
+      border-radius: 15px;
+      background: #f8f7ff;
+      border: 1px solid #eeeafd;
+    }
+
+    .category-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .category-icon {
+      width: 39px;
+      height: 39px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      background: #ede8ff;
+      color: #3413aa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .category-info {
+      min-width: 0;
+    }
+
+    .category-info strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      color: #222;
+    }
+
+    .category-info span {
+      display: block;
+      margin-top: 3px;
+      font-size: 9px;
+      color: #9297a4;
+    }
+
+    .category-count {
+      flex-shrink: 0;
+      padding: 6px 9px;
+      border-radius: 20px;
+      background: white;
+      border: 1px solid #e6e1ff;
+      color: #3413aa;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
     .set-item {
       border: 1px solid #eeeef4;
       border-radius: 15px;
@@ -298,12 +361,14 @@
     .set-name {
       font-size: 12px;
       font-weight: 800;
+      line-height: 1.4;
     }
 
     .set-score {
       font-size: 12px;
       font-weight: 800;
       color: #3413aa;
+      white-space: nowrap;
     }
 
     .progress {
@@ -323,10 +388,53 @@
     .set-meta {
       display: flex;
       justify-content: space-between;
+      gap: 5px;
       margin-top: 7px;
       color: #9297a4;
       font-size: 9px;
     }
+
+    .see-more-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 11px 14px;
+      border: 1px solid #e4defc;
+      border-radius: 12px;
+      background: #f7f5ff;
+      color: #3413aa;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .see-more-btn:active {
+      transform: scale(.98);
+    }
+
+    .category-empty {
+      text-align: center;
+      padding: 20px 12px;
+      border: 1px dashed #dedfe8;
+      border-radius: 14px;
+      color: #9ca3af;
+      font-size: 10px;
+    }
+
+    .category-empty i {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 7px;
+      color: #c7c9d4;
+    }
+
+    /* =========================================
+       HISTORY
+    ========================================= */
 
     .history-item {
       display: flex;
@@ -389,6 +497,10 @@
       margin-top: 2px;
     }
 
+    /* =========================================
+       RECOMMENDATIONS
+    ========================================= */
+
     .recommendation {
       display: flex;
       gap: 11px;
@@ -427,6 +539,10 @@
       margin-top: 4px;
       line-height: 1.5;
     }
+
+    /* =========================================
+       LOADING
+    ========================================= */
 
     #loadingScreen {
       position: fixed;
@@ -739,11 +855,14 @@
   };
 
 
-  const app = initializeApp(firebaseConfig);
+  const app =
+    initializeApp(firebaseConfig);
 
-  const auth = getAuth(app);
+  const auth =
+    getAuth(app);
 
-  const db = getFirestore(app);
+  const db =
+    getFirestore(app);
 
 
   /* =====================================================
@@ -771,7 +890,6 @@
         );
 
       return;
-
     }
 
 
@@ -814,13 +932,11 @@
 
   let accuracyChart = null;
 
-  let authResolved = false;
-
   let firestoreUserName = "";
 
 
   /* =====================================================
-     DOM HELPERS
+     DOM
   ===================================================== */
 
   function $(id) {
@@ -890,15 +1006,7 @@
 
 
   /* =====================================================
-     GET FIRESTORE USER NAME
-     
-     This is important for OLD leaderboard records.
-     
-     Old records were saved like:
-       username = Firestore user's name
-     
-     New records will use:
-       user_uid = Firebase UID
+     FIRESTORE USER NAME
   ===================================================== */
 
   async function loadFirestoreUserName(user) {
@@ -923,7 +1031,9 @@
           snapshot.data();
 
         firestoreUserName =
-          String(data.name || "").trim();
+          String(
+            data.name || ""
+          ).trim();
 
       }
 
@@ -940,86 +1050,81 @@
 
 
   /* =====================================================
-     AUTH STATE
+     AUTH
   ===================================================== */
 
-  onAuthStateChanged(auth, async (user) => {
+  onAuthStateChanged(
+    auth,
+    async user => {
 
-    authResolved = true;
+      if (user) {
 
-    console.log(
-      "Analysis Auth State:",
-      user ? user.email : "NO USER"
-    );
+        currentUser = user;
+
+        $("userEmailDisplay").textContent =
+          user.email || "Logged in";
 
 
-    if (user) {
+        try {
 
-      currentUser = user;
+          await initSupabase();
+
+          await loadFirestoreUserName(
+            user
+          );
+
+          await loadAnalytics(
+            user
+          );
+
+          hideLoading();
+
+        } catch (error) {
+
+          console.error(
+            "Analytics initialization error:",
+            error
+          );
+
+          hideLoading();
+
+          showError(
+            error.message ||
+            "Unable to load analytics."
+          );
+
+        }
+
+        return;
+
+      }
+
 
       $("userEmailDisplay").textContent =
-        user.email || "Logged in";
+        "Checking login...";
+
+      $("loadingText").textContent =
+        "Checking your login session...";
 
 
-      try {
+      setTimeout(() => {
 
-        await initSupabase();
+        if (!auth.currentUser) {
 
-        await loadFirestoreUserName(user);
+          window.location.replace(
+            "login.html?redirect=analysis.html"
+          );
 
-        await loadAnalytics(user);
+        }
 
-        hideLoading();
-
-      } catch (error) {
-
-        console.error(
-          "Analytics initialization error:",
-          error
-        );
-
-        hideLoading();
-
-        showError(
-          error.message ||
-          "Unable to load analytics."
-        );
-
-      }
-
-      return;
+      }, 3000);
 
     }
-
-
-    $("userEmailDisplay").textContent =
-      "Checking login...";
-
-    $("loadingText").textContent =
-      "Checking your login session...";
-
-
-    setTimeout(() => {
-
-      if (!auth.currentUser) {
-
-        console.log(
-          "No authenticated user. Redirecting to login."
-        );
-
-        window.location.replace(
-          "login.html?redirect=analysis.html"
-        );
-
-      }
-
-    }, 3000);
-
-  });
+  );
 
 
   /* =====================================================
-     SELECT COLUMNS
+     LEADERBOARD COLUMNS
   ===================================================== */
 
   const LEADERBOARD_COLUMNS = `
@@ -1038,16 +1143,6 @@
 
   /* =====================================================
      LOAD ANALYTICS
-     
-     NEW DATA:
-       user_uid = Firebase UID
-     
-     OLD DATA:
-       username = Firebase email
-       OR
-       username = Firestore user's name
-     
-     Therefore both are loaded and merged.
   ===================================================== */
 
   async function loadAnalytics(user) {
@@ -1058,10 +1153,15 @@
 
 
     const email =
-      String(user.email || "").trim();
+      String(
+        user.email || ""
+      ).trim();
+
 
     const uid =
-      String(user.uid || "").trim();
+      String(
+        user.uid || ""
+      ).trim();
 
 
     if (!uid) {
@@ -1073,18 +1173,10 @@
     }
 
 
-    console.log(
-      "Loading analytics for UID:",
-      uid
-    );
-
-
     const queries = [];
 
 
-    /* =================================================
-       NEW RECORDS
-       ================================ ================= */
+    /* NEW UID RECORDS */
 
     queries.push(
       supabaseClient
@@ -1094,9 +1186,7 @@
     );
 
 
-    /* =================================================
-       OLD RECORDS SAVED USING EMAIL
-    ================================================= */
+    /* OLD EMAIL RECORDS */
 
     if (email) {
 
@@ -1104,15 +1194,16 @@
         supabaseClient
           .from("exam_leaderboard")
           .select(LEADERBOARD_COLUMNS)
-          .eq("username", email)
+          .eq(
+            "username",
+            email
+          )
       );
 
     }
 
 
-    /* =================================================
-       OLD RECORDS SAVED USING FIRESTORE NAME
-    ================================================= */
+    /* OLD FIRESTORE NAME RECORDS */
 
     if (firestoreUserName) {
 
@@ -1130,22 +1221,10 @@
 
 
     const results =
-      await Promise.all(queries);
-
-
-    const errors =
-      results.filter(
-        result => result.error
+      await Promise.all(
+        queries
       );
 
-
-    /*
-      If user_uid column has not been created yet,
-      the new UID query may fail.
-
-      We still allow the old email/name queries
-      to work so old analytics are not lost.
-    */
 
     const usableResults =
       results.filter(
@@ -1158,7 +1237,10 @@
     if (!usableResults.length) {
 
       const firstError =
-        errors[0]?.error;
+        results.find(
+          result => result.error
+        )?.error;
+
 
       throw new Error(
         firstError?.message ||
@@ -1168,46 +1250,48 @@
     }
 
 
-    /* =================================================
-       MERGE + REMOVE DUPLICATES
-    ================================================= */
+    /* MERGE DUPLICATES */
 
     const merged =
       new Map();
 
 
-    usableResults.forEach(result => {
+    usableResults.forEach(
+      result => {
 
-      result.data.forEach(row => {
+        result.data.forEach(
+          row => {
 
-        if (!row || !row.id) {
-          return;
-        }
+            if (!row || !row.id) {
+              return;
+            }
 
-        merged.set(
-          String(row.id),
-          row
+            merged.set(
+              String(row.id),
+              row
+            );
+
+          }
         );
 
-      });
-
-    });
-
-
-    examData =
-      Array.from(merged.values());
-
-
-    examData.sort(
-      (a, b) =>
-        new Date(a.created_at || 0) -
-        new Date(b.created_at || 0)
+      }
     );
 
 
-    console.log(
-      "Analytics rows after merging old + new:",
-      examData
+    examData =
+      Array.from(
+        merged.values()
+      );
+
+
+    examData.sort(
+      (a,b) =>
+        new Date(
+          a.created_at || 0
+        ) -
+        new Date(
+          b.created_at || 0
+        )
     );
 
 
@@ -1217,7 +1301,7 @@
 
 
   /* =====================================================
-     RENDER EVERYTHING
+     RENDER
   ===================================================== */
 
   function renderAnalytics() {
@@ -1258,53 +1342,69 @@
     let scoreSum = 0;
 
 
-    examData.forEach(exam => {
+    examData.forEach(
+      exam => {
 
-      const correct =
-        Number(exam.correct_count) || 0;
+        const correct =
+          Number(
+            exam.correct_count
+          ) || 0;
 
-      const wrong =
-        Number(exam.wrong_count) || 0;
+        const wrong =
+          Number(
+            exam.wrong_count
+          ) || 0;
 
-      const skipped =
-        Number(exam.skipped_count) || 0;
+        const skipped =
+          Number(
+            exam.skipped_count
+          ) || 0;
 
-      const questions =
-        Number(exam.total_questions) || 0;
+        const questions =
+          Number(
+            exam.total_questions
+          ) || 0;
 
-      const score =
-        Number(exam.score) || 0;
-
-
-      totalCorrect += correct;
-
-      totalWrong += wrong;
-
-      totalSkipped += skipped;
-
-      totalQuestions += questions;
-
-      scoreSum += score;
+        const score =
+          Number(
+            exam.score
+          ) || 0;
 
 
-      if (score > bestScore) {
+        totalCorrect += correct;
 
-        bestScore = score;
+        totalWrong += wrong;
+
+        totalSkipped += skipped;
+
+        totalQuestions += questions;
+
+        scoreSum += score;
+
+
+        if (score > bestScore) {
+
+          bestScore = score;
+
+        }
 
       }
-
-    });
+    );
 
 
     const accuracy =
       totalQuestions > 0
-        ? (totalCorrect / totalQuestions) * 100
+        ? (
+            totalCorrect /
+            totalQuestions
+          ) * 100
         : 0;
 
 
     const averageScore =
       totalExams > 0
-        ? scoreSum / totalExams
+        ? scoreSum /
+          totalExams
         : 0;
 
 
@@ -1313,7 +1413,8 @@
 
 
     $("anaAccuracy").textContent =
-      accuracy.toFixed(1) + "%";
+      accuracy.toFixed(1) +
+      "%";
 
 
     $("anaBestScore").textContent =
@@ -1364,41 +1465,56 @@
 
     const labels =
       examData.map(
-        (exam, index) =>
-          "Exam " + (index + 1)
+        (exam,index) =>
+          "Exam " +
+          (index + 1)
       );
 
 
     const scores =
       examData.map(
         exam =>
-          Number(exam.score) || 0
+          Number(
+            exam.score
+          ) || 0
       );
 
 
     const correct =
       examData.reduce(
-        (sum, exam) =>
+        (sum,exam) =>
           sum +
-          (Number(exam.correct_count) || 0),
+          (
+            Number(
+              exam.correct_count
+            ) || 0
+          ),
         0
       );
 
 
     const wrong =
       examData.reduce(
-        (sum, exam) =>
+        (sum,exam) =>
           sum +
-          (Number(exam.wrong_count) || 0),
+          (
+            Number(
+              exam.wrong_count
+            ) || 0
+          ),
         0
       );
 
 
     const skipped =
       examData.reduce(
-        (sum, exam) =>
+        (sum,exam) =>
           sum +
-          (Number(exam.skipped_count) || 0),
+          (
+            Number(
+              exam.skipped_count
+            ) || 0
+          ),
         0
       );
 
@@ -1413,7 +1529,6 @@
         new Chart(
           scoreCanvas,
           {
-
             type: "line",
 
             data: {
@@ -1496,7 +1611,6 @@
         new Chart(
           accuracyCanvas,
           {
-
             type: "doughnut",
 
             data: {
@@ -1562,7 +1676,15 @@
 
 
   /* =====================================================
-     SET PERFORMANCE
+     SET-WISE PERFORMANCE
+     
+     1. Total Performance
+     2. Quiz Sets
+        quiz.html?set=Nepal_geography
+     3. Practice Exam Sets
+        exam.html?set=set_name
+     4. Mock Exam Sets
+        mockexam.html?set=kharidar_mocktest1
   ===================================================== */
 
   function renderSetPerformance() {
@@ -1576,8 +1698,7 @@
       container.innerHTML = `
         <div class="empty">
           <i class="fa-solid fa-chart-simple"></i>
-          Complete your first mock test to see
-          set-wise performance.
+          Complete an exam to see your set-wise performance.
         </div>
       `;
 
@@ -1589,148 +1710,775 @@
     }
 
 
-    const sets = {};
+    /*
+      Separate maps
+    */
+
+    const totalSets =
+      new Map();
+
+    const quizSets =
+      new Map();
+
+    const examSets =
+      new Map();
+
+    const mockExamSets =
+      new Map();
 
 
-    examData.forEach(exam => {
+    /*
+      Detect source from available data.
+
+      New records can contain:
+        source
+        page
+        exam_type
+
+      Old records can still be detected
+      from set_name.
+    */
+
+    function detectType(exam) {
+
+      const source =
+        String(
+          exam.source ||
+          exam.page ||
+          exam.exam_type ||
+          exam.type ||
+          ""
+        ).toLowerCase().trim();
+
 
       const setName =
-        exam.set_name || "Unknown Set";
+        String(
+          exam.set_name || ""
+        ).toLowerCase().trim();
 
 
-      if (!sets[setName]) {
+      /*
+        Mock Exam
+      */
 
-        sets[setName] = {
+      if (
+        source.includes("mock") ||
+        setName.includes("mockexam") ||
+        setName.includes("mock_exam") ||
+        setName.includes("mock-exam") ||
+        setName.includes("mocktest") ||
+        setName.includes("mock_test") ||
+        setName.includes("mock-test")
+      ) {
 
-          attempts: 0,
-
-          score: 0,
-
-          correct: 0,
-
-          wrong: 0,
-
-          skipped: 0,
-
-          questions: 0
-
-        };
+        return "mock";
 
       }
 
 
-      sets[setName].attempts++;
+      /*
+        exam.html
+      */
 
-      sets[setName].score +=
-        Number(exam.score) || 0;
+      if (
+        source === "exam" ||
+        source === "practice_exam" ||
+        source === "practiceexam" ||
+        source.includes("exam.html")
+      ) {
 
-      sets[setName].correct +=
-        Number(exam.correct_count) || 0;
+        return "exam";
 
-      sets[setName].wrong +=
-        Number(exam.wrong_count) || 0;
-
-      sets[setName].skipped +=
-        Number(exam.skipped_count) || 0;
-
-      sets[setName].questions +=
-        Number(exam.total_questions) || 0;
-
-    });
+      }
 
 
-    const entries =
-      Object.entries(sets);
+      /*
+        quiz.html
+      */
+
+      if (
+        source === "quiz" ||
+        source === "practice_quiz" ||
+        source === "practicequiz" ||
+        source.includes("quiz.html")
+      ) {
+
+        return "quiz";
+
+      }
+
+
+      /*
+        Old records without source.
+
+        Mock-name detection first.
+        Otherwise treat as quiz.
+      */
+
+      if (
+        setName.includes("mock")
+      ) {
+
+        return "mock";
+
+      }
+
+
+      return "quiz";
+
+    }
+
+
+    function addSet(
+      map,
+      setName,
+      exam
+    ) {
+
+      if (!map.has(setName)) {
+
+        map.set(
+          setName,
+          {
+            attempts: 0,
+            score: 0,
+            correct: 0,
+            wrong: 0,
+            skipped: 0,
+            questions: 0
+          }
+        );
+
+      }
+
+
+      const data =
+        map.get(setName);
+
+
+      data.attempts++;
+
+      data.score +=
+        Number(
+          exam.score
+        ) || 0;
+
+      data.correct +=
+        Number(
+          exam.correct_count
+        ) || 0;
+
+      data.wrong +=
+        Number(
+          exam.wrong_count
+        ) || 0;
+
+      data.skipped +=
+        Number(
+          exam.skipped_count
+        ) || 0;
+
+      data.questions +=
+        Number(
+          exam.total_questions
+        ) || 0;
+
+    }
+
+
+    examData.forEach(
+      exam => {
+
+        const setName =
+          String(
+            exam.set_name ||
+            "Unknown Set"
+          ).trim();
+
+
+        addSet(
+          totalSets,
+          setName,
+          exam
+        );
+
+
+        const type =
+          detectType(exam);
+
+
+        if (type === "mock") {
+
+          addSet(
+            mockExamSets,
+            setName,
+            exam
+          );
+
+        }
+
+        else if (type === "exam") {
+
+          addSet(
+            examSets,
+            setName,
+            exam
+          );
+
+        }
+
+        else {
+
+          addSet(
+            quizSets,
+            setName,
+            exam
+          );
+
+        }
+
+      }
+    );
 
 
     $("setCount").textContent =
-      entries.length + " sets";
+      totalSets.size +
+      " " +
+      (
+        totalSets.size === 1
+          ? "set"
+          : "sets"
+      );
 
 
     container.innerHTML = "";
 
 
-    entries
-      .sort(
-        (a,b) =>
-          (b[1].score / b[1].attempts) -
-          (a[1].score / a[1].attempts)
-      )
-      .forEach(([name, data]) => {
+    /*
+      Create category
+    */
 
-        const avgScore =
-          data.attempts > 0
-            ? data.score / data.attempts
-            : 0;
+    function createCategory(
+      map,
+      icon,
+      title,
+      description,
+      emptyIcon,
+      emptyTitle,
+      emptyMessage
+    ) {
 
-
-        const accuracy =
-          data.questions > 0
-            ? (data.correct / data.questions) * 100
-            : 0;
-
-
-        const item =
-          document.createElement("div");
+      const category =
+        document.createElement(
+          "div"
+        );
 
 
-        item.className =
-          "set-item";
+      category.className =
+        "performance-category";
 
 
-        item.innerHTML = `
+      /*
+        HEADER
+      */
 
-          <div class="set-top">
+      const header =
+        document.createElement(
+          "div"
+        );
 
-            <div class="set-name">
-              ${escapeHtml(
-                formatSetName(name)
-              )}
-            </div>
 
-            <div class="set-score">
-              ${avgScore.toFixed(1)}
-            </div>
+      header.className =
+        "category-header";
+
+
+      header.innerHTML = `
+
+        <div class="category-left">
+
+          <div class="category-icon">
+            <i class="fa-solid ${icon}"></i>
+          </div>
+
+          <div class="category-info">
+
+            <strong>
+              ${escapeHtml(title)}
+            </strong>
+
+            <span>
+              ${escapeHtml(description)}
+            </span>
 
           </div>
 
-          <div class="progress">
+        </div>
 
-            <div
-              class="progress-fill"
-              style="width:${Math.min(
-                Math.max(accuracy,0),
-                100
-              )}%">
-            </div>
+        <div class="category-count">
+          ${map.size}
+          ${map.size === 1 ? "set" : "sets"}
+        </div>
 
-          </div>
+      `;
 
-          <div class="set-meta">
 
-            <span>
-              Accuracy ${accuracy.toFixed(1)}%
-            </span>
+      category.appendChild(
+        header
+      );
 
-            <span>
-              ${data.attempts}
-              attempt${data.attempts > 1 ? "s" : ""}
-            </span>
 
+      /*
+        EMPTY
+      */
+
+      if (!map.size) {
+
+        const empty =
+          document.createElement(
+            "div"
+          );
+
+
+        empty.className =
+          "category-empty";
+
+
+        empty.innerHTML = `
+
+          <i class="fa-solid ${emptyIcon}"></i>
+
+          <strong>
+            ${escapeHtml(emptyTitle)}
+          </strong>
+
+          <div style="margin-top:4px;">
+            ${escapeHtml(emptyMessage)}
           </div>
 
         `;
 
 
-        container.appendChild(item);
+        category.appendChild(
+          empty
+        );
 
-      });
+
+        return category;
+
+      }
+
+
+      /*
+        SORT BY ACCURACY
+      */
+
+      const entries =
+        Array.from(
+          map.entries()
+        );
+
+
+      entries.sort(
+        (a,b) => {
+
+          const accuracyA =
+            a[1].questions > 0
+              ? (
+                  a[1].correct /
+                  a[1].questions
+                )
+              : 0;
+
+
+          const accuracyB =
+            b[1].questions > 0
+              ? (
+                  b[1].correct /
+                  b[1].questions
+                )
+              : 0;
+
+
+          return accuracyB -
+                 accuracyA;
+
+        }
+      );
+
+
+      const list =
+        document.createElement(
+          "div"
+        );
+
+
+      /*
+        SHOW FIRST 5
+      */
+
+      const visibleCount = 5;
+
+
+      entries.forEach(
+        ([name,data],index) => {
+
+          const avgScore =
+            data.attempts > 0
+              ? data.score /
+                data.attempts
+              : 0;
+
+
+          const accuracy =
+            data.questions > 0
+              ? (
+                  data.correct /
+                  data.questions
+                ) * 100
+              : 0;
+
+
+          const item =
+            document.createElement(
+              "div"
+            );
+
+
+          item.className =
+            "set-item";
+
+
+          if (index >= visibleCount) {
+
+            item.style.display =
+              "none";
+
+            item.dataset.extraSet =
+              "true";
+
+          }
+
+
+          item.innerHTML = `
+
+            <div class="set-top">
+
+              <div class="set-name">
+                ${escapeHtml(
+                  formatSetName(name)
+                )}
+              </div>
+
+              <div class="set-score">
+                ${avgScore.toFixed(1)}
+              </div>
+
+            </div>
+
+
+            <div class="progress">
+
+              <div
+                class="progress-fill"
+                style="
+                  width:${Math.min(
+                    Math.max(
+                      accuracy,
+                      0
+                    ),
+                    100
+                  )}%;
+                "
+              ></div>
+
+            </div>
+
+
+            <div class="set-meta">
+
+              <span>
+                Accuracy ${accuracy.toFixed(1)}%
+              </span>
+
+              <span>
+                ${data.attempts}
+                ${data.attempts === 1
+                  ? "attempt"
+                  : "attempts"}
+              </span>
+
+            </div>
+
+          `;
+
+
+          list.appendChild(
+            item
+          );
+
+        }
+      );
+
+
+      category.appendChild(
+        list
+      );
+
+
+      /*
+        SEE MORE
+      */
+
+      if (
+        entries.length >
+        visibleCount
+      ) {
+
+        const button =
+          document.createElement(
+            "button"
+          );
+
+
+        button.className =
+          "see-more-btn";
+
+
+        button.innerHTML = `
+          <span>
+            See More (${entries.length - visibleCount} more)
+          </span>
+          <i class="fa-solid fa-chevron-down"></i>
+        `;
+
+
+        let expanded = false;
+
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            expanded =
+              !expanded;
+
+
+            const extraItems =
+              list.querySelectorAll(
+                '[data-extra-set="true"]'
+              );
+
+
+            extraItems.forEach(
+              item => {
+
+                item.style.display =
+                  expanded
+                    ? ""
+                    : "none";
+
+              }
+            );
+
+
+            if (expanded) {
+
+              button.innerHTML = `
+                <span>
+                  Show Less
+                </span>
+                <i class="fa-solid fa-chevron-up"></i>
+              `;
+
+            } else {
+
+              button.innerHTML = `
+                <span>
+                  See More (${entries.length - visibleCount} more)
+                </span>
+                <i class="fa-solid fa-chevron-down"></i>
+              `;
+
+            }
+
+          }
+        );
+
+
+        category.appendChild(
+          button
+        );
+
+      }
+
+
+      return category;
+
+    }
+
+
+    /*
+      =========================================
+      1. TOTAL PERFORMANCE
+      =========================================
+    */
+
+    container.appendChild(
+      createCategory(
+        totalSets,
+        "fa-layer-group",
+        "Total Performance",
+        "All quiz, practice exam and mock exam sets",
+        "fa-chart-simple",
+        "No performance data",
+        "Complete a quiz or exam to see your total performance."
+      )
+    );
+
+
+    /*
+      =========================================
+      2. QUIZ.HTML
+         quiz.html?set=Nepal_geography
+      =========================================
+    */
+
+    container.appendChild(
+      createCategory(
+        quizSets,
+        "fa-book-open",
+        "Practice Quiz Sets",
+        "Sets attempted from quiz.html",
+        "fa-book-open",
+        "No Practice Quiz attempted",
+        "quiz.html practice sets will appear here."
+      )
+    );
+
+
+    /*
+      =========================================
+      3. EXAM.HTML
+         exam.html?set=set_name
+      =========================================
+    */
+
+    container.appendChild(
+      createCategory(
+        examSets,
+        "fa-file-lines",
+        "Practice Exam Sets",
+        "Sets attempted from exam.html",
+        "fa-file-lines",
+        "No Practice Exam attempted",
+        "exam.html sets will appear here."
+      )
+    );
+
+
+    /*
+      =========================================
+      4. MOCKEXAM.HTML
+         mockexam.html?set=kharidar_mocktest1
+      =========================================
+    */
+
+    container.appendChild(
+      createCategory(
+        mockExamSets,
+        "fa-clipboard-check",
+        "Mock Exam Sets",
+        "Sets attempted from mockexam.html",
+        "fa-clipboard-check",
+        "No Mock Exam attempted",
+        "mockexam.html tests will appear here."
+      )
+    );
 
   }
 
 
   /* =====================================================
-     SMART RECOMMENDATIONS
+     FORMAT SET NAME
+  ===================================================== */
+
+  function formatSetName(name) {
+
+    if (!name) {
+
+      return "Unknown Set";
+
+    }
+
+
+    let formatted =
+      String(name)
+        .replace(/[_-]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+
+    /*
+      Make common technical names cleaner
+    */
+
+    formatted =
+      formatted.replace(
+        /\bmockexam\b/gi,
+        "Mock Exam"
+      );
+
+
+    formatted =
+      formatted.replace(
+        /\bmocktest\b/gi,
+        "Mock Test"
+      );
+
+
+    formatted =
+      formatted.replace(
+        /\bpracticeexam\b/gi,
+        "Practice Exam"
+      );
+
+
+    formatted =
+      formatted.replace(
+        /\bpracticequiz\b/gi,
+        "Practice Quiz"
+      );
+
+
+    formatted =
+      formatted.replace(
+        /\bquiz\b/gi,
+        "Quiz"
+      );
+
+
+    formatted =
+      formatted.replace(
+        /\bexam\b/gi,
+        "Exam"
+      );
+
+
+    formatted =
+      formatted.replace(
+        /\b\w/g,
+        char =>
+          char.toUpperCase()
+      );
+
+
+    return formatted;
+
+  }
+
+
+  /* =====================================================
+     RECOMMENDATIONS
   ===================================================== */
 
   function renderRecommendations() {
@@ -1742,6 +2490,7 @@
     if (!examData.length) {
 
       container.innerHTML = `
+
         <div class="recommendation">
 
           <div class="recommendation-icon">
@@ -1749,6 +2498,7 @@
           </div>
 
           <div>
+
             <strong>
               Start your first Mock Test
             </strong>
@@ -1757,9 +2507,11 @@
               Complete a mock test and your personal
               performance insights will appear here.
             </p>
+
           </div>
 
         </div>
+
       `;
 
       return;
@@ -1776,26 +2528,39 @@
     let questions = 0;
 
 
-    examData.forEach(exam => {
+    examData.forEach(
+      exam => {
 
-      correct +=
-        Number(exam.correct_count) || 0;
+        correct +=
+          Number(
+            exam.correct_count
+          ) || 0;
 
-      wrong +=
-        Number(exam.wrong_count) || 0;
+        wrong +=
+          Number(
+            exam.wrong_count
+          ) || 0;
 
-      skipped +=
-        Number(exam.skipped_count) || 0;
+        skipped +=
+          Number(
+            exam.skipped_count
+          ) || 0;
 
-      questions +=
-        Number(exam.total_questions) || 0;
+        questions +=
+          Number(
+            exam.total_questions
+          ) || 0;
 
-    });
+      }
+    );
 
 
     const accuracy =
       questions > 0
-        ? (correct / questions) * 100
+        ? (
+            correct /
+            questions
+          ) * 100
         : 0;
 
 
@@ -1808,33 +2573,40 @@
 
         icon: "fa-book-open",
 
-        title: "Strengthen your basics",
+        title:
+          "Strengthen your basics",
 
         text:
           "Your overall accuracy is below 60%. Revise concepts before attempting more timed tests."
 
       });
 
-    } else if (accuracy < 75) {
+    }
+
+    else if (accuracy < 75) {
 
       recommendations.push({
 
         icon: "fa-bullseye",
 
-        title: "Work on accuracy",
+        title:
+          "Work on accuracy",
 
         text:
           "Your base is developing. Focus on reducing avoidable mistakes and reviewing wrong answers."
 
       });
 
-    } else {
+    }
+
+    else {
 
       recommendations.push({
 
         icon: "fa-fire",
 
-        title: "Keep your momentum",
+        title:
+          "Keep your momentum",
 
         text:
           "Your accuracy is strong. Continue mixed mock tests while focusing on difficult questions."
@@ -1844,13 +2616,18 @@
     }
 
 
-    if (wrong > correct * .35) {
+    if (
+      wrong >
+      correct * .35
+    ) {
 
       recommendations.push({
 
-        icon: "fa-triangle-exclamation",
+        icon:
+          "fa-triangle-exclamation",
 
-        title: "Reduce negative marking",
+        title:
+          "Reduce negative marking",
 
         text:
           "A relatively high number of wrong answers can reduce your final score. Avoid blind guessing."
@@ -1860,13 +2637,18 @@
     }
 
 
-    if (skipped > correct * .35) {
+    if (
+      skipped >
+      correct * .35
+    ) {
 
       recommendations.push({
 
-        icon: "fa-clock",
+        icon:
+          "fa-clock",
 
-        title: "Improve question attempt strategy",
+        title:
+          "Improve question attempt strategy",
 
         text:
           "You are skipping a noticeable number of questions. Practice easier questions first and manage time carefully."
@@ -1876,7 +2658,9 @@
     }
 
 
-    if (examData.length >= 3) {
+    if (
+      examData.length >= 3
+    ) {
 
       const recent =
         examData.slice(-3);
@@ -1884,11 +2668,16 @@
 
       const recentAverage =
         recent.reduce(
-          (sum, exam) =>
+          (sum,exam) =>
             sum +
-            (Number(exam.score) || 0),
+            (
+              Number(
+                exam.score
+              ) || 0
+            ),
           0
-        ) / recent.length;
+        ) /
+        recent.length;
 
 
       const old =
@@ -1903,18 +2692,27 @@
 
       const oldAverage =
         old.reduce(
-          (sum, exam) =>
+          (sum,exam) =>
             sum +
-            (Number(exam.score) || 0),
+            (
+              Number(
+                exam.score
+              ) || 0
+            ),
           0
-        ) / old.length;
+        ) /
+        old.length;
 
 
-      if (recentAverage > oldAverage) {
+      if (
+        recentAverage >
+        oldAverage
+      ) {
 
         recommendations.push({
 
-          icon: "fa-arrow-trend-up",
+          icon:
+            "fa-arrow-trend-up",
 
           title:
             "Your recent performance is improving",
@@ -1934,42 +2732,54 @@
 
     recommendations
       .slice(0,3)
-      .forEach(rec => {
+      .forEach(
+        rec => {
 
-        const item =
-          document.createElement("div");
-
-
-        item.className =
-          "recommendation";
-
-
-        item.innerHTML = `
-
-          <div class="recommendation-icon">
-
-            <i class="fa-solid ${escapeHtml(rec.icon)}"></i>
-
-          </div>
-
-          <div>
-
-            <strong>
-              ${escapeHtml(rec.title)}
-            </strong>
-
-            <p>
-              ${escapeHtml(rec.text)}
-            </p>
-
-          </div>
-
-        `;
+          const item =
+            document.createElement(
+              "div"
+            );
 
 
-        container.appendChild(item);
+          item.className =
+            "recommendation";
 
-      });
+
+          item.innerHTML = `
+
+            <div class="recommendation-icon">
+
+              <i class="fa-solid ${escapeHtml(
+                rec.icon
+              )}"></i>
+
+            </div>
+
+            <div>
+
+              <strong>
+                ${escapeHtml(
+                  rec.title
+                )}
+              </strong>
+
+              <p>
+                ${escapeHtml(
+                  rec.text
+                )}
+              </p>
+
+            </div>
+
+          `;
+
+
+          container.appendChild(
+            item
+          );
+
+        }
+      );
 
   }
 
@@ -1987,6 +2797,7 @@
     if (!examData.length) {
 
       container.innerHTML = `
+
         <div class="empty">
 
           <i class="fa-solid fa-clock-rotate-left"></i>
@@ -1994,6 +2805,7 @@
           No exam history found yet.
 
         </div>
+
       `;
 
       return;
@@ -2005,8 +2817,12 @@
       [...examData]
         .sort(
           (a,b) =>
-            new Date(b.created_at) -
-            new Date(a.created_at)
+            new Date(
+              b.created_at || 0
+            ) -
+            new Date(
+              a.created_at || 0
+            )
         )
         .slice(0,10);
 
@@ -2014,107 +2830,117 @@
     container.innerHTML = "";
 
 
-    recent.forEach(exam => {
+    recent.forEach(
+      exam => {
 
-      const score =
-        Number(exam.score) || 0;
-
-      const correct =
-        Number(exam.correct_count) || 0;
-
-      const wrong =
-        Number(exam.wrong_count) || 0;
-
-      const skipped =
-        Number(exam.skipped_count) || 0;
-
-      const total =
-        Number(exam.total_questions) || 0;
-
-      const date =
-        formatDate(exam.created_at);
+        const score =
+          Number(
+            exam.score
+          ) || 0;
 
 
-      const item =
-        document.createElement("div");
+        const correct =
+          Number(
+            exam.correct_count
+          ) || 0;
 
 
-      item.className =
-        "history-item";
+        const wrong =
+          Number(
+            exam.wrong_count
+          ) || 0;
 
 
-      item.innerHTML = `
-
-        <div class="history-icon">
-
-          <i class="fa-solid fa-file-lines"></i>
-
-        </div>
-
-        <div class="history-main">
-
-          <strong>
-            ${escapeHtml(
-              formatSetName(exam.set_name)
-            )}
-          </strong>
-
-          <span>
-            ${escapeHtml(date)} •
-            ${correct} correct •
-            ${wrong} wrong •
-            ${skipped} skipped
-          </span>
-
-        </div>
-
-        <div class="history-score">
-
-          <strong>
-            ${score.toFixed(1)}
-          </strong>
-
-          <span>
-            / ${total}
-          </span>
-
-        </div>
-
-      `;
+        const skipped =
+          Number(
+            exam.skipped_count
+          ) || 0;
 
 
-      container.appendChild(item);
+        const total =
+          Number(
+            exam.total_questions
+          ) || 0;
 
-    });
+
+        const date =
+          formatDate(
+            exam.created_at
+          );
+
+
+        const item =
+          document.createElement(
+            "div"
+          );
+
+
+        item.className =
+          "history-item";
+
+
+        item.innerHTML = `
+
+          <div class="history-icon">
+
+            <i class="fa-solid fa-file-lines"></i>
+
+          </div>
+
+          <div class="history-main">
+
+            <strong>
+              ${escapeHtml(
+                formatSetName(
+                  exam.set_name
+                )
+              )}
+            </strong>
+
+            <span>
+              ${escapeHtml(date)}
+              •
+              ${correct} correct
+              •
+              ${wrong} wrong
+              •
+              ${skipped} skipped
+            </span>
+
+          </div>
+
+          <div class="history-score">
+
+            <strong>
+              ${score.toFixed(1)}
+            </strong>
+
+            <span>
+              / ${total}
+            </span>
+
+          </div>
+
+        `;
+
+
+        container.appendChild(
+          item
+        );
+
+      }
+    );
 
   }
 
 
   /* =====================================================
-     HELPERS
+     DATE
   ===================================================== */
 
-  function formatSetName(name) {
-
-    if (!name) {
-
-      return "Mock Test";
-
-    }
-
-
-    return String(name)
-
-      .replace(/_/g, " ")
-
-      .replace(/\b\w/g, char =>
-        char.toUpperCase()
-      );
-
-  }
-
-
-  function formatDate(dateString) {
+  function formatDate(
+    dateString
+  ) {
 
     if (!dateString) {
 
@@ -2124,10 +2950,16 @@
 
 
     const date =
-      new Date(dateString);
+      new Date(
+        dateString
+      );
 
 
-    if (isNaN(date.getTime())) {
+    if (
+      isNaN(
+        date.getTime()
+      )
+    ) {
 
       return "Unknown date";
 
@@ -2150,20 +2982,25 @@
      NAVIGATION
   ===================================================== */
 
-  window.goBack = function() {
+  window.goBack =
+    function() {
 
-    if (history.length > 1) {
+      if (
+        history.length > 1
+      ) {
 
-      history.back();
+        history.back();
 
-    } else {
+      }
 
-      window.location.href =
-        "dashboard.html";
+      else {
 
-    }
+        window.location.href =
+          "dashboard.html";
 
-  };
+      }
+
+    };
 
 
   /* =====================================================
@@ -2174,10 +3011,6 @@
     async function() {
 
       if (!currentUser) {
-
-        console.log(
-          "Refresh ignored: user not ready"
-        );
 
         return;
 
@@ -2214,7 +3047,9 @@
           error
         );
 
+
         hideLoading();
+
 
         showError(
           error.message ||
