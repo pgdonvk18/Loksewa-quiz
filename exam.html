@@ -29,6 +29,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -46,6 +47,7 @@
     /* ================================
        TABLE
     ================================= */
+
     .quiz-table {
       width: 100%;
       border-collapse: collapse;
@@ -69,6 +71,7 @@
     /* ================================
        HEADER
     ================================= */
+
     .app-header {
       background: #1e3a8a;
       color: #ffffff;
@@ -101,6 +104,7 @@
     /* ================================
        MAIN
     ================================= */
+
     .main-wrapper {
       background-color: #ffffff;
       border-top-left-radius: 28px;
@@ -123,6 +127,7 @@
     /* ================================
        BUTTONS
     ================================= */
+
     .btn-primary {
       width: 100%;
       background: #2563eb;
@@ -191,6 +196,7 @@
     /* ================================
        OPTIONS
     ================================= */
+
     .option-card {
       width: 100%;
       text-align: left;
@@ -218,6 +224,7 @@
     /* ================================
        TIMER
     ================================= */
+
     .timer-badge {
       background: #fef2f2;
       border: 1px solid #fecaca;
@@ -232,6 +239,7 @@
     /* ================================
        LEADERBOARD
     ================================= */
+
     .lb-row {
       display: flex;
       justify-content: space-between;
@@ -242,11 +250,28 @@
       border: 1px solid #f1f5f9;
       font-size: 13px;
       margin-bottom: 8px;
+      gap: 10px;
+    }
+
+    .lb-name {
+      font-weight: 700;
+      color: #1e293b;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .lb-score {
+      color: #2563eb;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     /* ================================
        MODAL
     ================================= */
+
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -287,8 +312,120 @@
     }
 
     /* ================================
+       NAME SETUP MODAL
+    ================================= */
+
+    #name-setup-modal {
+      z-index: 10002;
+    }
+
+    .name-modal-card {
+      background: #ffffff;
+      width: 90%;
+      max-width: 370px;
+      border-radius: 26px;
+      padding: 26px 22px;
+      text-align: center;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+      transform: translateY(20px) scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    #name-setup-modal.active .name-modal-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .name-modal-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 16px;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.18);
+    }
+
+    .name-modal-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 7px;
+    }
+
+    .name-modal-text {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 17px;
+    }
+
+    .name-input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 0 14px;
+      outline: none;
+      background: #f8fafc;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .name-input:focus {
+      border-color: #2563eb;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .name-error {
+      min-height: 18px;
+      color: #dc2626;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    .name-save-btn {
+      width: 100%;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(37, 99, 235, 0.22);
+    }
+
+    .name-save-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .name-cancel-btn {
+      width: 100%;
+      background: #f1f5f9;
+      color: #475569;
+      border: none;
+      border-radius: 12px;
+      padding: 11px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    /* ================================
        ACHIEVEMENT POPUP
     ================================= */
+
     #achievement-unlocked-popup {
       position: fixed;
       inset: 0;
@@ -377,6 +514,7 @@
     /* ================================
        HIDDEN
     ================================= */
+
     .hidden {
       display: none !important;
     }
@@ -384,7 +522,9 @@
     /* ================================
        PRINT
     ================================= */
+
     @media print {
+
       body * {
         visibility: hidden;
       }
@@ -407,7 +547,9 @@
       .no-print {
         display: none !important;
       }
+
     }
+
   </style>
 </head>
 
@@ -416,6 +558,7 @@
   <!-- ==========================================
        ACHIEVEMENT UNLOCKED POPUP
   =========================================== -->
+
   <div id="achievement-unlocked-popup">
 
     <div class="achievement-popup-card">
@@ -447,8 +590,66 @@
 
 
   <!-- ==========================================
+       NAME SETUP MODAL
+  =========================================== -->
+
+  <div
+    id="name-setup-modal"
+    class="modal-overlay">
+
+    <div class="name-modal-card">
+
+      <div class="name-modal-icon">
+        <i class="fa-solid fa-user"></i>
+      </div>
+
+      <h2
+        id="name-modal-title"
+        class="name-modal-title">
+        आफ्नो नाम राख्नुहोस्
+      </h2>
+
+      <p
+        id="name-modal-text"
+        class="name-modal-text">
+        यो नाम LoksewaQuest को परीक्षा तथा लिडरबोर्डमा देखाइनेछ।
+      </p>
+
+      <input
+        id="name-input"
+        class="name-input"
+        type="text"
+        maxlength="40"
+        autocomplete="name"
+        placeholder="तपाईंको नाम">
+
+      <div
+        id="name-error"
+        class="name-error">
+      </div>
+
+      <button
+        id="save-name-btn"
+        class="name-save-btn">
+        नाम सुरक्षित गर्नुहोस्
+      </button>
+
+      <button
+        id="cancel-name-btn"
+        class="name-cancel-btn"
+        type="button">
+        रद्द गर्नुहोस्
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================
        LOGIN WARNING MODAL
   =========================================== -->
+
   <div id="login-modal" class="modal-overlay">
 
     <div class="modal-card" style="text-align: center;">
@@ -513,6 +714,7 @@
   <!-- ==========================================
        REPORT QUESTION MODAL
   =========================================== -->
+
   <div id="reportModal" class="modal-overlay">
 
     <div class="modal-card">
@@ -630,6 +832,7 @@
   <!-- ==========================================
        REVIEW MODAL
   =========================================== -->
+
   <div id="reviewModal" class="modal-overlay">
 
     <div class="modal-card"
@@ -737,6 +940,7 @@
   <!-- ==========================================
        HEADER
   =========================================== -->
+
   <header class="app-header">
 
     <a href="dashboard.html" class="back-btn">
@@ -759,6 +963,7 @@
     <!-- ==========================================
          REGISTRATION SCREEN
     =========================================== -->
+
     <div id="reg-screen" class="card space-y-4">
 
       <h2 style="
@@ -996,6 +1201,7 @@
     <!-- ==========================================
          EXAM SCREEN
     =========================================== -->
+
     <div
       id="exam-screen"
       class="card hidden space-y-4">
@@ -1112,6 +1318,7 @@
     <!-- ==========================================
          RESULT SCREEN
     =========================================== -->
+
     <div id="result-screen" class="hidden space-y-4">
 
       <div
@@ -1289,6 +1496,7 @@
 
 
         <!-- COIN REWARD -->
+
         <div
           id="coin-reward-box"
           class="hidden"
@@ -1315,6 +1523,7 @@
 
 
         <!-- STATUS -->
+
         <div
           id="status-message-box"
           style="
@@ -1400,6 +1609,7 @@
   <!-- ==========================================
        JAVASCRIPT
   =========================================== -->
+
   <script type="module">
 
     /* ==========================================
@@ -1421,11 +1631,15 @@
       getFirestore,
       doc,
       getDoc,
+      setDoc,
       updateDoc,
       collection,
       addDoc,
       serverTimestamp,
-      runTransaction
+      runTransaction,
+      query,
+      where,
+      getDocs
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
@@ -1434,28 +1648,51 @@
     =========================================== */
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-      authDomain: "loksewaquest-227b6.firebaseapp.com",
-      projectId: "loksewaquest-227b6",
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",
-      messagingSenderId: "779234903809",
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
+      apiKey:
+        "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+
+      authDomain:
+        "loksewaquest-227b6.firebaseapp.com",
+
+      projectId:
+        "loksewaquest-227b6",
+
+      storageBucket:
+        "loksewaquest-227b6.firebasestorage.app",
+
+      messagingSenderId:
+        "779234903809",
+
+      appId:
+        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
     };
 
 
-    const app = initializeApp(firebaseConfig);
+    const app =
+      initializeApp(firebaseConfig);
 
-    const auth = getAuth(app);
 
-    const db = getFirestore(app);
+    const auth =
+      getAuth(app);
+
+
+    const db =
+      getFirestore(app);
 
 
     setPersistence(
       auth,
       browserSessionPersistence
-    ).catch((error) => {
-      console.error("Persistence Error:", error);
-    });
+    ).catch(
+      error => {
+        console.error(
+          "Persistence Error:",
+          error
+        );
+      }
+    );
 
 
     /* ==========================================
@@ -1466,15 +1703,10 @@
     const SUPABASE_URL =
       'https://edyirdedkiarguvurpxq.supabase.co';
 
+
     const SUPABASE_ANON_KEY =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
 
-    /*
-      NOTE:
-      The Supabase key above is kept from your original setup.
-      Questions continue to come from:
-      Supabase -> quizzes
-    */
 
     const supabaseClient =
       window.supabase.createClient(
@@ -1488,36 +1720,52 @@
     =========================================== */
 
     const urlParams =
-      new URLSearchParams(window.location.search);
+      new URLSearchParams(
+        window.location.search
+      );
+
 
     const rawSet =
       urlParams.get('set') || 'set_1';
 
+
     const currentSet =
       rawSet.toLowerCase();
 
+
     const setNumberMatch =
       currentSet.match(/\d+/);
+
 
     const setNum =
       setNumberMatch
         ? setNumberMatch[0]
         : '1';
 
+
     const prettyExamName =
       `Pre Qualifying Test Set ${setNum}`;
+
 
     const examIdentifier =
       `set_${setNum}`;
 
 
-    document.getElementById('header-title').innerText =
+    document.getElementById(
+      'header-title'
+    ).innerText =
       `🇳🇵 LoksewaQuest - ${prettyExamName}`;
 
-    document.getElementById('set-badge-title').innerText =
+
+    document.getElementById(
+      'set-badge-title'
+    ).innerText =
       `🎯 ${prettyExamName} (Model Exam)`;
 
-    document.getElementById('lb-title').innerText =
+
+    document.getElementById(
+      'lb-title'
+    ).innerText =
       `🏆 ${prettyExamName} लिडरबोर्ड`;
 
 
@@ -1528,6 +1776,8 @@
     let candidateName = '';
 
     let userEmail = '';
+
+    let currentUserUid = '';
 
     let examQuestions = [];
 
@@ -1547,16 +1797,20 @@
 
     let examStartedActive = false;
 
-
-    /*
-      IMPORTANT:
-      Prevent submitExam() from running more than once
-      from timer / visibilitychange / back button / submit.
-    */
-
     let submitInProgress = false;
 
     let completionRecorded = false;
+
+
+    /*
+      Email -> Firestore Name cache.
+
+      This is used for OLD leaderboard rows
+      where username contains an email.
+    */
+
+    const firestoreNameCache =
+      new Map();
 
 
     /* ==========================================
@@ -1579,32 +1833,533 @@
 
 
     /* ==========================================
+       SAFE HTML
+       
+       Prevents names/questions from injecting
+       unwanted HTML when inserted into templates.
+    =========================================== */
+
+    function escapeHTML(value) {
+
+      if (
+        value === null ||
+        value === undefined
+      ) {
+        return '';
+      }
+
+
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+    }
+
+
+    /* ==========================================
+       NAME UI
+    =========================================== */
+
+    function applyCandidateName(name) {
+
+      const cleanName =
+        String(name || '')
+          .trim();
+
+
+      candidateName =
+        cleanName || 'Officer';
+
+
+      const profile =
+        document.getElementById(
+          'profile-display-name'
+        );
+
+
+      if (profile) {
+
+        profile.innerText =
+          candidateName;
+
+      }
+
+
+      const reportName =
+        document.getElementById(
+          'rep-name'
+        );
+
+
+      if (reportName) {
+
+        reportName.innerText =
+          candidateName;
+
+      }
+
+    }
+
+
+    /* ==========================================
+       GET CURRENT FIRESTORE USER NAME
+    =========================================== */
+
+    async function getFirestoreUserName(
+      user
+    ) {
+
+      if (!user) {
+        return '';
+      }
+
+
+      try {
+
+        const userRef =
+          doc(
+            db,
+            "users",
+            user.uid
+          );
+
+
+        const userSnap =
+          await getDoc(
+            userRef
+          );
+
+
+        if (
+          userSnap.exists()
+        ) {
+
+          const data =
+            userSnap.data();
+
+
+          const name =
+            typeof data.name === 'string'
+              ? data.name.trim()
+              : '';
+
+
+          if (name) {
+
+            firestoreNameCache.set(
+              (data.email || user.email || '')
+                .toLowerCase()
+                .trim(),
+              name
+            );
+
+            return name;
+
+          }
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Could not load Firestore name:",
+          error
+        );
+
+      }
+
+
+      return '';
+
+    }
+
+
+    /* ==========================================
+       NAME SETUP MODAL
+    =========================================== */
+
+    let nameModalResolver = null;
+
+    let nameModalRequired = false;
+
+
+    function openNameSetupModal(
+      user,
+      currentName = '',
+      required = false
+    ) {
+
+      return new Promise(
+        resolve => {
+
+          nameModalResolver =
+            resolve;
+
+          nameModalRequired =
+            required;
+
+
+          const modal =
+            document.getElementById(
+              'name-setup-modal'
+            );
+
+
+          const title =
+            document.getElementById(
+              'name-modal-title'
+            );
+
+
+          const text =
+            document.getElementById(
+              'name-modal-text'
+            );
+
+
+          const input =
+            document.getElementById(
+              'name-input'
+            );
+
+
+          const error =
+            document.getElementById(
+              'name-error'
+            );
+
+
+          const cancel =
+            document.getElementById(
+              'cancel-name-btn'
+            );
+
+
+          input.value =
+            currentName || '';
+
+
+          error.innerText =
+            '';
+
+
+          if (required) {
+
+            title.innerText =
+              'आफ्नो नाम राख्नुहोस्';
+
+            text.innerText =
+              'यो नाम LoksewaQuest को परीक्षा, प्रमाणपत्र तथा लिडरबोर्डमा देखाइनेछ।';
+
+            cancel.style.display =
+              'none';
+
+          } else {
+
+            title.innerText =
+              'नाम परिवर्तन गर्नुहोस्';
+
+            text.innerText =
+              'तपाईंको नयाँ नाम LoksewaQuest मा देखाइनेछ।';
+
+            cancel.style.display =
+              'block';
+
+          }
+
+
+          modal.classList.add(
+            'active'
+          );
+
+
+          setTimeout(
+            () => {
+
+              input.focus();
+
+              input.select();
+
+            },
+            120
+          );
+
+        }
+      );
+
+    }
+
+
+    async function saveCandidateName() {
+
+      const input =
+        document.getElementById(
+          'name-input'
+        );
+
+
+      const error =
+        document.getElementById(
+          'name-error'
+        );
+
+
+      const saveBtn =
+        document.getElementById(
+          'save-name-btn'
+        );
+
+
+      const name =
+        input.value
+          .trim()
+          .replace(/\s+/g, ' ');
+
+
+      error.innerText =
+        '';
+
+
+      if (!name) {
+
+        error.innerText =
+          'कृपया आफ्नो नाम लेख्नुहोस्।';
+
+        input.focus();
+
+        return;
+
+      }
+
+
+      if (name.length < 2) {
+
+        error.innerText =
+          'नाम कम्तीमा २ अक्षरको हुनुपर्छ।';
+
+        input.focus();
+
+        return;
+
+      }
+
+
+      if (!currentUserUid) {
+
+        error.innerText =
+          'प्रयोगकर्ता भेटिएन। कृपया फेरि लगइन गर्नुहोस्।';
+
+        return;
+
+      }
+
+
+      saveBtn.disabled =
+        true;
+
+
+      saveBtn.innerText =
+        'सुरक्षित हुँदैछ...';
+
+
+      try {
+
+        const userRef =
+          doc(
+            db,
+            "users",
+            currentUserUid
+          );
+
+
+        /*
+          merge:true means existing fields such as
+          coins, email, badges, completedExams etc.
+          will NOT be deleted.
+        */
+
+        await setDoc(
+          userRef,
+          {
+            name: name
+          },
+          {
+            merge: true
+          }
+        );
+
+
+        candidateName =
+          name;
+
+
+        firestoreNameCache.set(
+          userEmail.toLowerCase().trim(),
+          name
+        );
+
+
+        applyCandidateName(
+          name
+        );
+
+
+        const modal =
+          document.getElementById(
+            'name-setup-modal'
+          );
+
+
+        modal.classList.remove(
+          'active'
+        );
+
+
+        if (nameModalResolver) {
+
+          nameModalResolver(
+            name
+          );
+
+        }
+
+
+        nameModalResolver =
+          null;
+
+
+      } catch (error) {
+
+        console.error(
+          "Save name error:",
+          error
+        );
+
+
+        error.innerText =
+          'नाम सुरक्षित गर्न सकिएन। Firestore permission जाँच गर्नुहोस्।';
+
+      } finally {
+
+        saveBtn.disabled =
+          false;
+
+        saveBtn.innerText =
+          'नाम सुरक्षित गर्नुहोस्';
+
+      }
+
+    }
+
+
+    function cancelNameSetup() {
+
+      if (nameModalRequired) {
+        return;
+      }
+
+
+      const modal =
+        document.getElementById(
+          'name-setup-modal'
+        );
+
+
+      modal.classList.remove(
+        'active'
+      );
+
+
+      if (nameModalResolver) {
+
+        nameModalResolver(
+          null
+        );
+
+      }
+
+
+      nameModalResolver =
+        null;
+
+    }
+
+
+    document.getElementById(
+      'save-name-btn'
+    ).addEventListener(
+      'click',
+      saveCandidateName
+    );
+
+
+    document.getElementById(
+      'cancel-name-btn'
+    ).addEventListener(
+      'click',
+      cancelNameSetup
+    );
+
+
+    document.getElementById(
+      'name-input'
+    ).addEventListener(
+      'keydown',
+      event => {
+
+        if (
+          event.key === 'Enter'
+        ) {
+
+          event.preventDefault();
+
+          saveCandidateName();
+
+        }
+
+      }
+    );
+
+
+    /* ==========================================
        ACHIEVEMENT POPUP
     =========================================== */
 
-    function showAchievementUnlocked(badge) {
+    function showAchievementUnlocked(
+      badge
+    ) {
 
-      let popup =
+      const popup =
         document.getElementById(
           'achievement-unlocked-popup'
         );
+
 
       document.getElementById(
         'achievement-popup-icon'
       ).className =
         `fa-solid ${badge.icon}`;
 
+
       document.getElementById(
         'achievement-popup-name'
       ).innerText =
         badge.name;
+
 
       document.getElementById(
         'achievement-popup-en'
       ).innerText =
         badge.english;
 
-      popup.classList.add('active');
+
+      popup.classList.add(
+        'active'
+      );
+
     }
 
 
@@ -1615,9 +2370,15 @@
           'achievement-unlocked-popup'
         );
 
+
       if (popup) {
-        popup.classList.remove('active');
+
+        popup.classList.remove(
+          'active'
+        );
+
       }
+
     }
 
 
@@ -1631,9 +2392,6 @@
 
     /* ==========================================
        RECORD EXAM COMPLETION + BADGE
-       
-       ONLY LIVE EXAM
-       PRACTICE MODE DOES NOT COUNT
     =========================================== */
 
     async function recordLiveExamCompletion() {
@@ -1643,7 +2401,9 @@
         !auth.currentUser ||
         completionRecorded
       ) {
+
         return;
+
       }
 
 
@@ -1657,21 +2417,16 @@
 
       try {
 
-        /*
-          Transaction ensures:
-          - completedExams cannot accidentally
-            overwrite another update.
-          - badge progress and exam count
-            are updated together.
-        */
-
         const result =
           await runTransaction(
             db,
-            async (transaction) => {
+            async transaction => {
 
               const userSnap =
-                await transaction.get(userRef);
+                await transaction.get(
+                  userRef
+                );
+
 
               const userData =
                 userSnap.exists()
@@ -1711,12 +2466,9 @@
               };
 
 
-              let newlyUnlocked = false;
+              let newlyUnlocked =
+                false;
 
-
-              /* ==========================
-                 BADGE UNLOCKED
-              ========================== */
 
               if (
                 newCompleted >=
@@ -1725,7 +2477,9 @@
 
                 if (!alreadyUnlocked) {
 
-                  newlyUnlocked = true;
+                  newlyUnlocked =
+                    true;
+
 
                   updatedBadges[
                     EXAM_WARRIOR_BADGE.id
@@ -1745,11 +2499,6 @@
                   };
 
                 } else {
-
-                  /*
-                    Keep old unlockedAt,
-                    but normalize progress.
-                  */
 
                   updatedBadges[
                     EXAM_WARRIOR_BADGE.id
@@ -1773,11 +2522,6 @@
 
               } else {
 
-                /*
-                  Badge still locked.
-                  Save current progress.
-                */
-
                 updatedBadges[
                   EXAM_WARRIOR_BADGE.id
                 ] = {
@@ -1788,7 +2532,8 @@
 
                   unlocked: false,
 
-                  progress: newCompleted,
+                  progress:
+                    newCompleted,
 
                   target:
                     EXAM_WARRIOR_BADGE.target
@@ -1831,12 +2576,8 @@
           );
 
 
-        /*
-          This prevents another call in the
-          same page session.
-        */
-
-        completionRecorded = true;
+        completionRecorded =
+          true;
 
 
         console.log(
@@ -1845,19 +2586,20 @@
         );
 
 
-        /* ==========================
-           SHOW BADGE POPUP
-        ========================== */
+        if (
+          result.newlyUnlocked
+        ) {
 
-        if (result.newlyUnlocked) {
+          setTimeout(
+            () => {
 
-          setTimeout(() => {
+              showAchievementUnlocked(
+                EXAM_WARRIOR_BADGE
+              );
 
-            showAchievementUnlocked(
-              EXAM_WARRIOR_BADGE
-            );
-
-          }, 500);
+            },
+            500
+          );
 
         }
 
@@ -1883,33 +2625,85 @@
 
         onAuthStateChanged(
           auth,
-          async (user) => {
+          async user => {
 
             if (user) {
 
-              candidateName =
-                user.displayName ||
-                user.email.split('@')[0];
+              currentUserUid =
+                user.uid;
+
 
               userEmail =
-                user.email;
+                user.email || '';
 
 
-              document.getElementById(
-                'profile-display-name'
-              ).innerText =
-                candidateName;
+              /*
+                IMPORTANT:
+                Never use user.displayName here.
+                Firestore name is the source of truth.
+              */
+
+              let firestoreName =
+                await getFirestoreUserName(
+                  user
+                );
+
+
+              /*
+                If name does not exist,
+                ask the user to create one.
+              */
+
+              if (!firestoreName) {
+
+                firestoreName =
+                  await openNameSetupModal(
+                    user,
+                    '',
+                    true
+                  );
+
+              }
+
+
+              /*
+                Safety fallback only.
+                This value is NOT saved to
+                leaderboard if user later sets a name.
+              */
+
+              if (!firestoreName) {
+
+                firestoreName =
+                  'Officer';
+
+              }
+
+
+              applyCandidateName(
+                firestoreName
+              );
 
 
               await checkIfExamAlreadyGiven(
                 userEmail
               );
 
+
+              /*
+                Refresh leaderboard after the
+                user's Firestore name is loaded.
+              */
+
+              fetchLeaderboard();
+
             } else {
 
               document.getElementById(
                 'login-modal'
-              ).classList.add('active');
+              ).classList.add(
+                'active'
+              );
 
 
               document.getElementById(
@@ -1945,28 +2739,28 @@
     /* ==========================================
        CHECK EXISTING EXAM
        
-       SUPABASE LEADERBOARD
+       Uses EMAIL internally only.
+       This does NOT affect leaderboard display.
     =========================================== */
 
     async function checkIfExamAlreadyGiven(
       email
     ) {
 
-      if (!email) return;
+      if (!email) {
+        return;
+      }
 
 
       const {
         data,
         error
-      } = await supabaseClient
-
-        .from('exam_leaderboard')
-
-        .select('*')
-
-        .eq('username', email)
-
-        .eq('set_name', examIdentifier);
+      } =
+        await supabaseClient
+          .from('exam_leaderboard')
+          .select('*')
+          .eq('username', email)
+          .eq('set_name', examIdentifier);
 
 
       if (error) {
@@ -1976,37 +2770,121 @@
           error
         );
 
+        /*
+          Also check whether the new-name record
+          already exists.
+
+          This is important because new records
+          use Firestore name instead of email.
+        */
+
+        if (candidateName) {
+
+          const fallbackCheck =
+            await supabaseClient
+              .from('exam_leaderboard')
+              .select('*')
+              .eq('username', candidateName)
+              .eq('set_name', examIdentifier);
+
+
+          if (
+            fallbackCheck.data &&
+            fallbackCheck.data.length > 0
+          ) {
+
+            showAlreadyGivenBox();
+
+          }
+
+        }
+
         return;
 
       }
 
 
-      if (
+      let alreadyGiven =
         data &&
-        data.length > 0
+        data.length > 0;
+
+
+      /*
+        New records use candidateName.
+      */
+
+      if (
+        !alreadyGiven &&
+        candidateName
       ) {
 
-        document.getElementById(
-          'start-exam-btn'
-        ).classList.add('hidden');
+        const {
+          data: nameData
+        } =
+          await supabaseClient
+            .from('exam_leaderboard')
+            .select('*')
+            .eq(
+              'username',
+              candidateName
+            )
+            .eq(
+              'set_name',
+              examIdentifier
+            );
 
 
-        document.getElementById(
-          'already-given-box'
-        ).classList.remove('hidden');
+        if (
+          nameData &&
+          nameData.length > 0
+        ) {
+
+          alreadyGiven =
+            true;
+
+        }
+
+      }
+
+
+      if (alreadyGiven) {
+
+        showAlreadyGivenBox();
 
       } else {
 
         document.getElementById(
           'start-exam-btn'
-        ).classList.remove('hidden');
+        ).classList.remove(
+          'hidden'
+        );
 
 
         document.getElementById(
           'already-given-box'
-        ).classList.add('hidden');
+        ).classList.add(
+          'hidden'
+        );
 
       }
+
+    }
+
+
+    function showAlreadyGivenBox() {
+
+      document.getElementById(
+        'start-exam-btn'
+      ).classList.add(
+        'hidden'
+      );
+
+
+      document.getElementById(
+        'already-given-box'
+      ).classList.remove(
+        'hidden'
+      );
 
     }
 
@@ -2030,9 +2908,43 @@
 
             document.getElementById(
               'login-modal'
-            ).classList.add('active');
+            ).classList.add(
+              'active'
+            );
 
             return;
+
+          }
+
+
+          /*
+            Do not allow the exam to start
+            without a Firestore name.
+          */
+
+          if (
+            !candidateName ||
+            candidateName === 'Officer'
+          ) {
+
+            const savedName =
+              await openNameSetupModal(
+                auth.currentUser,
+                candidateName === 'Officer'
+                  ? ''
+                  : candidateName,
+                true
+              );
+
+
+            if (!savedName) {
+              return;
+            }
+
+
+            applyCandidateName(
+              savedName
+            );
 
           }
 
@@ -2077,8 +2989,6 @@
 
     /* ==========================================
        PROCEED START EXAM
-       
-       QUESTIONS ARE FETCHED FROM SUPABASE
     =========================================== */
 
     async function proceedStartExam() {
@@ -2100,21 +3010,30 @@
 
 
           const userSnap =
-            await getDoc(userRef);
+            await getDoc(
+              userRef
+            );
 
 
-          let currentCoins = 0;
+          let currentCoins =
+            0;
 
 
-          if (userSnap.exists()) {
+          if (
+            userSnap.exists()
+          ) {
 
             currentCoins =
-              userSnap.data().coins || 0;
+              Number(
+                userSnap.data().coins || 0
+              );
 
           }
 
 
-          if (currentCoins < 25) {
+          if (
+            currentCoins < 25
+          ) {
 
             showSuccessPopup(
 
@@ -2133,8 +3052,6 @@
           }
 
 
-          /* Deduct coins */
-
           await updateDoc(
             userRef,
             {
@@ -2143,8 +3060,6 @@
             }
           );
 
-
-          /* Coin history */
 
           await addDoc(
 
@@ -2174,27 +3089,22 @@
         }
 
 
-        /* ==========================================
-           IMPORTANT:
-           QUESTIONS CONTINUE TO COME FROM SUPABASE
-        =========================================== */
+        /* ==========================
+           QUESTIONS FROM SUPABASE
+        ========================== */
 
         let {
           data,
           error
-        } = await supabaseClient
+        } =
+          await supabaseClient
+            .from('quizzes')
+            .select('*')
+            .ilike(
+              'topic',
+              currentSet
+            );
 
-          .from('quizzes')
-
-          .select('*')
-
-          .ilike(
-            'topic',
-            currentSet
-          );
-
-
-        /* Retry with rawSet */
 
         if (
           error ||
@@ -2202,13 +3112,10 @@
           data.length === 0
         ) {
 
-          let retry =
+          const retry =
             await supabaseClient
-
               .from('quizzes')
-
               .select('*')
-
               .ilike(
                 'topic',
                 rawSet
@@ -2244,8 +3151,6 @@
         }
 
 
-        /* Save questions */
-
         examQuestions =
           data;
 
@@ -2254,27 +3159,39 @@
           new Date();
 
 
+        currentIdx =
+          0;
+
+
+        userAnswers =
+          {};
+
+
+        timeLeftSeconds =
+          45 * 60;
+
+
         document.getElementById(
           'reg-screen'
-        ).classList.add('hidden');
+        ).classList.add(
+          'hidden'
+        );
 
 
         document.getElementById(
           'exam-screen'
-        ).classList.remove('hidden');
+        ).classList.remove(
+          'hidden'
+        );
 
 
         examStartedActive =
           true;
 
 
-        /*
-          Reset submit guard
-          for this exam session.
-        */
-
         submitInProgress =
           false;
+
 
         completionRecorded =
           false;
@@ -2287,15 +3204,13 @@
         );
 
 
-        /* ==========================
-           LIVE EXAM
-        ========================== */
-
         if (!isPracticeMode) {
 
           document.getElementById(
             'timer-box'
-          ).classList.remove('hidden');
+          ).classList.remove(
+            'hidden'
+          );
 
 
           document.getElementById(
@@ -2306,18 +3221,13 @@
 
           startTimer();
 
-        }
-
-
-        /* ==========================
-           PRACTICE MODE
-        ========================== */
-
-        else {
+        } else {
 
           document.getElementById(
             'timer-box'
-          ).classList.add('hidden');
+          ).classList.add(
+            'hidden'
+          );
 
 
           document.getElementById(
@@ -2363,6 +3273,11 @@
 
     function startTimer() {
 
+      clearInterval(
+        timerInterval
+      );
+
+
       timerInterval =
         setInterval(
           () => {
@@ -2375,6 +3290,7 @@
                 timerInterval
               );
 
+
               submitExam();
 
               return;
@@ -2385,20 +3301,19 @@
             timeLeftSeconds--;
 
 
-            let m =
+            const m =
               Math.floor(
                 timeLeftSeconds / 60
               );
 
 
-            let s =
+            const s =
               timeLeftSeconds % 60;
 
 
             document.getElementById(
               'time-left'
             ).innerText =
-
               `${m}:${s < 10 ? '0' : ''}${s}`;
 
           },
@@ -2417,6 +3332,11 @@
 
         const q =
           examQuestions[currentIdx];
+
+
+        if (!q) {
+          return;
+        }
 
 
         document.getElementById(
@@ -2468,14 +3388,20 @@
 
             btn.innerHTML =
               `
-              <i class="fa-regular ${
-                isSelected
-                  ? 'fa-square-check'
-                  : 'fa-square'
-              }"></i>
+                <i class="fa-regular ${
+                  isSelected
+                    ? 'fa-square-check'
+                    : 'fa-square'
+                }"></i>
 
-              <span>${opt}</span>
+                <span></span>
               `;
+
+
+            btn.querySelector(
+              'span'
+            ).innerText =
+              opt;
 
 
             btn.onclick =
@@ -2483,7 +3409,8 @@
 
                 userAnswers[
                   currentIdx
-                ] = opt;
+                ] =
+                  opt;
 
                 loadExamQuestion();
 
@@ -2628,19 +3555,9 @@
 
     async function submitExam() {
 
-      /*
-        IMPORTANT:
-        Prevent duplicate execution.
-
-        This protects against:
-        - manual submit
-        - timer submit
-        - visibilitychange submit
-        - back button submit
-        - beforeunload submit
-      */
-
-      if (submitInProgress) {
+      if (
+        submitInProgress
+      ) {
 
         console.log(
           "Submit already in progress."
@@ -2651,7 +3568,9 @@
       }
 
 
-      if (completionRecorded) {
+      if (
+        completionRecorded
+      ) {
 
         console.log(
           "Exam completion already recorded."
@@ -2677,28 +3596,37 @@
 
       document.getElementById(
         'exam-screen'
-      ).classList.add('hidden');
+      ).classList.add(
+        'hidden'
+      );
 
 
       document.getElementById(
         'timer-box'
-      ).classList.add('hidden');
+      ).classList.add(
+        'hidden'
+      );
 
 
       document.getElementById(
         'result-screen'
-      ).classList.remove('hidden');
+      ).classList.remove(
+        'hidden'
+      );
 
 
       /* ==========================================
          EVALUATE
       =========================================== */
 
-      let correct = 0;
+      let correct =
+        0;
 
-      let wrong = 0;
+      let wrong =
+        0;
 
-      let skipped = 0;
+      let skipped =
+        0;
 
 
       evaluatedQuestionsList =
@@ -2729,7 +3657,9 @@
 
           }
 
-          else if (isCorrect) {
+          else if (
+            isCorrect
+          ) {
 
             correct++;
 
@@ -2787,7 +3717,8 @@
         totalScore < 0
       ) {
 
-        totalScore = 0;
+        totalScore =
+          0;
 
       }
 
@@ -2806,7 +3737,8 @@
           totalScore >= 90
         ) {
 
-          earnedCoins = 50;
+          earnedCoins =
+            50;
 
         }
 
@@ -2814,7 +3746,8 @@
           totalScore >= 80
         ) {
 
-          earnedCoins = 40;
+          earnedCoins =
+            40;
 
         }
 
@@ -2822,7 +3755,8 @@
           totalScore >= 70
         ) {
 
-          earnedCoins = 30;
+          earnedCoins =
+            30;
 
         }
 
@@ -2830,7 +3764,8 @@
           totalScore >= 60
         ) {
 
-          earnedCoins = 20;
+          earnedCoins =
+            20;
 
         }
 
@@ -2838,7 +3773,8 @@
           totalScore >= 50
         ) {
 
-          earnedCoins = 10;
+          earnedCoins =
+            10;
 
         }
 
@@ -2868,11 +3804,10 @@
               );
 
 
-            let existingCoins =
+            const existingCoins =
               userSnap.exists()
-                ? (
-                    userSnap.data().coins ||
-                    0
+                ? Number(
+                    userSnap.data().coins || 0
                   )
                 : 0;
 
@@ -2888,8 +3823,6 @@
               }
             );
 
-
-            /* Coin history */
 
             await addDoc(
 
@@ -2958,9 +3891,6 @@
 
       /* ==========================================
          LIVE EXAM RESULT
-         
-         1. Save leaderboard to Supabase
-         2. ONLY IF SUCCESS -> completedExams +1
       =========================================== */
 
       else {
@@ -2979,35 +3909,37 @@
 
         /* ==========================
            SUPABASE LEADERBOARD
+
+           NEW RECORD:
+           username = Firestore name
         ========================== */
 
         const {
           error: leaderboardError
-        } = await supabaseClient
+        } =
+          await supabaseClient
+            .from('exam_leaderboard')
+            .insert([
 
-          .from('exam_leaderboard')
+              {
 
-          .insert([
+                username:
+                  candidateName,
 
-            {
+                score:
+                  Number(
+                    totalScore.toFixed(1)
+                  ),
 
-              username:
-             username,
+                total_questions:
+                  examQuestions.length,
 
-              score:
-                Number(
-                  totalScore.toFixed(1)
-                ),
+                set_name:
+                  examIdentifier
 
-              total_questions:
-                examQuestions.length,
+              }
 
-              set_name:
-                examIdentifier
-
-            }
-
-          ]);
+            ]);
 
 
         /* ==========================
@@ -3026,11 +3958,6 @@
             "Leaderboard insert error:",
             leaderboardError
           );
-
-          /*
-            If leaderboard failed,
-            we DO NOT increment completedExams.
-          */
 
         }
 
@@ -3065,7 +3992,6 @@
 
       }
 
-
       else if (
         !isPracticeMode
       ) {
@@ -3091,7 +4017,6 @@
 
       }
 
-
       else {
 
         coinBox.classList.add(
@@ -3103,7 +4028,7 @@
 
       /* ==========================================
          STATUS
-      =========================================== */
+      ========================================== */
 
       const statusBox =
         document.getElementById(
@@ -3148,7 +4073,7 @@
 
       /* ==========================================
          RESULT DATA
-      =========================================== */
+      ========================================== */
 
       document.getElementById(
         'rep-name'
@@ -3188,14 +4113,16 @@
 
       /* ==========================================
          REVIEW
-      =========================================== */
+      ========================================== */
 
-      renderReviewList('all');
+      renderReviewList(
+        'all'
+      );
 
 
       /* ==========================================
          LEADERBOARD
-      =========================================== */
+      ========================================== */
 
       fetchLeaderboard();
 
@@ -3204,10 +4131,12 @@
 
     /* ==========================================
        REVIEW FILTER
-    =========================================== */
+    ========================================== */
 
     window.filterReview =
-      function (type) {
+      function (
+        type
+      ) {
 
         document
           .querySelectorAll(
@@ -3237,7 +4166,7 @@
 
     /* ==========================================
        REVIEW LIST
-    =========================================== */
+    ========================================== */
 
     function renderReviewList(
       filterType
@@ -3299,7 +4228,6 @@
       ) {
 
         container.innerHTML =
-
           '<p style="text-align:center;color:#64748b;padding:20px;font-size:12px;">कुनै प्रश्न फेला परेन।</p>';
 
         return;
@@ -3455,9 +4383,235 @@
 
 
     /* ==========================================
-       LEADERBOARD
+       OLD EMAIL -> FIRESTORE NAME
        
-       SUPABASE
+       This is the key part for old leaderboard
+       records.
+    =========================================== */
+
+    async function resolveLeaderboardName(
+      username
+    ) {
+
+      if (!username) {
+        return 'Unknown User';
+      }
+
+
+      const raw =
+        String(username)
+          .trim();
+
+
+      /*
+        New records already contain a name.
+        Only perform Firestore lookup when
+        the old record contains an email.
+      */
+
+      if (
+        !raw.includes('@')
+      ) {
+
+        return raw;
+
+      }
+
+
+      const email =
+        raw.toLowerCase();
+
+
+      /*
+        Cache first.
+      */
+
+      if (
+        firestoreNameCache.has(email)
+      ) {
+
+        return firestoreNameCache.get(
+          email
+        );
+
+      }
+
+
+      /*
+        If this is the currently logged-in user,
+        we already know their Firestore name.
+      */
+
+      if (
+        email ===
+        userEmail.toLowerCase() &&
+        candidateName &&
+        candidateName !== 'Officer'
+      ) {
+
+        firestoreNameCache.set(
+          email,
+          candidateName
+        );
+
+        return candidateName;
+
+      }
+
+
+      /*
+        Search Firestore users by email.
+        
+        Requires a Firestore query index only if
+        Firebase asks for one; simple equality
+        queries normally work without custom index.
+      */
+
+      try {
+
+        const usersRef =
+          collection(
+            db,
+            "users"
+          );
+
+
+        const q =
+          query(
+            usersRef,
+            where(
+              "email",
+              "==",
+              raw
+            )
+          );
+
+
+        const snap =
+          await getDocs(q);
+
+
+        if (
+          !snap.empty
+        ) {
+
+          const data =
+            snap.docs[0].data();
+
+
+          const name =
+            typeof data.name === 'string'
+              ? data.name.trim()
+              : '';
+
+
+          if (name) {
+
+            firestoreNameCache.set(
+              email,
+              name
+            );
+
+
+            return name;
+
+          }
+
+        }
+
+
+        /*
+          Try lowercase email as a second lookup.
+          This helps if your Firestore emails are
+          stored lowercase.
+        */
+
+        if (
+          raw !== email
+        ) {
+
+          const lowerQuery =
+            query(
+              usersRef,
+              where(
+                "email",
+                "==",
+                email
+              )
+            );
+
+
+          const lowerSnap =
+            await getDocs(
+              lowerQuery
+            );
+
+
+          if (
+            !lowerSnap.empty
+          ) {
+
+            const data =
+              lowerSnap.docs[0].data();
+
+
+            const name =
+              typeof data.name === 'string'
+                ? data.name.trim()
+                : '';
+
+
+            if (name) {
+
+              firestoreNameCache.set(
+                email,
+                name
+              );
+
+
+              return name;
+
+            }
+
+          }
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Old leaderboard name lookup error:",
+          error
+        );
+
+      }
+
+
+      /*
+        If the old email cannot be matched,
+        don't expose the complete email if
+        we can avoid it.
+
+        We show the part before @ as a final
+        fallback.
+      */
+
+      if (
+        raw.includes('@')
+      ) {
+
+        return raw.split('@')[0];
+
+      }
+
+
+      return raw;
+
+    }
+
+
+    /* ==========================================
+       FETCH LEADERBOARD
     =========================================== */
 
     async function fetchLeaderboard() {
@@ -3465,23 +4619,20 @@
       const {
         data,
         error
-      } = await supabaseClient
-
-        .from('exam_leaderboard')
-
-        .select('*')
-
-        .eq(
-          'set_name',
-          examIdentifier
-        )
-
-        .order(
-          'score',
-          {
-            ascending: false
-          }
-        );
+      } =
+        await supabaseClient
+          .from('exam_leaderboard')
+          .select('*')
+          .eq(
+            'set_name',
+            examIdentifier
+          )
+          .order(
+            'score',
+            {
+              ascending: false
+            }
+          );
 
 
       const containers = [
@@ -3500,8 +4651,9 @@
       containers.forEach(
         lbContainer => {
 
-          if (!lbContainer)
+          if (!lbContainer) {
             return;
+          }
 
 
           lbContainer.innerHTML =
@@ -3522,41 +4674,87 @@
 
           }
 
-
-          data.forEach(
-            (item, i) => {
-
-              let displayName =
-                item.username;
+        }
+      );
 
 
-              if (
-                displayName &&
-                displayName.includes('@')
-              ) {
+      /*
+        Resolve ALL leaderboard names.
 
-                displayName =
-                  displayName.split('@')[0];
+        Promise.all means old email records
+        can be converted to their Firestore
+        names before displaying.
+      */
 
-              }
+      const resolvedRows =
+        await Promise.all(
+
+          data.map(
+            async item => {
+
+              const displayName =
+                await resolveLeaderboardName(
+                  item.username
+                );
+
+
+              return {
+
+                item,
+                displayName
+
+              };
+
+            }
+          )
+
+        );
+
+
+      containers.forEach(
+        lbContainer => {
+
+          if (!lbContainer) {
+            return;
+          }
+
+
+          lbContainer.innerHTML =
+            '';
+
+
+          resolvedRows.forEach(
+            (row, i) => {
+
+              const displayName =
+                row.displayName ||
+                'Unknown User';
+
+
+              const safeName =
+                escapeHTML(
+                  displayName
+                );
+
+
+              const safeScore =
+                escapeHTML(
+                  row.item.score
+                );
 
 
               lbContainer.innerHTML += `
 
                 <div class="lb-row">
 
-                  <span style="
-                    font-weight:700;
-                    color:#1e293b;
-                  ">
-                    ${i + 1}. ${displayName}
+                  <span
+                    class="lb-name"
+                    title="${safeName}">
+                    ${i + 1}. ${safeName}
                   </span>
 
-                  <span style="
-                    color:#2563eb;
-                    font-weight:800;
-                  ">
-                    ${item.score} अंक
+                  <span class="lb-score">
+                    ${safeScore} अंक
                   </span>
 
                 </div>
@@ -3648,8 +4846,6 @@
 
     /* ==========================================
        REPORT QUESTION
-       
-       SUPABASE
     =========================================== */
 
     window.submitQuestionReport =
@@ -3684,31 +4880,39 @@
           examQuestions[currentIdx];
 
 
+        if (!currentQ) {
+
+          return;
+
+        }
+
+
         const {
           error
-        } = await supabaseClient
+        } =
+          await supabaseClient
 
-          .from('reported_questions')
+            .from('reported_questions')
 
-          .insert([
+            .insert([
 
-            {
+              {
 
-              question_id:
-                currentQ.id,
+                question_id:
+                  currentQ.id,
 
-              question_text:
-                currentQ.question,
+                question_text:
+                  currentQ.question,
 
-              reason:
-                reason,
+                reason:
+                  reason,
 
-              status:
-                'Pending'
+                status:
+                  'Pending'
 
-            }
+              }
 
-          ]);
+            ]);
 
 
         if (error) {
@@ -3752,8 +4956,6 @@
 
     /* ==========================================
        VISIBILITY CHANGE
-       
-       LIVE EXAM AUTO SUBMIT
     =========================================== */
 
     document.addEventListener(
@@ -3812,7 +5014,7 @@
 
     window.addEventListener(
       'popstate',
-      function (event) {
+      function () {
 
         const examScreen =
           document.getElementById(
@@ -3886,12 +5088,6 @@
 
           e.returnValue = '';
 
-          /*
-            submitExam has its own guard,
-            so this won't duplicate completion
-            if another submit is already running.
-          */
-
           submitExam();
 
         }
@@ -3906,4 +5102,4 @@
   <script src="components.js"></script>
 
 </body>
-</html>
+  </html>
