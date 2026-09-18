@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <title>LoksewaQuest - Discussion Community</title>
+  <title>LoksewaQuest - Community</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,405 +20,197 @@
     :root {
       --primary: #3413aa;
       --primary2: #5b35d5;
-      --blue: #2563eb;
-      --green: #16a34a;
-      --gold: #f59e0b;
       --text: #172033;
       --muted: #64748b;
       --border: #e2e8f0;
       --bg: #f5f7fb;
     }
 
+    html,
     body {
-      background: var(--bg);
-      color: var(--text);
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
     }
 
-    /* ================= HEADER ================= */
-
-    .top-header {
-      background: linear-gradient(135deg, #241078, #3413aa 55%, #5b35d5);
-      color: white;
-      padding: 14px 16px 18px;
-      box-shadow: 0 4px 20px rgba(52,19,170,.18);
-      position: relative;
-      z-index: 20;
+    body {
+      background: var(--bg);
+      color: var(--text);
     }
 
-    .header-row {
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    .top-header {
+      height: 68px;
+      background: linear-gradient(135deg, #241078, #3413aa 60%, #5b35d5);
+      color: white;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 0 15px;
+      position: relative;
+      z-index: 100;
+      box-shadow: 0 3px 15px rgba(0,0,0,.15);
     }
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 10px;
+      min-width: 0;
     }
 
-    .back-btn {
+    .back-btn,
+    .menu-btn {
       width: 38px;
       height: 38px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.14);
+      border-radius: 11px;
       border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.13);
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       text-decoration: none;
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
-    .community-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 13px;
-      background: rgba(255,255,255,.18);
+    .menu-btn {
+      font-size: 16px;
+    }
+
+    .group-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.17);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 17px;
+      flex-shrink: 0;
     }
 
-    .header-title h1 {
-      font-size: 16px;
+    .group-title {
+      min-width: 0;
+    }
+
+    .group-title h1 {
+      font-size: 15px;
       font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .header-title p {
-      font-size: 10px;
+    .group-title p {
+      font-size: 9px;
       opacity: .78;
       margin-top: 2px;
     }
 
-    .coin-mini {
-      background: rgba(255,255,255,.13);
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 20px;
-      padding: 7px 11px;
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .coin-pill {
       display: flex;
       align-items: center;
       gap: 5px;
-      font-size: 12px;
+      background: rgba(255,255,255,.13);
+      border: 1px solid rgba(255,255,255,.13);
+      padding: 7px 10px;
+      border-radius: 20px;
+      font-size: 11px;
       font-weight: 800;
     }
 
-    .coin-mini i {
+    .coin-pill i {
       color: #fbbf24;
     }
 
-    /* ================= PAGE ================= */
+    /* =====================================================
+       MAIN CHAT
+    ===================================================== */
 
-    .page {
-      height: calc(100vh - 74px);
-      overflow-y: auto;
-      padding-bottom: 85px;
+    .chat-page {
+      height: calc(100vh - 68px);
+      display: flex;
+      flex-direction: column;
+      position: relative;
     }
 
-    /* ================= COMMUNITY HERO ================= */
-
-    .community-card {
-      margin: 14px;
+    .chat-status {
+      height: 36px;
       background: white;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 17px;
-      box-shadow: 0 5px 18px rgba(15,23,42,.05);
-    }
-
-    .community-top {
+      border-bottom: 1px solid var(--border);
       display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .big-community-icon {
-      width: 52px;
-      height: 52px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
       flex-shrink: 0;
-      border-radius: 16px;
-      background: linear-gradient(135deg,#3413aa,#7c5ce8);
-      color: white;
+    }
+
+    .live-status {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      box-shadow: 0 7px 18px rgba(52,19,170,.22);
-    }
-
-    .community-details {
-      flex: 1;
-    }
-
-    .community-details h2 {
-      font-size: 16px;
-      font-weight: 800;
-      color: #172033;
-    }
-
-    .community-details p {
-      font-size: 11px;
-      color: var(--muted);
-      line-height: 1.55;
-      margin-top: 4px;
-    }
-
-    .online-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      margin-top: 7px;
-      font-size: 10px;
+      gap: 6px;
       color: #16a34a;
+      font-size: 10px;
       font-weight: 700;
     }
 
-    .online-dot {
+    .live-dot {
       width: 7px;
       height: 7px;
-      background: #22c55e;
       border-radius: 50%;
+      background: #22c55e;
       box-shadow: 0 0 0 3px #dcfce7;
     }
 
-    /* ================= STATS ================= */
-
-    .community-stats {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 8px;
-      margin-top: 15px;
-    }
-
-    .stat-box {
-      background: #f8fafc;
-      border: 1px solid #eef2f7;
-      border-radius: 13px;
-      padding: 10px 5px;
-      text-align: center;
-    }
-
-    .stat-box i {
-      font-size: 13px;
-      color: var(--primary);
-      margin-bottom: 4px;
-    }
-
-    .stat-box strong {
-      display: block;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .stat-box span {
+    .chat-count {
       font-size: 9px;
       color: var(--muted);
     }
 
-    /* ================= NOTICE ================= */
-
-    .notice {
-      margin: 0 14px 12px;
-      padding: 12px 13px;
-      background: linear-gradient(135deg,#fff7ed,#fffbeb);
-      border: 1px solid #fde68a;
-      border-radius: 15px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-
-    .notice-icon {
-      width: 29px;
-      height: 29px;
-      border-radius: 9px;
-      background: #f59e0b;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 12px;
-    }
-
-    .notice h4 {
-      font-size: 11px;
-      font-weight: 800;
-      margin-bottom: 3px;
-    }
-
-    .notice p {
-      font-size: 10px;
-      color: #78716c;
-      line-height: 1.45;
-    }
-
-    /* ================= COIN CARD ================= */
-
-    .coin-card {
-      margin: 0 14px 12px;
-      background: linear-gradient(135deg,#171717,#292929);
-      border-radius: 19px;
-      padding: 15px;
-      color: white;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .coin-card::after {
-      content: "₿";
-      position: absolute;
-      right: -15px;
-      bottom: -28px;
-      font-size: 105px;
-      font-weight: 800;
-      color: rgba(245,158,11,.08);
-      transform: rotate(-15deg);
-    }
-
-    .coin-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .coin-title {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    .coin-icon {
-      width: 35px;
-      height: 35px;
-      border-radius: 11px;
-      background: #f59e0b;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .coin-title h3 {
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .coin-title p {
-      font-size: 9px;
-      color: #a3a3a3;
-      margin-top: 2px;
-    }
-
-    .coin-balance {
-      font-size: 19px;
-      font-weight: 800;
-      color: #fbbf24;
-    }
-
-    .coin-actions {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 7px;
-      margin-top: 13px;
-    }
-
-    .coin-action {
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.07);
-      border-radius: 11px;
-      padding: 9px 4px;
-      text-align: center;
-      cursor: pointer;
-    }
-
-    .coin-action i {
-      font-size: 11px;
-      color: #fbbf24;
-      margin-bottom: 4px;
-    }
-
-    .coin-action span {
-      display: block;
-      font-size: 8px;
-      color: #d4d4d4;
-    }
-
-    /* ================= CHAT ================= */
-
-    .chat-section {
-      margin: 0 14px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 5px 18px rgba(15,23,42,.05);
-    }
-
-    .chat-section-header {
-      padding: 13px 14px;
-      border-bottom: 1px solid #eef2f7;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .chat-heading {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .chat-heading-icon {
-      width: 31px;
-      height: 31px;
-      border-radius: 10px;
-      background: #eef2ff;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-    }
-
-    .chat-heading h3 {
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .chat-heading p {
-      font-size: 9px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .chat-online {
-      font-size: 9px;
-      color: #16a34a;
-      font-weight: 700;
-    }
+    /* =====================================================
+       CHAT MESSAGES
+    ===================================================== */
 
     .chat-container {
-      height: 48vh;
-      min-height: 300px;
-      max-height: 500px;
-      padding: 14px;
+      flex: 1;
       overflow-y: auto;
-      background: #f8fafc;
+      padding: 15px 13px 18px;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(52,19,170,.035), transparent 25%),
+        #f5f7fb;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      -webkit-overflow-scrolling: touch;
     }
-
-    /* ================= MESSAGES ================= */
 
     .message-row {
       display: flex;
       flex-direction: column;
-      max-width: 78%;
+      max-width: 82%;
+      animation: messageIn .18s ease;
+    }
+
+    @keyframes messageIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .message-row.sent {
@@ -435,20 +227,21 @@
       font-size: 9px;
       font-weight: 800;
       color: #64748b;
-      margin: 0 4px 3px;
+      margin: 0 5px 3px;
     }
 
     .message-bubble {
-      padding: 9px 12px;
-      border-radius: 15px;
+      padding: 10px 13px;
+      border-radius: 16px;
       font-size: 13px;
-      line-height: 1.45;
+      line-height: 1.48;
       word-break: break-word;
-      box-shadow: 0 2px 5px rgba(0,0,0,.035);
+      position: relative;
+      box-shadow: 0 2px 7px rgba(15,23,42,.045);
     }
 
     .message-row.sent .message-bubble {
-      background: linear-gradient(135deg,#3413aa,#4c25c6);
+      background: linear-gradient(135deg, #3413aa, #542bc7);
       color: white;
       border-bottom-right-radius: 4px;
     }
@@ -461,94 +254,477 @@
     }
 
     .msg-time {
-      font-size: 8px;
-      opacity: .65;
-      margin-top: 4px;
       display: block;
       text-align: right;
+      font-size: 8px;
+      opacity: .62;
+      margin-top: 4px;
     }
 
-    /* ================= INPUT ================= */
+    .empty-chat {
+      margin: auto;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .empty-chat i {
+      font-size: 30px;
+      margin-bottom: 9px;
+      opacity: .6;
+    }
+
+    /* =====================================================
+       INPUT
+    ===================================================== */
 
     .chat-input-area {
-      padding: 11px;
+      min-height: 65px;
       background: white;
-      border-top: 1px solid #e5e7eb;
+      border-top: 1px solid var(--border);
+      padding: 10px 11px;
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-shrink: 0;
+      padding-bottom: calc(10px + env(safe-area-inset-bottom));
     }
 
     .chat-input {
       flex: 1;
-      background: #f8fafc;
+      min-width: 0;
+      height: 43px;
+      border-radius: 23px;
       border: 1px solid #dbe2ea;
-      padding: 11px 14px;
-      border-radius: 22px;
-      font-size: 13px;
+      background: #f8fafc;
       outline: none;
+      padding: 0 15px;
+      font-size: 13px;
+      color: var(--text);
     }
 
     .chat-input:focus {
       border-color: var(--primary);
       background: white;
+      box-shadow: 0 0 0 3px rgba(52,19,170,.07);
+    }
+
+    .chat-input:disabled {
+      opacity: .6;
     }
 
     .send-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
+      width: 43px;
+      height: 43px;
       border: none;
+      border-radius: 50%;
       background: linear-gradient(135deg,#3413aa,#5b35d5);
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 5px 12px rgba(52,19,170,.25);
+      flex-shrink: 0;
+      box-shadow: 0 5px 14px rgba(52,19,170,.25);
+    }
+
+    .send-btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    /* =====================================================
+       RIGHT SIDE DRAWER
+    ===================================================== */
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.48);
+      z-index: 300;
+      opacity: 0;
+      visibility: hidden;
+      transition: .25s ease;
+      backdrop-filter: blur(2px);
+    }
+
+    .drawer-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .side-drawer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: min(88%, 370px);
+      height: 100%;
+      background: #f8fafc;
+      transform: translateX(100%);
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
+      box-shadow: -8px 0 30px rgba(15,23,42,.16);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer-overlay.show .side-drawer {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      min-height: 70px;
+      background: linear-gradient(135deg,#241078,#3413aa,#5b35d5);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
       flex-shrink: 0;
     }
 
-    /* ================= TOAST ================= */
+    .drawer-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .drawer-header-icon {
+      width: 37px;
+      height: 37px;
+      border-radius: 11px;
+      background: rgba(255,255,255,.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drawer-header h2 {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .drawer-header p {
+      font-size: 9px;
+      opacity: .75;
+      margin-top: 2px;
+    }
+
+    .close-drawer {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.1);
+      color: white;
+      cursor: pointer;
+    }
+
+    .drawer-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 13px;
+    }
+
+    /* Drawer sections */
+
+    .drawer-section {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      padding: 14px;
+      margin-bottom: 11px;
+      box-shadow: 0 3px 12px rgba(15,23,42,.035);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 11px;
+    }
+
+    .section-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: #eef2ff;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+
+    .section-title h3 {
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .section-title p {
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Community info */
+
+    .community-description {
+      color: #475569;
+      font-size: 11px;
+      line-height: 1.6;
+      background: #f8fafc;
+      padding: 10px;
+      border-radius: 11px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .info-row i {
+      width: 25px;
+      text-align: center;
+      color: var(--primary);
+      font-size: 11px;
+    }
+
+    .info-row span {
+      font-size: 10px;
+      color: #475569;
+    }
+
+    /* Coin card */
+
+    .coin-card {
+      background: linear-gradient(135deg,#181818,#292929);
+      color: white;
+      border: none;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .coin-card::after {
+      content: "₿";
+      position: absolute;
+      right: -14px;
+      bottom: -35px;
+      font-size: 115px;
+      font-weight: 800;
+      color: rgba(245,158,11,.07);
+      transform: rotate(-15deg);
+      pointer-events: none;
+    }
+
+    .coin-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+
+    .coin-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .coin-icon {
+      width: 37px;
+      height: 37px;
+      border-radius: 11px;
+      background: #f59e0b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .coin-title h3 {
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .coin-title p {
+      font-size: 8px;
+      color: #a3a3a3;
+      margin-top: 2px;
+    }
+
+    .coin-balance {
+      color: #fbbf24;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .coin-list {
+      margin-top: 13px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .coin-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+
+    .coin-item i {
+      width: 23px;
+      text-align: center;
+      color: #fbbf24;
+      font-size: 10px;
+    }
+
+    .coin-item span {
+      font-size: 9px;
+      color: #d4d4d4;
+      flex: 1;
+    }
+
+    .coin-item strong {
+      font-size: 9px;
+      color: #fbbf24;
+    }
+
+    .coin-note {
+      margin-top: 10px;
+      padding: 8px 9px;
+      border-radius: 9px;
+      background: rgba(255,255,255,.06);
+      color: #a3a3a3;
+      font-size: 8px;
+      line-height: 1.45;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Rules */
+
+    .rule {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin-bottom: 10px;
+    }
+
+    .rule:last-child {
+      margin-bottom: 0;
+    }
+
+    .rule-number {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: #eef2ff;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .rule p {
+      font-size: 10px;
+      color: #475569;
+      line-height: 1.45;
+      padding-top: 2px;
+    }
+
+    /* Quick actions */
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .quick-btn {
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 11px;
+      padding: 11px 7px;
+      color: #334155;
+      cursor: pointer;
+      text-align: center;
+      font-size: 9px;
+    }
+
+    .quick-btn i {
+      display: block;
+      color: var(--primary);
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .quick-btn:active {
+      transform: scale(.97);
+    }
+
+    /* =====================================================
+       TOAST
+    ===================================================== */
 
     .toast {
       position: fixed;
       left: 50%;
-      bottom: 82px;
-      transform: translateX(-50%) translateY(20px);
+      bottom: 80px;
+      transform: translate(-50%,20px);
       background: #172033;
       color: white;
       padding: 10px 15px;
       border-radius: 12px;
-      font-size: 11px;
+      font-size: 10px;
       opacity: 0;
-      pointer-events: none;
+      visibility: hidden;
       transition: .25s;
-      z-index: 999;
+      z-index: 500;
+      max-width: 88%;
+      text-align: center;
       white-space: nowrap;
     }
 
     .toast.show {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      visibility: visible;
+      transform: translate(-50%,0);
     }
 
-    /* ================= RESPONSIVE ================= */
+    /* =====================================================
+       DESKTOP
+    ===================================================== */
 
     @media (min-width: 700px) {
-      .page {
-        max-width: 700px;
-        margin: auto;
-        width: 100%;
-      }
 
       .top-header {
-        max-width: 700px;
+        max-width: 760px;
         margin: auto;
       }
 
-      body {
-        background: #eef2f7;
+      .chat-page {
+        max-width: 760px;
+        margin: auto;
+        height: calc(100vh - 68px);
+        background: #f5f7fb;
+      }
+
+      .chat-container {
+        padding-left: 25px;
+        padding-right: 25px;
       }
     }
   </style>
@@ -556,587 +732,1021 @@
 
 <body>
 
-<!-- ================= HEADER ================= -->
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
 <header class="top-header">
 
-  <div class="header-row">
+  <div class="header-left">
 
-    <div class="header-left">
+    <a href="dashboard.html" class="back-btn">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
 
-      <a href="dashboard.html" class="back-btn">
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
-
-      <div class="community-icon">
-        <i class="fa-solid fa-users"></i>
-      </div>
-
-      <div class="header-title">
-        <h1>Discussion Community</h1>
-        <p>Learn • Discuss • Grow Together</p>
-      </div>
-
+    <div class="group-avatar">
+      <i class="fa-solid fa-users"></i>
     </div>
 
-    <div class="coin-mini">
+    <div class="group-title">
+      <h1>Loksewa Discussion</h1>
+      <p>Learn • Discuss • Grow Together</p>
+    </div>
+
+  </div>
+
+  <div class="header-right">
+
+    <div class="coin-pill">
       <i class="fa-solid fa-coins"></i>
       <span id="headerCoins">0</span>
     </div>
+
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
 
   </div>
 
 </header>
 
 
-<div class="page">
+<!-- =====================================================
+     CHAT PAGE
+===================================================== -->
 
-  <!-- ================= COMMUNITY INTRO ================= -->
+<main class="chat-page">
 
-  <section class="community-card">
+  <div class="chat-status">
 
-    <div class="community-top">
-
-      <div class="big-community-icon">
-        <i class="fa-solid fa-comments"></i>
-      </div>
-
-      <div class="community-details">
-
-        <h2>Loksewa Discussion Group</h2>
-
-        <p>
-          लोकसेवा तयारीसँग सम्बन्धित प्रश्न, ज्ञान, 
-          अनुभव र useful information साझा गरौँ।
-        </p>
-
-        <div class="online-status">
-          <span class="online-dot"></span>
-          Friendly community for all aspirants
-        </div>
-
-      </div>
-
+    <div class="live-status">
+      <span class="live-dot"></span>
+      Community Live
     </div>
 
-    <div class="community-stats">
-
-      <div class="stat-box">
-        <i class="fa-solid fa-message"></i>
-        <strong id="messageCount">0</strong>
-        <span>Messages</span>
-      </div>
-
-      <div class="stat-box">
-        <i class="fa-solid fa-users"></i>
-        <strong id="memberCount">—</strong>
-        <span>Aspirants</span>
-      </div>
-
-      <div class="stat-box">
-        <i class="fa-solid fa-fire"></i>
-        <strong>Daily</strong>
-        <span>Activity</span>
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- ================= COMMUNITY NOTICE ================= -->
-
-  <div class="notice">
-
-    <div class="notice-icon">
-      <i class="fa-solid fa-bullhorn"></i>
-    </div>
-
-    <div>
-      <h4>Community Guidelines</h4>
-
-      <p>
-        Respect everyone • No spam • No abusive language • 
-        Keep discussions related to learning & Loksewa preparation.
-      </p>
+    <div class="chat-count">
+      <span id="messageCount">0</span> messages
     </div>
 
   </div>
 
 
-  <!-- ================= COINS ================= -->
+  <!-- CHAT -->
 
-  <section class="coin-card">
+  <div class="chat-container" id="chatContainer">
 
-    <div class="coin-header">
+    <div class="empty-chat">
 
-      <div class="coin-title">
+      <i class="fa-regular fa-comments"></i>
 
-        <div class="coin-icon">
-          <i class="fa-solid fa-coins"></i>
+      <br>
+
+      मसेजहरू लोड हुँदैछन्...
+
+    </div>
+
+  </div>
+
+
+  <!-- INPUT -->
+
+  <form class="chat-input-area" id="chatForm">
+
+    <input
+      type="text"
+      id="messageInput"
+      class="chat-input"
+      maxlength="500"
+      placeholder="आफ्नो प्रश्न वा विचार लेख्नुहोस्..."
+      autocomplete="off"
+      required
+    >
+
+    <button
+      type="submit"
+      class="send-btn"
+      id="sendBtn"
+      aria-label="Send message"
+    >
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+
+  </form>
+
+</main>
+
+
+<!-- =====================================================
+     RIGHT SIDE MENU
+===================================================== -->
+
+<div class="drawer-overlay" id="drawerOverlay">
+
+  <aside class="side-drawer">
+
+    <!-- Drawer header -->
+
+    <div class="drawer-header">
+
+      <div class="drawer-header-left">
+
+        <div class="drawer-header-icon">
+          <i class="fa-solid fa-layer-group"></i>
         </div>
 
         <div>
-          <h3>Quest Coins</h3>
-          <p>Participate & earn rewards</p>
+          <h2>Community Menu</h2>
+          <p>Everything about this group</p>
         </div>
 
       </div>
 
-      <div class="coin-balance">
-        <span id="coinBalance">0</span>
-      </div>
+      <button class="close-drawer" id="closeDrawer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
 
     </div>
 
 
-    <div class="coin-actions">
-
-      <div class="coin-action" onclick="showCoinInfo('earn')">
-        <i class="fa-solid fa-plus"></i>
-        <span>Earn Coins</span>
-      </div>
-
-      <div class="coin-action" onclick="showCoinInfo('help')">
-        <i class="fa-solid fa-handshake"></i>
-        <span>Help Others</span>
-      </div>
-
-      <div class="coin-action" onclick="showCoinInfo('redeem')">
-        <i class="fa-solid fa-gift"></i>
-        <span>Use Coins</span>
-      </div>
-
-    </div>
-
-  </section>
+    <div class="drawer-content">
 
 
-  <!-- ================= CHAT ================= -->
+      <!-- =================================================
+           COMMUNITY INFO
+      ================================================= -->
 
-  <section class="chat-section">
+      <section class="drawer-section">
 
-    <div class="chat-section-header">
+        <div class="section-title">
 
-      <div class="chat-heading">
+          <div class="section-icon">
+            <i class="fa-solid fa-circle-info"></i>
+          </div>
 
-        <div class="chat-heading-icon">
-          <i class="fa-solid fa-comments"></i>
+          <div>
+            <h3>About Community</h3>
+            <p>LoksewaQuest Discussion</p>
+          </div>
+
         </div>
 
-        <div>
-          <h3>Community Chat</h3>
-          <p>Share questions, answers & ideas</p>
+
+        <div class="community-description">
+
+          लोकसेवा तयारीसँग सम्बन्धित प्रश्न,
+          ज्ञान, अनुभव, study tips र useful
+          information एकअर्कासँग साझा गर्ने
+          friendly community।
+
         </div>
 
-      </div>
 
-      <div class="chat-online">
-        ● Live
-      </div>
+        <div style="margin-top:10px;">
 
-    </div>
+          <div class="info-row">
+            <i class="fa-solid fa-users"></i>
+            <span>Loksewa aspirants का लागि खुला</span>
+          </div>
+
+          <div class="info-row">
+            <i class="fa-solid fa-comments"></i>
+            <span>Real-time community discussion</span>
+          </div>
+
+          <div class="info-row">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Study & preparation focused</span>
+          </div>
+
+        </div>
+
+      </section>
 
 
-    <div class="chat-container" id="chatContainer">
+      <!-- =================================================
+           QUEST COINS
+      ================================================= -->
+
+      <section class="drawer-section coin-card">
+
+        <div class="coin-top">
+
+          <div class="coin-title">
+
+            <div class="coin-icon">
+              <i class="fa-solid fa-coins"></i>
+            </div>
+
+            <div>
+              <h3>Quest Coins</h3>
+              <p>Participate • Earn • Unlock</p>
+            </div>
+
+          </div>
+
+          <div class="coin-balance">
+            <span id="drawerCoins">0</span>
+          </div>
+
+        </div>
+
+
+        <div class="coin-list">
+
+          <div class="coin-item">
+
+            <i class="fa-solid fa-calendar-check"></i>
+
+            <span>Daily login</span>
+
+            <strong>+5</strong>
+
+          </div>
+
+
+          <div class="coin-item">
+
+            <i class="fa-solid fa-pen-to-square"></i>
+
+            <span>Complete practice / exam</span>
+
+            <strong>+10</strong>
+
+          </div>
+
+
+          <div class="coin-item">
+
+            <i class="fa-solid fa-trophy"></i>
+
+            <span>Excellent performance</span>
+
+            <strong>+20</strong>
+
+          </div>
+
+
+          <div class="coin-item">
+
+            <i class="fa-solid fa-fire"></i>
+
+            <span>Maintain study streak</span>
+
+            <strong>Bonus</strong>
+
+          </div>
+
+
+          <div class="coin-item">
+
+            <i class="fa-solid fa-handshake"></i>
+
+            <span>Helpful community contribution</span>
+
+            <strong>Bonus</strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="coin-note">
+
+          💡 Coins भविष्यमा hints, lifelines,
+          badges, streak protection तथा
+          special practice features unlock
+          गर्न प्रयोग गर्न सकिनेछ।
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           COMMUNITY RULES
+      ================================================= -->
+
+      <section class="drawer-section">
+
+        <div class="section-title">
+
+          <div class="section-icon">
+            <i class="fa-solid fa-shield-heart"></i>
+          </div>
+
+          <div>
+            <h3>Community Rules</h3>
+            <p>Keep the community helpful</p>
+          </div>
+
+        </div>
+
+
+        <div class="rule">
+
+          <div class="rule-number">1</div>
+
+          <p>
+            सबै सदस्यलाई सम्मानपूर्वक व्यवहार गर्नुहोस्।
+          </p>
+
+        </div>
+
+
+        <div class="rule">
+
+          <div class="rule-number">2</div>
+
+          <p>
+            अनावश्यक spam वा repeated messages नगर्नुहोस्।
+          </p>
+
+        </div>
+
+
+        <div class="rule">
+
+          <div class="rule-number">3</div>
+
+          <p>
+            अपमानजनक वा abusive language प्रयोग नगर्नुहोस्।
+          </p>
+
+        </div>
+
+
+        <div class="rule">
+
+          <div class="rule-number">4</div>
+
+          <p>
+            सम्भव भएसम्म discussion लाई study र Loksewa
+            preparation सँग सम्बन्धित राख्नुहोस्।
+          </p>
+
+        </div>
+
+
+        <div class="rule">
+
+          <div class="rule-number">5</div>
+
+          <p>
+            गलत जानकारी भेटिएमा विनम्र रूपमा correction
+            वा reliable source सहित जानकारी दिनुहोस्।
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           QUICK ACTIONS
+      ================================================= -->
+
+      <section class="drawer-section">
+
+        <div class="section-title">
+
+          <div class="section-icon">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+
+          <div>
+            <h3>Quick Actions</h3>
+            <p>Explore LoksewaQuest</p>
+          </div>
+
+        </div>
+
+
+        <div class="quick-actions">
+
+          <button
+            class="quick-btn"
+            onclick="goToPage('practice.html')"
+          >
+            <i class="fa-solid fa-pen"></i>
+            Practice
+          </button>
+
+
+          <button
+            class="quick-btn"
+            onclick="goToPage('dashboard.html')"
+          >
+            <i class="fa-solid fa-house"></i>
+            Dashboard
+          </button>
+
+
+          <button
+            class="quick-btn"
+            onclick="showCoinMessage()"
+          >
+            <i class="fa-solid fa-coins"></i>
+            My Coins
+          </button>
+
+
+          <button
+            class="quick-btn"
+            onclick="showRulesMessage()"
+          >
+            <i class="fa-solid fa-shield"></i>
+            Rules
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- FOOTER INFO -->
 
       <div style="
         text-align:center;
+        padding:4px 10px 15px;
         color:#94a3b8;
-        font-size:11px;
-        margin-top:25px;
+        font-size:8px;
+        line-height:1.5;
       ">
-        <i class="fa-solid fa-circle-notch fa-spin"></i>
-        <br><br>
-        मसेजहरू लोड हुँदैछन्...
+
+        LoksewaQuest Community<br>
+        Learn • Practice • Improve • Succeed 🇳🇵
+
       </div>
+
 
     </div>
 
-
-    <form class="chat-input-area" id="chatForm">
-
-      <input
-        type="text"
-        class="chat-input"
-        id="messageInput"
-        maxlength="500"
-        placeholder="आफ्नो प्रश्न वा विचार लेख्नुहोस्..."
-        autocomplete="off"
-        required
-      >
-
-      <button type="submit" class="send-btn" id="sendBtn">
-        <i class="fa-solid fa-paper-plane"></i>
-      </button>
-
-    </form>
-
-  </section>
+  </aside>
 
 </div>
 
 
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
 <div class="toast" id="toast"></div>
 
 
-<!-- ================= FIREBASE ================= -->
+<!-- =====================================================
+     FIREBASE
+===================================================== -->
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
-import {
-  getAuth,
-  onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  }
+    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  onSnapshot,
-  serverTimestamp,
-  doc,
-  getDoc
-}
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-
-const firebaseConfig = {
-
-  apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-
-  authDomain:
-    "loksewaquest-227b6.firebaseapp.com",
-
-  projectId:
-    "loksewaquest-227b6",
-
-  storageBucket:
-    "loksewaquest-227b6.firebasestorage.app",
-
-  messagingSenderId:
-    "779234903809",
-
-  appId:
-    "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-
-};
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    onSnapshot,
+    serverTimestamp,
+    doc,
+    getDoc
+  }
+    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
-const app = initializeApp(firebaseConfig);
+  /* =====================================================
+     FIREBASE CONFIG
+  ===================================================== */
 
-const auth = getAuth(app);
+  const firebaseConfig = {
 
-const db = getFirestore(app);
+    apiKey:
+      "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+
+    authDomain:
+      "loksewaquest-227b6.firebaseapp.com",
+
+    projectId:
+      "loksewaquest-227b6",
+
+    storageBucket:
+      "loksewaquest-227b6.firebasestorage.app",
+
+    messagingSenderId:
+      "779234903809",
+
+    appId:
+      "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
+  };
 
 
-let currentUser = null;
+  const app =
+    initializeApp(firebaseConfig);
 
-let currentUserName = "Aspirant";
+  const auth =
+    getAuth(app);
+
+  const db =
+    getFirestore(app);
 
 
-/* ================= AUTH ================= */
+  let currentUser = null;
 
-onAuthStateChanged(auth, async (user) => {
+  let currentUserName = "Aspirant";
 
-  if (!user) {
+  let messagesLoaded = false;
 
-    setTimeout(() => {
 
-      if (!auth.currentUser) {
+  /* =====================================================
+     DRAWER
+  ===================================================== */
 
-        window.location.replace(
-          "login.html?redirect=chat.html"
+  const menuBtn =
+    document.getElementById("menuBtn");
+
+  const drawerOverlay =
+    document.getElementById("drawerOverlay");
+
+  const closeDrawer =
+    document.getElementById("closeDrawer");
+
+
+  function openDrawer() {
+
+    drawerOverlay.classList.add("show");
+
+    document.body.style.overflow = "hidden";
+
+  }
+
+
+  function closeSideDrawer() {
+
+    drawerOverlay.classList.remove("show");
+
+    document.body.style.overflow = "";
+
+  }
+
+
+  menuBtn.addEventListener(
+    "click",
+    openDrawer
+  );
+
+
+  closeDrawer.addEventListener(
+    "click",
+    closeSideDrawer
+  );
+
+
+  drawerOverlay.addEventListener(
+    "click",
+    (e) => {
+
+      if (e.target === drawerOverlay) {
+
+        closeSideDrawer();
+
+      }
+
+    }
+  );
+
+
+  /* Android back gesture / browser back */
+
+  window.addEventListener(
+    "keydown",
+    (e) => {
+
+      if (e.key === "Escape") {
+
+        closeSideDrawer();
+
+      }
+
+    }
+  );
+
+
+  /* =====================================================
+     AUTH
+  ===================================================== */
+
+  onAuthStateChanged(
+    auth,
+    async (user) => {
+
+      if (!user) {
+
+        /*
+          Firebase auth restore हुन केही समय
+          लाग्न सक्छ। त्यसैले तुरुन्त redirect नगर्ने।
+        */
+
+        setTimeout(() => {
+
+          if (!auth.currentUser) {
+
+            window.location.replace(
+              "login.html?redirect=chat.html"
+            );
+
+          }
+
+        }, 2500);
+
+        return;
+
+      }
+
+
+      currentUser = user;
+
+
+      currentUserName =
+        user.displayName ||
+        (
+          user.email
+            ? user.email.split("@")[0]
+            : "Aspirant"
+        );
+
+
+      /* =================================================
+         PROFILE NAME
+      ================================================= */
+
+      try {
+
+        const userRef =
+          doc(
+            db,
+            "users",
+            user.uid
+          );
+
+
+        const userSnap =
+          await getDoc(userRef);
+
+
+        if (
+          userSnap.exists() &&
+          userSnap.data().name
+        ) {
+
+          currentUserName =
+            userSnap.data().name;
+
+        }
+
+      } catch (error) {
+
+        console.log(
+          "Profile name fetch error:",
+          error
         );
 
       }
 
-    }, 2500);
 
-    return;
-  }
+      loadRealtimeMessages();
 
-
-  currentUser = user;
-
-  currentUserName =
-    user.displayName ||
-    (user.email
-      ? user.email.split("@")[0]
-      : "Aspirant");
-
-
-  /* GET PROFILE NAME */
-
-  try {
-
-    const userDocRef =
-      doc(db, "users", user.uid);
-
-    const userDocSnap =
-      await getDoc(userDocRef);
-
-    if (
-      userDocSnap.exists() &&
-      userDocSnap.data().name
-    ) {
-
-      currentUserName =
-        userDocSnap.data().name;
+      loadUserCoins();
 
     }
+  );
 
-  } catch (error) {
 
-    console.log(
-      "Profile name fetch error",
-      error
+  /* =====================================================
+     REALTIME CHAT
+  ===================================================== */
+
+  function loadRealtimeMessages() {
+
+    if (messagesLoaded) return;
+
+    messagesLoaded = true;
+
+
+    const chatRef =
+      collection(
+        db,
+        "global_chat"
+      );
+
+
+    onSnapshot(
+
+      chatRef,
+
+      (snapshot) => {
+
+        const container =
+          document.getElementById(
+            "chatContainer"
+          );
+
+
+        container.innerHTML = "";
+
+
+        if (snapshot.empty) {
+
+          container.innerHTML = `
+
+            <div class="empty-chat">
+
+              <i class="fa-regular fa-comments"></i>
+
+              <br>
+
+              कुनै मसेज छैन।
+
+              <br>
+
+              पहिलो मसेज तपाईंले लेख्नुहोस्! 🚀
+
+            </div>
+
+          `;
+
+          updateMessageCount(0);
+
+          return;
+
+        }
+
+
+        let messages = [];
+
+
+        snapshot.forEach(
+          (docSnap) => {
+
+            messages.push({
+
+              id: docSnap.id,
+
+              ...docSnap.data()
+
+            });
+
+          }
+        );
+
+
+        /* =================================================
+           SORT OLDEST → NEWEST
+        ================================================= */
+
+        messages.sort(
+          (a, b) => {
+
+            const timeA =
+              a.createdAt?.toMillis?.() || 0;
+
+            const timeB =
+              b.createdAt?.toMillis?.() || 0;
+
+            return timeA - timeB;
+
+          }
+        );
+
+
+        updateMessageCount(
+          messages.length
+        );
+
+
+        messages.forEach(
+          (data) => {
+
+            const isMe =
+              data.uid === currentUser.uid;
+
+
+            let timeStr =
+              "भर्खरै";
+
+
+            if (
+              data.createdAt &&
+              data.createdAt.toDate
+            ) {
+
+              try {
+
+                const date =
+                  data.createdAt.toDate();
+
+
+                timeStr =
+                  date.toLocaleTimeString(
+                    "ne-NP",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit"
+                    }
+                  );
+
+              } catch (e) {
+
+                timeStr =
+                  "भर्खरै";
+
+              }
+
+            }
+
+
+            const row =
+              document.createElement(
+                "div"
+              );
+
+
+            row.className =
+              "message-row " +
+              (
+                isMe
+                  ? "sent"
+                  : "received"
+              );
+
+
+            if (!isMe) {
+
+              const sender =
+                document.createElement(
+                  "span"
+                );
+
+              sender.className =
+                "sender-name";
+
+              sender.textContent =
+                data.senderName ||
+                "Aspirant";
+
+              row.appendChild(
+                sender
+              );
+
+            }
+
+
+            const bubble =
+              document.createElement(
+                "div"
+              );
+
+
+            bubble.className =
+              "message-bubble";
+
+
+            const textNode =
+              document.createTextNode(
+                data.text || ""
+              );
+
+
+            bubble.appendChild(
+              textNode
+            );
+
+
+            const time =
+              document.createElement(
+                "span"
+              );
+
+
+            time.className =
+              "msg-time";
+
+            time.textContent =
+              timeStr;
+
+
+            bubble.appendChild(
+              time
+            );
+
+
+            row.appendChild(
+              bubble
+            );
+
+
+            container.appendChild(
+              row
+            );
+
+          }
+        );
+
+
+        /*
+          Newest message तल देखाउने
+        */
+
+        requestAnimationFrame(
+          () => {
+
+            container.scrollTop =
+              container.scrollHeight;
+
+          }
+        );
+
+      },
+
+      (error) => {
+
+        console.error(
+          "Firestore Read Error:",
+          error
+        );
+
+
+        const container =
+          document.getElementById(
+            "chatContainer"
+          );
+
+
+        container.innerHTML = `
+
+          <div class="empty-chat"
+               style="color:#ef4444;">
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+            <br>
+
+            मसेज लोड गर्न समस्या भयो।
+
+            <br>
+
+            <small>
+              कृपया internet connection जाँच गर्नुहोस्।
+            </small>
+
+          </div>
+
+        `;
+
+      }
+
     );
 
   }
 
 
-  loadRealtimeMessages();
+  /* =====================================================
+     SEND MESSAGE
+  ===================================================== */
 
-  loadUserCoins();
+  const chatForm =
+    document.getElementById(
+      "chatForm"
+    );
 
-});
 
+  const messageInput =
+    document.getElementById(
+      "messageInput"
+    );
 
-/* ================= LOAD CHAT ================= */
 
-function loadRealtimeMessages() {
+  const sendBtn =
+    document.getElementById(
+      "sendBtn"
+    );
 
-  const chatRef =
-    collection(db, "global_chat");
 
-
-  onSnapshot(
-    chatRef,
-
-    (snapshot) => {
-
-      const chatContainer =
-        document.getElementById(
-          "chatContainer"
-        );
-
-      chatContainer.innerHTML = "";
-
-
-      if (snapshot.empty) {
-
-        chatContainer.innerHTML = `
-
-          <div style="
-            text-align:center;
-            color:#94a3b8;
-            font-size:11px;
-            margin-top:30px;
-          ">
-
-            <i class="fa-regular fa-comments"
-               style="font-size:25px;margin-bottom:10px;">
-            </i>
-
-            <br>
-
-            कुनै मसेज छैन।
-            <br>
-            पहिलो मसेज तपाईंले लेख्नुहोस्! 🚀
-
-          </div>
-
-        `;
-
-        updateMessageCount(0);
-
-        return;
-      }
-
-
-      let messages = [];
-
-
-      snapshot.forEach((docSnap) => {
-
-        messages.push({
-
-          id: docSnap.id,
-
-          ...docSnap.data()
-
-        });
-
-      });
-
-
-      /* SORT */
-
-      messages.sort((a,b) => {
-
-        const timeA =
-          a.createdAt?.toMillis?.() || 0;
-
-        const timeB =
-          b.createdAt?.toMillis?.() || 0;
-
-        return timeA - timeB;
-
-      });
-
-
-      updateMessageCount(messages.length);
-
-
-      messages.forEach((data) => {
-
-        const isMe =
-          data.uid === currentUser.uid;
-
-
-        let timeStr = "भर्खरै";
-
-
-        if (
-          data.createdAt &&
-          data.createdAt.toDate
-        ) {
-
-          try {
-
-            const date =
-              data.createdAt.toDate();
-
-            timeStr =
-              date.toLocaleTimeString(
-                "ne-NP",
-                {
-                  hour: "2-digit",
-                  minute: "2-digit"
-                }
-              );
-
-          } catch(e) {}
-
-        }
-
-
-        const row =
-          document.createElement("div");
-
-        row.className =
-          `message-row ${
-            isMe ? "sent" : "received"
-          }`;
-
-
-        row.innerHTML = `
-
-          ${
-            !isMe
-            ? `
-              <span class="sender-name">
-                ${escapeHTML(
-                  data.senderName || "Aspirant"
-                )}
-              </span>
-            `
-            : ""
-          }
-
-          <div class="message-bubble">
-
-            ${escapeHTML(
-              data.text || ""
-            )}
-
-            <span class="msg-time">
-              ${timeStr}
-            </span>
-
-          </div>
-
-        `;
-
-
-        chatContainer.appendChild(row);
-
-      });
-
-
-      /* SCROLL BOTTOM */
-
-      chatContainer.scrollTop =
-        chatContainer.scrollHeight;
-
-    },
-
-    (error) => {
-
-      console.error(
-        "Firestore Read Error:",
-        error
-      );
-
-      document.getElementById(
-        "chatContainer"
-      ).innerHTML = `
-
-        <div style="
-          text-align:center;
-          color:#ef4444;
-          font-size:11px;
-          margin-top:30px;
-        ">
-
-          <i class="fa-solid fa-triangle-exclamation"
-             style="font-size:22px;">
-          </i>
-
-          <br><br>
-
-          मसेज लोड गर्न समस्या भयो।
-
-        </div>
-
-      `;
-
-    }
-
-  );
-
-}
-
-
-/* ================= SEND MESSAGE ================= */
-
-document
-  .getElementById("chatForm")
-  .addEventListener(
+  chatForm.addEventListener(
     "submit",
     async (e) => {
 
       e.preventDefault();
 
 
-      const input =
-        document.getElementById(
-          "messageInput"
-        );
-
-      const sendBtn =
-        document.getElementById(
-          "sendBtn"
-        );
-
-
       const text =
-        input.value.trim();
+        messageInput.value.trim();
 
 
       if (!text) return;
@@ -1153,18 +1763,41 @@ document
       }
 
 
-      input.disabled = true;
+      if (text.length > 500) {
 
-      sendBtn.disabled = true;
+        showToast(
+          "Message 500 characters भन्दा कम राख्नुहोस्।"
+        );
+
+        return;
+
+      }
+
+
+      messageInput.disabled =
+        true;
+
+      sendBtn.disabled =
+        true;
+
+
+      const oldIcon =
+        sendBtn.innerHTML;
+
+
+      sendBtn.innerHTML =
+        `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
 
 
       try {
 
         await addDoc(
+
           collection(
             db,
             "global_chat"
           ),
+
           {
 
             text: text,
@@ -1183,7 +1816,9 @@ document
         );
 
 
-        input.value = "";
+        messageInput.value =
+          "";
+
 
         showToast(
           "Message पठाइयो ✓"
@@ -1197,17 +1832,23 @@ document
           error
         );
 
+
         showToast(
           "Message पठाउन सकिएन।"
         );
 
       } finally {
 
-        input.disabled = false;
+        messageInput.disabled =
+          false;
 
-        sendBtn.disabled = false;
+        sendBtn.disabled =
+          false;
 
-        input.focus();
+        sendBtn.innerHTML =
+          oldIcon;
+
+        messageInput.focus();
 
       }
 
@@ -1215,165 +1856,156 @@ document
   );
 
 
-/* ================= COINS ================= */
+  /* =====================================================
+     COINS
+  ===================================================== */
 
-/*
-  अहिले तपाईंको chat system मा
-  coins को actual database field छैन।
+  async function loadUserCoins() {
 
-  त्यसैले UI मात्रै balance देखाइरहेको छ।
-  पछि users/{uid} मा coins field राखेर
-  वास्तविक system जोड्न सकिन्छ।
-*/
-
-async function loadUserCoins() {
-
-  if (!currentUser) return;
+    if (!currentUser) return;
 
 
-  try {
+    try {
 
-    const userRef =
-      doc(
-        db,
-        "users",
-        currentUser.uid
-      );
-
-    const userSnap =
-      await getDoc(userRef);
-
-
-    let coins = 0;
-
-
-    if (userSnap.exists()) {
-
-      coins =
-        Number(
-          userSnap.data().coins || 0
+      const userRef =
+        doc(
+          db,
+          "users",
+          currentUser.uid
         );
+
+
+      const userSnap =
+        await getDoc(userRef);
+
+
+      let coins = 0;
+
+
+      if (userSnap.exists()) {
+
+        coins =
+          Number(
+            userSnap.data().coins || 0
+          );
+
+      }
+
+
+      document.getElementById(
+        "headerCoins"
+      ).textContent =
+        coins;
+
+
+      document.getElementById(
+        "drawerCoins"
+      ).textContent =
+        coins;
+
+
+    } catch (error) {
+
+      console.log(
+        "Coin loading error:",
+        error
+      );
 
     }
 
+  }
+
+
+  /* =====================================================
+     MESSAGE COUNT
+  ===================================================== */
+
+  function updateMessageCount(
+    count
+  ) {
 
     document.getElementById(
-      "coinBalance"
-    ).textContent = coins;
-
-
-    document.getElementById(
-      "headerCoins"
-    ).textContent = coins;
-
-
-  } catch (error) {
-
-    console.log(
-      "Coin loading error:",
-      error
-    );
+      "messageCount"
+    ).textContent =
+      count;
 
   }
 
-}
+
+  /* =====================================================
+     QUICK ACTIONS
+  ===================================================== */
+
+  window.goToPage =
+    function(page) {
+
+      window.location.href =
+        page;
+
+    };
 
 
-/* ================= MESSAGE COUNT ================= */
+  window.showCoinMessage =
+    function() {
 
-function updateMessageCount(count) {
+      showToast(
+        "तपाईंका Quest Coins माथि देखाइएको छ 💰"
+      );
 
-  document.getElementById(
-    "messageCount"
-  ).textContent = count;
-
-}
-
-
-/* ================= COIN INFO ================= */
-
-window.showCoinInfo = function(type) {
-
-  if (type === "earn") {
-
-    showToast(
-      "Quiz खेल्नुहोस्, daily activity गर्नुहोस् र Coins कमाउनुहोस् 💰"
-    );
-
-  }
-
-  if (type === "help") {
-
-    showToast(
-      "Helpful answers र community contribution बाट reward system बनाउन सकिन्छ 🤝"
-    );
-
-  }
-
-  if (type === "redeem") {
-
-    showToast(
-      "Future मा Coins बाट hints, badges र special rewards unlock गर्न सकिनेछ 🎁"
-    );
-
-  }
-
-};
+    };
 
 
-/* ================= TOAST ================= */
+  window.showRulesMessage =
+    function() {
 
-function showToast(message) {
+      showToast(
+        "Community लाई friendly र useful राखौँ 🤝"
+      );
 
-  const toast =
-    document.getElementById(
-      "toast"
-    );
-
-
-  toast.textContent =
-    message;
+    };
 
 
-  toast.classList.add(
-    "show"
-  );
+  /* =====================================================
+     TOAST
+  ===================================================== */
+
+  function showToast(
+    message
+  ) {
+
+    const toast =
+      document.getElementById(
+        "toast"
+      );
 
 
-  setTimeout(() => {
+    toast.textContent =
+      message;
 
-    toast.classList.remove(
+
+    toast.classList.add(
       "show"
     );
 
-  }, 2800);
 
-}
-
-
-/* ================= SECURITY ================= */
-
-function escapeHTML(str) {
-
-  if (!str) return "";
+    clearTimeout(
+      window.toastTimer
+    );
 
 
-  return String(str).replace(
-    /[&<>'"]/g,
+    window.toastTimer =
+      setTimeout(
+        () => {
 
-    tag => ({
+          toast.classList.remove(
+            "show"
+          );
 
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      "'": "&#39;",
-      '"': "&quot;"
+        },
+        2800
+      );
 
-    }[tag] || tag)
-
-  );
-
-}
+  }
 
 </script>
 
