@@ -97,7 +97,7 @@
     <div id="startScreen" class="card screen-center">
       <div style="font-size: 40px; color: #2563eb; margin-bottom: 10px;"><i class="fa-solid fa-bolt"></i></div>
       <h2>गति परीक्षण (Speed Blitz)</h2>
-      <p>१ मिनेटमा धेरै भन्दा धेरै प्रश्न मिलाउनुहोस्!</p>
+      <p>१ मिनेटमा धेरै भन्दा धेरै प्रश्न मिलाउनुहोस्! (५ वटा गल्ती भएमा खेल समाप्त हुनेछ)</p>
       <button class="btn-primary" id="startBtn" style="margin-bottom: 15px;"><i class="fa-solid fa-play"></i> खेल सुरु गर्नुहोस् 🚀</button>
 
       <div class="leaderboard-section">
@@ -119,6 +119,10 @@
           <div id="timerVal" class="hud-value">60s</div>
         </div>
         <div class="hud-box">
+          <div class="hud-title">गल्ती (Mistakes)</div>
+          <div id="mistakeVal" class="hud-value" style="color: #dc2626;">0/5</div>
+        </div>
+        <div class="hud-box">
           <div class="hud-title">सही स्कोर</div>
           <div id="scoreVal" class="hud-value">0</div>
         </div>
@@ -135,7 +139,7 @@
     <div id="gameOverScreen" class="card screen-center hidden" style="text-align: left;">
       <div style="text-align: center; margin-bottom: 16px;">
         <div style="font-size: 38px; color: #16a34a; margin-bottom: 8px;"><i class="fa-solid fa-trophy"></i></div>
-        <h2>समय समाप्त भयो! ⏰</h2>
+        <h2 id="gameOverTitle">समय समाप्त भयो! ⏰</h2>
         <p style="margin-bottom: 4px;">तपाईंको कुल सही स्कोर:</p>
         <div id="finalScoreDisplay" style="font-size: 28px; font-weight: 800; color: #2563eb;">0</div>
       </div>
@@ -183,11 +187,6 @@
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
     import { getFirestore, doc as fsDoc, getDoc as fsGetDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
     
-    let componentsModule = null;
-    try {
-      componentsModule = await import('./components.js').catch(() => null);
-    } catch (e) { console.log("components.js not found or ignored."); }
-
     const firebaseConfig = {  
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",  
       authDomain: "loksewaquest-227b6.firebaseapp.com",  
@@ -293,6 +292,9 @@
       usedQuestionIndices.clear();
       gameSessionHistory = [];
 
+      document.getElementById('scoreVal').innerText = '0';
+      document.getElementById('mistakeVal').innerText = '0/5';
+
       startTimer();
       loadNextQuestion();
     });
@@ -307,7 +309,7 @@
 
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
-          endGame();
+          endGame("समय समाप्त भयो! ⏰");
         }
       }, 1000);
     }
@@ -326,7 +328,7 @@
 
       let optsArray = [];
       if (Array.isArray(q.options)) {
-        optsArray = q.options;
+        optsArray = [...q.options];
       } else if (typeof q.options === 'object' && q.options !== null) {
         optsArray = Object.values(q.options);
       } else if (typeof q.options === 'string') {
@@ -334,6 +336,12 @@
       }
 
       const correctAns = String(q.answer || '').trim();
+
+      // अप्सनहरूलाई अनियमित (Shuffle) पार्ने Fisher-Yates एल्गोरिदम
+      for (let i = optsArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [optsArray[i], optsArray[j]] = [optsArray[j], optsArray[i]];
+      }
 
       currentQuestionData = {
         question: q.question || "प्रश्न उपलब्ध छैन",
@@ -352,13 +360,7 @@
         btn.className = 'option-btn';
         btn.innerText = optText;
         
-        const isCorrect = (String(optText).trim().toLowerCase() === correctAns.toLowerCase()) || 
-                          (correctAns.length === 1 && (
-                            (correctAns.toUpperCase() === 'A' && optText === optsArray[0]) ||
-                            (correctAns.toUpperCase() === 'B' && optText === optsArray[1]) ||
-                            (correctAns.toUpperCase() === 'C' && optText === optsArray[2]) ||
-                            (correctAns.toUpperCase() === 'D' && optText === optsArray[3])
-                          ));
+        const isCorrect = (String(optText).trim().toLowerCase() === correctAns.toLowerCase());
 
         btn.onclick = () => handleAnswerClick(isCorrect, optText, btn);
         optionsContainer.appendChild(btn);
@@ -382,6 +384,17 @@
         selectedBtn.classList.add('wrong');
         wrongCount++;
         currentQuestionData.status = 'wrong';
+        document.getElementById('mistakeVal').innerText = `${wrongCount}/5`;
+
+        // यदि ५ वटा गल्ती पुग्यो भने खेल तुरुन्तै बन्द गर्ने
+        if (wrongCount >= 5) {
+          gameActive = false;
+          clearInterval(timerInterval);
+          setTimeout(() => {
+            endGame("धेरै गल्तीहरू भएका कारण खेल समाप्त भयो! ❌");
+          }, 400);
+          return;
+        }
       }
 
       gameSessionHistory.push(currentQuestionData);
@@ -400,15 +413,17 @@
       loadNextQuestion();
     };
 
-    async function endGame() {
+    async function endGame(reasonTitle) {
       gameActive = false;
+      if (timerInterval) clearInterval(timerInterval);
+
       document.getElementById('gameScreen').classList.add('hidden');
       document.getElementById('gameOverScreen').classList.remove('hidden');
+      document.getElementById('gameOverTitle').innerText = reasonTitle;
       document.getElementById('finalScoreDisplay').innerText = score;
 
       if (supabaseClient && currentUserName) {
         try {
-          // पहिले यो युजरको यो set_name को लागि लिडरबोर्डमा रेकर्ड छ कि छैन चेक गर्ने
           const { data: existingData, error: fetchErr } = await supabaseClient
             .from('exam_leaderboard')
             .select('id, score')
@@ -419,7 +434,6 @@
           if (fetchErr) console.error(fetchErr);
 
           if (existingData) {
-            // यदि पुरानो रेकर्ड छ र नयाँ स्कोर बढी छ भने मात्र अपडेट गर्ने (Rewrite/Update)
             if (score > existingData.score) {
               await supabaseClient
                 .from('exam_leaderboard')
@@ -434,7 +448,6 @@
                 .eq('id', existingData.id);
             }
           } else {
-            // छैन भने नयाँ इन्सर्ट गर्ने
             await supabaseClient
               .from('exam_leaderboard')
               .insert([
@@ -527,7 +540,6 @@
           .order('score', { ascending: false });
 
         if (type === 'daily') {
-          // नेपाली समय (NPT = UTC +5:45) अनुसार आजको मिति निकाल्ने
           const nowNpt = new Date(new Date().getTime() + (5.75 * 60 * 60 * 1000));
           const todayStr = nowNpt.toISOString().split('T')[0];
           query = query.gte('created_at', todayStr + 'T00:00:00');
@@ -572,11 +584,8 @@
 
         container.innerHTML = html;
 
-        // खेल सकिएपछि (end screen मा) युजर टप ३ मा छ भने तुरुन्त कोइन नदिई 'रातको १२ बजे जम्मा हुनेछ' भन्ने मेसेज मात्र देखाउने
         if (targetScreen === 'end' && type === 'daily' && userInTop3) {
           document.getElementById('rewardMsgBox').classList.remove('hidden');
-          // नोट: रातको १२ बजे कोइन वितरणको लागि ब्याकइन्ड (Supabase Cron/Edge Function वा तपाईंको मुख्य सर्भर स्क्रिप्ट) मार्फत 
-          // दैनिक १२ बजे यो लिडरबोर्ड चेक गरेर शीर्ष ३ मा रहेका युजरहरूको Firebase 'coins' बढाउने स्वचालित व्यवस्था मिलाउनुपर्छ।
         }
 
       } catch (err) {
