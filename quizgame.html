@@ -9,7 +9,6 @@
   
   <!-- KaTeX for Math & Science Formulars -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 
   <!-- Canvas Confetti for Fireworks/Celebration -->
@@ -128,7 +127,7 @@
       <span class="room-badge" id="roomCodeDisplay">ROOM: ----</span>
     </div>
     <div class="header-btns">
-      <button class="lang-toggle-btn" id="langToggleBtn" onclick="toggleQuizLanguage()"><i class="fa-solid fa-language"></i> EN / NE</button>
+      <button class="lang-toggle-btn" id="langToggleBtn" onclick="toggleQuizLanguage()"><i class="fa-solid fa-language"></i> नेपाली (Active)</button>
       <button class="chat-toggle-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i> च्याट</button>
     </div>
   </div>
@@ -224,9 +223,10 @@
     let isAnswerSubmitting = false;
     let coinAlreadyDistributed = false; 
 
-    // Language Toggle state for Quiz section only ('ne' or 'en')
+    // Persistent Language State ('ne' or 'en') - Yeh poori quiz me change nahi hoga jab tak user click na kare
     let currentQuizLang = 'ne';
-    let translatedQuizCache = { question: "", options: [], correctAnswer: "" };
+    // Translation Cache taaki ek question dobara aaye ya render ho toh API call na karna pade (Fast)
+    let translationCache = {};
 
     const topicDisplayNames = {
       "all": "सबै विषयबाट मिक्स (All Topics Random)",
@@ -240,15 +240,22 @@
       "Budget2083-84": "आर्थिक वर्ष २०८३/८४ को बजेट"
     };
 
-    // Google MyMemory API helper to translate quiz text between Nepali and English
     async function translateText(text, targetLang) {
-      if (!text) return "";
-      if (targetLang === 'ne') return text; // Default is Nepali from DB
+      if (!text || targetLang === 'ne') return text;
+      
+      // Check cache first for instant load
+      const cacheKey = `${text}_${targetLang}`;
+      if (translationCache[cacheKey]) {
+        return translationCache[cacheKey];
+      }
+
       try {
         const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ne|en`);
         const data = await res.json();
         if (data && data.responseData && data.responseData.translatedText) {
-          return data.responseData.translatedText;
+          const translated = data.responseData.translatedText;
+          translationCache[cacheKey] = translated; // Save to cache
+          return translated;
         }
       } catch (e) {
         console.error("Translation error:", e);
@@ -256,23 +263,21 @@
       return text;
     }
 
+    // Toggle button function
     window.toggleQuizLanguage = async function() {
       currentQuizLang = (currentQuizLang === 'ne') ? 'en' : 'ne';
       const btn = document.getElementById('langToggleBtn');
-      btn.innerHTML = `<i class="fa-solid fa-language"></i> ${currentQuizLang === 'en' ? 'EN (Active)' : 'नेपाली (Active)'}`;
+      
+      if (currentQuizLang === 'en') {
+        btn.innerHTML = `<i class="fa-solid fa-language"></i> English (Active)`;
+        showToast("English translation activated for the quiz.");
+      } else {
+        btn.innerHTML = `<i class="fa-solid fa-language"></i> नेपाली (Active)`;
+        showToast("नेपाली भाषा सक्रिय गरियो।");
+      }
 
+      // Turant UI update karo naye language ke sath
       if (roomDataGlobal && roomDataGlobal.status === 'playing' && roomDataGlobal.currentQuestion) {
-        const q = roomDataGlobal.currentQuestion;
-        if (currentQuizLang === 'en') {
-          showToast("Translating quiz to English...");
-          const tQuestion = await translateText(q.text, 'en');
-          let tOptions = [];
-          for (let opt of q.options) {
-            tOptions.push(await translateText(opt, 'en'));
-          }
-          const tCorrect = await translateText(q.correctAnswer, 'en');
-          translatedQuizCache = { question: tQuestion, options: tOptions, correctAnswer: tCorrect };
-        }
         renderGameUI(roomDataGlobal);
       }
     };
@@ -426,14 +431,6 @@
           showToast(newRoomData.latestNotification.text);
         }
 
-        // Check if question changed to reset cache translation if needed
-        if (roomDataGlobal && roomDataGlobal.currentQuestion && newRoomData.currentQuestion) {
-          if (roomDataGlobal.currentQuestion.id !== newRoomData.currentQuestion.id) {
-            currentQuizLang = 'ne'; // Reset language to Nepali on new question
-            document.getElementById('langToggleBtn').innerHTML = `<i class="fa-solid fa-language"></i> नेपाली (Active)`;
-          }
-        }
-
         roomDataGlobal = newRoomData;
         
         if (roomDataGlobal.status === 'finished') {
@@ -527,12 +524,15 @@
         let currentQCount = room.questionCount || 1;
         let currentRoundNum = Math.floor((currentQCount - 1) / playerCount) + 1;
 
-        // Apply translation if English is active
+        // Fast Translation Handling based on persistent currentQuizLang state
         let displayQuestionText = q.text;
-        let displayOptions = q.options;
-        if (currentQuizLang === 'en' && translatedQuizCache.question) {
-          displayQuestionText = translatedQuizCache.question;
-          displayOptions = translatedQuizCache.options;
+        let displayOptions = [...q.options];
+
+        if (currentQuizLang === 'en') {
+          displayQuestionText = await translateText(q.text, 'en');
+          for (let i = 0; i < displayOptions.length; i++) {
+            displayOptions[i] = await translateText(q.options[i], 'en');
+          }
         }
 
         gameBody.innerHTML = `
@@ -543,7 +543,7 @@
             </div>
             <h4 id="questionTextRender">${escapeHTML(displayQuestionText)}</h4>
             <div class="options-grid" id="optionsGrid">
-              ${displayOptions.map((opt, index) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${q.options[index].replace(/'/g, "\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
+              ${displayOptions.map((opt, index) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${q.options[index].replace(/'/g, "\\тра\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
             </div>
             ${isMyTurn ? `
               <div class="action-row">
@@ -1000,7 +1000,7 @@
     }
 
     window.sendQuickEmoji = async function(emoji) {
-      if (!currentUser) return;
+      , if (!currentUser) return;
       await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
         text: emoji, uid: currentUser.uid, senderName: currentUserName, createdAt: serverTimestamp()
       });
