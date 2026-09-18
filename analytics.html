@@ -1,389 +1,282 @@
-<!DOCTYPE html>
-<html lang="ne">
+<!DOCTYPE html><html lang="ne">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"><meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-  <meta name="theme-color" content="#3413aa">
-
-  <title>LoksewaQuest - Performance Analytics</title>
-
-  <script src="components.js"></script>
-
-  <!-- Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-
+  <title>LoksewaQuest - Performance Analytics</title>  <script src="components.js"></script>  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <style>
     * {
       box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html {
-      scroll-behavior: smooth;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      background: #f7f7fb;
-      color: #18152b;
-      font-family: "Plus Jakarta Sans", sans-serif;
-      overflow-x: hidden;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #f5f6fb;
+      color: #1f2937;
+      padding-bottom: 90px;
     }
 
-    button {
-      font-family: inherit;
+    .top-header {
+      background: linear-gradient(135deg, #3413aa, #5b21d6);
+      color: white;
+      padding: 24px 18px 30px;
+      border-radius: 0 0 28px 28px;
+      box-shadow: 0 8px 25px rgba(52, 19, 170, 0.18);
     }
 
-    /* =========================================================
-       HEADER
-    ========================================================= */
-
-    .analytics-header {
-      position: relative;
-      overflow: hidden;
-      padding: 22px 18px 72px;
-      background: linear-gradient(135deg, #3413aa 0%, #4b1bc4 52%, #6d35e8 100%);
-      color: #fff;
-      border-radius: 0 0 30px 30px;
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
     }
 
-    .analytics-header::before {
-      content: "";
-      position: absolute;
-      width: 190px;
-      height: 190px;
-      right: -80px;
-      top: -70px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.08);
-    }
-
-    .analytics-header::after {
-      content: "";
-      position: absolute;
-      width: 130px;
-      height: 130px;
-      left: -65px;
-      bottom: -75px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.06);
-    }
-
-    .header-content {
-      position: relative;
-      z-index: 2;
-      max-width: 900px;
-      margin: auto;
-    }
-
-    .back-btn {
+    .back-btn,
+    .refresh-btn {
       width: 40px;
       height: 40px;
-      border: 1px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.12);
-      color: #fff;
       border-radius: 13px;
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.12);
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      margin-bottom: 20px;
-      backdrop-filter: blur(10px);
-    }
-
-    .back-btn:active {
-      transform: scale(.95);
     }
 
     .header-title {
-      font-size: 24px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .header-title h1 {
+      font-size: 20px;
       font-weight: 800;
-      margin: 0;
-      letter-spacing: -.5px;
     }
 
-    .header-subtitle {
-      margin: 7px 0 0;
+    .header-title p {
+      font-size: 11px;
+      opacity: .8;
+      margin-top: 4px;
+    }
+
+    .user-box {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.15);
+      padding: 12px 14px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .user-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: white;
+      color: #3413aa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+
+    .user-info {
+      min-width: 0;
+    }
+
+    .user-info small {
+      display: block;
+      opacity: .7;
+      font-size: 10px;
+    }
+
+    .user-info span {
+      display: block;
       font-size: 12px;
-      line-height: 1.6;
-      opacity: .82;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 240px;
     }
 
-    /* =========================================================
-       MAIN
-    ========================================================= */
-
-    .page-container {
-      width: 100%;
-      max-width: 900px;
-      margin: -48px auto 0;
+    .container {
+      width: min(1100px, calc(100% - 28px));
+      margin: -12px auto 0;
       position: relative;
-      z-index: 5;
-      padding: 0 14px 90px;
     }
-
-    /* =========================================================
-       SUMMARY CARDS
-    ========================================================= */
 
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 11px;
+      gap: 12px;
     }
 
     .summary-card {
-      background: #fff;
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 7px 24px rgba(32, 20, 80, .08);
-      border: 1px solid rgba(52,19,170,.05);
-      min-height: 115px;
+      background: white;
+      border-radius: 19px;
+      padding: 17px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.055);
+      border: 1px solid #eeeef5;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card::after {
+      content: "";
+      position: absolute;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: rgba(52,19,170,.05);
+      right: -20px;
+      bottom: -20px;
     }
 
     .summary-icon {
       width: 35px;
       height: 35px;
       border-radius: 11px;
+      background: #f0ebff;
+      color: #3413aa;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f0ebff;
-      color: #3413aa;
-      font-size: 14px;
-      margin-bottom: 10px;
+      margin-bottom: 11px;
     }
 
-    .summary-value {
-      font-size: 22px;
-      line-height: 1;
+    .summary-card h3 {
+      font-size: 23px;
       font-weight: 800;
-      color: #201b35;
     }
 
-    .summary-label {
+    .summary-card p {
       font-size: 10px;
+      color: #8b91a1;
+      margin-top: 4px;
       font-weight: 600;
-      color: #88839b;
-      margin-top: 7px;
     }
-
-    /* =========================================================
-       SECTION
-    ========================================================= */
 
     .section {
       margin-top: 18px;
     }
 
-    .section-heading {
+    .section-title {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 11px;
-      padding: 0 3px;
+      margin: 0 2px 10px;
     }
 
-    .section-title {
-      margin: 0;
+    .section-title h2 {
       font-size: 15px;
       font-weight: 800;
-      color: #211b37;
+      color: #222;
     }
 
-    .section-subtitle {
-      margin: 3px 0 0;
-      font-size: 9px;
-      color: #9792a8;
-      font-weight: 500;
+    .section-title span {
+      font-size: 10px;
+      color: #8a8f9c;
     }
-
-    /* =========================================================
-       CARD
-    ========================================================= */
 
     .card {
-      background: #fff;
-      border-radius: 19px;
-      padding: 16px;
-      box-shadow: 0 7px 24px rgba(32, 20, 80, .06);
-      border: 1px solid rgba(52,19,170,.045);
+      background: white;
+      border-radius: 20px;
+      padding: 17px;
+      border: 1px solid #eeeef5;
+      box-shadow: 0 5px 20px rgba(0,0,0,.045);
     }
 
-    /* =========================================================
-       QUESTION BREAKDOWN
-    ========================================================= */
-
-    .breakdown-grid {
+    .quick-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 9px;
     }
 
-    .breakdown-item {
+    .quick-stat {
       text-align: center;
-      padding: 13px 7px;
-      background: #faf9fd;
-      border-radius: 13px;
+      background: #f8f8fc;
+      border-radius: 14px;
+      padding: 13px 5px;
     }
 
-    .breakdown-number {
+    .quick-stat strong {
+      display: block;
       font-size: 18px;
       font-weight: 800;
     }
 
-    .breakdown-label {
-      margin-top: 5px;
+    .quick-stat span {
+      display: block;
+      margin-top: 4px;
+      color: #8a8f9c;
       font-size: 9px;
       font-weight: 600;
-      color: #9691a7;
     }
 
-    .correct-color {
-      color: #15945c;
+    .correct {
+      color: #159447;
     }
 
-    .wrong-color {
-      color: #e14b61;
+    .wrong {
+      color: #e34040;
     }
 
-    .skipped-color {
-      color: #f09a2e;
+    .skipped {
+      color: #e49a12;
     }
 
-    /* =========================================================
-       CHART
-    ========================================================= */
-
-    .chart-wrapper {
-      position: relative;
-      height: 235px;
-      width: 100%;
-    }
-
-    .chart-wrapper canvas {
-      max-width: 100%;
-    }
-
-    /* =========================================================
-       ACCURACY
-    ========================================================= */
-
-    .accuracy-layout {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .accuracy-chart {
-      width: 145px;
-      height: 145px;
-      flex: 0 0 145px;
+    .chart-box {
+      height: 250px;
       position: relative;
     }
 
-    .accuracy-chart canvas {
-      width: 145px !important;
-      height: 145px !important;
+    .chart-box.small {
+      height: 230px;
     }
 
-    .accuracy-center {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      pointer-events: none;
+    .empty {
+      text-align: center;
+      padding: 35px 15px;
+      color: #9ca3af;
+      font-size: 12px;
     }
 
-    .accuracy-center-value {
-      font-size: 22px;
-      font-weight: 800;
-      color: #3413aa;
+    .empty i {
+      font-size: 30px;
+      margin-bottom: 10px;
+      display: block;
+      color: #c8cbd5;
     }
 
-    .accuracy-center-label {
-      font-size: 8px;
-      color: #9893a8;
-      font-weight: 700;
-    }
-
-    .accuracy-legend {
-      flex: 1;
-    }
-
-    .legend-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #f0eef5;
-      font-size: 10px;
-    }
-
-    .legend-row:last-child {
-      border-bottom: none;
-    }
-
-    .legend-left {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      color: #6f6a7e;
-      font-weight: 600;
-    }
-
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    .legend-value {
-      font-weight: 800;
-      color: #272137;
-    }
-
-    /* =========================================================
+    /* =========================================
        SET PERFORMANCE
-    ========================================================= */
+    ========================================= */
 
     .performance-category {
-      background: #fff;
-      border-radius: 18px;
-      margin-bottom: 12px;
-      overflow: hidden;
-      border: 1px solid #eeeaf7;
-      box-shadow: 0 5px 18px rgba(32, 20, 80, .045);
+      margin-bottom: 20px;
+    }
+
+    .performance-category:last-child {
+      margin-bottom: 0;
     }
 
     .category-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px;
-      background: linear-gradient(135deg, #fbfaff, #f7f4ff);
-      border-bottom: 1px solid #efebf8;
+      gap: 10px;
+      padding: 13px;
+      margin-bottom: 10px;
+      border-radius: 15px;
+      background: #f8f7ff;
+      border: 1px solid #eeeafd;
     }
 
     .category-left {
@@ -394,96 +287,72 @@
     }
 
     .category-icon {
-      width: 38px;
-      height: 38px;
-      flex: 0 0 38px;
+      width: 39px;
+      height: 39px;
+      flex-shrink: 0;
       border-radius: 12px;
+      background: #ede8ff;
+      color: #3413aa;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #3413aa;
-      background: #ebe5ff;
-      font-size: 14px;
     }
 
     .category-info {
       min-width: 0;
     }
 
-    .category-name {
+    .category-info strong {
+      display: block;
       font-size: 12px;
       font-weight: 800;
-      color: #2a233e;
+      color: #222;
     }
 
-    .category-description {
+    .category-info span {
+      display: block;
       margin-top: 3px;
-      font-size: 8px;
-      color: #9691a7;
-      font-weight: 500;
+      font-size: 9px;
+      color: #9297a4;
     }
 
     .category-count {
-      padding: 5px 9px;
+      flex-shrink: 0;
+      padding: 6px 9px;
       border-radius: 20px;
-      background: #eee9ff;
+      background: white;
+      border: 1px solid #e6e1ff;
       color: #3413aa;
       font-size: 9px;
       font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .category-body {
-      padding: 7px 13px 13px;
     }
 
     .set-item {
-      padding: 12px 0;
-      border-bottom: 1px solid #f1eff5;
+      border: 1px solid #eeeef4;
+      border-radius: 15px;
+      padding: 13px;
+      margin-bottom: 10px;
     }
 
     .set-item:last-child {
-      border-bottom: none;
-    }
-
-    .set-item.extra-set {
-      display: none;
-    }
-
-    .set-item.extra-set.is-visible {
-      display: block;
-      animation: setReveal .25s ease both;
-    }
-
-    @keyframes setReveal {
-      from {
-        opacity: 0;
-        transform: translateY(-5px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      margin-bottom: 0;
     }
 
     .set-top {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       gap: 10px;
+      margin-bottom: 9px;
     }
 
     .set-name {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
-      color: #302a43;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      line-height: 1.4;
     }
 
     .set-score {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
       color: #3413aa;
       white-space: nowrap;
@@ -491,209 +360,53 @@
 
     .progress {
       height: 7px;
-      width: 100%;
-      background: #eeeef3;
+      background: #eeeef5;
       border-radius: 20px;
       overflow: hidden;
-      margin-top: 8px;
     }
 
     .progress-fill {
       height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #3413aa, #7445ed);
+      background: linear-gradient(90deg,#3413aa,#7c3aed);
+      border-radius: 20px;
       transition: width .7s ease;
     }
 
     .set-meta {
       display: flex;
       justify-content: space-between;
+      gap: 5px;
       margin-top: 7px;
-      font-size: 8px;
-      color: #9691a7;
-      font-weight: 600;
+      color: #9297a4;
+      font-size: 9px;
     }
 
     .category-empty {
-      padding: 18px 8px;
       text-align: center;
-      color: #a19cac;
-      font-size: 10px;
-      font-weight: 600;
-    }
-
-    /* =========================================================
-       POLISHED SEE MORE BUTTON
-    ========================================================= */
-
-    .see-more-btn {
-      position: relative;
-      overflow: hidden;
-
-      width: 100%;
-      min-height: 46px;
-
-      margin-top: 11px;
-      padding: 8px 12px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-
-      border: 1px solid #ddd5fb;
+      padding: 20px 12px;
+      border: 1px dashed #dedfe8;
       border-radius: 14px;
-
-      background: linear-gradient(135deg, #fbfaff 0%, #f2edff 100%);
-      color: #3413aa;
-
-      font-family: inherit;
+      color: #9ca3af;
       font-size: 10px;
-      font-weight: 800;
-
-      cursor: pointer;
-
-      box-shadow:
-        0 4px 12px rgba(52, 19, 170, .07),
-        inset 0 1px 0 rgba(255,255,255,.9);
-
-      transition:
-        transform .18s ease,
-        box-shadow .18s ease,
-        border-color .18s ease,
-        background .18s ease;
     }
 
-    .see-more-btn::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -80%;
-      width: 55%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,.7),
-        transparent
-      );
-      transform: skewX(-20deg);
-      transition: left .55s ease;
+    .category-empty i {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 7px;
+      color: #c7c9d4;
     }
 
-    .see-more-btn:hover::before {
-      left: 130%;
-    }
-
-    .see-more-btn:hover {
-      border-color: #c9bcf5;
-      background: linear-gradient(135deg, #ffffff 0%, #eee8ff 100%);
-      box-shadow:
-        0 7px 18px rgba(52, 19, 170, .11),
-        inset 0 1px 0 rgba(255,255,255,.95);
-      transform: translateY(-1px);
-    }
-
-    .see-more-btn:active {
-      transform: translateY(1px) scale(.985);
-      box-shadow: 0 3px 9px rgba(52, 19, 170, .08);
-    }
-
-    .see-more-btn .see-more-icon {
-      width: 27px;
-      height: 27px;
-      flex: 0 0 27px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 9px;
-
-      background: #fff;
-      color: #3413aa;
-
-      box-shadow:
-        0 2px 7px rgba(52,19,170,.1),
-        inset 0 0 0 1px rgba(52,19,170,.05);
-
-      transition:
-        transform .25s ease,
-        background .2s ease;
-    }
-
-    .see-more-btn .see-more-icon i {
-      font-size: 9px;
-      transition: transform .28s ease;
-    }
-
-    .see-more-btn.expanded .see-more-icon {
-      background: #3413aa;
-      color: #fff;
-    }
-
-    .see-more-btn.expanded .see-more-icon i {
-      transform: rotate(180deg);
-    }
-
-    .see-more-btn .see-more-text {
-      letter-spacing: .1px;
-    }
-
-    /* =========================================================
-       RECOMMENDATIONS
-    ========================================================= */
-
-    .recommendation {
-      display: flex;
-      gap: 11px;
-      align-items: flex-start;
-      padding: 12px;
-      border-radius: 14px;
-      background: #faf9fd;
-      margin-bottom: 8px;
-    }
-
-    .recommendation:last-child {
-      margin-bottom: 0;
-    }
-
-    .recommendation-icon {
-      width: 32px;
-      height: 32px;
-      flex: 0 0 32px;
-      border-radius: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #eee9ff;
-      color: #3413aa;
-      font-size: 12px;
-    }
-
-    .recommendation-title {
-      font-size: 10px;
-      font-weight: 800;
-      color: #302a43;
-    }
-
-    .recommendation-text {
-      margin-top: 3px;
-      font-size: 9px;
-      line-height: 1.55;
-      color: #8b8699;
-    }
-
-    /* =========================================================
+    /* =========================================
        HISTORY
-    ========================================================= */
+    ========================================= */
 
     .history-item {
       display: flex;
       align-items: center;
       gap: 11px;
       padding: 12px 0;
-      border-bottom: 1px solid #f0eef4;
+      border-bottom: 1px solid #f0f0f4;
     }
 
     .history-item:last-child {
@@ -703,71 +416,124 @@
     .history-icon {
       width: 37px;
       height: 37px;
-      flex: 0 0 37px;
-      border-radius: 11px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      background: #f0ebff;
+      color: #3413aa;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #eee9ff;
-      color: #3413aa;
-      font-size: 12px;
     }
 
-    .history-info {
+    .history-main {
       flex: 1;
       min-width: 0;
     }
 
-    .history-set {
-      font-size: 10px;
-      font-weight: 800;
-      color: #302a43;
-      overflow: hidden;
+    .history-main strong {
+      display: block;
+      font-size: 11px;
       white-space: nowrap;
+      overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .history-date {
-      margin-top: 4px;
-      font-size: 8px;
-      color: #9691a7;
-      font-weight: 500;
+    .history-main span {
+      display: block;
+      font-size: 9px;
+      color: #969ba8;
+      margin-top: 3px;
     }
 
     .history-score {
       text-align: right;
-      font-size: 11px;
-      font-weight: 800;
+    }
+
+    .history-score strong {
+      display: block;
+      font-size: 13px;
       color: #3413aa;
     }
 
-    .history-accuracy {
-      margin-top: 3px;
+    .history-score span {
+      display: block;
       font-size: 8px;
-      color: #9993a8;
-      font-weight: 600;
+      color: #999;
+      margin-top: 2px;
     }
 
-    /* =========================================================
+    /* =========================================
+       RECOMMENDATIONS
+    ========================================= */
+
+    .recommendation {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+      padding: 12px;
+      border-radius: 15px;
+      background: #faf9ff;
+      border: 1px solid #eeeafd;
+      margin-bottom: 9px;
+    }
+
+    .recommendation:last-child {
+      margin-bottom: 0;
+    }
+
+    .recommendation-icon {
+      width: 35px;
+      height: 35px;
+      flex-shrink: 0;
+      border-radius: 11px;
+      background: #ede8ff;
+      color: #3413aa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .recommendation strong {
+      font-size: 11px;
+      display: block;
+    }
+
+    .recommendation p {
+      font-size: 9px;
+      color: #7e8491;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* =========================================
        LOADING
-    ========================================================= */
+    ========================================= */
 
-    .loading-card {
-      background: #fff;
-      border-radius: 19px;
-      padding: 35px 20px;
-      text-align: center;
-      box-shadow: 0 7px 24px rgba(32,20,80,.06);
+    #loadingScreen {
+      position: fixed;
+      inset: 0;
+      background: #f5f6fb;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
-    .loading-spinner {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 3px solid #e7e0fb;
+    .loader {
+      width: 45px;
+      height: 45px;
+      border: 4px solid #e4defc;
       border-top-color: #3413aa;
+      border-radius: 50%;
       animation: spin .8s linear infinite;
-      margin: auto;
+    }
+
+    #loadingScreen p {
+      margin-top: 13px;
+      font-size: 12px;
+      color: #777;
+      font-weight: 600;
     }
 
     @keyframes spin {
@@ -776,1730 +542,945 @@
       }
     }
 
-    .loading-text {
-      margin-top: 12px;
-      font-size: 10px;
-      font-weight: 600;
-      color: #9691a7;
-    }
-
-    /* =========================================================
-       ERROR
-    ========================================================= */
-
-    .error-card {
+    #errorBox {
       display: none;
-      background: #fff;
-      border-radius: 18px;
-      padding: 25px 18px;
-      text-align: center;
-      box-shadow: 0 7px 24px rgba(32,20,80,.06);
-    }
-
-    .error-icon {
-      width: 44px;
-      height: 44px;
-      margin: 0 auto 10px;
-      border-radius: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff0f2;
-      color: #df4c62;
-    }
-
-    .error-title {
-      font-size: 12px;
-      font-weight: 800;
-      color: #302a43;
-    }
-
-    .error-message {
-      margin-top: 6px;
-      font-size: 9px;
+      background: #fff3f3;
+      border: 1px solid #ffd4d4;
+      color: #c53030;
+      border-radius: 16px;
+      padding: 15px;
+      margin-top: 18px;
+      font-size: 11px;
       line-height: 1.5;
-      color: #9993a8;
     }
 
-    .retry-btn {
-      margin-top: 14px;
-      padding: 10px 17px;
-      border: 0;
-      border-radius: 11px;
-      background: #3413aa;
-      color: #fff;
-      font-size: 9px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .retry-btn:active {
-      transform: scale(.97);
-    }
-
-    /* =========================================================
-       NO DATA
-    ========================================================= */
-
-    .no-data {
-      background: #fff;
-      border-radius: 19px;
-      padding: 40px 20px;
-      text-align: center;
-      box-shadow: 0 7px 24px rgba(32,20,80,.06);
-    }
-
-    .no-data-icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 17px;
-      background: #eee9ff;
-      color: #3413aa;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: auto;
-      font-size: 19px;
-    }
-
-    .no-data-title {
-      margin-top: 13px;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .no-data-text {
-      margin-top: 6px;
-      font-size: 9px;
-      line-height: 1.6;
-      color: #9691a7;
-    }
-
-    /* =========================================================
-       DESKTOP
-    ========================================================= */
-
-    @media (min-width: 650px) {
-
-      .analytics-header {
-        padding-left: 30px;
-        padding-right: 30px;
-      }
-
-      .page-container {
-        padding-left: 25px;
-        padding-right: 25px;
-      }
+    @media (min-width: 700px) {
 
       .summary-grid {
         grid-template-columns: repeat(4, 1fr);
       }
 
-      .breakdown-grid {
-        grid-template-columns: repeat(3, 1fr);
+      .analytics-grid {
+        display: grid;
+        grid-template-columns: 1.3fr .7fr;
+        gap: 18px;
+      }
+
+      .container {
+        margin-top: -15px;
       }
     }
+  </style></head><body><div id="loadingScreen">
+  <div class="loader"></div>
+  <p id="loadingText">तपाईंको analytics तयार हुँदैछ...</p>
+</div><header class="top-header">  <div class="header-top"><button class="back-btn" onclick="goBack()">
+  <i class="fa-solid fa-arrow-left"></i>
+</button>
 
-    /* =========================================================
-       SMALL MOBILE
-    ========================================================= */
+<div class="header-title">
+  <h1>Performance Analytics</h1>
+  <p>Your Loksewa Quest journey</p>
+</div>
 
-    @media (max-width: 360px) {
+<button class="refresh-btn" onclick="refreshAnalytics()">
+  <i class="fa-solid fa-rotate"></i>
+</button>
 
-      .analytics-header {
-        padding-left: 14px;
-        padding-right: 14px;
-      }
+  </div>  <div class="user-box"><div class="user-icon">
+  <i class="fa-solid fa-user"></i>
+</div>
 
-      .page-container {
-        padding-left: 10px;
-        padding-right: 10px;
-      }
+<div class="user-info">
+  <small>Logged in as</small>
+  <span id="userEmailDisplay">Checking account...</span>
+</div>
 
-      .summary-card {
-        padding: 13px;
-      }
+  </div></header><main class="container">  <section class="section"><div class="summary-grid">
 
-      .summary-value {
-        font-size: 19px;
-      }
+  <div class="summary-card">
+    <div class="summary-icon">
+      <i class="fa-solid fa-file-circle-check"></i>
+    </div>
+    <h3 id="anaTotalSolved">0</h3>
+    <p>EXAMS COMPLETED</p>
+  </div>
 
-      .accuracy-layout {
-        gap: 10px;
-      }
+  <div class="summary-card">
+    <div class="summary-icon">
+      <i class="fa-solid fa-bullseye"></i>
+    </div>
+    <h3 id="anaAccuracy">0%</h3>
+    <p>OVERALL ACCURACY</p>
+  </div>
 
-      .accuracy-chart {
-        width: 125px;
-        height: 125px;
-        flex-basis: 125px;
-      }
+  <div class="summary-card">
+    <div class="summary-icon">
+      <i class="fa-solid fa-trophy"></i>
+    </div>
+    <h3 id="anaBestScore">0</h3>
+    <p>BEST SCORE</p>
+  </div>
 
-      .accuracy-chart canvas {
-        width: 125px !important;
-        height: 125px !important;
-      }
-    }
+  <div class="summary-card">
+    <div class="summary-icon">
+      <i class="fa-solid fa-chart-line"></i>
+    </div>
+    <h3 id="anaAverageScore">0</h3>
+    <p>AVERAGE SCORE</p>
+  </div>
 
-  </style>
-</head>
+</div>
 
-<body>
+  </section>  <div id="errorBox"></div>  <section class="section"><div class="section-title">
+  <h2>Question Breakdown</h2>
+  <span>All exams</span>
+</div>
 
-  <!-- =========================================================
-       HEADER
-  ========================================================= -->
+<div class="card">
 
-  <header class="analytics-header">
+  <div class="quick-grid">
 
-    <div class="header-content">
-
-      <button class="back-btn" onclick="goBack()" aria-label="Back">
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
-
-      <h1 class="header-title">
-        Performance Analytics
-      </h1>
-
-      <p class="header-subtitle">
-        आफ्नो Loksewa तयारीको performance र progress हेर्नुहोस्।
-      </p>
-
+    <div class="quick-stat">
+      <strong class="correct" id="totalCorrect">0</strong>
+      <span>Correct</span>
     </div>
 
-  </header>
-
-
-  <!-- =========================================================
-       MAIN
-  ========================================================= -->
-
-  <main class="page-container">
-
-    <!-- Loading -->
-    <div id="loadingCard" class="loading-card">
-
-      <div class="loading-spinner"></div>
-
-      <div class="loading-text">
-        Analytics loading हुँदैछ...
-      </div>
-
+    <div class="quick-stat">
+      <strong class="wrong" id="totalWrong">0</strong>
+      <span>Wrong</span>
     </div>
 
-
-    <!-- Error -->
-    <div id="errorCard" class="error-card">
-
-      <div class="error-icon">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-      </div>
-
-      <div class="error-title">
-        Analytics load हुन सकेन
-      </div>
-
-      <div id="errorMessage" class="error-message">
-        केही समस्या भयो।
-      </div>
-
-      <button class="retry-btn" onclick="loadAnalytics()">
-        <i class="fa-solid fa-rotate-right"></i>
-        Retry
-      </button>
-
+    <div class="quick-stat">
+      <strong class="skipped" id="totalSkipped">0</strong>
+      <span>Skipped</span>
     </div>
 
+  </div>
 
-    <!-- Actual Content -->
-    <div id="analyticsContent" style="display:none;">
+</div>
 
-      <!-- =====================================================
-           SUMMARY
-      ====================================================== -->
+  </section>  <section class="section"><div class="analytics-grid">
 
-      <section class="section">
+  <div>
 
-        <div class="summary-grid">
-
-          <div class="summary-card">
-
-            <div class="summary-icon">
-              <i class="fa-solid fa-clipboard-check"></i>
-            </div>
-
-            <div id="totalExams" class="summary-value">
-              0
-            </div>
-
-            <div class="summary-label">
-              Exams Attempted
-            </div>
-
-          </div>
-
-
-          <div class="summary-card">
-
-            <div class="summary-icon">
-              <i class="fa-solid fa-bullseye"></i>
-            </div>
-
-            <div id="averageScore" class="summary-value">
-              0%
-            </div>
-
-            <div class="summary-label">
-              Average Score
-            </div>
-
-          </div>
-
-
-          <div class="summary-card">
-
-            <div class="summary-icon">
-              <i class="fa-solid fa-trophy"></i>
-            </div>
-
-            <div id="bestScore" class="summary-value">
-              0%
-            </div>
-
-            <div class="summary-label">
-              Best Score
-            </div>
-
-          </div>
-
-
-          <div class="summary-card">
-
-            <div class="summary-icon">
-              <i class="fa-solid fa-layer-group"></i>
-            </div>
-
-            <div id="totalSets" class="summary-value">
-              0
-            </div>
-
-            <div class="summary-label">
-              Sets Attempted
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =====================================================
-           QUESTION BREAKDOWN
-      ====================================================== -->
-
-      <section class="section">
-
-        <div class="section-heading">
-
-          <div>
-            <h2 class="section-title">
-              Question Breakdown
-            </h2>
-
-            <p class="section-subtitle">
-              तपाईंले attempt गरेका प्रश्नहरूको अवस्था
-            </p>
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="breakdown-grid">
-
-            <div class="breakdown-item">
-
-              <div id="correctCount" class="breakdown-number correct-color">
-                0
-              </div>
-
-              <div class="breakdown-label">
-                Correct
-              </div>
-
-            </div>
-
-
-            <div class="breakdown-item">
-
-              <div id="wrongCount" class="breakdown-number wrong-color">
-                0
-              </div>
-
-              <div class="breakdown-label">
-                Wrong
-              </div>
-
-            </div>
-
-
-            <div class="breakdown-item">
-
-              <div id="skippedCount" class="breakdown-number skipped-color">
-                0
-              </div>
-
-              <div class="breakdown-label">
-                Skipped
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =====================================================
-           SCORE PROGRESS
-      ====================================================== -->
-
-      <section class="section">
-
-        <div class="section-heading">
-
-          <div>
-
-            <h2 class="section-title">
-              Score Progress
-            </h2>
-
-            <p class="section-subtitle">
-              पछिल्ला exams मा score को progress
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="chart-wrapper">
-            <canvas id="scoreChart"></canvas>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =====================================================
-           ACCURACY
-      ====================================================== -->
-
-      <section class="section">
-
-        <div class="section-heading">
-
-          <div>
-
-            <h2 class="section-title">
-              Answer Accuracy
-            </h2>
-
-            <p class="section-subtitle">
-              Correct, wrong र skipped को अनुपात
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="accuracy-layout">
-
-            <div class="accuracy-chart">
-
-              <canvas id="accuracyChart"></canvas>
-
-              <div class="accuracy-center">
-
-                <div id="accuracyCenterValue"
-                     class="accuracy-center-value">
-                  0%
-                </div>
-
-                <div class="accuracy-center-label">
-                  ACCURACY
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div class="accuracy-legend">
-
-              <div class="legend-row">
-
-                <div class="legend-left">
-
-                  <span class="legend-dot"
-                        style="background:#22a866;"></span>
-
-                  Correct
-
-                </div>
-
-                <div id="legendCorrect"
-                     class="legend-value">
-                  0
-                </div>
-
-              </div>
-
-
-              <div class="legend-row">
-
-                <div class="legend-left">
-
-                  <span class="legend-dot"
-                        style="background:#e14b61;"></span>
-
-                  Wrong
-
-                </div>
-
-                <div id="legendWrong"
-                     class="legend-value">
-                  0
-                </div>
-
-              </div>
-
-
-              <div class="legend-row">
-
-                <div class="legend-left">
-
-                  <span class="legend-dot"
-                        style="background:#f0a034;"></span>
-
-                  Skipped
-
-                </div>
-
-                <div id="legendSkipped"
-                     class="legend-value">
-                  0
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- =====================================================
-           SET PERFORMANCE
-      ====================================================== -->
-
-      <section class="section">
-
-        <div class="section-heading">
-
-          <div>
-
-            <h2 class="section-title">
-              Set-wise Performance
-            </h2>
-
-            <p class="section-subtitle">
-              विभिन्न exam sets मा तपाईंको performance
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div id="setPerformanceContainer"></div>
-
-      </section>
-
-
-      <!-- =====================================================
-           SMART RECOMMENDATIONS
-      ====================================================== -->
-
-      <section class="section">
-
-        <div class="section-heading">
-
-          <div>
-
-            <h2 class="section-title">
-              Smart Recommendations
-            </h2>
-
-            <p class="section-subtitle">
-              तपाईंको performance अनुसार सुझाव
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div id="recommendationsContainer"
-             class="card">
-
-        </div>
-
-      </section>
-
-
-      <!-- =====================================================
-           RECENT HISTORY
-      ====================================================== -->
-
-      <section class="section">
-
-        <div class="section-heading">
-
-          <div>
-
-            <h2 class="section-title">
-              Recent Exam History
-            </h2>
-
-            <p class="section-subtitle">
-              तपाईंका पछिल्ला attempts
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div id="historyContainer"
-             class="card">
-
-        </div>
-
-      </section>
-
+    <div class="section-title">
+      <h2>Score Progress</h2>
+      <span>Exam by exam</span>
     </div>
 
+    <div class="card">
 
-    <!-- NO DATA -->
-    <div id="noDataCard"
-         class="no-data"
-         style="display:none;">
-
-      <div class="no-data-icon">
-        <i class="fa-solid fa-chart-line"></i>
-      </div>
-
-      <div class="no-data-title">
-        अझै पर्याप्त data छैन
-      </div>
-
-      <div class="no-data-text">
-        Practice Exam वा Quiz attempt गरेपछि यहाँ तपाईंको
-        performance analytics देखिनेछ।
+      <div class="chart-box">
+        <canvas id="scoreTrendChart"></canvas>
       </div>
 
     </div>
 
-  </main>
+  </div>
+
+  <div>
+
+    <div class="section-title">
+      <h2>Answer Accuracy</h2>
+      <span>Questions</span>
+    </div>
+
+    <div class="card">
+
+      <div class="chart-box small">
+        <canvas id="accuracyPieChart"></canvas>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+  </section>  <section class="section"><div class="section-title">
+  <h2>Set-wise Performance</h2>
+  <span id="setCount">0 sets</span>
+</div>
+
+<div class="card" id="setPerformance">
+
+  <div class="empty">
+    <i class="fa-solid fa-chart-simple"></i>
+    No exam data available yet.
+  </div>
+
+</div>
+
+  </section>  <section class="section"><div class="section-title">
+  <h2>Smart Recommendations</h2>
+  <span>Based on your results</span>
+</div>
+
+<div class="card" id="recommendations">
+
+  <div class="empty">
+    <i class="fa-solid fa-lightbulb"></i>
+    Complete some exams to unlock recommendations.
+  </div>
+
+</div>
+
+  </section>  <section class="section"><div class="section-title">
+  <h2>Recent Exam History</h2>
+  <span>Latest attempts</span>
+</div>
+
+<div class="card" id="examHistory">
+
+  <div class="empty">
+    <i class="fa-solid fa-clock-rotate-left"></i>
+    No exam history found.
+  </div>
+
+</div>
+
+  </section></main><script type="module">
+
+  /* =====================================================
+     FIREBASE
+  ===================================================== */
+
+  import {
+    initializeApp
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
-  <script>
-
-    /* =========================================================
-       SUPABASE CONFIG
-    ========================================================= */
-
-    const SUPABASE_URL =
-      "https://edyirdedkiarguvurpxq.supabase.co";
-
-    const SUPABASE_ANON_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
-
-    /*
-      IMPORTANT:
-      Replace SUPABASE_ANON_KEY above with the exact anon key
-      already present in your existing analytics.html.
-
-      The database query below intentionally uses ONLY columns
-      that exist in exam_leaderboard.
-    */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+    authDomain: "loksewaquest-227b6.firebaseapp.com",
+    projectId: "loksewaquest-227b6",
+    storageBucket: "loksewaquest-227b6.firebasestorage.app",
+    messagingSenderId: "779234903809",
+    appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+  };
 
 
-    let supabaseClient = null;
+  const app = initializeApp(firebaseConfig);
 
-    let scoreChartInstance = null;
-    let accuracyChartInstance = null;
+  const auth = getAuth(app);
 
-    let analyticsRows = [];
+  const db = getFirestore(app);
 
 
-    /* =========================================================
-       INIT SUPABASE
-    ========================================================= */
+  /* =====================================================
+     SUPABASE
+  ===================================================== */
 
-    function initSupabase() {
+  const SUPABASE_URL =
+    "https://edyirdedkiarguvurpxq.supabase.co";
 
-      if (typeof window.supabase === "undefined") {
-        throw new Error("Supabase library load भएन।");
-      }
+  const SUPABASE_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+  let supabaseClient = null;
+
+
+  async function initSupabase() {
+
+    if (window.supabase) {
 
       supabaseClient =
         window.supabase.createClient(
           SUPABASE_URL,
-          SUPABASE_ANON_KEY
+          SUPABASE_KEY
         );
 
+      return;
     }
 
 
-    /* =========================================================
-       BACK BUTTON
-    ========================================================= */
+    const script =
+      document.createElement("script");
 
-    function goBack() {
+    script.src =
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
-      if (history.length > 1) {
-        history.back();
-      } else {
-        window.location.href = "dashboard.html";
-      }
+    document.head.appendChild(script);
 
+
+    await new Promise((resolve, reject) => {
+
+      script.onload = resolve;
+      script.onerror = reject;
+
+    });
+
+
+    supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+  }
+
+
+  /* =====================================================
+     GLOBAL VARIABLES
+  ===================================================== */
+
+  let currentUser = null;
+
+  let examData = [];
+
+  let scoreChart = null;
+
+  let accuracyChart = null;
+
+  let firestoreUserName = "";
+
+
+  /* =====================================================
+     DOM
+  ===================================================== */
+
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+
+  function hideLoading() {
+
+    const loading = $("loadingScreen");
+
+    if (loading) {
+      loading.style.display = "none";
     }
 
-
-    /* =========================================================
-       LOADING / ERROR
-    ========================================================= */
-
-    function showLoading() {
-
-      document.getElementById("loadingCard").style.display = "block";
-      document.getElementById("errorCard").style.display = "none";
-      document.getElementById("analyticsContent").style.display = "none";
-      document.getElementById("noDataCard").style.display = "none";
-
-    }
+  }
 
 
-    function hideLoading() {
+  function showLoading(message) {
 
-      document.getElementById("loadingCard").style.display = "none";
+    $("loadingText").textContent =
+      message || "Loading...";
 
-    }
+    $("loadingScreen").style.display =
+      "flex";
 
-
-    function showError(message) {
-
-      hideLoading();
-
-      document.getElementById("analyticsContent").style.display = "none";
-      document.getElementById("noDataCard").style.display = "none";
-
-      document.getElementById("errorCard").style.display = "block";
-
-      document.getElementById("errorMessage").textContent =
-        message || "Data load गर्दा समस्या भयो।";
-
-    }
+  }
 
 
-    /* =========================================================
-       PRACTICE EXAM SET DETECTION
-       
-       IMPORTANT FIX:
-       No source/page/exam_type/type column is used.
+  function showError(message) {
 
-       ONLY:
-       set_1
-       set_2
-       set_3
-       ...
-       set_999
+    const box = $("errorBox");
 
-       Future sets are automatically detected.
-    ========================================================= */
+    box.style.display = "block";
 
-    function isPracticeExamSet(setName) {
+    box.innerHTML = `
+      <strong>
+        <i class="fa-solid fa-circle-exclamation"></i>
+        Analytics error
+      </strong>
+      <br>
+      ${escapeHtml(message)}
+    `;
 
-      const name =
-        String(setName || "")
-          .trim()
-          .toLowerCase();
-
-      return /^set_\d+$/.test(name);
-
-    }
+  }
 
 
-    /* =========================================================
-       GET SET NUMBER
-    ========================================================= */
+  function escapeHtml(value) {
 
-    function getSetNumber(setName) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
 
-      const match =
-        String(setName || "")
-          .trim()
-          .match(/^set_(\d+)$/i);
-
-      if (!match) {
-        return Number.MAX_SAFE_INTEGER;
-      }
-
-      return parseInt(match[1], 10);
-
-    }
+  }
 
 
-    /* =========================================================
-       FORMAT SET NAME
-    ========================================================= */
+  /* =====================================================
+     FIRESTORE USER NAME
+  ===================================================== */
 
-    function formatSetName(name) {
+  async function loadFirestoreUserName(user) {
 
-      const raw =
-        String(name || "")
-          .trim();
+    firestoreUserName = "";
 
-      /*
-        Exact formatting for:
-        set_1 -> Set 1
-        set_01 -> Set 1
-        set_10 -> Set 10
-      */
+    try {
 
-      const setMatch =
-        raw.match(/^set_(\d+)$/i);
-
-      if (setMatch) {
-
-        return "Set " +
-          parseInt(setMatch[1], 10);
-
-      }
-
-
-      let formatted =
-        raw
-          .replace(/[_-]+/g, " ")
-          .replace(/\s+/g, " ")
-          .trim();
-
-
-      formatted =
-        formatted
-          .replace(/\bmockexam\b/gi, "Mock Exam")
-          .replace(/\bmocktest\b/gi, "Mock Test")
-          .replace(/\bpracticeexam\b/gi, "Practice Exam")
-          .replace(/\bpracticequiz\b/gi, "Practice Quiz")
-          .replace(/\bquiz\b/gi, "Quiz")
-          .replace(/\bexam\b/gi, "Exam");
-
-
-      formatted =
-        formatted.replace(
-          /\b\w/g,
-          char => char.toUpperCase()
+      const userRef =
+        doc(
+          db,
+          "users",
+          user.uid
         );
 
+      const snapshot =
+        await getDoc(userRef);
 
-      return formatted || "Unknown Set";
+      if (snapshot.exists()) {
 
-    }
+        const data =
+          snapshot.data();
 
-
-    /* =========================================================
-       DETECT MOCK TEST
-       
-       This DOES NOT use source column.
-    ========================================================= */
-
-    function detectType(exam) {
-
-      const setName =
-        String(exam.set_name || "")
-          .toLowerCase()
-          .trim();
-
-
-      /*
-        Practice sets are handled separately.
-        Therefore they never enter Mock/Quiz categories.
-      */
-
-      if (isPracticeExamSet(setName)) {
-        return "exam";
-      }
-
-
-      if (
-        setName.includes("mock") ||
-        setName.includes("mocktest") ||
-        setName.includes("mock_exam") ||
-        setName.includes("mockexam")
-      ) {
-
-        return "mock";
+        firestoreUserName =
+          String(
+            data.name || ""
+          ).trim();
 
       }
 
+    } catch (error) {
 
-      return "quiz";
-
-    }
-
-
-    /* =========================================================
-       SAFE NUMBER
-    ========================================================= */
-
-    function num(value) {
-
-      const n = Number(value);
-
-      return Number.isFinite(n)
-        ? n
-        : 0;
-
-    }
-
-
-    /* =========================================================
-       ACCURACY
-    ========================================================= */
-
-    function getAccuracy(exam) {
-
-      const total =
-        num(exam.total_questions);
-
-
-      if (total > 0) {
-
-        return Math.max(
-          0,
-          Math.min(
-            100,
-            (num(exam.correct_count) / total) * 100
-          )
-        );
-
-      }
-
-
-      /*
-        Fallback if total_questions is unavailable.
-      */
-
-      const correct =
-        num(exam.correct_count);
-
-      const wrong =
-        num(exam.wrong_count);
-
-      const skipped =
-        num(exam.skipped_count);
-
-
-      const attempted =
-        correct + wrong + skipped;
-
-
-      if (attempted === 0) {
-        return 0;
-      }
-
-
-      return Math.max(
-        0,
-        Math.min(
-          100,
-          (correct / attempted) * 100
-        )
+      console.warn(
+        "Could not load Firestore user name:",
+        error
       );
 
     }
 
+  }
 
-    /* =========================================================
-       SCORE PERCENTAGE
-    ========================================================= */
 
-    function getScorePercentage(exam) {
+  /* =====================================================
+     AUTH
+  ===================================================== */
 
-      const score =
-        num(exam.score);
+  onAuthStateChanged(
+    auth,
+    async user => {
 
-      const total =
-        num(exam.total_questions);
+      if (user) {
 
+        currentUser = user;
 
-      if (total > 0) {
-
-        /*
-          If score is already percentage-like.
-        */
-
-        if (score <= 100) {
-          return Math.max(0, Math.min(100, score));
-        }
-
-        return Math.max(
-          0,
-          Math.min(
-            100,
-            (score / total) * 100
-          )
-        );
-
-      }
-
-
-      return Math.max(
-        0,
-        Math.min(100, score)
-      );
-
-    }
-
-
-    /* =========================================================
-       ADD SET
-    ========================================================= */
-
-    function addSet(map, setName, exam) {
-
-      const key =
-        String(setName || "unknown")
-          .trim()
-          .toLowerCase();
-
-
-      if (!map.has(key)) {
-
-        map.set(key, {
-          attempts: 0,
-          correct: 0,
-          wrong: 0,
-          skipped: 0,
-          totalQuestions: 0,
-          scores: [],
-          latestDate: null
-        });
-
-      }
-
-
-      const data =
-        map.get(key);
-
-
-      data.attempts++;
-
-      data.correct +=
-        num(exam.correct_count);
-
-      data.wrong +=
-        num(exam.wrong_count);
-
-      data.skipped +=
-        num(exam.skipped_count);
-
-      data.totalQuestions +=
-        num(exam.total_questions);
-
-      data.scores.push(
-        getScorePercentage(exam)
-      );
-
-
-      const currentDate =
-        new Date(exam.created_at || 0);
-
-      const previousDate =
-        data.latestDate
-          ? new Date(data.latestDate)
-          : new Date(0);
-
-
-      if (currentDate > previousDate) {
-
-        data.latestDate =
-          exam.created_at;
-
-      }
-
-    }
-
-
-    /* =========================================================
-       AVERAGE
-    ========================================================= */
-
-    function average(array) {
-
-      if (!array || array.length === 0) {
-        return 0;
-      }
-
-      return array.reduce(
-        (sum, value) => sum + num(value),
-        0
-      ) / array.length;
-
-    }
-
-
-    /* =========================================================
-       FORMAT DATE
-    ========================================================= */
-
-    function formatDate(dateValue) {
-
-      if (!dateValue) {
-        return "Unknown date";
-      }
-
-
-      const date =
-        new Date(dateValue);
-
-
-      if (Number.isNaN(date.getTime())) {
-        return "Unknown date";
-      }
-
-
-      const now =
-        new Date();
-
-
-      const today =
-        new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate()
-        );
-
-
-      const target =
-        new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate()
-        );
-
-
-      const diff =
-        Math.round(
-          (today - target) /
-          (1000 * 60 * 60 * 24)
-        );
-
-
-      if (diff === 0) {
-        return "Today";
-      }
-
-
-      if (diff === 1) {
-        return "Yesterday";
-      }
-
-
-      if (diff > 1 && diff < 7) {
-        return diff + " days ago";
-      }
-
-
-      return date.toLocaleDateString(
-        "en-IN",
-        {
-          day: "numeric",
-          month: "short",
-          year: "numeric"
-        }
-      );
-
-    }
-
-
-    /* =========================================================
-       LOAD ANALYTICS
-    ========================================================= */
-
-    async function loadAnalytics() {
-
-      showLoading();
-
-
-      try {
-
-        if (!supabaseClient) {
-          initSupabase();
-        }
-
-
-        /*
-          IMPORTANT DATABASE FIX:
-
-          ONLY EXISTING COLUMNS ARE SELECTED.
-
-          Do NOT add:
-          source
-          page
-          exam_type
-          type
-
-          because exam_leaderboard does not contain them.
-        */
-
-        const columns = `
-          id,
-          username,
-          user_uid,
-          set_name,
-          score,
-          correct_count,
-          wrong_count,
-          skipped_count,
-          total_questions,
-          created_at
-        `;
-
-
-        let allRows = [];
-
-
-        /*
-          -------------------------------------------------------
-          1. Firebase current user UID
-          -------------------------------------------------------
-        */
-
-        let firebaseUser = null;
+        $("userEmailDisplay").textContent =
+          user.email || "Logged in";
 
 
         try {
 
-          if (
-            window.firebase &&
-            window.firebase.auth
-          ) {
+          await initSupabase();
 
-            firebaseUser =
-              window.firebase
-                .auth()
-                .currentUser;
+          await loadFirestoreUserName(user);
 
-          }
+          await loadAnalytics(user);
 
-        } catch (e) {
+          hideLoading();
 
-          console.log(
-            "Firebase user unavailable:",
-            e
+        } catch (error) {
+
+          console.error(
+            "Analytics initialization error:",
+            error
+          );
+
+          hideLoading();
+
+          showError(
+            error.message ||
+            "Unable to load analytics."
           );
 
         }
 
-
-        /*
-          -------------------------------------------------------
-          2. Collect possible identities
-          -------------------------------------------------------
-        */
-
-        const uid =
-          firebaseUser?.uid || null;
-
-        const email =
-          firebaseUser?.email || null;
-
-
-        let firestoreUserName = null;
-
-
-        /*
-          Try to obtain Firestore display/name information
-          without requiring it.
-        */
-
-        try {
-
-          if (
-            window.firebase &&
-            window.firebase.firestore &&
-            firebaseUser
-          ) {
-
-            const db =
-              window.firebase.firestore();
-
-            const snap =
-              await db
-                .collection("users")
-                .doc(firebaseUser.uid)
-                .get();
-
-            if (snap.exists) {
-
-              const data =
-                snap.data() || {};
-
-              firestoreUserName =
-                data.username ||
-                data.userName ||
-                data.name ||
-                data.displayName ||
-                null;
-
-            }
-
-          }
-
-        } catch (e) {
-
-          console.log(
-            "Firestore username lookup skipped:",
-            e
-          );
-
-        }
-
-
-        /*
-          -------------------------------------------------------
-          3. Query by UID
-          -------------------------------------------------------
-        */
-
-        if (uid) {
-
-          const result =
-            await supabaseClient
-              .from("exam_leaderboard")
-              .select(columns)
-              .eq("user_uid", uid)
-              .order("created_at", {
-                ascending: false
-              });
-
-
-          if (result.error) {
-            throw result.error;
-          }
-
-
-          if (result.data) {
-            allRows.push(...result.data);
-          }
-
-        }
-
-
-        /*
-          -------------------------------------------------------
-          4. Query by email
-          -------------------------------------------------------
-        */
-
-        if (email) {
-
-          const result =
-            await supabaseClient
-              .from("exam_leaderboard")
-              .select(columns)
-              .eq("username", email)
-              .order("created_at", {
-                ascending: false
-              });
-
-
-          if (result.error) {
-            throw result.error;
-          }
-
-
-          if (result.data) {
-            allRows.push(...result.data);
-          }
-
-        }
-
-
-        /*
-          -------------------------------------------------------
-          5. Query by Firestore username
-          -------------------------------------------------------
-        */
-
-        if (firestoreUserName) {
-
-          const result =
-            await supabaseClient
-              .from("exam_leaderboard")
-              .select(columns)
-              .eq(
-                "username",
-                firestoreUserName
-              )
-              .order("created_at", {
-                ascending: false
-              });
-
-
-          if (result.error) {
-            throw result.error;
-          }
-
-
-          if (result.data) {
-            allRows.push(...result.data);
-          }
-
-        }
-
-
-        /*
-          -------------------------------------------------------
-          Remove duplicate rows
-          -------------------------------------------------------
-        */
-
-        const uniqueMap =
-          new Map();
-
-
-        allRows.forEach(row => {
-
-          const key =
-            row.id ||
-            [
-              row.user_uid,
-              row.username,
-              row.set_name,
-              row.created_at,
-              row.score
-            ].join("_");
-
-
-          if (!uniqueMap.has(key)) {
-            uniqueMap.set(key, row);
-          }
-
-        });
-
-
-        analyticsRows =
-          Array.from(uniqueMap.values())
-            .sort(
-              (a, b) =>
-                new Date(b.created_at || 0) -
-                new Date(a.created_at || 0)
-            );
-
-
-        hideLoading();
-
-
-        if (analyticsRows.length === 0) {
-
-          document.getElementById(
-            "noDataCard"
-          ).style.display = "block";
-
-          return;
-
-        }
-
-
-        document.getElementById(
-          "analyticsContent"
-        ).style.display = "block";
-
-
-        renderAnalytics(
-          analyticsRows
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "Analytics error:",
-          error
-        );
-
-
-        showError(
-          error?.message ||
-          "Analytics data load गर्दा समस्या भयो।"
-        );
-
-      }
-
-    }
-
-
-    /* =========================================================
-       RENDER ANALYTICS
-    ========================================================= */
-
-    function renderAnalytics(rows) {
-
-      renderSummary(rows);
-
-      renderQuestionBreakdown(rows);
-
-      renderScoreChart(rows);
-
-      renderAccuracyChart(rows);
-
-      renderSetPerformance(rows);
-
-      renderRecommendations(rows);
-
-      renderHistory(rows);
-
-    }
-
-
-    /* =========================================================
-       SUMMARY
-    ========================================================= */
-
-    function renderSummary(rows) {
-
-      const totalExams =
-        rows.length;
-
-
-      const scores =
-        rows.map(
-          row => getScorePercentage(row)
-        );
-
-
-      const avg =
-        average(scores);
-
-
-      const best =
-        scores.length
-          ? Math.max(...scores)
-          : 0;
-
-
-      const sets =
-        new Set(
-          rows.map(
-            row =>
-              String(
-                row.set_name || "unknown"
-              ).trim().toLowerCase()
-          )
-        );
-
-
-      document.getElementById(
-        "totalExams"
-      ).textContent =
-        totalExams;
-
-
-      document.getElementById(
-        "averageScore"
-      ).textContent =
-        Math.round(avg) + "%";
-
-
-      document.getElementById(
-        "bestScore"
-      ).textContent =
-        Math.round(best) + "%";
-
-
-      document.getElementById(
-        "totalSets"
-      ).textContent =
-        sets.size;
-
-    }
-
-
-    /* =========================================================
-       QUESTION BREAKDOWN
-    ========================================================= */
-
-    function renderQuestionBreakdown(rows) {
-
-      let correct = 0;
-      let wrong = 0;
-      let skipped = 0;
-
-
-      rows.forEach(row => {
-
-        correct +=
-          num(row.correct_count);
-
-        wrong +=
-          num(row.wrong_count);
-
-        skipped +=
-          num(row.skipped_count);
-
-      });
-
-
-      document.getElementById(
-        "correctCount"
-      ).textContent =
-        correct;
-
-
-      document.getElementById(
-        "wrongCount"
-      ).textContent =
-        wrong;
-
-
-      document.getElementById(
-        "skippedCount"
-      ).textContent =
-        skipped;
-
-
-      document.getElementById(
-        "legendCorrect"
-      ).textContent =
-        correct;
-
-
-      document.getElementById(
-        "legendWrong"
-      ).textContent =
-        wrong;
-
-
-      document.getElementById(
-        "legendSkipped"
-      ).textContent =
-        skipped;
-
-    }
-
-
-    /* =========================================================
-       SCORE CHART
-    ========================================================= */
-
-    function renderScoreChart(rows) {
-
-      const canvas =
-        document.getElementById(
-          "scoreChart"
-        );
-
-
-      if (!canvas) {
         return;
-      }
-
-
-      if (scoreChartInstance) {
-
-        scoreChartInstance.destroy();
 
       }
 
 
-      const chartRows =
-        [...rows]
-          .sort(
-            (a, b) =>
-              new Date(a.created_at || 0) -
-              new Date(b.created_at || 0)
+      $("userEmailDisplay").textContent =
+        "Checking login...";
+
+      $("loadingText").textContent =
+        "Checking your login session...";
+
+
+      setTimeout(() => {
+
+        if (!auth.currentUser) {
+
+          window.location.replace(
+            "login.html?redirect=analysis.html"
+          );
+
+        }
+
+      }, 3000);
+
+    }
+  );
+
+
+  /* =====================================================
+     LEADERBOARD COLUMNS
+  ===================================================== */
+
+  const LEADERBOARD_COLUMNS = `
+    id,
+    username,
+    user_uid,
+    set_name,
+    score,
+    correct_count,
+    wrong_count,
+    skipped_count,
+    total_questions,
+    created_at,
+    source,
+    page,
+    exam_type,
+    type
+  `;
+
+
+  /* =====================================================
+     LOAD ANALYTICS
+  ===================================================== */
+
+  async function loadAnalytics(user) {
+
+    showLoading(
+      "Loading your exam analytics..."
+    );
+
+
+    const email =
+      String(
+        user.email || ""
+      ).trim();
+
+
+    const uid =
+      String(
+        user.uid || ""
+      ).trim();
+
+
+    if (!uid) {
+
+      throw new Error(
+        "Your Firebase account UID could not be found."
+      );
+
+    }
+
+
+    const queries = [];
+
+
+    /* NEW UID RECORDS */
+
+    queries.push(
+      supabaseClient
+        .from("exam_leaderboard")
+        .select(LEADERBOARD_COLUMNS)
+        .eq("user_uid", uid)
+    );
+
+
+    /* OLD EMAIL RECORDS */
+
+    if (email) {
+
+      queries.push(
+        supabaseClient
+          .from("exam_leaderboard")
+          .select(LEADERBOARD_COLUMNS)
+          .eq("username", email)
+      );
+
+    }
+
+
+    /* OLD FIRESTORE NAME RECORDS */
+
+    if (firestoreUserName) {
+
+      queries.push(
+        supabaseClient
+          .from("exam_leaderboard")
+          .select(LEADERBOARD_COLUMNS)
+          .eq(
+            "username",
+            firestoreUserName
           )
-          .slice(-10);
+      );
+
+    }
 
 
-      const labels =
-        chartRows.map(
-          row =>
-            formatSetName(row.set_name)
+    const results =
+      await Promise.all(queries);
+
+
+    /*
+      IMPORTANT:
+      If the new optional columns don't exist,
+      retry with the original safe columns.
+    */
+
+    let usableResults =
+      results.filter(
+        result =>
+          !result.error &&
+          Array.isArray(result.data)
+      );
+
+
+    if (!usableResults.length) {
+
+      const fallbackColumns = `
+        id,
+        username,
+        user_uid,
+        set_name,
+        score,
+        correct_count,
+        wrong_count,
+        skipped_count,
+        total_questions,
+        created_at
+      `;
+
+
+      const fallbackQueries = [];
+
+
+      fallbackQueries.push(
+        supabaseClient
+          .from("exam_leaderboard")
+          .select(fallbackColumns)
+          .eq("user_uid", uid)
+      );
+
+
+      if (email) {
+
+        fallbackQueries.push(
+          supabaseClient
+            .from("exam_leaderboard")
+            .select(fallbackColumns)
+            .eq("username", email)
         );
 
+      }
 
-      const values =
-        chartRows.map(
-          row =>
-            Math.round(
-              getScorePercentage(row)
+
+      if (firestoreUserName) {
+
+        fallbackQueries.push(
+          supabaseClient
+            .from("exam_leaderboard")
+            .select(fallbackColumns)
+            .eq(
+              "username",
+              firestoreUserName
             )
         );
 
+      }
 
-      scoreChartInstance =
+
+      const fallbackResults =
+        await Promise.all(
+          fallbackQueries
+        );
+
+
+      usableResults =
+        fallbackResults.filter(
+          result =>
+            !result.error &&
+            Array.isArray(result.data)
+        );
+
+
+      if (!usableResults.length) {
+
+        const firstError =
+          fallbackResults.find(
+            result => result.error
+          )?.error;
+
+
+        throw new Error(
+          firstError?.message ||
+          "Could not fetch exam leaderboard data."
+        );
+
+      }
+
+    }
+
+
+    /* =====================================================
+       MERGE DUPLICATES
+    ===================================================== */
+
+    const merged =
+      new Map();
+
+
+    usableResults.forEach(
+      result => {
+
+        result.data.forEach(
+          row => {
+
+            if (!row || !row.id) {
+              return;
+            }
+
+
+            merged.set(
+              String(row.id),
+              row
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+    examData =
+      Array.from(
+        merged.values()
+      );
+
+
+    examData.sort(
+      (a,b) =>
+        new Date(
+          a.created_at || 0
+        ) -
+        new Date(
+          b.created_at || 0
+        )
+    );
+
+
+    renderAnalytics();
+
+  }
+
+
+  /* =====================================================
+     RENDER
+  ===================================================== */
+
+  function renderAnalytics() {
+
+    calculateSummary();
+
+    renderCharts();
+
+    renderSetPerformance();
+
+    renderRecommendations();
+
+    renderHistory();
+
+  }
+
+
+  /* =====================================================
+     SUMMARY
+  ===================================================== */
+
+  function calculateSummary() {
+
+    const totalExams =
+      examData.length;
+
+
+    let totalCorrect = 0;
+    let totalWrong = 0;
+    let totalSkipped = 0;
+    let totalQuestions = 0;
+    let bestScore = 0;
+    let scoreSum = 0;
+
+
+    examData.forEach(
+      exam => {
+
+        const correct =
+          Number(exam.correct_count) || 0;
+
+        const wrong =
+          Number(exam.wrong_count) || 0;
+
+        const skipped =
+          Number(exam.skipped_count) || 0;
+
+        const questions =
+          Number(exam.total_questions) || 0;
+
+        const score =
+          Number(exam.score) || 0;
+
+
+        totalCorrect += correct;
+        totalWrong += wrong;
+        totalSkipped += skipped;
+        totalQuestions += questions;
+        scoreSum += score;
+
+
+        if (score > bestScore) {
+          bestScore = score;
+        }
+
+      }
+    );
+
+
+    const accuracy =
+      totalQuestions > 0
+        ? (
+            totalCorrect /
+            totalQuestions
+          ) * 100
+        : 0;
+
+
+    const averageScore =
+      totalExams > 0
+        ? scoreSum / totalExams
+        : 0;
+
+
+    $("anaTotalSolved").textContent =
+      totalExams;
+
+
+    $("anaAccuracy").textContent =
+      accuracy.toFixed(1) + "%";
+
+
+    $("anaBestScore").textContent =
+      bestScore.toFixed(1);
+
+
+    $("anaAverageScore").textContent =
+      averageScore.toFixed(1);
+
+
+    $("totalCorrect").textContent =
+      totalCorrect;
+
+
+    $("totalWrong").textContent =
+      totalWrong;
+
+
+    $("totalSkipped").textContent =
+      totalSkipped;
+
+  }
+
+
+  /* =====================================================
+     CHARTS
+  ===================================================== */
+
+  function renderCharts() {
+
+    if (scoreChart) {
+      scoreChart.destroy();
+      scoreChart = null;
+    }
+
+
+    if (accuracyChart) {
+      accuracyChart.destroy();
+      accuracyChart = null;
+    }
+
+
+    const labels =
+      examData.map(
+        (exam,index) =>
+          "Exam " + (index + 1)
+      );
+
+
+    const scores =
+      examData.map(
+        exam =>
+          Number(exam.score) || 0
+      );
+
+
+    const correct =
+      examData.reduce(
+        (sum,exam) =>
+          sum +
+          (Number(exam.correct_count) || 0),
+        0
+      );
+
+
+    const wrong =
+      examData.reduce(
+        (sum,exam) =>
+          sum +
+          (Number(exam.wrong_count) || 0),
+        0
+      );
+
+
+    const skipped =
+      examData.reduce(
+        (sum,exam) =>
+          sum +
+          (Number(exam.skipped_count) || 0),
+        0
+      );
+
+
+    const scoreCanvas =
+      $("scoreTrendChart");
+
+
+    if (scoreCanvas) {
+
+      scoreChart =
         new Chart(
-          canvas,
+          scoreCanvas,
           {
             type: "line",
 
             data: {
+
               labels,
 
               datasets: [
+
                 {
                   label: "Score",
-
-                  data: values,
-
+                  data: scores,
                   borderWidth: 3,
-
-                  pointRadius: 4,
-
-                  pointHoverRadius: 6,
-
                   tension: .35,
-
                   fill: true,
-
-                  backgroundColor:
-                    "rgba(52,19,170,.08)",
-
-                  borderColor:
-                    "#3413aa",
-
-                  pointBackgroundColor:
-                    "#3413aa"
+                  pointRadius: 4,
+                  pointHoverRadius: 6
                 }
+
               ]
+
             },
 
             options: {
@@ -2509,63 +1490,24 @@
               maintainAspectRatio: false,
 
               plugins: {
-
                 legend: {
                   display: false
-                },
-
-                tooltip: {
-                  callbacks: {
-
-                    label: context =>
-                      " Score: " +
-                      context.parsed.y +
-                      "%"
-
-                  }
                 }
-
               },
 
               scales: {
 
                 y: {
-
-                  min: 0,
-
-                  max: 100,
-
-                  ticks: {
-                    font: {
-                      size: 9
-                    },
-
-                    callback: value =>
-                      value + "%"
-                  },
-
+                  beginAtZero: true,
                   grid: {
-                    color: "#f0eef5"
+                    color: "#eeeeF4"
                   }
-
                 },
 
                 x: {
-
-                  ticks: {
-                    font: {
-                      size: 8
-                    },
-
-                    maxRotation: 45,
-
-                    minRotation: 0
-                  },
-
                   grid: {
                     display: false
                   }
-
                 }
 
               }
@@ -2578,70 +1520,15 @@
     }
 
 
-    /* =========================================================
-       ACCURACY CHART
-    ========================================================= */
-
-    function renderAccuracyChart(rows) {
-
-      const canvas =
-        document.getElementById(
-          "accuracyChart"
-        );
+    const accuracyCanvas =
+      $("accuracyPieChart");
 
 
-      if (!canvas) {
-        return;
-      }
+    if (accuracyCanvas) {
 
-
-      if (accuracyChartInstance) {
-
-        accuracyChartInstance.destroy();
-
-      }
-
-
-      let correct = 0;
-      let wrong = 0;
-      let skipped = 0;
-
-
-      rows.forEach(row => {
-
-        correct +=
-          num(row.correct_count);
-
-        wrong +=
-          num(row.wrong_count);
-
-        skipped +=
-          num(row.skipped_count);
-
-      });
-
-
-      const total =
-        correct +
-        wrong +
-        skipped;
-
-
-      const accuracy =
-        total > 0
-          ? (correct / total) * 100
-          : 0;
-
-
-      document.getElementById(
-        "accuracyCenterValue"
-      ).textContent =
-        Math.round(accuracy) + "%";
-
-
-      accuracyChartInstance =
+      accuracyChart =
         new Chart(
-          canvas,
+          accuracyCanvas,
           {
             type: "doughnut",
 
@@ -2654,23 +1541,16 @@
               ],
 
               datasets: [
+
                 {
                   data: [
                     correct,
                     wrong,
                     skipped
                   ],
-
-                  backgroundColor: [
-                    "#22a866",
-                    "#e14b61",
-                    "#f0a034"
-                  ],
-
-                  borderWidth: 0,
-
-                  hoverOffset: 4
+                  borderWidth: 0
                 }
+
               ]
 
             },
@@ -2681,12 +1561,26 @@
 
               maintainAspectRatio: false,
 
-              cutout: "72%",
+              cutout: "68%",
 
               plugins: {
+
                 legend: {
-                  display: false
+
+                  position: "bottom",
+
+                  labels: {
+
+                    boxWidth: 10,
+
+                    font: {
+                      size: 10
+                    }
+
+                  }
+
                 }
+
               }
 
             }
@@ -2696,291 +1590,553 @@
 
     }
 
+  }
 
-    /* =========================================================
-       SET PERFORMANCE
-       
-       IMPORTANT:
 
-       Practice Exam Sets:
-       ONLY set_1, set_2, set_3...
-       
-       No source column.
-       No page column.
-       No exam_type column.
-       No type column.
-    ========================================================= */
+  /* =====================================================
+     SET-WISE PERFORMANCE
 
-    function renderSetPerformance(rows) {
+     STRICT PRACTICE EXAM SETS:
+       set_1
+       set_2
+       set_3
 
-      const container =
-        document.getElementById(
-          "setPerformanceContainer"
-        );
+     NOTHING ELSE IS ALLOWED HERE.
+  ===================================================== */
 
+  const PRACTICE_EXAM_SETS = [
+    "set_1",
+    "set_2",
+    "set_3"
+  ];
 
-      container.innerHTML = "";
 
+  function isStrictPracticeExamSet(setName) {
 
-      const totalSets =
-        new Map();
+    const normalized =
+      String(setName || "")
+        .trim()
+        .toLowerCase();
 
-      const quizSets =
-        new Map();
 
-      const examSets =
-        new Map();
+    return PRACTICE_EXAM_SETS.includes(
+      normalized
+    );
 
-      const mockExamSets =
-        new Map();
+  }
 
 
-      rows.forEach(exam => {
+  function formatPracticeExamSet(setName) {
 
-        const setName =
-          String(
-            exam.set_name || "unknown"
-          )
-            .trim()
-            .toLowerCase();
+    const normalized =
+      String(setName || "")
+        .trim()
+        .toLowerCase();
 
 
-        /*
-          -----------------------------------------------------
-          STRICT PRACTICE EXAM FILTER
-          -----------------------------------------------------
+    if (normalized === "set_1") {
+      return "Set 1";
+    }
 
-          set_1
-          set_2
-          set_3
-          set_4
-          set_5
-          set_6
-          set_7
-          ...
+    if (normalized === "set_2") {
+      return "Set 2";
+    }
 
-          automatically.
+    if (normalized === "set_3") {
+      return "Set 3";
+    }
 
-          Nothing else goes here.
-        */
 
-        if (isPracticeExamSet(setName)) {
+    return "Practice Exam";
 
-          addSet(
-            examSets,
-            setName,
-            exam
-          );
+  }
 
 
-          /*
-            Also keep total performance.
-          */
+  function renderSetPerformance() {
 
-          addSet(
-            totalSets,
-            setName,
-            exam
-          );
+    const container =
+      $("setPerformance");
 
 
-          return;
+    if (!examData.length) {
 
-        }
+      container.innerHTML = `
+        <div class="empty">
+          <i class="fa-solid fa-chart-simple"></i>
+          Complete an exam to see your set-wise performance.
+        </div>
+      `;
 
+      $("setCount").textContent =
+        "0 sets";
 
-        /*
-          Mock tests
-        */
-
-        if (
-          detectType(exam) === "mock"
-        ) {
-
-          addSet(
-            mockExamSets,
-            setName,
-            exam
-          );
-
-        } else {
-
-          addSet(
-            quizSets,
-            setName,
-            exam
-          );
-
-        }
-
-
-        addSet(
-          totalSets,
-          setName,
-          exam
-        );
-
-      });
-
-
-      /*
-        -------------------------------------------------------
-        TOTAL PERFORMANCE
-        -------------------------------------------------------
-      */
-
-      if (totalSets.size > 0) {
-
-        container.appendChild(
-          createCategory(
-            totalSets,
-            "Overall Set Performance",
-            "All attempted sets",
-            "fa-chart-column",
-            "accuracy"
-          )
-        );
-
-      }
-
-
-      /*
-        -------------------------------------------------------
-        PRACTICE EXAM SETS
-        -------------------------------------------------------
-
-        NUMERIC SORT:
-
-        Set 1
-        Set 2
-        Set 3
-        Set 4
-        Set 5
-        Set 6
-        ...
-
-        Not accuracy sorting.
-      */
-
-      if (examSets.size > 0) {
-
-        container.appendChild(
-          createCategory(
-            examSets,
-            "Practice Exam Sets",
-            "Set 1, Set 2, Set 3... future sets are added automatically",
-            "fa-file-circle-check",
-            "setNumber"
-          )
-        );
-
-      }
-
-
-      /*
-        -------------------------------------------------------
-        QUIZ SETS
-        -------------------------------------------------------
-      */
-
-      if (quizSets.size > 0) {
-
-        container.appendChild(
-          createCategory(
-            quizSets,
-            "Quiz Sets",
-            "Your regular quiz attempts",
-            "fa-circle-question",
-            "accuracy"
-          )
-        );
-
-      }
-
-
-      /*
-        -------------------------------------------------------
-        MOCK EXAM SETS
-        -------------------------------------------------------
-      */
-
-      if (mockExamSets.size > 0) {
-
-        container.appendChild(
-          createCategory(
-            mockExamSets,
-            "Mock Exam Sets",
-            "Mock test performance",
-            "fa-ranking-star",
-            "accuracy"
-          )
-        );
-
-      }
-
-
-      if (container.children.length === 0) {
-
-        container.innerHTML = `
-          <div class="performance-category">
-            <div class="category-empty">
-              अहिलेसम्म कुनै set attempt गरिएको छैन।
-            </div>
-          </div>
-        `;
-
-      }
+      return;
 
     }
 
 
-    /* =========================================================
+    /* =====================================================
+       TOTAL PERFORMANCE
+    ===================================================== */
+
+    const totalSets =
+      new Map();
+
+
+    /* =====================================================
+       QUIZ SETS
+    ===================================================== */
+
+    const quizSets =
+      new Map();
+
+
+    /* =====================================================
+       PRACTICE EXAM SETS
+
+       STRICTLY ONLY:
+       set_1
+       set_2
+       set_3
+    ===================================================== */
+
+    const examSets =
+      new Map();
+
+
+    /* =====================================================
+       MOCK EXAM SETS
+    ===================================================== */
+
+    const mockExamSets =
+      new Map();
+
+
+    function detectType(exam) {
+
+      const source =
+        String(
+          exam.source ||
+          exam.page ||
+          exam.exam_type ||
+          exam.type ||
+          ""
+        )
+        .toLowerCase()
+        .trim();
+
+
+      const setName =
+        String(
+          exam.set_name || ""
+        )
+        .toLowerCase()
+        .trim();
+
+
+      /*
+        STRICT RULE:
+
+        If set_name is set_1/set_2/set_3,
+        classify it as Practice Exam.
+
+        This rule has priority.
+      */
+
+      if (
+        isStrictPracticeExamSet(setName)
+      ) {
+
+        return "exam";
+
+      }
+
+
+      /*
+        Mock Exam
+      */
+
+      if (
+        source.includes("mock") ||
+        setName.includes("mockexam") ||
+        setName.includes("mock_exam") ||
+        setName.includes("mock-exam") ||
+        setName.includes("mocktest") ||
+        setName.includes("mock_test") ||
+        setName.includes("mock-test")
+      ) {
+
+        return "mock";
+
+      }
+
+
+      /*
+        Other exam.html sets are NOT
+        allowed in Practice Exam Sets.
+
+        They can still appear in Total Performance.
+      */
+
+      if (
+        source === "exam" ||
+        source === "practice_exam" ||
+        source === "practiceexam" ||
+        source.includes("exam.html")
+      ) {
+
+        return "other_exam";
+
+      }
+
+
+      /*
+        Quiz
+      */
+
+      if (
+        source === "quiz" ||
+        source === "practice_quiz" ||
+        source === "practicequiz" ||
+        source.includes("quiz.html")
+      ) {
+
+        return "quiz";
+
+      }
+
+
+      /*
+        Old records:
+
+        Only set_1/set_2/set_3 are treated
+        as Practice Exam.
+
+        Everything else defaults to quiz.
+      */
+
+      return "quiz";
+
+    }
+
+
+    function addSet(
+      map,
+      setName,
+      exam
+    ) {
+
+      if (!map.has(setName)) {
+
+        map.set(
+          setName,
+          {
+            attempts: 0,
+            score: 0,
+            correct: 0,
+            wrong: 0,
+            skipped: 0,
+            questions: 0
+          }
+        );
+
+      }
+
+
+      const data =
+        map.get(setName);
+
+
+      data.attempts++;
+
+      data.score +=
+        Number(exam.score) || 0;
+
+      data.correct +=
+        Number(exam.correct_count) || 0;
+
+      data.wrong +=
+        Number(exam.wrong_count) || 0;
+
+      data.skipped +=
+        Number(exam.skipped_count) || 0;
+
+      data.questions +=
+        Number(exam.total_questions) || 0;
+
+    }
+
+
+    examData.forEach(
+      exam => {
+
+        const rawSetName =
+          String(
+            exam.set_name ||
+            "Unknown Set"
+          ).trim();
+
+
+        /*
+          Total Performance gets all records.
+        */
+
+        addSet(
+          totalSets,
+          rawSetName,
+          exam
+        );
+
+
+        const type =
+          detectType(exam);
+
+
+        /*
+          STRICT PRACTICE EXAM FILTER
+
+          Only set_1, set_2, set_3.
+        */
+
+        if (
+          type === "exam" &&
+          isStrictPracticeExamSet(rawSetName)
+        ) {
+
+          addSet(
+            examSets,
+            rawSetName.toLowerCase(),
+            exam
+          );
+
+        }
+
+        else if (type === "mock") {
+
+          addSet(
+            mockExamSets,
+            rawSetName,
+            exam
+          );
+
+        }
+
+        else if (type === "quiz") {
+
+          addSet(
+            quizSets,
+            rawSetName,
+            exam
+          );
+
+        }
+
+      }
+    );
+
+
+    /*
+      IMPORTANT:
+      Ensure only these exact three keys can ever
+      exist in Practice Exam Sets.
+    */
+
+    const filteredExamSets =
+      new Map();
+
+
+    PRACTICE_EXAM_SETS.forEach(
+      setName => {
+
+        if (examSets.has(setName)) {
+
+          filteredExamSets.set(
+            setName,
+            examSets.get(setName)
+          );
+
+        }
+
+      }
+    );
+
+
+    /*
+      setCount currently means total unique
+      sets across all performance data.
+    */
+
+    $("setCount").textContent =
+      totalSets.size +
+      " " +
+      (
+        totalSets.size === 1
+          ? "set"
+          : "sets"
+      );
+
+
+    container.innerHTML = "";
+
+
+    /* =====================================================
        CREATE CATEGORY
-    ========================================================= */
+    ===================================================== */
 
     function createCategory(
       map,
+      icon,
       title,
       description,
-      icon,
-      sortMode = "accuracy"
+      emptyIcon,
+      emptyTitle,
+      emptyMessage,
+      strictPracticeExam = false
     ) {
 
-      const wrapper =
+      const category =
         document.createElement("div");
 
-      wrapper.className =
+
+      category.className =
         "performance-category";
 
+
+      const header =
+        document.createElement("div");
+
+
+      header.className =
+        "category-header";
+
+
+      header.innerHTML = `
+
+        <div class="category-left">
+
+          <div class="category-icon">
+            <i class="fa-solid ${icon}"></i>
+          </div>
+
+          <div class="category-info">
+
+            <strong>
+              ${escapeHtml(title)}
+            </strong>
+
+            <span>
+              ${escapeHtml(description)}
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="category-count">
+          ${map.size}
+          ${map.size === 1 ? "set" : "sets"}
+        </div>
+
+      `;
+
+
+      category.appendChild(header);
+
+
+      /*
+        EMPTY
+      */
+
+      if (!map.size) {
+
+        const empty =
+          document.createElement("div");
+
+
+        empty.className =
+          "category-empty";
+
+
+        empty.innerHTML = `
+
+          <i class="fa-solid ${emptyIcon}"></i>
+
+          <strong>
+            ${escapeHtml(emptyTitle)}
+          </strong>
+
+          <div style="margin-top:4px;">
+            ${escapeHtml(emptyMessage)}
+          </div>
+
+        `;
+
+
+        category.appendChild(empty);
+
+        return category;
+
+      }
+
+
+      /*
+        SORTING
+
+        Practice Exam:
+        Always Set 1 → Set 2 → Set 3
+
+        Other categories:
+        Accuracy descending
+      */
 
       let entries =
         Array.from(map.entries());
 
 
-      /*
-        -------------------------------------------------------
-        SORT
-        -------------------------------------------------------
-      */
-
-      if (sortMode === "setNumber") {
+      if (strictPracticeExam) {
 
         entries.sort(
-          (a, b) =>
-            getSetNumber(a[0]) -
-            getSetNumber(b[0])
+          (a,b) => {
+
+            const indexA =
+              PRACTICE_EXAM_SETS.indexOf(
+                a[0]
+              );
+
+            const indexB =
+              PRACTICE_EXAM_SETS.indexOf(
+                b[0]
+              );
+
+            return indexA - indexB;
+
+          }
         );
 
-      } else {
+      }
+
+      else {
 
         entries.sort(
-          (a, b) => {
+          (a,b) => {
 
             const accuracyA =
-              calculateSetAccuracy(a[1]);
+              a[1].questions > 0
+                ? (
+                    a[1].correct /
+                    a[1].questions
+                  )
+                : 0;
+
 
             const accuracyB =
-              calculateSetAccuracy(b[1]);
+              b[1].questions > 0
+                ? (
+                    b[1].correct /
+                    b[1].questions
+                  )
+                : 0;
+
 
             return accuracyB - accuracyA;
 
@@ -2990,60 +2146,40 @@
       }
 
 
+      const list =
+        document.createElement("div");
+
+
+      /*
+        Show first 5 only for other categories.
+
+        Practice Exam has only 3 possible sets,
+        so all are shown.
+      */
+
       const visibleCount =
-        5;
-
-
-      const extraCount =
-        Math.max(
-          0,
-          entries.length - visibleCount
-        );
-
-
-      wrapper.innerHTML = `
-
-        <div class="category-header">
-
-          <div class="category-left">
-
-            <div class="category-icon">
-              <i class="fa-solid ${icon}"></i>
-            </div>
-
-            <div class="category-info">
-
-              <div class="category-name">
-                ${escapeHtml(title)}
-              </div>
-
-              <div class="category-description">
-                ${escapeHtml(description)}
-              </div>
-
-            </div>
-
-          </div>
-
-          <div class="category-count">
-            ${entries.length} sets
-          </div>
-
-        </div>
-
-        <div class="category-body"></div>
-
-      `;
-
-
-      const body =
-        wrapper.querySelector(
-          ".category-body"
-        );
+        strictPracticeExam
+          ? 3
+          : 5;
 
 
       entries.forEach(
-        ([setName, data], index) => {
+        ([name,data],index) => {
+
+          const avgScore =
+            data.attempts > 0
+              ? data.score / data.attempts
+              : 0;
+
+
+          const accuracy =
+            data.questions > 0
+              ? (
+                  data.correct /
+                  data.questions
+                ) * 100
+              : 0;
+
 
           const item =
             document.createElement("div");
@@ -3053,27 +2189,22 @@
             "set-item";
 
 
-          if (index >= visibleCount) {
+          if (
+            !strictPracticeExam &&
+            index >= visibleCount
+          ) {
 
-            item.classList.add(
-              "extra-set"
-            );
+            item.style.display = "none";
+
+            item.dataset.extraSet = "true";
 
           }
 
 
-          const accuracy =
-            calculateSetAccuracy(data);
-
-
-          const averageScore =
-            average(data.scores);
-
-
-          const latestDate =
-            formatDate(
-              data.latestDate
-            );
+          const displayName =
+            strictPracticeExam
+              ? formatPracticeExamSet(name)
+              : formatSetName(name);
 
 
           item.innerHTML = `
@@ -3081,43 +2212,45 @@
             <div class="set-top">
 
               <div class="set-name">
-                ${escapeHtml(
-                  formatSetName(setName)
-                )}
+                ${escapeHtml(displayName)}
               </div>
 
               <div class="set-score">
-                ${Math.round(averageScore)}%
+                ${avgScore.toFixed(1)}
               </div>
 
             </div>
-
 
             <div class="progress">
 
               <div
                 class="progress-fill"
-                style="width:${accuracy}%">
-              </div>
+                style="
+                  width:${Math.min(
+                    Math.max(
+                      accuracy,
+                      0
+                    ),
+                    100
+                  )}%;
+                "
+              ></div>
 
             </div>
-
 
             <div class="set-meta">
 
               <span>
+                Accuracy ${accuracy.toFixed(1)}%
+              </span>
+
+              <span>
                 ${data.attempts}
-                ${data.attempts === 1
-                  ? "attempt"
-                  : "attempts"}
-              </span>
-
-              <span>
-                Accuracy ${Math.round(accuracy)}%
-              </span>
-
-              <span>
-                ${latestDate}
+                ${
+                  data.attempts === 1
+                    ? "attempt"
+                    : "attempts"
+                }
               </span>
 
             </div>
@@ -3125,19 +2258,26 @@
           `;
 
 
-          body.appendChild(item);
+          list.appendChild(item);
 
         }
       );
 
 
+      category.appendChild(list);
+
+
       /*
-        -------------------------------------------------------
         SEE MORE
-        -------------------------------------------------------
+
+        Not needed for strict Practice Exam
+        because there are only 3 allowed sets.
       */
 
-      if (extraCount > 0) {
+      if (
+        !strictPracticeExam &&
+        entries.length > visibleCount
+      ) {
 
         const button =
           document.createElement("button");
@@ -3147,92 +2287,61 @@
           "see-more-btn";
 
 
-        button.setAttribute(
-          "type",
-          "button"
-        );
-
-
-        button.setAttribute(
-          "aria-expanded",
-          "false"
-        );
-
-
         button.innerHTML = `
-
-          <span class="see-more-text">
-            See ${extraCount} more
+          <span>
+            See More (${entries.length - visibleCount} more)
           </span>
-
-          <span class="see-more-icon">
-            <i class="fa-solid fa-chevron-down"></i>
-          </span>
-
+          <i class="fa-solid fa-chevron-down"></i>
         `;
+
+
+        let expanded = false;
 
 
         button.addEventListener(
           "click",
           () => {
 
-            const expanded =
-              button.classList.contains(
-                "expanded"
-              );
+            expanded = !expanded;
 
 
             const extraItems =
-              body.querySelectorAll(
-                ".extra-set"
+              list.querySelectorAll(
+                '[data-extra-set="true"]'
               );
 
 
             extraItems.forEach(
               item => {
 
-                item.classList.toggle(
-                  "is-visible",
-                  !expanded
-                );
+                item.style.display =
+                  expanded
+                    ? ""
+                    : "none";
 
               }
             );
 
 
-            button.classList.toggle(
-              "expanded",
-              !expanded
-            );
+            if (expanded) {
 
+              button.innerHTML = `
+                <span>
+                  Show Less
+                </span>
+                <i class="fa-solid fa-chevron-up"></i>
+              `;
 
-            button.setAttribute(
-              "aria-expanded",
-              String(!expanded)
-            );
+            }
 
+            else {
 
-            const text =
-              button.querySelector(
-                ".see-more-text"
-              );
-
-
-            if (text) {
-
-              if (!expanded) {
-
-                text.textContent =
-                  "Show less";
-
-              } else {
-
-                text.textContent =
-                  "See " +
-                  extraCount +
-                  " more";
-
-              }
+              button.innerHTML = `
+                <span>
+                  See More (${entries.length - visibleCount} more)
+                </span>
+                <i class="fa-solid fa-chevron-down"></i>
+              `;
 
             }
 
@@ -3240,325 +2349,727 @@
         );
 
 
-        body.appendChild(button);
+        category.appendChild(button);
 
       }
 
 
-      return wrapper;
+      return category;
 
     }
 
 
-    /* =========================================================
-       SET ACCURACY
-    ========================================================= */
+    /* =====================================================
+       1. TOTAL PERFORMANCE
+    ===================================================== */
 
-    function calculateSetAccuracy(data) {
+    container.appendChild(
+      createCategory(
+        totalSets,
+        "fa-layer-group",
+        "Total Performance",
+        "All quiz, practice exam and mock exam sets",
+        "fa-chart-simple",
+        "No performance data",
+        "Complete a quiz or exam to see your total performance."
+      )
+    );
 
-      const total =
-        num(data.correct) +
-        num(data.wrong) +
-        num(data.skipped);
+
+    /* =====================================================
+       2. QUIZ.HTML
+    ===================================================== */
+
+    container.appendChild(
+      createCategory(
+        quizSets,
+        "fa-book-open",
+        "Practice Quiz Sets",
+        "Sets attempted from quiz.html",
+        "fa-book-open",
+        "No Practice Quiz attempted",
+        "quiz.html practice sets will appear here."
+      )
+    );
 
 
-      if (total === 0) {
-        return 0;
-      }
+    /* =====================================================
+       3. STRICT PRACTICE EXAM
+
+       ONLY:
+         set_1
+         set_2
+         set_3
+    ===================================================== */
+
+    container.appendChild(
+      createCategory(
+        filteredExamSets,
+        "fa-file-lines",
+        "Practice Exam Sets",
+        "Only Set 1, Set 2 and Set 3",
+        "fa-file-lines",
+        "No Practice Exam attempted",
+        "Only set_1, set_2 and set_3 from exam.html will appear here.",
+        true
+      )
+    );
 
 
-      return Math.max(
-        0,
-        Math.min(
-          100,
-          (data.correct / total) * 100
-        )
+    /* =====================================================
+       4. MOCK EXAM
+    ===================================================== */
+
+    container.appendChild(
+      createCategory(
+        mockExamSets,
+        "fa-clipboard-check",
+        "Mock Exam Sets",
+        "Sets attempted from mockexam.html",
+        "fa-clipboard-check",
+        "No Mock Exam attempted",
+        "mockexam.html tests will appear here."
+      )
+    );
+
+  }
+
+
+  /* =====================================================
+     FORMAT SET NAME
+  ===================================================== */
+
+  function formatSetName(name) {
+
+    if (!name) {
+      return "Unknown Set";
+    }
+
+
+    let formatted =
+      String(name)
+        .replace(/[_-]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+
+    formatted =
+      formatted.replace(
+        /\bmockexam\b/gi,
+        "Mock Exam"
       );
 
-    }
 
+    formatted =
+      formatted.replace(
+        /\bmocktest\b/gi,
+        "Mock Test"
+      );
 
-    /* =========================================================
-       RECOMMENDATIONS
-    ========================================================= */
 
-    function renderRecommendations(rows) {
+    formatted =
+      formatted.replace(
+        /\bpracticeexam\b/gi,
+        "Practice Exam"
+      );
 
-      const container =
-        document.getElementById(
-          "recommendationsContainer"
-        );
 
+    formatted =
+      formatted.replace(
+        /\bpracticequiz\b/gi,
+        "Practice Quiz"
+      );
 
-      container.innerHTML = "";
 
+    formatted =
+      formatted.replace(
+        /\bquiz\b/gi,
+        "Quiz"
+      );
 
-      const totalCorrect =
-        rows.reduce(
-          (sum, row) =>
-            sum + num(row.correct_count),
-          0
-        );
 
+    formatted =
+      formatted.replace(
+        /\bexam\b/gi,
+        "Exam"
+      );
 
-      const totalWrong =
-        rows.reduce(
-          (sum, row) =>
-            sum + num(row.wrong_count),
-          0
-        );
 
+    formatted =
+      formatted.replace(
+        /\b\w/g,
+        char =>
+          char.toUpperCase()
+      );
 
-      const totalSkipped =
-        rows.reduce(
-          (sum, row) =>
-            sum + num(row.skipped_count),
-          0
-        );
 
+    return formatted;
 
-      const totalQuestions =
-        totalCorrect +
-        totalWrong +
-        totalSkipped;
+  }
 
 
-      const accuracy =
-        totalQuestions > 0
-          ? (totalCorrect / totalQuestions) * 100
-          : 0;
+  /* =====================================================
+     RECOMMENDATIONS
+  ===================================================== */
 
+  function renderRecommendations() {
 
-      const recommendations = [];
+    const container =
+      $("recommendations");
 
 
-      if (accuracy < 50) {
+    if (!examData.length) {
 
-        recommendations.push({
-          icon: "fa-book-open",
-          title: "Concept Revision",
-          text:
-            "तपाईंको accuracy 50% भन्दा कम छ। नयाँ set attempt गर्नुअघि basic concepts र notes revise गर्नुहोस्।"
-        });
+      container.innerHTML = `
 
-      } else if (accuracy < 70) {
+        <div class="recommendation">
 
-        recommendations.push({
-          icon: "fa-bullseye",
-          title: "Accuracy सुधार्नुहोस्",
-          text:
-            "Concept राम्रो हुँदैछ। अब गलत भएका प्रश्नहरू review गरेर accuracy बढाउने प्रयास गर्नुहोस्।"
-        });
-
-      } else {
-
-        recommendations.push({
-          icon: "fa-fire",
-          title: "Keep Practicing",
-          text:
-            "तपाईंको accuracy राम्रो छ। नियमित practice मार्फत consistency कायम राख्नुहोस्।"
-        });
-
-      }
-
-
-      if (
-        totalSkipped >
-        totalWrong
-      ) {
-
-        recommendations.push({
-          icon: "fa-clock",
-          title: "Time Management",
-          text:
-            "Skipped questions धेरै छन्। Exam practice गर्दा प्रत्येक प्रश्नका लागि समय व्यवस्थापनमा ध्यान दिनुहोस्।"
-        });
-
-      }
-
-
-      if (
-        totalWrong >
-        totalCorrect * .5
-      ) {
-
-        recommendations.push({
-          icon: "fa-rotate-left",
-          title: "Review Wrong Answers",
-          text:
-            "गलत भएका प्रश्नहरू दोहोर्याएर हेर्नुहोस् र एउटै concept मा mistake repeat नहोस् भन्नेमा ध्यान दिनुहोस्।"
-        });
-
-      }
-
-
-      if (recommendations.length === 0) {
-
-        recommendations.push({
-          icon: "fa-chart-line",
-          title: "Continue Your Progress",
-          text:
-            "नियमित रूपमा नयाँ practice sets attempt गर्दै आफ्नो progress track गर्नुहोस्।"
-        });
-
-      }
-
-
-      recommendations
-        .slice(0, 3)
-        .forEach(item => {
-
-          const div =
-            document.createElement("div");
-
-
-          div.className =
-            "recommendation";
-
-
-          div.innerHTML = `
-
-            <div class="recommendation-icon">
-              <i class="fa-solid ${item.icon}"></i>
-            </div>
-
-            <div>
-
-              <div class="recommendation-title">
-                ${escapeHtml(item.title)}
-              </div>
-
-              <div class="recommendation-text">
-                ${escapeHtml(item.text)}
-              </div>
-
-            </div>
-
-          `;
-
-
-          container.appendChild(div);
-
-        });
-
-    }
-
-
-    /* =========================================================
-       HISTORY
-    ========================================================= */
-
-    function renderHistory(rows) {
-
-      const container =
-        document.getElementById(
-          "historyContainer"
-        );
-
-
-      container.innerHTML = "";
-
-
-      const recentRows =
-        rows.slice(0, 10);
-
-
-      recentRows.forEach(row => {
-
-        const div =
-          document.createElement("div");
-
-
-        div.className =
-          "history-item";
-
-
-        const score =
-          Math.round(
-            getScorePercentage(row)
-          );
-
-
-        const accuracy =
-          Math.round(
-            getAccuracy(row)
-          );
-
-
-        div.innerHTML = `
-
-          <div class="history-icon">
-            <i class="fa-solid fa-file-circle-check"></i>
+          <div class="recommendation-icon">
+            <i class="fa-solid fa-rocket"></i>
           </div>
-
-
-          <div class="history-info">
-
-            <div class="history-set">
-              ${escapeHtml(
-                formatSetName(row.set_name)
-              )}
-            </div>
-
-            <div class="history-date">
-              ${formatDate(row.created_at)}
-            </div>
-
-          </div>
-
 
           <div>
 
-            <div class="history-score">
-              ${score}%
-            </div>
+            <strong>
+              Start your first Mock Test
+            </strong>
 
-            <div class="history-accuracy">
-              ${accuracy}% accuracy
-            </div>
+            <p>
+              Complete a mock test and your personal
+              performance insights will appear here.
+            </p>
 
           </div>
 
-        `;
+        </div>
+
+      `;
+
+      return;
+
+    }
 
 
-        container.appendChild(div);
+    let correct = 0;
+    let wrong = 0;
+    let skipped = 0;
+    let questions = 0;
+
+
+    examData.forEach(
+      exam => {
+
+        correct +=
+          Number(exam.correct_count) || 0;
+
+        wrong +=
+          Number(exam.wrong_count) || 0;
+
+        skipped +=
+          Number(exam.skipped_count) || 0;
+
+        questions +=
+          Number(exam.total_questions) || 0;
+
+      }
+    );
+
+
+    const accuracy =
+      questions > 0
+        ? (
+            correct /
+            questions
+          ) * 100
+        : 0;
+
+
+    const recommendations = [];
+
+
+    if (accuracy < 60) {
+
+      recommendations.push({
+
+        icon: "fa-book-open",
+
+        title:
+          "Strengthen your basics",
+
+        text:
+          "Your overall accuracy is below 60%. Revise concepts before attempting more timed tests."
+
+      });
+
+    }
+
+    else if (accuracy < 75) {
+
+      recommendations.push({
+
+        icon: "fa-bullseye",
+
+        title:
+          "Work on accuracy",
+
+        text:
+          "Your base is developing. Focus on reducing avoidable mistakes and reviewing wrong answers."
+
+      });
+
+    }
+
+    else {
+
+      recommendations.push({
+
+        icon: "fa-fire",
+
+        title:
+          "Keep your momentum",
+
+        text:
+          "Your accuracy is strong. Continue mixed mock tests while focusing on difficult questions."
 
       });
 
     }
 
 
-    /* =========================================================
-       ESCAPE HTML
-    ========================================================= */
+    if (
+      wrong >
+      correct * .35
+    ) {
 
-    function escapeHtml(value) {
+      recommendations.push({
 
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        icon:
+          "fa-triangle-exclamation",
+
+        title:
+          "Reduce negative marking",
+
+        text:
+          "A relatively high number of wrong answers can reduce your final score. Avoid blind guessing."
+
+      });
 
     }
 
 
-    /* =========================================================
-       START
-    ========================================================= */
+    if (
+      skipped >
+      correct * .35
+    ) {
 
-    document.addEventListener(
-      "DOMContentLoaded",
-      () => {
+      recommendations.push({
 
-        loadAnalytics();
+        icon:
+          "fa-clock",
+
+        title:
+          "Improve question attempt strategy",
+
+        text:
+          "You are skipping a noticeable number of questions. Practice easier questions first and manage time carefully."
+
+      });
+
+    }
+
+
+    if (
+      examData.length >= 3
+    ) {
+
+      const recent =
+        examData.slice(-3);
+
+
+      const recentAverage =
+        recent.reduce(
+          (sum,exam) =>
+            sum +
+            (Number(exam.score) || 0),
+          0
+        ) /
+        recent.length;
+
+
+      const old =
+        examData.slice(
+          0,
+          Math.max(
+            1,
+            examData.length - 3
+          )
+        );
+
+
+      const oldAverage =
+        old.reduce(
+          (sum,exam) =>
+            sum +
+            (Number(exam.score) || 0),
+          0
+        ) /
+        old.length;
+
+
+      if (
+        recentAverage >
+        oldAverage
+      ) {
+
+        recommendations.push({
+
+          icon:
+            "fa-arrow-trend-up",
+
+          title:
+            "Your recent performance is improving",
+
+          text:
+            "Your recent mock-test scores are higher than your earlier average. Keep following the same study routine."
+
+        });
+
+      }
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    recommendations
+      .slice(0,3)
+      .forEach(
+        rec => {
+
+          const item =
+            document.createElement("div");
+
+
+          item.className =
+            "recommendation";
+
+
+          item.innerHTML = `
+
+            <div class="recommendation-icon">
+
+              <i class="fa-solid ${escapeHtml(
+                rec.icon
+              )}"></i>
+
+            </div>
+
+            <div>
+
+              <strong>
+                ${escapeHtml(
+                  rec.title
+                )}
+              </strong>
+
+              <p>
+                ${escapeHtml(
+                  rec.text
+                )}
+              </p>
+
+            </div>
+
+          `;
+
+
+          container.appendChild(item);
+
+        }
+      );
+
+  }
+
+
+  /* =====================================================
+     HISTORY
+  ===================================================== */
+
+  function renderHistory() {
+
+    const container =
+      $("examHistory");
+
+
+    if (!examData.length) {
+
+      container.innerHTML = `
+
+        <div class="empty">
+
+          <i class="fa-solid fa-clock-rotate-left"></i>
+
+          No exam history found yet.
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    const recent =
+      [...examData]
+        .sort(
+          (a,b) =>
+            new Date(
+              b.created_at || 0
+            ) -
+            new Date(
+              a.created_at || 0
+            )
+        )
+        .slice(0,10);
+
+
+    container.innerHTML = "";
+
+
+    recent.forEach(
+      exam => {
+
+        const score =
+          Number(exam.score) || 0;
+
+        const correct =
+          Number(exam.correct_count) || 0;
+
+        const wrong =
+          Number(exam.wrong_count) || 0;
+
+        const skipped =
+          Number(exam.skipped_count) || 0;
+
+        const total =
+          Number(exam.total_questions) || 0;
+
+        const date =
+          formatDate(exam.created_at);
+
+
+        const item =
+          document.createElement("div");
+
+
+        item.className =
+          "history-item";
+
+
+        item.innerHTML = `
+
+          <div class="history-icon">
+
+            <i class="fa-solid fa-file-lines"></i>
+
+          </div>
+
+          <div class="history-main">
+
+            <strong>
+              ${escapeHtml(
+                formatSetName(
+                  exam.set_name
+                )
+              )}
+            </strong>
+
+            <span>
+              ${escapeHtml(date)}
+              •
+              ${correct} correct
+              •
+              ${wrong} wrong
+              •
+              ${skipped} skipped
+            </span>
+
+          </div>
+
+          <div class="history-score">
+
+            <strong>
+              ${score.toFixed(1)}
+            </strong>
+
+            <span>
+              / ${total}
+            </span>
+
+          </div>
+
+        `;
+
+
+        container.appendChild(item);
 
       }
     );
 
-  </script>
+  }
 
-</body>
+
+  /* =====================================================
+     DATE
+  ===================================================== */
+
+  function formatDate(dateString) {
+
+    if (!dateString) {
+      return "Unknown date";
+    }
+
+
+    const date =
+      new Date(dateString);
+
+
+    if (
+      isNaN(
+        date.getTime()
+      )
+    ) {
+
+      return "Unknown date";
+
+    }
+
+
+    return date.toLocaleDateString(
+      "en-IN",
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     NAVIGATION
+  ===================================================== */
+
+  window.goBack =
+    function() {
+
+      if (history.length > 1) {
+
+        history.back();
+
+      }
+
+      else {
+
+        window.location.href =
+          "dashboard.html";
+
+      }
+
+    };
+
+
+  /* =====================================================
+     REFRESH
+  ===================================================== */
+
+  window.refreshAnalytics =
+    async function() {
+
+      if (!currentUser) {
+        return;
+      }
+
+
+      try {
+
+        showLoading(
+          "Refreshing your analytics..."
+        );
+
+
+        $("errorBox").style.display =
+          "none";
+
+
+        await loadFirestoreUserName(
+          currentUser
+        );
+
+
+        await loadAnalytics(
+          currentUser
+        );
+
+
+        hideLoading();
+
+      } catch (error) {
+
+        console.error(
+          "Refresh error:",
+          error
+        );
+
+
+        hideLoading();
+
+
+        showError(
+          error.message ||
+          "Failed to refresh analytics."
+        );
+
+      }
+
+    };
+
+
+  /* =====================================================
+     BOTTOM NAV
+  ===================================================== */
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      try {
+
+        if (
+          typeof window.loadBottomNav ===
+          "function"
+        ) {
+
+          window.loadBottomNav(
+            "analytics"
+          );
+
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "Bottom nav error:",
+          error
+        );
+
+      }
+
+    }
+  );
+
+</script></body>
 </html>
