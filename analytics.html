@@ -1,24 +1,11 @@
-<!DOCTYPE html>
-<html lang="ne">
+<!DOCTYPE html><html lang="ne">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"><meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-  <title>LoksewaQuest - Performance Analytics</title>
-
-  <script src="components.js"></script>
-
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
+  <title>LoksewaQuest - Performance Analytics</title>  <script src="components.js"></script>  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <style>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -394,28 +381,6 @@
       font-size: 9px;
     }
 
-    .see-more-btn {
-      width: 100%;
-      margin-top: 10px;
-      padding: 11px 14px;
-      border: 1px solid #e4defc;
-      border-radius: 12px;
-      background: #f7f5ff;
-      color: #3413aa;
-      font-family: inherit;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-    }
-
-    .see-more-btn:active {
-      transform: scale(.98);
-    }
-
     .category-empty {
       text-align: center;
       padding: 20px 12px;
@@ -605,225 +570,176 @@
         margin-top: -15px;
       }
     }
-  </style>
-</head>
-
-<body>
-
-<div id="loadingScreen">
+  </style></head><body><div id="loadingScreen">
   <div class="loader"></div>
   <p id="loadingText">तपाईंको analytics तयार हुँदैछ...</p>
+</div><header class="top-header">  <div class="header-top"><button class="back-btn" onclick="goBack()">
+  <i class="fa-solid fa-arrow-left"></i>
+</button>
+
+<div class="header-title">
+  <h1>Performance Analytics</h1>
+  <p>Your Loksewa Quest journey</p>
 </div>
 
-<header class="top-header">
+<button class="refresh-btn" onclick="refreshAnalytics()">
+  <i class="fa-solid fa-rotate"></i>
+</button>
 
-  <div class="header-top">
+  </div>  <div class="user-box"><div class="user-icon">
+  <i class="fa-solid fa-user"></i>
+</div>
 
-    <button class="back-btn" onclick="goBack()">
-      <i class="fa-solid fa-arrow-left"></i>
-    </button>
+<div class="user-info">
+  <small>Logged in as</small>
+  <span id="userEmailDisplay">Checking account...</span>
+</div>
 
-    <div class="header-title">
-      <h1>Performance Analytics</h1>
-      <p>Your Loksewa Quest journey</p>
+  </div></header><main class="container">  <section class="section"><div class="summary-grid">
+
+  <div class="summary-card">
+    <div class="summary-icon">
+      <i class="fa-solid fa-file-circle-check"></i>
+    </div>
+    <h3 id="anaTotalSolved">0</h3>
+    <p>EXAMS COMPLETED</p>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-icon">
+      <i class="fa-solid fa-bullseye"></i>
+    </div>
+    <h3 id="anaAccuracy">0%</h3>
+    <p>OVERALL ACCURACY</p>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-icon">
+      <i class="fa-solid fa-trophy"></i>
+    </div>
+    <h3 id="anaBestScore">0</h3>
+    <p>BEST SCORE</p>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-icon">
+      <i class="fa-solid fa-chart-line"></i>
+    </div>
+    <h3 id="anaAverageScore">0</h3>
+    <p>AVERAGE SCORE</p>
+  </div>
+
+</div>
+
+  </section>  <div id="errorBox"></div>  <section class="section"><div class="section-title">
+  <h2>Question Breakdown</h2>
+  <span>All exams</span>
+</div>
+
+<div class="card">
+
+  <div class="quick-grid">
+
+    <div class="quick-stat">
+      <strong class="correct" id="totalCorrect">0</strong>
+      <span>Correct</span>
     </div>
 
-    <button class="refresh-btn" onclick="refreshAnalytics()">
-      <i class="fa-solid fa-rotate"></i>
-    </button>
+    <div class="quick-stat">
+      <strong class="wrong" id="totalWrong">0</strong>
+      <span>Wrong</span>
+    </div>
+
+    <div class="quick-stat">
+      <strong class="skipped" id="totalSkipped">0</strong>
+      <span>Skipped</span>
+    </div>
 
   </div>
 
-  <div class="user-box">
+</div>
 
-    <div class="user-icon">
-      <i class="fa-solid fa-user"></i>
-    </div>
+  </section>  <section class="section"><div class="analytics-grid">
 
-    <div class="user-info">
-      <small>Logged in as</small>
-      <span id="userEmailDisplay">Checking account...</span>
-    </div>
-
-  </div>
-
-</header>
-
-<main class="container">
-
-  <section class="section">
-
-    <div class="summary-grid">
-
-      <div class="summary-card">
-        <div class="summary-icon">
-          <i class="fa-solid fa-file-circle-check"></i>
-        </div>
-        <h3 id="anaTotalSolved">0</h3>
-        <p>EXAMS COMPLETED</p>
-      </div>
-
-      <div class="summary-card">
-        <div class="summary-icon">
-          <i class="fa-solid fa-bullseye"></i>
-        </div>
-        <h3 id="anaAccuracy">0%</h3>
-        <p>OVERALL ACCURACY</p>
-      </div>
-
-      <div class="summary-card">
-        <div class="summary-icon">
-          <i class="fa-solid fa-trophy"></i>
-        </div>
-        <h3 id="anaBestScore">0</h3>
-        <p>BEST SCORE</p>
-      </div>
-
-      <div class="summary-card">
-        <div class="summary-icon">
-          <i class="fa-solid fa-chart-line"></i>
-        </div>
-        <h3 id="anaAverageScore">0</h3>
-        <p>AVERAGE SCORE</p>
-      </div>
-
-    </div>
-
-  </section>
-
-  <div id="errorBox"></div>
-
-  <section class="section">
+  <div>
 
     <div class="section-title">
-      <h2>Question Breakdown</h2>
-      <span>All exams</span>
+      <h2>Score Progress</h2>
+      <span>Exam by exam</span>
     </div>
 
     <div class="card">
 
-      <div class="quick-grid">
-
-        <div class="quick-stat">
-          <strong class="correct" id="totalCorrect">0</strong>
-          <span>Correct</span>
-        </div>
-
-        <div class="quick-stat">
-          <strong class="wrong" id="totalWrong">0</strong>
-          <span>Wrong</span>
-        </div>
-
-        <div class="quick-stat">
-          <strong class="skipped" id="totalSkipped">0</strong>
-          <span>Skipped</span>
-        </div>
-
+      <div class="chart-box">
+        <canvas id="scoreTrendChart"></canvas>
       </div>
 
     </div>
 
-  </section>
+  </div>
 
-  <section class="section">
-
-    <div class="analytics-grid">
-
-      <div>
-
-        <div class="section-title">
-          <h2>Score Progress</h2>
-          <span>Exam by exam</span>
-        </div>
-
-        <div class="card">
-
-          <div class="chart-box">
-            <canvas id="scoreTrendChart"></canvas>
-          </div>
-
-        </div>
-
-      </div>
-
-      <div>
-
-        <div class="section-title">
-          <h2>Answer Accuracy</h2>
-          <span>Questions</span>
-        </div>
-
-        <div class="card">
-
-          <div class="chart-box small">
-            <canvas id="accuracyPieChart"></canvas>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <section class="section">
+  <div>
 
     <div class="section-title">
-      <h2>Set-wise Performance</h2>
-      <span id="setCount">0 sets</span>
+      <h2>Answer Accuracy</h2>
+      <span>Questions</span>
     </div>
 
-    <div class="card" id="setPerformance">
+    <div class="card">
 
-      <div class="empty">
-        <i class="fa-solid fa-chart-simple"></i>
-        No exam data available yet.
+      <div class="chart-box small">
+        <canvas id="accuracyPieChart"></canvas>
       </div>
 
     </div>
 
-  </section>
+  </div>
 
-  <section class="section">
+</div>
 
-    <div class="section-title">
-      <h2>Smart Recommendations</h2>
-      <span>Based on your results</span>
-    </div>
+  </section>  <section class="section"><div class="section-title">
+  <h2>Set-wise Performance</h2>
+  <span id="setCount">0 sets</span>
+</div>
 
-    <div class="card" id="recommendations">
+<div class="card" id="setPerformance">
 
-      <div class="empty">
-        <i class="fa-solid fa-lightbulb"></i>
-        Complete some exams to unlock recommendations.
-      </div>
+  <div class="empty">
+    <i class="fa-solid fa-chart-simple"></i>
+    No exam data available yet.
+  </div>
 
-    </div>
+</div>
 
-  </section>
+  </section>  <section class="section"><div class="section-title">
+  <h2>Smart Recommendations</h2>
+  <span>Based on your results</span>
+</div>
 
-  <section class="section">
+<div class="card" id="recommendations">
 
-    <div class="section-title">
-      <h2>Recent Exam History</h2>
-      <span>Latest attempts</span>
-    </div>
+  <div class="empty">
+    <i class="fa-solid fa-lightbulb"></i>
+    Complete some exams to unlock recommendations.
+  </div>
 
-    <div class="card" id="examHistory">
+</div>
 
-      <div class="empty">
-        <i class="fa-solid fa-clock-rotate-left"></i>
-        No exam history found.
-      </div>
+  </section>  <section class="section"><div class="section-title">
+  <h2>Recent Exam History</h2>
+  <span>Latest attempts</span>
+</div>
 
-    </div>
+<div class="card" id="examHistory">
 
-  </section>
+  <div class="empty">
+    <i class="fa-solid fa-clock-rotate-left"></i>
+    No exam history found.
+  </div>
 
-</main>
+</div>
 
-<script type="module">
+  </section></main><script type="module">
 
   /* =====================================================
      FIREBASE
@@ -855,14 +771,11 @@
   };
 
 
-  const app =
-    initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
 
-  const auth =
-    getAuth(app);
+  const auth = getAuth(app);
 
-  const db =
-    getFirestore(app);
+  const db = getFirestore(app);
 
 
   /* =====================================================
@@ -873,8 +786,7 @@
     "https://edyirdedkiarguvurpxq.supabase.co";
 
   const SUPABASE_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
-
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZWRraWFyZ3V2dXJweHEiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4OTAxODY2MiwiZXhwIjoyMTA0NTk0NjYyfQ.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
 
   let supabaseClient = null;
 
@@ -905,7 +817,6 @@
     await new Promise((resolve, reject) => {
 
       script.onload = resolve;
-
       script.onerror = reject;
 
     });
@@ -940,22 +851,16 @@
   ===================================================== */
 
   function $(id) {
-
     return document.getElementById(id);
-
   }
 
 
   function hideLoading() {
 
-    const loading =
-      $("loadingScreen");
+    const loading = $("loadingScreen");
 
     if (loading) {
-
-      loading.style.display =
-        "none";
-
+      loading.style.display = "none";
     }
 
   }
@@ -964,8 +869,7 @@
   function showLoading(message) {
 
     $("loadingText").textContent =
-      message ||
-      "Loading...";
+      message || "Loading...";
 
     $("loadingScreen").style.display =
       "flex";
@@ -975,11 +879,9 @@
 
   function showError(message) {
 
-    const box =
-      $("errorBox");
+    const box = $("errorBox");
 
-    box.style.display =
-      "block";
+    box.style.display = "block";
 
     box.innerHTML = `
       <strong>
@@ -1069,13 +971,9 @@
 
           await initSupabase();
 
-          await loadFirestoreUserName(
-            user
-          );
+          await loadFirestoreUserName(user);
 
-          await loadAnalytics(
-            user
-          );
+          await loadAnalytics(user);
 
           hideLoading();
 
@@ -1137,7 +1035,11 @@
     wrong_count,
     skipped_count,
     total_questions,
-    created_at
+    created_at,
+    source,
+    page,
+    exam_type,
+    type
   `;
 
 
@@ -1194,10 +1096,7 @@
         supabaseClient
           .from("exam_leaderboard")
           .select(LEADERBOARD_COLUMNS)
-          .eq(
-            "username",
-            email
-          )
+          .eq("username", email)
       );
 
     }
@@ -1221,12 +1120,16 @@
 
 
     const results =
-      await Promise.all(
-        queries
-      );
+      await Promise.all(queries);
 
 
-    const usableResults =
+    /*
+      IMPORTANT:
+      If the new optional columns don't exist,
+      retry with the original safe columns.
+    */
+
+    let usableResults =
       results.filter(
         result =>
           !result.error &&
@@ -1236,21 +1139,93 @@
 
     if (!usableResults.length) {
 
-      const firstError =
-        results.find(
-          result => result.error
-        )?.error;
+      const fallbackColumns = `
+        id,
+        username,
+        user_uid,
+        set_name,
+        score,
+        correct_count,
+        wrong_count,
+        skipped_count,
+        total_questions,
+        created_at
+      `;
 
 
-      throw new Error(
-        firstError?.message ||
-        "Could not fetch exam leaderboard data."
+      const fallbackQueries = [];
+
+
+      fallbackQueries.push(
+        supabaseClient
+          .from("exam_leaderboard")
+          .select(fallbackColumns)
+          .eq("user_uid", uid)
       );
+
+
+      if (email) {
+
+        fallbackQueries.push(
+          supabaseClient
+            .from("exam_leaderboard")
+            .select(fallbackColumns)
+            .eq("username", email)
+        );
+
+      }
+
+
+      if (firestoreUserName) {
+
+        fallbackQueries.push(
+          supabaseClient
+            .from("exam_leaderboard")
+            .select(fallbackColumns)
+            .eq(
+              "username",
+              firestoreUserName
+            )
+        );
+
+      }
+
+
+      const fallbackResults =
+        await Promise.all(
+          fallbackQueries
+        );
+
+
+      usableResults =
+        fallbackResults.filter(
+          result =>
+            !result.error &&
+            Array.isArray(result.data)
+        );
+
+
+      if (!usableResults.length) {
+
+        const firstError =
+          fallbackResults.find(
+            result => result.error
+          )?.error;
+
+
+        throw new Error(
+          firstError?.message ||
+          "Could not fetch exam leaderboard data."
+        );
+
+      }
 
     }
 
 
-    /* MERGE DUPLICATES */
+    /* =====================================================
+       MERGE DUPLICATES
+    ===================================================== */
 
     const merged =
       new Map();
@@ -1265,6 +1240,7 @@
             if (!row || !row.id) {
               return;
             }
+
 
             merged.set(
               String(row.id),
@@ -1330,15 +1306,10 @@
 
 
     let totalCorrect = 0;
-
     let totalWrong = 0;
-
     let totalSkipped = 0;
-
     let totalQuestions = 0;
-
     let bestScore = 0;
-
     let scoreSum = 0;
 
 
@@ -1346,46 +1317,30 @@
       exam => {
 
         const correct =
-          Number(
-            exam.correct_count
-          ) || 0;
+          Number(exam.correct_count) || 0;
 
         const wrong =
-          Number(
-            exam.wrong_count
-          ) || 0;
+          Number(exam.wrong_count) || 0;
 
         const skipped =
-          Number(
-            exam.skipped_count
-          ) || 0;
+          Number(exam.skipped_count) || 0;
 
         const questions =
-          Number(
-            exam.total_questions
-          ) || 0;
+          Number(exam.total_questions) || 0;
 
         const score =
-          Number(
-            exam.score
-          ) || 0;
+          Number(exam.score) || 0;
 
 
         totalCorrect += correct;
-
         totalWrong += wrong;
-
         totalSkipped += skipped;
-
         totalQuestions += questions;
-
         scoreSum += score;
 
 
         if (score > bestScore) {
-
           bestScore = score;
-
         }
 
       }
@@ -1403,8 +1358,7 @@
 
     const averageScore =
       totalExams > 0
-        ? scoreSum /
-          totalExams
+        ? scoreSum / totalExams
         : 0;
 
 
@@ -1413,8 +1367,7 @@
 
 
     $("anaAccuracy").textContent =
-      accuracy.toFixed(1) +
-      "%";
+      accuracy.toFixed(1) + "%";
 
 
     $("anaBestScore").textContent =
@@ -1446,37 +1399,28 @@
   function renderCharts() {
 
     if (scoreChart) {
-
       scoreChart.destroy();
-
       scoreChart = null;
-
     }
 
 
     if (accuracyChart) {
-
       accuracyChart.destroy();
-
       accuracyChart = null;
-
     }
 
 
     const labels =
       examData.map(
         (exam,index) =>
-          "Exam " +
-          (index + 1)
+          "Exam " + (index + 1)
       );
 
 
     const scores =
       examData.map(
         exam =>
-          Number(
-            exam.score
-          ) || 0
+          Number(exam.score) || 0
       );
 
 
@@ -1484,11 +1428,7 @@
       examData.reduce(
         (sum,exam) =>
           sum +
-          (
-            Number(
-              exam.correct_count
-            ) || 0
-          ),
+          (Number(exam.correct_count) || 0),
         0
       );
 
@@ -1497,11 +1437,7 @@
       examData.reduce(
         (sum,exam) =>
           sum +
-          (
-            Number(
-              exam.wrong_count
-            ) || 0
-          ),
+          (Number(exam.wrong_count) || 0),
         0
       );
 
@@ -1510,11 +1446,7 @@
       examData.reduce(
         (sum,exam) =>
           sum +
-          (
-            Number(
-              exam.skipped_count
-            ) || 0
-          ),
+          (Number(exam.skipped_count) || 0),
         0
       );
 
@@ -1539,17 +1471,11 @@
 
                 {
                   label: "Score",
-
                   data: scores,
-
                   borderWidth: 3,
-
                   tension: .35,
-
                   fill: true,
-
                   pointRadius: 4,
-
                   pointHoverRadius: 6
                 }
 
@@ -1564,31 +1490,24 @@
               maintainAspectRatio: false,
 
               plugins: {
-
                 legend: {
                   display: false
                 }
-
               },
 
               scales: {
 
                 y: {
-
                   beginAtZero: true,
-
                   grid: {
                     color: "#eeeeF4"
                   }
-
                 },
 
                 x: {
-
                   grid: {
                     display: false
                   }
-
                 }
 
               }
@@ -1629,7 +1548,6 @@
                     wrong,
                     skipped
                   ],
-
                   borderWidth: 0
                 }
 
@@ -1677,15 +1595,62 @@
 
   /* =====================================================
      SET-WISE PERFORMANCE
-     
-     1. Total Performance
-     2. Quiz Sets
-        quiz.html?set=Nepal_geography
-     3. Practice Exam Sets
-        exam.html?set=set_name
-     4. Mock Exam Sets
-        mockexam.html?set=kharidar_mocktest1
+
+     STRICT PRACTICE EXAM SETS:
+       set_1
+       set_2
+       set_3
+
+     NOTHING ELSE IS ALLOWED HERE.
   ===================================================== */
+
+  const PRACTICE_EXAM_SETS = [
+    "set_1",
+    "set_2",
+    "set_3"
+  ];
+
+
+  function isStrictPracticeExamSet(setName) {
+
+    const normalized =
+      String(setName || "")
+        .trim()
+        .toLowerCase();
+
+
+    return PRACTICE_EXAM_SETS.includes(
+      normalized
+    );
+
+  }
+
+
+  function formatPracticeExamSet(setName) {
+
+    const normalized =
+      String(setName || "")
+        .trim()
+        .toLowerCase();
+
+
+    if (normalized === "set_1") {
+      return "Set 1";
+    }
+
+    if (normalized === "set_2") {
+      return "Set 2";
+    }
+
+    if (normalized === "set_3") {
+      return "Set 3";
+    }
+
+
+    return "Practice Exam";
+
+  }
+
 
   function renderSetPerformance() {
 
@@ -1710,34 +1675,42 @@
     }
 
 
-    /*
-      Separate maps
-    */
+    /* =====================================================
+       TOTAL PERFORMANCE
+    ===================================================== */
 
     const totalSets =
       new Map();
 
+
+    /* =====================================================
+       QUIZ SETS
+    ===================================================== */
+
     const quizSets =
       new Map();
+
+
+    /* =====================================================
+       PRACTICE EXAM SETS
+
+       STRICTLY ONLY:
+       set_1
+       set_2
+       set_3
+    ===================================================== */
 
     const examSets =
       new Map();
 
+
+    /* =====================================================
+       MOCK EXAM SETS
+    ===================================================== */
+
     const mockExamSets =
       new Map();
 
-
-    /*
-      Detect source from available data.
-
-      New records can contain:
-        source
-        page
-        exam_type
-
-      Old records can still be detected
-      from set_name.
-    */
 
     function detectType(exam) {
 
@@ -1748,13 +1721,35 @@
           exam.exam_type ||
           exam.type ||
           ""
-        ).toLowerCase().trim();
+        )
+        .toLowerCase()
+        .trim();
 
 
       const setName =
         String(
           exam.set_name || ""
-        ).toLowerCase().trim();
+        )
+        .toLowerCase()
+        .trim();
+
+
+      /*
+        STRICT RULE:
+
+        If set_name is set_1/set_2/set_3,
+        classify it as Practice Exam.
+
+        This rule has priority.
+      */
+
+      if (
+        isStrictPracticeExamSet(setName)
+      ) {
+
+        return "exam";
+
+      }
 
 
       /*
@@ -1777,7 +1772,10 @@
 
 
       /*
-        exam.html
+        Other exam.html sets are NOT
+        allowed in Practice Exam Sets.
+
+        They can still appear in Total Performance.
       */
 
       if (
@@ -1787,13 +1785,13 @@
         source.includes("exam.html")
       ) {
 
-        return "exam";
+        return "other_exam";
 
       }
 
 
       /*
-        quiz.html
+        Quiz
       */
 
       if (
@@ -1809,20 +1807,13 @@
 
 
       /*
-        Old records without source.
+        Old records:
 
-        Mock-name detection first.
-        Otherwise treat as quiz.
+        Only set_1/set_2/set_3 are treated
+        as Practice Exam.
+
+        Everything else defaults to quiz.
       */
-
-      if (
-        setName.includes("mock")
-      ) {
-
-        return "mock";
-
-      }
-
 
       return "quiz";
 
@@ -1859,29 +1850,19 @@
       data.attempts++;
 
       data.score +=
-        Number(
-          exam.score
-        ) || 0;
+        Number(exam.score) || 0;
 
       data.correct +=
-        Number(
-          exam.correct_count
-        ) || 0;
+        Number(exam.correct_count) || 0;
 
       data.wrong +=
-        Number(
-          exam.wrong_count
-        ) || 0;
+        Number(exam.wrong_count) || 0;
 
       data.skipped +=
-        Number(
-          exam.skipped_count
-        ) || 0;
+        Number(exam.skipped_count) || 0;
 
       data.questions +=
-        Number(
-          exam.total_questions
-        ) || 0;
+        Number(exam.total_questions) || 0;
 
     }
 
@@ -1889,16 +1870,20 @@
     examData.forEach(
       exam => {
 
-        const setName =
+        const rawSetName =
           String(
             exam.set_name ||
             "Unknown Set"
           ).trim();
 
 
+        /*
+          Total Performance gets all records.
+        */
+
         addSet(
           totalSets,
-          setName,
+          rawSetName,
           exam
         );
 
@@ -1907,31 +1892,40 @@
           detectType(exam);
 
 
-        if (type === "mock") {
+        /*
+          STRICT PRACTICE EXAM FILTER
 
-          addSet(
-            mockExamSets,
-            setName,
-            exam
-          );
+          Only set_1, set_2, set_3.
+        */
 
-        }
-
-        else if (type === "exam") {
+        if (
+          type === "exam" &&
+          isStrictPracticeExamSet(rawSetName)
+        ) {
 
           addSet(
             examSets,
-            setName,
+            rawSetName.toLowerCase(),
             exam
           );
 
         }
 
-        else {
+        else if (type === "mock") {
+
+          addSet(
+            mockExamSets,
+            rawSetName,
+            exam
+          );
+
+        }
+
+        else if (type === "quiz") {
 
           addSet(
             quizSets,
-            setName,
+            rawSetName,
             exam
           );
 
@@ -1940,6 +1934,37 @@
       }
     );
 
+
+    /*
+      IMPORTANT:
+      Ensure only these exact three keys can ever
+      exist in Practice Exam Sets.
+    */
+
+    const filteredExamSets =
+      new Map();
+
+
+    PRACTICE_EXAM_SETS.forEach(
+      setName => {
+
+        if (examSets.has(setName)) {
+
+          filteredExamSets.set(
+            setName,
+            examSets.get(setName)
+          );
+
+        }
+
+      }
+    );
+
+
+    /*
+      setCount currently means total unique
+      sets across all performance data.
+    */
 
     $("setCount").textContent =
       totalSets.size +
@@ -1954,9 +1979,9 @@
     container.innerHTML = "";
 
 
-    /*
-      Create category
-    */
+    /* =====================================================
+       CREATE CATEGORY
+    ===================================================== */
 
     function createCategory(
       map,
@@ -1965,27 +1990,20 @@
       description,
       emptyIcon,
       emptyTitle,
-      emptyMessage
+      emptyMessage,
+      strictPracticeExam = false
     ) {
 
       const category =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
 
       category.className =
         "performance-category";
 
 
-      /*
-        HEADER
-      */
-
       const header =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
 
       header.className =
@@ -2022,9 +2040,7 @@
       `;
 
 
-      category.appendChild(
-        header
-      );
+      category.appendChild(header);
 
 
       /*
@@ -2034,9 +2050,7 @@
       if (!map.size) {
 
         const empty =
-          document.createElement(
-            "div"
-          );
+          document.createElement("div");
 
 
         empty.className =
@@ -2058,10 +2072,7 @@
         `;
 
 
-        category.appendChild(
-          empty
-        );
-
+        category.appendChild(empty);
 
         return category;
 
@@ -2069,54 +2080,87 @@
 
 
       /*
-        SORT BY ACCURACY
+        SORTING
+
+        Practice Exam:
+        Always Set 1 → Set 2 → Set 3
+
+        Other categories:
+        Accuracy descending
       */
 
-      const entries =
-        Array.from(
-          map.entries()
+      let entries =
+        Array.from(map.entries());
+
+
+      if (strictPracticeExam) {
+
+        entries.sort(
+          (a,b) => {
+
+            const indexA =
+              PRACTICE_EXAM_SETS.indexOf(
+                a[0]
+              );
+
+            const indexB =
+              PRACTICE_EXAM_SETS.indexOf(
+                b[0]
+              );
+
+            return indexA - indexB;
+
+          }
         );
 
+      }
 
-      entries.sort(
-        (a,b) => {
+      else {
 
-          const accuracyA =
-            a[1].questions > 0
-              ? (
-                  a[1].correct /
-                  a[1].questions
-                )
-              : 0;
+        entries.sort(
+          (a,b) => {
 
-
-          const accuracyB =
-            b[1].questions > 0
-              ? (
-                  b[1].correct /
-                  b[1].questions
-                )
-              : 0;
+            const accuracyA =
+              a[1].questions > 0
+                ? (
+                    a[1].correct /
+                    a[1].questions
+                  )
+                : 0;
 
 
-          return accuracyB -
-                 accuracyA;
+            const accuracyB =
+              b[1].questions > 0
+                ? (
+                    b[1].correct /
+                    b[1].questions
+                  )
+                : 0;
 
-        }
-      );
+
+            return accuracyB - accuracyA;
+
+          }
+        );
+
+      }
 
 
       const list =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
 
       /*
-        SHOW FIRST 5
+        Show first 5 only for other categories.
+
+        Practice Exam has only 3 possible sets,
+        so all are shown.
       */
 
-      const visibleCount = 5;
+      const visibleCount =
+        strictPracticeExam
+          ? 3
+          : 5;
 
 
       entries.forEach(
@@ -2124,8 +2168,7 @@
 
           const avgScore =
             data.attempts > 0
-              ? data.score /
-                data.attempts
+              ? data.score / data.attempts
               : 0;
 
 
@@ -2139,24 +2182,29 @@
 
 
           const item =
-            document.createElement(
-              "div"
-            );
+            document.createElement("div");
 
 
           item.className =
             "set-item";
 
 
-          if (index >= visibleCount) {
+          if (
+            !strictPracticeExam &&
+            index >= visibleCount
+          ) {
 
-            item.style.display =
-              "none";
+            item.style.display = "none";
 
-            item.dataset.extraSet =
-              "true";
+            item.dataset.extraSet = "true";
 
           }
+
+
+          const displayName =
+            strictPracticeExam
+              ? formatPracticeExamSet(name)
+              : formatSetName(name);
 
 
           item.innerHTML = `
@@ -2164,9 +2212,7 @@
             <div class="set-top">
 
               <div class="set-name">
-                ${escapeHtml(
-                  formatSetName(name)
-                )}
+                ${escapeHtml(displayName)}
               </div>
 
               <div class="set-score">
@@ -2174,7 +2220,6 @@
               </div>
 
             </div>
-
 
             <div class="progress">
 
@@ -2193,7 +2238,6 @@
 
             </div>
 
-
             <div class="set-meta">
 
               <span>
@@ -2202,9 +2246,11 @@
 
               <span>
                 ${data.attempts}
-                ${data.attempts === 1
-                  ? "attempt"
-                  : "attempts"}
+                ${
+                  data.attempts === 1
+                    ? "attempt"
+                    : "attempts"
+                }
               </span>
 
             </div>
@@ -2212,32 +2258,29 @@
           `;
 
 
-          list.appendChild(
-            item
-          );
+          list.appendChild(item);
 
         }
       );
 
 
-      category.appendChild(
-        list
-      );
+      category.appendChild(list);
 
 
       /*
         SEE MORE
+
+        Not needed for strict Practice Exam
+        because there are only 3 allowed sets.
       */
 
       if (
-        entries.length >
-        visibleCount
+        !strictPracticeExam &&
+        entries.length > visibleCount
       ) {
 
         const button =
-          document.createElement(
-            "button"
-          );
+          document.createElement("button");
 
 
         button.className =
@@ -2259,8 +2302,7 @@
           "click",
           () => {
 
-            expanded =
-              !expanded;
+            expanded = !expanded;
 
 
             const extraItems =
@@ -2290,7 +2332,9 @@
                 <i class="fa-solid fa-chevron-up"></i>
               `;
 
-            } else {
+            }
+
+            else {
 
               button.innerHTML = `
                 <span>
@@ -2305,9 +2349,7 @@
         );
 
 
-        category.appendChild(
-          button
-        );
+        category.appendChild(button);
 
       }
 
@@ -2317,11 +2359,9 @@
     }
 
 
-    /*
-      =========================================
-      1. TOTAL PERFORMANCE
-      =========================================
-    */
+    /* =====================================================
+       1. TOTAL PERFORMANCE
+    ===================================================== */
 
     container.appendChild(
       createCategory(
@@ -2336,12 +2376,9 @@
     );
 
 
-    /*
-      =========================================
-      2. QUIZ.HTML
-         quiz.html?set=Nepal_geography
-      =========================================
-    */
+    /* =====================================================
+       2. QUIZ.HTML
+    ===================================================== */
 
     container.appendChild(
       createCategory(
@@ -2356,32 +2393,32 @@
     );
 
 
-    /*
-      =========================================
-      3. EXAM.HTML
-         exam.html?set=set_name
-      =========================================
-    */
+    /* =====================================================
+       3. STRICT PRACTICE EXAM
+
+       ONLY:
+         set_1
+         set_2
+         set_3
+    ===================================================== */
 
     container.appendChild(
       createCategory(
-        examSets,
+        filteredExamSets,
         "fa-file-lines",
         "Practice Exam Sets",
-        "Sets attempted from exam.html",
+        "Only Set 1, Set 2 and Set 3",
         "fa-file-lines",
         "No Practice Exam attempted",
-        "exam.html sets will appear here."
+        "Only set_1, set_2 and set_3 from exam.html will appear here.",
+        true
       )
     );
 
 
-    /*
-      =========================================
-      4. MOCKEXAM.HTML
-         mockexam.html?set=kharidar_mocktest1
-      =========================================
-    */
+    /* =====================================================
+       4. MOCK EXAM
+    ===================================================== */
 
     container.appendChild(
       createCategory(
@@ -2405,9 +2442,7 @@
   function formatSetName(name) {
 
     if (!name) {
-
       return "Unknown Set";
-
     }
 
 
@@ -2417,10 +2452,6 @@
         .replace(/\s+/g, " ")
         .trim();
 
-
-    /*
-      Make common technical names cleaner
-    */
 
     formatted =
       formatted.replace(
@@ -2520,11 +2551,8 @@
 
 
     let correct = 0;
-
     let wrong = 0;
-
     let skipped = 0;
-
     let questions = 0;
 
 
@@ -2532,24 +2560,16 @@
       exam => {
 
         correct +=
-          Number(
-            exam.correct_count
-          ) || 0;
+          Number(exam.correct_count) || 0;
 
         wrong +=
-          Number(
-            exam.wrong_count
-          ) || 0;
+          Number(exam.wrong_count) || 0;
 
         skipped +=
-          Number(
-            exam.skipped_count
-          ) || 0;
+          Number(exam.skipped_count) || 0;
 
         questions +=
-          Number(
-            exam.total_questions
-          ) || 0;
+          Number(exam.total_questions) || 0;
 
       }
     );
@@ -2670,11 +2690,7 @@
         recent.reduce(
           (sum,exam) =>
             sum +
-            (
-              Number(
-                exam.score
-              ) || 0
-            ),
+            (Number(exam.score) || 0),
           0
         ) /
         recent.length;
@@ -2694,11 +2710,7 @@
         old.reduce(
           (sum,exam) =>
             sum +
-            (
-              Number(
-                exam.score
-              ) || 0
-            ),
+            (Number(exam.score) || 0),
           0
         ) /
         old.length;
@@ -2736,9 +2748,7 @@
         rec => {
 
           const item =
-            document.createElement(
-              "div"
-            );
+            document.createElement("div");
 
 
           item.className =
@@ -2774,9 +2784,7 @@
           `;
 
 
-          container.appendChild(
-            item
-          );
+          container.appendChild(item);
 
         }
       );
@@ -2834,45 +2842,26 @@
       exam => {
 
         const score =
-          Number(
-            exam.score
-          ) || 0;
-
+          Number(exam.score) || 0;
 
         const correct =
-          Number(
-            exam.correct_count
-          ) || 0;
-
+          Number(exam.correct_count) || 0;
 
         const wrong =
-          Number(
-            exam.wrong_count
-          ) || 0;
-
+          Number(exam.wrong_count) || 0;
 
         const skipped =
-          Number(
-            exam.skipped_count
-          ) || 0;
-
+          Number(exam.skipped_count) || 0;
 
         const total =
-          Number(
-            exam.total_questions
-          ) || 0;
-
+          Number(exam.total_questions) || 0;
 
         const date =
-          formatDate(
-            exam.created_at
-          );
+          formatDate(exam.created_at);
 
 
         const item =
-          document.createElement(
-            "div"
-          );
+          document.createElement("div");
 
 
         item.className =
@@ -2924,9 +2913,7 @@
         `;
 
 
-        container.appendChild(
-          item
-        );
+        container.appendChild(item);
 
       }
     );
@@ -2938,21 +2925,15 @@
      DATE
   ===================================================== */
 
-  function formatDate(
-    dateString
-  ) {
+  function formatDate(dateString) {
 
     if (!dateString) {
-
       return "Unknown date";
-
     }
 
 
     const date =
-      new Date(
-        dateString
-      );
+      new Date(dateString);
 
 
     if (
@@ -2985,9 +2966,7 @@
   window.goBack =
     function() {
 
-      if (
-        history.length > 1
-      ) {
+      if (history.length > 1) {
 
         history.back();
 
@@ -3011,9 +2990,7 @@
     async function() {
 
       if (!currentUser) {
-
         return;
-
       }
 
 
@@ -3094,7 +3071,5 @@
     }
   );
 
-</script>
-
-</body>
+</script></body>
 </html>
