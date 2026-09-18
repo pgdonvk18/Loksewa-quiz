@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
+
   <script src="components.js"></script>
 
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <title>LoksewaQuest - Dashboard</title>
 
   <!-- Premium Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
   <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 
   <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -30,19 +37,31 @@
       overflow-x: hidden;
     }
 
+
     /* =========================
        TOP HEADER
     ========================= */
 
     .app-header {
-      background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
+      background: linear-gradient(
+        135deg,
+        #0f2a4a 0%,
+        #1e40af 100%
+      );
+
       color: white;
+
       padding: 24px 20px 35px 20px;
+
       display: flex;
+
       justify-content: space-between;
+
       align-items: center;
+
       border-radius: 0 0 30px 30px;
     }
+
 
     .app-header h1 {
       font-size: 18px;
@@ -50,29 +69,45 @@
       letter-spacing: -0.3px;
     }
 
+
     .app-header h1 span {
       color: #fbbf24;
     }
 
+
     .icon-btn {
       background: rgba(255,255,255,0.15);
+
       border: none;
+
       color: white;
+
       width: 40px;
       height: 40px;
+
       border-radius: 12px;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       font-size: 16px;
+
       cursor: pointer;
+
       backdrop-filter: blur(5px);
+
       transition: background 0.2s;
     }
+
 
     .icon-btn:active {
       background: rgba(255,255,255,0.25);
     }
+
+
 
     /* =========================
        NOTIFICATION TICKER
@@ -80,55 +115,91 @@
 
     .ticker-container {
       background: #fef3c7;
+
       border-bottom: 1px solid #fde68a;
+
       border-top: 1px solid #fde68a;
+
       color: #92400e;
+
       padding: 10px 16px;
+
       display: flex;
+
       align-items: center;
+
       font-size: 13px;
+
       font-weight: 600;
+
       overflow: hidden;
+
       white-space: nowrap;
+
       position: relative;
+
       margin-top: -10px;
+
       margin-bottom: 15px;
+
       box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     }
 
+
     .ticker-badge-tag {
       background: #d97706;
+
       color: white;
+
       padding: 3px 8px;
+
       border-radius: 6px;
+
       font-size: 10px;
+
       font-weight: 800;
+
       margin-right: 12px;
+
       text-transform: uppercase;
+
       flex-shrink: 0;
+
       z-index: 2;
+
       display: flex;
+
       align-items: center;
+
       gap: 4px;
     }
 
+
     .ticker-text-wrap {
       overflow: hidden;
+
       width: 100%;
+
       display: inline-block;
     }
 
+
     .ticker-text {
       display: inline-block;
+
       padding-left: 100%;
+
       animation: marquee 25s linear infinite;
     }
+
 
     .ticker-text:hover {
       animation-play-state: paused;
     }
 
+
     @keyframes marquee {
+
       0% {
         transform: translate(0,0);
       }
@@ -136,678 +207,1419 @@
       100% {
         transform: translate(-100%,0);
       }
+
     }
+
+
 
     /* =========================
        SIDEBAR
     ========================= */
 
     .sidebar-overlay {
+
       position: fixed;
+
       top: 0;
       left: 0;
+
       width: 100%;
       height: 100%;
+
       background: rgba(0,0,0,0.5);
+
       backdrop-filter: blur(4px);
+
       z-index: 2000;
+
       opacity: 0;
+
       visibility: hidden;
+
       transition: all 0.3s ease;
     }
 
+
     .sidebar-overlay.active {
+
       opacity: 1;
+
       visibility: visible;
     }
 
+
     .sidebar {
+
       position: fixed;
+
       top: 0;
+
       left: -280px;
+
       width: 280px;
+
       height: 100%;
+
       background: #ffffff;
+
       z-index: 2100;
+
       box-shadow: 5px 0 25px rgba(0,0,0,0.1);
+
       transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
+
       display: flex;
+
       flex-direction: column;
+
       justify-content: space-between;
+
       padding: 20px;
+
       overflow-y: auto;
     }
+
 
     .sidebar.active {
       left: 0;
     }
 
+
     .sidebar-header {
+
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
+
       margin-bottom: 20px;
+
       padding-bottom: 15px;
+
       border-bottom: 1px solid #f1f5f9;
     }
 
+
     .sidebar-user-info {
+
       display: flex;
+
       align-items: center;
+
       gap: 12px;
     }
 
+
     .sidebar-avatar {
+
       width: 48px;
+
       height: 48px;
+
       border-radius: 50%;
+
       background: #e2e8f0;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       color: #1e40af;
+
       font-weight: 700;
+
       font-size: 18px;
+
       border: 2px solid #2563eb;
+
       flex-shrink: 0;
     }
 
+
     .sidebar-text h4 {
+
       font-size: 14px;
+
       font-weight: 700;
+
       color: #0f172a;
     }
 
+
     .sidebar-text p {
+
       font-size: 11px;
+
       color: #64748b;
+
       margin-top: 2px;
+
       word-break: break-all;
     }
+
 
     /* Coins */
 
     .sidebar-coins-badge {
+
       display: inline-flex;
+
       align-items: center;
+
       gap: 5px;
+
       background: #fef3c7;
+
       color: #b45309;
+
       padding: 3px 8px;
+
       border-radius: 20px;
+
       font-size: 11px;
+
       font-weight: 700;
+
       margin-top: 5px;
+
       text-decoration: none;
+
       border: 1px solid #fde68a;
+
       transition: transform 0.2s;
     }
+
 
     .sidebar-coins-badge:active {
       transform: scale(0.95);
     }
 
+
     .sidebar-coins-badge i {
       color: #f59e0b;
     }
 
+
     .close-sidebar {
+
       background: #f1f5f9;
+
       border: none;
+
       width: 32px;
       height: 32px;
+
       border-radius: 50%;
+
       color: #64748b;
+
       cursor: pointer;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       font-size: 14px;
+
       flex-shrink: 0;
     }
+
+
 
     /* Sidebar menu */
 
     .sidebar-menu {
+
       display: flex;
+
       flex-direction: column;
+
       gap: 6px;
+
       flex: 1;
     }
 
+
     .menu-item {
+
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
+
       padding: 12px 14px;
+
       border-radius: 12px;
+
       text-decoration: none;
+
       color: #334155;
+
       font-size: 13px;
+
       font-weight: 600;
+
       transition: all 0.2s;
     }
 
+
     .menu-item:hover,
     .menu-item:active {
+
       background: #f8fafc;
+
       color: #2563eb;
     }
 
+
     .menu-item-left {
+
       display: flex;
+
       align-items: center;
+
       gap: 12px;
     }
 
+
     .menu-item-left i {
+
       font-size: 16px;
+
       color: #64748b;
+
       width: 20px;
+
       text-align: center;
     }
+
 
     .menu-item:hover .menu-item-left i {
       color: #2563eb;
     }
 
-    /* Community menu */
+
+
+    /* Community */
 
     .community-menu {
-      background: linear-gradient(135deg,#eff6ff,#eef2ff);
+
+      background:
+        linear-gradient(
+          135deg,
+          #eff6ff,
+          #eef2ff
+        );
+
       border: 1px solid #dbeafe;
+
       color: #1d4ed8;
     }
+
 
     .community-menu .menu-item-left i {
       color: #2563eb;
     }
 
+
     .community-menu-badge {
+
       background: #2563eb;
+
       color: white;
+
       font-size: 8px;
+
       font-weight: 800;
+
       padding: 3px 6px;
+
       border-radius: 10px;
+
       text-transform: uppercase;
     }
+
+
 
     /* Switch */
 
     .switch {
+
       position: relative;
+
       display: inline-block;
+
       width: 40px;
+
       height: 22px;
     }
 
+
     .switch input {
+
       opacity: 0;
+
       width: 0;
+
       height: 0;
     }
 
+
     .slider {
+
       position: absolute;
+
       cursor: pointer;
+
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
+
       background-color: #cbd5e1;
+
       transition: .3s;
+
       border-radius: 22px;
     }
 
+
     .slider:before {
+
       position: absolute;
+
       content: "";
+
       height: 16px;
+
       width: 16px;
+
       left: 3px;
+
       bottom: 3px;
+
       background-color: white;
+
       transition: .3s;
+
       border-radius: 50%;
     }
+
 
     input:checked + .slider {
       background-color: #2563eb;
     }
 
+
     input:checked + .slider:before {
       transform: translateX(18px);
     }
 
+
+
     .sidebar-footer {
+
       border-top: 1px solid #f1f5f9;
+
       padding-top: 15px;
+
       margin-top: 10px;
     }
 
+
     .logout-btn {
+
       background: #fef2f2;
+
       color: #dc2626;
+
       width: 100%;
+
       border: none;
+
       padding: 12px;
+
       border-radius: 12px;
+
       font-weight: 700;
+
       font-size: 13px;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       gap: 8px;
+
       cursor: pointer;
+
       transition: background 0.2s;
     }
+
 
     .logout-btn:active {
       background: #fee2e2;
     }
 
+
+
     /* =========================
-       MAIN CONTAINER
+       MAIN
     ========================= */
 
     .main-container {
       padding: 0 20px;
     }
 
+
+
     /* =========================
        GREETING
     ========================= */
 
     .greeting-section {
+
       background: #ffffff;
+
       border-radius: 20px;
+
       padding: 18px 20px;
+
       box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+
       border: 1px solid #f1f5f9;
+
       margin-bottom: 20px;
+
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
     }
 
+
     .greeting-section h2 {
+
       font-size: 16px;
+
       font-weight: 800;
+
       color: #0f172a;
+
       letter-spacing: -0.5px;
+
       margin-bottom: 3px;
     }
 
+
     .greeting-section p {
+
       font-size: 12px;
+
       color: #64748b;
+
       font-weight: 500;
     }
 
+
     .user-avatar-small {
+
       width: 45px;
+
       height: 45px;
+
       border-radius: 50%;
+
       background: #e2e8f0;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       color: #1e40af;
+
       font-weight: 700;
+
       font-size: 18px;
+
       border: 2px solid #2563eb;
+
       flex-shrink: 0;
     }
+
+
 
     /* =========================
        LIVE EXAM
     ========================= */
 
     .live-exam-card {
-      background: linear-gradient(135deg,#1e3a8a 0%,#2563eb 50%,#1d4ed8 100%);
+
+      background:
+        linear-gradient(
+          135deg,
+          #1e3a8a 0%,
+          #2563eb 50%,
+          #1d4ed8 100%
+        );
+
       border-radius: 20px;
+
       padding: 18px;
+
       color: white;
+
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
-      box-shadow: 0 8px 20px rgba(37,99,235,0.25);
+
+      box-shadow:
+        0 8px 20px rgba(37,99,235,0.25);
+
       margin-bottom: 20px;
+
       text-decoration: none;
+
       transition: all 0.25s ease;
+
       position: relative;
+
       overflow: hidden;
+
       border: 1px solid rgba(255,255,255,0.2);
     }
+
 
     .live-exam-card:active {
       transform: scale(0.98);
     }
 
+
     .live-exam-left {
+
       display: flex;
+
       align-items: center;
+
       gap: 14px;
+
       z-index: 1;
     }
 
+
     .live-exam-img-box {
+
       width: 52px;
+
       height: 52px;
+
       border-radius: 14px;
+
       background: #ffffff;
+
       padding: 4px;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       flex-shrink: 0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+      box-shadow:
+        0 4px 10px rgba(0,0,0,0.1);
     }
 
+
     .live-exam-img-box img {
+
       width: 100%;
+
       height: 100%;
+
       object-fit: cover;
+
       border-radius: 10px;
     }
 
+
     .live-exam-info h3 {
+
       font-size: 14px;
+
       font-weight: 800;
+
       color: #ffffff;
+
       margin-bottom: 4px;
+
       letter-spacing: -0.2px;
     }
 
+
     .live-badge-wrapper {
+
       display: flex;
+
       align-items: center;
+
       gap: 6px;
     }
 
+
     .live-dot {
+
       width: 7px;
+
       height: 7px;
+
       background-color: #ef4444;
+
       border-radius: 50%;
+
       animation: pulse-dot 1.5s infinite;
     }
 
+
     @keyframes pulse-dot {
+
       0% {
-        box-shadow: 0 0 0 0 rgba(239,68,68,0.7);
+        box-shadow:
+          0 0 0 0 rgba(239,68,68,0.7);
       }
 
       70% {
-        box-shadow: 0 0 0 8px rgba(239,68,68,0);
+        box-shadow:
+          0 0 0 8px rgba(239,68,68,0);
       }
 
       100% {
-        box-shadow: 0 0 0 0 rgba(239,68,68,0);
+        box-shadow:
+          0 0 0 0 rgba(239,68,68,0);
       }
+
     }
 
+
     .live-text {
+
       font-size: 11px;
+
       font-weight: 700;
+
       color: #fca5a5;
+
       text-transform: uppercase;
+
       letter-spacing: 0.5px;
     }
 
+
     .live-exam-right {
-      background: rgba(255,255,255,0.2);
+
+      background:
+        rgba(255,255,255,0.2);
+
       width: 34px;
+
       height: 34px;
+
       border-radius: 10px;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       font-size: 13px;
+
       color: #ffffff;
+
       backdrop-filter: blur(4px);
+
       z-index: 1;
+
       flex-shrink: 0;
     }
+
+
 
     /* =========================
        SECTION TITLE
     ========================= */
 
     .section-header {
+
       display: flex;
+
       justify-content: space-between;
+
       align-items: center;
+
       margin-bottom: 10px;
     }
 
+
     .section-header h3 {
+
       font-size: 15px;
+
       font-weight: 800;
+
       color: #0f172a;
     }
+
+
 
     /* =========================
        ACTION GRID
     ========================= */
 
     .action-grid {
+
       display: grid;
+
       grid-template-columns: 1fr 1fr;
+
       gap: 12px;
+
       margin-bottom: 24px;
     }
 
+
     .action-card {
+
       border-radius: 18px;
+
       padding: 16px;
+
       color: white;
+
       display: flex;
+
       flex-direction: column;
+
       justify-content: space-between;
+
       height: 115px;
+
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+      box-shadow:
+        0 4px 12px rgba(0,0,0,0.05);
+
       text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
+
+      transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+
       position: relative;
+
       overflow: hidden;
     }
+
 
     .action-card:active {
       transform: scale(0.97);
     }
 
+
     .action-card .card-icon {
+
       font-size: 15px;
-      background: rgba(255,255,255,0.2);
+
+      background:
+        rgba(255,255,255,0.2);
+
       width: 34px;
+
       height: 34px;
+
       border-radius: 10px;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
     }
 
+
     .action-card h4 {
+
       font-size: 14px;
+
       font-weight: 700;
     }
 
+
     .action-card p {
+
       font-size: 11px;
+
       opacity: 0.9;
+
       font-weight: 500;
+
       margin-top: 2px;
     }
 
-    /* Games first */
 
     .card-purple {
-      background: linear-gradient(135deg,#8b5cf6,#6d28d9);
+      background:
+        linear-gradient(135deg,#8b5cf6,#6d28d9);
     }
 
-    /* Practice */
 
     .card-green {
-      background: linear-gradient(135deg,#10b981,#059669);
+      background:
+        linear-gradient(135deg,#10b981,#059669);
     }
 
-    /* Mock */
 
     .card-orange {
-      background: linear-gradient(135deg,#f97316,#c2410c);
+      background:
+        linear-gradient(135deg,#f97316,#c2410c);
     }
 
-    /* Community */
 
     .card-community {
-      background: linear-gradient(135deg,#2563eb,#1e3a8a);
+
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #1e3a8a
+        );
+
       grid-column: span 2;
+
       height: 125px;
-      box-shadow: 0 8px 20px rgba(37,99,235,0.20);
+
+      box-shadow:
+        0 8px 20px rgba(37,99,235,0.20);
     }
 
+
     .community-card-content {
+
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
+
       width: 100%;
     }
 
+
     .community-card-left {
+
       display: flex;
+
       align-items: center;
+
       gap: 12px;
     }
 
+
     .community-card-icon {
+
       width: 46px;
+
       height: 46px;
+
       border-radius: 14px;
-      background: rgba(255,255,255,0.18);
+
+      background:
+        rgba(255,255,255,0.18);
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       font-size: 19px;
+
       backdrop-filter: blur(5px);
     }
 
+
     .community-arrow {
+
       width: 34px;
+
       height: 34px;
+
       border-radius: 10px;
-      background: rgba(255,255,255,0.18);
+
+      background:
+        rgba(255,255,255,0.18);
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       font-size: 12px;
     }
 
+
     .community-online {
+
       display: inline-flex;
+
       align-items: center;
+
       gap: 5px;
+
       font-size: 10px;
+
       font-weight: 700;
+
       margin-top: 4px;
+
       opacity: 0.9;
     }
 
+
     .online-dot {
+
       width: 6px;
+
       height: 6px;
+
       background: #4ade80;
+
       border-radius: 50%;
-      box-shadow: 0 0 0 3px rgba(74,222,128,0.15);
+
+      box-shadow:
+        0 0 0 3px rgba(74,222,128,0.15);
     }
 
+
+
     /* =========================
-       NOTES CARD
+       NOTES
     ========================= */
 
     .notes-mini {
+
       background: #ffffff;
+
       border: 1px solid #e2e8f0;
+
       border-radius: 18px;
+
       padding: 15px;
+
       margin-bottom: 20px;
+
       display: flex;
+
       align-items: center;
+
       gap: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+
+      box-shadow:
+        0 4px 15px rgba(0,0,0,0.03);
+
       text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
+
+      transition:
+        transform 0.2s,
+        box-shadow 0.2s;
     }
+
 
     .notes-mini:active {
       transform: scale(0.98);
     }
 
+
     .notes-mini-icon {
+
       width: 40px;
+
       height: 40px;
+
       border-radius: 12px;
+
       background: #ecfdf5;
+
       color: #059669;
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
+
       flex-shrink: 0;
     }
+
 
     .notes-mini-text {
       flex: 1;
     }
 
+
     .notes-mini-text h4 {
+
       font-size: 13px;
+
       color: #0f172a;
+
       font-weight: 800;
+
       margin-bottom: 2px;
     }
 
+
     .notes-mini-text p {
+
       font-size: 10px;
+
       color: #64748b;
+
       font-weight: 500;
     }
 
+
     .notes-mini-arrow {
+
       color: #94a3b8;
+
       font-size: 11px;
     }
 
+
+
     /* =========================
-       DARK MODE BASIC SUPPORT
+       DAILY REWARD POPUP
+    ========================= */
+
+    .reward-overlay {
+
+      position: fixed;
+
+      inset: 0;
+
+      background:
+        rgba(15,23,42,0.60);
+
+      backdrop-filter: blur(6px);
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 24px;
+
+      z-index: 99999;
+
+      animation:
+        rewardFadeIn 0.25s ease;
+    }
+
+
+    .reward-card {
+
+      width: 100%;
+
+      max-width: 330px;
+
+      background: white;
+
+      border-radius: 28px;
+
+      padding: 30px 24px 24px;
+
+      text-align: center;
+
+      box-shadow:
+        0 25px 80px rgba(0,0,0,0.28);
+
+      animation:
+        rewardPop 0.35s cubic-bezier(.17,.67,.34,1.35);
+    }
+
+
+    .reward-coin {
+
+      width: 82px;
+
+      height: 82px;
+
+      margin: 0 auto 15px;
+
+      border-radius: 50%;
+
+      background:
+        linear-gradient(
+          135deg,
+          #fbbf24,
+          #f59e0b
+        );
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      color: white;
+
+      font-size: 38px;
+
+      box-shadow:
+        0 10px 30px rgba(245,158,11,0.35);
+
+      animation:
+        coinBounce 0.8s ease;
+    }
+
+
+    .reward-card h2 {
+
+      color: #0f172a;
+
+      font-size: 21px;
+
+      font-weight: 800;
+
+      margin-bottom: 7px;
+    }
+
+
+    .reward-card .reward-subtitle {
+
+      color: #64748b;
+
+      font-size: 12px;
+
+      font-weight: 500;
+
+      margin-bottom: 14px;
+    }
+
+
+    .reward-amount {
+
+      font-size: 36px;
+
+      line-height: 1;
+
+      font-weight: 800;
+
+      color: #f59e0b;
+
+      margin-bottom: 7px;
+    }
+
+
+    .reward-message {
+
+      font-size: 11px;
+
+      color: #64748b;
+
+      margin-bottom: 20px;
+    }
+
+
+    .reward-close {
+
+      width: 100%;
+
+      border: none;
+
+      padding: 13px;
+
+      border-radius: 14px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #1d4ed8
+        );
+
+      color: white;
+
+      font-size: 14px;
+
+      font-weight: 800;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 8px 18px rgba(37,99,235,0.22);
+    }
+
+
+    .reward-close:active {
+      transform: scale(0.98);
+    }
+
+
+    @keyframes rewardFadeIn {
+
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+
+    }
+
+
+    @keyframes rewardPop {
+
+      from {
+        opacity: 0;
+        transform: scale(0.75);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+    }
+
+
+    @keyframes coinBounce {
+
+      0% {
+        transform: scale(0.5) rotate(-15deg);
+      }
+
+      60% {
+        transform: scale(1.12) rotate(5deg);
+      }
+
+      100% {
+        transform: scale(1) rotate(0);
+      }
+
+    }
+
+
+
+    /* =========================
+       DARK MODE
     ========================= */
 
     body.dark {
+
       background: #0f172a;
+
       color: #e2e8f0;
     }
 
+
     body.dark .greeting-section,
     body.dark .notes-mini {
+
       background: #1e293b;
+
       border-color: #334155;
     }
+
 
     body.dark .greeting-section h2,
     body.dark .section-header h3,
     body.dark .notes-mini-text h4 {
+
       color: #f8fafc;
     }
 
+
     body.dark .greeting-section p,
     body.dark .notes-mini-text p {
+
       color: #94a3b8;
     }
+
+
+    body.dark .sidebar {
+      background: #1e293b;
+    }
+
+
+    body.dark .sidebar-text h4 {
+      color: #f8fafc;
+    }
+
+
+    body.dark .sidebar-header,
+    body.dark .sidebar-footer {
+      border-color: #334155;
+    }
+
+
+    body.dark .menu-item {
+      color: #cbd5e1;
+    }
+
+
+    body.dark .menu-item:hover,
+    body.dark .menu-item:active {
+      background: #334155;
+    }
+
+
+    body.dark .close-sidebar {
+      background: #334155;
+      color: #cbd5e1;
+    }
+
+
+    body.dark .reward-card {
+      background: #1e293b;
+    }
+
+
+    body.dark .reward-card h2 {
+      color: #f8fafc;
+    }
+
+
+    body.dark .reward-card .reward-subtitle,
+    body.dark .reward-message {
+      color: #94a3b8;
+    }
+
   </style>
+
 </head>
 
+
 <body>
+
 
   <!-- =========================
        TOP HEADER
@@ -816,18 +1628,25 @@
   <div class="app-header">
 
     <button class="icon-btn" id="menuBtn">
+
       <i class="fa-solid fa-bars-staggered"></i>
+
     </button>
+
 
     <h1>
       Loksewa<span>Quest</span>
     </h1>
 
+
     <button class="icon-btn" id="notificationBtn">
+
       <i class="fa-regular fa-bell"></i>
+
     </button>
 
   </div>
+
 
 
   <!-- =========================
@@ -837,14 +1656,23 @@
   <div class="ticker-container">
 
     <span class="ticker-badge-tag">
-      <i class="fa-solid fa-bullhorn" style="font-size:9px;"></i>
+
+      <i class="fa-solid fa-bullhorn"
+         style="font-size:9px;"></i>
+
       सूचना
+
     </span>
+
 
     <div class="ticker-text-wrap">
 
-      <span id="live-ticker-text" class="ticker-text">
-        LoksewaQuest मा स्वागत छ! नयाँ सेटहरू अपडेट गरिएको छ।
+      <span id="live-ticker-text"
+            class="ticker-text">
+
+        LoksewaQuest मा स्वागत छ!
+        नयाँ सेटहरू अपडेट गरिएको छ।
+
       </span>
 
     </div>
@@ -852,72 +1680,106 @@
   </div>
 
 
+
   <!-- =========================
        SIDEBAR OVERLAY
   ========================= -->
 
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="sidebar-overlay"
+       id="sidebarOverlay">
+  </div>
+
 
 
   <!-- =========================
        SIDEBAR
   ========================= -->
 
-  <div class="sidebar" id="sidebar">
+  <div class="sidebar"
+       id="sidebar">
+
 
     <div>
+
 
       <!-- User -->
 
       <div class="sidebar-header">
 
+
         <div class="sidebar-user-info">
 
-          <div class="sidebar-avatar" id="sidebarAvatar">
+
+          <div class="sidebar-avatar"
+               id="sidebarAvatar">
+
             LK
+
           </div>
+
 
           <div class="sidebar-text">
 
+
             <h4 id="sidebarName">
+
               युजर लोड हुँदैछ...
+
             </h4>
 
+
             <p id="sidebarEmail">
+
               email@example.com
+
             </p>
+
 
             <a href="coins.html"
                class="sidebar-coins-badge">
 
+
               <i class="fa-solid fa-coins"></i>
 
+
               <span id="sidebarCoinsCount">
+
                 0
+
               </span>
+
 
               Coins
 
+
             </a>
+
 
           </div>
 
+
         </div>
 
-        <button class="close-sidebar" id="closeSidebar">
+
+        <button class="close-sidebar"
+                id="closeSidebar">
 
           <i class="fa-solid fa-xmark"></i>
 
         </button>
 
+
       </div>
+
 
 
       <!-- Menu -->
 
       <div class="sidebar-menu">
 
-        <a href="courses.html" class="menu-item">
+
+        <a href="courses.html"
+           class="menu-item">
 
           <div class="menu-item-left">
 
@@ -927,6 +1789,7 @@
 
           </div>
 
+
           <i class="fa-solid fa-chevron-right"
              style="font-size:10px;color:#94a3b8;">
           </i>
@@ -934,7 +1797,9 @@
         </a>
 
 
-        <a href="syllabus.html" class="menu-item">
+
+        <a href="syllabus.html"
+           class="menu-item">
 
           <div class="menu-item-left">
 
@@ -944,6 +1809,7 @@
 
           </div>
 
+
           <i class="fa-solid fa-chevron-right"
              style="font-size:10px;color:#94a3b8;">
           </i>
@@ -951,7 +1817,9 @@
         </a>
 
 
-        <a href="notes.html" class="menu-item">
+
+        <a href="notes.html"
+           class="menu-item">
 
           <div class="menu-item-left">
 
@@ -961,14 +1829,16 @@
 
           </div>
 
+
           <i class="fa-solid fa-chevron-right"
-             style="font-size:10px;color:#94a3b8;">
+             style="font-size:10px;color:#94a3bf;">
           </i>
 
         </a>
 
 
-        <!-- COMMUNITY HUB -->
+
+        <!-- COMMUNITY -->
 
         <a href="chat.html"
            class="menu-item community-menu">
@@ -981,6 +1851,7 @@
 
           </div>
 
+
           <span class="community-menu-badge">
             LIVE
           </span>
@@ -988,9 +1859,11 @@
         </a>
 
 
+
         <!-- Leaderboard -->
 
-        <a href="leaderboard.html" class="menu-item">
+        <a href="leaderboard.html"
+           class="menu-item">
 
           <div class="menu-item-left">
 
@@ -1002,11 +1875,13 @@
 
           </div>
 
+
           <i class="fa-solid fa-chevron-right"
              style="font-size:10px;color:#94a3b8;">
           </i>
 
         </a>
+
 
 
         <!-- Admin -->
@@ -1026,11 +1901,13 @@
 
           </div>
 
+
           <i class="fa-solid fa-chevron-right"
              style="font-size:10px;color:#94a3b8;">
           </i>
 
         </a>
+
 
 
         <!-- Language -->
@@ -1047,14 +1924,18 @@
 
           </div>
 
+
           <span style="
             font-size:11px;
             font-weight:700;
             color:#2563eb;">
+
             नेपा
+
           </span>
 
         </div>
+
 
 
         <!-- Dark Mode -->
@@ -1071,6 +1952,7 @@
 
           </div>
 
+
           <label class="switch">
 
             <input type="checkbox"
@@ -1082,16 +1964,20 @@
 
         </div>
 
+
       </div>
 
+
     </div>
+
 
 
     <!-- Logout -->
 
     <div class="sidebar-footer">
 
-      <button class="logout-btn" id="logoutBtn">
+      <button class="logout-btn"
+              id="logoutBtn">
 
         <i class="fa-solid fa-right-from-bracket"></i>
 
@@ -1101,7 +1987,9 @@
 
     </div>
 
+
   </div>
+
 
 
   <!-- =========================
@@ -1115,24 +2003,35 @@
 
     <div class="greeting-section">
 
+
       <div>
 
         <h2 id="greetingName">
+
           शुभ प्रभात! 👋
+
         </h2>
 
+
         <p>
+
           साना प्रयासहरूले ठूला सपना पूरा गर्छन्।
+
         </p>
 
       </div>
 
+
       <div class="user-avatar-small"
            id="userInitial">
+
         LK
+
       </div>
 
+
     </div>
+
 
 
     <!-- =========================
@@ -1142,7 +2041,9 @@
     <a href="setlist.html"
        class="live-exam-card">
 
+
       <div class="live-exam-left">
+
 
         <div class="live-exam-img-box">
 
@@ -1151,25 +2052,38 @@
 
         </div>
 
+
         <div class="live-exam-info">
 
+
           <h3>
+
             PRE TEST QUALIFYING EXAM
+
           </h3>
+
 
           <div class="live-badge-wrapper">
 
+
             <div class="live-dot"></div>
 
+
             <span class="live-text">
+
               Live Now - Join Exam
+
             </span>
+
 
           </div>
 
+
         </div>
 
+
       </div>
+
 
 
       <div class="live-exam-right">
@@ -1178,7 +2092,9 @@
 
       </div>
 
+
     </a>
+
 
 
     <!-- =========================
@@ -1194,13 +2110,15 @@
     </div>
 
 
+
     <div class="action-grid">
 
 
-      <!-- 1. QUIZ GAMES FIRST -->
+      <!-- Quiz Games -->
 
       <a href="games.html"
          class="action-card card-purple">
+
 
         <div class="card-icon">
 
@@ -1208,11 +2126,13 @@
 
         </div>
 
+
         <div>
 
           <h4>
             Quiz Games
           </h4>
+
 
           <p>
             रमाइलो खेलमार्फत ज्ञान बढाउनुहोस्
@@ -1220,13 +2140,16 @@
 
         </div>
 
+
       </a>
 
 
-      <!-- 2. PRACTICE QUESTIONS -->
+
+      <!-- Practice -->
 
       <a href="practice.html"
          class="action-card card-green">
+
 
         <div class="card-icon">
 
@@ -1234,11 +2157,13 @@
 
         </div>
 
+
         <div>
 
           <h4>
             Practice Questions
           </h4>
+
 
           <p>
             विषयगत प्रश्नहरूको अभ्यास
@@ -1246,13 +2171,16 @@
 
         </div>
 
+
       </a>
 
 
-      <!-- 3. MOCK TEST -->
+
+      <!-- Mock -->
 
       <a href="mock.html"
          class="action-card card-orange">
+
 
         <div class="card-icon">
 
@@ -1260,11 +2188,13 @@
 
         </div>
 
+
         <div>
 
           <h4>
             Mock Test
           </h4>
+
 
           <p>
             वास्तविक परीक्षा अभ्यास
@@ -1272,17 +2202,22 @@
 
         </div>
 
+
       </a>
 
 
-      <!-- 4. COMMUNITY HUB -->
+
+      <!-- Community -->
 
       <a href="chat.html"
          class="action-card card-community">
 
+
         <div class="community-card-content">
 
+
           <div class="community-card-left">
+
 
             <div class="community-card-icon">
 
@@ -1290,15 +2225,19 @@
 
             </div>
 
+
             <div>
+
 
               <h4>
                 Community Hub
               </h4>
 
+
               <p>
                 साथी Loksewa तयारीकर्तासँग छलफल गर्नुहोस्
               </p>
+
 
               <div class="community-online">
 
@@ -1310,7 +2249,9 @@
 
               </div>
 
+
             </div>
+
 
           </div>
 
@@ -1321,20 +2262,24 @@
 
           </div>
 
+
         </div>
 
+
       </a>
+
 
     </div>
 
 
+
     <!-- =========================
-         NOTES CARD
-         Replaced duplicate Community Hub
+         NOTES
     ========================= -->
 
     <a href="notes.html"
        class="notes-mini">
+
 
       <div class="notes-mini-icon">
 
@@ -1342,17 +2287,22 @@
 
       </div>
 
+
       <div class="notes-mini-text">
+
 
         <h4>
           Study Notes
         </h4>
 
+
         <p>
           महत्वपूर्ण Notes हेर्नुहोस् र आफ्नो तयारी अझ राम्रो बनाउनुहोस्।
         </p>
 
+
       </div>
+
 
       <div class="notes-mini-arrow">
 
@@ -1360,9 +2310,12 @@
 
       </div>
 
+
     </a>
 
+
   </div>
+
 
 
   <!-- =========================
@@ -1371,9 +2324,13 @@
 
   <script src="components.js"></script>
 
+
   <script>
+
     loadBottomNav('home');
+
   </script>
+
 
 
   <!-- =========================
@@ -1383,15 +2340,18 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
+
   <!-- =========================
        FIREBASE
   ========================= -->
 
   <script type="module">
 
+
     import {
       initializeApp
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
 
     import {
       getAuth,
@@ -1399,18 +2359,24 @@
       signOut
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+
     import {
       getFirestore,
       doc,
-      getDoc
+      getDoc,
+      runTransaction
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
-    /* Firebase */
+
+    /* =========================
+       FIREBASE CONFIG
+    ========================= */
 
     const firebaseConfig = {
 
-      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      apiKey:
+        "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
 
       authDomain:
         "loksewaquest-227b6.firebaseapp.com",
@@ -1426,23 +2392,33 @@
 
       appId:
         "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
     };
 
 
-    const app = initializeApp(firebaseConfig);
-
-    const auth = getAuth(app);
-
-    const db = getFirestore(app);
+    const app =
+      initializeApp(firebaseConfig);
 
 
-    /* Supabase */
+    const auth =
+      getAuth(app);
+
+
+    const db =
+      getFirestore(app);
+
+
+
+    /* =========================
+       SUPABASE
+    ========================= */
 
     const SUPABASE_URL =
       "https://edyirdedkiarguvurpxq.supabase.co";
 
+
     const SUPABASE_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZWRlZGtkiaHJndXZ1cnB4cSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzg5MDE4NjYyLCJleHAiOjIxMDQ1OTQ2NjJ9.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
 
 
     const supabase =
@@ -1452,6 +2428,7 @@
       );
 
 
+
     /* =========================
        SIDEBAR
     ========================= */
@@ -1459,14 +2436,18 @@
     const menuBtn =
       document.getElementById('menuBtn');
 
+
     const closeSidebar =
       document.getElementById('closeSidebar');
+
 
     const sidebar =
       document.getElementById('sidebar');
 
+
     const sidebarOverlay =
       document.getElementById('sidebarOverlay');
+
 
 
     function openSidebar() {
@@ -1505,75 +2486,92 @@
     );
 
 
+
     /* =========================
-   NOTIFICATIONS
-========================= */
+       NOTIFICATIONS
+    ========================= */
 
-async function fetchLatestNotification() {
+    async function fetchLatestNotification() {
 
-  try {
+      try {
 
-    const {
-      data,
-      error
-    } = await supabase
-      .from('notifications')
-      .select('message')
-      .order('id', {
-        ascending: false
-      })
-      .limit(1);
+        const {
+          data,
+          error
+        } = await supabase
 
-    if (error) {
+          .from('notifications')
 
-      console.error(
-        "Notification error:",
-        error
-      );
+          .select('message')
 
-      return;
+          .order('id', {
+            ascending: false
+          })
+
+          .limit(1);
+
+
+        if (error) {
+
+          console.error(
+            "Notification error:",
+            error
+          );
+
+          return;
+
+        }
+
+
+        const ticker =
+          document.getElementById(
+            'live-ticker-text'
+          );
+
+
+        if (!ticker) return;
+
+
+        if (
+          data &&
+          data.length > 0
+        ) {
+
+          ticker.textContent =
+            data[0].message;
+
+        }
+
+        else {
+
+          ticker.textContent =
+            "LoksewaQuest मा स्वागत छ! नयाँ सूचनाहरू चाँडै अपडेट हुनेछ।";
+
+        }
+
+
+      } catch (err) {
+
+        console.error(
+          "Notification fetch error:",
+          err
+        );
+
+      }
+
     }
 
-    const ticker =
-      document.getElementById(
-        'live-ticker-text'
-      );
 
-    if (!ticker) return;
+    // Page load हुँदा
+    fetchLatestNotification();
 
-    if (data && data.length > 0) {
 
-      ticker.textContent =
-        data[0].message;
-
-    } else {
-
-      ticker.textContent =
-        "LoksewaQuest मा स्वागत छ! नयाँ सूचनाहरू चाँडै अपडेट हुनेछ।";
-
-    }
-
-  } catch (err) {
-
-    console.error(
-      "Notification fetch error:",
-      err
+    // हरेक 30 seconds मा नयाँ notification check
+    setInterval(
+      fetchLatestNotification,
+      30000
     );
 
-  }
-
-}
-
-
-// Page load हुँदा तुरुन्त notification ल्याउने
-fetchLatestNotification();
-
-
-// प्रत्येक 30 seconds मा नयाँ notification check गर्ने
-setInterval(
-  fetchLatestNotification,
-  30000
-);
 
 
     /* =========================
@@ -1584,12 +2582,16 @@ setInterval(
 
       try {
 
-        if (!user || !user.email)
-          return;
+        if (
+          !user ||
+          !user.email
+        ) return;
 
 
         const adminEmails = [
+
           "pgprajwal11@gmail.com"
+
         ];
 
 
@@ -1614,6 +2616,7 @@ setInterval(
 
         }
 
+
       } catch (err) {
 
         console.error(
@@ -1626,6 +2629,308 @@ setInterval(
     }
 
 
+
+    /* ==================================================
+       DAILY LOGIN REWARD
+       +5 COINS ONCE PER NEPAL CALENDAR DAY
+    ================================================== */
+
+
+    function getNepalDate() {
+
+      return new Intl.DateTimeFormat(
+        'en-CA',
+        {
+          timeZone: 'Asia/Kathmandu',
+
+          year: 'numeric',
+
+          month: '2-digit',
+
+          day: '2-digit'
+        }
+      ).format(
+        new Date()
+      );
+
+    }
+
+
+
+    async function giveDailyLoginReward(user) {
+
+      try {
+
+        if (!user) {
+
+          return {
+            rewarded: false
+          };
+
+        }
+
+
+        const userRef =
+          doc(
+            db,
+            "users",
+            user.uid
+          );
+
+
+        const today =
+          getNepalDate();
+
+
+        let rewardGiven = false;
+
+
+        await runTransaction(
+          db,
+          async (transaction) => {
+
+            const userSnap =
+              await transaction.get(
+                userRef
+              );
+
+
+            if (!userSnap.exists()) {
+
+              console.warn(
+                "User document does not exist."
+              );
+
+              return;
+
+            }
+
+
+            const userData =
+              userSnap.data();
+
+
+            const lastDailyLogin =
+              userData.lastDailyLogin || "";
+
+
+            /*
+             * Already received today's reward
+             */
+
+            if (
+              lastDailyLogin === today
+            ) {
+
+              rewardGiven = false;
+
+              return;
+
+            }
+
+
+            /*
+             * Current coins
+             */
+
+            const currentCoins =
+              Number(
+                userData.coins || 0
+              );
+
+
+            /*
+             * Give +5
+             */
+
+            transaction.update(
+              userRef,
+              {
+
+                coins:
+                  currentCoins + 5,
+
+                lastDailyLogin:
+                  today
+
+              }
+            );
+
+
+            rewardGiven = true;
+
+          }
+        );
+
+
+        return {
+          rewarded: rewardGiven
+        };
+
+
+      } catch (error) {
+
+        console.error(
+          "Daily login reward error:",
+          error
+        );
+
+
+        return {
+          rewarded: false,
+          error: error
+        };
+
+      }
+
+    }
+
+
+
+    /* =========================
+       DAILY REWARD POPUP
+    ========================= */
+
+    function showDailyReward() {
+
+      // Existing popup भए remove
+      const oldPopup =
+        document.querySelector(
+          '.reward-overlay'
+        );
+
+
+      if (oldPopup) {
+
+        oldPopup.remove();
+
+      }
+
+
+      const overlay =
+        document.createElement(
+          'div'
+        );
+
+
+      overlay.className =
+        'reward-overlay';
+
+
+      overlay.innerHTML = `
+
+        <div class="reward-card">
+
+          <div class="reward-coin">
+
+            <i class="fa-solid fa-coins"></i>
+
+          </div>
+
+
+          <h2>
+            Daily Login Reward 🎉
+          </h2>
+
+
+          <div class="reward-subtitle">
+
+            आज LoksewaQuest मा login गर्नुभएकोमा
+
+          </div>
+
+
+          <div class="reward-amount">
+
+            +5 Coins
+
+          </div>
+
+
+          <div class="reward-message">
+
+            हरेक दिन login गरेर आफ्नो Coins जम्मा गर्नुहोस्।
+
+          </div>
+
+
+          <button
+            class="reward-close"
+            id="closeRewardBtn">
+
+            Continue 🚀
+
+          </button>
+
+        </div>
+
+      `;
+
+
+      document.body.appendChild(
+        overlay
+      );
+
+
+      document
+        .getElementById(
+          'closeRewardBtn'
+        )
+        .addEventListener(
+          'click',
+          () => {
+
+            overlay.remove();
+
+          }
+        );
+
+
+      // Overlay बाहिर click गर्दा पनि close
+      overlay.addEventListener(
+        'click',
+        (event) => {
+
+          if (
+            event.target === overlay
+          ) {
+
+            overlay.remove();
+
+          }
+
+        }
+      );
+
+    }
+
+
+
+    /* =========================
+       UPDATE COIN DISPLAY
+    ========================= */
+
+    function updateCoinDisplay(
+      coins
+    ) {
+
+      const coinElement =
+        document.getElementById(
+          'sidebarCoinsCount'
+        );
+
+
+      if (coinElement) {
+
+        coinElement.textContent =
+          coins;
+
+      }
+
+    }
+
+
+
     /* =========================
        AUTH + USER DATA
     ========================= */
@@ -1634,18 +2939,27 @@ setInterval(
       auth,
       async (user) => {
 
+
         if (user) {
 
+
           const email =
-            user.email || "No Email";
+            user.email ||
+            "No Email";
+
 
           let name =
-            user.displayName || "Officer";
+            user.displayName ||
+            "Officer";
+
 
           let userCoins = 0;
 
 
-          /* Firestore User */
+
+          /* =========================
+             FIRESTORE USER
+          ========================= */
 
           try {
 
@@ -1658,16 +2972,22 @@ setInterval(
 
 
             const docSnap =
-              await getDoc(docRef);
+              await getDoc(
+                docRef
+              );
 
 
-            if (docSnap.exists()) {
+            if (
+              docSnap.exists()
+            ) {
 
               const userData =
                 docSnap.data();
 
 
-              if (userData.name) {
+              if (
+                userData.name
+              ) {
 
                 name =
                   userData.name;
@@ -1681,11 +3001,14 @@ setInterval(
               ) {
 
                 userCoins =
-                  userData.coins;
+                  Number(
+                    userData.coins
+                  );
 
               }
 
             }
+
 
           } catch (err) {
 
@@ -1697,22 +3020,27 @@ setInterval(
           }
 
 
-          /* Sidebar */
+
+          /* =========================
+             BASIC USER UI
+          ========================= */
 
           document.getElementById(
             'sidebarName'
-          ).textContent = name;
+          ).textContent =
+            name;
 
 
           document.getElementById(
             'sidebarEmail'
-          ).textContent = email;
-
-
-          document.getElementById(
-            'sidebarCoinsCount'
           ).textContent =
-            userCoins;
+            email;
+
+
+          updateCoinDisplay(
+            userCoins
+          );
+
 
 
           /* Greeting */
@@ -1723,15 +3051,26 @@ setInterval(
             `शुभ प्रभात, ${name}! 👋`;
 
 
+
           /* Initials */
 
           const initials =
             name
+
               .split(' ')
-              .map(n => n[0])
+
+              .map(
+                n => n[0]
+              )
+
               .join('')
+
               .toUpperCase()
-              .substring(0,2) || "LK";
+
+              .substring(
+                0,
+                2
+              ) || "LK";
 
 
           document.getElementById(
@@ -1746,9 +3085,52 @@ setInterval(
             initials;
 
 
-          /* Admin */
 
-          checkAdminRole(user);
+          /* =========================
+             ADMIN
+          ========================= */
+
+          checkAdminRole(
+            user
+          );
+
+
+
+          /* =================================================
+             DAILY LOGIN REWARD
+          ================================================= */
+
+          const rewardResult =
+            await giveDailyLoginReward(
+              user
+            );
+
+
+          if (
+            rewardResult &&
+            rewardResult.rewarded
+          ) {
+
+            // Sidebar coin count +5
+            userCoins += 5;
+
+            updateCoinDisplay(
+              userCoins
+            );
+
+
+            // Show reward popup
+            setTimeout(
+              () => {
+
+                showDailyReward();
+
+              },
+              500
+            );
+
+          }
+
 
         }
 
@@ -1761,6 +3143,7 @@ setInterval(
 
       }
     );
+
 
 
     /* =========================
@@ -1775,10 +3158,14 @@ setInterval(
 
         try {
 
-          await signOut(auth);
+          await signOut(
+            auth
+          );
+
 
           window.location.href =
             "login.html";
+
 
         } catch (error) {
 
@@ -1793,6 +3180,7 @@ setInterval(
     );
 
 
+
     /* =========================
        DARK MODE
     ========================= */
@@ -1804,12 +3192,14 @@ setInterval(
 
 
     if (
-      localStorage.getItem('theme')
-      === 'dark'
+      localStorage.getItem(
+        'theme'
+      ) === 'dark'
     ) {
 
       darkModeToggle.checked =
         true;
+
 
       document.body.classList.add(
         'dark'
@@ -1822,16 +3212,21 @@ setInterval(
       'change',
       (e) => {
 
-        if (e.target.checked) {
+
+        if (
+          e.target.checked
+        ) {
 
           localStorage.setItem(
             'theme',
             'dark'
           );
 
+
           document.body.classList.add(
             'dark'
           );
+
 
         }
 
@@ -1842,6 +3237,7 @@ setInterval(
             'light'
           );
 
+
           document.body.classList.remove(
             'dark'
           );
@@ -1851,7 +3247,9 @@ setInterval(
       }
     );
 
+
   </script>
 
+
 </body>
-        </html>
+  </html>
