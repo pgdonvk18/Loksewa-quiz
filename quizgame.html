@@ -223,9 +223,8 @@
     let isAnswerSubmitting = false;
     let coinAlreadyDistributed = false; 
 
-    // Persistent Language State ('ne' or 'en') - Yeh poori quiz me change nahi hoga jab tak user click na kare
+    // Persistent Language State ('ne' or 'en')
     let currentQuizLang = 'ne';
-    // Translation Cache taaki ek question dobara aaye ya render ho toh API call na karna pade (Fast)
     let translationCache = {};
 
     const topicDisplayNames = {
@@ -243,7 +242,6 @@
     async function translateText(text, targetLang) {
       if (!text || targetLang === 'ne') return text;
       
-      // Check cache first for instant load
       const cacheKey = `${text}_${targetLang}`;
       if (translationCache[cacheKey]) {
         return translationCache[cacheKey];
@@ -254,7 +252,7 @@
         const data = await res.json();
         if (data && data.responseData && data.responseData.translatedText) {
           const translated = data.responseData.translatedText;
-          translationCache[cacheKey] = translated; // Save to cache
+          translationCache[cacheKey] = translated;
           return translated;
         }
       } catch (e) {
@@ -263,7 +261,6 @@
       return text;
     }
 
-    // Toggle button function
     window.toggleQuizLanguage = async function() {
       currentQuizLang = (currentQuizLang === 'ne') ? 'en' : 'ne';
       const btn = document.getElementById('langToggleBtn');
@@ -276,7 +273,6 @@
         showToast("नेपाली भाषा सक्रिय गरियो।");
       }
 
-      // Turant UI update karo naye language ke sath
       if (roomDataGlobal && roomDataGlobal.status === 'playing' && roomDataGlobal.currentQuestion) {
         renderGameUI(roomDataGlobal);
       }
@@ -524,7 +520,6 @@
         let currentQCount = room.questionCount || 1;
         let currentRoundNum = Math.floor((currentQCount - 1) / playerCount) + 1;
 
-        // Fast Translation Handling based on persistent currentQuizLang state
         let displayQuestionText = q.text;
         let displayOptions = [...q.options];
 
@@ -543,7 +538,7 @@
             </div>
             <h4 id="questionTextRender">${escapeHTML(displayQuestionText)}</h4>
             <div class="options-grid" id="optionsGrid">
-              ${displayOptions.map((opt, index) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${q.options[index].replace(/'/g, "\\тра\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
+              ${displayOptions.map((opt, index) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${q.options[index].replace(/'/g, "\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
             </div>
             ${isMyTurn ? `
               <div class="action-row">
@@ -1000,7 +995,7 @@
     }
 
     window.sendQuickEmoji = async function(emoji) {
-      , if (!currentUser) return;
+      if (!currentUser) return;
       await addDoc(collection(db, "quiz_rooms", roomId, "room_chat"), {
         text: emoji, uid: currentUser.uid, senderName: currentUserName, createdAt: serverTimestamp()
       });
@@ -1008,7 +1003,7 @@
 
     document.getElementById('chatForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const input = document.getElementById('chatText') || document.getElementById('chatInputText');
+      const input = document.getElementById('chatInputText');
       const text = input.value.trim();
       if (!text || !currentUser) return;
       input.value = '';
@@ -1024,7 +1019,6 @@
         '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
       }[tag] || tag));
     }
-  </script><script src="translator.js"></script>
-  <script src="components.js"></script>
+  </script>
 </body>
 </html>
