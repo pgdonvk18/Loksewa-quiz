@@ -3,11 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <title>LoksewaQuest - Performance Analytics</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Chart.js CDN -->
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -15,30 +20,32 @@
       padding: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
+
     body {
       background: #f8fafc;
       color: #1e293b;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding-bottom: 90px;
+      padding-bottom: 100px;
     }
+
+    /* ================= HEADER ================= */
 
     .analytics-header {
       background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
-      padding: 24px 20px 35px 20px;
+      padding: 22px 18px 38px;
       border-radius: 0 0 30px 30px;
       color: white;
     }
+
     .nav-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
+
     .back-btn {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255,255,255,.15);
       border: none;
       width: 40px;
       height: 40px;
@@ -48,358 +55,1902 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       text-decoration: none;
-      backdrop-filter: blur(5px);
-    }
-    .nav-bar h2 {
-      font-size: 18px;
-      font-weight: 700;
-    }
-    .header-subtitle {
-      font-size: 13px;
-      color: #cbd5e1;
-      font-weight: 500;
     }
 
-    .container {
-      padding: 0 20px;
-      margin-top: -15px;
-      flex: 1;
+    .nav-bar h2 {
+      font-size: 17px;
+      font-weight: 800;
     }
+
+    .header-subtitle {
+      font-size: 12px;
+      color: #dbeafe;
+      line-height: 1.6;
+    }
+
+    .user-pill {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255,255,255,.12);
+      padding: 7px 11px;
+      border-radius: 20px;
+      font-size: 10px;
+      color: #e0e7ff;
+    }
+
+    /* ================= CONTAINER ================= */
+
+    .container {
+      padding: 0 16px;
+      margin-top: -20px;
+    }
+
+    /* ================= SUMMARY ================= */
 
     .summary-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
     }
+
     .sum-card {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 14px 10px;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-      border: 1px solid #f1f5f9;
+      background: #fff;
+      border-radius: 18px;
+      padding: 15px;
+      box-shadow: 0 5px 18px rgba(15,23,42,.06);
+      border: 1px solid #eef2f7;
     }
+
+    .sum-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
     .sum-card i {
-      font-size: 16px;
-      margin-bottom: 6px;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
     }
-    .sum-card.c1 i { color: #2563eb; }
-    .sum-card.c2 i { color: #16a34a; }
-    .sum-card.c3 i { color: #ea580c; }
-    
+
+    .sum-card:nth-child(1) i {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    .sum-card:nth-child(2) i {
+      background: #ecfdf5;
+      color: #16a34a;
+    }
+
+    .sum-card:nth-child(3) i {
+      background: #fff7ed;
+      color: #ea580c;
+    }
+
+    .sum-card:nth-child(4) i {
+      background: #fefce8;
+      color: #ca8a04;
+    }
+
     .sum-card h4 {
       font-size: 10px;
       color: #64748b;
-      text-transform: uppercase;
       font-weight: 700;
       margin-bottom: 2px;
     }
+
     .sum-card span {
-      font-size: 16px;
+      font-size: 21px;
       font-weight: 800;
       color: #0f172a;
     }
 
-    .card-box {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 18px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
-      border: 1px solid #f1f5f9;
-      margin-bottom: 20px;
+    .sum-card small {
+      display: block;
+      margin-top: 2px;
+      color: #94a3b8;
+      font-size: 9px;
     }
+
+    /* ================= CARDS ================= */
+
+    .card-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 17px;
+      box-shadow: 0 5px 20px rgba(15,23,42,.045);
+      border: 1px solid #eef2f7;
+      margin-bottom: 16px;
+    }
+
     .card-title {
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 800;
       color: #0f172a;
       margin-bottom: 15px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
+
     .card-title i {
       color: #2563eb;
     }
+
     .chart-container {
       position: relative;
       height: 220px;
       width: 100%;
     }
 
-    .topic-item {
-      margin-bottom: 14px;
-    }
-    .topic-item:last-child { margin-bottom: 0; }
-    .topic-info {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      font-weight: 600;
-      color: #334155;
-      margin-bottom: 5px;
-    }
-    .progress-bar-bg {
-      background: #f1f5f9;
-      height: 8px;
-      border-radius: 10px;
-      overflow: hidden;
-      width: 100%;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      border-radius: 10px;
-      transition: width 0.6s ease;
+    /* ================= PERFORMANCE HERO ================= */
+
+    .performance-card {
+      background: linear-gradient(135deg,#1d4ed8,#4338ca);
+      color: white;
+      border-radius: 22px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 25px rgba(37,99,235,.18);
     }
 
-    .focus-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .performance-label {
+      font-size: 11px;
+      color: #dbeafe;
+      font-weight: 600;
     }
+
+    .performance-score {
+      font-size: 36px;
+      font-weight: 800;
+      margin: 5px 0;
+    }
+
+    .performance-message {
+      font-size: 11px;
+      color: #dbeafe;
+      line-height: 1.6;
+    }
+
+    .performance-progress {
+      height: 7px;
+      background: rgba(255,255,255,.2);
+      border-radius: 20px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+
+    .performance-progress div {
+      height: 100%;
+      background: white;
+      border-radius: 20px;
+      width: 0%;
+      transition: width .8s ease;
+    }
+
+    /* ================= MINI STATS ================= */
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .mini-card {
+      background: white;
+      border: 1px solid #eef2f7;
+      border-radius: 15px;
+      padding: 12px 7px;
+      text-align: center;
+    }
+
+    .mini-card i {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .mini-card span {
+      display: block;
+      font-size: 9px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    /* ================= SET PERFORMANCE ================= */
+
+    .set-item {
+      padding: 13px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .set-item:last-child {
+      border-bottom: none;
+    }
+
+    .set-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 7px;
+    }
+
+    .set-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      max-width: 70%;
+    }
+
+    .set-score {
+      font-size: 12px;
+      font-weight: 800;
+      color: #2563eb;
+    }
+
+    .set-progress {
+      height: 7px;
+      background: #f1f5f9;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .set-progress div {
+      height: 100%;
+      border-radius: 20px;
+      transition: width .7s ease;
+    }
+
+    .set-meta {
+      margin-top: 5px;
+      font-size: 9px;
+      color: #94a3b8;
+    }
+
+    /* ================= HISTORY ================= */
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-rank {
+      width: 35px;
+      height: 35px;
+      border-radius: 11px;
+      background: #eff6ff;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .history-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .history-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-date {
+      font-size: 9px;
+      color: #94a3b8;
+      margin-top: 3px;
+    }
+
+    .history-score {
+      text-align: right;
+    }
+
+    .history-score strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      color: #2563eb;
+    }
+
+    .history-score span {
+      font-size: 9px;
+      color: #64748b;
+    }
+
+    /* ================= FOCUS ================= */
+
     .focus-item {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 11px;
       background: #fffbeb;
       border: 1px solid #fef3c7;
-      padding: 12px 14px;
+      padding: 12px;
       border-radius: 14px;
+      margin-bottom: 9px;
     }
+
+    .focus-item:last-child {
+      margin-bottom: 0;
+    }
+
     .focus-item i {
       color: #d97706;
-      font-size: 16px;
+      font-size: 15px;
       margin-top: 2px;
     }
+
     .focus-text h5 {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 800;
       color: #92400e;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
+
     .focus-text p {
-      font-size: 11px;
+      font-size: 10px;
       color: #b45309;
-      font-weight: 500;
+      line-height: 1.55;
+    }
+
+    /* ================= EMPTY / LOADING ================= */
+
+    .loading {
+      text-align: center;
+      padding: 35px 10px;
+      color: #64748b;
+      font-size: 11px;
+    }
+
+    .loading i {
+      font-size: 25px;
+      margin-bottom: 10px;
+      color: #2563eb;
+    }
+
+    .error-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 13px;
+      border-radius: 14px;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .empty-box {
+      text-align: center;
+      padding: 30px 15px;
+      color: #64748b;
+    }
+
+    .empty-box i {
+      font-size: 30px;
+      color: #cbd5e1;
+      margin-bottom: 10px;
+    }
+
+    .empty-box h4 {
+      font-size: 13px;
+      color: #475569;
+      margin-bottom: 5px;
+    }
+
+    .empty-box p {
+      font-size: 10px;
+    }
+
+    /* ================= REFRESH ================= */
+
+    .refresh-btn {
+      position: fixed;
+      right: 18px;
+      bottom: 88px;
+      width: 46px;
+      height: 46px;
+      border: none;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      font-size: 15px;
+      box-shadow: 0 8px 20px rgba(37,99,235,.3);
+      z-index: 20;
+      cursor: pointer;
+    }
+
+    .refresh-btn.loading-spin i {
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (min-width: 700px) {
+      .container {
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(4,1fr);
+      }
     }
   </style>
 </head>
+
 <body>
 
+  <!-- ================= HEADER ================= -->
+
   <div class="analytics-header">
+
     <div class="nav-bar">
-      <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+
+      <a href="dashboard.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+
       <h2>Performance Analytics</h2>
-      <div style="width: 40px;"></div>
+
+      <div style="width:40px;"></div>
+
     </div>
-    <p class="header-subtitle">तपाईंको कार्यसम्पादनको वास्तविक तथ्याङ्क र विश्लेषण</p>
+
+    <p class="header-subtitle">
+      तपाईंले दिएका Mock Exams को वास्तविक प्रदर्शन विश्लेषण
+    </p>
+
+    <div class="user-pill">
+      <i class="fa-solid fa-user"></i>
+      <span id="userEmailDisplay">Loading...</span>
+    </div>
+
   </div>
+
 
   <div class="container">
-    
+
+    <!-- ================= PERFORMANCE ================= -->
+
+    <div class="performance-card">
+
+      <div class="performance-label">
+        OVERALL EXAM PERFORMANCE
+      </div>
+
+      <div class="performance-score" id="overallAccuracy">
+        0%
+      </div>
+
+      <div class="performance-message" id="performanceMessage">
+        तपाईंको exam performance तयार हुँदैछ...
+      </div>
+
+      <div class="performance-progress">
+        <div id="overallProgress"></div>
+      </div>
+
+    </div>
+
+
+    <!-- ================= SUMMARY ================= -->
+
     <div class="summary-grid">
-      <div class="sum-card c1">
-        <i class="fa-solid fa-circle-check"></i>
-        <h4>Total Solved</h4>
-        <span id="anaTotalSolved">0</span>
+
+      <div class="sum-card">
+
+        <div class="sum-top">
+          <i class="fa-solid fa-file-pen"></i>
+        </div>
+
+        <h4>Total Exams</h4>
+        <span id="totalExams">0</span>
+        <small>Mock exams</small>
+
       </div>
-      <div class="sum-card c2">
-        <i class="fa-solid fa-bullseye"></i>
+
+
+      <div class="sum-card">
+
+        <div class="sum-top">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+
+        <h4>Questions</h4>
+        <span id="totalQuestions">0</span>
+        <small>Answered</small>
+
+      </div>
+
+
+      <div class="sum-card">
+
+        <div class="sum-top">
+          <i class="fa-solid fa-bullseye"></i>
+        </div>
+
         <h4>Accuracy</h4>
-        <span id="anaAccuracy">0%</span>
+        <span id="accuracyValue">0%</span>
+        <small>Overall</small>
+
       </div>
-      <div class="sum-card c3">
-        <i class="fa-solid fa-clock"></i>
-        <h4>Time Spent</h4>
-        <span id="anaTime">0 hrs</span>
+
+
+      <div class="sum-card">
+
+        <div class="sum-top">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+
+        <h4>Best Score</h4>
+        <span id="bestScore">0</span>
+        <small id="bestScoreSet">No exam yet</small>
+
       </div>
+
     </div>
 
-    <!-- Dynamic Pie Chart -->
+
+    <!-- ================= MINI STATS ================= -->
+
+    <div class="mini-grid">
+
+      <div class="mini-card">
+        <i class="fa-solid fa-chart-line"></i>
+        <strong id="averageScore">0</strong>
+        <span>Average Score</span>
+      </div>
+
+      <div class="mini-card">
+        <i class="fa-solid fa-check"></i>
+        <strong id="correctCount">0</strong>
+        <span>Correct</span>
+      </div>
+
+      <div class="mini-card">
+        <i class="fa-solid fa-xmark"></i>
+        <strong id="wrongCount">0</strong>
+        <span>Wrong</span>
+      </div>
+
+    </div>
+
+
+    <!-- ================= SCORE TREND ================= -->
+
     <div class="card-box">
-      <div class="card-title"><i class="fa-solid fa-chart-pie"></i> नतिजा वितरण (Correct vs Incorrect)</div>
+
+      <div class="card-title">
+        <i class="fa-solid fa-chart-line"></i>
+        Score Trend
+      </div>
+
       <div class="chart-container">
-        <canvas id="accuracyPieChart"></canvas>
+        <canvas id="scoreTrendChart"></canvas>
       </div>
+
     </div>
 
-    <!-- Dynamic Topic Improvement Progress -->
+
+    <!-- ================= ANSWER DISTRIBUTION ================= -->
+
     <div class="card-box">
-      <div class="card-title"><i class="fa-solid fa-chart-bar"></i> विषयगत सुधार (Topic Improvement)</div>
-      <div class="topic-list" id="topicProgressContainer">
-        <div class="topic-item">
-          <div class="topic-info"><span id="topic1Name">नेपालको भूगोल (Geography)</span><span id="topic1Val">0%</span></div>
-          <div class="progress-bar-bg"><div class="progress-bar-fill" id="topic1Bar" style="width: 0%; background: #2563eb;"></div></div>
-        </div>
-        <div class="topic-item" style="margin-top: 12px;">
-          <div class="topic-info"><span id="topic2Name">संविधान तथा शासनपद्धति</span><span id="topic2Val">0%</span></div>
-          <div class="progress-bar-bg"><div class="progress-bar-fill" id="topic2Bar" style="width: 0%; background: #16a34a;"></div></div>
-        </div>
-        <div class="topic-item" style="margin-top: 12px;">
-          <div class="topic-info"><span id="topic3Name">समसामयिक (Current Affairs)</span><span id="topic3Val">0%</span></div>
-          <div class="progress-bar-bg"><div class="progress-bar-fill" id="topic3Bar" style="width: 0%; background: #ea580c;"></div></div>
-        </div>
+
+      <div class="card-title">
+        <i class="fa-solid fa-chart-pie"></i>
+        Answer Distribution
       </div>
+
+      <div class="chart-container">
+        <canvas id="answerPieChart"></canvas>
+      </div>
+
     </div>
 
-    <!-- Dynamic Focus Recommendation Area -->
+
+    <!-- ================= SET PERFORMANCE ================= -->
+
     <div class="card-box">
-      <div class="card-title"><i class="fa-solid fa-triangle-exclamation"></i> ध्यान दिनुपर्ने क्षेत्रहरू (Areas to Improve)</div>
-      <div class="focus-list" id="focusRecommendationList">
+
+      <div class="card-title">
+        <i class="fa-solid fa-layer-group"></i>
+        Set-wise Performance
+      </div>
+
+      <div id="setPerformance">
+
+        <div class="loading">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <br>
+          Set performance loading...
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= RECENT EXAMS ================= -->
+
+    <div class="card-box">
+
+      <div class="card-title">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        Recent Exam History
+      </div>
+
+      <div id="examHistory">
+
+        <div class="loading">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <br>
+          Exam history loading...
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= SMART RECOMMENDATION ================= -->
+
+    <div class="card-box">
+
+      <div class="card-title">
+        <i class="fa-solid fa-lightbulb"></i>
+        Smart Improvement
+      </div>
+
+      <div id="focusRecommendationList">
+
         <div class="focus-item">
-          <i class="fa-solid fa-lightbulb"></i>
+
+          <i class="fa-solid fa-spinner fa-spin"></i>
+
           <div class="focus-text">
-            <h5 id="focusTitle">डाटा लोड हुँदैछ...</h5>
-            <p id="focusDesc">तपाईंको नतिजा विश्लेषण गरेर यहाँ सुधार गर्नुपर्ने सुझाव देखाइनेछ।</p>
+
+            <h5>विश्लेषण हुँदैछ...</h5>
+
+            <p>
+              तपाईंको exam records हेरेर personalized सुझाव तयार गरिँदैछ।
+            </p>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
 
   </div>
 
-  <script src="components.js"></script>
-  <script>loadBottomNav('analytics');</script>
 
-  <!-- Supabase CDN -->
+  <!-- Refresh -->
+
+  <button class="refresh-btn" id="refreshBtn" title="Refresh Analytics">
+
+    <i class="fa-solid fa-rotate"></i>
+
+  </button>
+
+
+  <!-- Bottom Navigation -->
+
+  <script src="components.js"></script>
+
+  <script>
+    if (typeof loadBottomNav === "function") {
+      loadBottomNav('analytics');
+    }
+  </script>
+
+
+  <!-- Supabase -->
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Firebase & Synchronized Analytics Logic -->
+
+  <!-- Firebase -->
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+
+    /* =========================================================
+       FIREBASE
+    ========================================================= */
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+
+      apiKey: "AIzaSyCkCkCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+
       authDomain: "loksewaquest-227b6.firebaseapp.com",
+
       projectId: "loksewaquest-227b6",
+
       storageBucket: "loksewaquest-227b6.firebasestorage.app",
+
       messagingSenderId: "779234903809",
+
       appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
     };
 
+
     const app = initializeApp(firebaseConfig);
+
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
-    const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let pieChartInstance = null;
+    /* =========================================================
+       SUPABASE
+    ========================================================= */
 
-    function renderPieChart(correctCount, incorrectCount) {
-      const ctx = document.getElementById('accuracyPieChart').getContext('2d');
-      if (pieChartInstance) {
-        pieChartInstance.destroy();
-      }
-      pieChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['मिलाइएका (Correct)', 'बिग्रिएका (Incorrect)'],
-          datasets: [{
-            data: [correctCount, incorrectCount],
-            backgroundColor: ['#16a34a', '#dc2626'],
-            borderWidth: 0,
-            hoverOffset: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                boxWidth: 12,
-                font: {
-                  family: 'Plus Jakarta Sans',
-                  weight: '600',
-                  size: 12
-                }
-              }
-            }
-          }
-        }
-      });
+    const SUPABASE_URL =
+      "https://edyirdedkiarguvurpxq.supabase.co";
+
+    const SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+
+    const supabase =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    /* =========================================================
+       CHART INSTANCES
+    ========================================================= */
+
+    let trendChart = null;
+    let pieChart = null;
+
+
+    /* =========================================================
+       ESCAPE HTML
+    ========================================================= */
+
+    function escapeHTML(value) {
+
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
     }
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          // लोकल स्टोरेजबाट वास्तविक तथ्याङ्क तान्ने (शुरुमा 0 हुनेछ)
-          let totalSolved = parseInt(localStorage.getItem('total_questions_solved')) || 0;
-          let correctAnswers = parseInt(localStorage.getItem('total_correct_answers')) || 0;
-          let totalTimeMinutes = parseInt(localStorage.getItem('total_time_spent_minutes')) || 0;
-          
-          let accuracy = 0;
-          if (totalSolved > 0) {
-            accuracy = Math.round((correctAnswers / totalSolved) * 100);
-          } else if (localStorage.getItem('user_accuracy')) {
-            accuracy = parseInt(localStorage.getItem('user_accuracy'));
-          }
 
-          // Supabase बाट युजरको वास्तविक रेकर्ड जाँच गर्ने
-          let { data: userStat } = await supabase
-            .from('user_stats')
-            .select('*')
-            .eq('id', user.uid)
-            .maybeSingle();
+    /* =========================================================
+       FORMAT SET NAME
+    ========================================================= */
 
-          if (userStat) {
-            if (userStat.total_solved !== undefined) totalSolved = userStat.total_solved;
-            if (userStat.correct_answers !== undefined) correctAnswers = userStat.correct_answers;
-            if (userStat.time_spent_minutes !== undefined) totalTimeMinutes = userStat.time_spent_minutes;
-            if (userStat.accuracy !== undefined) accuracy = userStat.accuracy;
-            else if (totalSolved > 0) accuracy = Math.round((correctAnswers / totalSolved) * 100);
-          }
+    function formatSetName(name) {
 
-          let incorrectAnswers = totalSolved - correctAnswers;
-          if (incorrectAnswers < 0) incorrectAnswers = 0;
+      if (!name) return "Unknown Exam";
 
-          // UI मा मानहरू सेट गर्ने
-          document.getElementById('anaTotalSolved').textContent = totalSolved;
-          document.getElementById('anaAccuracy').textContent = accuracy + "%";
-          document.getElementById('anaTime').textContent = (totalTimeMinutes / 60).toFixed(1) + " hrs";
+      return String(name)
+        .replace(/_/g, " ")
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
 
-          // पाई चार्ट अपडेट गर्ने (यदि शून्य छ भने ग्राफमा खाली नदेखियोस् भन्नका लागि खाली डेटा ह्यान्डल गरिएको)
-          renderPieChart(totalSolved > 0 ? correctAnswers : 1, totalSolved > 0 ? incorrectAnswers : 1);
+    }
 
-          // विषयगत प्रगतिका बारहरू
-          let geoProgress = Math.min(100, Math.max(10, accuracy));
-          let constProgress = Math.min(100, Math.max(10, accuracy - 5));
-          let currentProgress = Math.min(100, Math.max(10, accuracy - 10));
 
-          document.getElementById('topic1Val').textContent = geoProgress + "%";
-          document.getElementById('topic1Bar').style.width = geoProgress + "%";
+    /* =========================================================
+       DATE FORMAT
+    ========================================================= */
 
-          document.getElementById('topic2Val').textContent = constProgress + "%";
-          document.getElementById('topic2Bar').style.width = constProgress + "%";
+    function formatDate(dateString) {
 
-          document.getElementById('topic3Val').textContent = currentProgress + "%";
-          document.getElementById('topic3Bar').style.width = currentProgress + "%";
+      if (!dateString) return "Unknown date";
 
-          // सुझाव खण्ड (Focus Area)
-          const focusListEl = document.getElementById('focusRecommendationList');
-          focusListEl.innerHTML = `
-            <div class="focus-item">
-              <i class="fa-solid fa-lightbulb"></i>
-              <div class="focus-text">
-                <h5>समीक्षा र निरन्तर अभ्यास</h5>
-                <p>तपाईंको कुल शुद्धता <strong>${accuracy}%</strong> रहेको छ। यसलाई अझै बढाउन नियमित रूपमा क्विजहरू अभ्यास गर्दै जानुहोला।</p>
-              </div>
-            </div>`;
+      const date = new Date(dateString);
 
-        } catch (err) {
-          console.error("Analytics sync error:", err);
-        }
-      } else {
-        window.location.href = "login.html";
+      if (isNaN(date.getTime())) {
+        return "Unknown date";
       }
-    });
+
+      return date.toLocaleDateString("ne-NP", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+
+    }
+
+
+    /* =========================================================
+       EMPTY STATE
+    ========================================================= */
+
+    function showEmptyState() {
+
+      document.getElementById("overallAccuracy").textContent = "0%";
+
+      document.getElementById("overallProgress").style.width = "0%";
+
+      document.getElementById("totalExams").textContent = "0";
+
+      document.getElementById("totalQuestions").textContent = "0";
+
+      document.getElementById("accuracyValue").textContent = "0%";
+
+      document.getElementById("bestScore").textContent = "0";
+
+      document.getElementById("bestScoreSet").textContent =
+        "No exam yet";
+
+      document.getElementById("averageScore").textContent = "0";
+
+      document.getElementById("correctCount").textContent = "0";
+
+      document.getElementById("wrongCount").textContent = "0";
+
+
+      document.getElementById("performanceMessage").textContent =
+        "अहिलेसम्म कुनै Mock Exam record भेटिएन। एउटा exam दिएपछि यहाँ तपाईंको वास्तविक performance देखिनेछ।";
+
+
+      document.getElementById("setPerformance").innerHTML = `
+
+        <div class="empty-box">
+
+          <i class="fa-solid fa-chart-simple"></i>
+
+          <h4>अझै exam record छैन</h4>
+
+          <p>
+            Mock Exam दिएपछि यहाँ set-wise performance देखिनेछ।
+          </p>
+
+        </div>
+
+      `;
+
+
+      document.getElementById("examHistory").innerHTML = `
+
+        <div class="empty-box">
+
+          <i class="fa-solid fa-clock-rotate-left"></i>
+
+          <h4>No Exam History</h4>
+
+          <p>
+            तपाईंले दिएको exam यहाँ देखिनेछ।
+          </p>
+
+        </div>
+
+      `;
+
+
+      document.getElementById("focusRecommendationList").innerHTML = `
+
+        <div class="focus-item">
+
+          <i class="fa-solid fa-lightbulb"></i>
+
+          <div class="focus-text">
+
+            <h5>पहिलो Mock Exam दिनुहोस्</h5>
+
+            <p>
+              तपाईंको वास्तविक performance analysis सुरु गर्न कम्तीमा एउटा exam आवश्यक छ।
+            </p>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* =========================================================
+       LOAD ANALYTICS
+    ========================================================= */
+
+    async function loadAnalytics(user) {
+
+      const refreshBtn =
+        document.getElementById("refreshBtn");
+
+      refreshBtn.classList.add("loading-spin");
+
+
+      try {
+
+        const email = user.email;
+
+        document.getElementById("userEmailDisplay").textContent =
+          email || "User";
+
+
+        /*
+         IMPORTANT:
+
+         exam_leaderboard columns:
+
+         id
+         username
+         set_name
+         score
+         correct_count
+         wrong_count
+         skipped_count
+         total_questions
+         created_at
+        */
+
+        const {
+          data,
+          error
+        } = await supabase
+
+          .from("exam_leaderboard")
+
+          .select(`
+            id,
+            username,
+            set_name,
+            score,
+            correct_count,
+            wrong_count,
+            skipped_count,
+            total_questions,
+            created_at
+          `)
+
+          .eq("username", email)
+
+          .order("created_at", {
+            ascending: true
+          });
+
+
+        if (error) {
+
+          console.error(
+            "Supabase Analytics Error:",
+            error
+          );
+
+          document.getElementById("examHistory").innerHTML = `
+
+            <div class="error-box">
+
+              <strong>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Analytics load भएन
+              </strong>
+
+              <br><br>
+
+              ${escapeHTML(error.message)}
+
+              <br><br>
+
+              <small>
+                Supabase RLS / API key / table permission जाँच गर्नुहोस्।
+              </small>
+
+            </div>
+
+          `;
+
+          return;
+        }
+
+
+        const exams = data || [];
+
+
+        console.log(
+          "Analytics exam records:",
+          exams
+        );
+
+
+        if (exams.length === 0) {
+
+          showEmptyState();
+
+          return;
+
+        }
+
+
+        /* =====================================================
+           BASIC TOTALS
+        ===================================================== */
+
+        const totalExams = exams.length;
+
+
+        const totalQuestions =
+          exams.reduce(
+            (sum, e) =>
+              sum + Number(e.total_questions || 0),
+            0
+          );
+
+
+        const totalCorrect =
+          exams.reduce(
+            (sum, e) =>
+              sum + Number(e.correct_count || 0),
+            0
+          );
+
+
+        const totalWrong =
+          exams.reduce(
+            (sum, e) =>
+              sum + Number(e.wrong_count || 0),
+            0
+          );
+
+
+        const totalSkipped =
+          exams.reduce(
+            (sum, e) =>
+              sum + Number(e.skipped_count || 0),
+            0
+          );
+
+
+        const accuracy =
+          totalQuestions > 0
+            ? Math.round(
+                (totalCorrect / totalQuestions) * 100
+              )
+            : 0;
+
+
+        const averageScore =
+          exams.reduce(
+            (sum, e) =>
+              sum + Number(e.score || 0),
+            0
+          ) / totalExams;
+
+
+        /* =====================================================
+           BEST SCORE
+        ===================================================== */
+
+        const bestExam =
+          [...exams].sort(
+            (a, b) =>
+              Number(b.score || 0) -
+              Number(a.score || 0)
+          )[0];
+
+
+        /* =====================================================
+           SUMMARY UI
+        ===================================================== */
+
+        document.getElementById("totalExams")
+          .textContent = totalExams;
+
+
+        document.getElementById("totalQuestions")
+          .textContent = totalQuestions;
+
+
+        document.getElementById("accuracyValue")
+          .textContent = accuracy + "%";
+
+
+        document.getElementById("bestScore")
+          .textContent =
+            Number(bestExam.score || 0)
+              .toFixed(1);
+
+
+        document.getElementById("bestScoreSet")
+          .textContent =
+            formatSetName(bestExam.set_name);
+
+
+        document.getElementById("averageScore")
+          .textContent =
+            averageScore.toFixed(1);
+
+
+        document.getElementById("correctCount")
+          .textContent = totalCorrect;
+
+
+        document.getElementById("wrongCount")
+          .textContent = totalWrong;
+
+
+        document.getElementById("overallAccuracy")
+          .textContent = accuracy + "%";
+
+
+        document.getElementById("overallProgress")
+          .style.width =
+            Math.min(100, accuracy) + "%";
+
+
+        /* =====================================================
+           PERFORMANCE MESSAGE
+        ===================================================== */
+
+        let performanceMessage = "";
+
+
+        if (accuracy >= 90) {
+
+          performanceMessage =
+            "तपाईंको exam accuracy धेरै उच्च छ। अब consistency र difficult questions मा focus गर्न सकिन्छ।";
+
+        }
+
+        else if (accuracy >= 80) {
+
+          performanceMessage =
+            "तपाईंको performance राम्रो छ। केही गलत भएका प्रश्नहरू review गर्दा अझ सुधार गर्न सकिन्छ।";
+
+        }
+
+        else if (accuracy >= 70) {
+
+          performanceMessage =
+            "तपाईंको आधार राम्रो देखिन्छ। नियमित mock test र mistake review ले accuracy बढाउन सक्छ।";
+
+        }
+
+        else if (accuracy >= 50) {
+
+          performanceMessage =
+            "अझै सुधारको राम्रो ठाउँ छ। गलत र skipped questions लाई प्राथमिकता दिएर पुनः अभ्यास गर्नुहोस्।";
+
+        }
+
+        else {
+
+          performanceMessage =
+            "अहिले fundamentals र नियमित practice मा focus गर्नु उपयोगी हुनेछ।";
+
+        }
+
+
+        document.getElementById("performanceMessage")
+          .textContent = performanceMessage;
+
+
+        /* =====================================================
+           CHART 1 — SCORE TREND
+        ===================================================== */
+
+        const trendLabels =
+          exams.map(
+            (e, index) =>
+              "#" + (index + 1)
+          );
+
+
+        const trendScores =
+          exams.map(
+            e =>
+              Number(e.score || 0)
+          );
+
+
+        const trendCtx =
+          document
+            .getElementById("scoreTrendChart")
+            .getContext("2d");
+
+
+        if (trendChart) {
+          trendChart.destroy();
+        }
+
+
+        trendChart = new Chart(
+          trendCtx,
+          {
+
+            type: "line",
+
+            data: {
+
+              labels: trendLabels,
+
+              datasets: [{
+
+                label: "Score",
+
+                data: trendScores,
+
+                borderColor: "#2563eb",
+
+                backgroundColor:
+                  "rgba(37,99,235,.10)",
+
+                fill: true,
+
+                tension: .35,
+
+                pointRadius: 4,
+
+                pointHoverRadius: 6,
+
+                borderWidth: 3
+
+              }]
+
+            },
+
+            options: {
+
+              responsive: true,
+
+              maintainAspectRatio: false,
+
+              plugins: {
+
+                legend: {
+                  display: false
+                }
+
+              },
+
+              scales: {
+
+                y: {
+
+                  beginAtZero: true,
+
+                  grid: {
+                    color: "#f1f5f9"
+                  }
+
+                },
+
+                x: {
+
+                  grid: {
+                    display: false
+                  }
+
+                }
+
+              }
+
+            }
+
+          }
+        );
+
+
+        /* =====================================================
+           CHART 2 — ANSWER DISTRIBUTION
+        ===================================================== */
+
+        const pieCtx =
+          document
+            .getElementById("answerPieChart")
+            .getContext("2d");
+
+
+        if (pieChart) {
+          pieChart.destroy();
+        }
+
+
+        pieChart = new Chart(
+          pieCtx,
+          {
+
+            type: "doughnut",
+
+            data: {
+
+              labels: [
+                "Correct",
+                "Wrong",
+                "Skipped"
+              ],
+
+              datasets: [{
+
+                data: [
+                  totalCorrect,
+                  totalWrong,
+                  totalSkipped
+                ],
+
+                backgroundColor: [
+                  "#16a34a",
+                  "#dc2626",
+                  "#f59e0b"
+                ],
+
+                borderWidth: 0,
+
+                hoverOffset: 5
+
+              }]
+
+            },
+
+            options: {
+
+              responsive: true,
+
+              maintainAspectRatio: false,
+
+              cutout: "68%",
+
+              plugins: {
+
+                legend: {
+
+                  position: "bottom",
+
+                  labels: {
+
+                    boxWidth: 12,
+
+                    font: {
+                      family:
+                        "Plus Jakarta Sans",
+                      size: 11,
+                      weight: "600"
+                    }
+
+                  }
+
+                }
+
+              }
+
+            }
+
+          }
+        );
+
+
+        /* =====================================================
+           SET-WISE PERFORMANCE
+        ===================================================== */
+
+        const setMap = {};
+
+
+        exams.forEach(exam => {
+
+          const set =
+            exam.set_name || "Unknown";
+
+
+          if (!setMap[set]) {
+
+            setMap[set] = {
+
+              exams: 0,
+              questions: 0,
+              correct: 0,
+              score: 0
+
+            };
+
+          }
+
+
+          setMap[set].exams++;
+
+          setMap[set].questions +=
+            Number(exam.total_questions || 0);
+
+          setMap[set].correct +=
+            Number(exam.correct_count || 0);
+
+          setMap[set].score +=
+            Number(exam.score || 0);
+
+        });
+
+
+        const setEntries =
+          Object.entries(setMap)
+            .map(([name, value]) => {
+
+              const setAccuracy =
+                value.questions > 0
+                  ? Math.round(
+                      (value.correct /
+                       value.questions) * 100
+                    )
+                  : 0;
+
+
+              return {
+                name,
+                ...value,
+                accuracy: setAccuracy
+              };
+
+            })
+            .sort(
+              (a,b) =>
+                b.accuracy - a.accuracy
+            );
+
+
+        const setContainer =
+          document.getElementById(
+            "setPerformance"
+          );
+
+
+        setContainer.innerHTML = "";
+
+
+        setEntries.forEach((set, index) => {
+
+          let barColor = "#2563eb";
+
+          if (set.accuracy >= 80) {
+            barColor = "#16a34a";
+          }
+
+          else if (set.accuracy < 50) {
+            barColor = "#dc2626";
+          }
+
+          setContainer.innerHTML += `
+
+            <div class="set-item">
+
+              <div class="set-top">
+
+                <span class="set-name">
+                  ${escapeHTML(
+                    formatSetName(set.name)
+                  )}
+                </span>
+
+                <span class="set-score">
+                  ${set.accuracy}%
+                </span>
+
+              </div>
+
+              <div class="set-progress">
+
+                <div
+                  style="
+                    width:${set.accuracy}%;
+                    background:${barColor};
+                  ">
+                </div>
+
+              </div>
+
+              <div class="set-meta">
+
+                ${set.exams} exam
+                •
+                ${set.correct}/${set.questions} correct
+                •
+                Avg score:
+                ${(set.score / set.exams).toFixed(1)}
+
+              </div>
+
+            </div>
+
+          `;
+
+        });
+
+
+        /* =====================================================
+           RECENT HISTORY
+        ===================================================== */
+
+        const recentExams =
+          [...exams]
+            .reverse()
+            .slice(0, 8);
+
+
+        const history =
+          document.getElementById(
+            "examHistory"
+          );
+
+
+        history.innerHTML = "";
+
+
+        recentExams.forEach(
+          (exam, index) => {
+
+            const score =
+              Number(exam.score || 0);
+
+
+            const questions =
+              Number(
+                exam.total_questions || 0
+              );
+
+
+            const correct =
+              Number(
+                exam.correct_count || 0
+              );
+
+
+            const examAccuracy =
+              questions > 0
+                ? Math.round(
+                    (correct / questions) * 100
+                  )
+                : 0;
+
+
+            history.innerHTML += `
+
+              <div class="history-item">
+
+                <div class="history-rank">
+
+                  ${index === 0
+                    ? "🆕"
+                    : "#" + (index + 1)}
+
+                </div>
+
+                <div class="history-info">
+
+                  <div class="history-name">
+
+                    ${escapeHTML(
+                      formatSetName(
+                        exam.set_name
+                      )
+                    )}
+
+                  </div>
+
+                  <div class="history-date">
+
+                    ${formatDate(
+                      exam.created_at
+                    )}
+
+                  </div>
+
+                </div>
+
+                <div class="history-score">
+
+                  <strong>
+                    ${score.toFixed(1)}
+                  </strong>
+
+                  <span>
+                    ${examAccuracy}% accuracy
+                  </span>
+
+                </div>
+
+              </div>
+
+            `;
+
+          }
+        );
+
+
+        /* =====================================================
+           SMART RECOMMENDATIONS
+        ===================================================== */
+
+        const recommendations = [];
+
+
+        /* Accuracy */
+
+        if (accuracy < 60) {
+
+          recommendations.push({
+
+            icon: "fa-book-open",
+
+            title: "Fundamentals मा focus गर्नुहोस्",
+
+            desc:
+              `तपाईंको overall accuracy ${accuracy}% छ। पहिले concept-based questions मा accuracy बढाउने लक्ष्य राख्नुहोस्।`
+
+          });
+
+        }
+
+        else if (accuracy < 80) {
+
+          recommendations.push({
+
+            icon: "fa-bullseye",
+
+            title: "Accuracy सुधार्ने focus",
+
+            desc:
+              `तपाईंको accuracy ${accuracy}% छ। गलत भएका प्रश्नहरूको कारण पत्ता लगाएर पुनः अभ्यास गर्नुहोस्।`
+
+          });
+
+        }
+
+        else {
+
+          recommendations.push({
+
+            icon: "fa-medal",
+
+            title: "Strong performance",
+
+            desc:
+              `तपाईंको overall accuracy ${accuracy}% छ। अब कठिन र tricky questions मा focus गर्न सकिन्छ।`
+
+          });
+
+        }
+
+
+        /* Wrong */
+
+        if (totalWrong > 0) {
+
+          recommendations.push({
+
+            icon: "fa-circle-xmark",
+
+            title: "Wrong answers review गर्नुहोस्",
+
+            desc:
+              `तपाईंले कुल ${totalWrong} प्रश्न गलत गर्नुभएको छ। यी प्रश्नहरू फेरि review गर्नु उपयोगी हुन्छ।`
+
+          });
+
+        }
+
+
+        /* Skipped */
+
+        if (totalSkipped > 0) {
+
+          recommendations.push({
+
+            icon: "fa-forward",
+
+            title: "Skipped questions कम गर्नुहोस्",
+
+            desc:
+              `कुल ${totalSkipped} प्रश्न skip भएका छन्। समय व्यवस्थापन सुधार्दा attempt rate बढ्न सक्छ।`
+
+          });
+
+        }
+
+
+        /* Best set */
+
+        if (setEntries.length > 0) {
+
+          const weakSet =
+            [...setEntries]
+              .sort(
+                (a,b) =>
+                  a.accuracy - b.accuracy
+              )[0];
+
+
+          if (weakSet.accuracy < 70) {
+
+            recommendations.push({
+
+              icon: "fa-triangle-exclamation",
+
+              title:
+                `${formatSetName(
+                  weakSet.name
+                )} मा पुनः अभ्यास`,
+
+              desc:
+                `यस set मा तपाईंको accuracy ${weakSet.accuracy}% छ। यो topic/set लाई priority दिनुहोस्।`
+
+            });
+
+          }
+
+        }
+
+
+        const focusList =
+          document.getElementById(
+            "focusRecommendationList"
+          );
+
+
+        focusList.innerHTML = "";
+
+
+        recommendations
+          .slice(0,4)
+          .forEach(item => {
+
+            focusList.innerHTML += `
+
+              <div class="focus-item">
+
+                <i class="fa-solid ${item.icon}"></i>
+
+                <div class="focus-text">
+
+                  <h5>
+                    ${escapeHTML(item.title)}
+                  </h5>
+
+                  <p>
+                    ${escapeHTML(item.desc)}
+                  </p>
+
+                </div>
+
+              </div>
+
+            `;
+
+          });
+
+
+      }
+
+      catch (err) {
+
+        console.error(
+          "Analytics error:",
+          err
+        );
+
+
+        document.getElementById(
+          "examHistory"
+        ).innerHTML = `
+
+          <div class="error-box">
+
+            <strong>
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Something went wrong
+            </strong>
+
+            <br><br>
+
+            ${escapeHTML(err.message)}
+
+          </div>
+
+        `;
+
+      }
+
+      finally {
+
+        refreshBtn.classList.remove(
+          "loading-spin"
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       AUTH
+    ========================================================= */
+
+    onAuthStateChanged(
+      auth,
+      async user => {
+
+        if (!user) {
+
+          window.location.href =
+            "login.html";
+
+          return;
+
+        }
+
+
+        await loadAnalytics(user);
+
+      }
+    );
+
+
+    /* =========================================================
+       REFRESH BUTTON
+    ========================================================= */
+
+    document
+      .getElementById("refreshBtn")
+      .addEventListener(
+        "click",
+        async () => {
+
+          const user = auth.currentUser;
+
+          if (user) {
+
+            await loadAnalytics(user);
+
+          }
+
+        }
+      );
+
   </script>
+
 </body>
 </html>
