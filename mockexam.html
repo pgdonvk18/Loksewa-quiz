@@ -1,5401 +1,1587 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>LoksewaQuest - Mock Exam</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet">
-
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-body{
-    font-family:'Plus Jakarta Sans',sans-serif;
-    background:#f5f7fb;
-    color:#172033;
-    min-height:100vh;
-}
-
-button{
-    font-family:inherit;
-}
-
-.app-header{
-    position:sticky;
-    top:0;
-    z-index:1000;
-    height:64px;
-    background:linear-gradient(135deg,#3413aa,#5b21d6);
-    color:#fff;
-    display:flex;
-    align-items:center;
-    padding:0 14px;
-    box-shadow:0 4px 15px rgba(52,19,170,.2);
-}
-
-.header-left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    min-width:0;
-}
-
-.back-btn{
-    width:40px;
-    height:40px;
-    border:none;
-    border-radius:12px;
-    background:rgba(255,255,255,.15);
-    color:#fff;
-    cursor:pointer;
-    font-size:17px;
-}
-
-.header-title{
-    font-size:15px;
-    font-weight:800;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    max-width:190px;
-}
-
-.header-right{
-    margin-left:auto;
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
-
-.coin-pill{
-    background:rgba(255,255,255,.15);
-    border:1px solid rgba(255,255,255,.2);
-    border-radius:20px;
-    padding:7px 10px;
-    font-size:12px;
-    font-weight:800;
-    white-space:nowrap;
-}
-
-.timer{
-    background:#fff;
-    color:#3413aa;
-    border-radius:10px;
-    padding:7px 9px;
-    font-size:12px;
-    font-weight:800;
-    min-width:65px;
-    text-align:center;
-}
-
-.container{
-    width:100%;
-    max-width:760px;
-    margin:auto;
-    padding:18px 14px 40px;
-}
-
-.card{
-    background:#fff;
-    border-radius:20px;
-    padding:18px;
-    margin-bottom:15px;
-    box-shadow:0 5px 25px rgba(15,23,42,.06);
-    border:1px solid #edf0f6;
-}
-
-.exam-badge{
-    display:inline-flex;
-    align-items:center;
-    gap:7px;
-    padding:7px 11px;
-    background:#f0ebff;
-    color:#4c1d95;
-    border-radius:20px;
-    font-size:11px;
-    font-weight:800;
-    margin-bottom:12px;
-}
-
-.hero-title{
-    font-size:22px;
-    line-height:1.3;
-    font-weight:800;
-    margin-bottom:7px;
-}
-
-.subtitle{
-    color:#64748b;
-    font-size:13px;
-    line-height:1.6;
-}
-
-.rules{
-    margin-top:16px;
-    display:grid;
-    gap:9px;
-}
-
-.rule{
-    display:flex;
-    align-items:flex-start;
-    gap:10px;
-    font-size:12px;
-    color:#475569;
-    line-height:1.5;
-}
-
-.rule i{
-    color:#5b21d6;
-    margin-top:3px;
-}
-
-.user-box{
-    background:#f8f7ff;
-    border:1px solid #e8e1ff;
-    border-radius:14px;
-    padding:12px;
-    margin-top:15px;
-}
-
-.user-label{
-    font-size:10px;
-    color:#64748b;
-    margin-bottom:3px;
-}
-
-.user-name{
-    font-size:14px;
-    font-weight:800;
-    color:#3413aa;
-    word-break:break-word;
-}
-
-.user-email{
-    font-size:10px;
-    color:#64748b;
-    margin-top:4px;
-    word-break:break-all;
-}
-
-.primary-btn{
-    width:100%;
-    border:none;
-    border-radius:14px;
-    padding:14px;
-    background:linear-gradient(135deg,#3413aa,#6329db);
-    color:#fff;
-    font-size:14px;
-    font-weight:800;
-    cursor:pointer;
-    box-shadow:0 7px 18px rgba(52,19,170,.2);
-}
-
-.primary-btn:disabled{
-    opacity:.55;
-    cursor:not-allowed;
-}
-
-.secondary-btn{
-    width:100%;
-    border:1px solid #ddd6fe;
-    border-radius:14px;
-    padding:12px;
-    background:#fff;
-    color:#4c1d95;
-    font-size:13px;
-    font-weight:800;
-    cursor:pointer;
-}
-
-.button-row{
-    display:flex;
-    gap:9px;
-    margin-top:14px;
-}
-
-.button-row button{
-    flex:1;
-}
-
-.section-title{
-    font-size:14px;
-    font-weight:800;
-    margin-bottom:11px;
-}
-
-.notice{
-    padding:11px 12px;
-    border-radius:12px;
-    background:#fff7ed;
-    color:#9a3412;
-    font-size:11px;
-    line-height:1.5;
-    margin-top:13px;
-}
-
-.success-notice{
-    background:#ecfdf5;
-    color:#047857;
-}
-
-.warning-notice{
-    background:#fff7ed;
-    color:#c2410c;
-}
-
-.leaderboard-card{
-    margin-top:15px;
-}
-
-.lb-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    padding:11px 4px;
-    border-bottom:1px solid #eef2f7;
-    font-size:11px;
-}
-
-.lb-row:last-child{
-    border-bottom:none;
-}
-
-.lb-rank{
-    width:28px;
-    height:28px;
-    border-radius:9px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#f1f5f9;
-    font-weight:800;
-    flex-shrink:0;
-}
-
-.lb-user{
-    flex:1;
-    min-width:0;
-}
-
-.lb-name{
-    font-weight:800;
-    color:#1e293b;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-}
-
-.lb-score{
-    text-align:right;
-    font-weight:800;
-    color:#2563eb;
-    white-space:nowrap;
-}
-
-.empty-lb{
-    text-align:center;
-    color:#64748b;
-    font-size:11px;
-    padding:15px 4px;
-}
-
-.exam-progress-wrap{
-    margin-bottom:15px;
-}
-
-.progress-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:11px;
-    font-weight:800;
-    color:#64748b;
-    margin-bottom:8px;
-}
-
-.progress{
-    height:7px;
-    background:#e2e8f0;
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.progress-bar{
-    height:100%;
-    background:linear-gradient(90deg,#3413aa,#7c3aed);
-    width:0%;
-    transition:.25s;
-}
-
-.mode-badge{
-    display:inline-block;
-    padding:6px 9px;
-    background:#ecfdf5;
-    color:#047857;
-    border-radius:20px;
-    font-size:10px;
-    font-weight:800;
-    margin-bottom:12px;
-}
-
-.question-number{
-    font-size:11px;
-    font-weight:800;
-    color:#64748b;
-    margin-bottom:8px;
-}
-
-.question{
-    font-size:17px;
-    line-height:1.65;
-    font-weight:800;
-    color:#172033;
-    margin-bottom:16px;
-}
-
-.options{
-    display:grid;
-    gap:10px;
-}
-
-.option{
-    width:100%;
-    border:1px solid #e2e8f0;
-    background:#fff;
-    border-radius:14px;
-    padding:13px;
-    text-align:left;
-    cursor:pointer;
-    display:flex;
-    align-items:flex-start;
-    gap:11px;
-    font-size:13px;
-    line-height:1.5;
-    transition:.18s;
-}
-
-.option:hover{
-    border-color:#a78bfa;
-    background:#faf8ff;
-}
-
-.option.selected{
-    border-color:#5b21d6;
-    background:#f4f0ff;
-}
-
-.option-letter{
-    width:28px;
-    height:28px;
-    flex-shrink:0;
-    border-radius:9px;
-    background:#f1f5f9;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:800;
-    color:#475569;
-}
-
-.option.selected .option-letter{
-    background:#5b21d6;
-    color:#fff;
-}
-
-.exam-actions{
-    display:flex;
-    gap:9px;
-    margin-top:18px;
-}
-
-.exam-actions button{
-    border:none;
-    border-radius:13px;
-    padding:12px;
-    cursor:pointer;
-    font-size:12px;
-    font-weight:800;
-}
-
-.prev-btn{
-    background:#f1f5f9;
-    color:#475569;
-    flex:1;
-}
-
-.next-btn{
-    background:#3413aa;
-    color:#fff;
-    flex:1.5;
-}
-
-.report-btn{
-    margin-top:13px;
-    width:100%;
-    padding:10px;
-    background:#fff;
-    border:1px solid #fecaca;
-    color:#dc2626;
-    border-radius:12px;
-    font-size:11px;
-    font-weight:800;
-    cursor:pointer;
-}
-
-.result-score{
-    text-align:center;
-    padding:10px 0 20px;
-}
-
-.score-circle{
-    width:125px;
-    height:125px;
-    border-radius:50%;
-    margin:0 auto 15px;
-    background:linear-gradient(135deg,#3413aa,#7c3aed);
-    color:#fff;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    box-shadow:0 12px 30px rgba(52,19,170,.2);
-}
-
-.score-value{
-    font-size:28px;
-    font-weight:800;
-}
-
-.score-label{
-    font-size:10px;
-    opacity:.85;
-}
-
-.result-title{
-    font-size:20px;
-    font-weight:800;
-    margin-bottom:4px;
-}
-
-.result-sub{
-    color:#64748b;
-    font-size:12px;
-}
-
-.stats-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:9px;
-    margin-top:16px;
-}
-
-.stat{
-    background:#f8fafc;
-    border-radius:13px;
-    padding:12px 5px;
-    text-align:center;
-}
-
-.stat-value{
-    font-size:18px;
-    font-weight:800;
-}
-
-.stat-label{
-    font-size:9px;
-    color:#64748b;
-    margin-top:3px;
-}
-
-.green{
-    color:#059669;
-}
-
-.red{
-    color:#dc2626;
-}
-
-.orange{
-    color:#ea580c;
-}
-
-.blue{
-    color:#2563eb;
-}
-
-/* =========================
-   MODAL
-========================= */
-
-.modal{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,.58);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
-    z-index:5000;
-    backdrop-filter:blur(4px);
-}
-
-.modal.show{
-    display:flex;
-}
-
-.modal-box{
-    width:100%;
-    max-width:430px;
-    background:#fff;
-    border-radius:22px;
-    padding:22px;
-    max-height:90vh;
-    overflow:auto;
-    box-shadow:0 25px 70px rgba(15,23,42,.25);
-}
-
-.modal-icon{
-    width:58px;
-    height:58px;
-    border-radius:18px;
-    background:#f0ebff;
-    color:#5b21d6;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:23px;
-    margin-bottom:14px;
-}
-
-.modal-title{
-    font-size:18px;
-    font-weight:800;
-    margin-bottom:8px;
-}
-
-.modal-text{
-    font-size:12px;
-    color:#64748b;
-    line-height:1.65;
-}
-
-.name-input-wrap{
-    margin-top:16px;
-}
-
-.name-input-label{
-    font-size:11px;
-    font-weight:800;
-    color:#475569;
-    margin-bottom:7px;
-}
-
-.name-input{
-    width:100%;
-    border:1.5px solid #e2e8f0;
-    border-radius:14px;
-    padding:13px 14px;
-    font-family:inherit;
-    font-size:14px;
-    outline:none;
-    color:#172033;
-    transition:.2s;
-}
-
-.name-input:focus{
-    border-color:#5b21d6;
-    box-shadow:0 0 0 3px rgba(91,33,214,.08);
-}
-
-.name-error{
-    color:#dc2626;
-    font-size:10px;
-    margin-top:7px;
-    min-height:15px;
-}
-
-.name-character{
-    text-align:right;
-    color:#94a3b8;
-    font-size:9px;
-    margin-top:4px;
-}
-
-.close-modal{
-    width:100%;
-    margin-top:13px;
-    border:none;
-    background:#f1f5f9;
-    padding:12px;
-    border-radius:12px;
-    font-weight:800;
-    color:#475569;
-    cursor:pointer;
-}
-
-textarea{
-    width:100%;
-    min-height:110px;
-    margin-top:12px;
-    border:1px solid #e2e8f0;
-    border-radius:12px;
-    padding:12px;
-    resize:none;
-    font-family:inherit;
-    outline:none;
-}
-
-.review-item{
-    padding:13px;
-    border-radius:13px;
-    margin-bottom:10px;
-    background:#f8fafc;
-    font-size:12px;
-    line-height:1.6;
-}
-
-.review-q{
-    font-weight:800;
-    margin-bottom:7px;
-}
-
-.review-correct{
-    color:#047857;
-}
-
-.review-wrong{
-    color:#dc2626;
-}
-
-.review-skip{
-    color:#d97706;
-}
-
-.login-icon{
-    width:55px;
-    height:55px;
-    border-radius:17px;
-    background:#f0ebff;
-    color:#5b21d6;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:23px;
-    margin-bottom:13px;
-}
-
-.hidden{
-    display:none !important;
-}
-
-.loading{
-    text-align:center;
-    padding:25px;
-    color:#64748b;
-    font-size:12px;
-}
-
-.spinner{
-    width:24px;
-    height:24px;
-    border:3px solid #ddd6fe;
-    border-top-color:#5b21d6;
-    border-radius:50%;
-    animation:spin .7s linear infinite;
-    margin:0 auto 10px;
-}
-
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-.name-save-loading{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:7px;
-}
-
-.mini-spinner{
-    width:15px;
-    height:15px;
-    border:2px solid rgba(255,255,255,.4);
-    border-top-color:#fff;
-    border-radius:50%;
-    animation:spin .7s linear infinite;
-}
-
-@media(max-width:480px){
-
-    .header-title{
-        max-width:135px;
-    }
-
-    .hero-title{
-        font-size:20px;
-    }
-
-    .question{
-        font-size:16px;
-    }
-
-    .stats-grid{
-        gap:6px;
-    }
-
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#f5f7fb;color:#172033;min-height:100vh}
+button{font-family:inherit}
+.app-header{position:sticky;top:0;z-index:1000;height:64px;background:linear-gradient(135deg,#3413aa,#5b21d6);color:#fff;display:flex;align-items:center;padding:0 14px;box-shadow:0 4px 15px rgba(52,19,170,.2)}
+.header-left{display:flex;align-items:center;gap:10px;min-width:0}
+.back-btn{width:40px;height:40px;border:none;border-radius:12px;background:rgba(255,255,255,.15);color:#fff;cursor:pointer;font-size:17px}
+.header-title{font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.coin-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:7px 10px;font-size:12px;font-weight:800;white-space:nowrap}
+.timer{background:#fff;color:#3413aa;border-radius:10px;padding:7px 9px;font-size:12px;font-weight:800;min-width:65px;text-align:center}
+.container{width:100%;max-width:760px;margin:auto;padding:18px 14px 40px}
+.card{background:#fff;border-radius:20px;padding:18px;margin-bottom:15px;box-shadow:0 5px 25px rgba(15,23,42,.06);border:1px solid #edf0f6}
+.exam-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;background:#f0ebff;color:#4c1d95;border-radius:20px;font-size:11px;font-weight:800;margin-bottom:12px}
+.hero-title{font-size:22px;line-height:1.3;font-weight:800;margin-bottom:7px}
+.subtitle{color:#64748b;font-size:13px;line-height:1.6}
+.rules{margin-top:16px;display:grid;gap:9px}
+.rule{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:#475569;line-height:1.5}
+.rule i{color:#5b21d6;margin-top:3px}
+.user-box{background:#f8f7ff;border:1px solid #e8e1ff;border-radius:14px;padding:12px;margin-top:15px}
+.user-label{font-size:10px;color:#64748b;margin-bottom:3px}
+.user-name{font-size:14px;font-weight:800;color:#3413aa;word-break:break-word}
+.user-email{font-size:10px;color:#64748b;margin-top:4px;word-break:break-all}
+.primary-btn{width:100%;border:none;border-radius:14px;padding:14px;background:linear-gradient(135deg,#3413aa,#6329db);color:#fff;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 7px 18px rgba(52,19,170,.2)}
+.primary-btn:disabled{opacity:.55;cursor:not-allowed}
+.secondary-btn{width:100%;border:1px solid #ddd6fe;border-radius:14px;padding:12px;background:#fff;color:#4c1d95;font-size:13px;font-weight:800;cursor:pointer}
+.button-row{display:flex;gap:9px;margin-top:14px}
+.button-row button{flex:1}
+.section-title{font-size:14px;font-weight:800;margin-bottom:11px}
+.notice{padding:11px 12px;border-radius:12px;background:#fff7ed;color:#9a3412;font-size:11px;line-height:1.5;margin-top:13px}
+.success-notice{background:#ecfdf5;color:#047857}
+.warning-notice{background:#fff7ed;color:#c2410c}
+.leaderboard-card{margin-top:15px}
+.lb-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 4px;border-bottom:1px solid #eef2f7;font-size:11px}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#f1f5f9;font-weight:800;flex-shrink:0}
+.lb-user{flex:1;min-width:0}
+.lb-name{font-weight:800;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-score{text-align:right;font-weight:800;color:#2563eb;white-space:nowrap}
+.empty-lb{text-align:center;color:#64748b;font-size:11px;padding:15px 4px}
+.exam-progress-wrap{margin-bottom:15px}
+.progress-top{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;color:#64748b;margin-bottom:8px}
+.progress{height:7px;background:#e2e8f0;border-radius:20px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#3413aa,#7c3aed);width:0%;transition:.25s}
+.mode-badge{display:inline-block;padding:6px 9px;background:#ecfdf5;color:#047857;border-radius:20px;font-size:10px;font-weight:800;margin-bottom:12px}
+.question-number{font-size:11px;font-weight:800;color:#64748b;margin-bottom:8px}
+.question{font-size:17px;line-height:1.65;font-weight:800;color:#172033;margin-bottom:16px}
+.options{display:grid;gap:10px}
+.option{width:100%;border:1px solid #e2e8f0;background:#fff;border-radius:14px;padding:13px;text-align:left;cursor:pointer;display:flex;align-items:flex-start;gap:11px;font-size:13px;line-height:1.5;transition:.18s}
+.option:hover{border-color:#a78bfa;background:#faf8ff}
+.option.selected{border-color:#5b21d6;background:#f4f0ff}
+.option-letter{width:28px;height:28px;flex-shrink:0;border-radius:9px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-weight:800;color:#475569}
+.option.selected .option-letter{background:#5b21d6;color:#fff}
+.exam-actions{display:flex;gap:9px;margin-top:18px}
+.exam-actions button{border:none;border-radius:13px;padding:12px;cursor:pointer;font-size:12px;font-weight:800}
+.prev-btn{background:#f1f5f9;color:#475569;flex:1}
+.next-btn{background:#3413aa;color:#fff;flex:1.5}
+.report-btn{margin-top:13px;width:100%;padding:10px;background:#fff;border:1px solid #fecaca;color:#dc2626;border-radius:12px;font-size:11px;font-weight:800;cursor:pointer}
+.result-score{text-align:center;padding:10px 0 20px}
+.score-circle{width:125px;height:125px;border-radius:50%;margin:0 auto 15px;background:linear-gradient(135deg,#3413aa,#7c3aed);color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;box-shadow:0 12px 30px rgba(52,19,170,.2)}
+.score-value{font-size:28px;font-weight:800}
+.score-label{font-size:10px;opacity:.85}
+.result-title{font-size:20px;font-weight:800;margin-bottom:4px}
+.result-sub{color:#64748b;font-size:12px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}
+.stat{appearance:none;width:100%;border:none;background:#f8fafc;border-radius:13px;padding:12px 5px;text-align:center;cursor:pointer;transition:.18s}
+.stat:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(15,23,42,.08)}
+.stat:active{transform:scale(.98)}
+.stat-value{font-size:18px;font-weight:800}
+.stat-label{font-size:9px;color:#64748b;margin-top:3px}
+.green{color:#059669}.red{color:#dc2626}.orange{color:#ea580c}.blue{color:#2563eb}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.58);display:none;align-items:center;justify-content:center;padding:18px;z-index:5000;backdrop-filter:blur(4px)}
+.modal.show{display:flex}
+.modal-box{width:100%;max-width:430px;background:#fff;border-radius:22px;padding:22px;max-height:90vh;overflow:auto;box-shadow:0 25px 70px rgba(15,23,42,.25)}
+.modal-icon,.login-icon{width:58px;height:58px;border-radius:18px;background:#f0ebff;color:#5b21d6;display:flex;align-items:center;justify-content:center;font-size:23px;margin-bottom:14px}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:8px}
+.modal-text{font-size:12px;color:#64748b;line-height:1.65}
+.name-input-wrap{margin-top:16px}
+.name-input-label{font-size:11px;font-weight:800;color:#475569;margin-bottom:7px}
+.name-input{width:100%;border:1.5px solid #e2e8f0;border-radius:14px;padding:13px 14px;font-family:inherit;font-size:14px;outline:none;color:#172033}
+.name-input:focus{border-color:#5b21d6;box-shadow:0 0 0 3px rgba(91,33,214,.08)}
+.name-error{color:#dc2626;font-size:10px;margin-top:7px;min-height:15px}
+.name-character{text-align:right;color:#94a3b8;font-size:9px;margin-top:4px}
+.close-modal{width:100%;margin-top:13px;border:none;background:#f1f5f9;padding:12px;border-radius:12px;font-weight:800;color:#475569;cursor:pointer}
+textarea{width:100%;min-height:110px;margin-top:12px;border:1px solid #e2e8f0;border-radius:12px;padding:12px;resize:none;font-family:inherit;outline:none}
+.review-filters{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0}
+.review-filter{border:1px solid #e2e8f0;background:#f8fafc;color:#64748b;border-radius:10px;padding:9px 3px;font-size:10px;font-weight:800;cursor:pointer}
+.review-filter.active{background:#3413aa;color:#fff;border-color:#3413aa}
+.review-item{padding:13px;border-radius:13px;margin-bottom:10px;background:#f8fafc;font-size:12px;line-height:1.6;cursor:pointer;border:1px solid transparent;transition:.18s}
+.review-item:hover{border-color:#c4b5fd;background:#faf8ff}
+.review-q{font-weight:800;margin-bottom:7px}
+.review-correct{color:#047857}.review-wrong{color:#dc2626}.review-skip{color:#d97706}
+.detail-option{padding:11px 12px;border:1px solid #e2e8f0;border-radius:11px;margin-top:8px;font-size:12px;line-height:1.5}
+.detail-option.correct{background:#ecfdf5;border-color:#86efac;color:#047857}
+.detail-option.user-wrong{background:#fef2f2;border-color:#fca5a5;color:#b91c1c}
+.detail-option .letter{font-weight:800;margin-right:7px}
+.login-icon{margin-bottom:13px}
+.hidden{display:none!important}
+.loading{text-align:center;padding:25px;color:#64748b;font-size:12px}
+.spinner{width:24px;height:24px;border:3px solid #ddd6fe;border-top-color:#5b21d6;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.name-save-loading{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.mini-spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@media(max-width:480px){.header-title{max-width:135px}.hero-title{font-size:20px}.question{font-size:16px}.stats-grid{gap:6px}}
 </style>
 </head>
 
 <body>
 
 <header class="app-header">
-
-    <div class="header-left">
-
-        <button class="back-btn"
-                onclick="goDashboard()">
-
-            <i class="fa-solid fa-arrow-left"></i>
-
-        </button>
-
-        <div class="header-title"
-             id="header-title">
-
-            🇳🇵 Mock Exam
-
-        </div>
-
-    </div>
-
-    <div class="header-right">
-
-        <div class="coin-pill">
-
-            🪙
-            <span id="user-coin-balance">0</span>
-
-        </div>
-
-        <div class="timer hidden"
-             id="timer-box">
-
-            <i class="fa-regular fa-clock"></i>
-
-            <span id="timer">
-                45:00
-            </span>
-
-        </div>
-
-    </div>
-
+<div class="header-left">
+<button class="back-btn" onclick="goDashboard()"><i class="fa-solid fa-arrow-left"></i></button>
+<div class="header-title" id="header-title">🇳🇵 Mock Exam</div>
+</div>
+<div class="header-right">
+<div class="coin-pill">🪙 <span id="user-coin-balance">0</span></div>
+<div class="timer hidden" id="timer-box"><i class="fa-regular fa-clock"></i> <span id="timer">45:00</span></div>
+</div>
 </header>
-
 
 <div class="container">
 
-
 <section id="reg-screen">
+<div class="card">
 
-    <div class="card">
+<div class="exam-badge"><i class="fa-solid fa-bolt"></i><span id="set-badge-title">🎯 परीक्षा सेट</span></div>
+<h1 class="hero-title">Mock Examination</h1>
+<p class="subtitle">वास्तविक Loksewa परीक्षा जस्तै वातावरणमा आफ्नो तयारी जाँच गर्नुहोस्।</p>
 
-        <div class="exam-badge">
+<div class="rules">
+<div class="rule"><i class="fa-solid fa-circle-check"></i><span>कुल समय: <b>45 मिनेट</b></span></div>
+<div class="rule"><i class="fa-solid fa-circle-check"></i><span>सही उत्तर: <b>+2 अंक</b></span></div>
+<div class="rule"><i class="fa-solid fa-circle-xmark"></i><span>गलत उत्तर: <b>-0.4 अंक</b></span></div>
+<div class="rule"><i class="fa-solid fa-forward"></i><span>छोडेको प्रश्नमा <b>अंक काटिँदैन</b></span></div>
+<div class="rule"><i class="fa-solid fa-coins"></i><span>Live Exam सुरु गर्न <b>50 coins</b> लाग्नेछ</span></div>
+<div class="rule"><i class="fa-solid fa-rotate"></i><span>पहिले दिइसकेको परीक्षा फेरि <b>Practice Mode</b> मा गर्न सकिन्छ</span></div>
+</div>
 
-            <i class="fa-solid fa-bolt"></i>
+<div id="login-warning" class="notice warning-notice hidden">Mock Exam सुरु गर्न पहिले login गर्नुहोस्।</div>
 
-            <span id="set-badge-title">
-                🎯 परीक्षा सेट
-            </span>
+<div id="user-box" class="user-box hidden">
+<div class="user-label">LOGGED IN USER</div>
+<div class="user-name" id="logged-user-name">Loading...</div>
+<div class="user-email" id="logged-user-email">Loading...</div>
+</div>
 
-        </div>
+<div id="already-given-box" class="notice success-notice hidden">
+तपाईंले यो परीक्षा पहिले नै दिनुभएको छ। अब यो <b>Practice Mode</b> मा खुल्नेछ।
+</div>
 
-        <h1 class="hero-title">
-            Mock Examination
-        </h1>
+<div id="exam-loading" class="loading"><div class="spinner"></div>परीक्षा तयार हुँदैछ...</div>
 
-        <p class="subtitle">
-            वास्तविक Loksewa परीक्षा जस्तै वातावरणमा आफ्नो तयारी जाँच गर्नुहोस्।
-        </p>
+<button id="start-exam-btn" class="primary-btn hidden" onclick="startExam()">🚀 परीक्षा सुरु गर्नुहोस्</button>
+</div>
 
-        <div class="rules">
-
-            <div class="rule">
-                <i class="fa-solid fa-circle-check"></i>
-                <span>कुल समय: <b>45 मिनेट</b></span>
-            </div>
-
-            <div class="rule">
-                <i class="fa-solid fa-circle-check"></i>
-                <span>सही उत्तर: <b>+2 अंक</b></span>
-            </div>
-
-            <div class="rule">
-                <i class="fa-solid fa-circle-xmark"></i>
-                <span>गलत उत्तर: <b>-0.4 अंक</b></span>
-            </div>
-
-            <div class="rule">
-                <i class="fa-solid fa-forward"></i>
-                <span>छोडेको प्रश्नमा <b>अंक काटिँदैन</b></span>
-            </div>
-
-            <div class="rule">
-                <i class="fa-solid fa-coins"></i>
-                <span>Live Exam सुरु गर्न <b>50 coins</b> लाग्नेछ</span>
-            </div>
-
-            <div class="rule">
-                <i class="fa-solid fa-rotate"></i>
-                <span>पहिले दिइसकेको परीक्षा फेरि <b>Practice Mode</b> मा गर्न सकिन्छ</span>
-            </div>
-
-        </div>
-
-
-        <div id="login-warning"
-             class="notice warning-notice hidden">
-
-            Mock Exam सुरु गर्न पहिले login गर्नुहोस्।
-
-        </div>
-
-
-        <div id="user-box"
-             class="user-box hidden">
-
-            <div class="user-label">
-                LOGGED IN USER
-            </div>
-
-            <div class="user-name"
-                 id="logged-user-name">
-
-                Loading...
-
-            </div>
-
-            <div class="user-email"
-                 id="logged-user-email">
-
-                Loading...
-
-            </div>
-
-        </div>
-
-
-        <div id="already-given-box"
-             class="notice success-notice hidden">
-
-            तपाईंले यो परीक्षा पहिले नै दिनुभएको छ।
-            अब यो <b>Practice Mode</b> मा खुल्नेछ।
-
-        </div>
-
-
-        <div id="exam-loading"
-             class="loading">
-
-            <div class="spinner"></div>
-
-            परीक्षा तयार हुँदैछ...
-
-        </div>
-
-
-        <button id="start-exam-btn"
-                class="primary-btn hidden"
-                onclick="startExam()">
-
-            🚀 परीक्षा सुरु गर्नुहोस्
-
-        </button>
-
-    </div>
-
-
-    <div class="card leaderboard-card">
-
-        <div class="section-title">
-            🏆 Leaderboard
-        </div>
-
-        <div class="subtitle"
-             style="margin-bottom:8px;">
-
-            यस परीक्षा सेटमा उत्कृष्ट प्रदर्शन
-
-        </div>
-
-        <div id="home-leaderboard">
-
-            <div class="loading">
-                Loading leaderboard...
-            </div>
-
-        </div>
-
-    </div>
-
+<div class="card leaderboard-card">
+<div class="section-title">🏆 Leaderboard</div>
+<div class="subtitle" style="margin-bottom:8px;">यस परीक्षा सेटमा उत्कृष्ट प्रदर्शन</div>
+<div id="home-leaderboard"><div class="loading">Loading leaderboard...</div></div>
+</div>
 </section>
 
+<section id="exam-screen" class="hidden">
+<div class="card">
+<div class="exam-progress-wrap">
+<div class="progress-top"><span id="question-counter">प्रश्न 1 / 1</span><span id="progress-percent">0%</span></div>
+<div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+</div>
 
-<section id="exam-screen"
-         class="hidden">
+<div class="mode-badge" id="mode-badge">LIVE EXAM</div>
+<div class="question-number">QUESTION</div>
+<div class="question" id="question-text"></div>
+<div class="options" id="options-container"></div>
 
-    <div class="card">
+<button class="report-btn" onclick="openReportModal()"><i class="fa-solid fa-flag"></i> प्रश्नमा समस्या रिपोर्ट गर्नुहोस्</button>
 
-        <div class="exam-progress-wrap">
-
-            <div class="progress-top">
-
-                <span id="question-counter">
-                    प्रश्न 1 / 1
-                </span>
-
-                <span id="progress-percent">
-                    0%
-                </span>
-
-            </div>
-
-            <div class="progress">
-
-                <div class="progress-bar"
-                     id="progress-bar">
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="mode-badge"
-             id="mode-badge">
-
-            LIVE EXAM
-
-        </div>
-
-        <div class="question-number">
-            QUESTION
-        </div>
-
-        <div class="question"
-             id="question-text">
-        </div>
-
-        <div class="options"
-             id="options-container">
-        </div>
-
-        <button class="report-btn"
-                onclick="openReportModal()">
-
-            <i class="fa-solid fa-flag"></i>
-
-            प्रश्नमा समस्या रिपोर्ट गर्नुहोस्
-
-        </button>
-
-        <div class="exam-actions">
-
-            <button class="prev-btn"
-                    id="prev-btn"
-                    onclick="previousQuestion()">
-
-                <i class="fa-solid fa-arrow-left"></i>
-                पछाडि
-
-            </button>
-
-            <button class="next-btn"
-                    id="next-btn"
-                    onclick="nextQuestion()">
-
-                अर्को
-                <i class="fa-solid fa-arrow-right"></i>
-
-            </button>
-
-        </div>
-
-    </div>
-
+<div class="exam-actions">
+<button class="prev-btn" id="prev-btn" onclick="previousQuestion()"><i class="fa-solid fa-arrow-left"></i> पछाडि</button>
+<button class="next-btn" id="next-btn" onclick="nextQuestion()">अर्को <i class="fa-solid fa-arrow-right"></i></button>
+</div>
+</div>
 </section>
 
+<section id="result-screen" class="hidden">
+<div class="card">
 
-<section id="result-screen"
-         class="hidden">
+<div class="result-score">
+<div class="score-circle">
+<div class="score-value" id="final-score">0</div>
+<div class="score-label">SCORE</div>
+</div>
+<div class="result-title">परीक्षा सम्पन्न भयो 🎉</div>
+<div class="result-sub" id="result-message">राम्रो प्रयास!</div>
+</div>
 
-    <div class="card">
+<div class="stats-grid">
+<button class="stat" id="stat-correct" onclick="openReviewWithFilter('correct')">
+<div class="stat-value green" id="correct-count">0</div>
+<div class="stat-label">सही · हेर्नुहोस्</div>
+</button>
 
-        <div class="result-score">
+<button class="stat" id="stat-wrong" onclick="openReviewWithFilter('wrong')">
+<div class="stat-value red" id="wrong-count">0</div>
+<div class="stat-label">गलत · हेर्नुहोस्</div>
+</button>
 
-            <div class="score-circle">
+<button class="stat" id="stat-skipped" onclick="openReviewWithFilter('skipped')">
+<div class="stat-value orange" id="skipped-count">0</div>
+<div class="stat-label">छोडिएको · हेर्नुहोस्</div>
+</button>
+</div>
 
-                <div class="score-value"
-                     id="final-score">
+<div class="notice success-notice" id="reward-box">🎁 Reward calculation हुँदैछ...</div>
 
-                    0
+<div class="button-row">
+<button class="secondary-btn" onclick="openReviewModal()"><i class="fa-solid fa-list-check"></i> सबै Review</button>
+<button class="secondary-btn" onclick="printResult()"><i class="fa-solid fa-file-pdf"></i> Report</button>
+</div>
 
-                </div>
+<button class="primary-btn" style="margin-top:10px;" onclick="goDashboard()"><i class="fa-solid fa-house"></i> Dashboard</button>
+</div>
 
-                <div class="score-label">
-                    SCORE
-                </div>
-
-            </div>
-
-            <div class="result-title">
-                परीक्षा सम्पन्न भयो 🎉
-            </div>
-
-            <div class="result-sub"
-                 id="result-message">
-
-                राम्रो प्रयास!
-
-            </div>
-
-        </div>
-
-
-        <div class="stats-grid">
-
-            <div class="stat">
-
-                <div class="stat-value green"
-                     id="correct-count">
-
-                    0
-
-                </div>
-
-                <div class="stat-label">
-                    सही
-                </div>
-
-            </div>
-
-            <div class="stat">
-
-                <div class="stat-value red"
-                     id="wrong-count">
-
-                    0
-
-                </div>
-
-                <div class="stat-label">
-                    गलत
-                </div>
-
-            </div>
-
-            <div class="stat">
-
-                <div class="stat-value orange"
-                     id="skipped-count">
-
-                    0
-
-                </div>
-
-                <div class="stat-label">
-                    छोडिएको
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="notice success-notice"
-             id="reward-box">
-
-            🎁 Reward calculation हुँदैछ...
-
-        </div>
-
-
-        <div class="button-row">
-
-            <button class="secondary-btn"
-                    onclick="openReviewModal()">
-
-                <i class="fa-solid fa-list-check"></i>
-                Review
-
-            </button>
-
-            <button class="secondary-btn"
-                    onclick="printResult()">
-
-                <i class="fa-solid fa-file-pdf"></i>
-                Report
-
-            </button>
-
-        </div>
-
-
-        <button class="primary-btn"
-                style="margin-top:10px;"
-                onclick="goDashboard()">
-
-            <i class="fa-solid fa-house"></i>
-            Dashboard
-
-        </button>
-
-    </div>
-
-
-    <div class="card leaderboard-card">
-
-        <div class="section-title">
-            🏆 Leaderboard
-        </div>
-
-        <div id="result-leaderboard">
-
-            <div class="loading">
-                Loading leaderboard...
-            </div>
-
-        </div>
-
-    </div>
-
+<div class="card leaderboard-card">
+<div class="section-title">🏆 Leaderboard</div>
+<div id="result-leaderboard"><div class="loading">Loading leaderboard...</div></div>
+</div>
 </section>
 
 </div>
 
-
-<!-- =========================
-     NAME SETUP MODAL
-========================= -->
-
-<div class="modal"
-     id="name-modal">
-
-    <div class="modal-box">
-
-        <div class="modal-icon">
-
-            <i class="fa-solid fa-user-pen"></i>
-
-        </div>
-
-        <div class="modal-title">
-
-            आफ्नो नाम सेट गर्नुहोस् 👋
-
-        </div>
-
-        <div class="modal-text">
-
-            Leaderboard र तपाईंको profile मा देखाउन
-            आफ्नो वास्तविक नाम लेख्नुहोस्।
-
-            <br><br>
-
-            यो नाम तपाईंको
-            <b>LoksewaQuest account</b>
-            मा Firestore मा सुरक्षित हुनेछ।
-
-        </div>
-
-
-        <div class="name-input-wrap">
-
-            <div class="name-input-label">
-
-                तपाईंको नाम
-
-            </div>
-
-            <input
-                type="text"
-                id="name-input"
-                class="name-input"
-                maxlength="40"
-                autocomplete="name"
-                placeholder="जस्तै: Prazwal PG">
-
-            <div id="name-error"
-                 class="name-error">
-            </div>
-
-            <div class="name-character">
-
-                <span id="name-count">0</span>/40
-
-            </div>
-
-        </div>
-
-
-        <button id="save-name-btn"
-                class="primary-btn"
-                style="margin-top:5px;"
-                onclick="saveFirestoreName()">
-
-            <span id="save-name-text">
-                नाम Save गर्नुहोस्
-            </span>
-
-        </button>
-
-    </div>
-
+<div class="modal" id="name-modal">
+<div class="modal-box">
+<div class="modal-icon"><i class="fa-solid fa-user-pen"></i></div>
+<div class="modal-title">आफ्नो नाम सेट गर्नुहोस् 👋</div>
+<div class="modal-text">Leaderboard र तपाईंको profile मा देखाउन आफ्नो वास्तविक नाम लेख्नुहोस्।<br><br>यो नाम तपाईंको <b>LoksewaQuest account</b> मा Firestore मा सुरक्षित हुनेछ।</div>
+<div class="name-input-wrap">
+<div class="name-input-label">तपाईंको नाम</div>
+<input type="text" id="name-input" class="name-input" maxlength="40" autocomplete="name" placeholder="जस्तै: Prazwal PG">
+<div id="name-error" class="name-error"></div>
+<div class="name-character"><span id="name-count">0</span>/40</div>
+</div>
+<button id="save-name-btn" class="primary-btn" style="margin-top:5px;" onclick="saveFirestoreName()"><span id="save-name-text">नाम Save गर्नुहोस्</span></button>
+</div>
 </div>
 
-
-<!-- LOGIN MODAL -->
-
-<div class="modal"
-     id="login-modal">
-
-    <div class="modal-box">
-
-        <div class="login-icon">
-            <i class="fa-solid fa-lock"></i>
-        </div>
-
-        <div class="modal-title">
-            Login आवश्यक छ
-        </div>
-
-        <div class="modal-text">
-            Mock Exam मा सहभागी हुन आफ्नो LoksewaQuest account मा login गर्नुहोस्।
-        </div>
-
-        <button class="primary-btn"
-                style="margin-top:15px;"
-                onclick="goLogin()">
-
-            Login गर्नुहोस्
-
-        </button>
-
-        <button class="close-modal"
-                onclick="closeModal('login-modal')">
-
-            बन्द गर्नुहोस्
-
-        </button>
-
-    </div>
-
+<div class="modal" id="login-modal">
+<div class="modal-box">
+<div class="login-icon"><i class="fa-solid fa-lock"></i></div>
+<div class="modal-title">Login आवश्यक छ</div>
+<div class="modal-text">Mock Exam मा सहभागी हुन आफ्नो LoksewaQuest account मा login गर्नुहोस्।</div>
+<button class="primary-btn" style="margin-top:15px;" onclick="goLogin()">Login गर्नुहोस्</button>
+<button class="close-modal" onclick="closeModal('login-modal')">बन्द गर्नुहोस्</button>
+</div>
 </div>
 
-
-<!-- COINS MODAL -->
-
-<div class="modal"
-     id="coins-modal">
-
-    <div class="modal-box">
-
-        <div class="login-icon">
-            🪙
-        </div>
-
-        <div class="modal-title">
-            Coins पर्याप्त छैन
-        </div>
-
-        <div class="modal-text">
-
-            Live Mock Exam सुरु गर्न
-            <b>50 coins</b>
-            आवश्यक छ।
-
-            <br><br>
-
-            तपाईंको balance:
-            <b id="modal-coin-balance">0</b>
-
-        </div>
-
-        <button class="close-modal"
-                onclick="closeModal('coins-modal')">
-
-            बन्द गर्नुहोस्
-
-        </button>
-
-    </div>
-
+<div class="modal" id="coins-modal">
+<div class="modal-box">
+<div class="login-icon">🪙</div>
+<div class="modal-title">Coins पर्याप्त छैन</div>
+<div class="modal-text">Live Mock Exam सुरु गर्न <b>50 coins</b> आवश्यक छ।<br><br>तपाईंको balance: <b id="modal-coin-balance">0</b></div>
+<button class="close-modal" onclick="closeModal('coins-modal')">बन्द गर्नुहोस्</button>
+</div>
 </div>
 
-
-<!-- REPORT MODAL -->
-
-<div class="modal"
-     id="report-modal">
-
-    <div class="modal-box">
-
-        <div class="modal-title">
-            🚩 प्रश्न Report गर्नुहोस्
-        </div>
-
-        <div class="modal-text">
-            यो प्रश्नमा के समस्या छ?
-        </div>
-
-        <textarea id="report-text"
-                  placeholder="जस्तै: Answer गलत छ, question अस्पष्ट छ..."></textarea>
-
-        <button class="primary-btn"
-                style="margin-top:10px;"
-                onclick="submitReport()">
-
-            Report पठाउनुहोस्
-
-        </button>
-
-        <button class="close-modal"
-                onclick="closeModal('report-modal')">
-
-            Cancel
-
-        </button>
-
-    </div>
-
+<div class="modal" id="report-modal">
+<div class="modal-box">
+<div class="modal-title">🚩 प्रश्न Report गर्नुहोस्</div>
+<div class="modal-text">यो प्रश्नमा के समस्या छ?</div>
+<textarea id="report-text" placeholder="जस्तै: Answer गलत छ, question अस्पष्ट छ..."></textarea>
+<button class="primary-btn" style="margin-top:10px;" onclick="submitReport()">Report पठाउनुहोस्</button>
+<button class="close-modal" onclick="closeModal('report-modal')">Cancel</button>
+</div>
 </div>
 
+<div class="modal" id="review-modal">
+<div class="modal-box">
+<div class="modal-title">📋 Answer Review</div>
 
-<!-- REVIEW MODAL -->
-
-<div class="modal"
-     id="review-modal">
-
-    <div class="modal-box">
-
-        <div class="modal-title">
-            📋 Answer Review
-        </div>
-
-        <div id="review-container"
-             style="margin-top:14px;">
-        </div>
-
-        <button class="close-modal"
-                onclick="closeModal('review-modal')">
-
-            बन्द गर्नुहोस्
-
-        </button>
-
-    </div>
-
+<div class="review-filters">
+<button class="review-filter active" data-filter="all" onclick="filterReview('all')">सबै</button>
+<button class="review-filter" data-filter="correct" onclick="filterReview('correct')">✅ सही</button>
+<button class="review-filter" data-filter="wrong" onclick="filterReview('wrong')">❌ गलत</button>
+<button class="review-filter" data-filter="skipped" onclick="filterReview('skipped')">⏭️ Skip</button>
 </div>
 
+<div id="review-container"></div>
+<button class="close-modal" onclick="closeModal('review-modal')">बन्द गर्नुहोस्</button>
+</div>
+</div>
+
+<div class="modal" id="question-detail-modal">
+<div class="modal-box">
+<div class="modal-title" id="detail-title">Question</div>
+<div id="question-detail-container"></div>
+<button class="close-modal" onclick="closeModal('question-detail-modal')">बन्द गर्नुहोस्</button>
+</div>
+</div>
 
 <script>
+const SUPABASE_URL='https://edyirdedkiarguvurpxq.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI6ImVkeWlyZWRka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-/* =========================================================
-   SUPABASE
-========================================================= */
-
-const SUPABASE_URL =
-    'https://edyirdedkiarguvurpxq.supabase.co';
-
-const SUPABASE_ANON_KEY =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
-
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
-
-
-/* =========================================================
-   FIREBASE
-========================================================= */
-
-const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-
-    authDomain:
-        "loksewaquest-227b6.firebaseapp.com",
-
-    projectId:
-        "loksewaquest-227b6",
-
-    storageBucket:
-        "loksewaquest-227b6.firebasestorage.app",
-
-    messagingSenderId:
-        "779234903809",
-
-    appId:
-        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-
+const firebaseConfig={
+apiKey:"AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+authDomain:"loksewaquest-227b6.firebaseapp.com",
+projectId:"loksewaquest-227b6",
+storageBucket:"loksewaquest-227b6.firebasestorage.app",
+messagingSenderId:"779234903809",
+appId:"1:779234903809:web:dd0dd0ffb742e1c218bd00"
 };
 
-if(!firebase.apps.length){
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
 
-    firebase.initializeApp(firebaseConfig);
+const urlParams=new URLSearchParams(window.location.search);
+const activeSet=urlParams.get('set')||'kharidar_mocktest1';
+const displayNameSet=activeSet==='kharidar_mocktest1'?'Kharidar Mock Test 1':activeSet;
 
-}
+let currentUser=null;
+let userEmail='';
+let firestoreUserName='';
+let userCoins=0;
+let examQuestions=[];
+let currentQuestionIndex=0;
+let userAnswers=[];
+let examStarted=false;
+let examFinished=false;
+let practiceMode=false;
+let liveExamCompleted=false;
+let timerInterval=null;
+let remainingSeconds=45*60;
+let submittedToLeaderboard=false;
+let reportQuestionIndex=null;
+let questionsLoaded=false;
+let authLoaded=false;
+let currentReviewFilter='all';
 
-const auth =
-    firebase.auth();
+const nameCacheByEmail={};
+const nameCacheByUid={};
 
-const db =
-    firebase.firestore();
-
-
-/* =========================================================
-   EXAM SET
-========================================================= */
-
-const urlParams =
-    new URLSearchParams(
-        window.location.search
-    );
-
-const activeSet =
-    urlParams.get('set') ||
-    'kharidar_mocktest1';
-
-const displayNameSet =
-    activeSet === 'kharidar_mocktest1'
-        ? 'Kharidar Mock Test 1'
-        : activeSet;
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-let currentUser = null;
-
-let userEmail = '';
-
-let firestoreUserName = '';
-
-let userCoins = 0;
-
-let examQuestions = [];
-
-let currentQuestionIndex = 0;
-
-let userAnswers = [];
-
-let examStarted = false;
-
-let examFinished = false;
-
-let practiceMode = false;
-
-let timerInterval = null;
-
-let remainingSeconds = 45 * 60;
-
-let submittedToLeaderboard = false;
-
-let reportQuestionIndex = null;
-
-let questionsLoaded = false;
-
-let authLoaded = false;
-
-
-/*
- * Cache for resolving old email records.
- *
- * email -> Firestore name
- * uid   -> Firestore name
- */
-
-const nameCacheByEmail = {};
-
-const nameCacheByUid = {};
-
-
-/* =========================================================
-   DOM
-========================================================= */
-
-const regScreen =
-    document.getElementById(
-        'reg-screen'
-    );
-
-const examScreen =
-    document.getElementById(
-        'exam-screen'
-    );
-
-const resultScreen =
-    document.getElementById(
-        'result-screen'
-    );
-
-const startBtn =
-    document.getElementById(
-        'start-exam-btn'
-    );
-
-
-/* =========================================================
-   HELPER
-========================================================= */
+const regScreen=document.getElementById('reg-screen');
+const examScreen=document.getElementById('exam-screen');
+const resultScreen=document.getElementById('result-screen');
+const startBtn=document.getElementById('start-exam-btn');
 
 function escapeHtml(value){
-
-    if(
-        value === null ||
-        value === undefined
-    ){
-
-        return '';
-
-    }
-
-    return String(value)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#039;');
-
+if(value===null||value===undefined)return '';
+return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
-
 
 function shuffleArray(array){
-
-    const arr = [...array];
-
-    for(
-        let i = arr.length - 1;
-        i > 0;
-        i--
-    ){
-
-        const j =
-            Math.floor(
-                Math.random() * (i + 1)
-            );
-
-        [
-            arr[i],
-            arr[j]
-        ] =
-        [
-            arr[j],
-            arr[i]
-        ];
-
-    }
-
-    return arr;
-
+const arr=[...array];
+for(let i=arr.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[arr[i],arr[j]]=[arr[j],arr[i]];
 }
-
+return arr;
+}
 
 function normalizeText(value){
-
-    return String(value ?? '')
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g,' ');
-
+return String(value??'').trim().toLowerCase().replace(/\s+/g,' ');
 }
-
 
 function normalizeEmail(value){
-
-    return String(value ?? '')
-        .trim()
-        .toLowerCase();
-
+return String(value??'').trim().toLowerCase();
 }
-
-
-/*
- * Detect whether a string is actually an email.
- */
 
 function looksLikeEmail(value){
-
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        .test(
-            String(value ?? '').trim()
-        );
-
+return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value??'').trim());
 }
 
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-document.getElementById(
-    'set-badge-title'
-).innerText =
-    `🎯 परीक्षा सेट: ${displayNameSet}`;
-
-
-document.getElementById(
-    'header-title'
-).innerText =
-    `🇳🇵 ${displayNameSet}`;
-
-
-/* =========================================================
-   FIRESTORE USER NAME
-========================================================= */
-
-
-/*
- * Load the user's Firestore profile.
- *
- * IMPORTANT:
- * We intentionally DO NOT use:
- *
- * user.displayName
- *
- * Firestore is the source of truth.
- */
+document.getElementById('set-badge-title').innerText=`🎯 परीक्षा सेट: ${displayNameSet}`;
+document.getElementById('header-title').innerText=`🇳🇵 ${displayNameSet}`;
 
 async function loadFirestoreUser(user){
+if(!user)return null;
+try{
+const ref=db.collection('users').doc(user.uid);
+const snap=await ref.get();
 
-    if(!user){
-
-        return null;
-
-    }
-
-
-    try{
-
-        const userRef =
-            db.collection('users')
-              .doc(user.uid);
-
-        const snap =
-            await userRef.get();
-
-
-        if(!snap.exists){
-
-            /*
-             * Create the basic user document.
-             * Name remains blank until the user
-             * completes the name setup modal.
-             */
-
-            await userRef.set({
-
-                email:
-                    user.email || '',
-
-                name:
-                    ''
-
-            },{
-                merge:true
-            });
-
-
-            return {
-
-                name:'',
-                email:user.email || ''
-
-            };
-
-        }
-
-
-        const data =
-            snap.data() || {};
-
-
-        const name =
-            typeof data.name === 'string'
-                ? data.name.trim()
-                : '';
-
-
-        const email =
-            data.email ||
-            user.email ||
-            '';
-
-
-        return {
-
-            name:name,
-            email:email
-
-        };
-
-
-    }catch(error){
-
-        console.error(
-            '❌ FIRESTORE USER LOAD ERROR:',
-            error
-        );
-
-        return {
-
-            name:'',
-            email:user.email || ''
-
-        };
-
-    }
-
+if(!snap.exists){
+await ref.set({email:user.email||'',name:''},{merge:true});
+return {name:'',email:user.email||''};
 }
 
-
-/*
- * Apply user profile to UI.
- */
+const data=snap.data()||{};
+return{
+name:typeof data.name==='string'?data.name.trim():'',
+email:data.email||user.email||''
+};
+}catch(error){
+console.error('FIRESTORE USER LOAD ERROR:',error);
+return{name:'',email:user.email||''};
+}
+}
 
 function applyFirestoreUserUI(){
-
-    document.getElementById(
-        'logged-user-name'
-    ).innerText =
-        firestoreUserName ||
-        'नाम सेट गरिएको छैन';
-
-
-    document.getElementById(
-        'logged-user-email'
-    ).innerText =
-        userEmail || '';
-
+document.getElementById('logged-user-name').innerText=firestoreUserName||'नाम सेट गरिएको छैन';
+document.getElementById('logged-user-email').innerText=userEmail||'';
 }
-
-
-/* =========================================================
-   NAME SETUP
-========================================================= */
 
 function openNameSetupModal(){
-
-    const input =
-        document.getElementById(
-            'name-input'
-        );
-
-    const error =
-        document.getElementById(
-            'name-error'
-        );
-
-
-    error.innerText = '';
-
-    input.value =
-        firestoreUserName || '';
-
-    updateNameCount();
-
-    document.getElementById(
-        'name-modal'
-    ).classList.add('show');
-
-
-    setTimeout(
-        () => input.focus(),
-        150
-    );
-
+const input=document.getElementById('name-input');
+document.getElementById('name-error').innerText='';
+input.value=firestoreUserName||'';
+updateNameCount();
+document.getElementById('name-modal').classList.add('show');
+setTimeout(()=>input.focus(),150);
 }
-
-
-/*
- * Name character counter.
- */
 
 function updateNameCount(){
-
-    const input =
-        document.getElementById(
-            'name-input'
-        );
-
-    document.getElementById(
-        'name-count'
-    ).innerText =
-        input.value.length;
-
+document.getElementById('name-count').innerText=document.getElementById('name-input').value.length;
 }
 
-
-document.getElementById(
-    'name-input'
-).addEventListener(
-    'input',
-    updateNameCount
-);
-
-
-/*
- * Save Firestore name.
- */
+document.getElementById('name-input').addEventListener('input',updateNameCount);
 
 async function saveFirestoreName(){
-
-    if(!currentUser){
-
-        return;
-
-    }
-
-
-    const input =
-        document.getElementById(
-            'name-input'
-        );
-
-    const errorBox =
-        document.getElementById(
-            'name-error'
-        );
-
-    const saveBtn =
-        document.getElementById(
-            'save-name-btn'
-        );
-
-    const saveText =
-        document.getElementById(
-            'save-name-text'
-        );
-
-
-    /*
-     * Normalize multiple spaces.
-     */
-
-    const name =
-        input.value
-            .trim()
-            .replace(/\s+/g,' ');
-
-
-    errorBox.innerText = '';
-
-
-    if(!name){
-
-        errorBox.innerText =
-            'कृपया आफ्नो नाम लेख्नुहोस्।';
-
-        input.focus();
-
-        return;
-
-    }
-
-
-    if(name.length < 2){
-
-        errorBox.innerText =
-            'नाम कम्तीमा 2 अक्षरको हुनुपर्छ।';
-
-        input.focus();
-
-        return;
-
-    }
-
-
-    if(name.length > 40){
-
-        errorBox.innerText =
-            'नाम 40 अक्षरभन्दा बढी हुन मिल्दैन।';
-
-        input.focus();
-
-        return;
-
-    }
-
-
-    /*
-     * Prevent email being used as name.
-     */
-
-    if(looksLikeEmail(name)){
-
-        errorBox.innerText =
-            'कृपया email होइन, आफ्नो वास्तविक नाम लेख्नुहोस्।';
-
-        input.focus();
-
-        return;
-
-    }
-
-
-    saveBtn.disabled = true;
-
-    saveText.innerHTML =
-        `
-            <span class="name-save-loading">
-                <span class="mini-spinner"></span>
-                Saving...
-            </span>
-        `;
-
-
-    try{
-
-        await db
-            .collection('users')
-            .doc(currentUser.uid)
-            .set({
-
-                name:name,
-
-                email:
-                    currentUser.email || ''
-
-            },{
-                merge:true
-            });
-
-
-        /*
-         * Update local state.
-         */
-
-        firestoreUserName =
-            name;
-
-
-        nameCacheByUid[
-            currentUser.uid
-        ] =
-            name;
-
-
-        if(currentUser.email){
-
-            nameCacheByEmail[
-                normalizeEmail(
-                    currentUser.email
-                )
-            ] =
-                name;
-
-        }
-
-
-        applyFirestoreUserUI();
-
-
-        document.getElementById(
-            'name-modal'
-        ).classList.remove('show');
-
-
-        /*
-         * Now user can start exam.
-         */
-
-        prepareStartButton();
-
-
-    }catch(error){
-
-        console.error(
-            '❌ FIRESTORE NAME SAVE ERROR:',
-            error
-        );
-
-        errorBox.innerText =
-            'नाम save हुन सकेन। Internet connection जाँच गरेर फेरि प्रयास गर्नुहोस्।';
-
-    }
-
-
-    saveBtn.disabled = false;
-
-    saveText.innerText =
-        'नाम Save गर्नुहोस्';
-
+if(!currentUser)return;
+
+const input=document.getElementById('name-input');
+const errorBox=document.getElementById('name-error');
+const saveBtn=document.getElementById('save-name-btn');
+const saveText=document.getElementById('save-name-text');
+
+const name=input.value.trim().replace(/\s+/g,' ');
+errorBox.innerText='';
+
+if(!name){errorBox.innerText='कृपया आफ्नो नाम लेख्नुहोस्।';input.focus();return}
+if(name.length<2){errorBox.innerText='नाम कम्तीमा 2 अक्षरको हुनुपर्छ।';input.focus();return}
+if(name.length>40){errorBox.innerText='नाम 40 अक्षरभन्दा बढी हुन मिल्दैन।';input.focus();return}
+if(looksLikeEmail(name)){errorBox.innerText='कृपया email होइन, आफ्नो वास्तविक नाम लेख्नुहोस्।';input.focus();return}
+
+saveBtn.disabled=true;
+saveText.innerHTML='<span class="name-save-loading"><span class="mini-spinner"></span>Saving...</span>';
+
+try{
+await db.collection('users').doc(currentUser.uid).set({
+name:name,
+email:currentUser.email||''
+},{merge:true});
+
+firestoreUserName=name;
+nameCacheByUid[currentUser.uid]=name;
+
+if(currentUser.email)nameCacheByEmail[normalizeEmail(currentUser.email)]=name;
+
+applyFirestoreUserUI();
+document.getElementById('name-modal').classList.remove('show');
+prepareStartButton();
+}catch(error){
+console.error('FIRESTORE NAME SAVE ERROR:',error);
+errorBox.innerText='नाम save हुन सकेन। Internet connection जाँच गरेर फेरि प्रयास गर्नुहोस्।';
 }
 
-
-/* =========================================================
-   FIND FIRESTORE NAME BY UID
-========================================================= */
+saveBtn.disabled=false;
+saveText.innerText='नाम Save गर्नुहोस्';
+}
 
 async function getFirestoreNameByUid(uid){
+if(!uid)return '';
+if(Object.prototype.hasOwnProperty.call(nameCacheByUid,uid))return nameCacheByUid[uid];
 
-    if(!uid){
+try{
+const snap=await db.collection('users').doc(uid).get();
+if(!snap.exists){nameCacheByUid[uid]='';return ''}
 
-        return '';
+const data=snap.data()||{};
+const name=typeof data.name==='string'?data.name.trim():'';
+nameCacheByUid[uid]=name;
 
-    }
-
-
-    if(
-        Object.prototype.hasOwnProperty.call(
-            nameCacheByUid,
-            uid
-        )
-    ){
-
-        return nameCacheByUid[uid];
-
-    }
-
-
-    try{
-
-        const snap =
-            await db
-                .collection('users')
-                .doc(uid)
-                .get();
-
-
-        if(
-            !snap.exists
-        ){
-
-            nameCacheByUid[uid] = '';
-
-            return '';
-
-        }
-
-
-        const data =
-            snap.data() || {};
-
-
-        const name =
-            typeof data.name === 'string'
-                ? data.name.trim()
-                : '';
-
-
-        nameCacheByUid[uid] =
-            name;
-
-
-        if(data.email){
-
-            nameCacheByEmail[
-                normalizeEmail(
-                    data.email
-                )
-            ] =
-                name;
-
-        }
-
-
-        return name;
-
-
-    }catch(error){
-
-        console.error(
-            '❌ UID NAME RESOLUTION ERROR:',
-            error
-        );
-
-        return '';
-
-    }
-
+if(data.email)nameCacheByEmail[normalizeEmail(data.email)]=name;
+return name;
+}catch(error){
+console.error('UID NAME RESOLUTION ERROR:',error);
+return '';
 }
-
-
-/* =========================================================
-   FIND FIRESTORE NAME BY EMAIL
-========================================================= */
+}
 
 async function getFirestoreNameByEmail(email){
+const normalized=normalizeEmail(email);
+if(!normalized)return '';
+if(Object.prototype.hasOwnProperty.call(nameCacheByEmail,normalized))return nameCacheByEmail[normalized];
 
-    const normalized =
-        normalizeEmail(email);
+try{
+const snapshot=await db.collection('users').where('email','==',email).limit(1).get();
 
-
-    if(!normalized){
-
-        return '';
-
-    }
-
-
-    if(
-        Object.prototype.hasOwnProperty.call(
-            nameCacheByEmail,
-            normalized
-        )
-    ){
-
-        return nameCacheByEmail[
-            normalized
-        ];
-
-    }
-
-
-    try{
-
-        /*
-         * Search users collection by email.
-         *
-         * This supports OLD leaderboard rows
-         * which only contain email.
-         */
-
-        const snapshot =
-            await db
-                .collection('users')
-                .where(
-                    'email',
-                    '==',
-                    email
-                )
-                .limit(1)
-                .get();
-
-
-        if(
-            snapshot.empty
-        ){
-
-            /*
-             * Try normalized email if the
-             * stored Firestore email is lowercase.
-             */
-
-            if(
-                email !== normalized
-            ){
-
-                const secondSnapshot =
-                    await db
-                        .collection('users')
-                        .where(
-                            'email',
-                            '==',
-                            normalized
-                        )
-                        .limit(1)
-                        .get();
-
-
-                if(
-                    !secondSnapshot.empty
-                ){
-
-                    const doc =
-                        secondSnapshot.docs[0];
-
-                    const data =
-                        doc.data() || {};
-
-                    const name =
-                        typeof data.name === 'string'
-                            ? data.name.trim()
-                            : '';
-
-
-                    nameCacheByEmail[
-                        normalized
-                    ] =
-                        name;
-
-
-                    nameCacheByUid[
-                        doc.id
-                    ] =
-                        name;
-
-
-                    return name;
-
-                }
-
-            }
-
-
-            nameCacheByEmail[
-                normalized
-            ] =
-                '';
-
-            return '';
-
-        }
-
-
-        const userDoc =
-            snapshot.docs[0];
-
-        const data =
-            userDoc.data() || {};
-
-
-        const name =
-            typeof data.name === 'string'
-                ? data.name.trim()
-                : '';
-
-
-        nameCacheByEmail[
-            normalized
-        ] =
-            name;
-
-
-        nameCacheByUid[
-            userDoc.id
-        ] =
-            name;
-
-
-        return name;
-
-
-    }catch(error){
-
-        console.error(
-            '❌ EMAIL NAME RESOLUTION ERROR:',
-            error
-        );
-
-        nameCacheByEmail[
-            normalized
-        ] =
-            '';
-
-        return '';
-
-    }
-
+if(snapshot.empty&&email!==normalized){
+const second=await db.collection('users').where('email','==',normalized).limit(1).get();
+if(!second.empty){
+const doc=second.docs[0];
+const data=doc.data()||{};
+const name=typeof data.name==='string'?data.name.trim():'';
+nameCacheByEmail[normalized]=name;
+nameCacheByUid[doc.id]=name;
+return name;
+}
 }
 
+if(snapshot.empty){
+nameCacheByEmail[normalized]='';
+return '';
+}
 
-/* =========================================================
-   RESOLVE LEADERBOARD NAME
-========================================================= */
+const doc=snapshot.docs[0];
+const data=doc.data()||{};
+const name=typeof data.name==='string'?data.name.trim():'';
 
-
-/*
- * Priority:
- *
- * 1. Firestore UID -> name
- * 2. Firestore email -> name
- * 3. existing non-email username
- * 4. Anonymous
- *
- * Therefore old email records can show
- * the real Firestore name.
- */
+nameCacheByEmail[normalized]=name;
+nameCacheByUid[doc.id]=name;
+return name;
+}catch(error){
+console.error('EMAIL NAME RESOLUTION ERROR:',error);
+return '';
+}
+}
 
 async function resolveLeaderboardName(item){
-
-    /*
-     * If a future record has uid,
-     * use it first.
-     */
-
-    if(item.uid){
-
-        const uidName =
-            await getFirestoreNameByUid(
-                item.uid
-            );
-
-
-        if(uidName){
-
-            return uidName;
-
-        }
-
-    }
-
-
-    const rawUsername =
-        String(
-            item.username || ''
-        ).trim();
-
-
-    /*
-     * Old records currently use email
-     * in username.
-     */
-
-    if(
-        looksLikeEmail(rawUsername)
-    ){
-
-        const emailName =
-            await getFirestoreNameByEmail(
-                rawUsername
-            );
-
-
-        if(emailName){
-
-            return emailName;
-
-        }
-
-
-        /*
-         * If no matching Firestore name exists,
-         * do not pretend the email is a real name.
-         */
-
-        return 'Anonymous';
-
-    }
-
-
-    /*
-     * Existing actual name.
-     */
-
-    if(rawUsername){
-
-        return rawUsername;
-
-    }
-
-
-    return 'Anonymous';
-
+if(item.uid){
+const n=await getFirestoreNameByUid(item.uid);
+if(n)return n;
 }
 
+const raw=String(item.username||'').trim();
 
-/* =========================================================
-   FIREBASE AUTH
-========================================================= */
+if(looksLikeEmail(raw)){
+const n=await getFirestoreNameByEmail(raw);
+return n||'Anonymous';
+}
 
-auth.onAuthStateChanged(
-    async user => {
+return raw||'Anonymous';
+}
 
-        currentUser =
-            user;
+auth.onAuthStateChanged(async user=>{
+currentUser=user;
 
+if(user){
+userEmail=user.email||'';
 
-        if(user){
+document.getElementById('user-box').classList.remove('hidden');
+document.getElementById('login-warning').classList.add('hidden');
 
-            userEmail =
-                user.email || '';
+const profile=await loadFirestoreUser(user);
+firestoreUserName=profile?.name||'';
+applyFirestoreUserUI();
 
+if(firestoreUserName){
+nameCacheByUid[user.uid]=firestoreUserName;
+if(user.email)nameCacheByEmail[normalizeEmail(user.email)]=firestoreUserName;
+}
 
-            document.getElementById(
-                'user-box'
-            ).classList.remove('hidden');
+await loadUserCoins(user.uid);
+await checkIfExamAlreadyGiven();
 
+if(!firestoreUserName){
+setTimeout(()=>{
+if(currentUser&&!firestoreUserName)openNameSetupModal();
+},250);
+}
+}else{
+userEmail='';
+firestoreUserName='';
+liveExamCompleted=false;
+practiceMode=false;
 
-            document.getElementById(
-                'login-warning'
-            ).classList.add('hidden');
+document.getElementById('login-warning').classList.remove('hidden');
+document.getElementById('user-box').classList.add('hidden');
+startBtn.classList.add('hidden');
+}
 
-
-            /*
-             * Load Firestore user FIRST.
-             */
-
-            const firestoreUser =
-                await loadFirestoreUser(
-                    user
-                );
-
-
-            firestoreUserName =
-                firestoreUser?.name || '';
-
-
-            applyFirestoreUserUI();
-
-
-            /*
-             * Cache current user's name.
-             */
-
-            if(firestoreUserName){
-
-                nameCacheByUid[
-                    user.uid
-                ] =
-                    firestoreUserName;
-
-
-                if(user.email){
-
-                    nameCacheByEmail[
-                        normalizeEmail(
-                            user.email
-                        )
-                    ] =
-                        firestoreUserName;
-
-                }
-
-            }
-
-
-            await loadUserCoins(
-                user.uid
-            );
-
-
-            await checkIfExamAlreadyGiven(
-                userEmail
-            );
-
-
-            /*
-             * IMPORTANT:
-             *
-             * If Firestore name is missing,
-             * open name setup after auth loads.
-             */
-
-            if(!firestoreUserName){
-
-                /*
-                 * Small delay so page UI renders first.
-                 */
-
-                setTimeout(
-                    () => {
-
-                        if(
-                            currentUser &&
-                            !firestoreUserName
-                        ){
-
-                            openNameSetupModal();
-
-                        }
-
-                    },
-                    250
-                );
-
-            }
-
-
-        }else{
-
-            userEmail = '';
-
-            firestoreUserName = '';
-
-            document.getElementById(
-                'login-warning'
-            ).classList.remove(
-                'hidden'
-            );
-
-            document.getElementById(
-                'user-box'
-            ).classList.add(
-                'hidden'
-            );
-
-            startBtn.classList.add(
-                'hidden'
-            );
-
-        }
-
-
-        authLoaded = true;
-
-        finishInitialLoading();
-
-    }
-);
-
-
-/* =========================================================
-   LOAD USER COINS
-========================================================= */
+authLoaded=true;
+finishInitialLoading();
+});
 
 async function loadUserCoins(uid){
+try{
+const snap=await db.collection('users').doc(uid).get();
 
-    try{
+if(snap.exists){
+const data=snap.data()||{};
+userCoins=Number(data.coins??data.coinBalance??0);
+}else userCoins=0;
 
-        const snap =
-            await db
-                .collection('users')
-                .doc(uid)
-                .get();
-
-
-        if(snap.exists){
-
-            const data =
-                snap.data() || {};
-
-
-            userCoins =
-                Number(
-                    data.coins ??
-                    data.coinBalance ??
-                    0
-                );
-
-        }else{
-
-            userCoins = 0;
-
-        }
-
-
-        updateCoinUI();
-
-
-    }catch(error){
-
-        console.error(
-            '❌ FIREBASE COIN ERROR:',
-            error
-        );
-
-        userCoins = 0;
-
-        updateCoinUI();
-
-    }
-
+updateCoinUI();
+}catch(error){
+console.error('FIREBASE COIN ERROR:',error);
+userCoins=0;
+updateCoinUI();
 }
-
+}
 
 function updateCoinUI(){
-
-    document.getElementById(
-        'user-coin-balance'
-    ).innerText =
-        userCoins;
-
-
-    document.getElementById(
-        'modal-coin-balance'
-    ).innerText =
-        userCoins;
-
+document.getElementById('user-coin-balance').innerText=userCoins;
+document.getElementById('modal-coin-balance').innerText=userCoins;
 }
-
-
-/* =========================================================
-   INITIAL LOADING
-========================================================= */
 
 function finishInitialLoading(){
-
-    if(
-        authLoaded &&
-        questionsLoaded
-    ){
-
-        document.getElementById(
-            'exam-loading'
-        ).classList.add(
-            'hidden'
-        );
-
-
-        prepareStartButton();
-
-    }
-
+if(authLoaded&&questionsLoaded){
+document.getElementById('exam-loading').classList.add('hidden');
+prepareStartButton();
 }
-
-
-/* =========================================================
-   LOAD QUESTIONS FROM SUPABASE
-========================================================= */
+}
 
 async function loadQuestions(){
-
-    try{
-
-        console.log(
-            '📚 Loading questions for:',
-            activeSet
-        );
-
-
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-            .from('quizzes')
-            .select('*')
-            .ilike(
-                'topic',
-                activeSet
-            );
-
-
-        if(error){
-
-            console.error(
-                '❌ QUESTION LOAD ERROR:',
-                error
-            );
-
-
-            document.getElementById(
-                'exam-loading'
-            ).innerHTML =
-            `
-                <div style="color:#dc2626;">
-                    प्रश्न load हुन सकेन।
-                    <br><br>
-                    ${escapeHtml(
-                        error.message
-                    )}
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        if(
-            !data ||
-            data.length === 0
-        ){
-
-            document.getElementById(
-                'exam-loading'
-            ).innerHTML =
-            `
-                <div style="color:#dc2626;">
-                    यो set का प्रश्नहरू भेटिएनन्।
-                    <br><br>
-                    Set: <b>
-                        ${escapeHtml(activeSet)}
-                    </b>
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        examQuestions =
-            data.map(
-                (row,index) => {
-
-                    let options = [];
-
-
-                    if(
-                        Array.isArray(
-                            row.options
-                        )
-                    ){
-
-                        options =
-                            row.options.map(
-                                (x,i) => ({
-
-                                    text:
-                                        typeof x === 'object'
-                                            ? (
-                                                x.text ??
-                                                x.option ??
-                                                x.value ??
-                                                ''
-                                            )
-                                            : x,
-
-                                    originalIndex:i
-
-                                })
-                            );
-
-                    }
-
-
-                    else if(
-                        typeof row.options ===
-                        'string'
-                    ){
-
-                        try{
-
-                            const parsed =
-                                JSON.parse(
-                                    row.options
-                                );
-
-
-                            if(
-                                Array.isArray(
-                                    parsed
-                                )
-                            ){
-
-                                options =
-                                    parsed.map(
-                                        (x,i) => ({
-
-                                            text:
-                                                typeof x === 'object'
-                                                    ? (
-                                                        x.text ??
-                                                        x.option ??
-                                                        x.value ??
-                                                        ''
-                                                    )
-                                                    : x,
-
-                                            originalIndex:i
-
-                                        })
-                                    );
-
-                            }
-
-                        }catch(e){
-
-                        }
-
-                    }
-
-
-                    if(
-                        options.length === 0
-                    ){
-
-                        const possibleOptions = [
-
-                            row.option_a,
-                            row.option_b,
-                            row.option_c,
-                            row.option_d
-
-                        ];
-
-
-                        options =
-                            possibleOptions
-                                .filter(
-                                    x =>
-                                        x !== null &&
-                                        x !== undefined &&
-                                        String(x).trim() !== ''
-                                )
-                                .map(
-                                    (x,i) => ({
-
-                                        text:String(x),
-
-                                        originalIndex:i
-
-                                    })
-                                );
-
-                    }
-
-
-                    if(
-                        options.length === 0
-                    ){
-
-                        const possibleOptions = [
-
-                            row.option1,
-                            row.option2,
-                            row.option3,
-                            row.option4
-
-                        ];
-
-
-                        options =
-                            possibleOptions
-                                .filter(
-                                    x =>
-                                        x !== null &&
-                                        x !== undefined &&
-                                        String(x).trim() !== ''
-                                )
-                                .map(
-                                    (x,i) => ({
-
-                                        text:String(x),
-
-                                        originalIndex:i
-
-                                    })
-                                );
-
-                    }
-
-
-                    const correctAnswer =
-                        row.correct_answer ??
-                        row.correctAnswer ??
-                        row.answer ??
-                        row.correct_option ??
-                        row.correctOption ??
-                        row.correct;
-
-
-                    let correctIndex = -1;
-
-
-                    if(
-                        typeof correctAnswer === 'number'
-                    ){
-
-                        correctIndex =
-                            correctAnswer;
-
-                    }
-
-
-                    else if(
-                        typeof correctAnswer === 'string'
-                    ){
-
-                        const ca =
-                            correctAnswer.trim();
-
-
-                        if(
-                            /^[ABCD]$/i.test(ca)
-                        ){
-
-                            correctIndex =
-                                ca.toUpperCase()
-                                  .charCodeAt(0) - 65;
-
-                        }
-
-
-                        else if(
-                            /^[0-3]$/.test(ca)
-                        ){
-
-                            correctIndex =
-                                Number(ca);
-
-                        }
-
-
-                        else{
-
-                            const found =
-                                options.findIndex(
-                                    opt =>
-                                        normalizeText(
-                                            opt.text
-                                        ) ===
-                                        normalizeText(
-                                            ca
-                                        )
-                                );
-
-
-                            if(found >= 0){
-
-                                correctIndex =
-                                    found;
-
-                            }
-
-                        }
-
-                    }
-
-
-                    const questionText =
-                        row.question ??
-                        row.question_text ??
-                        row.questionText ??
-                        row.text ??
-                        `Question ${index + 1}`;
-
-
-                    return {
-
-                        ...row,
-
-                        question:
-                            questionText,
-
-                        options:
-                            shuffleArray(
-                                options
-                            ),
-
-                        correctAnswer:
-                            correctAnswer,
-
-                        correctIndex:
-                            correctIndex,
-
-                        explanation:
-                            row.explanation ??
-                            row.explain ??
-                            ''
-
-                    };
-
-                }
-            );
-
-
-        /*
-         * Remap correct answer after option shuffle.
-         */
-
-        examQuestions =
-            examQuestions.map(
-                question => {
-
-                    const originalOptions =
-                        question.options;
-
-
-                    if(
-                        typeof question.correctAnswer ===
-                        'string'
-                    ){
-
-                        const answer =
-                            question.correctAnswer
-                                .trim();
-
-
-                        let idx =
-                            originalOptions.findIndex(
-                                opt =>
-                                    normalizeText(
-                                        opt.text
-                                    ) ===
-                                    normalizeText(
-                                        answer
-                                    )
-                            );
-
-
-                        if(idx >= 0){
-
-                            question.correctIndex =
-                                idx;
-
-                        }
-
-                        else if(
-                            /^[ABCD]$/i.test(
-                                answer
-                            )
-                        ){
-
-                            const target =
-                                answer
-                                    .toUpperCase()
-                                    .charCodeAt(0) - 65;
-
-
-                            idx =
-                                originalOptions.findIndex(
-                                    opt =>
-                                        opt.originalIndex ===
-                                        target
-                                );
-
-
-                            question.correctIndex =
-                                idx;
-
-                        }
-
-                        else if(
-                            /^[0-3]$/.test(
-                                answer
-                            )
-                        ){
-
-                            const target =
-                                Number(answer);
-
-
-                            idx =
-                                originalOptions.findIndex(
-                                    opt =>
-                                        opt.originalIndex ===
-                                        target
-                                );
-
-
-                            question.correctIndex =
-                                idx;
-
-                        }
-
-                    }
-
-
-                    else if(
-                        typeof question.correctAnswer ===
-                        'number'
-                    ){
-
-                        const idx =
-                            originalOptions.findIndex(
-                                opt =>
-                                    opt.originalIndex ===
-                                    question.correctAnswer
-                            );
-
-
-                        if(idx >= 0){
-
-                            question.correctIndex =
-                                idx;
-
-                        }
-
-                    }
-
-
-                    return question;
-
-                }
-            );
-
-
-        examQuestions =
-            shuffleArray(
-                examQuestions
-            );
-
-
-        userAnswers =
-            new Array(
-                examQuestions.length
-            ).fill(null);
-
-
-        questionsLoaded = true;
-
-
-        console.log(
-            `✅ ${examQuestions.length} questions loaded`
-        );
-
-
-        await fetchLeaderboard();
-
-
-        finishInitialLoading();
-
-
-    }catch(error){
-
-        console.error(
-            '❌ QUESTION SYSTEM ERROR:',
-            error
-        );
-
-
-        document.getElementById(
-            'exam-loading'
-        ).innerHTML =
-        `
-            <div style="color:#dc2626;">
-                प्रश्न load गर्दा error भयो।
-                <br><br>
-                ${escapeHtml(
-                    error.message
-                )}
-            </div>
-        `;
-
-    }
-
+try{
+const {data,error}=await supabaseClient
+.from('quizzes')
+.select('*')
+.ilike('topic',activeSet);
+
+if(error){
+console.error('QUESTION LOAD ERROR:',error);
+document.getElementById('exam-loading').innerHTML=`<div style="color:#dc2626">प्रश्न load हुन सकेन।<br><br>${escapeHtml(error.message)}</div>`;
+return;
 }
 
+if(!data||!data.length){
+document.getElementById('exam-loading').innerHTML=`<div style="color:#dc2626">यो set का प्रश्नहरू भेटिएनन्।<br><br>Set: <b>${escapeHtml(activeSet)}</b></div>`;
+return;
+}
 
-/* =========================================================
-   PREPARE START BUTTON
-========================================================= */
+examQuestions=data.map((row,index)=>{
+let options=[];
+
+if(Array.isArray(row.options)){
+options=row.options.map((x,i)=>({
+text:typeof x==='object'?(x.text??x.option??x.value??''):x,
+originalIndex:i
+}));
+}else if(typeof row.options==='string'){
+try{
+const parsed=JSON.parse(row.options);
+if(Array.isArray(parsed)){
+options=parsed.map((x,i)=>({
+text:typeof x==='object'?(x.text??x.option??x.value??''):x,
+originalIndex:i
+}));
+}
+}catch(e){}
+}
+
+if(!options.length){
+options=[row.option_a,row.option_b,row.option_c,row.option_d]
+.filter(x=>x!==null&&x!==undefined&&String(x).trim()!=='')
+.map((x,i)=>({text:String(x),originalIndex:i}));
+}
+
+if(!options.length){
+options=[row.option1,row.option2,row.option3,row.option4]
+.filter(x=>x!==null&&x!==undefined&&String(x).trim()!=='')
+.map((x,i)=>({text:String(x),originalIndex:i}));
+}
+
+const correctAnswer=row.correct_answer??row.correctAnswer??row.answer??row.correct_option??row.correctOption??row.correct;
+let correctIndex=-1;
+
+if(typeof correctAnswer==='number'){
+correctIndex=correctAnswer;
+}else if(typeof correctAnswer==='string'){
+const ca=correctAnswer.trim();
+
+if(/^[ABCD]$/i.test(ca)){
+correctIndex=ca.toUpperCase().charCodeAt(0)-65;
+}else if(/^[0-3]$/.test(ca)){
+correctIndex=Number(ca);
+}else{
+const found=options.findIndex(o=>normalizeText(o.text)===normalizeText(ca));
+if(found>=0)correctIndex=found;
+}
+}
+
+return{
+...row,
+question:row.question??row.question_text??row.questionText??row.text??`Question ${index+1}`,
+options:shuffleArray(options),
+correctAnswer,
+correctIndex,
+explanation:row.explanation??row.explain??''
+};
+});
+
+examQuestions=examQuestions.map(q=>{
+const opts=q.options;
+
+if(typeof q.correctAnswer==='string'){
+const a=q.correctAnswer.trim();
+let idx=-1;
+
+if(/^[ABCD]$/i.test(a)){
+const target=a.toUpperCase().charCodeAt(0)-65;
+idx=opts.findIndex(o=>o.originalIndex===target);
+}else if(/^[0-3]$/.test(a)){
+const target=Number(a);
+idx=opts.findIndex(o=>o.originalIndex===target);
+}else{
+idx=opts.findIndex(o=>normalizeText(o.text)===normalizeText(a));
+}
+
+q.correctIndex=idx;
+}else if(typeof q.correctAnswer==='number'){
+const idx=opts.findIndex(o=>o.originalIndex===q.correctAnswer);
+if(idx>=0)q.correctIndex=idx;
+}
+
+return q;
+});
+
+examQuestions=shuffleArray(examQuestions);
+userAnswers=new Array(examQuestions.length).fill(null);
+questionsLoaded=true;
+
+await fetchLeaderboard();
+finishInitialLoading();
+}catch(error){
+console.error('QUESTION SYSTEM ERROR:',error);
+document.getElementById('exam-loading').innerHTML=`<div style="color:#dc2626">प्रश्न load गर्दा error भयो।<br><br>${escapeHtml(error.message)}</div>`;
+}
+}
+
+async function checkIfExamAlreadyGiven(){
+if(!currentUser){
+liveExamCompleted=false;
+practiceMode=false;
+return;
+}
+
+try{
+const userRef=db.collection('users').doc(currentUser.uid);
+const snap=await userRef.get();
+
+if(snap.exists){
+const data=snap.data()||{};
+const mockExams=data.mockExams||{};
+
+if(mockExams[activeSet]===true){
+liveExamCompleted=true;
+practiceMode=true;
+showAlreadyGiven();
+return;
+}
+}
+
+liveExamCompleted=false;
+practiceMode=false;
+
+/*
+ * Legacy support:
+ * Old records may contain the user's email in username.
+ * We only use email here because names are not unique.
+ */
+if(userEmail){
+const {data,error}=await supabaseClient
+.from('exam_leaderboard')
+.select('id,username,set_name,score')
+.ilike('username',userEmail)
+.ilike('set_name',activeSet)
+.limit(1);
+
+if(!error&&data&&data.length){
+liveExamCompleted=true;
+practiceMode=true;
+showAlreadyGiven();
+}
+}
+}catch(error){
+console.error('CHECK EXAM ERROR:',error);
+}
+prepareStartButton();
+}
+
+function showAlreadyGiven(){
+document.getElementById('already-given-box').classList.remove('hidden');
+}
 
 function prepareStartButton(){
-
-    /*
-     * Not logged in.
-     */
-
-    if(!currentUser){
-
-        startBtn.classList.add(
-            'hidden'
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * Firestore name missing.
-     */
-
-    if(!firestoreUserName){
-
-        startBtn.classList.remove(
-            'hidden'
-        );
-
-        startBtn.disabled = true;
-
-        startBtn.innerHTML =
-            '👤 पहिले आफ्नो नाम सेट गर्नुहोस्';
-
-        return;
-
-    }
-
-
-    startBtn.disabled = false;
-
-    startBtn.classList.remove(
-        'hidden'
-    );
-
-
-    startBtn.innerHTML =
-        practiceMode
-            ? '📚 Practice सुरु गर्नुहोस्'
-            : '🚀 परीक्षा सुरु गर्नुहोस्';
-
-
-    document.getElementById(
-        'exam-loading'
-    ).classList.add(
-        'hidden'
-    );
-
+if(!currentUser){
+startBtn.classList.add('hidden');
+return;
 }
 
-
-/* =========================================================
-   CHECK PREVIOUS EXAM
-========================================================= */
-
-async function checkIfExamAlreadyGiven(
-    email
-){
-
-    if(!email){
-
-        practiceMode = false;
-
-        return;
-
-    }
-
-
-    try{
-
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-            .from('exam_leaderboard')
-            .select(
-                'id,username,set_name,score'
-            )
-            .ilike(
-                'username',
-                email
-            )
-            .ilike(
-                'set_name',
-                activeSet
-            )
-            .limit(1);
-
-
-        if(error){
-
-            console.error(
-                '❌ PREVIOUS EXAM CHECK ERROR:',
-                error
-            );
-
-            practiceMode = false;
-
-            return;
-
-        }
-
-
-        if(
-            data &&
-            data.length > 0
-        ){
-
-            practiceMode = true;
-
-
-            document.getElementById(
-                'already-given-box'
-            ).classList.remove(
-                'hidden'
-            );
-
-        }else{
-
-            practiceMode = false;
-
-        }
-
-
-        prepareStartButton();
-
-
-    }catch(error){
-
-        console.error(
-            '❌ CHECK EXAM ERROR:',
-            error
-        );
-
-        practiceMode = false;
-
-    }
-
+if(!firestoreUserName){
+startBtn.classList.remove('hidden');
+startBtn.disabled=true;
+startBtn.innerHTML='👤 पहिले आफ्नो नाम सेट गर्नुहोस्';
+return;
 }
 
+startBtn.disabled=false;
+startBtn.classList.remove('hidden');
 
-/* =========================================================
-   START EXAM
-========================================================= */
+startBtn.innerHTML=liveExamCompleted||practiceMode
+?'📚 Practice सुरु गर्नुहोस्'
+:'🚀 परीक्षा सुरु गर्नुहोस्';
+
+document.getElementById('exam-loading').classList.add('hidden');
+}
 
 async function startExam(){
-
-    if(!currentUser){
-
-        document.getElementById(
-            'login-modal'
-        ).classList.add(
-            'show'
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * Require Firestore name.
-     */
-
-    if(!firestoreUserName){
-
-        openNameSetupModal();
-
-        return;
-
-    }
-
-
-    if(!examQuestions.length){
-
-        alert(
-            'प्रश्नहरू अझै load भएका छैनन्।'
-        );
-
-        return;
-
-    }
-
-
-    if(!practiceMode){
-
-        if(userCoins < 50){
-
-            document.getElementById(
-                'coins-modal'
-            ).classList.add(
-                'show'
-            );
-
-            return;
-
-        }
-
-
-        const success =
-            await deductCoins(50);
-
-
-        if(!success){
-
-            alert(
-                'Coins काट्न सकिएन। फेरि प्रयास गर्नुहोस्।'
-            );
-
-            return;
-
-        }
-
-    }
-
-
-    examStarted = true;
-
-    examFinished = false;
-
-    currentQuestionIndex = 0;
-
-    userAnswers =
-        new Array(
-            examQuestions.length
-        ).fill(null);
-
-    remainingSeconds =
-        45 * 60;
-
-
-    regScreen.classList.add(
-        'hidden'
-    );
-
-    resultScreen.classList.add(
-        'hidden'
-    );
-
-    examScreen.classList.remove(
-        'hidden'
-    );
-
-
-    document.getElementById(
-        'timer-box'
-    ).classList.remove(
-        'hidden'
-    );
-
-
-    document.getElementById(
-        'mode-badge'
-    ).innerText =
-        practiceMode
-            ? '📚 PRACTICE MODE'
-            : '🔴 LIVE EXAM';
-
-
-    renderQuestion();
-
-    startTimer();
-
+if(!currentUser){
+document.getElementById('login-modal').classList.add('show');
+return;
 }
 
+if(!firestoreUserName){
+openNameSetupModal();
+return;
+}
 
-/* =========================================================
-   DEDUCT COINS
-========================================================= */
+if(!examQuestions.length){
+alert('प्रश्नहरू अझै load भएका छैनन्।');
+return;
+}
+
+/*
+ * Re-check Firestore immediately before charging coins.
+ * This prevents a completed exam from becoming another paid Live attempt.
+ */
+try{
+const snap=await db.collection('users').doc(currentUser.uid).get();
+const data=snap.exists?(snap.data()||{}):{};
+const mockExams=data.mockExams||{};
+
+if(mockExams[activeSet]===true){
+liveExamCompleted=true;
+practiceMode=true;
+showAlreadyGiven();
+}
+}catch(error){
+console.error('FINAL COMPLETION CHECK ERROR:',error);
+}
+
+if(!practiceMode&&!liveExamCompleted){
+if(userCoins<50){
+document.getElementById('coins-modal').classList.add('show');
+return;
+}
+
+const success=await deductCoins(50);
+if(!success){
+alert('Coins काट्न सकिएन। फेरि प्रयास गर्नुहोस्।');
+return;
+}
+}
+
+examStarted=true;
+examFinished=false;
+submittedToLeaderboard=false;
+currentQuestionIndex=0;
+userAnswers=new Array(examQuestions.length).fill(null);
+remainingSeconds=45*60;
+
+regScreen.classList.add('hidden');
+resultScreen.classList.add('hidden');
+examScreen.classList.remove('hidden');
+document.getElementById('timer-box').classList.remove('hidden');
+
+document.getElementById('mode-badge').innerText=
+practiceMode||liveExamCompleted?'📚 PRACTICE MODE':'🔴 LIVE EXAM';
+
+renderQuestion();
+startTimer();
+}
 
 async function deductCoins(amount){
+if(!currentUser)return false;
 
-    if(!currentUser){
+try{
+const userRef=db.collection('users').doc(currentUser.uid);
 
-        return false;
+const result=await db.runTransaction(async transaction=>{
+const snap=await transaction.get(userRef);
 
-    }
+if(!snap.exists)throw new Error('User document भेटिएन।');
 
+const data=snap.data()||{};
+const currentCoins=Number(data.coins??data.coinBalance??0);
 
-    try{
+if(currentCoins<amount)throw new Error('INSUFFICIENT_COINS');
 
-        const userRef =
-            db.collection('users')
-              .doc(
-                  currentUser.uid
-              );
+const newCoins=currentCoins-amount;
+transaction.update(userRef,{coins:newCoins});
+return newCoins;
+});
 
+userCoins=Number(result);
+updateCoinUI();
+return true;
+}catch(error){
+console.error('COIN DEDUCTION ERROR:',error);
 
-        const result =
-            await db.runTransaction(
-                async transaction => {
-
-                    const snap =
-                        await transaction.get(
-                            userRef
-                        );
-
-
-                    if(!snap.exists){
-
-                        throw new Error(
-                            'User document भेटिएन।'
-                        );
-
-                    }
-
-
-                    const data =
-                        snap.data() || {};
-
-
-                    const currentCoins =
-                        Number(
-                            data.coins ??
-                            data.coinBalance ??
-                            0
-                        );
-
-
-                    if(
-                        currentCoins < amount
-                    ){
-
-                        throw new Error(
-                            'INSUFFICIENT_COINS'
-                        );
-
-                    }
-
-
-                    const newCoins =
-                        currentCoins - amount;
-
-
-                    transaction.update(
-                        userRef,
-                        {
-                            coins:newCoins
-                        }
-                    );
-
-
-                    return newCoins;
-
-                }
-            );
-
-
-        userCoins =
-            Number(result);
-
-
-        updateCoinUI();
-
-
-        return true;
-
-
-    }catch(error){
-
-        console.error(
-            '❌ COIN DEDUCTION ERROR:',
-            error
-        );
-
-
-        if(
-            error.message ===
-            'INSUFFICIENT_COINS'
-        ){
-
-            document.getElementById(
-                'coins-modal'
-            ).classList.add(
-                'show'
-            );
-
-        }
-
-
-        return false;
-
-    }
-
+if(error.message==='INSUFFICIENT_COINS'){
+document.getElementById('coins-modal').classList.add('show');
 }
-
-
-/* =========================================================
-   TIMER
-========================================================= */
+return false;
+}
+}
 
 function startTimer(){
+clearInterval(timerInterval);
+updateTimer();
 
-    clearInterval(
-        timerInterval
-    );
+timerInterval=setInterval(()=>{
+remainingSeconds--;
+updateTimer();
 
-
-    updateTimer();
-
-
-    timerInterval =
-        setInterval(
-            () => {
-
-                remainingSeconds--;
-
-                updateTimer();
-
-
-                if(
-                    remainingSeconds <= 0
-                ){
-
-                    clearInterval(
-                        timerInterval
-                    );
-
-
-                    alert(
-                        '⏰ समय सकियो। परीक्षा submit हुँदैछ।'
-                    );
-
-
-                    finishExam();
-
-                }
-
-            },
-            1000
-        );
-
+if(remainingSeconds<=0){
+clearInterval(timerInterval);
+alert('⏰ समय सकियो। परीक्षा submit हुँदैछ।');
+finishExam();
 }
-
+},1000);
+}
 
 function updateTimer(){
+const minutes=Math.floor(remainingSeconds/60);
+const seconds=remainingSeconds%60;
 
-    const minutes =
-        Math.floor(
-            remainingSeconds / 60
-        );
+document.getElementById('timer').innerText=
+String(minutes).padStart(2,'0')+':'+String(seconds).padStart(2,'0');
 
-
-    const seconds =
-        remainingSeconds % 60;
-
-
-    document.getElementById(
-        'timer'
-    ).innerText =
-        String(minutes).padStart(2,'0') +
-        ':' +
-        String(seconds).padStart(2,'0');
-
-
-    if(
-        remainingSeconds <= 300
-    ){
-
-        document.getElementById(
-            'timer-box'
-        ).style.background =
-            '#fee2e2';
-
-
-        document.getElementById(
-            'timer-box'
-        ).style.color =
-            '#dc2626';
-
-    }
-
+if(remainingSeconds<=300){
+document.getElementById('timer-box').style.background='#fee2e2';
+document.getElementById('timer-box').style.color='#dc2626';
+}else{
+document.getElementById('timer-box').style.background='#fff';
+document.getElementById('timer-box').style.color='#3413aa';
 }
-
-
-/* =========================================================
-   RENDER QUESTION
-========================================================= */
+}
 
 function renderQuestion(){
+const q=examQuestions[currentQuestionIndex];
+if(!q)return;
 
-    const q =
-        examQuestions[
-            currentQuestionIndex
-        ];
+const total=examQuestions.length;
+const number=currentQuestionIndex+1;
 
+document.getElementById('question-counter').innerText=`प्रश्न ${number} / ${total}`;
 
-    if(!q){
+const percent=Math.round(number/total*100);
+document.getElementById('progress-percent').innerText=`${percent}%`;
+document.getElementById('progress-bar').style.width=`${percent}%`;
 
-        return;
+document.getElementById('question-text').innerHTML=escapeHtml(q.question);
 
-    }
+const container=document.getElementById('options-container');
+container.innerHTML='';
 
+const letters=['A','B','C','D','E','F'];
 
-    const total =
-        examQuestions.length;
+q.options.forEach((option,index)=>{
+const button=document.createElement('button');
+button.className='option';
 
-
-    const number =
-        currentQuestionIndex + 1;
-
-
-    document.getElementById(
-        'question-counter'
-    ).innerText =
-        `प्रश्न ${number} / ${total}`;
-
-
-    const percent =
-        Math.round(
-            (number / total) * 100
-        );
-
-
-    document.getElementById(
-        'progress-percent'
-    ).innerText =
-        `${percent}%`;
-
-
-    document.getElementById(
-        'progress-bar'
-    ).style.width =
-        `${percent}%`;
-
-
-    document.getElementById(
-        'question-text'
-    ).innerHTML =
-        escapeHtml(
-            q.question
-        );
-
-
-    const container =
-        document.getElementById(
-            'options-container'
-        );
-
-
-    container.innerHTML = '';
-
-
-    const letters =
-        [
-            'A',
-            'B',
-            'C',
-            'D',
-            'E',
-            'F'
-        ];
-
-
-    q.options.forEach(
-        (option,index) => {
-
-            const button =
-                document.createElement(
-                    'button'
-                );
-
-
-            button.className =
-                'option';
-
-
-            if(
-                userAnswers[
-                    currentQuestionIndex
-                ] === index
-            ){
-
-                button.classList.add(
-                    'selected'
-                );
-
-            }
-
-
-            button.innerHTML =
-            `
-                <span class="option-letter">
-                    ${letters[index] || index+1}
-                </span>
-
-                <span>
-                    ${escapeHtml(
-                        option.text
-                    )}
-                </span>
-            `;
-
-
-            button.onclick =
-                () =>
-                    selectAnswer(index);
-
-
-            container.appendChild(
-                button
-            );
-
-        }
-    );
-
-
-    document.getElementById(
-        'prev-btn'
-    ).disabled =
-        currentQuestionIndex === 0;
-
-
-    const nextBtn =
-        document.getElementById(
-            'next-btn'
-        );
-
-
-    if(
-        currentQuestionIndex ===
-        total - 1
-    ){
-
-        nextBtn.innerHTML =
-            'Submit परीक्षा <i class="fa-solid fa-check"></i>';
-
-    }else{
-
-        nextBtn.innerHTML =
-            'अर्को <i class="fa-solid fa-arrow-right"></i>';
-
-    }
-
+if(userAnswers[currentQuestionIndex]===index){
+button.classList.add('selected');
 }
 
+button.innerHTML=`
+<span class="option-letter">${letters[index]||index+1}</span>
+<span>${escapeHtml(option.text)}</span>
+`;
 
-/* =========================================================
-   SELECT ANSWER
-========================================================= */
+button.onclick=()=>selectAnswer(index);
+container.appendChild(button);
+});
+
+document.getElementById('prev-btn').disabled=currentQuestionIndex===0;
+
+const nextBtn=document.getElementById('next-btn');
+
+nextBtn.innerHTML=currentQuestionIndex===total-1
+?'Submit परीक्षा <i class="fa-solid fa-check"></i>'
+:'अर्को <i class="fa-solid fa-arrow-right"></i>';
+}
 
 function selectAnswer(index){
-
-    userAnswers[
-        currentQuestionIndex
-    ] =
-        index;
-
-
-    renderQuestion();
-
+userAnswers[currentQuestionIndex]=index;
+renderQuestion();
 }
-
-
-/* =========================================================
-   NEXT
-========================================================= */
 
 function nextQuestion(){
-
-    if(
-        currentQuestionIndex <
-        examQuestions.length - 1
-    ){
-
-        currentQuestionIndex++;
-
-        renderQuestion();
-
-    }else{
-
-        const confirmSubmit =
-            confirm(
-                'के तपाईं परीक्षा submit गर्न चाहनुहुन्छ?'
-            );
-
-
-        if(confirmSubmit){
-
-            finishExam();
-
-        }
-
-    }
-
+if(currentQuestionIndex<examQuestions.length-1){
+currentQuestionIndex++;
+renderQuestion();
+}else{
+if(confirm('के तपाईं परीक्षा submit गर्न चाहनुहुन्छ?'))finishExam();
 }
-
-
-/* =========================================================
-   PREVIOUS
-========================================================= */
+}
 
 function previousQuestion(){
-
-    if(
-        currentQuestionIndex > 0
-    ){
-
-        currentQuestionIndex--;
-
-        renderQuestion();
-
-    }
-
+if(currentQuestionIndex>0){
+currentQuestionIndex--;
+renderQuestion();
 }
-
-
-/* =========================================================
-   FINISH EXAM
-========================================================= */
+}
 
 async function finishExam(){
+if(examFinished)return;
 
-    if(examFinished){
+examFinished=true;
+clearInterval(timerInterval);
 
-        return;
+let correct=0;
+let wrong=0;
+let skipped=0;
 
-    }
+examQuestions.forEach((q,index)=>{
+const answer=userAnswers[index];
 
+if(answer===null||answer===undefined){
+skipped++;
+}else if(answer===q.correctIndex){
+correct++;
+}else{
+wrong++;
+}
+});
 
-    examFinished = true;
+const total=examQuestions.length;
 
+let totalScore=(correct*2)-(wrong*0.4);
+if(totalScore<0)totalScore=0;
+totalScore=Number(totalScore.toFixed(1));
 
-    clearInterval(
-        timerInterval
-    );
+const percentage=total>0?(correct/total)*100:0;
 
+let earnedCoins=0;
 
-    let correct = 0;
+if(!practiceMode&&!liveExamCompleted){
+earnedCoins=calculateReward(percentage);
 
-    let wrong = 0;
-
-    let skipped = 0;
-
-
-    examQuestions.forEach(
-        (q,index) => {
-
-            const answer =
-                userAnswers[index];
-
-
-            if(
-                answer === null ||
-                answer === undefined
-            ){
-
-                skipped++;
-
-            }
-
-            else if(
-                answer ===
-                q.correctIndex
-            ){
-
-                correct++;
-
-            }
-
-            else{
-
-                wrong++;
-
-            }
-
-        }
-    );
-
-
-    const total =
-        examQuestions.length;
-
-
-    let totalScore =
-        (correct * 2) -
-        (wrong * 0.4);
-
-
-    if(
-        totalScore < 0
-    ){
-
-        totalScore = 0;
-
-    }
-
-
-    totalScore =
-        Number(
-            totalScore.toFixed(1)
-        );
-
-
-    const percentage =
-        total > 0
-            ? (correct / total) * 100
-            : 0;
-
-
-    let earnedCoins = 0;
-
-
-    if(!practiceMode){
-
-        earnedCoins =
-            calculateReward(
-                percentage
-            );
-
-
-        if(
-            earnedCoins > 0
-        ){
-
-            await addCoins(
-                earnedCoins
-            );
-
-        }
-
-    }
-
-
-    /*
-     * Save LIVE leaderboard.
-     */
-
-    if(
-        !practiceMode &&
-        !submittedToLeaderboard
-    ){
-
-        submittedToLeaderboard = true;
-
-
-        await saveLeaderboard({
-
-            score:
-                totalScore,
-
-            correct:
-                correct,
-
-            wrong:
-                wrong,
-
-            skipped:
-                skipped,
-
-            total:
-                total
-
-        });
-
-
-        await markExamCompleted();
-
-    }
-
-
-    showResult({
-
-        score:
-            totalScore,
-
-        correct:
-            correct,
-
-        wrong:
-            wrong,
-
-        skipped:
-            skipped,
-
-        total:
-            total,
-
-        percentage:
-            percentage,
-
-        earnedCoins:
-            earnedCoins
-
-    });
-
+if(earnedCoins>0)await addCoins(earnedCoins);
 }
 
+if(!practiceMode&&!liveExamCompleted&&!submittedToLeaderboard){
+submittedToLeaderboard=true;
 
-/* =========================================================
-   REWARD
-========================================================= */
+await saveLeaderboard({
+score:totalScore,
+correct,
+wrong,
+skipped,
+total
+});
 
-function calculateReward(
-    percentage
-){
+await markExamCompleted();
+await markMockExamAsCompleted();
 
-    if(
-        percentage >= 90
-    ){
-
-        return 50;
-
-    }
-
-    if(
-        percentage >= 80
-    ){
-
-        return 40;
-
-    }
-
-    if(
-        percentage >= 70
-    ){
-
-        return 30;
-
-    }
-
-    if(
-        percentage >= 60
-    ){
-
-        return 20;
-
-    }
-
-    if(
-        percentage >= 50
-    ){
-
-        return 10;
-
-    }
-
-    return 0;
-
+liveExamCompleted=true;
+practiceMode=false;
 }
 
+showResult({
+score:totalScore,
+correct,
+wrong,
+skipped,
+total,
+percentage,
+earnedCoins
+});
+}
 
-/* =========================================================
-   ADD COINS
-========================================================= */
+function calculateReward(percentage){
+if(percentage>=90)return 50;
+if(percentage>=80)return 40;
+if(percentage>=70)return 30;
+if(percentage>=60)return 20;
+if(percentage>=50)return 10;
+return 0;
+}
 
 async function addCoins(amount){
+if(!currentUser||!amount)return;
 
-    if(
-        !currentUser ||
-        !amount
-    ){
+try{
+const userRef=db.collection('users').doc(currentUser.uid);
 
-        return;
+await db.runTransaction(async transaction=>{
+const snap=await transaction.get(userRef);
+if(!snap.exists)return;
 
-    }
+const data=snap.data()||{};
+const currentCoins=Number(data.coins??data.coinBalance??0);
 
+transaction.update(userRef,{coins:currentCoins+amount});
+});
 
-    try{
-
-        const userRef =
-            db.collection('users')
-              .doc(
-                  currentUser.uid
-              );
-
-
-        await db.runTransaction(
-            async transaction => {
-
-                const snap =
-                    await transaction.get(
-                        userRef
-                    );
-
-
-                if(
-                    !snap.exists
-                ){
-
-                    return;
-
-                }
-
-
-                const data =
-                    snap.data() || {};
-
-
-                const currentCoins =
-                    Number(
-                        data.coins ??
-                        data.coinBalance ??
-                        0
-                    );
-
-
-                transaction.update(
-                    userRef,
-                    {
-
-                        coins:
-                            currentCoins +
-                            amount
-
-                    }
-                );
-
-            }
-        );
-
-
-        userCoins +=
-            amount;
-
-
-        updateCoinUI();
-
-
-    }catch(error){
-
-        console.error(
-            '❌ REWARD COIN ERROR:',
-            error
-        );
-
-    }
-
+userCoins+=amount;
+updateCoinUI();
+}catch(error){
+console.error('REWARD COIN ERROR:',error);
+}
 }
 
-
-/* =========================================================
-   SAVE LEADERBOARD
-========================================================= */
-
-async function saveLeaderboard(
-    result
-){
-
-    if(
-        !firestoreUserName
-    ){
-
-        console.warn(
-            '⚠️ Firestore name missing. Leaderboard skipped.'
-        );
-
-        return false;
-
-    }
-
-
-    /*
-     * IMPORTANT:
-     *
-     * New records use the REAL FIRESTORE NAME
-     * instead of email.
-     */
-
-    const payload = {
-
-        username:
-            firestoreUserName,
-
-        set_name:
-            activeSet,
-
-        score:
-            Number(
-                result.score
-            ),
-
-        correct_count:
-            Number(
-                result.correct
-            ),
-
-        wrong_count:
-            Number(
-                result.wrong
-            ),
-
-        skipped_count:
-            Number(
-                result.skipped
-            ),
-
-        total_questions:
-            Number(
-                result.total
-            )
-
-    };
-
-
-    console.log(
-        '📤 LEADERBOARD INSERT:',
-        payload
-    );
-
-
-    try{
-
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-            .from(
-                'exam_leaderboard'
-            )
-            .insert([
-                payload
-            ])
-            .select();
-
-
-        if(error){
-
-            console.error(
-                '❌ LEADERBOARD INSERT ERROR:',
-                error
-            );
-
-            console.error(
-                'CODE:',
-                error.code
-            );
-
-            console.error(
-                'MESSAGE:',
-                error.message
-            );
-
-            console.error(
-                'DETAILS:',
-                error.details
-            );
-
-            console.error(
-                'HINT:',
-                error.hint
-            );
-
-
-            return false;
-
-        }
-
-
-        console.log(
-            '✅ LEADERBOARD SAVED:',
-            data
-        );
-
-
-        await fetchLeaderboard();
-
-
-        return true;
-
-
-    }catch(error){
-
-        console.error(
-            '❌ LEADERBOARD SYSTEM ERROR:',
-            error
-        );
-
-        return false;
-
-    }
-
+async function saveLeaderboard(result){
+if(!firestoreUserName){
+console.warn('Firestore name missing. Leaderboard skipped.');
+return false;
 }
 
+const payload={
+username:firestoreUserName,
+set_name:activeSet,
+score:Number(result.score),
+correct_count:Number(result.correct),
+wrong_count:Number(result.wrong),
+skipped_count:Number(result.skipped),
+total_questions:Number(result.total)
+};
 
-/* =========================================================
-   FETCH LEADERBOARD
-========================================================= */
+try{
+const {data,error}=await supabaseClient
+.from('exam_leaderboard')
+.insert([payload])
+.select();
+
+if(error){
+console.error('LEADERBOARD INSERT ERROR:',error);
+return false;
+}
+
+console.log('LEADERBOARD SAVED:',data);
+await fetchLeaderboard();
+return true;
+}catch(error){
+console.error('LEADERBOARD SYSTEM ERROR:',error);
+return false;
+}
+}
 
 async function fetchLeaderboard(){
-
-    console.log(
-        '🏆 Loading leaderboard:',
-        activeSet
-    );
-
-
-    const containers = [
-
-        document.getElementById(
-            'home-leaderboard'
-        ),
-
-        document.getElementById(
-            'result-leaderboard'
-        )
-
-    ];
-
-
-    try{
-
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-            .from(
-                'exam_leaderboard'
-            )
-            .select(`
-                id,
-                username,
-                set_name,
-                score,
-                correct_count,
-                wrong_count,
-                skipped_count,
-                total_questions,
-                created_at
-            `)
-            .ilike(
-                'set_name',
-                activeSet
-            )
-            .order(
-                'score',
-                {
-                    ascending:false
-                }
-            );
-
-
-        if(error){
-
-            console.error(
-                '❌ LEADERBOARD SELECT ERROR:',
-                error
-            );
-
-
-            containers.forEach(
-                container => {
-
-                    if(!container){
-
-                        return;
-
-                    }
-
-
-                    container.innerHTML =
-                    `
-                        <div class="empty-lb">
-
-                            <i class="fa-solid fa-triangle-exclamation"
-                               style="color:#dc2626;"></i>
-
-                            <br><br>
-
-                            Leaderboard load हुन सकेन।
-
-                            <br>
-
-                            <small>
-                                ${escapeHtml(
-                                    error.message ||
-                                    'Database error'
-                                )}
-                            </small>
-
-                        </div>
-                    `;
-
-                }
-            );
-
-
-            return;
-
-        }
-
-
-        if(
-            !data ||
-            data.length === 0
-        ){
-
-            containers.forEach(
-                container => {
-
-                    if(!container){
-
-                        return;
-
-                    }
-
-
-                    container.innerHTML =
-                    `
-                        <div class="empty-lb">
-
-                            🏆 यस सेटको leaderboard
-                            मा अझै record छैन।
-
-                        </div>
-                    `;
-
-                }
-            );
-
-
-            return;
-
-        }
-
-
-        /*
-         * Resolve ALL names.
-         *
-         * This is the important part for
-         * old email records.
-         */
-
-        const resolvedData =
-            await Promise.all(
-
-                data.map(
-                    async item => {
-
-                        const name =
-                            await resolveLeaderboardName(
-                                item
-                            );
-
-
-                        return {
-
-                            ...item,
-
-                            resolvedName:
-                                name
-
-                        };
-
-                    }
-                )
-
-            );
-
-
-        containers.forEach(
-            container => {
-
-                if(!container){
-
-                    return;
-
-                }
-
-
-                container.innerHTML = '';
-
-
-                resolvedData.forEach(
-                    (item,index) => {
-
-                        let name =
-                            item.resolvedName ||
-                            'Anonymous';
-
-
-                        if(
-                            name.length > 20
-                        ){
-
-                            name =
-                                name.substring(
-                                    0,
-                                    20
-                                ) + '...';
-
-                        }
-
-
-                        let medal = '';
-
-
-                        if(index === 0){
-
-                            medal = '🥇';
-
-                        }
-
-                        else if(index === 1){
-
-                            medal = '🥈';
-
-                        }
-
-                        else if(index === 2){
-
-                            medal = '🥉';
-
-                        }
-
-
-                        container.innerHTML +=
-                        `
-                            <div class="lb-row">
-
-                                <div class="lb-rank">
-
-                                    ${
-                                        medal ||
-                                        index + 1
-                                    }
-
-                                </div>
-
-
-                                <div class="lb-user">
-
-                                    <div class="lb-name">
-
-                                        ${escapeHtml(
-                                            name
-                                        )}
-
-                                    </div>
-
-
-                                    <div style="
-                                        color:#94a3b8;
-                                        font-size:9px;
-                                        margin-top:2px;
-                                    ">
-
-                                        ${
-                                            item.correct_count ??
-                                            0
-                                        }
-                                        सही /
-
-                                        ${
-                                            item.total_questions ??
-                                            0
-                                        }
-                                        प्रश्न
-
-                                    </div>
-
-                                </div>
-
-
-                                <div class="lb-score">
-
-                                    ${
-                                        Number(
-                                            item.score ??
-                                            0
-                                        ).toFixed(1)
-                                    }
-
-                                    अंक
-
-                                </div>
-
-                            </div>
-                        `;
-
-                    }
-                );
-
-            }
-        );
-
-
-    }catch(error){
-
-        console.error(
-            '❌ LEADERBOARD FETCH SYSTEM ERROR:',
-            error
-        );
-
-    }
-
+const containers=[
+document.getElementById('home-leaderboard'),
+document.getElementById('result-leaderboard')
+];
+
+try{
+const {data,error}=await supabaseClient
+.from('exam_leaderboard')
+.select(`
+id,
+username,
+set_name,
+score,
+correct_count,
+wrong_count,
+skipped_count,
+total_questions,
+created_at
+`)
+.ilike('set_name',activeSet)
+.order('score',{ascending:false});
+
+if(error){
+containers.forEach(container=>{
+if(container)container.innerHTML=`
+<div class="empty-lb">
+<i class="fa-solid fa-triangle-exclamation" style="color:#dc2626"></i>
+<br><br>Leaderboard load हुन सकेन।
+<br><small>${escapeHtml(error.message||'Database error')}</small>
+</div>`;
+});
+return;
 }
 
-
-/* =========================================================
-   MARK EXAM COMPLETED
-========================================================= */
-
-async function markExamCompleted(){
-
-    if(!currentUser){
-
-        return;
-
-    }
-
-
-    try{
-
-        const userRef =
-            db.collection('users')
-              .doc(
-                  currentUser.uid
-              );
-
-
-        await db.runTransaction(
-            async transaction => {
-
-                const snap =
-                    await transaction.get(
-                        userRef
-                    );
-
-
-                if(!snap.exists){
-
-                    return;
-
-                }
-
-
-                const data =
-                    snap.data() || {};
-
-
-                const current =
-                    Number(
-                        data.completedExams ??
-                        data.examsCompleted ??
-                        0
-                    );
-
-
-                const newCount =
-                    current + 1;
-
-
-                transaction.set(
-                    userRef,
-                    {
-
-                        completedExams:
-                            newCount,
-
-                        examsCompleted:
-                            newCount
-
-                    },
-                    {
-                        merge:true
-                    }
-                );
-
-
-                if(
-                    newCount >= 5
-                ){
-
-                    transaction.set(
-                        userRef,
-                        {
-
-                            badges:{
-                                exam_warrior:true
-                            }
-
-                        },
-                        {
-                            merge:true
-                        }
-                    );
-
-                }
-
-            }
-        );
-
-
-        console.log(
-            '🏅 Exam completion updated'
-        );
-
-
-    }catch(error){
-
-        console.error(
-            '❌ EXAM BADGE ERROR:',
-            error
-        );
-
-    }
-
+if(!data||!data.length){
+containers.forEach(container=>{
+if(container)container.innerHTML='<div class="empty-lb">🏆 यस सेटको leaderboard मा अझै record छैन।</div>';
+});
+return;
 }
 
-
-/* =========================================================
-   SHOW RESULT
-========================================================= */
-
-function showResult(result){
-
-    examScreen.classList.add(
-        'hidden'
-    );
-
-
-    resultScreen.classList.remove(
-        'hidden'
-    );
-
-
-    document.getElementById(
-        'timer-box'
-    ).classList.add(
-        'hidden'
-    );
-
-
-    document.getElementById(
-        'final-score'
-    ).innerText =
-        result.score;
-
-
-    document.getElementById(
-        'correct-count'
-    ).innerText =
-        result.correct;
-
-
-    document.getElementById(
-        'wrong-count'
-    ).innerText =
-        result.wrong;
-
-
-    document.getElementById(
-        'skipped-count'
-    ).innerText =
-        result.skipped;
-
-
-    let message =
-        'राम्रो प्रयास!';
-
-
-    if(
-        result.percentage >= 90
-    ){
-
-        message =
-            '🔥 उत्कृष्ट प्रदर्शन!';
-
-    }
-
-    else if(
-        result.percentage >= 80
-    ){
-
-        message =
-            '🎉 धेरै राम्रो प्रदर्शन!';
-
-    }
-
-    else if(
-        result.percentage >= 70
-    ){
-
-        message =
-            '👏 राम्रो प्रदर्शन!';
-
-    }
-
-    else if(
-        result.percentage >= 50
-    ){
-
-        message =
-            '💪 अझै अभ्यास गर्नुहोस्!';
-
-    }
-
-    else{
-
-        message =
-            '📚 अभ्यास जारी राख्नुहोस्!';
-
-    }
-
-
-    document.getElementById(
-        'result-message'
-    ).innerText =
-        message;
-
-
-    const rewardBox =
-        document.getElementById(
-            'reward-box'
-        );
-
-
-    if(practiceMode){
-
-        rewardBox.innerHTML =
-        `
-            📚 <b>Practice Mode</b><br>
-            Practice mode मा coins reward दिइँदैन।
-        `;
-
-    }
-
-    else if(
-        result.earnedCoins > 0
-    ){
-
-        rewardBox.innerHTML =
-        `
-            🎁 तपाईंले
-            <b>${result.earnedCoins} 🪙 coins</b>
-            कमाउनुभयो!
-        `;
-
-    }
-
-    else{
-
-        rewardBox.innerHTML =
-        `
-            📚 यो पटक reward threshold पुगेन।
-            अर्को पटक अझ राम्रो गर्नुहोस्!
-        `;
-
-    }
-
-
-    fetchLeaderboard();
-
-}
-
-
-/* =========================================================
-   REVIEW
-========================================================= */
-
-function openReviewModal(){
-
-    const container =
-        document.getElementById(
-            'review-container'
-        );
-
-
-    container.innerHTML = '';
-
-
-    examQuestions.forEach(
-        (q,index) => {
-
-            const answer =
-                userAnswers[index];
-
-
-            let statusClass =
-                '';
-
-
-            let statusText =
-                '';
-
-
-            if(
-                answer === null ||
-                answer === undefined
-            ){
-
-                statusClass =
-                    'review-skip';
-
-                statusText =
-                    '⏭️ छोडिएको';
-
-            }
-
-            else if(
-                answer ===
-                q.correctIndex
-            ){
-
-                statusClass =
-                    'review-correct';
-
-                statusText =
-                    '✅ सही';
-
-            }
-
-            else{
-
-                statusClass =
-                    'review-wrong';
-
-                statusText =
-                    '❌ गलत';
-
-            }
-
-
-            const userAnswerText =
-                answer !== null &&
-                answer !== undefined &&
-                q.options[answer]
-                    ? q.options[answer].text
-                    : 'उत्तर दिइएन';
-
-
-            const correctAnswerText =
-                q.correctIndex >= 0 &&
-                q.options[q.correctIndex]
-                    ? q.options[
-                        q.correctIndex
-                      ].text
-                    : 'Correct answer उपलब्ध छैन';
-
-
-            container.innerHTML +=
-            `
-                <div class="review-item">
-
-                    <div class="review-q">
-
-                        ${index + 1}.
-                        ${escapeHtml(
-                            q.question
-                        )}
-
-                    </div>
-
-
-                    <div class="${statusClass}">
-
-                        ${statusText}
-
-                    </div>
-
-
-                    <div style="
-                        margin-top:6px;
-                        color:#475569;
-                    ">
-
-                        तपाईंको उत्तर:
-
-                        <b>
-                            ${escapeHtml(
-                                userAnswerText
-                            )}
-                        </b>
-
-                    </div>
-
-
-                    <div style="
-                        margin-top:3px;
-                        color:#047857;
-                    ">
-
-                        सही उत्तर:
-
-                        <b>
-                            ${escapeHtml(
-                                correctAnswerText
-                            )}
-                        </b>
-
-                    </div>
-
-
-                    ${
-                        q.explanation
-                            ? `
-                                <div style="
-                                    margin-top:7px;
-                                    color:#64748b;
-                                    font-size:11px;
-                                ">
-
-                                    💡
-                                    ${escapeHtml(
-                                        q.explanation
-                                    )}
-
-                                </div>
-                              `
-                            : ''
-                    }
-
-                </div>
-            `;
-
-        }
-    );
-
-
-    document.getElementById(
-        'review-modal'
-    ).classList.add(
-        'show'
-    );
-
-}
-
-
-/* =========================================================
-   REPORT
-========================================================= */
-
-function openReportModal(){
-
-    reportQuestionIndex =
-        currentQuestionIndex;
-
-
-    document.getElementById(
-        'report-text'
-    ).value = '';
-
-
-    document.getElementById(
-        'report-modal'
-    ).classList.add(
-        'show'
-    );
-
-}
-
-
-async function submitReport(){
-
-    const text =
-        document.getElementById(
-            'report-text'
-        ).value.trim();
-
-
-    if(!text){
-
-        alert(
-            'कृपया report reason लेख्नुहोस्।'
-        );
-
-        return;
-
-    }
-
-
-    const question =
-        examQuestions[
-            reportQuestionIndex
-        ];
-
-
-    try{
-
-        const {
-            error
-        } =
-        await supabaseClient
-            .from(
-                'question_reports'
-            )
-            .insert([{
-
-                question:
-                    question?.question ||
-                    '',
-
-                question_id:
-                    question?.id ??
-                    null,
-
-                report:
-                    text,
-
-                username:
-                    firestoreUserName ||
-                    userEmail ||
-                    null,
-
-                topic:
-                    activeSet
-
-            }]);
-
-
-        if(error){
-
-            console.error(
-                '❌ REPORT ERROR:',
-                error
-            );
-
-
-            alert(
-                'Report save हुन सकेन।'
-            );
-
-
-            return;
-
-        }
-
-
-        alert(
-            '✅ Report पठाइयो। धन्यवाद!'
-        );
-
-
-        closeModal(
-            'report-modal'
-        );
-
-
-    }catch(error){
-
-        console.error(
-            '❌ REPORT SYSTEM ERROR:',
-            error
-        );
-
-
-        alert(
-            'Report पठाउँदा error भयो।'
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-function closeModal(id){
-
-    document
-        .getElementById(id)
-        .classList.remove(
-            'show'
-        );
-
-}
-
-
-function goLogin(){
-
-    window.location.href =
-        'login.html';
-
-}
-
-
-function goDashboard(){
-
-    window.location.href =
-        'dashboard.html';
-
-}
-
-
-/* =========================================================
-   PRINT / PDF
-========================================================= */
-
-function printResult(){
-
-    const original =
-        document.body.innerHTML;
-
-
-    document.body.innerHTML =
-    `
-        <div style="
-            max-width:700px;
-            margin:30px auto;
-            font-family:Arial,sans-serif;
-            padding:20px;
-        ">
-
-            <h1>
-                🇳🇵 LoksewaQuest
-            </h1>
-
-            <h2>
-                ${escapeHtml(
-                    displayNameSet
-                )}
-            </h2>
-
-            <hr>
-
-            <h3>
-                Score:
-                ${
-                    document.getElementById(
-                        'final-score'
-                    ).innerText
-                }
-            </h3>
-
-            <p>
-                सही:
-                ${
-                    document.getElementById(
-                        'correct-count'
-                    ).innerText
-                }
-            </p>
-
-            <p>
-                गलत:
-                ${
-                    document.getElementById(
-                        'wrong-count'
-                    ).innerText
-                }
-            </p>
-
-            <p>
-                छोडिएको:
-                ${
-                    document.getElementById(
-                        'skipped-count'
-                    ).innerText
-                }
-            </p>
-
-            <br>
-
-            <p>
-                Name:
-                ${escapeHtml(
-                    firestoreUserName ||
-                    'Anonymous'
-                )}
-            </p>
-
-            <p>
-                Email:
-                ${escapeHtml(
-                    userEmail
-                )}
-            </p>
-
-            <p>
-                Generated by LoksewaQuest
-            </p>
-
-        </div>
-    `;
-
-
-    window.print();
-
-
-    document.body.innerHTML =
-        original;
-
-
-    window.location.reload();
-
-}
-
-
-/* =========================================================
-   STARTUP
-========================================================= */
-
-document.addEventListener(
-    'DOMContentLoaded',
-    async () => {
-
-        /*
-         * Load leaderboard.
-         */
-
-        await fetchLeaderboard();
-
-
-        /*
-         * Load questions.
-         */
-
-        await loadQuestions();
-
-    }
+const resolvedData=await Promise.all(
+data.map(async item=>({
+...item,
+resolvedName:await resolveLeaderboardName(item)
+}))
 );
 
+containers.forEach(container=>{
+if(!container)return;
+
+container.innerHTML='';
+
+resolvedData.forEach((item,index)=>{
+let name=item.resolvedName||'Anonymous';
+
+if(name.length>20)name=name.substring(0,20)+'...';
+
+let medal='';
+if(index===0)medal='🥇';
+else if(index===1)medal='🥈';
+else if(index===2)medal='🥉';
+
+container.innerHTML+=`
+<div class="lb-row">
+<div class="lb-rank">${medal||index+1}</div>
+<div class="lb-user">
+<div class="lb-name">${escapeHtml(name)}</div>
+<div style="color:#94a3b8;font-size:9px;margin-top:2px">
+${item.correct_count??0} सही / ${item.total_questions??0} प्रश्न
+</div>
+</div>
+<div class="lb-score">${Number(item.score??0).toFixed(1)} अंक</div>
+</div>`;
+});
+});
+}catch(error){
+console.error('LEADERBOARD FETCH SYSTEM ERROR:',error);
+}
+}
+
+async function markExamCompleted(){
+if(!currentUser)return;
+
+try{
+const userRef=db.collection('users').doc(currentUser.uid);
+
+await db.runTransaction(async transaction=>{
+const snap=await transaction.get(userRef);
+if(!snap.exists)return;
+
+const data=snap.data()||{};
+const current=Number(data.completedExams??data.examsCompleted??0);
+const newCount=current+1;
+
+const update={
+completedExams:newCount,
+examsCompleted:newCount
+};
+
+if(newCount>=5){
+update.badges={exam_warrior:true};
+}
+
+transaction.set(userRef,update,{merge:true});
+});
+
+console.log('Exam completion updated');
+}catch(error){
+console.error('EXAM BADGE ERROR:',error);
+}
+}
+
+async function markMockExamAsCompleted(){
+if(!currentUser)return;
+
+try{
+const userRef=db.collection('users').doc(currentUser.uid);
+
+await db.runTransaction(async transaction=>{
+const snap=await transaction.get(userRef);
+
+if(!snap.exists){
+transaction.set(userRef,{
+mockExams:{
+[activeSet]:true
+}
+},{merge:true});
+return;
+}
+
+transaction.set(userRef,{
+mockExams:{
+[activeSet]:true
+}
+},{merge:true});
+});
+
+liveExamCompleted=true;
+console.log('✅ Mock exam marked completed:',activeSet);
+}catch(error){
+console.error('❌ MOCK EXAM COMPLETION MARK ERROR:',error);
+}
+}
+
+function showResult(result){
+examScreen.classList.add('hidden');
+resultScreen.classList.remove('hidden');
+document.getElementById('timer-box').classList.add('hidden');
+
+document.getElementById('final-score').innerText=result.score;
+document.getElementById('correct-count').innerText=result.correct;
+document.getElementById('wrong-count').innerText=result.wrong;
+document.getElementById('skipped-count').innerText=result.skipped;
+
+let message='राम्रो प्रयास!';
+
+if(result.percentage>=90)message='🔥 उत्कृष्ट प्रदर्शन!';
+else if(result.percentage>=80)message='🎉 धेरै राम्रो प्रदर्शन!';
+else if(result.percentage>=70)message='👏 राम्रो प्रदर्शन!';
+else if(result.percentage>=50)message='💪 अझै अभ्यास गर्नुहोस्!';
+else message='📚 अभ्यास जारी राख्नुहोस्!';
+
+document.getElementById('result-message').innerText=message;
+
+const rewardBox=document.getElementById('reward-box');
+
+if(practiceMode){
+rewardBox.innerHTML='📚 <b>Practice Mode</b><br>Practice mode मा coins reward दिइँदैन।';
+}else if(result.earnedCoins>0){
+rewardBox.innerHTML=`🎁 तपाईंले <b>${result.earnedCoins} 🪙 coins</b> कमाउनुभयो!`;
+}else{
+rewardBox.innerHTML='📚 यो पटक reward threshold पुगेन। अर्को पटक अझ राम्रो गर्नुहोस्!';
+}
+
+fetchLeaderboard();
+}
+
+function getQuestionStatus(index){
+const q=examQuestions[index];
+const answer=userAnswers[index];
+
+if(answer===null||answer===undefined)return'skipped';
+if(answer===q.correctIndex)return'correct';
+return'wrong';
+}
+
+function getStatusText(status){
+if(status==='correct')return'✅ सही';
+if(status==='wrong')return'❌ गलत';
+return'⏭️ छोडिएको';
+}
+
+function getStatusClass(status){
+if(status==='correct')return'review-correct';
+if(status==='wrong')return'review-wrong';
+return'review-skip';
+}
+
+function openReviewModal(){
+currentReviewFilter='all';
+updateReviewFilterButtons();
+renderReviewList('all');
+document.getElementById('review-modal').classList.add('show');
+}
+
+function openReviewWithFilter(filter){
+currentReviewFilter=filter;
+updateReviewFilterButtons();
+renderReviewList(filter);
+document.getElementById('review-modal').classList.add('show');
+}
+
+function filterReview(filter){
+currentReviewFilter=filter;
+updateReviewFilterButtons();
+renderReviewList(filter);
+}
+
+function updateReviewFilterButtons(){
+document.querySelectorAll('.review-filter').forEach(button=>{
+button.classList.toggle('active',button.dataset.filter===currentReviewFilter);
+});
+}
+
+function renderReviewList(filter){
+const container=document.getElementById('review-container');
+container.innerHTML='';
+
+const indexes=examQuestions
+.map((q,index)=>index)
+.filter(index=>filter==='all'||getQuestionStatus(index)===filter);
+
+if(!indexes.length){
+container.innerHTML='<div class="empty-lb">यस category मा प्रश्न छैन।</div>';
+return;
+}
+
+indexes.forEach(index=>{
+const q=examQuestions[index];
+const status=getQuestionStatus(index);
+const answer=userAnswers[index];
+
+const userAnswerText=
+answer!==null&&answer!==undefined&&q.options[answer]
+?q.options[answer].text
+:'उत्तर दिइएन';
+
+const correctAnswerText=
+q.correctIndex>=0&&q.options[q.correctIndex]
+?q.options[q.correctIndex].text
+:'Correct answer उपलब्ध छैन';
+
+const item=document.createElement('div');
+item.className='review-item';
+
+item.innerHTML=`
+<div class="review-q">${index+1}. ${escapeHtml(q.question)}</div>
+<div class="${getStatusClass(status)}">${getStatusText(status)}</div>
+<div style="margin-top:6px;color:#475569">
+तपाईंको उत्तर: <b>${escapeHtml(userAnswerText)}</b>
+</div>
+<div style="margin-top:3px;color:#047857">
+सही उत्तर: <b>${escapeHtml(correctAnswerText)}</b>
+</div>
+<div style="margin-top:8px;color:#5b21d6;font-size:10px;font-weight:800">
+<i class="fa-solid fa-hand-pointer"></i> पूरा question र सबै options हेर्न tap गर्नुहोस्
+</div>
+`;
+
+item.onclick=()=>openQuestionDetail(index);
+container.appendChild(item);
+});
+}
+
+function openQuestionDetail(index){
+const q=examQuestions[index];
+if(!q)return;
+
+const status=getQuestionStatus(index);
+const answer=userAnswers[index];
+const letters=['A','B','C','D','E','F'];
+
+document.getElementById('detail-title').innerText=`Question ${index+1}`;
+
+const container=document.getElementById('question-detail-container');
+
+let optionsHtml='';
+
+q.options.forEach((option,i)=>{
+let cls='';
+
+if(i===q.correctIndex){
+cls='correct';
+}else if(i===answer&&answer!==q.correctIndex){
+cls='user-wrong';
+}
+
+let tag='';
+
+if(i===q.correctIndex)tag=' ✓ सही उत्तर';
+if(i===answer&&answer!==q.correctIndex)tag=' ✗ तपाईंको उत्तर';
+
+optionsHtml+=`
+<div class="detail-option ${cls}">
+<span class="letter">${letters[i]||i+1}.</span>
+${escapeHtml(option.text)}
+${tag?`<b>${escapeHtml(tag)}</b>`:''}
+</div>`;
+});
+
+const userAnswerText=
+answer!==null&&answer!==undefined&&q.options[answer]
+?q.options[answer].text
+:'उत्तर दिइएन';
+
+const correctAnswerText=
+q.correctIndex>=0&&q.options[q.correctIndex]
+?q.options[q.correctIndex].text
+:'Correct answer उपलब्ध छैन';
+
+container.innerHTML=`
+<div style="font-size:15px;font-weight:800;line-height:1.65;margin-bottom:14px">
+${escapeHtml(q.question)}
+</div>
+
+<div class="${getStatusClass(status)}" style="font-size:12px;font-weight:800;margin-bottom:12px">
+${getStatusText(status)}
+</div>
+
+<div style="font-size:11px;font-weight:800;color:#64748b;margin-bottom:5px">
+सबै विकल्प
+</div>
+
+${optionsHtml}
+
+<div style="margin-top:14px;padding:11px;border-radius:12px;background:#f8fafc;font-size:11px;line-height:1.6">
+<div>तपाईंको उत्तर: <b>${escapeHtml(userAnswerText)}</b></div>
+<div style="margin-top:4px;color:#047857">सही उत्तर: <b>${escapeHtml(correctAnswerText)}</b></div>
+</div>
+
+${
+q.explanation
+?`<div style="margin-top:12px;padding:11px;border-radius:12px;background:#f5f3ff;color:#4c1d95;font-size:11px;line-height:1.6">
+💡 <b>Explanation</b><br>${escapeHtml(q.explanation)}
+</div>`
+:''
+}
+`;
+
+document.getElementById('question-detail-modal').classList.add('show');
+}
+
+function openReportModal(){
+reportQuestionIndex=currentQuestionIndex;
+document.getElementById('report-text').value='';
+document.getElementById('report-modal').classList.add('show');
+}
+
+async function submitReport(){
+const text=document.getElementById('report-text').value.trim();
+
+if(!text){
+alert('कृपया report reason लेख्नुहोस्।');
+return;
+}
+
+const question=examQuestions[reportQuestionIndex];
+
+try{
+const {error}=await supabaseClient
+.from('question_reports')
+.insert([{
+question:question?.question||'',
+question_id:question?.id??null,
+report:text,
+username:firestoreUserName||userEmail||null,
+topic:activeSet
+}]);
+
+if(error){
+console.error('REPORT ERROR:',error);
+alert('Report save हुन सकेन।');
+return;
+}
+
+alert('✅ Report पठाइयो। धन्यवाद!');
+closeModal('report-modal');
+}catch(error){
+console.error('REPORT SYSTEM ERROR:',error);
+alert('Report पठाउँदा error भयो।');
+}
+}
+
+function closeModal(id){
+document.getElementById(id).classList.remove('show');
+}
+
+function goLogin(){
+window.location.href='login.html';
+}
+
+function goDashboard(){
+window.location.href='dashboard.html';
+}
+
+function printResult(){
+const original=document.body.innerHTML;
+
+document.body.innerHTML=`
+<div style="max-width:700px;margin:30px auto;font-family:Arial,sans-serif;padding:20px">
+<h1>🇳🇵 LoksewaQuest</h1>
+<h2>${escapeHtml(displayNameSet)}</h2>
+<hr>
+<h3>Score: ${document.getElementById('final-score').innerText}</h3>
+<p>सही: ${document.getElementById('correct-count').innerText}</p>
+<p>गलत: ${document.getElementById('wrong-count').innerText}</p>
+<p>छोडिएको: ${document.getElementById('skipped-count').innerText}</p>
+<br>
+<p>Name: ${escapeHtml(firestoreUserName||'Anonymous')}</p>
+<p>Email: ${escapeHtml(userEmail)}</p>
+<p>Generated by LoksewaQuest</p>
+</div>
+`;
+
+window.print();
+document.body.innerHTML=original;
+window.location.reload();
+}
+
+document.addEventListener('DOMContentLoaded',async()=>{
+await fetchLeaderboard();
+await loadQuestions();
+});
 </script>
 
 </body>
-             </html>
+</html>
