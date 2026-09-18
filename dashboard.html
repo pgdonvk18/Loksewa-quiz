@@ -1831,7 +1831,7 @@
 
 
           <i class="fa-solid fa-chevron-right"
-             style="font-size:10px;color:#94a3bf;">
+             style="font-size:10px;color:#94a3b8;">
           </i>
 
         </a>
@@ -2077,7 +2077,6 @@
 
 
           </div>
-
 
         </div>
 
@@ -2364,7 +2363,9 @@
       getFirestore,
       doc,
       getDoc,
-      runTransaction
+      collection,
+      runTransaction,
+      serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
@@ -2418,7 +2419,7 @@
 
 
     const SUPABASE_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZWRlZGtkiaHJndXZ1cnB4cSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzg5MDE4NjYyLCJleHAiOjIxMDQ1OTQ2NjJ9.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
 
 
     const supabase =
@@ -2562,11 +2563,9 @@
     }
 
 
-    // Page load हुँदा
     fetchLatestNotification();
 
 
-    // हरेक 30 seconds मा नयाँ notification check
     setInterval(
       fetchLatestNotification,
       30000
@@ -2631,10 +2630,9 @@
 
 
     /* ==================================================
-       DAILY LOGIN REWARD
-       +5 COINS ONCE PER NEPAL CALENDAR DAY
+       GET NEPAL DATE
+       Nepal Calendar Day = UTC+5:45
     ================================================== */
-
 
     function getNepalDate() {
 
@@ -2657,6 +2655,24 @@
 
 
 
+    /* ==================================================
+       DAILY LOGIN REWARD
+
+       +5 Coins once per Nepal calendar day
+
+       Also creates:
+
+       coin_history
+          USER_ID
+             AUTO_ID
+
+       amount: "5"
+       created_at: serverTimestamp()
+       description: "Daily Reward"
+       source: "exam reward"
+       type: "earn"
+    ================================================== */
+
     async function giveDailyLoginReward(user) {
 
       try {
@@ -2670,6 +2686,10 @@
         }
 
 
+        /* =========================
+           USER DOCUMENT
+        ========================= */
+
         const userRef =
           doc(
             db,
@@ -2678,94 +2698,229 @@
           );
 
 
+        /* =========================
+           TODAY'S NEPAL DATE
+        ========================= */
+
         const today =
           getNepalDate();
 
 
-        let rewardGiven = false;
+        /*
+         * Create a NEW history document ID.
+         *
+         * Path:
+         * coin_history / USER_ID / AUTO_ID
+         */
+
+        const historyRef =
+          doc(
+            collection(
+              db,
+              "coin_history",
+              user.uid
+            )
+          );
 
 
-        await runTransaction(
-          db,
-          async (transaction) => {
+        /*
+         * Firestore transaction.
+         *
+         * This prevents:
+         * - duplicate reward on refresh
+         * - duplicate reward from multiple tabs
+         * - coin/history mismatch
+         */
 
-            const userSnap =
-              await transaction.get(
-                userRef
-              );
-
-
-            if (!userSnap.exists()) {
-
-              console.warn(
-                "User document does not exist."
-              );
-
-              return;
-
-            }
+        const result =
+          await runTransaction(
+            db,
+            async (transaction) => {
 
 
-            const userData =
-              userSnap.data();
+              /* =========================
+                 READ USER
+              ========================= */
+
+              const userSnap =
+                await transaction.get(
+                  userRef
+                );
 
 
-            const lastDailyLogin =
-              userData.lastDailyLogin || "";
+              if (!userSnap.exists()) {
 
+                console.warn(
+                  "User document does not exist."
+                );
 
-            /*
-             * Already received today's reward
-             */
-
-            if (
-              lastDailyLogin === today
-            ) {
-
-              rewardGiven = false;
-
-              return;
-
-            }
-
-
-            /*
-             * Current coins
-             */
-
-            const currentCoins =
-              Number(
-                userData.coins || 0
-              );
-
-
-            /*
-             * Give +5
-             */
-
-            transaction.update(
-              userRef,
-              {
-
-                coins:
-                  currentCoins + 5,
-
-                lastDailyLogin:
-                  today
+                return {
+                  rewarded: false,
+                  coins: 0
+                };
 
               }
-            );
 
 
-            rewardGiven = true;
+              const userData =
+                userSnap.data();
 
-          }
+
+              /* =========================
+                 CURRENT COINS
+              ========================= */
+
+              const currentCoins =
+                Number(
+                  userData.coins || 0
+                );
+
+
+              /* =========================
+                 LAST DAILY LOGIN
+              ========================= */
+
+              const lastDailyLogin =
+                userData.lastDailyLogin || "";
+
+
+              /*
+               * Already rewarded today.
+               *
+               * IMPORTANT:
+               * No new history is created.
+               */
+
+              if (
+                lastDailyLogin === today
+              ) {
+
+                return {
+                  rewarded: false,
+                  coins: currentCoins
+                };
+
+              }
+
+
+              /* =========================
+                 NEW COIN BALANCE
+              ========================= */
+
+              const newCoins =
+                currentCoins + 5;
+
+
+
+              /* =========================
+                 UPDATE USER COINS
+              ========================= */
+
+              transaction.update(
+                userRef,
+                {
+
+                  coins:
+                    newCoins,
+
+                  lastDailyLogin:
+                    today
+
+                }
+              );
+
+
+
+              /* =========================
+                 SAVE COIN HISTORY
+              ========================= */
+
+              transaction.set(
+                historyRef,
+                {
+
+                  /*
+                   * Keep amount as STRING
+                   * exactly as requested.
+                   */
+
+                  amount:
+                    "5",
+
+
+                  /*
+                   * Firestore server timestamp.
+                   */
+
+                  created_at:
+                    serverTimestamp(),
+
+
+                  description:
+                    "Daily Reward",
+
+
+                  source:
+                    "exam reward",
+
+
+                  type:
+                    "earn"
+
+                }
+              );
+
+
+
+              /* =========================
+                 RETURN RESULT
+              ========================= */
+
+              return {
+
+                rewarded:
+                  true,
+
+                coins:
+                  newCoins
+
+              };
+
+            }
+          );
+
+
+        /* =========================
+           UPDATE COIN DISPLAY
+        ========================= */
+
+        updateCoinDisplay(
+          result.coins
         );
 
 
-        return {
-          rewarded: rewardGiven
-        };
+        /* =========================
+           SHOW POPUP ONLY WHEN
+           ACTUALLY REWARDED
+        ========================= */
+
+        if (
+          result.rewarded
+        ) {
+
+          setTimeout(
+            () => {
+
+              showDailyReward();
+
+            },
+            500
+          );
+
+        }
+
+
+        return result;
 
 
       } catch (error) {
@@ -2777,8 +2932,13 @@
 
 
         return {
-          rewarded: false,
-          error: error
+
+          rewarded:
+            false,
+
+          error:
+            error
+
         };
 
       }
@@ -2793,7 +2953,8 @@
 
     function showDailyReward() {
 
-      // Existing popup भए remove
+      /* Remove old popup if exists */
+
       const oldPopup =
         document.querySelector(
           '.reward-overlay'
@@ -2806,6 +2967,8 @@
 
       }
 
+
+      /* Create overlay */
 
       const overlay =
         document.createElement(
@@ -2872,11 +3035,17 @@
       );
 
 
-      document
-        .getElementById(
+      /* Close button */
+
+      const closeButton =
+        document.getElementById(
           'closeRewardBtn'
-        )
-        .addEventListener(
+        );
+
+
+      if (closeButton) {
+
+        closeButton.addEventListener(
           'click',
           () => {
 
@@ -2885,8 +3054,11 @@
           }
         );
 
+      }
 
-      // Overlay बाहिर click गर्दा पनि close
+
+      /* Click outside */
+
       overlay.addEventListener(
         'click',
         (event) => {
@@ -3043,7 +3215,9 @@
 
 
 
-          /* Greeting */
+          /* =========================
+             GREETING
+          ========================= */
 
           document.getElementById(
             'greetingName'
@@ -3052,7 +3226,9 @@
 
 
 
-          /* Initials */
+          /* =========================
+             INITIALS
+          ========================= */
 
           const initials =
             name
@@ -3100,36 +3276,9 @@
              DAILY LOGIN REWARD
           ================================================= */
 
-          const rewardResult =
-            await giveDailyLoginReward(
-              user
-            );
-
-
-          if (
-            rewardResult &&
-            rewardResult.rewarded
-          ) {
-
-            // Sidebar coin count +5
-            userCoins += 5;
-
-            updateCoinDisplay(
-              userCoins
-            );
-
-
-            // Show reward popup
-            setTimeout(
-              () => {
-
-                showDailyReward();
-
-              },
-              500
-            );
-
-          }
+          await giveDailyLoginReward(
+            user
+          );
 
 
         }
@@ -3252,4 +3401,4 @@
 
 
 </body>
-  </html>
+</html>
