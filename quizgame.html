@@ -25,8 +25,13 @@
     .room-badge { background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
     .header-btns { display: flex; gap: 8px; align-items: center; }
     .chat-toggle-btn, .lang-toggle-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-    .lang-toggle-btn { background: #059669; }
-    .lang-toggle-btn:hover { background: #047857; }
+    
+    /* Google Translate Widget Styling */
+    #google_translate_element { display: inline-block; }
+    .goog-te-combo { background: #059669; color: white; padding: 6px 10px; border-radius: 8px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; outline: none; }
+    .goog-logo-link, .goog-te-gadget span, div.goog-te-gadgetZone { display: none !important; }
+    .goog-te-gadget { color: transparent !important; font-size: 0 !important; }
+    body { top: 0 !important; }
 
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
     .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; position: relative; }
@@ -127,7 +132,8 @@
       <span class="room-badge" id="roomCodeDisplay">ROOM: ----</span>
     </div>
     <div class="header-btns">
-      <button class="lang-toggle-btn" id="langToggleBtn" onclick="toggleQuizLanguage()"><i class="fa-solid fa-language"></i> नेपाली (Active)</button>
+      <!-- Google Translate Widget Dropdown Holder -->
+      <div id="google_translate_element"></div>
       <button class="chat-toggle-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i> च्याट</button>
     </div>
   </div>
@@ -183,6 +189,18 @@
     </div>
   </div>
 
+  <!-- Google Translate Widget Script Initialization -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'ne',
+        includedLanguages: 'en,ne',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -223,10 +241,6 @@
     let isAnswerSubmitting = false;
     let coinAlreadyDistributed = false; 
 
-    // Persistent Language State ('ne' or 'en')
-    let currentQuizLang = 'ne';
-    let translationCache = {};
-
     const topicDisplayNames = {
       "all": "सबै विषयबाट मिक्स (All Topics Random)",
       "Nepal Geography": "नेपालको भूगोल",
@@ -237,45 +251,6 @@
       "iq": "Intelligent Quotient",
       "16thYojana": "१६ औँ योजना",
       "Budget2083-84": "आर्थिक वर्ष २०८३/८४ को बजेट"
-    };
-
-    async function translateText(text, targetLang) {
-      if (!text || targetLang === 'ne') return text;
-      
-      const cacheKey = `${text}_${targetLang}`;
-      if (translationCache[cacheKey]) {
-        return translationCache[cacheKey];
-      }
-
-      try {
-        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ne|en`);
-        const data = await res.json();
-        if (data && data.responseData && data.responseData.translatedText) {
-          const translated = data.responseData.translatedText;
-          translationCache[cacheKey] = translated;
-          return translated;
-        }
-      } catch (e) {
-        console.error("Translation error:", e);
-      }
-      return text;
-    }
-
-    window.toggleQuizLanguage = async function() {
-      currentQuizLang = (currentQuizLang === 'ne') ? 'en' : 'ne';
-      const btn = document.getElementById('langToggleBtn');
-      
-      if (currentQuizLang === 'en') {
-        btn.innerHTML = `<i class="fa-solid fa-language"></i> English (Active)`;
-        showToast("English translation activated for the quiz.");
-      } else {
-        btn.innerHTML = `<i class="fa-solid fa-language"></i> नेपाली (Active)`;
-        showToast("नेपाली भाषा सक्रिय गरियो।");
-      }
-
-      if (roomDataGlobal && roomDataGlobal.status === 'playing' && roomDataGlobal.currentQuestion) {
-        renderGameUI(roomDataGlobal);
-      }
     };
 
     async function distributeCoinsForGame(room) {
@@ -520,25 +495,15 @@
         let currentQCount = room.questionCount || 1;
         let currentRoundNum = Math.floor((currentQCount - 1) / playerCount) + 1;
 
-        let displayQuestionText = q.text;
-        let displayOptions = [...q.options];
-
-        if (currentQuizLang === 'en') {
-          displayQuestionText = await translateText(q.text, 'en');
-          for (let i = 0; i < displayOptions.length; i++) {
-            displayOptions[i] = await translateText(q.options[i], 'en');
-          }
-        }
-
         gameBody.innerHTML = `
           <div class="card question-box" id="activeQuestionCard">
             <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px;">
               <span>राउन्ड: ${currentRoundNum} / ${totalRounds} (प्रश्न: ${currentQCount}/${totalQuestionsPlanned})</span>
               <span>पालो: <b style="color: ${isMyTurn ? '#2563eb' : '#0f2a4a'}">${isMyTurn ? 'तपाईँको पालो!' : currentTurnPlayer.name + ' को पालो'}</b></span>
             </div>
-            <h4 id="questionTextRender">${escapeHTML(displayQuestionText)}</h4>
+            <h4 id="questionTextRender">${escapeHTML(q.text)}</h4>
             <div class="options-grid" id="optionsGrid">
-              ${displayOptions.map((opt, index) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${q.options[index].replace(/'/g, "\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
+              ${q.options.map((opt) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt.replace(/'/g, "\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
             </div>
             ${isMyTurn ? `
               <div class="action-row">
