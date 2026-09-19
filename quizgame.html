@@ -9,24 +9,14 @@
   
   <!-- KaTeX for Math & Science Formulars -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 
   <!-- Canvas Confetti for Fireworks/Celebration -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    
-    /* Google Translate fix: माथि आउने white bar, space र spinning loader हरूलाई हटाउन */
-    html { top: 0 !important; position: static !important; }
-    body { background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; top: 0 !important; position: static !important; margin-top: 0 !important; }
-    
-    .goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; border: none !important; }
-    #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
-    .goog-text-highlight { background-color: none !important; box-shadow: none !important; }
-    body > .skiptranslate { display: none !important; }
-    
-    /* Google Translate loading spinner fix */
-    .goog-te-spinner-pos, .goog-te-spinner { display: none !important; }
+    body { background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
     footer, .global-site-footer, #globalFooter {
       display: none !important;
@@ -34,40 +24,7 @@
 
     .game-header { background: #0f2a4a; color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 10; }
     .room-badge { background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
-    .header-btns { display: flex; gap: 8px; align-items: center; }
     .chat-toggle-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-    
-    #google_translate_element { display: none !important; } 
-    
-    .custom-lang-switcher {
-      display: flex;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      padding: 2px;
-      gap: 2px;
-      align-items: center;
-    }
-    .lang-option-btn {
-      background: transparent;
-      border: none;
-      color: #94a3b8;
-      padding: 4px 8px;
-      font-size: 11px;
-      font-weight: 700;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .lang-option-btn.active {
-      background: #2563eb;
-      color: white;
-      box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);
-    }
-    .lang-option-btn:hover:not(.active) {
-      color: white;
-      background: rgba(255, 255, 255, 0.08);
-    }
 
     .game-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
     .main-content { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px; position: relative; }
@@ -167,16 +124,7 @@
       <h3>Loksewa Arena</h3>
       <span class="room-badge" id="roomCodeDisplay">ROOM: ----</span>
     </div>
-    <div class="header-btns">
-      <div id="google_translate_element"></div>
-      
-      <div class="custom-lang-switcher" id="customLangSwitcher">
-        <button class="lang-option-btn active" id="btnLangNE" onclick="changeLanguage('ne')">नेपा</button>
-        <button class="lang-option-btn" id="btnLangEN" onclick="changeLanguage('en')">ENG</button>
-      </div>
-
-      <button class="chat-toggle-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i> च्याट</button>
-    </div>
+    <button class="chat-toggle-btn" onclick="toggleChat()"><i class="fa-solid fa-comments"></i> च्याट</button>
   </div>
 
   <div class="game-layout">
@@ -230,68 +178,6 @@
     </div>
   </div>
 
-  <script type="text/javascript">
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'ne',
-        includedLanguages: 'en,ne',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay: false
-      }, 'google_translate_element');
-    }
-
-    function changeLanguage(langCode) {
-      const btnNE = document.getElementById('btnLangNE');
-      const btnEN = document.getElementById('btnLangEN');
-
-      if (langCode === 'en') {
-        btnEN.classList.add('active');
-        btnNE.classList.remove('active');
-      } else {
-        btnNE.classList.add('active');
-        btnEN.classList.remove('active');
-      }
-
-      document.cookie = `googtrans=/ne/${langCode}; path=/; domain=${document.domain}`;
-      document.cookie = `googtrans=/ne/${langCode}; path=/;`;
-
-      const selectBox = document.querySelector('.goog-te-combo');
-      if (selectBox) {
-        selectBox.value = langCode;
-        selectBox.dispatchEvent(new Event('change'));
-        selectBox.dispatchEvent(new Event('input'));
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const match = document.cookie.match(new RegExp('(^| )googtrans=([^;]+)'));
-      if (match) {
-        const currentLang = match[2].split('/')[2];
-        if (currentLang === 'en') {
-          document.getElementById('btnLangEN')?.classList.add('active');
-          document.getElementById('btnLangNE')?.classList.remove('active');
-        } else {
-          document.getElementById('btnLangNE')?.classList.add('active');
-          document.getElementById('btnLangEN')?.classList.remove('active');
-        }
-      }
-
-      const observer = new MutationObserver(() => {
-        if (document.body.style.top && document.body.style.top !== '0px') {
-          document.body.style.setProperty('top', '0px', 'important');
-          document.body.style.setProperty('position', 'static', 'important');
-        }
-        if (document.documentElement.style.top && document.documentElement.style.top !== '0px') {
-          document.documentElement.style.setProperty('top', '0px', 'important');
-          document.documentElement.style.setProperty('position', 'static', 'important');
-        }
-      });
-      observer.observe(document.body, { attributes: true, attributeFilter: ['style'] });
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
-    });
-  </script>
-  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -330,6 +216,7 @@
     let questionTimerInterval = null;
     let lastProcessedNotificationId = null;
     let isAnswerSubmitting = false;
+    let coinAlreadyDistributed = false; // दोहोरो कोइन नजोडिनको लागि
 
     const topicDisplayNames = {
       "all": "सबै विषयबाट मिक्स (All Topics Random)",
@@ -343,25 +230,28 @@
       "Budget2083-84": "आर्थिक वर्ष २०८३/८४ को बजेट"
     };
 
+    // ==========================================
+    // कोइन वितरण गर्ने फिक्स गरिएको लजिक (प्रत्येक युजरले आफ्नो कोइन आफैँ अपडेट गर्ने)
+    // ==========================================
     async function distributeCoinsForGame(room) {
       if (!room.players || !Array.isArray(room.players)) return;
-      
-      const rewardKey = `coin_distributed_${roomId}`;
-      if (sessionStorage.getItem(rewardKey) === 'true') return;
+      if (coinAlreadyDistributed) return; // एउटै गेममा दुई पटक नजोडियोस्
+      coinAlreadyDistributed = true;
 
       let sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
       
       for (let i = 0; i < sortedPlayers.length; i++) {
         let player = sortedPlayers[i];
         
-        let calculatedCoins = 10; 
+        let calculatedCoins = 10; // बेस कोइन
         if (i === 0) {
-          calculatedCoins += 40; 
+          calculatedCoins += 40; // प्रथम हुनेलाई बोनस
         }
 
         let scoreEarned = player.score > 0 ? player.score : 0;
         let totalEarnedForThisPlayer = calculatedCoins + scoreEarned;
 
+        // यदि यो लूपमा आएको खेलाडी अहिलेको डिभाइस चलाइरहेको युजर हो भने, उसले आफ्नो कोइन सुरक्षित रूपमा अपडेट गर्छ
         if (player.uid && currentUser && player.uid === currentUser.uid) {
           try {
             const userRef = doc(db, "users", currentUser.uid);
@@ -376,25 +266,15 @@
               coins: currentCoins + totalEarnedForThisPlayer
             });
             
-            // सहि तरिकाले मिलाइएको कोइन इतिहास (Coin history) राख्ने कोड
-            const historyRef = collection(db, "users", currentUser.uid, "coin_history");
-            await addDoc(historyRef, {
-              amount: totalEarnedForThisPlayer,
-              source_topic: room.settings?.topic || 'all',
-              set_key: roomId,
-              type: "earned_quiz",
-              description: 'Multiplayer Quiz बाट प्राप्त',
-              created_at: serverTimestamp()
-            });
-            
-            sessionStorage.setItem(rewardKey, 'true');
             showToast(`🎉 बधाई छ! तपाईँले यो खेलबाट ${totalEarnedForThisPlayer} कोइन प्राप्त गर्नुभयो! (स्कोर्स: ${player.score})`);
+            console.log(`आफ्नो कोइन সফল रूपमा थपियो: ${totalEarnedForThisPlayer}`);
           } catch (err) {
             console.error("कोइन अपडेट गर्दा त्रुटी आयो:", err);
           }
         }
       }
     }
+    // ==========================================
 
     function renderMathContent(elementId) {
       setTimeout(() => {
@@ -466,8 +346,7 @@
 
         initGameListener();
         initChatListener();
-        
-        window.addEventListener('pagehide', handleUserLeave);
+        window.addEventListener('beforeunload', handleUserLeave);
       } else {
         window.location.href = "login.html";
       }
@@ -508,15 +387,18 @@
 
         roomDataGlobal = newRoomData;
         
+        // यदि गेम समाप्त भएको छ भने कोइन वितरण गर्ने फंक्सन कल गर्ने
         if (roomDataGlobal.status === 'finished') {
           await distributeCoinsForGame(roomDataGlobal);
+        } else {
+          coinAlreadyDistributed = false; // नयाँ खेल सुरु हुँदा रिसेट हुने
         }
 
         renderGameUI(roomDataGlobal);
       });
     }
 
-    async function renderGameUI(room) {
+    function renderGameUI(room) {
       const gameBody = document.getElementById('gameBody');
       const scoreInfo = document.getElementById('scoreboardInfo');
       const totalRounds = room.settings?.totalRounds || 3;
@@ -605,7 +487,7 @@
             </div>
             <h4 id="questionTextRender">${escapeHTML(q.text)}</h4>
             <div class="options-grid" id="optionsGrid">
-              ${q.options.map((opt) => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt.replace(/'/g, "\\\\OrCallback")}', false)">${escapeHTML(opt)}</button>`).join('')}
+              ${q.options.map(opt => `<button class="option-btn" ${!isMyTurn ? 'disabled' : ''} onclick="submitAnswer('${opt.replace(/'/g, "\\'")}', false)">${escapeHTML(opt)}</button>`).join('')}
             </div>
             ${isMyTurn ? `
               <div class="action-row">
@@ -678,8 +560,6 @@
       if (!roomDataGlobal || currentUser.uid !== roomDataGlobal.hostId) return;
       const roomRef = doc(db, "quiz_rooms", roomId);
       let resetPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
-
-      sessionStorage.removeItem(`coin_distributed_${roomId}`);
 
       try {
         await updateDoc(roomRef, {
@@ -903,8 +783,6 @@
       const firstQ = await fetchQuestionByTopic(chosenTopic, []);
       let initialPlayers = roomDataGlobal.players.map(p => ({ ...p, score: 0 }));
 
-      sessionStorage.removeItem(`coin_distributed_${roomId}`);
-
       try {
         await updateDoc(roomRef, {
           status: "playing",
@@ -1074,7 +952,7 @@
 
     document.getElementById('chatForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const input = document.getElementById('chatInputText');
+      const input = document.getElementById('chatText') || document.getElementById('chatInputText');
       const text = input.value.trim();
       if (!text || !currentUser) return;
       input.value = '';
@@ -1090,6 +968,7 @@
         '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
       }[tag] || tag));
     }
-  </script>
+  </script><script src="translator.js"></script>
+  <script src="components.js"></script>
 </body>
 </html>
