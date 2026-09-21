@@ -260,7 +260,7 @@ body {
 }
 
 /* =========================================================
-   MESSAGES
+   MESSAGES & BADGES STYLING
 ========================================================= */
 .message-row {
   display: flex;
@@ -290,11 +290,47 @@ body {
   align-items: flex-start;
 }
 
+.sender-name-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 5px 3px;
+}
+
 .sender-name {
   font-size: 9px;
   font-weight: 800;
   color: #64748b;
-  margin: 0 5px 3px;
+}
+
+/* User Badge Styles */
+.user-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 700;
+  gap: 2px;
+}
+
+.user-badge.admin {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.user-badge.moderator {
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+}
+
+.user-badge.vip {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fde68a;
 }
 
 .message-bubble {
@@ -1044,6 +1080,7 @@ const db = getFirestore(app);
 
 let currentUser = null;
 let currentUserName = "Aspirant";
+let currentUserBadge = "";
 let messagesLoaded = false;
 let heartbeatTimer = null;
 
@@ -1095,11 +1132,17 @@ onAuthStateChanged(auth, async function(user) {
   try {
     const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
-    if (userSnap.exists() && userSnap.data().name) {
-      currentUserName = userSnap.data().name;
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      if (userData.name) {
+        currentUserName = userData.name;
+      }
+      if (userData.badge) {
+        currentUserBadge = userData.badge; // 'admin', 'moderator', 'vip' आदि हुन सक्छ
+      }
     }
   } catch(error) {
-    console.log("Profile name error:", error);
+    console.log("Profile data error:", error);
   }
 
   loadRealtimeMessages();
@@ -1182,10 +1225,32 @@ function loadRealtimeMessages() {
       row.className = "message-row " + (isMe ? "sent" : "received");
 
       if (!isMe) {
+        // Sender info wrapper (Name + Badge)
+        const senderContainer = document.createElement("div");
+        senderContainer.className = "sender-name-container";
+
         const sender = document.createElement("span");
         sender.className = "sender-name";
         sender.textContent = data.senderName || "Aspirant";
-        row.appendChild(sender);
+        senderContainer.appendChild(sender);
+
+        // Check if badge exists in message data
+        if (data.badge) {
+          const badgeEl = document.createElement("span");
+          badgeEl.className = "user-badge " + data.badge;
+          
+          if (data.badge === 'admin') {
+            badgeEl.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Admin';
+          } else if (data.badge === 'moderator') {
+            badgeEl.innerHTML = '<i class="fa-solid fa-star"></i> Mod';
+          } else if (data.badge === 'vip') {
+            badgeEl.innerHTML = '<i class="fa-solid fa-crown"></i> VIP';
+          }
+          
+          senderContainer.appendChild(badgeEl);
+        }
+
+        row.appendChild(senderContainer);
       }
 
       const bubble = document.createElement("div");
@@ -1249,12 +1314,18 @@ chatForm.addEventListener("submit", async function(e) {
   sendBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
 
   try {
-    await addDoc(collection(db, "global_chat"), {
+    const messageData = {
       text: text,
       uid: currentUser.uid,
       senderName: currentUserName,
       createdAt: serverTimestamp()
-    });
+    };
+
+    if (currentUserBadge) {
+      messageData.badge = currentUserBadge;
+    }
+
+    await addDoc(collection(db, "global_chat"), messageData);
     messageInput.value = "";
     showToast("Message पठाइयो ✓");
   } catch(error) {
@@ -1284,12 +1355,16 @@ async function startPresence() {
 async function updatePresence(presenceRef) {
   if (!currentUser) return;
   try {
-    await setDoc(presenceRef, {
+    const presenceObj = {
       uid: currentUser.uid,
       name: currentUserName,
       lastSeen: serverTimestamp(),
       online: true
-    }, { merge: true });
+    };
+    if (currentUserBadge) {
+      presenceObj.badge = currentUserBadge;
+    }
+    await setDoc(presenceRef, presenceObj, { merge: true });
   } catch(error) {
     console.log("Presence update error:", error);
   }
