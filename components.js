@@ -1,3 +1,37 @@
+// युजरको नाम र ब्याजेज मिलाएर HTML फर्काउने Helper Function
+function renderNameWithBadge(userName, userData) {
+  if (!userName) userName = "User";
+  
+  // युजरले किनेको वा इक्विप गरेको ब्याजेज चेक गर्ने
+  let purchasedBadges = userData?.purchasedBadges || userData?.inventory || [];
+  let equipped = userData?.equippedBadge;
+  let activeBadgeKey = equipped || (Array.isArray(purchasedBadges) && purchasedBadges.length > 0 ? purchasedBadges[purchasedBadges.length - 1] : null);
+
+  if (!activeBadgeKey) {
+    // यदि कुनै ब्याजेज किनेको छैन भने केवल नाम मात्र फिर्ता गर्ने
+    return `<span class="name-with-badge"><span>${userName}</span></span>`;
+  }
+
+  // ब्याजेजको आइकन वा अक्षर छान्ने
+  let badgeContent = `<i class="fa-solid fa-crown"></i>`;
+  if (activeBadgeKey.includes("aspirant") || activeBadgeKey === "badge_aspirant") {
+    badgeContent = `<span style="font-weight:800; font-size:10px;">A</span>`;
+  } else if (activeBadgeKey.includes("pro") || activeBadgeKey === "badge_pro") {
+    badgeContent = `<span style="font-weight:800; font-size:10px;">P</span>`;
+  } else if (activeBadgeKey.includes("master") || activeBadgeKey === "badge_master") {
+    badgeContent = `<span style="font-weight:800; font-size:10px;">M</span>`;
+  }
+
+  // नाम र ब्याजेज जोडिएको HTML स्ट्रक्चर
+  return `
+    <span class="name-with-badge">
+      <span>${userName}</span>
+      <span class="inline-store-badge" title="Store Badge">${badgeContent}</span>
+    </span>
+  `;
+}
+
+
 // // Global Components (Chat, Footer, Floating Emojis, Room Config, Bottom Nav & Other Pages Header)
 (function() {
   // Inject CSS styles dynamically for all global components
