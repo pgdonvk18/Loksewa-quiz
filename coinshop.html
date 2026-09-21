@@ -214,9 +214,24 @@
         return;
       }
 
-      // Deduct coins using your shared helper by passing a negative value!
-      await triggerCoinAction(db, currentUserId, -cost, `Shop: ${itemName}`);
-      
+      import { buyShopItem } from './coinHelper.js';
+
+window.buyItem = async function(itemName, cost, itemKey) {
+    if (userCoins < cost) {
+        showToast("⚠️ पर्याप्त कोइन छैन!");
+        return;
+    }
+
+    // आइटम किन्ने र कोइन काट्ने
+    let success = await buyShopItem(db, currentUserId, cost, itemName, itemKey);
+    
+    if (success) {
+        userCoins -= cost;
+        document.getElementById('user-coin-balance').innerText = userCoins;
+        showToast(`🎉 ${itemName} सफल खरिद भयो!`);
+    }
+};
+
       // Update local tracking & UI
       userCoins -= cost;
       document.getElementById('user-coin-balance').innerText = userCoins;
