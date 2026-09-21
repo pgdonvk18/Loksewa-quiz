@@ -208,9 +208,9 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, browserSessionPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     
-    // Import helper function
+    // यदि अन्य वस्तुका लागि coinHelper प्रयोग भइरहेको छ भने त्यसलाई कायम राखिएको छ
     import { buyShopItem } from './coinHelper.js';
 
     const firebaseConfig = {
@@ -243,15 +243,20 @@
 
     async function fetchUserData() {
       if (!currentUserId) return;
-      const userDoc = await getDoc(doc(db, "users", currentUserId));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        userCoins = Number(data.coins || 0);
-        document.getElementById('user-coin-balance').innerText = userCoins;
+      try {
+        const userDocRef = doc(db, "users", currentUserId);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          userCoins = Number(data.coins || 0);
+          document.getElementById('user-coin-balance').innerText = userCoins;
 
-        // युजरले किनेका ब्याजेजहरू फेच गर्ने
-        purchasedBadgesList = data.purchasedBadges || data.inventory || [];
-        updateBadgeButtonsState();
+          // युजरले किनेका ब्याजेजहरूको सूची फेच गर्ने
+          purchasedBadgesList = data.purchasedBadges || data.inventory || [];
+          updateBadgeButtonsState();
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
       }
     }
 
@@ -268,8 +273,13 @@
       });
     }
 
-    // Global buyItem function linked with coinHelper
+    // Global buyItem function
     window.buyItem = async function(itemName, cost, itemKey) {
+      if (!currentUserId) {
+        showToast("⚠️ कृपया लगइन गर्नुहोस्!");
+        return;
+      }
+
       // यदि ब्याज हो र पहिले नै खरिद गरिसकेको छ भने रोक्ने
       if (itemKey.startsWith('badge_') && purchasedBadgesList.includes(itemKey)) {
         showToast("⚠️ तपाईंसँग यो ब्याज पहिले नै छ!");
@@ -281,15 +291,36 @@
         return;
       }
 
-      let success = await buyShopItem(db, currentUserId, cost, itemName, itemKey);
+      let success = false;
+
+      // यदि यो ब्याजेज हो भने सिधै Firestore मा update गर्ने (जसले गर्दा रिफ्रेस गर्दा पनि नहटोस्)
+      if (itemKey.startsWith('badge_')) {
+        try {
+          const userDocRef = doc(db, "users", currentUserId);
+          let newCoins = userCoins - cost;
+
+          await updateDoc(userDocRef, {
+            coins: newCoins,
+            purchasedBadges: arrayUnion(itemKey)
+          });
+
+          userCoins = newCoins;
+          purchasedBadgesList.push(itemKey);
+          success = true;
+        } catch (err) {
+          console.error("Badge purchase error:", err);
+          success = false;
+        }
+      } else {
+        // अन्य Perks हरूको लागि coinHelper प्रयोग हुनेछ
+        success = await buyShopItem(db, currentUserId, cost, itemName, itemKey);
+      }
       
       if (success) {
-        userCoins -= cost;
+        userCoins = Number(userCoins - (itemKey.startsWith('badge_') ? 0 : 0)); // coins already deducted above for badges
         document.getElementById('user-coin-balance').innerText = userCoins;
 
-        // यदि ब्याजेज हो भने लिस्टमा जोडेर बटन अपटेड गर्ने
         if (itemKey.startsWith('badge_')) {
-          purchasedBadgesList.push(itemKey);
           updateBadgeButtonsState();
         }
 
