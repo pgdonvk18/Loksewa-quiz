@@ -1,407 +1,2011 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-  <title>LoksewaQuest - User Profile</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background: #f8fafc; color: #1e293b; min-height: 100vh; padding-bottom: 90px; }
-
-    .profile-header {
-      background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
-      padding: 24px 20px 34px;
-      border-radius: 0 0 30px 30px;
-      color: white;
-      position: relative;
-      z-index: 1;
-    }
-
-    .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
-    .back-btn {
-      background: rgba(255,255,255,0.15); border: none; width: 40px; height: 40px; border-radius: 12px;
-      color: white; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; backdrop-filter: blur(5px);
-    }
-    .nav-bar h2 { font-size: 18px; font-weight: 700; }
-
-    .user-profile-card { display: flex; align-items: center; gap: 16px; }
-    .avatar-wrapper { position: relative; flex-shrink: 0; }
-    .avatar-container { width: 76px; height: 76px; border-radius: 50%; background: #ffffff; padding: 3px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
-    .avatar-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-    .avatar-edit-btn {
-      position: absolute; bottom: 0; right: 0; background: #2563eb; color: #ffffff; border: 2px solid #ffffff;
-      width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: pointer;
-    }
-    .avatar-edit-btn input { display: none; }
-
-    .user-meta { flex: 1; min-width: 0; }
-    .user-meta p { font-size: 13px; color: #cbd5e1; font-weight: 500; margin-bottom: 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    .name-badge-row {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 5px;
-    }
-
-    .name-input-box {
-      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px;
-      padding: 6px 12px; color: #ffffff; font-size: 17px; font-weight: 800; width: 150px; outline: none;
-    }
-    .name-input-box:disabled { background: transparent; border-color: transparent; padding: 0; width: auto; max-width: 180px; }
-
-    .user-badge-logo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      font-size: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-
-    .edit-name-btn, .save-name-btn {
-      background: rgba(255,255,255,0.2); border: none; width: 34px; height: 34px; border-radius: 8px;
-      color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .save-name-btn { background: #16a34a; display: none; }
-
-    .address-badge {
-      display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15);
-      padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #fbbf24;
-    }
-
-    .container { padding: 0 20px; }
-
-    .coin-display-card {
-      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-      border-radius: 20px; padding: 16px 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); border: 1px solid #fde68a;
-      display: flex; align-items: center; justify-content: space-between; margin-top: 18px; margin-bottom: 14px; position: relative; z-index: 2;
-    }
-    .coin-left { display: flex; align-items: center; gap: 13px; }
-    .coin-icon { width: 50px; height: 50px; border-radius: 14px; background: #ffffff; display: flex; align-items: center; justify-content: center; color: #f59e0b; font-size: 25px; box-shadow: 0 3px 12px rgba(245,158,11,0.18); }
-    .coin-info h4 { font-size: 11px; font-weight: 700; color: #92400e; text-transform: uppercase; margin-bottom: 2px; }
-    .coin-info span { font-size: 22px; font-weight: 800; color: #78350f; }
-    .redeem-btn { background: #d97706; color: white; border: none; padding: 8px 13px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
-
-    .achievements-section { background: #ffffff; border-radius: 20px; padding: 15px 0 12px; margin-bottom: 18px; border: 1px solid #f1f5f9; box-shadow: 0 6px 20px rgba(0,0,0,0.05); }
-    .achievement-header { padding: 0 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
-    .achievement-title { display: flex; align-items: center; gap: 9px; }
-    .achievement-title-icon { width: 34px; height: 34px; border-radius: 10px; background: #fff7ed; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 15px; }
-    .achievement-title h3 { font-size: 14px; font-weight: 800; color: #0f172a; }
-    .badge-count { background: #eff6ff; color: #2563eb; font-size: 10px; font-weight: 800; padding: 5px 9px; border-radius: 20px; }
-
-    .badge-scroller { display: flex; gap: 9px; overflow-x: auto; padding: 2px 16px 7px; scrollbar-width: none; }
-    .badge-scroller::-webkit-scrollbar { display: none; }
-
-    .badge-card { min-width: 105px; width: 105px; height: 128px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 10px 7px 8px; text-align: center; flex-shrink: 0; }
-    .badge-card.unlocked { background: linear-gradient(145deg,#ffffff,#fffdf7); border-color: #fde68a; box-shadow: 0 4px 13px rgba(245,158,11,.12); }
-    .badge-icon-wrap { width: 55px; height: 55px; margin: 0 auto 7px; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; background: #e2e8f0; color: #94a3b8; font-size: 23px; }
-    .badge-card.unlocked .badge-icon-wrap { background: linear-gradient(145deg,#f59e0b,#d97706); color: #fff; }
-    .badge-name { font-size: 10px; font-weight: 800; color: #334155; height: 25px; display: flex; align-items: center; justify-content: center; }
-    .badge-status { font-size: 8px; color: #16a34a; font-weight: 700; margin-top: 3px; }
-
-    .stats-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 18px; }
-    .stat-card { background: #ffffff; border-radius: 20px; padding: 17px; box-shadow: 0 6px 20px rgba(0,0,0,.05); border: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 10px; }
-    .stat-icon { width: 42px; height: 42px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .stat-icon.solved { background: #eff6ff; color: #2563eb; }
-    .stat-icon.time { background: #fff7ed; color: #ea580c; }
-    .stat-icon.accuracy { background: #f0fdf4; color: #16a34a; }
-    .stat-icon.rank { background: #fdf4ff; color: #c084fc; }
-    .stat-info h4 { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 3px; }
-    .stat-info span { font-size: 19px; font-weight: 800; color: #0f172a; }
-
-    .menu-card { background: #ffffff; border-radius: 20px; padding: 8px 16px; box-shadow: 0 6px 20px rgba(0,0,0,.05); border: 1px solid #f1f5f9; margin-bottom: 20px; }
-    .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 4px; text-decoration: none; border-bottom: 1px solid #f8fafc; color: #334155; font-size: 14px; font-weight: 600; }
-    .menu-item-left { display: flex; align-items: center; gap: 12px; }
-    .menu-item-left i { font-size: 16px; color: #64748b; width: 24px; text-align: center; }
-    .menu-item.logout { color: #dc2626; }
-
-    #toastMessage {
-      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #0f172a; color: #ffffff;
-      padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,.2);
-      z-index: 9999; display: none; text-align: center;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LoksewaQuest - User Profile</title>
+<link href="[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap)" rel="stylesheet">
+<link rel="stylesheet"
+href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+<style>
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+font-family: 'Plus Jakarta Sans', sans-serif;
+}
+body {
+background: #f8fafc;
+color: #1e293b;
+min-height: 100vh;
+padding-bottom: 90px;
+}
+/* =====================================================
+PROFILE HEADER
+====================================================== */
+.profile-header {
+background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
+padding: 24px 20px 34px;
+border-radius: 0 0 30px 30px;
+color: white;
+position: relative;
+z-index: 1;
+}
+.nav-bar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 25px;
+}
+.back-btn {
+background: rgba(255,255,255,0.15);
+border: none;
+width: 40px;
+height: 40px;
+border-radius: 12px;
+color: white;
+font-size: 16px;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+text-decoration: none;
+backdrop-filter: blur(5px);
+}
+.nav-bar h2 {
+font-size: 18px;
+font-weight: 700;
+}
+.user-profile-card {
+display: flex;
+align-items: center;
+gap: 16px;
+}
+.avatar-wrapper {
+position: relative;
+flex-shrink: 0;
+}
+.avatar-container {
+width: 76px;
+height: 76px;
+border-radius: 50%;
+background: #ffffff;
+padding: 3px;
+box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.avatar-container img {
+width: 100%;
+height: 100%;
+border-radius: 50%;
+object-fit: cover;
+}
+.avatar-edit-btn {
+position: absolute;
+bottom: 0;
+right: 0;
+background: #2563eb;
+color: #ffffff;
+border: 2px solid #ffffff;
+width: 26px;
+height: 26px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 11px;
+cursor: pointer;
+}
+.user-meta {
+flex: 1;
+min-width: 0;
+}
+.user-meta p {
+font-size: 13px;
+color: #cbd5e1;
+font-weight: 500;
+margin-bottom: 7px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+.address-badge {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+background: rgba(255,255,255,0.15);
+padding: 4px 10px;
+border-radius: 20px;
+font-size: 11px;
+font-weight: 600;
+color: #fbbf24;
+}
+.name-edit-wrapper {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 5px;
+}
+.name-input-box {
+background: rgba(255,255,255,0.15);
+border: 1px solid rgba(255,255,255,0.3);
+border-radius: 10px;
+padding: 6px 12px;
+color: #ffffff;
+font-size: 17px;
+font-weight: 800;
+width: 100%;
+outline: none;
+}
+.name-input-box:disabled {
+background: transparent;
+border-color: transparent;
+padding: 0;
+}
+.edit-name-btn,
+.save-name-btn {
+background: rgba(255,255,255,0.2);
+border: none;
+width: 34px;
+height: 34px;
+border-radius: 8px;
+color: #ffffff;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+.save-name-btn {
+background: #16a34a;
+display: none;
+}
+/* =====================================================
+MAIN CONTAINER
+====================================================== */
+.container {
+padding: 0 20px;
+margin-top: 0;
+}
+/* =====================================================
+COINS
+====================================================== */
+.coin-display-card {
+background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+border-radius: 20px;
+padding: 16px 18px;
+box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+border: 1px solid #fde68a;
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-top: 18px;
+margin-bottom: 14px;
+position: relative;
+z-index: 2;
+}
+.coin-left {
+display: flex;
+align-items: center;
+gap: 13px;
+}
+.coin-icon {
+width: 50px;
+height: 50px;
+border-radius: 14px;
+background: #ffffff;
+display: flex;
+align-items: center;
+justify-content: center;
+color: #f59e0b;
+font-size: 25px;
+box-shadow: 0 3px 12px rgba(245,158,11,0.18);
+}
+.coin-info h4 {
+font-size: 11px;
+font-weight: 700;
+color: #92400e;
+text-transform: uppercase;
+margin-bottom: 2px;
+}
+.coin-info span {
+font-size: 22px;
+font-weight: 800;
+color: #78350f;
+}
+.redeem-btn {
+background: #d97706;
+color: white;
+border: none;
+padding: 8px 13px;
+border-radius: 10px;
+font-size: 11px;
+font-weight: 700;
+cursor: pointer;
+}
+/* =====================================================
+ACHIEVEMENTS
+====================================================== */
+.achievements-section {
+background: #ffffff;
+border-radius: 20px;
+padding: 15px 0 12px;
+margin-bottom: 18px;
+border: 1px solid #f1f5f9;
+box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+overflow: hidden;
+}
+.achievement-header {
+padding: 0 16px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 11px;
+}
+.achievement-title {
+display: flex;
+align-items: center;
+gap: 9px;
+}
+.achievement-title-icon {
+width: 34px;
+height: 34px;
+border-radius: 10px;
+background: #fff7ed;
+color: #d97706;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 15px;
+}
+.achievement-title h3 {
+font-size: 14px;
+font-weight: 800;
+color: #0f172a;
+}
+.achievement-title p {
+font-size: 9px;
+color: #94a3b8;
+margin-top: 1px;
+}
+.badge-count {
+background: #eff6ff;
+color: #2563eb;
+font-size: 10px;
+font-weight: 800;
+padding: 5px 9px;
+border-radius: 20px;
+}
+/* =====================================================
+HORIZONTAL BADGE SCROLLER
+====================================================== */
+.badge-scroller {
+display: flex;
+gap: 9px;
+overflow-x: auto;
+padding: 2px 16px 7px;
+scroll-snap-type: x mandatory;
+-webkit-overflow-scrolling: touch;
+scrollbar-width: none;
+}
+.badge-scroller::-webkit-scrollbar {
+display: none;
+}
+/* =====================================================
+BADGE CARD
+====================================================== */
+.badge-card {
+min-width: 105px;
+width: 105px;
+height: 128px;
+background: #f8fafc;
+border: 1px solid #e2e8f0;
+border-radius: 16px;
+padding: 10px 7px 8px;
+text-align: center;
+flex-shrink: 0;
+scroll-snap-align: start;
+cursor: pointer;
+transition:
+transform .18s ease,
+box-shadow .18s ease;
+}
+.badge-card:active {
+transform: scale(.96);
+}
+.badge-card.unlocked {
+background: linear-gradient(145deg,#ffffff,#fffdf7);
+border-color: #fde68a;
+box-shadow:
+0 4px 13px rgba(245,158,11,.12);
+}
+.badge-card.locked {
+opacity: .75;
+}
+/* Badge icon */
+.badge-icon-wrap {
+width: 55px;
+height: 55px;
+margin: 0 auto 7px;
+border-radius: 16px;
+display: flex;
+align-items: center;
+justify-content: center;
+position: relative;
+background:
+linear-gradient(145deg,#f1f5f9,#e2e8f0);
+color: #94a3b8;
+font-size: 23px;
+}
+.badge-card.unlocked .badge-icon-wrap {
+color: #ffffff;
+background:
+linear-gradient(145deg,#f59e0b,#d97706);
+box-shadow:
+0 5px 14px rgba(245,158,11,.3);
+}
+.badge-card.blue.unlocked
+.badge-icon-wrap {
+background:
+linear-gradient(145deg,#3b82f6,#1d4ed8);
+}
+.badge-card.green.unlocked
+.badge-icon-wrap {
+background:
+linear-gradient(145deg,#22c55e,#15803d);
+}
+.badge-card.purple.unlocked
+.badge-icon-wrap {
+background:
+linear-gradient(145deg,#a855f7,#7e22ce);
+}
+.badge-card.red.unlocked
+.badge-icon-wrap {
+background:
+linear-gradient(145deg,#f43f5e,#be123c);
+}
+/* Check / Lock */
+.badge-check,
+.badge-lock {
+position: absolute;
+right: -3px;
+top: -3px;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+border: 2px solid #ffffff;
+display: flex;
+align-items: center;
+justify-content: center;
+color: #ffffff;
+font-size: 7px;
+}
+.badge-check {
+background: #16a34a;
+}
+.badge-lock {
+background: #64748b;
+}
+.badge-name {
+font-size: 10px;
+font-weight: 800;
+color: #334155;
+line-height: 1.25;
+height: 25px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.badge-status {
+font-size: 8px;
+color: #94a3b8;
+font-weight: 700;
+margin-top: 3px;
+}
+.badge-card.unlocked
+.badge-status {
+color: #16a34a;
+}
+.mini-progress {
+height: 4px;
+background: #e2e8f0;
+border-radius: 20px;
+margin: 5px 3px 0;
+overflow: hidden;
+}
+.mini-progress span {
+display: block;
+height: 100%;
+background: #94a3b8;
+border-radius: 20px;
+}
+.badge-card.unlocked
+.mini-progress span {
+background: #16a34a;
+}
+.swipe-hint {
+text-align: center;
+font-size: 8px;
+color: #cbd5e1;
+margin-top: 1px;
+}
+/* =====================================================
+STATS
+====================================================== */
+.stats-grid {
+display: grid;
+grid-template-columns:
+repeat(2,1fr);
+gap: 14px;
+margin-bottom: 18px;
+}
+.stat-card {
+background: #ffffff;
+border-radius: 20px;
+padding: 17px;
+box-shadow:
+0 6px 20px rgba(0,0,0,.05);
+border: 1px solid #f1f5f9;
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+.stat-icon {
+width: 42px;
+height: 42px;
+border-radius: 13px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 17px;
+}
+.stat-icon.solved {
+background: #eff6ff;
+color: #2563eb;
+}
+.stat-icon.time {
+background: #fff7ed;
+color: #ea580c;
+}
+.stat-icon.accuracy {
+background: #f0fdf4;
+color: #16a34a;
+}
+.stat-icon.rank {
+background: #fdf4ff;
+color: #c084fc;
+}
+.stat-info h4 {
+font-size: 11px;
+font-weight: 700;
+color: #64748b;
+text-transform: uppercase;
+margin-bottom: 3px;
+}
+.stat-info span {
+font-size: 19px;
+font-weight: 800;
+color: #0f172a;
+}
+/* =====================================================
+MENU
+====================================================== */
+.menu-card {
+background: #ffffff;
+border-radius: 20px;
+padding: 8px 16px;
+box-shadow:
+0 6px 20px rgba(0,0,0,.05);
+border: 1px solid #f1f5f9;
+margin-bottom: 20px;
+}
+.menu-item {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 14px 4px;
+text-decoration: none;
+border-bottom:
+1px solid #f8fafc;
+color: #334155;
+font-size: 14px;
+font-weight: 600;
+}
+.menu-item:last-child {
+border-bottom: none;
+}
+.menu-item-left {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+.menu-item-left i {
+font-size: 16px;
+color: #64748b;
+width: 24px;
+text-align: center;
+}
+.menu-item.logout {
+color: #dc2626;
+}
+.menu-item.logout i {
+color: #dc2626;
+}
+/* =====================================================
+BADGE MODAL
+====================================================== */
+.badge-modal {
+position: fixed;
+inset: 0;
+background:
+rgba(15,23,42,.55);
+backdrop-filter: blur(5px);
+z-index: 9998;
+display: none;
+align-items: flex-end;
+justify-content: center;
+}
+.badge-modal.show {
+display: flex;
+}
+.badge-modal-box {
+width: 100%;
+max-width: 500px;
+background: #ffffff;
+border-radius:
+25px 25px 0 0;
+padding:
+22px 22px 30px;
+animation:
+badgeModalUp .22s ease;
+position: relative;
+}
+@keyframes badgeModalUp {
+from {
+transform: translateY(100%);
+}
+to {
+transform: translateY(0);
+}
+}
+.modal-close {
+position: absolute;
+right: 18px;
+top: 15px;
+width: 34px;
+height: 34px;
+border: none;
+border-radius: 50%;
+background: #f1f5f9;
+color: #64748b;
+cursor: pointer;
+}
+.modal-badge-icon {
+width: 75px;
+height: 75px;
+border-radius: 22px;
+margin:
+5px auto 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+background:
+linear-gradient(145deg,#f59e0b,#d97706);
+color: #ffffff;
+font-size: 31px;
+box-shadow:
+0 10px 25px
+rgba(245,158,11,.25);
+}
+.modal-badge-name {
+text-align: center;
+font-size: 19px;
+font-weight: 800;
+color: #0f172a;
+}
+.modal-badge-desc {
+text-align: center;
+color: #64748b;
+font-size: 12px;
+line-height: 1.5;
+margin:
+6px 20px 14px;
+}
+.modal-status {
+text-align: center;
+font-size: 11px;
+font-weight: 800;
+margin-bottom: 10px;
+}
+.modal-status.unlocked {
+color: #16a34a;
+}
+.modal-status.locked {
+color: #64748b;
+}
+.modal-progress-bg {
+height: 7px;
+background: #e2e8f0;
+border-radius: 20px;
+overflow: hidden;
+margin: 0 10px;
+}
+.modal-progress-fill {
+height: 100%;
+width: 0%;
+background:
+linear-gradient(
+90deg,
+#2563eb,
+#60a5fa
+);
+border-radius: 20px;
+}
+.modal-progress-text {
+text-align: center;
+font-size: 10px;
+color: #94a3b8;
+margin-top: 6px;
+font-weight: 700;
+}
+/* =====================================================
+BOTTOM NAV
+====================================================== */
+.bottom-nav {
+position: fixed;
+bottom: 0;
+left: 0;
+width: 100%;
+background: #ffffff;
+display: flex;
+justify-content: space-around;
+padding:
+10px 0 14px;
+box-shadow:
+0 -5px 20px
+rgba(0,0,0,.06);
+border-radius:
+20px 20px 0 0;
+z-index: 100;
+}
+.nav-link {
+display: flex;
+flex-direction: column;
+align-items: center;
+text-decoration: none;
+color: #94a3b8;
+font-size: 11px;
+font-weight: 600;
+gap: 3px;
+}
+.nav-link i {
+font-size: 18px;
+}
+.nav-link.active {
+color: #2563eb;
+}
+/* =====================================================
+TOAST
+====================================================== */
+#toastMessage {
+position: fixed;
+bottom: 90px;
+left: 50%;
+transform:
+translateX(-50%);
+background: #0f172a;
+color: #ffffff;
+padding:
+10px 20px;
+border-radius: 30px;
+font-size: 13px;
+font-weight: 600;
+box-shadow:
+0 4px 15px
+rgba(0,0,0,.2);
+z-index: 9999;
+display: none;
+text-align: center;
+white-space: nowrap;
+}
+</style>
 </head>
 <body>
-
-  <div id="toastMessage">Edited successfully</div>
-
-  <div class="profile-header">
-    <div class="nav-bar">
-      <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-      <h2>My Profile</h2>
-      <div style="width:40px;"></div>
-    </div>
-
-    <div class="user-profile-card">
-      <div class="avatar-wrapper">
-        <div class="avatar-container">
-          <img id="userAvatar" src="https://www.svgrepo.com/show/382109/male-avatar-boy-face-man-user-9.svg" alt="Profile Photo">
-        </div>
-        <button type="button" class="avatar-edit-btn" onclick="triggerPhotoUpload()">
-          <i class="fa-solid fa-pen"></i>
-        </button>
-        <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="handlePhotoChange(event)">
-      </div>
-
-      <div class="user-meta">
-        <div class="name-badge-row">
-          <input type="text" id="userNameInput" class="name-input-box" value="Loading..." disabled>
-          
-          <div id="user-purchased-badges" style="display: flex; gap: 4px; align-items: center;"></div>
-
-          <button type="button" class="edit-name-btn" id="editNameBtn" onclick="enableNameEdit()">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-          <button type="button" class="save-name-btn" id="saveNameBtn" onclick="saveNameUpdate()">
-            <i class="fa-solid fa-check"></i>
-          </button>
-        </div>
-
-        <p id="userEmail">fetching...</p>
-
-        <div class="address-badge">
-          <i class="fa-solid fa-location-dot"></i>
-          <span>नेपाल</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="coin-display-card">
-      <div class="coin-left">
-        <div class="coin-icon"><i class="fa-solid fa-coins"></i></div>
-        <div class="coin-info">
-          <h4>मेरो कोइन (Coins)</h4>
-          <span id="userCoinsDisplay">0</span>
-        </div>
-      </div>
-      <button class="redeem-btn" onclick="showToast('रिडिम फिचर छिट्टै आउँदैछ!')">रिडिम</button>
-    </div>
-
-    <div class="achievements-section">
-      <div class="achievement-header">
-        <div class="achievement-title">
-          <div class="achievement-title-icon"><i class="fa-solid fa-trophy"></i></div>
-          <div>
-            <h3>Achievements</h3>
-            <p>तपाईंका उपलब्धिहरू</p>
-          </div>
-        </div>
-        <div class="badge-count" id="badgeCount">0/8</div>
-      </div>
-      <div class="badge-scroller" id="badgeScroller"></div>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon solved"><i class="fa-solid fa-circle-check"></i></div>
-        <div class="stat-info">
-          <h4>Solved Questions</h4>
-          <span id="totalSolved">0</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon time"><i class="fa-solid fa-clock-rotate-left"></i></div>
-        <div class="stat-info">
-          <h4>Spent Time</h4>
-          <span id="spentTime">0 hrs</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon accuracy"><i class="fa-solid fa-bullseye"></i></div>
-        <div class="stat-info">
-          <h4>Accuracy</h4>
-          <span id="accuracyRate">0%</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon rank"><i class="fa-solid fa-award"></i></div>
-        <div class="stat-info">
-          <h4>Quiz Level</h4>
-          <span id="userRank">Aspirant</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="menu-card">
-      <a href="#" class="menu-item" onclick="enableNameEdit(); return false;">
-        <div class="menu-item-left"><i class="fa-solid fa-user-pen"></i><span>Edit Profile</span></div>
-        <i class="fa-solid fa-chevron-right" style="font-size:12px;color:#cbd5e1;"></i>
-      </a>
-      <a href="#" class="menu-item">
-        <div class="menu-item-left"><i class="fa-solid fa-shield-halved"></i><span>Change Password</span></div>
-        <i class="fa-solid fa-chevron-right" style="font-size:12px;color:#cbd5e1;"></i>
-      </a>
-      <a href="#" id="logoutBtn" class="menu-item logout">
-        <div class="menu-item-left"><i class="fa-solid fa-right-from-bracket"></i><span>Log Out</span></div>
-      </a>
-    </div>
-  </div>
-
-  <script src="components.js"></script>
-  <script>loadBottomNav('profile');</script>
-  <script src="main.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-      authDomain: "loksewaquest-227b6.firebaseapp.com",
-      projectId: "loksewaquest-227b6",
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",
-      messagingSenderId: "779234903809",
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    let currentUserId = null;
-
-    function showToast(message) {
-      const toast = document.getElementById("toastMessage");
-      toast.textContent = message;
-      toast.style.display = "block";
-      setTimeout(() => { toast.style.display = "none"; }, 2500);
-    }
-    window.showToast = showToast;
-
-    function renderUserPurchasedBadges(inventory = []) {
-      const container = document.getElementById("user-purchased-badges");
-      container.innerHTML = "";
-
-      let badgesHTML = "";
-      if (inventory.includes('badge_aspirant')) {
-        badgesHTML += `<span class="user-badge-logo" style="background: linear-gradient(135deg, #22c55e, #15803d); color: white;" title="Aspirant Badge"><i class="fa-solid fa-seedling"></i></span>`;
-      }
-      if (inventory.includes('badge_pro')) {
-        badgesHTML += `<span class="user-badge-logo" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white;" title="Pro Badge"><i class="fa-solid fa-bolt"></i></span>`;
-      }
-      if (inventory.includes('badge_master')) {
-        badgesHTML += `<span class="user-badge-logo" style="background: linear-gradient(135deg, #f59e0b, #b45309); color: white;" title="Master Badge"><i class="fa-solid fa-award"></i></span>`;
-      }
-      if (inventory.includes('badge_loksewa_king')) {
-        badgesHTML += `<span class="user-badge-logo" style="background: linear-gradient(135deg, #ec4899, #be185d); color: white;" title="Loksewa King"><i class="fa-solid fa-crown"></i></span>`;
-      }
-      container.innerHTML = badgesHTML;
-    }
-
-    function renderAchievements(userData) {
-      const badgeScroller = document.getElementById("badgeScroller");
-      badgeScroller.innerHTML = "";
-
-      const allBadges = [
-        { id: 'badge_aspirant', name: 'Aspirant', icon: 'fa-seedling' },
-        { id: 'badge_pro', name: 'Quiz Pro', icon: 'fa-bolt' },
-        { id: 'badge_master', name: 'Master', icon: 'fa-award' },
-        { id: 'badge_loksewa_king', name: 'Loksewa King', icon: 'fa-crown' },
-        { id: 'badge_streak_7', name: '7 Days Streak', icon: 'fa-fire' },
-        { id: 'badge_scorer_100', name: 'Centurion', icon: 'fa-star' },
-        { id: 'badge_speedy', name: 'Fast Fingers', icon: 'fa-stopwatch' },
-        { id: 'badge_expert', name: 'Expert Level', icon: 'fa-graduation-cap' }
-      ];
-
-      const inventory = userData.inventory || [];
-      const userBadges = userData.badges || [];
-      let unlockedCount = 0;
-
-      allBadges.forEach(badge => {
-        const isUnlocked = inventory.includes(badge.id) || userBadges.includes(badge.id);
-        if (isUnlocked) unlockedCount++;
-
-        const badgeCard = document.createElement('div');
-        badgeCard.className = `badge-card ${isUnlocked ? 'unlocked' : ''}`;
-        badgeCard.innerHTML = `
-          <div class="badge-icon-wrap">
-            <i class="fa-solid ${badge.icon}"></i>
-          </div>
-          <div class="badge-name">${badge.name}</div>
-          <div class="badge-status">${isUnlocked ? 'Unlocked' : 'Locked'}</div>
-        `;
-        badgeScroller.appendChild(badgeCard);
-      });
-
-      document.getElementById("badgeCount").textContent = `${unlockedCount}/${allBadges.length}`;
-    }
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-        return;
-      }
-      currentUserId = user.uid;
-      document.getElementById("userEmail").textContent = user.email || "No Email";
-
-      let userData = {};
-      const userDocRef = doc(db, "users", user.uid);
-
-      try {
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {
-          userData = userDocSnap.data();
-          
-          document.getElementById("userCoinsDisplay").textContent = userData.coins !== undefined ? Number(userData.coins) : 0;
-          
-          if (userData.name) {
-            document.getElementById("userNameInput").value = userData.name;
-          } else {
-            document.getElementById("userNameInput").value = user.displayName || user.email.split("@")[0];
-          }
-
-          if (userData.photoURL) {
-            document.getElementById("userAvatar").src = userData.photoURL;
-          }
-
-          renderUserPurchasedBadges(userData.inventory || []);
-          renderAchievements(userData);
-        }
-      } catch (err) {
-        console.error("Error loading user profile:", err);
-      }
-    });
-
-    window.enableNameEdit = function() {
-      const input = document.getElementById("userNameInput");
-      input.disabled = false;
-      input.focus();
-      document.getElementById("editNameBtn").style.display = "none";
-      document.getElementById("saveNameBtn").style.display = "flex";
-    };
-
-    window.saveNameUpdate = async function() {
-      const newName = document.getElementById("userNameInput").value.trim();
-      if (!newName) {
-        showToast("नाम खाली राख्न पाइँदैन।");
-        return;
-      }
-      if (!currentUserId) return;
-
-      try {
-        await updateDoc(doc(db, "users", currentUserId), { name: newName });
-        document.getElementById("userNameInput").disabled = true;
-        document.getElementById("saveNameBtn").style.display = "none";
-        document.getElementById("editNameBtn").style.display = "flex";
-        showToast("Edited successfully");
-      } catch (error) {
-        showToast("नाम अपडेट गर्न सकिएन।");
-      }
-    };
-  </script>
+<!-- TOAST -->
+<div id="toastMessage">
+Edited successfully
+</div>
+<!-- =====================================================
+PROFILE HEADER
+====================================================== -->
+<div class="profile-header">
+<div class="nav-bar">
+<a
+href="dashboard.html"
+class="back-btn"
+>
+<i class="fa-solid fa-arrow-left"></i>
+</a>
+<h2>My Profile</h2>
+<div style="width:40px;"></div>
+</div>
+<div class="user-profile-card">
+<!-- AVATAR -->
+<div class="avatar-wrapper">
+<div class="avatar-container">
+<img
+id="userAvatar"
+src="[https://www.svgrepo.com/show/382109/male-avatar-boy-face-man-user-9.svg](https://www.svgrepo.com/show/382109/male-avatar-boy-face-man-user-9.svg)"
+alt="Profile Photo"
+>
+</div>
+<button
+type="button"
+class="avatar-edit-btn"
+onclick="triggerPhotoUpload()"
+>
+<i class="fa-solid fa-pen"></i>
+</button>
+<input
+type="file"
+id="avatarFileInput"
+accept="image/*"
+style="display:none;"
+onchange="handlePhotoChange(event)"
+>
+</div>
+<!-- USER INFO -->
+<div class="user-meta">
+<div class="name-edit-wrapper">
+<!-- प्रोफाइल नामको अगाडि देखिने ब्याजको आइकन -->
+<div id="profileBadgeIcon" style="display: none; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(145deg,#f59e0b,#d97706); color: white; font-size: 12px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(245,158,11,0.3);">
+<i class="fa-solid fa-trophy"></i>
+</div>
+<input
+type="text"
+id="userNameInput"
+class="name-input-box"
+value="Loading..."
+disabled
+>
+<button
+type="button"
+class="edit-name-btn"
+id="editNameBtn"
+onclick="enableNameEdit()"
+>
+<i class="fa-solid fa-pen"></i>
+</button>
+<button
+type="button"
+class="save-name-btn"
+id="saveNameBtn"
+onclick="saveNameUpdate()"
+>
+<i class="fa-solid fa-check"></i>
+</button>
+</div>
+<p id="userEmail">
+fetching...
+</p>
+<div class="address-badge">
+<i class="fa-solid fa-location-dot"></i>
+<span>नेपाल</span>
+</div>
+</div>
+</div>
+</div>
+<!-- =====================================================
+MAIN CONTENT
+====================================================== -->
+<div class="container">
+<!-- ===================================================
+COINS
+==================================================== -->
+<div class="coin-display-card">
+<div class="coin-left">
+<div class="coin-icon">
+<i class="fa-solid fa-coins"></i>
+</div>
+<div class="coin-info">
+<h4>मेरो कोइन (Coins)</h4>
+<span id="userCoinsDisplay">
+0
+</span>
+</div>
+</div>
+<button
+class="redeem-btn"
+onclick="showToast('रिडिम फिचर छिट्टै आउँदैछ!')"
+>
+रिडिम
+</button>
+</div>
+<!-- ===================================================
+ACHIEVEMENTS
+==================================================== -->
+<div class="achievements-section">
+<div class="achievement-header">
+<div class="achievement-title">
+<div class="achievement-title-icon">
+<i class="fa-solid fa-trophy"></i>
+</div>
+<div>
+<h3>
+Achievements
+</h3>
+<p>
+तपाईंका उपलब्धिहरू
+</p>
+</div>
+</div>
+<div
+class="badge-count"
+id="badgeCount"
+>
+0/8
+</div>
+</div>
+<!-- HORIZONTAL BADGES -->
+<div
+class="badge-scroller"
+id="badgeScroller"
+>
+</div>
+<div class="swipe-hint">
+<i class="fa-solid fa-arrows-left-right"></i>
+Swipe to explore
+</div>
+</div>
+<!-- ===================================================
+STATS
+==================================================== -->
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-icon solved">
+<i class="fa-solid fa-circle-check"></i>
+</div>
+<div class="stat-info">
+<h4>
+Solved Questions
+</h4>
+<span id="totalSolved">
+0
+</span>
+</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon time">
+<i class="fa-solid fa-clock-rotate-left"></i>
+</div>
+<div class="stat-info">
+<h4>
+Spent Time
+</h4>
+<span id="spentTime">
+0 hrs
+</span>
+</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon accuracy">
+<i class="fa-solid fa-bullseye"></i>
+</div>
+<div class="stat-info">
+<h4>
+Accuracy
+</h4>
+<span id="accuracyRate">
+0%
+</span>
+</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon rank">
+<i class="fa-solid fa-award"></i>
+</div>
+<div class="stat-info">
+<h4>
+Quiz Level
+</h4>
+<span id="userRank">
+Aspirant
+</span>
+</div>
+</div>
+</div>
+<!-- ===================================================
+MENU
+==================================================== -->
+<div class="menu-card">
+<a
+href="#"
+class="menu-item"
+onclick="enableNameEdit(); return false;"
+>
+<div class="menu-item-left">
+<i class="fa-solid fa-user-pen"></i>
+<span>
+Edit Profile
+</span>
+</div>
+<i
+class="fa-solid fa-chevron-right"
+style="font-size:12px;color:#cbd5e1;"
+></i>
+</a>
+<a
+href="#"
+class="menu-item"
+>
+<div class="menu-item-left">
+<i class="fa-solid fa-shield-halved"></i>
+<span>
+Change Password
+</span>
+</div>
+<i
+class="fa-solid fa-chevron-right"
+style="font-size:12px;color:#cbd5e1;"
+></i>
+</a>
+<a
+href="#"
+id="logoutBtn"
+class="menu-item logout"
+>
+<div class="menu-item-left">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span>
+Log Out
+</span>
+</div>
+</a>
+</div>
+</div>
+<!-- =====================================================
+BADGE DETAIL MODAL
+====================================================== -->
+<div
+class="badge-modal"
+id="badgeModal"
+onclick="closeBadgeDetails(event)"
+> 
+<div
+class="badge-modal-box"
+onclick="event.stopPropagation()"
+>
+<button
+class="modal-close"
+onclick="closeBadgeDetails()"
+>
+<i class="fa-solid fa-xmark"></i>
+</button>
+<div
+class="modal-badge-icon"
+id="modalBadgeIcon"
+>
+<i class="fa-solid fa-trophy"></i>
+</div>
+<div
+class="modal-badge-name"
+id="modalBadgeName"
+>
+Badge
+</div>
+<div
+class="modal-badge-desc"
+id="modalBadgeDesc"
+>
+Badge description
+</div>
+<div
+class="modal-status locked"
+id="modalBadgeStatus"
+>
+Locked
+</div>
+<div class="modal-progress-bg">
+<div
+class="modal-progress-fill"
+id="modalProgressFill"
+></div>
+</div>
+<div
+class="modal-progress-text"
+id="modalProgressText"
+>
+0 / 100
+</div>
+</div>
+</div>
+<!-- =====================================================
+GLOBAL COMPONENTS
+====================================================== -->
+<script src="components.js"></script>
+<script>
+loadBottomNav('profile');
+</script>
+<script src="main.js"></script>
+<script src="[https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2)"></script>
+<!-- =====================================================
+FIREBASE
+====================================================== -->
+<script type="module">
+import {
+initializeApp
+} from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {
+getAuth,
+onAuthStateChanged,
+signOut,
+updateProfile
+} from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import {
+getFirestore,
+doc,
+getDoc,
+setDoc,
+updateDoc
+} from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+/* ===================================================
+FIREBASE CONFIG
+==================================================== */
+const firebaseConfig = {
+apiKey:
+"AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+authDomain:
+"loksewaquest-227b6.firebaseapp.com",
+projectId:
+"loksewaquest-227b6",
+storageBucket:
+"loksewaquest-227b6.firebasestorage.app",
+messagingSenderId:
+"779234903809",
+appId:
+"1:779234903809:web:dd0dd0ffb742e1c218bd00"
+};
+const app =
+initializeApp(firebaseConfig);
+const auth =
+getAuth(app);
+const db =
+getFirestore(app);
+/* ===================================================
+SUPABASE
+==================================================== */
+const SUPABASE_URL =
+"https://edyirdedkiarguvurpxq.supabase.co";
+const SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzIiwicmVmIjoiZWR5aXJkZWRraWFyZ3V2dXJweHF1IiwiaWF0IjoxNzg5MDE4NjYyLCJleHAiOjIxMDQ1OTQ2NjZ9.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+const supabase =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+let currentUserId = null;
+let currentBadgeState = {};
+let currentBadgeMetrics = {};
+/* ===================================================
+TOAST
+==================================================== */
+function showToast(message) {
+const toast =
+document.getElementById(
+"toastMessage"
+);
+toast.textContent =
+message;
+toast.style.display =
+"block";
+setTimeout(() => {
+toast.style.display =
+"none";
+}, 2500);
+}
+window.showToast =
+showToast;
+/* ===================================================
+BADGES
+==================================================== */
+const BADGES = [
+{
+id: "first_step",
+name: "First Step",
+nepali: "पहिलो कदम",
+icon: "fa-flag-checkered",
+color: "blue",
+metric: "solved",
+target: 1,
+description:
+"पहिलो प्रश्न solve गरेर LoksewaQuest यात्राको सुरुवात गर्नुहोस्।"
+},
+{
+id: "practice_starter",
+name: "Practice Starter",
+nepali: "अभ्यास सुरु",
+icon: "fa-book-open",
+color: "green",
+metric: "solved",
+target: 50,
+description:
+"50 वटा प्रश्न solve गरेपछि यो badge unlock हुन्छ।"
+},
+{
+id: "question_hunter",
+name: "Question Hunter",
+nepali: "प्रश्न शिकारी",
+icon: "fa-crosshairs",
+color: "red",
+metric: "solved",
+target: 100,
+description:
+"100 वटा प्रश्न solve गरेर Question Hunter बन्नुहोस्।"
+},
+{
+id: "knowledge_seeker",
+name: "Knowledge Seeker",
+nepali: "ज्ञान खोजी",
+icon: "fa-book",
+color: "purple",
+metric: "solved",
+target: 500,
+description:
+"500 वटा प्रश्न solve गरेपछि Knowledge Seeker badge unlock हुन्छ।"
+},
+{
+id: "question_master",
+name: "Question Master",
+nepali: "प्रश्न मास्टर",
+icon: "fa-crown",
+color: "blue",
+metric: "solved",
+target: 1000,
+description:
+"1,000 वटा प्रश्न solve गरेर Question Master बन्नुहोस्।"
+},
+{
+id: "coin_collector",
+name: "Coin Collector",
+nepali: "Coin Collector",
+icon: "fa-coins",
+color: "green",
+metric: "coins",
+target: 100,
+description:
+"100 coins जम्मा गरेपछि Coin Collector badge unlock हुन्छ।"
+},
+{
+id: "exam_warrior",
+name: "Exam Warrior",
+nepali: "परीक्षा योद्धा",
+icon: "fa-shield-halved",
+color: "red",
+metric: "exams",
+target: 5,
+description:
+"5 वटा Set Exam complete गरेपछि Exam Warrior badge unlock हुन्छ।"
+},
+{
+id: "consistency",
+name: "Consistency Pro",
+nepali: "निरन्तर साधक",
+icon: "fa-fire",
+color: "purple",
+metric: "streak",
+target: 7,
+description:
+"7 दिनको learning streak पूरा गरेपछि यो badge unlock हुन्छ।"
+}
+];
+/* ===================================================
+METRIC LABEL
+==================================================== */
+function getMetricLabel(metric) {
+if (metric === "solved")
+return "questions";
+if (metric === "coins")
+return "coins";
+if (metric === "exams")
+return "exams";
+if (metric === "streak")
+return "days";
+return "";
+}
+/* ===================================================
+PROCESS BADGES
+==================================================== */
+async function processBadges(
+userDocRef,
+userData,
+metrics
+) {
+const existing =
+userData.badges || {};
+const updated =
+{ ...existing };
+const firestoreUpdates = {};
+BADGES.forEach(badge => {
+const currentValue =
+Number(
+metrics[badge.metric] || 0
+);
+const existingBadge =
+existing[badge.id] || {};
+const alreadyUnlocked =
+existingBadge === true ||
+existingBadge.unlocked === true;
+const reached =
+currentValue >= badge.target;
+if (
+reached ||
+alreadyUnlocked
+) {
+const unlockData = {
+unlocked: true,
+progress:
+Math.min(
+currentValue,
+badge.target
+),
+target:
+badge.target,
+unlockedAt:
+existingBadge.unlockedAt ||
+new Date().toISOString()
+};
+updated[badge.id] =
+unlockData;
+const needsUpdate =
+existingBadge.unlocked !== true ||
+Number(existingBadge.progress || 0) !==
+unlockData.progress ||
+Number(existingBadge.target || 0) !==
+unlockData.target ||
+!existingBadge.unlockedAt;
+if (needsUpdate) {
+firestoreUpdates[
+badges.${badge.id}
+] = unlockData;
+}
+}
+else {
+const lockedData = {
+unlocked: false,
+progress:
+Math.min(
+currentValue,
+badge.target
+),
+target:
+badge.target
+};
+updated[badge.id] =
+lockedData;
+if (
+existingBadge.unlocked !== false ||
+Number(existingBadge.progress || 0) !==
+lockedData.progress ||
+Number(existingBadge.target || 0) !==
+lockedData.target
+) {
+firestoreUpdates[
+badges.${badge.id}
+] = lockedData;
+}
+}
+});
+if (
+Object.keys(firestoreUpdates).length > 0
+) {
+try {
+await updateDoc(
+userDocRef,
+firestoreUpdates
+);
+console.log(
+"Badges synchronized successfully."
+);
+}
+catch (error) {
+console.error(
+"Badge save error:",
+error
+);
+}
+}
+return updated;
+}
+/* ===================================================
+RENDER BADGES
+==================================================== */
+function renderBadges(
+badgeState,
+metrics
+) {
+const container =
+document.getElementById(
+"badgeScroller"
+);
+container.innerHTML = "";
+let unlockedCount = 0;
+let firstUnlockedBadge = null;
+BADGES.forEach(badge => {
+const saved =
+badgeState[badge.id] || {};
+const value =
+Number(
+metrics[badge.metric] || 0
+);
+const unlocked =
+saved.unlocked === true ||
+value >= badge.target;
+if (unlocked) {
+unlockedCount++;
+if (!firstUnlockedBadge) {
+firstUnlockedBadge = badge;
+}
+}
+const displayProgress =
+Math.min(
+value,
+badge.target
+);
+const progress =
+Math.min(
+100,
+Math.round(
+(displayProgress / badge.target) * 100
+)
+);
+const card =
+document.createElement(
+"div"
+);
+card.className =
+badge-card ${badge.color} ${ unlocked ? "unlocked" : "locked" };
+card.onclick =
+() => {
+openBadgeDetails(
+badge.id
+);
+};
+card.innerHTML = `
+<div class="badge-icon-wrap">
+<i class="fa-solid ${badge.icon}"></i>
+${
+unlocked
+?
+<span class="badge-check"> <i class="fa-solid fa-check"></i> </span>
+:
+<span class="badge-lock"> <i class="fa-solid fa-lock"></i> </span>
+}
+</div>
+<div class="badge-name">
+${badge.nepali}
+</div>
+<div class="badge-status">
+${
+unlocked
+? ✓ Earned ${badge.target}/${badge.target}
+: ${displayProgress}/${badge.target}
+}
+</div>
+<div class="mini-progress">
+<span
+style="width:${progress}%"
+></span>
+</div>
+`;
+container.appendChild(
+card
+);
+});
+document.getElementById(
+"badgeCount"
+).textContent =
+${unlockedCount}/${BADGES.length};
+// नामको अगाडि पहिलो अनलक भएको ब्याज देखाउने वा लुकाउने
+const profileBadgeElement = document.getElementById("profileBadgeIcon");
+if (firstUnlockedBadge) {
+profileBadgeElement.style.display = "flex";
+profileBadgeElement.innerHTML = <i class="fa-solid ${firstUnlockedBadge.icon}"></i>;
+profileBadgeElement.onclick = () => openBadgeDetails(firstUnlockedBadge.id);
+profileBadgeElement.style.cursor = "pointer";
+} else {
+profileBadgeElement.style.display = "none";
+}
+currentBadgeState =
+badgeState;
+currentBadgeMetrics =
+metrics;
+}
+/* ===================================================
+BADGE DETAILS
+==================================================== */
+window.openBadgeDetails =
+function(id) {
+const badge =
+BADGES.find(
+item => item.id === id
+);
+if (!badge)
+return;
+const saved =
+currentBadgeState[id] || {};
+const value =
+Number(
+currentBadgeMetrics[
+badge.metric
+] || 0
+);
+const unlocked =
+saved.unlocked === true ||
+value >= badge.target;
+const displayProgress =
+Math.min(
+value,
+badge.target
+);
+const progress =
+Math.min(
+100,
+Math.round(
+(displayProgress / badge.target) * 100
+)
+);
+document.getElementById(
+"modalBadgeIcon"
+).innerHTML =
+<i class="fa-solid ${badge.icon}"></i>;
+document.getElementById(
+"modalBadgeName"
+).textContent =
+${badge.nepali} · ${badge.name};
+document.getElementById(
+"modalBadgeDesc"
+).textContent =
+badge.description;
+const status =
+document.getElementById(
+"modalBadgeStatus"
+);
+if (unlocked) {
+status.textContent =
+"✓ BADGE UNLOCKED";
+status.className =
+"modal-status unlocked";
+}
+else {
+status.textContent =
+"🔒 LOCKED";
+status.className =
+"modal-status locked";
+}
+document.getElementById(
+"modalProgressFill"
+).style.width =
+${progress}%;
+document.getElementById(
+"modalProgressText"
+).textContent =
+${displayProgress} / ${badge.target} ${getMetricLabel(badge.metric)};
+document.getElementById(
+"badgeModal"
+).classList.add(
+"show"
+);
+};
+window.closeBadgeDetails =
+function(event) {
+if (
+event &&
+event.target !==
+document.getElementById(
+"badgeModal"
+)
+) {
+return;
+}
+document.getElementById(
+"badgeModal"
+).classList.remove(
+"show"
+);
+};
+/* ===================================================
+AUTH
+==================================================== */
+onAuthStateChanged(
+auth,
+async (user) => {
+if (!user) {
+window.location.href =
+"login.html";
+return;
+}
+currentUserId =
+user.uid;
+const userEmail =
+user.email ||
+"No Email";
+document.getElementById(
+"userEmail"
+).textContent =
+userEmail;
+let displayName =
+user.displayName ||
+userEmail.split("@")[0];
+let userData = {};
+const userDocRef =
+doc(
+db,
+"users",
+user.uid
+);
+try {
+const userDocSnap =
+await getDoc(
+userDocRef
+);
+if (
+userDocSnap.exists()
+) {
+userData =
+userDocSnap.data();
+const userCoins =
+userData.coins !== undefined
+? Number(userData.coins)
+: 0;
+document.getElementById(
+"userCoinsDisplay"
+).textContent =
+userCoins;
+if (userData.name) {
+displayName =
+userData.name;
+document.getElementById(
+"userNameInput"
+).value =
+userData.name;
+}
+else {
+document.getElementById(
+"userNameInput"
+).value =
+displayName;
+}
+if (
+userData.photoURL
+) {
+document.getElementById(
+"userAvatar"
+).src =
+userData.photoURL;
+}
+else if (
+user.photoURL
+) {
+document.getElementById(
+"userAvatar"
+).src =
+user.photoURL;
+}
+}
+else {
+document.getElementById(
+"userNameInput"
+).value =
+displayName;
+document.getElementById(
+"userCoinsDisplay"
+).textContent =
+"0";
+userData = {
+name:
+displayName,
+email:
+userEmail,
+coins:
+0,
+practiceSolved:
+0,
+badges:
+{}
+};
+await setDoc(
+userDocRef,
+userData,
+{
+merge: true
+}
+);
+}
+}
+catch (err) {
+console.error(
+"Firestore error:",
+err
+);
+document.getElementById(
+"userNameInput"
+).value =
+displayName;
+}
+try {
+let totalSolvedCount = 0;
+let totalTimeMinutes = 0;
+const {
+data: userStatData
+} =
+await supabase
+.from("user_stats")
+.select("*")
+.eq("id", user.uid)
+.maybeSingle();
+if (userStatData) {
+totalSolvedCount +=
+Number(
+userStatData.total_solved || 0
+);
+totalTimeMinutes +=
+Number(
+userStatData.time_spent_minutes || 0
+);
+}
+const {
+data: examLbData
+} =
+await supabase
+.from("exam_leaderboard")
+.select(
+"total_questions,id,username"
+);
+if (
+examLbData &&
+examLbData.length > 0
+) {
+examLbData.forEach(
+row => {
+if (
+row.id === user.uid ||
+row.username === displayName
+) {
+totalSolvedCount +=
+Number(
+row.total_questions || 0
+);
+}
+}
+);
+}
+document.getElementById(
+"totalSolved"
+).textContent =
+totalSolvedCount;
+const hours =
+(
+totalTimeMinutes / 60
+).toFixed(1);
+document.getElementById(
+"spentTime"
+).textContent =
+${hours} hrs;
+if (
+totalSolvedCount > 0
+) {
+document.getElementById(
+"accuracyRate"
+).textContent =
+"85%";
+}
+else {
+document.getElementById(
+"accuracyRate"
+).textContent =
+"0%";
+}
+const practiceSolved =
+Number(
+userData.practiceSolved || 0
+);
+const metrics = {
+solved:
+practiceSolved,
+coins:
+Number(
+userData.coins || 0
+),
+exams:
+Number(
+userData.completedExams ||
+userData.examsCompleted ||
+0
+),
+streak:
+Number(
+userData.streakDays ||
+0
+)
+};
+const finalBadgeState =
+await processBadges(
+userDocRef,
+userData,
+metrics
+);
+renderBadges(
+finalBadgeState,
+metrics
+);
+}
+catch (dbError) {
+console.error(
+"Supabase / stats error:",
+dbError
+);
+const practiceSolved =
+Number(
+userData.practiceSolved || 0
+);
+const fallbackMetrics = {
+solved:
+practiceSolved,
+coins:
+Number(
+userData.coins || 0
+),
+exams:
+Number(
+userData.completedExams ||
+userData.examsCompleted ||
+0
+),
+streak:
+Number(
+userData.streakDays ||
+0
+)
+};
+const fallbackBadgeState =
+await processBadges(
+userDocRef,
+userData,
+fallbackMetrics
+);
+renderBadges(
+fallbackBadgeState,
+fallbackMetrics
+);
+}
+}
+);
+/* ===================================================
+EDIT NAME
+==================================================== */
+window.enableNameEdit =
+function() {
+const input =
+document.getElementById(
+"userNameInput"
+);
+input.disabled =
+false;
+input.focus();
+input.select();
+document.getElementById(
+"editNameBtn"
+).style.display =
+"none";
+document.getElementById(
+"saveNameBtn"
+).style.display =
+"flex";
+};
+/* ===================================================
+SAVE NAME
+==================================================== */
+window.saveNameUpdate =
+async function() {
+const newName =
+document.getElementById(
+"userNameInput"
+).value.trim();
+if (!newName) {
+showToast(
+"नाम खाली राख्न पाइँदैन।"
+);
+return;
+}
+if (!currentUserId)
+return;
+try {
+if (auth.currentUser) {
+await updateProfile(
+auth.currentUser,
+{
+displayName:
+newName
+}
+);
+}
+const userDocRef =
+doc(
+db,
+"users",
+currentUserId
+);
+await updateDoc(
+userDocRef,
+{
+name:
+newName
+}
+);
+const nameInput =
+document.getElementById(
+"userNameInput"
+);
+nameInput.disabled =
+true;
+document.getElementById(
+"saveNameBtn"
+).style.display =
+"none";
+document.getElementById(
+"editNameBtn"
+).style.display =
+"flex";
+showToast(
+"Edited successfully"
+);
+}
+catch (error) {
+console.error(
+"नाम अपडेट गर्दा त्रुटि:",
+error
+);
+showToast(
+"नाम अपडेट गर्न सकिएन।"
+);
+}
+};
+/* ===================================================
+PHOTO UPLOAD
+==================================================== */
+window.triggerPhotoUpload =
+function() {
+document.getElementById(
+"avatarFileInput"
+).click();
+};
+window.handlePhotoChange =
+async function(event) {
+const file =
+event.target.files[0];
+if (!file)
+return;
+const reader =
+new FileReader();
+reader.onload =
+function(e) {
+const img =
+new Image();
+img.src =
+e.target.result;
+img.onload =
+async function() {
+const canvas =
+document.createElement(
+"canvas"
+);
+let width =
+img.width;
+let height =
+img.height;
+if (
+width > height
+) {
+if (
+width > 200
+) {
+height *=
+200 / width;
+width = 200;
+}
+}
+else {
+if (
+height > 200
+) {
+width *=
+200 / height;
+height = 200;
+}
+}
+canvas.width =
+width;
+canvas.height =
+height;
+const ctx =
+canvas.getContext(
+"2d"
+);
+ctx.drawImage(
+img,
+0,
+0,
+width,
+height
+);
+const compressedBase64 =
+canvas.toDataURL(
+"image/jpeg",
+.6
+);
+document.getElementById(
+"userAvatar"
+).src =
+compressedBase64;
+if (
+currentUserId
+) {
+try {
+const userDocRef =
+doc(
+db,
+"users",
+currentUserId
+);
+await updateDoc(
+userDocRef,
+{
+photoURL:
+compressedBase64
+}
+);
+showToast(
+"Edited successfully"
+);
+}
+catch (err) {
+console.error(
+"फोटो सेभ गर्दा त्रुटि:",
+err
+);
+showToast(
+"तस्वीर सेभ गर्न सकिएन।"
+);
+}
+}
+};
+};
+reader.readAsDataURL(file);
+};
+/* ===================================================
+LOGOUT
+==================================================== */
+document
+.getElementById("logoutBtn")
+.addEventListener(
+"click",
+(e) => {
+e.preventDefault();
+signOut(auth)
+.then(() => {
+window.location.href =
+"login.html";
+})
+.catch(error => {
+console.error(
+"Logout error:",
+error
+);
+});
+}
+);
+</script>
 </body>
 </html>
