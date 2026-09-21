@@ -1,28 +1,24 @@
 // coinHelper.js
-import { doc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { doc, updateDoc, increment, collection, addDoc, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 /**
- * Super simple coin helper for new pages
- * @param {Object} db - Your Firestore instance
- * @param {String} userId - Current user's Firebase UID
- * @param {Number} amount - Positive to earn, negative to spend (e.g., 10 or -25)
- * @param {String} title - Name of the activity (e.g., 'Math Practice', 'Final Exam')
+ * सामान्य कोइन बढाउन वा घटाउन (Earn or Spend)
  */
 export async function triggerCoinAction(db, userId, amount, title) {
     if (!userId) {
         console.warn("User not logged in, coin action skipped.");
-        return;
+        return false;
     }
 
     try {
         const userDocRef = doc(db, "users", userId);
         
-        // 1. Update balance
+        // 1. कोइन ब्यालेन्स अपडेट गर्ने
         await updateDoc(userDocRef, {
             coins: increment(amount)
         });
 
-        // 2. Log history
+        // 2. इतिहास (History) रेकर्ड राख्ने
         const historyRef = collection(db, "users", userId, "coin_history");
         await addDoc(historyRef, {
             amount: amount,
@@ -32,24 +28,25 @@ export async function triggerCoinAction(db, userId, amount, title) {
             created_at: serverTimestamp()
         });
 
-        console.log(`Coin action successful: ${amount} for ${title}`);
+        return true;
     } catch (err) {
         console.error("Coin action failed:", err);
+        return false;
     }
 }
-// coinHelper.js मा यो पनि थप्नुहोस्
-import { arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+/**
+ * शपबाट कुनै वस्तु वा ब्याजेज खरिद गर्दा कोइन काट्ने र इन्भेन्ट्रीमा थप्ने
+ */
 export async function buyShopItem(db, userId, cost, itemName, itemKey) {
     if (!userId) return false;
 
     try {
         const userDocRef = doc(db, "users", userId);
         
-        // 1. कोइन काट्ने र खरिद इतिहास रेकर्ड गर्ने (अगाडिको जस्तै)
+        // 1. कोइन काट्ने र inventory मा itemKey थप्ने (arrayUnion ले डुप्लिकेट बच्न मद्दत गर्छ)
         await updateDoc(userDocRef, {
             coins: increment(-cost),
-            // प्रयोगकर्ताको इन्भेन्ट्रीमा यो आइटम जोड्ने
             inventory: arrayUnion(itemKey)
         });
 
