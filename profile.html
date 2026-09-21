@@ -42,7 +42,6 @@
     .user-meta { flex: 1; min-width: 0; }
     .user-meta p { font-size: 13px; color: #cbd5e1; font-weight: 500; margin-bottom: 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    /* Name & Profile Badge Logos Styling */
     .name-badge-row {
       display: flex;
       align-items: center;
@@ -57,7 +56,6 @@
     }
     .name-input-box:disabled { background: transparent; border-color: transparent; padding: 0; width: auto; max-width: 180px; }
 
-    /* Purchased Badge Logos style */
     .user-badge-logo {
       display: inline-flex;
       align-items: center;
@@ -82,7 +80,6 @@
 
     .container { padding: 0 20px; }
 
-    /* Coins Card */
     .coin-display-card {
       background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
       border-radius: 20px; padding: 16px 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); border: 1px solid #fde68a;
@@ -94,7 +91,6 @@
     .coin-info span { font-size: 22px; font-weight: 800; color: #78350f; }
     .redeem-btn { background: #d97706; color: white; border: none; padding: 8px 13px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
-    /* Achievements & Stats */
     .achievements-section { background: #ffffff; border-radius: 20px; padding: 15px 0 12px; margin-bottom: 18px; border: 1px solid #f1f5f9; box-shadow: 0 6px 20px rgba(0,0,0,0.05); }
     .achievement-header { padding: 0 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
     .achievement-title { display: flex; align-items: center; gap: 9px; }
@@ -158,11 +154,9 @@
       </div>
 
       <div class="user-meta">
-        <!-- Name & PNG-like Badges Container -->
         <div class="name-badge-row">
           <input type="text" id="userNameInput" class="name-input-box" value="Loading..." disabled>
           
-          <!-- यहाँ किनेका ब्याजेजहरूको आकर्षक लोगो देखिनेछ -->
           <div id="user-purchased-badges" style="display: flex; gap: 4px; align-items: center;"></div>
 
           <button type="button" class="edit-name-btn" id="editNameBtn" onclick="enableNameEdit()">
@@ -288,13 +282,11 @@
     }
     window.showToast = showToast;
 
-    // युजरले किनेका ब्याजेजहरूको आकर्षक PNG जस्तो आइकन देखाउने फंक्सन
     function renderUserPurchasedBadges(inventory = []) {
       const container = document.getElementById("user-purchased-badges");
       container.innerHTML = "";
 
       let badgesHTML = "";
-
       if (inventory.includes('badge_aspirant')) {
         badgesHTML += `<span class="user-badge-logo" style="background: linear-gradient(135deg, #22c55e, #15803d); color: white;" title="Aspirant Badge"><i class="fa-solid fa-seedling"></i></span>`;
       }
@@ -307,8 +299,45 @@
       if (inventory.includes('badge_loksewa_king')) {
         badgesHTML += `<span class="user-badge-logo" style="background: linear-gradient(135deg, #ec4899, #be185d); color: white;" title="Loksewa King"><i class="fa-solid fa-crown"></i></span>`;
       }
-
       container.innerHTML = badgesHTML;
+    }
+
+    function renderAchievements(userData) {
+      const badgeScroller = document.getElementById("badgeScroller");
+      badgeScroller.innerHTML = "";
+
+      const allBadges = [
+        { id: 'badge_aspirant', name: 'Aspirant', icon: 'fa-seedling' },
+        { id: 'badge_pro', name: 'Quiz Pro', icon: 'fa-bolt' },
+        { id: 'badge_master', name: 'Master', icon: 'fa-award' },
+        { id: 'badge_loksewa_king', name: 'Loksewa King', icon: 'fa-crown' },
+        { id: 'badge_streak_7', name: '7 Days Streak', icon: 'fa-fire' },
+        { id: 'badge_scorer_100', name: 'Centurion', icon: 'fa-star' },
+        { id: 'badge_speedy', name: 'Fast Fingers', icon: 'fa-stopwatch' },
+        { id: 'badge_expert', name: 'Expert Level', icon: 'fa-graduation-cap' }
+      ];
+
+      const inventory = userData.inventory || [];
+      const userBadges = userData.badges || [];
+      let unlockedCount = 0;
+
+      allBadges.forEach(badge => {
+        const isUnlocked = inventory.includes(badge.id) || userBadges.includes(badge.id);
+        if (isUnlocked) unlockedCount++;
+
+        const badgeCard = document.createElement('div');
+        badgeCard.className = `badge-card ${isUnlocked ? 'unlocked' : ''}`;
+        badgeCard.innerHTML = `
+          <div class="badge-icon-wrap">
+            <i class="fa-solid ${badge.icon}"></i>
+          </div>
+          <div class="badge-name">${badge.name}</div>
+          <div class="badge-status">${isUnlocked ? 'Unlocked' : 'Locked'}</div>
+        `;
+        badgeScroller.appendChild(badgeCard);
+      });
+
+      document.getElementById("badgeCount").textContent = `${unlockedCount}/${allBadges.length}`;
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -327,23 +356,20 @@
         if (userDocSnap.exists()) {
           userData = userDocSnap.data();
           
-          // कोइन देखाउने
           document.getElementById("userCoinsDisplay").textContent = userData.coins !== undefined ? Number(userData.coins) : 0;
           
-          // नाम सेट गर्ने
           if (userData.name) {
             document.getElementById("userNameInput").value = userData.name;
           } else {
             document.getElementById("userNameInput").value = user.displayName || user.email.split("@")[0];
           }
 
-          // फोटो सेट गर्ने
           if (userData.photoURL) {
             document.getElementById("userAvatar").src = userData.photoURL;
           }
 
-          // इन्भेन्ट्रीबाट ब्याजेजहरू रेन्डर गर्ने
           renderUserPurchasedBadges(userData.inventory || []);
+          renderAchievements(userData);
         }
       } catch (err) {
         console.error("Error loading user profile:", err);
