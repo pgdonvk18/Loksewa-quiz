@@ -71,7 +71,7 @@
     .price-tag { font-size: 13px; font-weight: 800; color: #d97706; display: flex; align-items: center; gap: 4px; }
     
     .btn-buy {
-      background: #2563eb; color: #white; border: none; padding: 8px 16px; border-radius: 12px;
+      background: #2563eb; color: #ffffff; border: none; padding: 8px 16px; border-radius: 12px;
       font-size: 12px; font-weight: 700; cursor: pointer; transition: transform 0.1s;
     }
     .btn-buy:active { transform: scale(0.96); }
@@ -115,7 +115,7 @@
         <div class="shop-item-desc">अभ्यास गर्दा आउने सबै विज्ञापनहरू २४ घण्टाको लागि हटाउनुहोस्।</div>
         <div class="buy-row">
           <span class="price-tag"><i class="fa-solid fa-coins"></i> 50 कोइन</span>
-          <button class="btn-buy" onclick="buyItem('Ad-Free Pass', 50)">किन्नुहोस्</button>
+          <button class="btn-buy" onclick="buyItem('Ad-Free Pass', 50, 'ad_free')">किन्नुहोस्</button>
         </div>
       </div>
     </div>
@@ -128,7 +128,7 @@
         <div class="shop-item-desc">कठिन प्रश्नहरूमा तुरुन्तै स्मार्ट संकेतहरू (Hints) अनलक गर्नुहोस्।</div>
         <div class="buy-row">
           <span class="price-tag"><i class="fa-solid fa-coins"></i> 30 कोइन</span>
-          <button class="btn-buy" onclick="buyItem('AI Hint Booster', 30)">किन्नुहोस्</button>
+          <button class="btn-buy" onclick="buyItem('AI Hint Booster', 30, 'ai_hints')">किन्नुहोस्</button>
         </div>
       </div>
     </div>
@@ -141,7 +141,7 @@
         <div class="shop-item-desc">लिडरबोर्डमा तपाईंको नामको अगाडि विशेष सुनौलो क्राउन (Crown) देखाउनुहोस्।</div>
         <div class="buy-row">
           <span class="price-tag"><i class="fa-solid fa-coins"></i> 100 कोइन</span>
-          <button class="btn-buy" onclick="buyItem('Golden Leaderboard Badge', 100)">किन्नुहोस्</button>
+          <button class="btn-buy" onclick="buyItem('Golden Leaderboard Badge', 100, 'golden_badge')">किन्नुहोस्</button>
         </div>
       </div>
     </div>
@@ -154,7 +154,7 @@
         <div class="shop-item-desc">विशेष रंगीन एक्सेंटहरू (Neon Blue & Emerald) र थिम विकल्पहरू अनलक गर्नुहोस्।</div>
         <div class="buy-row">
           <span class="price-tag"><i class="fa-solid fa-coins"></i> 75 कोइन</span>
-          <button class="btn-buy" onclick="buyItem('Custom Theme Pro Pack', 75)">किन्नुहोस्</button>
+          <button class="btn-buy" onclick="buyItem('Custom Theme Pro Pack', 75, 'pro_theme')">किन्नुहोस्</button>
         </div>
       </div>
     </div>
@@ -168,8 +168,8 @@
     import { getAuth, onAuthStateChanged, browserSessionPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     
-    // Import your single clean helper file!
-    import { triggerCoinAction } from './coinHelper.js';
+    // Import helper functions properly at the very top
+    import { buyShopItem } from './coinHelper.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -207,35 +207,23 @@
       }
     }
 
-    // Expose buyItem globally so buttons can access it
-    window.buyItem = async function(itemName, cost) {
+    // Expose buyItem globally so HTML buttons can access it cleanly
+    window.buyItem = async function(itemName, cost, itemKey) {
       if (userCoins < cost) {
         showToast("⚠️ पर्याप्त कोइन छैन!");
         return;
       }
 
-      import { buyShopItem } from './coinHelper.js';
-
-window.buyItem = async function(itemName, cost, itemKey) {
-    if (userCoins < cost) {
-        showToast("⚠️ पर्याप्त कोइन छैन!");
-        return;
-    }
-
-    // आइटम किन्ने र कोइन काट्ने
-    let success = await buyShopItem(db, currentUserId, cost, itemName, itemKey);
-    
-    if (success) {
+      // Call the shared helper function
+      let success = await buyShopItem(db, currentUserId, cost, itemName, itemKey);
+      
+      if (success) {
         userCoins -= cost;
         document.getElementById('user-coin-balance').innerText = userCoins;
         showToast(`🎉 ${itemName} सफल खरिद भयो!`);
-    }
-};
-
-      // Update local tracking & UI
-      userCoins -= cost;
-      document.getElementById('user-coin-balance').innerText = userCoins;
-      showToast(`🎉 ${itemName} सफल खरिद भयो!`);
+      } else {
+        showToast("⚠️ खरिद गर्न असफल भयो। फेरि प्रयास गर्नुहोस्।");
+      }
     };
 
     function showToast(message) {
