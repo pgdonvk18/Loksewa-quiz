@@ -578,7 +578,6 @@ body {
 
 /* =========================================================
    CHAT INPUT
-   APP-SAFE VERSION
 ========================================================= */
 
 .chat-input-area {
@@ -1585,11 +1584,6 @@ body {
   }
 
 }
-
-
-/* =========================================================
-   EXTRA APP SAFETY
-========================================================= */
 
 button,
 input {
@@ -2625,7 +2619,7 @@ onAuthStateChanged(
       );
 
 
-    /* GET PROFILE NAME & BATCH/BADGE */
+    /* GET PROFILE NAME & BADGE */
 
     try {
 
@@ -2651,11 +2645,11 @@ onAuthStateChanged(
           currentUserName = userData.name;
         }
         
-        // purchasedBadges चेक गर्ने
+        // purchasedBadges array वा string भएपनि पहिलो वा मुख्य badge लिने
         if (userData.purchasedBadges) {
-          if (Array.isArray(userData.purchasedBadges)) {
-            currentUserBadge = userData.purchasedBadges.length > 0 ? userData.purchasedBadges[0] : "";
-          } else {
+          if (Array.isArray(userData.purchasedBadges) && userData.purchasedBadges.length > 0) {
+            currentUserBadge = userData.purchasedBadges[0]; // उदाहरणको लागि पहिलो वा मुख्य badge
+          } else if (typeof userData.purchasedBadges === 'string') {
             currentUserBadge = userData.purchasedBadges;
           }
         }
@@ -2683,28 +2677,28 @@ onAuthStateChanged(
 
 
 /* =========================================================
-   HELPER FUNCTION: GET BADGE LOGO / ICON
+   HELPER FUNCTION: DATABASE BADGE ID TO LOGO / ICON MAPPING
 ========================================================= */
-function getBadgeLogo(badgeName) {
-  if (!badgeName) return "";
+function getBadgeLogo(badgeId) {
+  if (!badgeId) return "";
   
-  const b = String(badgeName).toLowerCase();
+  const b = String(badgeId).trim().toLowerCase();
   
-  // ब्यागको नाम अनुसार लोगो (FontAwesome Icon वा Emoji) छान्ने
-  if (b.includes('vip') || b.includes('king') || b.includes('crown')) {
-    return '<i class="fa-solid fa-crown" style="color: #fbbf24;" title="VIP"></i>';
-  } else if (b.includes('pro') || b.includes('expert')) {
-    return '<i class="fa-solid fa-bolt" style="color: #3b82f6;" title="Pro"></i>';
-  } else if (b.includes('star') || b.includes('top')) {
-    return '<i class="fa-solid fa-star" style="color: #eab308;" title="Star"></i>';
-  } else if (b.includes('shield') || b.includes('mod')) {
-    return '<i class="fa-solid fa-shield-halved" style="color: #10b981;" title="Verified"></i>';
-  } else if (b.includes('fire') || b.includes('streak')) {
-    return '<i class="fa-solid fa-fire" style="color: #f97316;" title="Streak"></i>';
+  // तपाइँको database को badge ID अनुसार ठ्याक्कै म्याच गराइएको
+  if (b === 'badge_legend') {
+    return '<i class="fa-solid fa-crown" style="color: #fbbf24;" title="Legend"></i>';
+  } else if (b === 'badge_loksewa_king') {
+    return '<i class="fa-solid fa-chess-king" style="color: #f59e0b;" title="Loksewa King"></i>';
+  } else if (b === 'badge_master') {
+    return '<i class="fa-solid fa-graduation-cap" style="color: #3b82f6;" title="Master"></i>';
+  } else if (b === 'badge_pro') {
+    return '<i class="fa-solid fa-bolt" style="color: #8b5cf6;" title="Pro"></i>';
+  } else if (b === 'badge_aspirant') {
+    return '<i class="fa-solid fa-bullseye" style="color: #10b981;" title="Aspirant"></i>';
   }
   
-  // यदि अरु कुनै नाम छ भने सामान्य ब्याग आइकन देखाउने
-  return '<i class="fa-solid fa-certificate" style="color: #8b5cf6;" title="' + badgeName + '"></i>';
+  // यदि सूचीमा नभएको अरू कुनै badge ID आएमा default आइकन
+  return '<i class="fa-solid fa-certificate" style="color: #64748b;" title="' + badgeId + '"></i>';
 }
 
 
@@ -2993,14 +2987,12 @@ function loadRealtimeMessages() {
           let badgeLogoHtml = "";
           
           if (data.purchasedBadge) {
-            // ब्यागको नामको सट्टा लोगो/आइकन कल गर्ने
             const badgeIcon = getBadgeLogo(data.purchasedBadge);
-            badgeLogoHtml = `<span style="display:inline-flex; align-items:center; margin-left:3px;" title="${data.purchasedBadge}">${badgeIcon}</span>`;
+            badgeLogoHtml = `<span style="display:inline-flex; align-items:center; margin-right:4px;" title="${data.purchasedBadge}">${badgeIcon}</span>`;
           }
 
-          // नामको अगाडि होइन, पछाडि वा नियम अनुसार मिलाउन badgeLogoHtml लाई राख्न सकिन्छ। 
-          // यदि नामको अगाडि देखाउनु पर्छ भने: `${badgeLogoHtml} ${senderNameStr}`
-          sender.innerHTML = `${badgeLogoHtml} ${senderNameStr}`;
+          // नामको ठ्याक्क अगाडि लोगो देखाउन badgeLogoHtml लाई अगाडि राखिएको छ
+          sender.innerHTML = `${badgeLogoHtml}${senderNameStr}`;
           row.appendChild(sender);
 
 
@@ -3779,11 +3771,6 @@ function updateKeyboardOffset() {
     );
 
 
-  /*
-    Only move the input when
-    keyboard is actually visible.
-  */
-
   if (
     keyboardHeight > 120
   ) {
@@ -3863,10 +3850,6 @@ messageInput.addEventListener(
   }
 );
 
-
-/* =========================================================
-   PREVENT INPUT FROM BEING HIDDEN
-========================================================= */
 
 messageInput.addEventListener(
   "focus",
