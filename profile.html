@@ -285,13 +285,7 @@ body {
   text-align: center;
   flex-shrink: 0;
   scroll-snap-align: start;
-  cursor: pointer;
-  transition: transform .18s ease, box-shadow .18s ease;
 }
-.badge-card:active {
-  transform: scale(.96);
-}
-/* Unlocked (Completed) badges को लागि आकर्षक हरियो (Green) थिम */
 .badge-card.unlocked {
   background: linear-gradient(145deg, #f0fdf4, #dcfce7);
   border-color: #bbf7d0;
@@ -313,13 +307,11 @@ body {
   color: #94a3b8;
   font-size: 23px;
 }
-/* Unlocked badge icon र wrap हरियो बनाइएको */
 .badge-card.unlocked .badge-icon-wrap {
   color: #ffffff;
   background: linear-gradient(145deg, #22c55e, #15803d);
   box-shadow: 0 5px 14px rgba(34, 197, 94, 0.35);
 }
-
 .badge-check, .badge-lock {
   position: absolute;
   right: -3px;
@@ -572,9 +564,9 @@ body {
     </div>
     <div class="user-meta">
       <div class="name-edit-wrapper">
-        <!-- प्रोफाइल नामको अगाडि युजरको अनलक भएको पहिलो ब्याज (Badge) को आइकन देखाउने ठाउँ -->
-        <div id="profileBadgeIcon" style="display: none; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(145deg,#22c55e,#15803d); color: white; font-size: 12px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(34,197,94,0.3);">
-          <i class="fa-solid fa-trophy"></i>
+        <!-- यहाँ achievements होइन कि युजरले पसलबाट किनेको/सेलेक्ट गरेको ब्याजेज मात्र देखिनेछ -->
+        <div id="profilePurchasedBadge" style="display: none; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(145deg,#d97706,#b45309); color: white; font-size: 12px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(217,119,6,0.3);" title="Store Badge">
+          <i class="fa-solid fa-crown"></i>
         </div>
         <input type="text" id="userNameInput" class="name-input-box" value="Loading..." disabled>
         <button type="button" class="edit-name-btn" id="editNameBtn" onclick="enableNameEdit()"><i class="fa-solid fa-pen"></i></button>
@@ -781,23 +773,18 @@ function renderBadges(badgeState, metrics) {
   const container = document.getElementById("badgeScroller");
   container.innerHTML = "";
   let unlockedCount = 0;
-  let firstUnlockedBadge = null;
 
   BADGES.forEach(badge => {
     const saved = badgeState[badge.id] || {};
     const value = Number(metrics[badge.metric] || 0);
     const unlocked = saved.unlocked === true || value >= badge.target;
 
-    if (unlocked) {
-      unlockedCount++;
-      if (!firstUnlockedBadge) firstUnlockedBadge = badge;
-    }
+    if (unlocked) unlockedCount++;
 
     const displayProgress = Math.min(value, badge.target);
     const progress = Math.min(100, Math.round((displayProgress / badge.target) * 100));
 
     const card = document.createElement("div");
-    // Completed (unlocked) हरूलाई छुट्टै .unlocked क्लास जसले हरियो रङ दिन्छ
     card.className = `badge-card ${badge.color} ${unlocked ? "unlocked" : "locked"}`;
     card.onclick = () => { openBadgeDetails(badge.id); };
     card.innerHTML = `
@@ -813,20 +800,50 @@ function renderBadges(badgeState, metrics) {
   });
 
   document.getElementById("badgeCount").textContent = `${unlockedCount}/${BADGES.length}`;
-
-  // युजरको नामको छेउमा पहिलो अनलक भएको ब्याजबारे सेट गर्ने
-  const profileBadgeElement = document.getElementById("profileBadgeIcon");
-  if (firstUnlockedBadge) {
-    profileBadgeElement.style.display = "flex";
-    profileBadgeElement.innerHTML = `<i class="fa-solid ${firstUnlockedBadge.icon}"></i>`;
-    profileBadgeElement.onclick = () => openBadgeDetails(firstUnlockedBadge.id);
-    profileBadgeElement.style.cursor = "pointer";
-  } else {
-    profileBadgeElement.style.display = "none";
-  }
-
   currentBadgeState = badgeState;
   currentBadgeMetrics = metrics;
+}
+
+// शपबाट किनेको ब्याजेज प्रोफाइलको नामको छेउमा देखाउने लजिक
+function renderPurchasedBadgeOnProfile(userData) {
+  const profileBadgeEl = document.getElementById("profilePurchasedBadge");
+  
+  // coinHelper वा शपबाट युजरले किनेको ब्याजेज (जस्तै equippedBadge वा purchasedBadges मा स्टोर भएको) चेक गर्ने
+  // यहाँ user को डेटामा equippedBadge वा अन्तिम किनेको badge चेक गरिएको छ
+  let purchasedBadges = userData.purchasedBadges || userData.inventory || [];
+  let equipped = userData.equippedBadge;
+
+  // यदि equipped छैन तर purchasedBadges वा purchased items छ भने पहिलो किनेको देखाउने
+  let activeBadgeKey = equipped || (Array.isArray(purchasedBadges) && purchasedBadges.length > 0 ? purchasedBadges[purchasedBadges.length - 1] : null);
+
+  // यदि कुनै शपको ब्याजेज किनेको छ भने मात्र नामको छेउमा देखाउने
+  if (activeBadgeKey) {
+    let iconClass = "fa-crown";
+    let badgeText = "A";
+    
+    if (activeBadgeKey.includes("aspirant") || activeBadgeKey === "badge_aspirant") {
+      badgeText = "A";
+      iconClass = "";
+    } else if (activeBadgeKey.includes("pro") || activeBadgeKey === "badge_pro") {
+      badgeText = "P";
+      iconClass = "";
+    } else if (activeBadgeKey.includes("master") || activeBadgeKey === "badge_master") {
+      badgeText = "M";
+      iconClass = "";
+    } else if (activeBadgeKey.includes("king") || activeBadgeKey === "badge_loksewa_king") {
+      iconClass = "fa-crown";
+      badgeText = "";
+    }
+
+    profileBadgeEl.style.display = "flex";
+    if (iconClass) {
+      profileBadgeEl.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+    } else {
+      profileBadgeEl.innerHTML = `<span style="font-weight: 800; font-size: 13px;">${badgeText}</span>`;
+    }
+  } else {
+    profileBadgeEl.style.display = "none";
+  }
 }
 
 window.openBadgeDetails = function(id) {
@@ -889,10 +906,14 @@ onAuthStateChanged(auth, async (user) => {
       } else if (user.photoURL) {
         document.getElementById("userAvatar").src = user.photoURL;
       }
+
+      // शपबाट किनेको ब्याजेज प्रोफाइलको नामको छेउमा कल गर्ने
+      renderPurchasedBadgeOnProfile(userData);
+
     } else {
       document.getElementById("userNameInput").value = displayName;
       document.getElementById("userCoinsDisplay").textContent = "0";
-      userData = { name: displayName, email: userEmail, coins: 0, practiceSolved: 0, badges: {} };
+      userData = { name: displayName, email: userEmail, coins: 0, practiceSolved: 0, badges: {}, purchasedBadges: [] };
       await setDoc(userDocRef, userData, { merge: true });
     }
   } catch (err) {
