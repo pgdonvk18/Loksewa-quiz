@@ -57,15 +57,15 @@
     .leaderboard-item:last-child { border-bottom: none; }
     
     .item-rank { width: 32px; font-size: 14px; font-weight: 800; color: #64748b; text-align: center; }
-    .item-avatar { width: 42px; height: 42px; border-radius: 50%; background: #f1f5f9; margin-left: 10px; margin-right: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #475569; font-size: 14px; }
+    .item-avatar { width: 42px; height: 42px; border-radius: 50%; background: #f1f5f9; margin-left: 10px; margin-right: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #475569; font-size: 14px; flex-shrink: 0; }
     .item-info { flex: 1; min-width: 0; }
     .item-name { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .item-sub { font-size: 11px; color: #94a3b8; font-weight: 500; }
     .item-score { font-size: 15px; font-weight: 800; color: #2563eb; text-align: right; flex-shrink: 0; }
 
-    /* Badge Helper Styles */
+    /* Badge Helper Styles (Badge in front of name) */
     .name-with-badge { display: inline-flex; align-items: center; gap: 6px; vertical-align: middle; max-width: 100%; }
-    .inline-store-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(145deg, #d97706, #b45309); color: white; font-size: 10px; box-shadow: 0 2px 5px rgba(217, 119, 6, 0.3); flex-shrink: 0; }
+    .inline-store-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(145deg, #d97706, #b45309); color: white; font-size: 9px; box-shadow: 0 2px 5px rgba(217, 119, 6, 0.3); flex-shrink: 0; }
 
     /* Current User Highlighted Card */
     .current-user-card { 
@@ -121,7 +121,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -141,10 +141,10 @@
 
     let currentCategory = "questions"; // 'questions' or 'coins'
     let currentPeriod = "daily";
-    let currentUserUid = null;
-    let usersFirestoreCache = {}; // UID अनुसार Firestore को युजर प्रोफाइल क्यास गर्न
+    let currentUserName = null;
+    let usersFirestoreCache = {}; // नाम (lowercase) को आधारमा Firestore युजर प्रोफाइल म्याच गर्न
 
-    // Step 2: Global Helper Function to Render Name with Store Badge
+    // Helper Function: ब्याजेजलाई नामको अगाडि राख्ने
     function renderNameWithBadge(userName, userData) {
       if (!userName) userName = "Aspirant";
       
@@ -158,17 +158,18 @@
 
       let badgeContent = `<i class="fa-solid fa-crown"></i>`;
       if (activeBadgeKey.includes("aspirant") || activeBadgeKey === "badge_aspirant") {
-        badgeContent = `<span style="font-weight:800; font-size:10px;">A</span>`;
+        badgeContent = `<span style="font-weight:800; font-size:9px;">A</span>`;
       } else if (activeBadgeKey.includes("pro") || activeBadgeKey === "badge_pro") {
-        badgeContent = `<span style="font-weight:800; font-size:10px;">P</span>`;
+        badgeContent = `<span style="font-weight:800; font-size:9px;">P</span>`;
       } else if (activeBadgeKey.includes("master") || activeBadgeKey === "badge_master") {
-        badgeContent = `<span style="font-weight:800; font-size:10px;">M</span>`;
+        badgeContent = `<span style="font-weight:800; font-size:9px;">M</span>`;
       }
 
+      // ब्याजेज नामभन्दा अगाडि राखिएको छ
       return `
         <span class="name-with-badge">
-          <span>${userName}</span>
           <span class="inline-store-badge" title="Store Badge">${badgeContent}</span>
+          <span>${userName}</span>
         </span>
       `;
     }
@@ -201,14 +202,23 @@
     document.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session && session.user) {
-        currentUserUid = session.user.id;
+        if (session.user.user_metadata?.full_name) {
+          currentUserName = session.user.user_metadata.full_name;
+        } else if (session.user.email) {
+          let p = session.user.email.split('@')[0];
+          currentUserName = p.charAt(0).toUpperCase() + p.slice(1);
+        }
       }
       
-      // सबै युजरहरूको Firestore प्रोफाइल डेटा प्रि-फेच गरी क्यास गर्ने (ताकि ब्याजेज म्याच गर्न सजिलो होस्)
+      // Firestore बाट युजरहरूको डाटा तानेर नामको लोअरकेस की (key) बनाएर क्यास गर्ने
       try {
         const snapshot = await getDocs(collection(db, "users"));
         snapshot.forEach(docSnap => {
-          usersFirestoreCache[docSnap.id] = docSnap.data();
+          let uData = docSnap.data();
+          let nameKey = (uData.name || "").trim().toLowerCase();
+          if (nameKey) {
+            usersFirestoreCache[nameKey] = uData;
+          }
         });
       } catch (e) {
         console.error("Cache fetch error:", e);
@@ -233,7 +243,7 @@
 
       const { data, error } = await supabaseClient
         .from('v_exam_leaderboard_summary')
-        .select(`id, display_name, ${scoreColumn}`)
+        .select(`display_name, ${scoreColumn}`)
         .order(scoreColumn, { ascending: false });
 
       if (error) {
@@ -252,8 +262,8 @@
       podiumSection.style.display = "flex";
       renderPodiumAndList(filteredData, scoreColumn, "अंक");
 
-      if (currentUserUid) {
-        const uIndex = filteredData.findIndex(u => u.id === currentUserUid);
+      if (currentUserName) {
+        const uIndex = filteredData.findIndex(u => u.display_name.toLowerCase() === currentUserName.toLowerCase());
         if (uIndex !== -1) {
           renderCurrentUserCard(filteredData[uIndex], uIndex + 1, scoreColumn, "अंक");
         }
@@ -271,14 +281,17 @@
       currentUserCard.style.display = "none";
 
       try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
         let usersList = [];
-        Object.keys(usersFirestoreCache).forEach(uid => {
-          let uData = usersFirestoreCache[uid];
+
+        usersSnapshot.forEach(docSnap => {
+          let uData = docSnap.data();
           let coins = Number(uData.coins || 0);
           if (coins > 0) {
+            let name = uData.name || uData.email?.split('@')[0] || "Aspirant";
             usersList.push({
-              uid: uid,
-              display_name: uData.name || "Aspirant",
+              uid: docSnap.id,
+              display_name: name,
               coins: coins,
               ...uData
             });
@@ -296,8 +309,8 @@
         podiumSection.style.display = "flex";
         renderPodiumAndList(usersList, 'coins', "कोइन");
 
-        if (currentUserUid) {
-          const myIndex = usersList.findIndex(u => u.uid === currentUserUid);
+        if (currentUserName) {
+          const myIndex = usersList.findIndex(u => u.display_name.toLowerCase() === currentUserName.toLowerCase());
           if (myIndex !== -1) {
             renderCurrentUserCard(usersList[myIndex], myIndex + 1, 'coins', "कोइन");
           }
@@ -321,14 +334,14 @@
       if (top3[2]) orderedPodium.push({ user: top3[2], rank: 3, cls: "third" });
 
       orderedPodium.forEach(item => {
-        let userId = item.user.id || item.user.uid;
-        let userData = usersFirestoreCache[userId] || item.user;
-        let name = item.user.display_name || userData.name || "Aspirant";
+        let name = item.user.display_name;
         let score = item.user[scoreKey];
         let initial = name ? name.charAt(0).toUpperCase() : "L";
         let crownHtml = item.rank === 1 ? `<i class="fa-solid fa-crown" style="color: #d97706; font-size: 14px; margin-bottom: 2px; display: block;"></i>` : '';
 
-        // ब्याजेज सहितको नाम जेनेरेट गर्ने
+        // नाम र ब्याजेज म्याच गर्ने (नामको आधारमा)
+        let nameKey = (name || "").trim().toLowerCase();
+        let userData = usersFirestoreCache[nameKey] || item.user;
         let formattedNameWithBadge = renderNameWithBadge(name, userData);
 
         podiumHTML += `
@@ -350,12 +363,12 @@
       } else {
         remaining.forEach((user, index) => {
           let rank = index + 4;
-          let userId = user.id || user.uid;
-          let userData = usersFirestoreCache[userId] || user;
-          let name = user.display_name || userData.name || "Aspirant";
+          let name = user.display_name;
           let score = user[scoreKey];
           let initial = name ? name.charAt(0).toUpperCase() : "L";
 
+          let nameKey = (name || "").trim().toLowerCase();
+          let userData = usersFirestoreCache[nameKey] || user;
           let formattedNameWithBadge = renderNameWithBadge(name, userData);
 
           listHTML += `
@@ -376,12 +389,12 @@
 
     function renderCurrentUserCard(userDataItem, rank, scoreKey, unitLabel) {
       const currentUserCard = document.getElementById("currentUserCard");
-      let userId = userDataItem.id || userDataItem.uid;
-      let userData = usersFirestoreCache[userId] || userDataItem;
-      let name = userDataItem.display_name || userData.name || "Aspirant";
+      let name = userDataItem.display_name;
       let score = userDataItem[scoreKey];
       let myInitial = name ? name.charAt(0).toUpperCase() : "U";
 
+      let nameKey = (name || "").trim().toLowerCase();
+      let userData = usersFirestoreCache[nameKey] || userDataItem;
       let formattedNameWithBadge = renderNameWithBadge(name, userData);
 
       currentUserCard.style.display = "flex";
