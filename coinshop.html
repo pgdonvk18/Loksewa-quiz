@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <script src="dark-mode.js" defer></script>
+  <link rel="stylesheet" href="DarkMode.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LoksewaQuest - Coin Shop</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: #f8fafc; color: #0f172a; padding-bottom: 40px; }
+    
+    .app-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: #ffffff;
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+    }
+    .app-header h1 { font-size: 18px; font-weight: 800; }
+    .back-btn {
+      background: rgba(255, 255, 255, 0.15); color: #ffffff; border: none; width: 38px; height: 38px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none;
+    }
+
+    .main-wrapper { max-width: 500px; margin: 0 auto; padding: 20px 16px; }
+
+    /* Coin Balance Banner */
+    .wallet-card {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);
+    }
+    .wallet-info span { font-size: 12px; font-weight: 700; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; }
+    .wallet-info h2 { font-size: 26px; font-weight: 800; margin-top: 4px; }
+    .wallet-icon { font-size: 38px; background: rgba(255,255,255,0.2); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+    /* Shop Item Cards */
+    .shop-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .shop-item-icon {
+      width: 54px; height: 54px; border-radius: 16px; background: #eff6ff; color: #2563eb;
+      display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+    }
+    .shop-item-details { flex-grow: 1; }
+    .shop-item-title { font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+    .shop-item-desc { font-size: 12px; color: #64748b; line-height: 1.4; margin-bottom: 10px; }
+    
+    .buy-row { display: flex; justify-content: space-between; align-items: center; }
+    .price-tag { font-size: 13px; font-weight: 800; color: #d97706; display: flex; align-items: center; gap: 4px; }
+    
+    .btn-buy {
+      background: #2563eb; color: #white; border: none; padding: 8px 16px; border-radius: 12px;
+      font-size: 12px; font-weight: 700; cursor: pointer; transition: transform 0.1s;
+    }
+    .btn-buy:active { transform: scale(0.96); }
+
+    /* Toast Notification */
+    #shop-toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: #0f172a; color: #fff; padding: 12px 24px; border-radius: 30px; font-size: 13px;
+      font-weight: 700; transition: transform 0.3s ease; z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    #shop-toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1>LoksewaQuest - कोइन शप</h1>
+    <div style="width: 38px;"></div>
+  </header>
+
+  <main class="main-wrapper">
+    <!-- Wallet Balance Box -->
+    <div class="wallet-card">
+      <div class="wallet-info">
+        <span>तपाईंको कुल कोइन</span>
+        <h2 id="user-coin-balance">...</h2>
+      </div>
+      <div class="wallet-icon">
+        <i class="fa-solid fa-coins"></i>
+      </div>
+    </div>
+
+    <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin-bottom: 14px;">🛠️ विशेष सुविधा तथा वस्तुहरू</h3>
+
+    <!-- Item 1 -->
+    <div class="shop-card">
+      <div class="shop-item-icon" style="background: #f0fdf4; color: #166534;"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="shop-item-details">
+        <div class="shop-item-title">विज्ञापन-रहित अभ्यास पास (Ad-Free Pass)</div>
+        <div class="shop-item-desc">अभ्यास गर्दा आउने सबै विज्ञापनहरू २४ घण्टाको लागि हटाउनुहोस्।</div>
+        <div class="buy-row">
+          <span class="price-tag"><i class="fa-solid fa-coins"></i> 50 कोइन</span>
+          <button class="btn-buy" onclick="buyItem('Ad-Free Pass', 50)">किन्नुहोस्</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 2 -->
+    <div class="shop-card">
+      <div class="shop-item-icon" style="background: #eff6ff; color: #2563eb;"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+      <div class="shop-item-details">
+        <div class="shop-item-title">AI संकेत बूस्टर (5x Hints)</div>
+        <div class="shop-item-desc">कठिन प्रश्नहरूमा तुरुन्तै स्मार्ट संकेतहरू (Hints) अनलक गर्नुहोस्।</div>
+        <div class="buy-row">
+          <span class="price-tag"><i class="fa-solid fa-coins"></i> 30 कोइन</span>
+          <button class="btn-buy" onclick="buyItem('AI Hint Booster', 30)">किन्नुहोस्</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 3 -->
+    <div class="shop-card">
+      <div class="shop-item-icon" style="background: #fef3c7; color: #d97706;"><i class="fa-solid fa-crown"></i></div>
+      <div class="shop-item-details">
+        <div class="shop-item-title">सुनौलो लिडरबोर्ड ब्याजबक्स</div>
+        <div class="shop-item-desc">लिडरबोर्डमा तपाईंको नामको अगाडि विशेष सुनौलो क्राउन (Crown) देखाउनुहोस्।</div>
+        <div class="buy-row">
+          <span class="price-tag"><i class="fa-solid fa-coins"></i> 100 कोइन</span>
+          <button class="btn-buy" onclick="buyItem('Golden Leaderboard Badge', 100)">किन्नुहोस्</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 4 -->
+    <div class="shop-card">
+      <div class="shop-item-icon" style="background: #fdf2f8; color: #db2777;"><i class="fa-solid fa-palette"></i></div>
+      <div class="shop-item-details">
+        <div class="shop-item-title">कस्टम डार्क/लाइट थिम प्रो प्याक</div>
+        <div class="shop-item-desc">विशेष रंगीन एक्सेंटहरू (Neon Blue & Emerald) र थिम विकल्पहरू अनलक गर्नुहोस्।</div>
+        <div class="buy-row">
+          <span class="price-tag"><i class="fa-solid fa-coins"></i> 75 कोइन</span>
+          <button class="btn-buy" onclick="buyItem('Custom Theme Pro Pack', 75)">किन्नुहोस्</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="shop-toast">सफलतापूर्वक खरिद गरियो! 🎉</div>
+
+  <!-- Firebase & Shop Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, browserSessionPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    
+    // Import your single clean helper file!
+    import { triggerCoinAction } from './coinHelper.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    setPersistence(auth, browserSessionPersistence).catch(console.error);
+
+    let currentUserId = null;
+    let userCoins = 0;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUserId = user.uid;
+        await fetchUserCoins();
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    async function fetchUserCoins() {
+      if (!currentUserId) return;
+      const userDoc = await getDoc(doc(db, "users", currentUserId));
+      if (userDoc.exists()) {
+        userCoins = Number(userDoc.data().coins || 0);
+        document.getElementById('user-coin-balance').innerText = userCoins;
+      }
+    }
+
+    // Expose buyItem globally so buttons can access it
+    window.buyItem = async function(itemName, cost) {
+      if (userCoins < cost) {
+        showToast("⚠️ पर्याप्त कोइन छैन!");
+        return;
+      }
+
+      // Deduct coins using your shared helper by passing a negative value!
+      await triggerCoinAction(db, currentUserId, -cost, `Shop: ${itemName}`);
+      
+      // Update local tracking & UI
+      userCoins -= cost;
+      document.getElementById('user-coin-balance').innerText = userCoins;
+      showToast(`🎉 ${itemName} सफल खरिद भयो!`);
+    };
+
+    function showToast(message) {
+      const toast = document.getElementById('shop-toast');
+      toast.innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
