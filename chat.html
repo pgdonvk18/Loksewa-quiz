@@ -2651,7 +2651,7 @@ onAuthStateChanged(
           currentUserName = userData.name;
         }
         
-        // purchasedBadges चेक गर्ने (Array वा String जे भए पनि मिलाउन मिल्ने गरी)
+        // purchasedBadges चेक गर्ने
         if (userData.purchasedBadges) {
           if (Array.isArray(userData.purchasedBadges)) {
             currentUserBadge = userData.purchasedBadges.length > 0 ? userData.purchasedBadges[0] : "";
@@ -2680,6 +2680,32 @@ onAuthStateChanged(
 
   }
 );
+
+
+/* =========================================================
+   HELPER FUNCTION: GET BADGE LOGO / ICON
+========================================================= */
+function getBadgeLogo(badgeName) {
+  if (!badgeName) return "";
+  
+  const b = String(badgeName).toLowerCase();
+  
+  // ब्यागको नाम अनुसार लोगो (FontAwesome Icon वा Emoji) छान्ने
+  if (b.includes('vip') || b.includes('king') || b.includes('crown')) {
+    return '<i class="fa-solid fa-crown" style="color: #fbbf24;" title="VIP"></i>';
+  } else if (b.includes('pro') || b.includes('expert')) {
+    return '<i class="fa-solid fa-bolt" style="color: #3b82f6;" title="Pro"></i>';
+  } else if (b.includes('star') || b.includes('top')) {
+    return '<i class="fa-solid fa-star" style="color: #eab308;" title="Star"></i>';
+  } else if (b.includes('shield') || b.includes('mod')) {
+    return '<i class="fa-solid fa-shield-halved" style="color: #10b981;" title="Verified"></i>';
+  } else if (b.includes('fire') || b.includes('streak')) {
+    return '<i class="fa-solid fa-fire" style="color: #f97316;" title="Streak"></i>';
+  }
+  
+  // यदि अरु कुनै नाम छ भने सामान्य ब्याग आइकन देखाउने
+  return '<i class="fa-solid fa-certificate" style="color: #8b5cf6;" title="' + badgeName + '"></i>';
+}
 
 
 /* =========================================================
@@ -2952,7 +2978,7 @@ function loadRealtimeMessages() {
             );
 
 
-          /* SENDER & BADGE */
+          /* SENDER & BADGE LOGO */
 
           const sender =
             document.createElement(
@@ -2963,15 +2989,18 @@ function loadRealtimeMessages() {
           sender.className =
             "sender-name";
 
-          // sender ko naam र badge देखाउने (यदि database मा badge सेव छ भने)
           let senderNameStr = data.senderName || "Aspirant";
-          let badgeHtml = "";
+          let badgeLogoHtml = "";
           
           if (data.purchasedBadge) {
-            badgeHtml = `<span style="background:#eef2ff; color:#3413aa; padding:1px 5px; border-radius:4px; font-size:8px; font-weight:700;">${data.purchasedBadge}</span>`;
+            // ब्यागको नामको सट्टा लोगो/आइकन कल गर्ने
+            const badgeIcon = getBadgeLogo(data.purchasedBadge);
+            badgeLogoHtml = `<span style="display:inline-flex; align-items:center; margin-left:3px;" title="${data.purchasedBadge}">${badgeIcon}</span>`;
           }
 
-          sender.innerHTML = `${senderNameStr} ${badgeHtml}`;
+          // नामको अगाडि होइन, पछाडि वा नियम अनुसार मिलाउन badgeLogoHtml लाई राख्न सकिन्छ। 
+          // यदि नामको अगाडि देखाउनु पर्छ भने: `${badgeLogoHtml} ${senderNameStr}`
+          sender.innerHTML = `${badgeLogoHtml} ${senderNameStr}`;
           row.appendChild(sender);
 
 
