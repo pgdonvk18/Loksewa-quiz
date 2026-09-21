@@ -1,209 +1,70 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
-  <script src="dark-mode.js" defer></script>
-  <link rel="stylesheet" href="DarkMode.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LoksewaQuest - कोइन शप तथा ब्याजेज</title>
-  
+  <meta name="theme-color" content="#2563eb">
+  <title>LoksewaQuest - Badge Store</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: #f8fafc; color: #0f172a; padding-bottom: 40px; }
+    body { min-height: 100vh; background: #f8fafc; color: #1e293b; padding-bottom: 90px; }
     
-    .app-header {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      color: #ffffff;
-      padding: 18px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-    }
-    .app-header h1 { font-size: 18px; font-weight: 800; }
-    .back-btn {
-      background: rgba(255, 255, 255, 0.15); color: #ffffff; border: none; width: 38px; height: 38px;
-      border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none;
-    }
+    .header { background: linear-gradient(135deg, #172554 0%, #1d4ed8 100%); color: white; padding: 24px 20px 30px; border-bottom-left-radius: 32px; border-bottom-right-radius: 32px; box-shadow: 0 10px 25px rgba(29, 78, 216, 0.2); display: flex; align-items: center; justify-content: space-between; }
+    .back-btn { background: rgba(255, 255, 255, 0.15); border: none; width: 40px; height: 40px; border-radius: 12px; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .header h1 { font-size: 20px; font-weight: 800; }
+    .coin-display { background: rgba(255, 255, 255, 0.2); padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 6px; }
 
-    .main-wrapper { max-width: 500px; margin: 0 auto; padding: 20px 16px; }
-
-    /* Coin Balance Banner */
-    .wallet-card {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #fff;
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);
-    }
-    .wallet-info span { font-size: 12px; font-weight: 700; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; }
-    .wallet-info h2 { font-size: 26px; font-weight: 800; margin-top: 4px; }
-    .wallet-icon { font-size: 38px; background: rgba(255,255,255,0.2); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-
-    /* Shop Item Cards */
-    .shop-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-      display: flex;
-      gap: 16px;
-      align-items: center;
-    }
-    .shop-item-icon {
-      width: 54px; height: 54px; border-radius: 16px; background: #eff6ff; color: #2563eb;
-      display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
-    }
-    .shop-item-details { flex-grow: 1; }
-    .shop-item-title { font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
-    .shop-item-desc { font-size: 12px; color: #64748b; line-height: 1.4; margin-bottom: 10px; }
+    .container { max-width: 600px; margin: -15px auto 0; padding: 0 16px; }
     
-    .buy-row { display: flex; justify-content: space-between; align-items: center; }
-    .price-tag { font-size: 13px; font-weight: 800; color: #d97706; display: flex; align-items: center; gap: 4px; }
+    .section-title { font-size: 16px; font-weight: 800; color: #0f172a; margin: 20px 0 12px; display: flex; align-items: center; gap: 8px; }
+
+    /* Store Grid Cards */
+    .store-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .store-card { background: #ffffff; border-radius: 20px; padding: 18px 14px; text-align: center; border: 2px solid #e2e8f0; box-shadow: 0 8px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; align-items: center; position: relative; transition: 0.2s; }
     
-    .btn-buy {
-      background: #2563eb; color: #ffffff; border: none; padding: 8px 16px; border-radius: 12px;
-      font-size: 12px; font-weight: 700; cursor: pointer; transition: transform 0.1s;
-    }
-    .btn-buy:active { transform: scale(0.96); }
+    .badge-icon-box { width: 56px; height: 56px; border-radius: 50%; background: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #d97706; margin-bottom: 10px; border: 3px solid #fde68a; box-shadow: 0 4px 10px rgba(217,119,6,0.15); }
+    .badge-name { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+    .badge-desc { font-size: 11px; color: #64748b; margin-bottom: 12px; line-height: 1.3; }
 
-    .section-title {
-      font-size: 15px; font-weight: 800; color: #1e293b; margin-top: 24px; margin-bottom: 14px;
-    }
+    .badge-price { font-size: 13px; font-weight: 800; color: #d97706; margin-bottom: 12px; display: flex; align-items: center; gap: 4px; }
 
-    /* Toast Notification */
-    #shop-toast {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
-      background: #0f172a; color: #fff; padding: 12px 24px; border-radius: 30px; font-size: 13px;
-      font-weight: 700; transition: transform 0.3s ease; z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-    #shop-toast.show { transform: translateX(-50%) translateY(0); }
+    .buy-btn { width: 100%; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+    .buy-btn:active { transform: scale(0.97); }
+    
+    /* Already Owned Button Style */
+    .buy-btn.owned { background: #10b981 !important; color: white; cursor: not-allowed; box-shadow: none; opacity: 0.9; }
+
+    .loading-state { text-align: center; padding: 40px; color: #64748b; font-size: 14px; grid-column: span 2; }
   </style>
 </head>
+
 <body>
 
-  <header class="app-header">
-    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1>LoksewaQuest - कोइन शप</h1>
-    <div style="width: 38px;"></div>
-  </header>
+  <div class="header">
+    <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
+    <h1>ब्याज स्टोर (Badge Store)</h1>
+    <div class="coin-display" id="userCoinsDisplay"><i class="fa-solid fa-coins" style="color: #fde047;"></i> <span id="coinVal">0</span></div>
+  </div>
 
-  <main class="main-wrapper">
-    <!-- Wallet Balance Box -->
-    <div class="wallet-card">
-      <div class="wallet-info">
-        <span>तपाईंको कुल कोइन</span>
-        <h2 id="user-coin-balance">...</h2>
-      </div>
-      <div class="wallet-icon">
-        <i class="fa-solid fa-coins"></i>
-      </div>
+  <div class="container">
+    <div class="section-title"><i class="fa-solid fa-store" style="color: #2563eb;">}</i> उपलब्ध विशेष ब्याजेजहरू</div>
+    
+    <div class="store-grid" id="storeGrid">
+      <div class="loading-state"><div class="spinner"></div>स्टोर लोड हुँदैछ...</div>
     </div>
+  </div>
 
-    <!-- SECTION 1: BADGES -->
-    <div class="section-title">🎖️ विशेष प्रोफाइल ब्याजेजहरू</div>
-
-    <!-- Badge 1: Aspirant -->
-    <div class="shop-card">
-      <div class="shop-item-icon" style="background: #f0fdf4; color: #166534; font-weight: 800; font-size: 18px;">A</div>
-      <div class="shop-item-details">
-        <div class="shop-item-title">Aspirant ब्याज (A)</div>
-        <div class="shop-item-desc">तपाईंको प्रोफाइल नामको अगाडि आधिकारिक 'Aspirant' ब्याज देखाउँछ।</div>
-        <div class="buy-row">
-          <span class="price-tag"><i class="fa-solid fa-coins"></i> 40 कोइन</span>
-          <button class="btn-buy" onclick="buyItem('Aspirant Badge', 40, 'badge_aspirant')">किन्नुहोस्</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Badge 2: Pro -->
-    <div class="shop-card">
-      <div class="shop-item-icon" style="background: #eff6ff; color: #2563eb; font-weight: 800; font-size: 18px;">P</div>
-      <div class="shop-item-details">
-        <div class="shop-item-title">Pro ब्याज (P)</div>
-        <div class="shop-item-desc">नियमित अभ्यास गर्ने प्रो विद्यार्थीहरूको लागि विशेष निलो 'Pro' ब्याज।</div>
-        <div class="buy-row">
-          <span class="price-tag"><i class="fa-solid fa-coins"></i> 80 कोइन</span>
-          <button class="btn-buy" onclick="buyItem('Pro Badge', 80, 'badge_pro')">किन्नुहोस्</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Badge 3: Master -->
-    <div class="shop-card">
-      <div class="shop-item-icon" style="background: #fef3c7; color: #d97706; font-weight: 800; font-size: 18px;">M</div>
-      <div class="shop-item-details">
-        <div class="shop-item-title">Master ब्याज (M)</div>
-        <div class="shop-item-desc">कठिन क्विज विजेताहरूको लागि आकर्षक सुनौलो 'Master' ब्याज।</div>
-        <div class="buy-row">
-          <span class="price-tag"><i class="fa-solid fa-coins"></i> 150 कोइन</span>
-          <button class="btn-buy" onclick="buyItem('Master Badge', 150, 'badge_master')">किन्नुहोस्</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Badge 4: Loksewa King -->
-    <div class="shop-card">
-      <div class="shop-item-icon" style="background: #fdf2f8; color: #db2777;"><i class="fa-solid fa-crown"></i></div>
-      <div class="shop-item-details">
-        <div class="shop-item-title">Loksewa King (👑)</div>
-        <div class="shop-item-desc">लोकसेवाका असली राजा! प्रोफाइल र लिडरबोर्डमा विशेष क्राउन ब्याज।</div>
-        <div class="buy-row">
-          <span class="price-tag"><i class="fa-solid fa-coins"></i> 300 कोइन</span>
-          <button class="btn-buy" onclick="buyItem('Loksewa King Badge', 300, 'badge_loksewa_king')">किन्नुहोस्</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 2: OTHER PERKS -->
-    <div class="section-title">🛠️ वेबसाइट सुविधाहरू (Perks)</div>
-
-    <!-- Item 1 -->
-    <div class="shop-card">
-      <div class="shop-item-icon" style="background: #f0fdf4; color: #166534;"><i class="fa-solid fa-shield-halved"></i></div>
-      <div class="shop-item-details">
-        <div class="shop-item-title">विज्ञापन-रहित अभ्यास पास (Ad-Free)</div>
-        <div class="shop-item-desc">अभ्यास गर्दा आउने सबै विज्ञापनहरू २४ घण्टाको लागि हटाउनुहोस्।</div>
-        <div class="buy-row">
-          <span class="price-tag"><i class="fa-solid fa-coins"></i> 50 कोइन</span>
-          <button class="btn-buy" onclick="buyItem('Ad-Free Pass', 50, 'ad_free')">किन्नुहोस्</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Item 2 -->
-    <div class="shop-card">
-      <div class="shop-item-icon" style="background: #eff6ff; color: #2563eb;"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-      <div class="shop-item-details">
-        <div class="shop-item-title">AI संकेत बूस्टर (5x Hints)</div>
-        <div class="shop-item-desc">कठिन प्रश्नहरूमा तुरुन्तै स्मार्ट संकेतहरू (Hints) अनलक गर्नुहोस्।</div>
-        <div class="buy-row">
-          <span class="price-tag"><i class="fa-solid fa-coins"></i> 30 कोइन</span>
-          <button class="btn-buy" onclick="buyItem('AI Hint Booster', 30, 'ai_hints')">किन्नुहोस्</button>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <div id="shop-toast">सफलतापूर्वक खरिद गरियो! 🎉</div>
-
-  <!-- Firebase & Shop Script -->
+  <!-- Firebase SDKs -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, browserSessionPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    
-    // Import helper function
-    import { buyShopItem } from './coinHelper.js';
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -218,53 +79,113 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    setPersistence(auth, browserSessionPersistence).catch(console.error);
+    // बिक्रीमा उपलब्ध ब्याजेजहरूको सूची
+    const availableBadges = [
+      { id: "badge_aspirant", name: "Aspirant Pro", desc: "सुरुवाती लोकसेवा तयारीकर्ताको विशेष पहिचान।", price: 100, icon: "fa-award" },
+      { id: "badge_pro", name: "Loksewa Expert", desc: "नियमित अभ्यास गर्ने दक्ष विधार्थीको प्रतीक।", price: 250, icon: "fa-medal" },
+      { id: "badge_master", name: "Quest Master", desc: "सबैभन्दा उत्कृष्ट र उच्च स्तरको प्रतिष्ठित ब्याज।", price: 500, icon: "fa-crown" },
+      { id: "badge_legend", name: "Loksewa Legend", desc: "पढाइ र लिडरबोर्डमा तहल्का मच्चाउने लिजेन्ड।", price: 1000, icon: "fa-star" }
+    ];
 
-    let currentUserId = null;
-    let userCoins = 0;
+    let currentUser = null;
+    let userDataCache = null;
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        currentUserId = user.uid;
-        await fetchUserCoins();
+        currentUser = user;
+        await fetchUserDataAndRenderStore(user.uid);
       } else {
-        window.location.href = 'login.html';
+        document.getElementById("storeGrid").innerHTML = `<div class="loading-state">लगइन गर्नुहोला।</div>`;
       }
     });
 
-    async function fetchUserCoins() {
-      if (!currentUserId) return;
-      const userDoc = await getDoc(doc(db, "users", currentUserId));
-      if (userDoc.exists()) {
-        userCoins = Number(userDoc.data().coins || 0);
-        document.getElementById('user-coin-balance').innerText = userCoins;
+    async function fetchUserDataAndRenderStore(uid) {
+      try {
+        const userDocRef = doc(db, "users", uid);
+        const userSnap = await getDoc(userDocRef);
+
+        if (userSnap.exists()) {
+          userDataCache = userSnap.data();
+          let coins = Number(userDataCache.coins || 0);
+          document.getElementById("coinVal").innerText = coins;
+          
+          renderStoreItems(userDataCache);
+        }
+      } catch (e) {
+        console.error("Error fetching user data:", e);
       }
     }
 
-    // Global buyItem function linked with coinHelper
-    window.buyItem = async function(itemName, cost, itemKey) {
-      if (userCoins < cost) {
-        showToast("⚠️ पर्याप्त कोइन छैन!");
+    function renderStoreItems(uData) {
+      const storeGrid = document.getElementById("storeGrid");
+      let html = "";
+
+      // युusztसँग भएका (purchased) ब्याजेजहरूको सूची (Array)
+      let purchasedList = uData.purchasedBadges || uData.inventory || [];
+
+      availableBadges.forEach(badge => {
+        let isAlreadyOwned = purchasedList.includes(badge.id);
+
+        html += `
+          <div class="store-card">
+            <div class="badge-icon-box"><i class="fa-solid ${badge.icon}"></i></div>
+            <div class="badge-name">${badge.name}</div>
+            <div class="badge-desc">${badge.desc}</div>
+            <div class="badge-price"><i class="fa-solid fa-coins"></i> ${badge.price}</div>
+            
+            ${isAlreadyOwned 
+              ? `<button class="buy-btn owned" disabled><i class="fa-solid fa-check"></i> Already Owned</button>` 
+              : `<button class="buy-btn" onclick="buyBadge('${badge.id}',${badge.price})">किनौं (Buy)</button>`
+            }
+          </div>
+        `;
+      });
+
+      storeGrid.innerHTML = html;
+    }
+
+    // ब्याज खरिद गर्ने फंक्सन
+    window.buyBadge = async function(badgeId, price) {
+      if (!currentUser) {
+        alert("कृपया लगइन गर्नुहोस्!");
         return;
       }
 
-      let success = await buyShopItem(db, currentUserId, cost, itemName, itemKey);
-      
-      if (success) {
-        userCoins -= cost;
-        document.getElementById('user-coin-balance').innerText = userCoins;
-        showToast(`🎉 ${itemName} सफल खरिद भयो!`);
-      } else {
-        showToast("⚠️ खरिद गर्न असफल भयो। फेरि प्रयास गर्नुहोस्।");
+      let currentCoins = Number(userDataCache.coins || 0);
+      if (currentCoins < price) {
+        alert("तपाईंसँग पर्याप्त कोइन (Coins) छैन!");
+        return;
+      }
+
+      if (!confirm("के तपाईँ यो ब्याज खरिद गर्न चाहनुहुन्छ?")) return;
+
+      try {
+        const userDocRef = doc(db, "users", currentUser.uid);
+        let updatedCoins = currentCoins - price;
+
+        // Firestore मा कोइन घटाउने र purchasedBadges मा badgeId थप्ने
+        await updateDoc(userDocRef, {
+          coins: updatedCoins,
+          purchasedBadges: arrayUnion(badgeId),
+          equippedBadge: badgeId // खरिद गर्दा स्वचालित रूपमा सुसज्जित (Equip) पनि हुने
+        });
+
+        alert("ब्याज सफलतापूर्वक खरिद गरियो!");
+        
+        // लोकल डाटा अपडेट गरेर स्टोर रि-रेन्डर गर्ने
+        userDataCache.coins = updatedCoins;
+        if (!userDataCache.purchasedBadges) userDataCache.purchasedBadges = [];
+        userDataCache.purchasedBadges.push(badgeId);
+        userDataCache.equippedBadge = badgeId;
+
+        document.getElementById("coinVal").innerText = updatedCoins;
+        renderStoreItems(userDataCache);
+
+      } catch (err) {
+        console.error("Purchase error:", err);
+        alert("खरिद गर्ას समस्या आयो। फेरि प्रयास गर्नुहोला।");
       }
     };
-
-    function showToast(message) {
-      const toast = document.getElementById('shop-toast');
-      toast.innerText = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
   </script>
 </body>
 </html>
