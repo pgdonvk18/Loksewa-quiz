@@ -1,7 +1,6 @@
-// Ensure Supabase CDN has loaded before calling createClient
+// 1. SAFE INITIALIZATION OF LIBRARIES & SUPABASE CLIENT
 if (!window.supabase) {
   console.error("Supabase CDN failed to load!");
-  document.getElementById('userStatus').innerText = "Error: Supabase SDK failed to load.";
 }
 
 const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
@@ -9,21 +8,21 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Configure PDF.js Worker
+// Configure PDF.js Worker location safely
 if (window.pdfjsLib) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
 
-// DOM Elements
+// 2. DOM ELEMENTS
 const userStatus = document.getElementById('userStatus');
 const anonLoginBtn = document.getElementById('anonLoginBtn');
-const uploadBtn = document.getElementById('uploadBtn');
+const uploadBtn = document.getElementById('uploadBtn') || document.getElementById('processBtn');
 const fileInput = document.getElementById('fileInput');
 const statusMsg = document.getElementById('statusMsg');
 const previewBox = document.getElementById('textPreview');
 const previewContainer = document.getElementById('previewContainer');
 
-// Check authentication status
+// 3. AUTHENTICATION HELPERS
 async function checkAuth() {
   try {
     const { data: { user }, error } = await supabaseClient.auth.getUser();
@@ -64,59 +63,10 @@ if (anonLoginBtn) {
   });
 }
 
-// Run auth check on load
-checkAuth();
-// 1. INITIALIZE SUPABASE CLIENT & LIBRARIES FIRST
-const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// Configure PDF.js Worker location
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-// DOM Elements
-const userStatus = document.getElementById('userStatus');
-const anonLoginBtn = document.getElementById('anonLoginBtn');
-const uploadBtn = document.getElementById('uploadBtn') || document.getElementById('processBtn');
-const fileInput = document.getElementById('fileInput');
-const statusMsg = document.getElementById('statusMsg');
-const previewBox = document.getElementById('textPreview');
-const previewContainer = document.getElementById('previewContainer');
-
-// 2. AUTHENTICATION HELPERS
-async function checkAuth() {
-  const { data: { user } } = await supabaseClient.auth.getUser();
-  if (user) {
-    if (userStatus) {
-      userStatus.innerText = `Logged in as: ${user.is_anonymous ? 'Guest User' : user.email}`;
-      userStatus.style.color = '#15803d';
-    }
-    if (anonLoginBtn) anonLoginBtn.style.display = 'none';
-  } else {
-    if (userStatus) {
-      userStatus.innerText = 'Status: Not logged in';
-      userStatus.style.color = '#b91c1c';
-    }
-    if (anonLoginBtn) anonLoginBtn.style.display = 'inline-block';
-  }
-}
-
-if (anonLoginBtn) {
-  anonLoginBtn.addEventListener('click', async () => {
-    if (userStatus) userStatus.innerText = 'Logging in...';
-    const { data, error } = await supabaseClient.auth.signInAnonymously();
-    if (error) {
-      alert('Login failed: ' + error.message);
-    } else {
-      checkAuth();
-    }
-  });
-}
-
-// Run auth check immediately after client initialization
+// Run auth check immediately
 checkAuth();
 
-// 3. HELPER: EXTRACT TEXT FROM PDF FILE
+// 4. HELPER: EXTRACT TEXT FROM PDF FILE
 async function extractTextFromPDF(file) {
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -132,7 +82,7 @@ async function extractTextFromPDF(file) {
   return fullText;
 }
 
-// 4. HELPER: CHUNK TEXT INTO ~600 WORD SNIPPETS
+// 5. HELPER: CHUNK TEXT INTO ~600 WORD SNIPPETS
 function createTextChunks(text, wordsPerChunk = 600) {
   const words = text.split(/\s+/);
   const chunks = [];
@@ -147,99 +97,101 @@ function createTextChunks(text, wordsPerChunk = 600) {
   return chunks;
 }
 
-// 5. MAIN ACTION EVENT LISTENER
-uploadBtn.addEventListener('click', async () => {
-  const file = fileInput.files[0];
+// 6. MAIN ACTION EVENT LISTENER
+if (uploadBtn) {
+  uploadBtn.addEventListener('click', async () => {
+    const file = fileInput.files[0];
 
-  if (!file) {
-    alert('Please select a file to upload.');
-    return;
-  }
-
-  // Check Authentication
-  const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-  if (authError || !user) {
-    statusMsg.innerText = 'Error: You must be logged in to process files. Click "Quick Guest Login" above.';
-    return;
-  }
-
-  uploadBtn.disabled = true;
-
-  try {
-    // STEP A: Extract Text
-    statusMsg.innerText = 'Step 1/4: Extracting text from document...';
-    let extractedText = '';
-
-    if (file.type === 'application/pdf') {
-      extractedText = await extractTextFromPDF(file);
-    } else {
-      extractedText = await file.text();
+    if (!file) {
+      alert('Please select a file to upload.');
+      return;
     }
 
-    if (!extractedText.trim()) {
-      throw new Error('Could not extract any readable text from this file.');
+    // Check Authentication
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    if (authError || !user) {
+      statusMsg.innerText = 'Error: You must be logged in to process files. Click "Quick Guest Login" above.';
+      return;
     }
 
-    // STEP B: Chunk Text
-    statusMsg.innerText = 'Step 2/4: Chunking text for AI processing...';
-    const chunks = createTextChunks(extractedText, 600);
+    uploadBtn.disabled = true;
 
-    // Render Preview
-    if (previewContainer && previewBox) {
-      previewContainer.style.display = 'block';
-      previewBox.innerText = chunks[0] || 'No text snippet available.';
+    try {
+      // STEP A: Extract Text
+      statusMsg.innerText = 'Step 1/4: Extracting text from document...';
+      let extractedText = '';
+
+      if (file.type === 'application/pdf') {
+        extractedText = await extractTextFromPDF(file);
+      } else {
+        extractedText = await file.text();
+      }
+
+      if (!extractedText.trim()) {
+        throw new Error('Could not extract any readable text from this file.');
+      }
+
+      // STEP B: Chunk Text
+      statusMsg.innerText = 'Step 2/4: Chunking text for AI processing...';
+      const chunks = createTextChunks(extractedText, 600);
+
+      // Render Preview
+      if (previewContainer && previewBox) {
+        previewContainer.style.display = 'block';
+        previewBox.innerText = chunks[0] || 'No text snippet available.';
+      }
+
+      // STEP C: Upload File to Storage Bucket
+      statusMsg.innerText = 'Step 3/4: Uploading original file to storage...';
+      const fileExt = file.name.split('.').pop();
+      const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const filePath = `${user.id}/${Date.now()}_${sanitizedName}`;
+
+      const { data: storageData, error: storageError } = await supabaseClient.storage
+        .from('loksewa_documents')
+        .upload(filePath, file);
+
+      if (storageError) throw storageError;
+
+      // STEP D: Insert Document Record into Database
+      statusMsg.innerText = 'Step 4/4: Saving document & text chunks to database...';
+      const { data: docData, error: dbError } = await supabaseClient
+        .from('documents')
+        .insert({
+          user_id: user.id,
+          title: file.name,
+          file_path: storageData.path,
+          file_type: fileExt,
+          file_size_bytes: file.size,
+          status: 'completed'
+        })
+        .select()
+        .single();
+
+      if (dbError) throw dbError;
+
+      // STEP E: Insert Chunks into document_chunks Table
+      const chunkRecords = chunks.map((chunkContent, index) => ({
+        document_id: docData.id,
+        chunk_index: index,
+        content: chunkContent,
+        token_count: chunkContent.split(/\s+/).length
+      }));
+
+      const { error: chunkError } = await supabaseClient
+        .from('document_chunks')
+        .insert(chunkRecords);
+
+      if (chunkError) throw chunkError;
+
+      statusMsg.innerText = `Success! Parsed and saved ${chunks.length} text chunk(s).`;
+      console.log('Document & Chunks created successfully. Document ID:', docData.id);
+
+    } catch (err) {
+      console.error('Processing error:', err);
+      statusMsg.innerText = 'Error: ' + err.message;
+    } finally {
+      uploadBtn.disabled = false;
     }
-
-    // STEP C: Upload File to Storage Bucket
-    statusMsg.innerText = 'Step 3/4: Uploading original file to storage...';
-    const fileExt = file.name.split('.').pop();
-    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filePath = `${user.id}/${Date.now()}_${sanitizedName}`;
-
-    const { data: storageData, error: storageError } = await supabaseClient.storage
-      .from('loksewa_documents')
-      .upload(filePath, file);
-
-    if (storageError) throw storageError;
-
-    // STEP D: Insert Document Record into Database
-    statusMsg.innerText = 'Step 4/4: Saving document & text chunks to database...';
-    const { data: docData, error: dbError } = await supabaseClient
-      .from('documents')
-      .insert({
-        user_id: user.id,
-        title: file.name,
-        file_path: storageData.path,
-        file_type: fileExt,
-        file_size_bytes: file.size,
-        status: 'completed'
-      })
-      .select()
-      .single();
-
-    if (dbError) throw dbError;
-
-    // STEP E: Insert Chunks into document_chunks Table
-    const chunkRecords = chunks.map((chunkContent, index) => ({
-      document_id: docData.id,
-      chunk_index: index,
-      content: chunkContent,
-      token_count: chunkContent.split(/\s+/).length
-    }));
-
-    const { error: chunkError } = await supabaseClient
-      .from('document_chunks')
-      .insert(chunkRecords);
-
-    if (chunkError) throw chunkError;
-
-    statusMsg.innerText = `Success! Parsed and saved ${chunks.length} text chunk(s).`;
-    console.log('Document & Chunks created successfully. Document ID:', docData.id);
-
-  } catch (err) {
-    console.error('Processing error:', err);
-    statusMsg.innerText = 'Error: ' + err.message;
-  } finally {
-    uploadBtn.disabled = false;
-  }
-});
+  });
+}
