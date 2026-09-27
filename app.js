@@ -1,3 +1,71 @@
+// Ensure Supabase CDN has loaded before calling createClient
+if (!window.supabase) {
+  console.error("Supabase CDN failed to load!");
+  document.getElementById('userStatus').innerText = "Error: Supabase SDK failed to load.";
+}
+
+const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Configure PDF.js Worker
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+// DOM Elements
+const userStatus = document.getElementById('userStatus');
+const anonLoginBtn = document.getElementById('anonLoginBtn');
+const uploadBtn = document.getElementById('uploadBtn');
+const fileInput = document.getElementById('fileInput');
+const statusMsg = document.getElementById('statusMsg');
+const previewBox = document.getElementById('textPreview');
+const previewContainer = document.getElementById('previewContainer');
+
+// Check authentication status
+async function checkAuth() {
+  try {
+    const { data: { user }, error } = await supabaseClient.auth.getUser();
+    if (error) throw error;
+
+    if (user) {
+      if (userStatus) {
+        userStatus.innerText = `Logged in as: ${user.is_anonymous ? 'Guest User' : user.email}`;
+        userStatus.style.color = '#15803d';
+      }
+      if (anonLoginBtn) anonLoginBtn.style.display = 'none';
+    } else {
+      if (userStatus) {
+        userStatus.innerText = 'Status: Not logged in';
+        userStatus.style.color = '#b91c1c';
+      }
+      if (anonLoginBtn) anonLoginBtn.style.display = 'inline-block';
+    }
+  } catch (err) {
+    console.error('Auth error:', err);
+    if (userStatus) {
+      userStatus.innerText = 'Status: Not logged in (Click Guest Login)';
+      userStatus.style.color = '#b91c1c';
+    }
+  }
+}
+
+if (anonLoginBtn) {
+  anonLoginBtn.addEventListener('click', async () => {
+    if (userStatus) userStatus.innerText = 'Logging in...';
+    const { data, error } = await supabaseClient.auth.signInAnonymously();
+    if (error) {
+      alert('Login failed: ' + error.message);
+      checkAuth();
+    } else {
+      checkAuth();
+    }
+  });
+}
+
+// Run auth check on load
+checkAuth();
 // 1. INITIALIZE SUPABASE CLIENT & LIBRARIES FIRST
 const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
