@@ -1,3 +1,36 @@
+const userStatus = document.getElementById('userStatus');
+const anonLoginBtn = document.getElementById('anonLoginBtn');
+
+// Automatically check auth state on page load
+async function checkAuth() {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+  if (user) {
+    userStatus.innerText = `Logged in as: ${user.is_anonymous ? 'Guest User' : user.email}`;
+    userStatus.style.color = '#15803d';
+    if (anonLoginBtn) anonLoginBtn.style.display = 'none';
+  } else {
+    userStatus.innerText = 'Status: Not logged in';
+    userStatus.style.color = '#b91c1c';
+  }
+}
+
+// Guest login button event listener
+if (anonLoginBtn) {
+  anonLoginBtn.addEventListener('click', async () => {
+    userStatus.innerText = 'Logging in...';
+    const { data, error } = await supabaseClient.auth.signInAnonymously();
+    if (error) {
+      alert('Login failed: ' + error.message);
+    } else {
+      checkAuth();
+    }
+  });
+}
+
+// Run auth check immediately
+checkAuth();
+
+
 // 1. INITIALIZE SUPABASE CLIENT
 // Use window.supabase or a different variable name to avoid scope collision
 const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
