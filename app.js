@@ -34,13 +34,6 @@ if (window.pdfjsLib) {
 }
 
 /* =========================
-   GEMINI API CONFIGURATION
-========================= */
-// Replace with your actual Gemini API key
-const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"; 
-const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-
-/* =========================
    DOM ELEMENTS
 ========================= */
 const userStatus = document.getElementById('userStatus');
@@ -104,72 +97,35 @@ function createTextChunks(text, wordsPerChunk = 600) {
   return chunks;
 }
 
-// 3. Generate Loksewa Questions via Gemini API
+// 3. Generate Loksewa Questions via Supabase Edge Function
 async function generateLoksewaQuestions(chunkContent, documentId) {
   if (!currentUser) {
     throw new Error("User must be authenticated.");
   }
 
-  const prompt = `
-You are an expert examiner for Nepal Loksewa Aayog (Public Service Commission).
-Analyze the following text extract and generate 3 to 5 high-quality, objective Multiple-Choice Questions (MCQs) relevant for Loksewa preparation.
-
-Text Content:
-"""
-${chunkContent}
-"""
-
-Return your response strictly as a JSON array where each object has the following structure:
-[
-  {
-    "question": "Question text here",
-    "options": ["Option A", "Option B", "Option C", "Option D"],
-    "correct_index": 0,
-    "explanation": "Brief explanation of why this answer is correct."
-  }
-]
-`;
-
-  const payload = {
-    contents: [
-      {
-        parts: [{ text: prompt }]
-      }
-    ],
-    generationConfig: {
-      responseMimeType: "application/json"
-    }
-  };
-
-  const response = await fetch(GEMINI_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
+  // Securely invoke your Supabase Edge Function
+  const { data, error } = await supabaseClient.functions.invoke("generate-ai-quiz", {
+    body: { chunkContent: chunkContent }
   });
 
-  if (!response.ok) {
-    const errData = await response.json();
-    throw new Error(errData.error?.message || "Failed to generate questions from Gemini.");
+  if (error) {
+    throw new Error(`Edge Function Error: ${error.message}`);
   }
 
-  const data = await response.json();
-  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-  if (!rawText) {
-    throw new Error("No response content generated from Gemini.");
+  if (!data || (!data.questions && !Array.isArray(data))) {
+    throw new Error(data?.error || "Invalid format returned from Edge Function.");
   }
 
-  const questionsArray = JSON.parse(rawText);
+  // Support both { questions: [...] } or direct array [...] responses from edge function
+  const questionsArray = data.questions || data;
 
-  // Map and insert generated questions into Supabase
+  // Map and insert generated questions into Supabase DB
   const recordsToInsert = questionsArray.map((q) => ({
     document_id: documentId,
     user_id: currentUser.uid,
     question_text: q.question,
     options: q.options,
-    correct_option: q.correct_index,
+    correct_option: q.correct_index ?? q.correct_option,
     explanation: q.explanation || ""
   }));
 
@@ -270,12 +226,12 @@ if (uploadBtn) {
 
       if (chunkError) throw chunkError;
 
-      // Step 6: Generate Questions using Gemini API
-      if (statusMsg) statusMsg.innerText = 'Step 5/5: Generating Loksewa MCQs via Gemini AI...';
+      // Step 6: Generate MCQs securely via Supabase Edge Function
+      if (statusMsg) statusMsg.innerText = 'Step 5/5: Generating Loksewa MCQs via AI Edge Function...';
       const generatedQuestions = await generateLoksewaQuestions(chunks[0], docData.id);
 
       if (statusMsg) {
-        statusMsg.innerText = `Success! Saved document, created ${chunks.length} chunks, and generated ${generatedQuestions.length} Loksewa questions.`;
+        statusMsg.innerText = `Success! Saved document, created ${chunks.length} chunks, and generated ${generatedQuestions.length} Loksewa questions via Edge Function.`;
       }
 
     } catch (err) {
