@@ -1,23 +1,41 @@
+// 1. INITIALIZE SUPABASE CLIENT & LIBRARIES FIRST
+const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Configure PDF.js Worker location
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// DOM Elements
 const userStatus = document.getElementById('userStatus');
 const anonLoginBtn = document.getElementById('anonLoginBtn');
+const uploadBtn = document.getElementById('uploadBtn') || document.getElementById('processBtn');
+const fileInput = document.getElementById('fileInput');
+const statusMsg = document.getElementById('statusMsg');
+const previewBox = document.getElementById('textPreview');
+const previewContainer = document.getElementById('previewContainer');
 
-// Automatically check auth state on page load
+// 2. AUTHENTICATION HELPERS
 async function checkAuth() {
   const { data: { user } } = await supabaseClient.auth.getUser();
   if (user) {
-    userStatus.innerText = `Logged in as: ${user.is_anonymous ? 'Guest User' : user.email}`;
-    userStatus.style.color = '#15803d';
+    if (userStatus) {
+      userStatus.innerText = `Logged in as: ${user.is_anonymous ? 'Guest User' : user.email}`;
+      userStatus.style.color = '#15803d';
+    }
     if (anonLoginBtn) anonLoginBtn.style.display = 'none';
   } else {
-    userStatus.innerText = 'Status: Not logged in';
-    userStatus.style.color = '#b91c1c';
+    if (userStatus) {
+      userStatus.innerText = 'Status: Not logged in';
+      userStatus.style.color = '#b91c1c';
+    }
+    if (anonLoginBtn) anonLoginBtn.style.display = 'inline-block';
   }
 }
 
-// Guest login button event listener
 if (anonLoginBtn) {
   anonLoginBtn.addEventListener('click', async () => {
-    userStatus.innerText = 'Logging in...';
+    if (userStatus) userStatus.innerText = 'Logging in...';
     const { data, error } = await supabaseClient.auth.signInAnonymously();
     if (error) {
       alert('Login failed: ' + error.message);
@@ -27,27 +45,10 @@ if (anonLoginBtn) {
   });
 }
 
-// Run auth check immediately
+// Run auth check immediately after client initialization
 checkAuth();
 
-
-// 1. INITIALIZE SUPABASE CLIENT
-// Use window.supabase or a different variable name to avoid scope collision
-const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// Configure PDF.js Worker location
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-// DOM Elements
-const uploadBtn = document.getElementById('uploadBtn') || document.getElementById('processBtn');
-const fileInput = document.getElementById('fileInput');
-const statusMsg = document.getElementById('statusMsg');
-const previewBox = document.getElementById('textPreview');
-const previewContainer = document.getElementById('previewContainer');
-
-// 2. HELPER: EXTRACT TEXT FROM PDF FILE
+// 3. HELPER: EXTRACT TEXT FROM PDF FILE
 async function extractTextFromPDF(file) {
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -63,7 +64,7 @@ async function extractTextFromPDF(file) {
   return fullText;
 }
 
-// 3. HELPER: CHUNK TEXT INTO ~600 WORD SNIPPETS
+// 4. HELPER: CHUNK TEXT INTO ~600 WORD SNIPPETS
 function createTextChunks(text, wordsPerChunk = 600) {
   const words = text.split(/\s+/);
   const chunks = [];
@@ -78,7 +79,7 @@ function createTextChunks(text, wordsPerChunk = 600) {
   return chunks;
 }
 
-// 4. MAIN ACTION EVENT LISTENER
+// 5. MAIN ACTION EVENT LISTENER
 uploadBtn.addEventListener('click', async () => {
   const file = fileInput.files[0];
 
@@ -90,7 +91,7 @@ uploadBtn.addEventListener('click', async () => {
   // Check Authentication
   const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
   if (authError || !user) {
-    statusMsg.innerText = 'Error: You must be logged in to process files.';
+    statusMsg.innerText = 'Error: You must be logged in to process files. Click "Quick Guest Login" above.';
     return;
   }
 
@@ -115,7 +116,7 @@ uploadBtn.addEventListener('click', async () => {
     statusMsg.innerText = 'Step 2/4: Chunking text for AI processing...';
     const chunks = createTextChunks(extractedText, 600);
 
-    // Render Preview if elements exist in HTML
+    // Render Preview
     if (previewContainer && previewBox) {
       previewContainer.style.display = 'block';
       previewBox.innerText = chunks[0] || 'No text snippet available.';
@@ -165,7 +166,7 @@ uploadBtn.addEventListener('click', async () => {
     if (chunkError) throw chunkError;
 
     statusMsg.innerText = `Success! Parsed and saved ${chunks.length} text chunk(s).`;
-    console.log('Document & Chunks created successfully:', docData.id);
+    console.log('Document & Chunks created successfully. Document ID:', docData.id);
 
   } catch (err) {
     console.error('Processing error:', err);
