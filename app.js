@@ -34,6 +34,13 @@ if (window.pdfjsLib) {
 }
 
 /* =========================
+   GEMINI API CONFIGURATION
+========================= */
+// Replace with your actual Gemini API key
+const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"; 
+const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+/* =========================
    DOM ELEMENTS
 ========================= */
 const userStatus = document.getElementById('userStatus');
@@ -59,8 +66,6 @@ onAuthStateChanged(auth, (user) => {
       userStatus.innerText = 'Not logged in. Redirecting to login...';
       userStatus.style.color = '#dc2626';
     }
-    // Optional: Redirect to login if user is not authenticated
-    // window.location.href = "login.html";
   }
 });
 
@@ -99,6 +104,85 @@ function createTextChunks(text, wordsPerChunk = 600) {
   return chunks;
 }
 
+// 3. Generate Loksewa Questions via Gemini API
+async function generateLoksewaQuestions(chunkContent, documentId) {
+  if (!currentUser) {
+    throw new Error("User must be authenticated.");
+  }
+
+  const prompt = `
+You are an expert examiner for Nepal Loksewa Aayog (Public Service Commission).
+Analyze the following text extract and generate 3 to 5 high-quality, objective Multiple-Choice Questions (MCQs) relevant for Loksewa preparation.
+
+Text Content:
+"""
+${chunkContent}
+"""
+
+Return your response strictly as a JSON array where each object has the following structure:
+[
+  {
+    "question": "Question text here",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "correct_index": 0,
+    "explanation": "Brief explanation of why this answer is correct."
+  }
+]
+`;
+
+  const payload = {
+    contents: [
+      {
+        parts: [{ text: prompt }]
+      }
+    ],
+    generationConfig: {
+      responseMimeType: "application/json"
+    }
+  };
+
+  const response = await fetch(GEMINI_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const errData = await response.json();
+    throw new Error(errData.error?.message || "Failed to generate questions from Gemini.");
+  }
+
+  const data = await response.json();
+  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+  if (!rawText) {
+    throw new Error("No response content generated from Gemini.");
+  }
+
+  const questionsArray = JSON.parse(rawText);
+
+  // Map and insert generated questions into Supabase
+  const recordsToInsert = questionsArray.map((q) => ({
+    document_id: documentId,
+    user_id: currentUser.uid,
+    question_text: q.question,
+    options: q.options,
+    correct_option: q.correct_index,
+    explanation: q.explanation || ""
+  }));
+
+  const { data: savedQuestions, error: dbError } = await supabaseClient
+    .from("quiz_questions")
+    .insert(recordsToInsert)
+    .select();
+
+  if (dbError) throw dbError;
+
+  return savedQuestions;
+}
+
 /* =========================
    UPLOAD & PROCESS EVENT
 ========================= */
@@ -120,8 +204,8 @@ if (uploadBtn) {
     uploadBtn.disabled = true;
 
     try {
-      // Step A: Extract Text
-      if (statusMsg) statusMsg.innerText = 'Step 1/4: Extracting document text...';
+      // Step 1: Extract Text
+      if (statusMsg) statusMsg.innerText = 'Step 1/5: Extracting document text...';
       let extractedText = '';
 
       if (file.type === 'application/pdf') {
@@ -134,8 +218,8 @@ if (uploadBtn) {
         throw new Error('Could not extract readable text from this file.');
       }
 
-      // Step B: Text Chunking
-      if (statusMsg) statusMsg.innerText = 'Step 2/4: Chunking content for processing...';
+      // Step 2: Text Chunking
+      if (statusMsg) statusMsg.innerText = 'Step 2/5: Chunking content for processing...';
       const chunks = createTextChunks(extractedText, 600);
 
       if (previewContainer && previewBox) {
@@ -143,8 +227,8 @@ if (uploadBtn) {
         previewBox.innerText = chunks[0] || 'Preview unavailable.';
       }
 
-      // Step C: Upload File to Supabase Storage
-      if (statusMsg) statusMsg.innerText = 'Step 3/4: Uploading file to storage...';
+      // Step 3: Upload File to Supabase Storage
+      if (statusMsg) statusMsg.innerText = 'Step 3/5: Uploading file to storage...';
       const fileExt = file.name.split('.').pop();
       const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
       const filePath = `${currentUser.uid}/${Date.now()}_${sanitizedName}`;
@@ -155,8 +239,8 @@ if (uploadBtn) {
 
       if (storageError) throw storageError;
 
-      // Step D: Insert Record into Supabase DB
-      if (statusMsg) statusMsg.innerText = 'Step 4/4: Saving metadata & chunks...';
+      // Step 4: Insert Document Metadata into Supabase DB
+      if (statusMsg) statusMsg.innerText = 'Step 4/5: Saving metadata & text chunks...';
       const { data: docData, error: dbError } = await supabaseClient
         .from('documents')
         .insert({
@@ -172,7 +256,7 @@ if (uploadBtn) {
 
       if (dbError) throw dbError;
 
-      // Step E: Save Chunks
+      // Step 5: Save Text Chunks
       const chunkRecords = chunks.map((chunkContent, index) => ({
         document_id: docData.id,
         chunk_index: index,
@@ -186,8 +270,12 @@ if (uploadBtn) {
 
       if (chunkError) throw chunkError;
 
+      // Step 6: Generate Questions using Gemini API
+      if (statusMsg) statusMsg.innerText = 'Step 5/5: Generating Loksewa MCQs via Gemini AI...';
+      const generatedQuestions = await generateLoksewaQuestions(chunks[0], docData.id);
+
       if (statusMsg) {
-        statusMsg.innerText = `Success! Created ${chunks.length} text chunks successfully.`;
+        statusMsg.innerText = `Success! Saved document, created ${chunks.length} chunks, and generated ${generatedQuestions.length} Loksewa questions.`;
       }
 
     } catch (err) {
