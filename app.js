@@ -49,7 +49,7 @@ let currentUser = null;
 const SUPABASE_URL =
   "https://edyirdedkiarguvurpxq.supabase.co";
 
-const SUPABASE_KEY = "SUPABASE_PUBLISHABLE_KEYS";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
 
 
 /* =========================================================
