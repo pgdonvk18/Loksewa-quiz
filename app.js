@@ -1,17 +1,11 @@
 /* =========================================================
-   LOKSEWAQUEST - SOURCE PARSER
+   LOKSEWAQUEST SOURCE PARSER
    Firebase Auth + Supabase + PDF.js + Gemini Edge Function
-
-   IMPORTANT:
-   1. Firebase handles user authentication.
-   2. Supabase uses the PUBLIC/PUBLISHABLE key.
-   3. Do NOT put Supabase service_role/secret key here.
-   4. Replace YOUR_SUPABASE_PUBLISHABLE_KEY below.
 ========================================================= */
 
 
 /* =========================================================
-   1. FIREBASE MODULE IMPORTS
+   1. FIREBASE IMPORTS
 ========================================================= */
 
 import {
@@ -20,7 +14,8 @@ import {
 
 import {
   getAuth,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signInAnonymously
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 
@@ -29,7 +24,7 @@ import {
 ========================================================= */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCkKCU1re5b9MtdAF1F4xI6rGxmxhGZak",
+  apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
   authDomain: "loksewaquest-227b6.firebaseapp.com",
   projectId: "loksewaquest-227b6",
   storageBucket: "loksewaquest-227b6.firebasestorage.app",
@@ -49,107 +44,55 @@ let currentUser = null;
 
 
 /* =========================================================
-   4. SUPABASE CONFIGURATION
+   4. SUPABASE CONFIG
 ========================================================= */
 
 const SUPABASE_URL =
   "https://edyirdedkiarguvurpxq.supabase.co";
 
 /*
- * IMPORTANT:
- *
- * Replace this with your CURRENT Supabase
- * Publishable key from:
- *
- * Supabase Dashboard
- * → Project Settings
- * → API
- * → Publishable key
- *
- * It normally starts with:
- *
- * sb_publishable_...
- *
- * DO NOT use:
- *
- * - service_role
- * - secret
- * - Supabase secret key
- *
- */
+ IMPORTANT:
+ Replace this with your REAL Supabase
+ Publishable/Anon key.
+
+ Do NOT put the service_role/secret key here.
+*/
 
 const SUPABASE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
 
 
 /* =========================================================
-   5. CHECK SUPABASE KEY
-========================================================= */
-
-if (
-  !SUPABASE_KEY ||
-  SUPABASE_KEY === "YOUR_SUPABASE_PUBLISHABLE_KEY"
-) {
-
-  console.error(
-    "Supabase publishable key has not been configured."
-  );
-
-  throw new Error(
-    "Supabase Publishable Key is missing. Add your current Supabase Publishable key in app.js."
-  );
-}
-
-
-/* =========================================================
-   6. CHECK SUPABASE LIBRARY
+   5. CHECK SUPABASE
 ========================================================= */
 
 if (!window.supabase) {
-
-  console.error(
-    "Supabase library was not loaded."
-  );
-
   throw new Error(
     "Supabase library failed to load. Check your HTML CDN."
   );
 }
 
-
-/* =========================================================
-   7. CREATE SUPABASE CLIENT
-========================================================= */
+if (
+  SUPABASE_KEY ===
+  "PASTE_YOUR_REAL_SUPABASE_PUBLISHABLE_KEY_HERE"
+) {
+  console.warn(
+    "WARNING: Supabase publishable key has not been configured."
+  );
+}
 
 const supabaseClient =
   window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_KEY,
-    {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-        detectSessionInUrl: false
-      }
-    }
+    SUPABASE_KEY
   );
-
-
-console.log(
-  "Supabase client initialized."
-);
 
 
 /* =========================================================
-   8. CHECK PDF.JS
+   6. CHECK PDF.JS
 ========================================================= */
 
 if (!window.pdfjsLib) {
-
-  console.error(
-    "PDF.js was not loaded."
-  );
-
   throw new Error(
     "PDF.js failed to load. Check your HTML CDN."
   );
@@ -157,15 +100,15 @@ if (!window.pdfjsLib) {
 
 
 /* =========================================================
-   9. PDF.JS WORKER
+   7. PDF.JS WORKER
 ========================================================= */
 
-window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
 
 /* =========================================================
-   10. DOM ELEMENTS
+   8. DOM ELEMENTS
 ========================================================= */
 
 const userStatus =
@@ -187,117 +130,168 @@ const previewBox =
 const previewContainer =
   document.getElementById("previewContainer");
 
+const anonLoginBtn =
+  document.getElementById("anonLoginBtn");
+
 
 /* =========================================================
-   11. STATUS HELPER
+   9. STATUS FUNCTION
 ========================================================= */
 
-function setStatus(
-  message,
-  type = "info"
-) {
+function setStatus(message, type = "info") {
 
-  if (!statusMsg) {
-    return;
-  }
+  if (!statusMsg) return;
 
   statusMsg.innerText = message;
 
-  statusMsg.className = "";
-
   if (type === "success") {
-    statusMsg.classList.add("success");
-  }
-
-  if (type === "error") {
-    statusMsg.classList.add("error");
+    statusMsg.style.color = "#15803d";
+  } else if (type === "error") {
+    statusMsg.style.color = "#dc2626";
+  } else {
+    statusMsg.style.color = "#1e40af";
   }
 }
 
 
 /* =========================================================
-   12. FIREBASE AUTH MONITORING
+   10. FIREBASE AUTH STATE
 ========================================================= */
 
-onAuthStateChanged(
-  auth,
-  (user) => {
+onAuthStateChanged(auth, (user) => {
 
-    if (user) {
+  if (user) {
 
-      currentUser = user;
+    currentUser = user;
 
-      console.log(
-        "Firebase user logged in:",
-        user.uid
-      );
+    console.log(
+      "Firebase authenticated:",
+      user.uid
+    );
 
-      console.log(
-        "Firebase email:",
-        user.email || "No email"
-      );
+    if (userStatus) {
 
-      if (userStatus) {
+      userStatus.innerText =
+        `Logged in • ${user.email || "Guest User"}`;
 
-        userStatus.innerText =
-          `Logged in as: ${user.email || user.uid}`;
+      userStatus.style.color =
+        "#15803d";
+    }
 
-        userStatus.style.color =
-          "#15803d";
-      }
+    if (anonLoginBtn) {
+      anonLoginBtn.style.display = "none";
+    }
 
-    } else {
+  } else {
 
-      currentUser = null;
+    currentUser = null;
 
-      console.log(
-        "No Firebase user logged in."
-      );
+    console.log(
+      "Firebase: no authenticated user."
+    );
 
-      if (userStatus) {
+    if (userStatus) {
 
-        userStatus.innerText =
-          "Not logged in.";
+      userStatus.innerText =
+        "Not logged in";
 
-        userStatus.style.color =
-          "#dc2626";
-      }
+      userStatus.style.color =
+        "#dc2626";
+    }
+
+    if (anonLoginBtn) {
+      anonLoginBtn.style.display = "block";
     }
   }
-);
+});
 
 
 /* =========================================================
-   13. PDF TEXT EXTRACTION
+   11. QUICK GUEST LOGIN
+========================================================= */
+
+if (anonLoginBtn) {
+
+  anonLoginBtn.addEventListener(
+    "click",
+    async () => {
+
+      anonLoginBtn.disabled = true;
+
+      anonLoginBtn.innerText =
+        "Signing in...";
+
+      try {
+
+        setStatus(
+          "Signing in as guest..."
+        );
+
+        const result =
+          await signInAnonymously(auth);
+
+        currentUser =
+          result.user;
+
+        console.log(
+          "Guest Firebase user:",
+          currentUser.uid
+        );
+
+        setStatus(
+          "Guest login successful.",
+          "success"
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Firebase anonymous login error:",
+          error
+        );
+
+        setStatus(
+          "Login failed: " +
+          (error.message || error),
+          "error"
+        );
+
+        alert(
+          "Firebase Guest Login failed.\n\n" +
+          (error.message || error)
+        );
+
+        anonLoginBtn.disabled = false;
+
+        anonLoginBtn.innerText =
+          "Quick Guest Login";
+      }
+    }
+  );
+}
+
+
+/* =========================================================
+   12. PDF TEXT EXTRACTION
 ========================================================= */
 
 async function extractTextFromPDF(file) {
 
   if (!file) {
-
     throw new Error(
       "No PDF file supplied."
     );
   }
 
-  console.log(
-    "Reading PDF:",
-    file.name
-  );
-
   const arrayBuffer =
     await file.arrayBuffer();
 
   const pdf =
-    await window.pdfjsLib
+    await pdfjsLib
       .getDocument({
         data: arrayBuffer
       })
       .promise;
-
-  console.log(
-    `PDF pages: ${pdf.numPages}`
-  );
 
   let fullText = "";
 
@@ -319,9 +313,7 @@ async function extractTextFromPDF(file) {
 
     const pageText =
       textContent.items
-        .map(
-          item => item.str || ""
-        )
+        .map(item => item.str || "")
         .join(" ");
 
     fullText +=
@@ -333,13 +325,12 @@ async function extractTextFromPDF(file) {
 
 
 /* =========================================================
-   14. TEXT EXTRACTION
+   13. TEXT/PDF EXTRACTION
 ========================================================= */
 
 async function extractTextFromFile(file) {
 
   if (!file) {
-
     throw new Error(
       "No file selected."
     );
@@ -347,14 +338,10 @@ async function extractTextFromFile(file) {
 
   const isPDF =
     file.type === "application/pdf" ||
-    file.name
-      .toLowerCase()
-      .endsWith(".pdf");
+    file.name.toLowerCase().endsWith(".pdf");
 
   if (isPDF) {
-
     return await extractTextFromPDF(file);
-
   }
 
   return await file.text();
@@ -362,7 +349,7 @@ async function extractTextFromFile(file) {
 
 
 /* =========================================================
-   15. CREATE TEXT CHUNKS
+   14. CREATE CHUNKS
 ========================================================= */
 
 function createTextChunks(
@@ -370,18 +357,12 @@ function createTextChunks(
   wordsPerChunk = 600
 ) {
 
-  if (
-    !text ||
-    !text.trim()
-  ) {
-
+  if (!text || !text.trim()) {
     return [];
   }
 
   const words =
-    text
-      .trim()
-      .split(/\s+/);
+    text.trim().split(/\s+/);
 
   const chunks = [];
 
@@ -391,21 +372,14 @@ function createTextChunks(
     i += wordsPerChunk
   ) {
 
-    const chunkText =
+    const chunk =
       words
-        .slice(
-          i,
-          i + wordsPerChunk
-        )
-        .join(" ");
+        .slice(i, i + wordsPerChunk)
+        .join(" ")
+        .trim();
 
-    if (
-      chunkText.trim()
-    ) {
-
-      chunks.push(
-        chunkText.trim()
-      );
+    if (chunk) {
+      chunks.push(chunk);
     }
   }
 
@@ -414,103 +388,7 @@ function createTextChunks(
 
 
 /* =========================================================
-   16. UPLOAD FILE TO SUPABASE STORAGE
-========================================================= */
-
-async function uploadFileToStorage(
-  file,
-  filePath
-) {
-
-  console.log(
-    "Starting Supabase Storage upload..."
-  );
-
-  console.log(
-    "Bucket:",
-    "loksewa_documents"
-  );
-
-  console.log(
-    "Path:",
-    filePath
-  );
-
-  console.log(
-    "File:",
-    file.name,
-    file.size,
-    file.type
-  );
-
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .storage
-        .from("loksewa_documents")
-        .upload(
-          filePath,
-          file,
-          {
-            cacheControl: "3600",
-            upsert: false,
-            contentType:
-              file.type ||
-              "application/octet-stream"
-          }
-        );
-
-
-    if (error) {
-
-      console.error(
-        "Supabase Storage error:",
-        error
-      );
-
-      throw new Error(
-        error.message ||
-        "Unknown Supabase Storage error."
-      );
-    }
-
-
-    if (!data) {
-
-      throw new Error(
-        "Supabase Storage returned an empty response."
-      );
-    }
-
-
-    console.log(
-      "Storage upload successful:",
-      data
-    );
-
-
-    return data;
-
-  } catch (error) {
-
-    console.error(
-      "Storage upload exception:",
-      error
-    );
-
-    throw error;
-  }
-}
-
-
-/* =========================================================
-   17. GENERATE LOKSEWA QUESTIONS
-      USING SUPABASE EDGE FUNCTION
+   15. GENERATE AI QUESTIONS
 ========================================================= */
 
 async function generateLoksewaQuestions(
@@ -519,27 +397,20 @@ async function generateLoksewaQuestions(
 ) {
 
   if (!currentUser) {
-
     throw new Error(
-      "Firebase user is not authenticated."
+      "Firebase authentication required."
     );
   }
 
-  if (
-    !chunkContent ||
-    !chunkContent.trim()
-  ) {
-
+  if (!chunkContent?.trim()) {
     throw new Error(
-      "No text content available for AI generation."
+      "No text available for AI generation."
     );
   }
-
 
   console.log(
-    "Calling Supabase Edge Function..."
+    "Calling generate-ai-quiz..."
   );
-
 
   const {
     data,
@@ -549,15 +420,13 @@ async function generateLoksewaQuestions(
       "generate-ai-quiz",
       {
         body: {
-          chunkContent:
-            chunkContent
+          chunkContent
         }
       }
     );
 
-
   console.log(
-    "Edge Function data:",
+    "Edge Function response:",
     data
   );
 
@@ -566,7 +435,6 @@ async function generateLoksewaQuestions(
     error
   );
 
-
   if (error) {
 
     throw new Error(
@@ -574,123 +442,78 @@ async function generateLoksewaQuestions(
     );
   }
 
-
   if (!data) {
-
     throw new Error(
       "Edge Function returned no data."
     );
   }
 
-
-  if (
-    data.success === false
-  ) {
-
+  if (data.error) {
     throw new Error(
-      data.error ||
-      data.details ||
-      "AI generation failed."
+      data.error
     );
   }
 
-
-  if (
-    !Array.isArray(
-      data.questions
-    )
-  ) {
-
-    console.error(
-      "Invalid Edge Function response:",
-      data
-    );
-
+  if (!Array.isArray(data.questions)) {
     throw new Error(
-      "Edge Function did not return a valid questions array."
+      "Invalid response: questions array missing."
     );
   }
-
-
-  const questionsArray =
-    data.questions;
-
-
-  if (
-    questionsArray.length === 0
-  ) {
-
-    throw new Error(
-      "AI generated zero questions."
-    );
-  }
-
-
-  /* =======================================================
-     VALIDATE AI QUESTIONS
-  ======================================================= */
 
   const validQuestions =
-    questionsArray.filter(
-      (q) => {
+    data.questions.filter((q) => {
 
-        return (
-          q &&
-          typeof q.question === "string" &&
-          Array.isArray(q.options) &&
-          q.options.length === 4 &&
-          Number.isInteger(q.correct_index) &&
-          q.correct_index >= 0 &&
-          q.correct_index <= 3
-        );
+      return (
+        q &&
+        typeof q.question === "string" &&
+        Array.isArray(q.options) &&
+        q.options.length === 4 &&
+        Number.isInteger(q.correct_index) &&
+        q.correct_index >= 0 &&
+        q.correct_index <= 3
+      );
 
-      }
-    );
+    });
 
 
-  if (
-    validQuestions.length === 0
-  ) {
+  if (!validQuestions.length) {
 
     throw new Error(
-      "AI returned questions, but none passed validation."
+      "Gemini returned no valid MCQs."
     );
   }
 
 
   /* =======================================================
-     PREPARE DATABASE RECORDS
+     SAVE QUESTIONS
   ======================================================= */
 
-  const recordsToInsert =
-    validQuestions.map(
-      (q) => ({
+  const records =
+    validQuestions.map((q) => ({
 
-        document_id:
-          documentId,
+      document_id:
+        documentId,
 
-        user_id:
-          currentUser.uid,
+      /*
+       Firebase UID stored as TEXT
+      */
 
-        question_text:
-          q.question,
+      user_id:
+        currentUser.uid,
 
-        options:
-          q.options,
+      question_text:
+        q.question,
 
-        correct_option:
-          q.correct_index,
+      options:
+        q.options,
 
-        explanation:
-          q.explanation || ""
+      correct_option:
+        q.correct_index,
 
-      })
-    );
+      explanation:
+        q.explanation || ""
 
-
-  console.log(
-    "Saving generated questions..."
-  );
+    }));
 
 
   const {
@@ -699,18 +522,11 @@ async function generateLoksewaQuestions(
   } =
     await supabaseClient
       .from("quiz_questions")
-      .insert(
-        recordsToInsert
-      )
+      .insert(records)
       .select();
 
 
   if (dbError) {
-
-    console.error(
-      "quiz_questions error:",
-      dbError
-    );
 
     throw new Error(
       `Failed to save questions: ${dbError.message}`
@@ -723,335 +539,7 @@ async function generateLoksewaQuestions(
 
 
 /* =========================================================
-   18. MAIN UPLOAD/PROCESS FUNCTION
-========================================================= */
-
-async function processDocument() {
-
-  /* =======================================================
-     CHECK FIREBASE LOGIN
-  ======================================================= */
-
-  if (!currentUser) {
-
-    throw new Error(
-      "You must be logged in with Firebase."
-    );
-  }
-
-
-  /* =======================================================
-     CHECK FILE
-  ======================================================= */
-
-  const file =
-    fileInput?.files?.[0];
-
-
-  if (!file) {
-
-    throw new Error(
-      "Please select a PDF or text file first."
-    );
-  }
-
-
-  /* =======================================================
-     STEP 1 — EXTRACT TEXT
-  ======================================================= */
-
-  setStatus(
-    "Step 1/6: Extracting document text..."
-  );
-
-
-  const extractedText =
-    await extractTextFromFile(file);
-
-
-  if (
-    !extractedText ||
-    !extractedText.trim()
-  ) {
-
-    throw new Error(
-      "Could not extract readable text from this file."
-    );
-  }
-
-
-  console.log(
-    "Extracted characters:",
-    extractedText.length
-  );
-
-
-  /* =======================================================
-     STEP 2 — CHUNK TEXT
-  ======================================================= */
-
-  setStatus(
-    "Step 2/6: Chunking content..."
-  );
-
-
-  const chunks =
-    createTextChunks(
-      extractedText,
-      600
-    );
-
-
-  if (
-    chunks.length === 0
-  ) {
-
-    throw new Error(
-      "No usable text chunks were created."
-    );
-  }
-
-
-  console.log(
-    `Created ${chunks.length} chunks.`
-  );
-
-
-  /* =======================================================
-     PREVIEW
-  ======================================================= */
-
-  if (
-    previewContainer &&
-    previewBox
-  ) {
-
-    previewContainer.style.display =
-      "block";
-
-    previewBox.innerText =
-      chunks[0] ||
-      "Preview unavailable.";
-  }
-
-
-  /* =======================================================
-     STEP 3 — STORAGE UPLOAD
-  ======================================================= */
-
-  setStatus(
-    "Step 3/6: Uploading document to Supabase Storage..."
-  );
-
-
-  const fileExt =
-    file.name
-      .split(".")
-      .pop()
-      ?.toLowerCase() ||
-    "unknown";
-
-
-  const sanitizedName =
-    file.name.replace(
-      /[^a-zA-Z0-9.-]/g,
-      "_"
-    );
-
-
-  const filePath =
-    `${currentUser.uid}/${Date.now()}_${sanitizedName}`;
-
-
-  const storageData =
-    await uploadFileToStorage(
-      file,
-      filePath
-    );
-
-
-  if (!storageData?.path) {
-
-    throw new Error(
-      "Upload succeeded but no storage path was returned."
-    );
-  }
-
-
-  /* =======================================================
-     STEP 4 — DOCUMENT METADATA
-  ======================================================= */
-
-  setStatus(
-    "Step 4/6: Saving document metadata..."
-  );
-
-
-  const {
-    data: docData,
-    error: dbError
-  } =
-    await supabaseClient
-      .from("documents")
-      .insert({
-
-        user_id:
-          currentUser.uid,
-
-        title:
-          file.name,
-
-        file_path:
-          storageData.path,
-
-        file_type:
-          fileExt,
-
-        file_size_bytes:
-          file.size,
-
-        status:
-          "completed"
-
-      })
-      .select()
-      .single();
-
-
-  if (dbError) {
-
-    console.error(
-      "Document database error:",
-      dbError
-    );
-
-    throw new Error(
-      `Failed to save document: ${dbError.message}`
-    );
-  }
-
-
-  if (!docData?.id) {
-
-    throw new Error(
-      "Document saved but no document ID was returned."
-    );
-  }
-
-
-  console.log(
-    "Document created:",
-    docData.id
-  );
-
-
-  /* =======================================================
-     STEP 5 — SAVE TEXT CHUNKS
-  ======================================================= */
-
-  setStatus(
-    `Step 5/6: Saving ${chunks.length} text chunks...`
-  );
-
-
-  const chunkRecords =
-    chunks.map(
-      (
-        chunkContent,
-        index
-      ) => ({
-
-        document_id:
-          docData.id,
-
-        chunk_index:
-          index,
-
-        content:
-          chunkContent,
-
-        token_count:
-          chunkContent
-            .split(/\s+/)
-            .length
-
-      })
-    );
-
-
-  const {
-    error: chunkError
-  } =
-    await supabaseClient
-      .from("document_chunks")
-      .insert(
-        chunkRecords
-      );
-
-
-  if (chunkError) {
-
-    console.error(
-      "Chunk insert error:",
-      chunkError
-    );
-
-    throw new Error(
-      `Failed to save text chunks: ${chunkError.message}`
-    );
-  }
-
-
-  /* =======================================================
-     STEP 6 — GENERATE MCQs
-  ======================================================= */
-
-  setStatus(
-    "Step 6/6: Generating Loksewa MCQs with AI..."
-  );
-
-
-  /*
-   * Currently generating from FIRST CHUNK ONLY.
-   *
-   * This keeps Gemini usage lower.
-   */
-
-  const generatedQuestions =
-    await generateLoksewaQuestions(
-      chunks[0],
-      docData.id
-    );
-
-
-  /* =======================================================
-     SUCCESS
-  ======================================================= */
-
-  setStatus(
-    `Success! Saved document, created ${chunks.length} chunks, and generated ${generatedQuestions.length} Loksewa questions.`,
-    "success"
-  );
-
-
-  console.log(
-    "PROCESS COMPLETED SUCCESSFULLY"
-  );
-
-  console.log(
-    "Document:",
-    docData
-  );
-
-  console.log(
-    "Questions:",
-    generatedQuestions
-  );
-}
-
-
-/* =========================================================
-   19. UPLOAD BUTTON
+   16. MAIN PROCESS
 ========================================================= */
 
 if (uploadBtn) {
@@ -1060,32 +548,314 @@ if (uploadBtn) {
     "click",
     async () => {
 
-      if (uploadBtn.disabled) {
+      /* AUTH */
+
+      if (!currentUser) {
+
+        alert(
+          "Please login first using Quick Guest Login."
+        );
+
         return;
       }
 
+
+      /* FILE */
+
+      const file =
+        fileInput?.files?.[0];
+
+      if (!file) {
+
+        alert(
+          "Please select a PDF or TXT file."
+        );
+
+        return;
+      }
+
+
       uploadBtn.disabled = true;
+
 
       try {
 
-        await processDocument();
+        /* =========================================
+           STEP 1
+        ========================================= */
 
-      } catch (err) {
+        setStatus(
+          "Step 1/6: Extracting document..."
+        );
 
-        console.error(
-          "PROCESSING ERROR:",
-          err
+        const extractedText =
+          await extractTextFromFile(file);
+
+
+        if (!extractedText.trim()) {
+
+          throw new Error(
+            "Could not extract readable text."
+          );
+        }
+
+
+        /* =========================================
+           STEP 2
+        ========================================= */
+
+        setStatus(
+          "Step 2/6: Creating text chunks..."
+        );
+
+        const chunks =
+          createTextChunks(
+            extractedText,
+            600
+          );
+
+
+        if (!chunks.length) {
+
+          throw new Error(
+            "No usable chunks were created."
+          );
+        }
+
+
+        /* PREVIEW */
+
+        if (
+          previewContainer &&
+          previewBox
+        ) {
+
+          previewContainer.style.display =
+            "block";
+
+          previewBox.innerText =
+            chunks[0];
+        }
+
+
+        /* =========================================
+           STEP 3
+        ========================================= */
+
+        setStatus(
+          "Step 3/6: Uploading document..."
         );
 
 
-        const message =
-          err?.message ||
-          String(err) ||
-          "Unknown error";
+        const fileExt =
+          file.name
+            .split(".")
+            .pop()
+            ?.toLowerCase() ||
+          "unknown";
+
+
+        const safeName =
+          file.name.replace(
+            /[^a-zA-Z0-9.-]/g,
+            "_"
+          );
+
+
+        const filePath =
+          `${currentUser.uid}/${Date.now()}_${safeName}`;
+
+
+        console.log(
+          "Storage path:",
+          filePath
+        );
+
+
+        const {
+          data: storageData,
+          error: storageError
+        } =
+          await supabaseClient
+            .storage
+            .from("loksewa_documents")
+            .upload(
+              filePath,
+              file,
+              {
+                cacheControl: "3600",
+                upsert: false
+              }
+            );
+
+
+        if (storageError) {
+
+          console.error(
+            "Storage upload error:",
+            storageError
+          );
+
+          throw new Error(
+            `Storage upload failed: ${storageError.message}`
+          );
+        }
+
+
+        /* =========================================
+           STEP 4
+        ========================================= */
+
+        setStatus(
+          "Step 4/6: Saving document..."
+        );
+
+
+        const {
+          data: docData,
+          error: docError
+        } =
+          await supabaseClient
+            .from("documents")
+            .insert({
+
+              user_id:
+                currentUser.uid,
+
+              title:
+                file.name,
+
+              file_path:
+                storageData.path,
+
+              file_type:
+                fileExt,
+
+              file_size_bytes:
+                file.size,
+
+              status:
+                "completed"
+
+            })
+            .select()
+            .single();
+
+
+        if (docError) {
+
+          throw new Error(
+            `Document save failed: ${docError.message}`
+          );
+        }
+
+
+        if (!docData?.id) {
+
+          throw new Error(
+            "Document ID was not returned."
+          );
+        }
+
+
+        /* =========================================
+           STEP 5
+        ========================================= */
+
+        setStatus(
+          `Step 5/6: Saving ${chunks.length} chunks...`
+        );
+
+
+        const chunkRecords =
+          chunks.map(
+            (content, index) => ({
+
+              document_id:
+                docData.id,
+
+              chunk_index:
+                index,
+
+              content,
+
+              token_count:
+                content.split(/\s+/).length
+
+            })
+          );
+
+
+        const {
+          error: chunkError
+        } =
+          await supabaseClient
+            .from("document_chunks")
+            .insert(chunkRecords);
+
+
+        if (chunkError) {
+
+          throw new Error(
+            `Chunk save failed: ${chunkError.message}`
+          );
+        }
+
+
+        /* =========================================
+           STEP 6
+        ========================================= */
+
+        setStatus(
+          "Step 6/6: Generating Loksewa MCQs..."
+        );
+
+
+        /*
+          Only first chunk is sent to Gemini
+          to control API usage.
+        */
+
+        const questions =
+          await generateLoksewaQuestions(
+            chunks[0],
+            docData.id
+          );
+
+
+        /* =========================================
+           SUCCESS
+        ========================================= */
+
+        setStatus(
+          `Success! ${chunks.length} chunks saved and ${questions.length} MCQs generated.`,
+          "success"
+        );
+
+
+        console.log(
+          "Completed successfully:",
+          {
+            document: docData,
+            questions
+          }
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "PROCESSING ERROR:",
+          error
+        );
 
 
         setStatus(
-          `Error: ${message}`,
+          "Error: " +
+          (
+            error?.message ||
+            String(error)
+          ),
           "error"
         );
 
@@ -1093,25 +863,13 @@ if (uploadBtn) {
 
         uploadBtn.disabled = false;
       }
+
     }
   );
 
 } else {
 
   console.error(
-    "Upload button was not found."
+    "Upload button not found."
   );
-}
-
-
-/* =========================================================
-   20. INITIAL STATUS
-========================================================= */
-
-setStatus(
-  "Ready. Please select a PDF or text file."
-);
-
-console.log(
-  "LoksewaQuest Source Parser initialized."
-);
+           }
