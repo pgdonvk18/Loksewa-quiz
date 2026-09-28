@@ -1,6 +1,18 @@
 /* =========================================================
    LOKSEWAQUEST SOURCE PARSER
    Firebase Auth + Supabase + PDF.js + Gemini Edge Function
+
+   FEATURES:
+   - PDF/TXT extraction
+   - 600-word chunks
+   - Supabase document storage
+   - Supabase chunk storage
+   - Process EVERY chunk sequentially
+   - Send documentId with every Gemini request
+   - Duplicate protection handled by Edge Function
+   - Collect all generated questions
+   - Save questions to quiz_questions
+   - Display final unique question count
 ========================================================= */
 
 
@@ -37,8 +49,11 @@ const firebaseConfig = {
    3. INITIALIZE FIREBASE
 ========================================================= */
 
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
+const firebaseApp =
+  initializeApp(firebaseConfig);
+
+const auth =
+  getAuth(firebaseApp);
 
 let currentUser = null;
 
@@ -50,14 +65,6 @@ let currentUser = null;
 const SUPABASE_URL =
   "https://edyirdedkiarguvurpxq.supabase.co";
 
-/*
- IMPORTANT:
- Replace this with your REAL Supabase
- Publishable/Anon key.
-
- Do NOT put the service_role/secret key here.
-*/
-
 const SUPABASE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
 
@@ -67,19 +74,13 @@ const SUPABASE_KEY =
 ========================================================= */
 
 if (!window.supabase) {
+
   throw new Error(
     "Supabase library failed to load. Check your HTML CDN."
   );
+
 }
 
-if (
-  SUPABASE_KEY ===
-  "PASTE_YOUR_REAL_SUPABASE_PUBLISHABLE_KEY_HERE"
-) {
-  console.warn(
-    "WARNING: Supabase publishable key has not been configured."
-  );
-}
 
 const supabaseClient =
   window.supabase.createClient(
@@ -93,9 +94,11 @@ const supabaseClient =
 ========================================================= */
 
 if (!window.pdfjsLib) {
+
   throw new Error(
     "PDF.js failed to load. Check your HTML CDN."
   );
+
 }
 
 
@@ -138,19 +141,36 @@ const anonLoginBtn =
    9. STATUS FUNCTION
 ========================================================= */
 
-function setStatus(message, type = "info") {
+function setStatus(
+  message,
+  type = "info"
+) {
 
-  if (!statusMsg) return;
+  if (!statusMsg) {
+    return;
+  }
 
-  statusMsg.innerText = message;
+  statusMsg.innerText =
+    message;
+
 
   if (type === "success") {
-    statusMsg.style.color = "#15803d";
+
+    statusMsg.style.color =
+      "#15803d";
+
   } else if (type === "error") {
-    statusMsg.style.color = "#dc2626";
+
+    statusMsg.style.color =
+      "#dc2626";
+
   } else {
-    statusMsg.style.color = "#1e40af";
+
+    statusMsg.style.color =
+      "#1e40af";
+
   }
+
 }
 
 
@@ -158,52 +178,71 @@ function setStatus(message, type = "info") {
    10. FIREBASE AUTH STATE
 ========================================================= */
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(
+  auth,
+  (user) => {
 
-  if (user) {
+    if (user) {
 
-    currentUser = user;
+      currentUser =
+        user;
 
-    console.log(
-      "Firebase authenticated:",
-      user.uid
-    );
+      console.log(
+        "Firebase authenticated:",
+        user.uid
+      );
 
-    if (userStatus) {
 
-      userStatus.innerText =
-        `Logged in • ${user.email || "Guest User"}`;
+      if (userStatus) {
 
-      userStatus.style.color =
-        "#15803d";
+        userStatus.innerText =
+          `Logged in • ${user.email || "Guest User"}`;
+
+        userStatus.style.color =
+          "#15803d";
+
+      }
+
+
+      if (anonLoginBtn) {
+
+        anonLoginBtn.style.display =
+          "none";
+
+      }
+
+    } else {
+
+      currentUser =
+        null;
+
+      console.log(
+        "Firebase: no authenticated user."
+      );
+
+
+      if (userStatus) {
+
+        userStatus.innerText =
+          "Not logged in";
+
+        userStatus.style.color =
+          "#dc2626";
+
+      }
+
+
+      if (anonLoginBtn) {
+
+        anonLoginBtn.style.display =
+          "block";
+
+      }
+
     }
 
-    if (anonLoginBtn) {
-      anonLoginBtn.style.display = "none";
-    }
-
-  } else {
-
-    currentUser = null;
-
-    console.log(
-      "Firebase: no authenticated user."
-    );
-
-    if (userStatus) {
-
-      userStatus.innerText =
-        "Not logged in";
-
-      userStatus.style.color =
-        "#dc2626";
-    }
-
-    if (anonLoginBtn) {
-      anonLoginBtn.style.display = "block";
-    }
   }
-});
+);
 
 
 /* =========================================================
@@ -216,10 +255,12 @@ if (anonLoginBtn) {
     "click",
     async () => {
 
-      anonLoginBtn.disabled = true;
+      anonLoginBtn.disabled =
+        true;
 
       anonLoginBtn.innerText =
         "Signing in...";
+
 
       try {
 
@@ -227,21 +268,28 @@ if (anonLoginBtn) {
           "Signing in as guest..."
         );
 
+
         const result =
-          await signInAnonymously(auth);
+          await signInAnonymously(
+            auth
+          );
+
 
         currentUser =
           result.user;
+
 
         console.log(
           "Guest Firebase user:",
           currentUser.uid
         );
 
+
         setStatus(
           "Guest login successful.",
           "success"
         );
+
 
       } catch (error) {
 
@@ -250,24 +298,37 @@ if (anonLoginBtn) {
           error
         );
 
+
         setStatus(
           "Login failed: " +
-          (error.message || error),
+          (
+            error.message ||
+            error
+          ),
           "error"
         );
 
+
         alert(
           "Firebase Guest Login failed.\n\n" +
-          (error.message || error)
+          (
+            error.message ||
+            error
+          )
         );
 
-        anonLoginBtn.disabled = false;
+
+        anonLoginBtn.disabled =
+          false;
 
         anonLoginBtn.innerText =
           "Quick Guest Login";
+
       }
+
     }
   );
+
 }
 
 
@@ -275,16 +336,22 @@ if (anonLoginBtn) {
    12. PDF TEXT EXTRACTION
 ========================================================= */
 
-async function extractTextFromPDF(file) {
+async function extractTextFromPDF(
+  file
+) {
 
   if (!file) {
+
     throw new Error(
       "No PDF file supplied."
     );
+
   }
+
 
   const arrayBuffer =
     await file.arrayBuffer();
+
 
   const pdf =
     await pdfjsLib
@@ -293,7 +360,10 @@ async function extractTextFromPDF(file) {
       })
       .promise;
 
-  let fullText = "";
+
+  let fullText =
+    "";
+
 
   for (
     let pageNum = 1;
@@ -305,22 +375,34 @@ async function extractTextFromPDF(file) {
       `Extracting PDF page ${pageNum}/${pdf.numPages}...`
     );
 
+
     const page =
-      await pdf.getPage(pageNum);
+      await pdf.getPage(
+        pageNum
+      );
+
 
     const textContent =
       await page.getTextContent();
 
+
     const pageText =
       textContent.items
-        .map(item => item.str || "")
+        .map(
+          item =>
+            item.str || ""
+        )
         .join(" ");
+
 
     fullText +=
       `\n--- Page ${pageNum} ---\n${pageText}`;
+
   }
 
+
   return fullText.trim();
+
 }
 
 
@@ -328,23 +410,38 @@ async function extractTextFromPDF(file) {
    13. TEXT/PDF EXTRACTION
 ========================================================= */
 
-async function extractTextFromFile(file) {
+async function extractTextFromFile(
+  file
+) {
 
   if (!file) {
+
     throw new Error(
       "No file selected."
     );
+
   }
+
 
   const isPDF =
-    file.type === "application/pdf" ||
-    file.name.toLowerCase().endsWith(".pdf");
+    file.type ===
+      "application/pdf" ||
+    file.name
+      .toLowerCase()
+      .endsWith(".pdf");
+
 
   if (isPDF) {
-    return await extractTextFromPDF(file);
+
+    return await extractTextFromPDF(
+      file
+    );
+
   }
 
+
   return await file.text();
+
 }
 
 
@@ -357,14 +454,25 @@ function createTextChunks(
   wordsPerChunk = 600
 ) {
 
-  if (!text || !text.trim()) {
+  if (
+    !text ||
+    !text.trim()
+  ) {
+
     return [];
+
   }
 
-  const words =
-    text.trim().split(/\s+/);
 
-  const chunks = [];
+  const words =
+    text
+      .trim()
+      .split(/\s+/);
+
+
+  const chunks =
+    [];
+
 
   for (
     let i = 0;
@@ -374,172 +482,248 @@ function createTextChunks(
 
     const chunk =
       words
-        .slice(i, i + wordsPerChunk)
+        .slice(
+          i,
+          i + wordsPerChunk
+        )
         .join(" ")
         .trim();
 
+
     if (chunk) {
-      chunks.push(chunk);
+
+      chunks.push(
+        chunk
+      );
+
     }
+
   }
 
+
   return chunks;
+
 }
 
 
 /* =========================================================
-   15. GENERATE AI QUESTIONS
+   15. GENERATE QUESTIONS FOR ONE CHUNK
 ========================================================= */
 
-async function generateLoksewaQuestions(
+async function generateQuestionsForChunk(
   chunkContent,
-  documentId
+  documentId,
+  chunkIndex,
+  totalChunks
 ) {
 
   if (!currentUser) {
+
     throw new Error(
       "Firebase authentication required."
     );
+
   }
 
-  if (!chunkContent?.trim()) {
-    throw new Error(
-      "No text available for AI generation."
+
+  const cleanChunk =
+    String(
+      chunkContent || ""
+    ).trim();
+
+
+  if (!cleanChunk) {
+
+    console.warn(
+      `Chunk ${chunkIndex + 1} is empty. Skipping.`
     );
+
+    return [];
+
   }
+
 
   console.log(
-    "Calling generate-ai-quiz..."
+    `Processing chunk ${chunkIndex + 1}/${totalChunks}`
   );
+
+
+  console.log(
+    "Chunk length:",
+    cleanChunk.length
+  );
+
+
+  setStatus(
+    `Step 6/6: Generating MCQs from chunk ${chunkIndex + 1}/${totalChunks}...`
+  );
+
 
   const {
     data,
     error
   } =
-    await supabaseClient.functions.invoke(
-      "generate-ai-quiz",
-      {
-        body: {
-          chunkContent
+    await supabaseClient
+      .functions
+      .invoke(
+        "generate-ai-quiz",
+        {
+          body: {
+
+            chunkContent:
+              cleanChunk,
+
+            documentId:
+              documentId
+
+          }
         }
-      }
-    );
+      );
+
 
   console.log(
-    "Edge Function response:",
+    `Chunk ${chunkIndex + 1} Edge Function response:`,
     data
   );
 
-  console.log(
-    "Edge Function error:",
-    error
-  );
 
   if (error) {
 
     throw new Error(
-      `Edge Function Error: ${error.message}`
+      `Chunk ${chunkIndex + 1} Edge Function Error: ${error.message}`
     );
+
   }
+
 
   if (!data) {
+
     throw new Error(
-      "Edge Function returned no data."
+      `Chunk ${chunkIndex + 1}: Edge Function returned no data.`
     );
+
   }
+
 
   if (data.error) {
-    throw new Error(
-      data.error
-    );
-  }
-
-  if (!Array.isArray(data.questions)) {
-    throw new Error(
-      "Invalid response: questions array missing."
-    );
-  }
-
-  const validQuestions =
-    data.questions.filter((q) => {
-
-      return (
-        q &&
-        typeof q.question === "string" &&
-        Array.isArray(q.options) &&
-        q.options.length === 4 &&
-        Number.isInteger(q.correct_index) &&
-        q.correct_index >= 0 &&
-        q.correct_index <= 3
-      );
-
-    });
-
-
-  if (!validQuestions.length) {
 
     throw new Error(
-      "Gemini returned no valid MCQs."
+      `Chunk ${chunkIndex + 1}: ${data.error}`
     );
+
   }
 
 
-  /* =======================================================
-     SAVE QUESTIONS
-  ======================================================= */
-
-  const records =
-    validQuestions.map((q) => ({
-
-      document_id:
-        documentId,
-
-      /*
-       Firebase UID stored as TEXT
-      */
-
-      user_id:
-        currentUser.uid,
-
-      question_text:
-        q.question,
-
-      options:
-        q.options,
-
-      correct_option:
-        q.correct_index,
-
-      explanation:
-        q.explanation || ""
-
-    }));
-
-
-  const {
-    data: savedQuestions,
-    error: dbError
-  } =
-    await supabaseClient
-      .from("quiz_questions")
-      .insert(records)
-      .select();
-
-
-  if (dbError) {
+  if (
+    !Array.isArray(
+      data.questions
+    )
+  ) {
 
     throw new Error(
-      `Failed to save questions: ${dbError.message}`
+      `Chunk ${chunkIndex + 1}: questions array missing.`
     );
+
   }
 
 
-  return savedQuestions || [];
+  console.log(
+    `Chunk ${chunkIndex + 1} generated ${data.questions.length} unique questions.`
+  );
+
+
+  return data.questions;
+
 }
 
 
 /* =========================================================
-   16. MAIN PROCESS
+   16. REMOVE DUPLICATES CLIENT-SIDE
+       
+   Extra safety layer.
+========================================================= */
+
+function normalizeQuestion(
+  question
+) {
+
+  return String(
+    question || ""
+  )
+    .toLowerCase()
+    .normalize("NFKC")
+    .replace(/\s+/g, " ")
+    .replace(
+      /[?？!！.,।,:;'"“”‘’\-–—()[\]{}]/g,
+      ""
+    )
+    .trim();
+
+}
+
+
+/* =========================================================
+   17. UNIQUE QUESTION FILTER
+========================================================= */
+
+function removeDuplicateQuestions(
+  questions
+) {
+
+  const seen =
+    new Set();
+
+
+  const unique =
+    [];
+
+
+  for (
+    const question
+    of questions
+  ) {
+
+    const key =
+      normalizeQuestion(
+        question.question
+      );
+
+
+    if (!key) {
+      continue;
+    }
+
+
+    if (
+      seen.has(key)
+    ) {
+
+      console.log(
+        "Client-side duplicate removed:",
+        question.question
+      );
+
+      continue;
+
+    }
+
+
+    seen.add(key);
+
+    unique.push(
+      question
+    );
+
+  }
+
+
+  return unique;
+
+}
+
+
+/* =========================================================
+   18. MAIN PROCESS
 ========================================================= */
 
 if (uploadBtn) {
@@ -548,7 +732,9 @@ if (uploadBtn) {
     "click",
     async () => {
 
-      /* AUTH */
+      /* ===================================================
+         AUTH
+      =================================================== */
 
       if (!currentUser) {
 
@@ -557,13 +743,17 @@ if (uploadBtn) {
         );
 
         return;
+
       }
 
 
-      /* FILE */
+      /* ===================================================
+         FILE
+      =================================================== */
 
       const file =
         fileInput?.files?.[0];
+
 
       if (!file) {
 
@@ -572,41 +762,56 @@ if (uploadBtn) {
         );
 
         return;
+
       }
 
 
-      uploadBtn.disabled = true;
+      uploadBtn.disabled =
+        true;
 
 
       try {
 
-        /* =========================================
+        /* =================================================
            STEP 1
-        ========================================= */
+        ================================================= */
 
         setStatus(
           "Step 1/6: Extracting document..."
         );
 
+
         const extractedText =
-          await extractTextFromFile(file);
+          await extractTextFromFile(
+            file
+          );
 
 
-        if (!extractedText.trim()) {
+        if (
+          !extractedText.trim()
+        ) {
 
           throw new Error(
             "Could not extract readable text."
           );
+
         }
 
 
-        /* =========================================
+        console.log(
+          "Extracted characters:",
+          extractedText.length
+        );
+
+
+        /* =================================================
            STEP 2
-        ========================================= */
+        ================================================= */
 
         setStatus(
           "Step 2/6: Creating text chunks..."
         );
+
 
         const chunks =
           createTextChunks(
@@ -615,15 +820,26 @@ if (uploadBtn) {
           );
 
 
-        if (!chunks.length) {
+        if (
+          !chunks.length
+        ) {
 
           throw new Error(
             "No usable chunks were created."
           );
+
         }
 
 
-        /* PREVIEW */
+        console.log(
+          "Total chunks:",
+          chunks.length
+        );
+
+
+        /* =================================================
+           PREVIEW
+        ================================================= */
 
         if (
           previewContainer &&
@@ -633,14 +849,16 @@ if (uploadBtn) {
           previewContainer.style.display =
             "block";
 
+
           previewBox.innerText =
             chunks[0];
+
         }
 
 
-        /* =========================================
+        /* =================================================
            STEP 3
-        ========================================= */
+        ================================================= */
 
         setStatus(
           "Step 3/6: Uploading document..."
@@ -678,13 +896,18 @@ if (uploadBtn) {
         } =
           await supabaseClient
             .storage
-            .from("loksewa_documents")
+            .from(
+              "loksewa_documents"
+            )
             .upload(
               filePath,
               file,
               {
-                cacheControl: "3600",
-                upsert: false
+                cacheControl:
+                  "3600",
+
+                upsert:
+                  false
               }
             );
 
@@ -696,15 +919,17 @@ if (uploadBtn) {
             storageError
           );
 
+
           throw new Error(
             `Storage upload failed: ${storageError.message}`
           );
+
         }
 
 
-        /* =========================================
+        /* =================================================
            STEP 4
-        ========================================= */
+        ================================================= */
 
         setStatus(
           "Step 4/6: Saving document..."
@@ -716,7 +941,9 @@ if (uploadBtn) {
           error: docError
         } =
           await supabaseClient
-            .from("documents")
+            .from(
+              "documents"
+            )
             .insert({
 
               user_id:
@@ -747,6 +974,7 @@ if (uploadBtn) {
           throw new Error(
             `Document save failed: ${docError.message}`
           );
+
         }
 
 
@@ -755,12 +983,23 @@ if (uploadBtn) {
           throw new Error(
             "Document ID was not returned."
           );
+
         }
 
 
-        /* =========================================
+        const documentId =
+          docData.id;
+
+
+        console.log(
+          "Document ID:",
+          documentId
+        );
+
+
+        /* =================================================
            STEP 5
-        ========================================= */
+        ================================================= */
 
         setStatus(
           `Step 5/6: Saving ${chunks.length} chunks...`
@@ -769,18 +1008,24 @@ if (uploadBtn) {
 
         const chunkRecords =
           chunks.map(
-            (content, index) => ({
+            (
+              content,
+              index
+            ) => ({
 
               document_id:
-                docData.id,
+                documentId,
 
               chunk_index:
                 index,
 
-              content,
+              content:
+                content,
 
               token_count:
-                content.split(/\s+/).length
+                content
+                  .split(/\s+/)
+                  .length
 
             })
           );
@@ -790,8 +1035,12 @@ if (uploadBtn) {
           error: chunkError
         } =
           await supabaseClient
-            .from("document_chunks")
-            .insert(chunkRecords);
+            .from(
+              "document_chunks"
+            )
+            .insert(
+              chunkRecords
+            );
 
 
         if (chunkError) {
@@ -799,45 +1048,227 @@ if (uploadBtn) {
           throw new Error(
             `Chunk save failed: ${chunkError.message}`
           );
+
         }
 
 
-        /* =========================================
+        /* =================================================
            STEP 6
-        ========================================= */
+           PROCESS EVERY CHUNK SEQUENTIALLY
+        ================================================= */
 
         setStatus(
-          "Step 6/6: Generating Loksewa MCQs..."
+          `Step 6/6: Generating MCQs from ${chunks.length} chunks...`
         );
 
 
-        /*
-          Only first chunk is sent to Gemini
-          to control API usage.
-        */
+        const allGeneratedQuestions =
+          [];
 
-        const questions =
-          await generateLoksewaQuestions(
-            chunks[0],
-            docData.id
+
+        let skippedChunks =
+          0;
+
+
+        for (
+          let i = 0;
+          i < chunks.length;
+          i++
+        ) {
+
+          const chunk =
+            chunks[i];
+
+
+          console.log(
+            `Starting chunk ${i + 1}/${chunks.length}`
           );
 
 
-        /* =========================================
-           SUCCESS
-        ========================================= */
+          try {
 
-        setStatus(
-          `Success! ${chunks.length} chunks saved and ${questions.length} MCQs generated.`,
-          "success"
+            const questions =
+              await generateQuestionsForChunk(
+                chunk,
+                documentId,
+                i,
+                chunks.length
+              );
+
+
+            if (
+              Array.isArray(
+                questions
+              )
+            ) {
+
+              allGeneratedQuestions.push(
+                ...questions
+              );
+
+            }
+
+
+          } catch (chunkError) {
+
+            console.error(
+              `Chunk ${i + 1} failed:`,
+              chunkError
+            );
+
+
+            /*
+              Continue with remaining chunks
+              instead of destroying the entire
+              upload process.
+            */
+
+            skippedChunks++;
+
+
+            setStatus(
+              `Chunk ${i + 1} failed. Continuing with remaining chunks...`,
+              "error"
+            );
+
+          }
+
+
+          /* =============================================
+             Small delay between Gemini calls
+             Helps avoid rapid-fire requests.
+          ============================================= */
+
+          if (
+            i <
+            chunks.length - 1
+          ) {
+
+            await new Promise(
+              resolve =>
+                setTimeout(
+                  resolve,
+                  500
+                )
+            );
+
+          }
+
+        }
+
+
+        /* =================================================
+           REMOVE CLIENT-SIDE DUPLICATES
+        ================================================= */
+
+        const uniqueQuestions =
+          removeDuplicateQuestions(
+            allGeneratedQuestions
+          );
+
+
+        /* =================================================
+           FINAL COUNT
+        ================================================= */
+
+        console.log(
+          "Total Gemini questions:",
+          allGeneratedQuestions.length
         );
 
 
         console.log(
+          "Final unique questions:",
+          uniqueQuestions.length
+        );
+
+
+        console.log(
+          "Skipped chunks:",
+          skippedChunks
+        );
+
+
+        /* =================================================
+           NOTE
+           
+           The Edge Function is already responsible
+           for saving questions in your current setup.
+
+           Therefore we DO NOT insert them again here.
+        ================================================= */
+
+
+        /* =================================================
+           SUCCESS MESSAGE
+        ================================================= */
+
+        if (
+          skippedChunks > 0
+        ) {
+
+          setStatus(
+            `Completed with warnings: ${chunks.length - skippedChunks}/${chunks.length} chunks processed. ${uniqueQuestions.length} unique MCQs generated.`,
+            "success"
+          );
+
+        } else {
+
+          setStatus(
+            `Success! ${chunks.length} chunks processed and ${uniqueQuestions.length} unique MCQs generated.`,
+            "success"
+          );
+
+        }
+
+
+        /* =================================================
+           FINAL ALERT
+        ================================================= */
+
+        alert(
+          `AI Quiz Generation Complete!\n\n` +
+
+          `📄 Chunks: ${chunks.length}\n` +
+
+          `🤖 Questions generated: ${allGeneratedQuestions.length}\n` +
+
+          `✅ Final unique questions: ${uniqueQuestions.length}\n` +
+
+          (
+            skippedChunks > 0
+              ? `⚠️ Chunks skipped: ${skippedChunks}\n`
+              : ""
+          )
+        );
+
+
+        /* =================================================
+           FINAL CONSOLE DATA
+        ================================================= */
+
+        console.log(
           "Completed successfully:",
           {
-            document: docData,
-            questions
+
+            document:
+              docData,
+
+            chunks:
+              chunks.length,
+
+            generated:
+              allGeneratedQuestions.length,
+
+            unique:
+              uniqueQuestions.length,
+
+            skippedChunks:
+              skippedChunks,
+
+            questions:
+              uniqueQuestions
+
           }
         );
 
@@ -859,17 +1290,31 @@ if (uploadBtn) {
           "error"
         );
 
+
+        alert(
+          "Processing failed.\n\n" +
+          (
+            error?.message ||
+            String(error)
+          )
+        );
+
+
       } finally {
 
-        uploadBtn.disabled = false;
+        uploadBtn.disabled =
+          false;
+
       }
 
     }
   );
+
 
 } else {
 
   console.error(
     "Upload button not found."
   );
-           }
+
+       }
