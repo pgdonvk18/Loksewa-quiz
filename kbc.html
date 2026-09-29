@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
+
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width,
-    initial-scale=1.0,
-    maximum-scale=1.0,
-    user-scalable=no"
->
+<meta name="viewport"
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no">
 
 <title>LoksewaQuest - Hot Seat</title>
 
 <style>
+
+/* =========================================================
+   RESET
+========================================================= */
 
 *{
     box-sizing:border-box;
@@ -23,37 +26,44 @@
 }
 
 :root{
-    --bg:#020617;
-    --bg2:#07142f;
+    --bg:#02030a;
+    --bg2:#061536;
+
     --blue:#2563eb;
     --blue2:#38bdf8;
     --cyan:#22d3ee;
+
     --gold:#facc15;
     --gold2:#f59e0b;
+
     --green:#22c55e;
     --red:#ef4444;
+
     --white:#f8fafc;
     --muted:#94a3b8;
-    --panel:rgba(7,20,47,.92);
-    --border:rgba(148,163,184,.22);
+
+    --panel:#07152f;
+    --panel2:#0b1d3d;
+
+    --border:rgba(148,163,184,.20);
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+html,
+body{
+    min-height:100%;
 }
 
 body{
+
     min-height:100vh;
-    background:
-        radial-gradient(circle at 50% 25%,
-        rgba(37,99,235,.28),
-        transparent 35%),
-        radial-gradient(circle at 20% 80%,
-        rgba(14,165,233,.12),
-        transparent 30%),
-        linear-gradient(
-            180deg,
-            #01030a 0%,
-            #03102a 45%,
-            #020617 100%
-        );
+
     color:var(--white);
+
     font-family:
         Inter,
         system-ui,
@@ -61,925 +71,2204 @@ body{
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 18%,
+            rgba(37,99,235,.35),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 10% 80%,
+            rgba(14,165,233,.10),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 90% 70%,
+            rgba(30,64,175,.12),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            180deg,
+            #010207 0%,
+            #020817 45%,
+            #01030a 100%
+        );
+
     overflow-x:hidden;
 }
 
-/* =========================================
+
+/* =========================================================
+   GAME LIGHTS
+========================================================= */
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:-1;
+
+    background:
+
+        linear-gradient(
+            110deg,
+            transparent 35%,
+            rgba(56,189,248,.035) 50%,
+            transparent 65%
+        );
+
+    animation:
+        stageLight 7s ease-in-out infinite;
+
+}
+
+@keyframes stageLight{
+
+    0%,100%{
+        transform:translateX(-15%);
+    }
+
+    50%{
+        transform:translateX(15%);
+    }
+
+}
+
+
+/* =========================================================
    LOADING
-========================================= */
+========================================================= */
 
 #loadingScreen{
+
     position:fixed;
+
     inset:0;
+
     z-index:9999;
+
     display:flex;
+
     justify-content:center;
+
     align-items:center;
-    background:#020617;
+
+    background:
+
+        radial-gradient(
+            circle,
+            #09245a,
+            #020617 55%
+        );
+
 }
 
 .loader-box{
+
     width:min(90%,400px);
+
     text-align:center;
+
     padding:35px;
+
 }
 
 .loader-ring{
-    width:70px;
-    height:70px;
+
+    width:75px;
+
+    height:75px;
+
     border-radius:50%;
-    border:5px solid rgba(255,255,255,.12);
-    border-top-color:var(--gold);
-    animation:spin 1s linear infinite;
-    margin:0 auto 25px;
+
+    border:4px solid
+        rgba(255,255,255,.10);
+
+    border-top-color:
+        var(--gold);
+
+    border-right-color:
+        var(--blue2);
+
+    animation:
+        spin .9s linear infinite;
+
+    margin:
+        0 auto 25px;
+
+    box-shadow:
+        0 0 35px
+        rgba(250,204,21,.22);
+
 }
 
 .loader-title{
-    font-size:25px;
-    font-weight:900;
-    margin-bottom:8px;
+
+    font-size:26px;
+
+    font-weight:1000;
+
+    letter-spacing:.5px;
+
 }
 
 .loading-text{
+
     color:var(--muted);
+
+    margin-top:8px;
+
     font-size:14px;
+
 }
 
 @keyframes spin{
+
     to{
         transform:rotate(360deg);
     }
+
 }
 
-/* =========================================
+
+/* =========================================================
    ERROR
-========================================= */
+========================================================= */
 
 #errorScreen{
+
     position:fixed;
+
     inset:0;
+
     z-index:9998;
+
     display:none;
+
     align-items:center;
+
     justify-content:center;
+
     padding:20px;
+
     background:#020617;
+
 }
 
 .error-card{
+
     width:min(100%,430px);
+
     padding:30px;
-    border-radius:24px;
+
+    border-radius:25px;
+
     text-align:center;
+
     background:
+
         linear-gradient(
             145deg,
             rgba(15,23,42,.98),
             rgba(2,6,23,.98)
         );
-    border:1px solid rgba(239,68,68,.4);
-    box-shadow:0 25px 80px rgba(0,0,0,.55);
+
+    border:
+        1px solid
+        rgba(239,68,68,.35);
+
+    box-shadow:
+        0 30px 90px
+        rgba(0,0,0,.6);
+
 }
 
 .error-icon{
-    font-size:48px;
+
+    font-size:50px;
+
     margin-bottom:15px;
+
 }
 
 .error-title{
+
     font-size:24px;
-    font-weight:900;
-    margin-bottom:12px;
+
+    font-weight:1000;
+
 }
 
 .error-message{
+
     color:#cbd5e1;
-    line-height:1.6;
+
+    margin-top:10px;
+
+    line-height:1.65;
+
     font-size:14px;
+
     white-space:pre-wrap;
+
 }
 
 .retry-btn{
-    margin-top:22px;
+
     width:100%;
+
+    margin-top:22px;
+
     padding:14px;
+
     border:0;
+
     border-radius:14px;
-    background:linear-gradient(
-        135deg,
-        #2563eb,
-        #1d4ed8
-    );
-    color:white;
-    font-weight:800;
+
+    color:#fff;
+
+    font-weight:900;
+
     cursor:pointer;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
 }
 
-/* =========================================
+
+/* =========================================================
    MAIN
-========================================= */
+========================================================= */
 
 #game{
+
     display:none;
+
     min-height:100vh;
+
 }
 
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
 .topbar{
+
     position:sticky;
+
     top:0;
+
     z-index:100;
+
     height:68px;
+
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
-    padding:0 16px;
-    background:rgba(2,6,23,.86);
-    backdrop-filter:blur(16px);
-    border-bottom:1px solid rgba(148,163,184,.12);
+
+    padding:0 18px;
+
+    background:
+        rgba(2,6,23,.86);
+
+    backdrop-filter:
+        blur(18px);
+
+    border-bottom:
+        1px solid
+        rgba(148,163,184,.12);
+
 }
 
 .brand{
+
     display:flex;
+
     align-items:center;
+
     gap:10px;
+
 }
 
 .brand-orb{
-    width:38px;
-    height:38px;
+
+    width:40px;
+
+    height:40px;
+
     border-radius:50%;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
-    background:
-        radial-gradient(
-            circle at 35% 30%,
-            #fff,
-            #facc15 20%,
-            #f59e0b 60%,
-            #92400e
-        );
-    color:#172554;
+
+    font-size:11px;
+
     font-weight:1000;
+
+    color:#172554;
+
+    background:
+
+        radial-gradient(
+            circle at 35% 25%,
+            white 0%,
+            #fde68a 15%,
+            #facc15 35%,
+            #f59e0b 65%,
+            #92400e 100%
+        );
+
     box-shadow:
-        0 0 20px rgba(250,204,21,.45);
+
+        0 0 20px
+        rgba(250,204,21,.45),
+
+        inset 0 0 8px
+        rgba(255,255,255,.7);
+
 }
 
 .brand-name{
+
     font-size:16px;
-    font-weight:900;
+
+    font-weight:1000;
+
 }
 
 .brand-sub{
+
+    margin-top:2px;
+
     color:#64748b;
-    font-size:10px;
+
+    font-size:9px;
+
+    letter-spacing:1.6px;
+
     text-transform:uppercase;
-    letter-spacing:1.5px;
+
 }
 
 .user-area{
+
     display:flex;
+
     align-items:center;
+
     gap:8px;
+
 }
 
 .coin-box{
+
     display:flex;
+
     align-items:center;
+
     gap:6px;
-    padding:8px 12px;
+
+    padding:8px 13px;
+
     border-radius:999px;
-    background:rgba(250,204,21,.09);
-    border:1px solid rgba(250,204,21,.3);
+
+    background:
+        rgba(250,204,21,.08);
+
+    border:
+        1px solid
+        rgba(250,204,21,.28);
+
     color:var(--gold);
+
     font-size:13px;
-    font-weight:900;
+
+    font-weight:1000;
+
 }
 
-/* =========================================
+
+/* =========================================================
    LAYOUT
-========================================= */
+========================================================= */
 
 .layout{
-    width:min(1250px,100%);
+
+    width:min(1280px,100%);
+
     margin:auto;
+
     display:grid;
-    grid-template-columns:1fr 270px;
-    gap:20px;
+
+    grid-template-columns:
+        minmax(0,1fr)
+        275px;
+
+    gap:22px;
+
     padding:22px;
+
 }
 
 .main-stage{
+
     min-width:0;
+
 }
 
-/* =========================================
+
+/* =========================================================
    GAME HEADER
-========================================= */
+========================================================= */
 
 .game-header{
+
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
-    margin-bottom:18px;
+
+    margin-bottom:14px;
+
 }
 
 .question-counter{
-    font-size:14px;
+
     color:#cbd5e1;
+
+    font-size:13px;
+
 }
 
 .question-counter strong{
+
     color:white;
-    font-size:20px;
+
+    font-size:22px;
+
+    margin:0 3px;
+
 }
 
 .topic-badge{
+
     max-width:55%;
+
     overflow:hidden;
+
     text-overflow:ellipsis;
+
     white-space:nowrap;
-    padding:7px 11px;
+
+    padding:7px 12px;
+
     border-radius:999px;
-    background:rgba(56,189,248,.08);
-    border:1px solid rgba(56,189,248,.25);
+
     color:#7dd3fc;
+
+    background:
+        rgba(56,189,248,.07);
+
+    border:
+        1px solid
+        rgba(56,189,248,.24);
+
     font-size:11px;
-    font-weight:800;
+
+    font-weight:900;
+
 }
 
-/* =========================================
+
+/* =========================================================
+   HOT SEAT STAGE
+========================================================= */
+
+.stage{
+
+    position:relative;
+
+    margin-bottom:18px;
+
+    padding:12px;
+
+    border-radius:28px;
+
+    background:
+
+        radial-gradient(
+            ellipse at 50% 100%,
+            rgba(37,99,235,.22),
+            transparent 55%
+        );
+
+}
+
+.stage::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:-15px;
+
+    transform:translateX(-50%);
+
+    width:65%;
+
+    height:50px;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(37,99,235,.25),
+            transparent 70%
+        );
+
+    filter:blur(10px);
+
+    pointer-events:none;
+
+}
+
+
+/* =========================================================
    TIMER
-========================================= */
+========================================================= */
 
 .timer-row{
+
     display:flex;
+
     justify-content:center;
-    margin:10px 0 20px;
+
+    margin:
+        4px 0 22px;
+
 }
 
 .timer{
-    width:76px;
-    height:76px;
-    border-radius:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+
+    width:82px;
+
+    height:82px;
+
     position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
     background:
+
         radial-gradient(
             circle,
-            #07152f 55%,
-            transparent 56%
+            #071936 52%,
+            #020617 53%
         );
-    border:4px solid rgba(59,130,246,.25);
+
+    border:
+        3px solid
+        rgba(59,130,246,.28);
+
     box-shadow:
-        0 0 30px rgba(37,99,235,.18);
+
+        0 0 30px
+        rgba(37,99,235,.18),
+
+        inset 0 0 25px
+        rgba(37,99,235,.15);
+
 }
 
 .timer::before{
+
     content:"";
+
     position:absolute;
+
     inset:-5px;
+
     border-radius:50%;
-    border:4px solid var(--blue2);
-    border-right-color:transparent;
-    transform:rotate(-40deg);
-    transition:.3s;
+
+    border:
+        4px solid
+        var(--blue2);
+
+    border-right-color:
+        transparent;
+
+    border-bottom-color:
+        rgba(56,189,248,.15);
+
+    transform:rotate(-35deg);
+
 }
 
 .timer.warning{
-    border-color:rgba(239,68,68,.3);
+
+    border-color:
+        rgba(239,68,68,.45);
+
 }
 
 .timer.warning::before{
-    border-color:var(--red);
-    border-right-color:transparent;
-    animation:pulse .7s infinite;
+
+    border-color:
+        var(--red);
+
+    border-right-color:
+        transparent;
+
+    animation:
+        timerPulse .6s infinite;
+
 }
 
 .timer-number{
-    font-size:25px;
+
+    font-size:26px;
+
     font-weight:1000;
+
+    z-index:1;
+
 }
 
 .timer-label{
+
     position:absolute;
-    bottom:-20px;
-    font-size:9px;
+
+    bottom:-21px;
+
     color:#64748b;
+
+    font-size:8px;
+
     text-transform:uppercase;
+
     letter-spacing:1px;
+
 }
 
-/* =========================================
+@keyframes timerPulse{
+
+    50%{
+        transform:
+            rotate(-35deg)
+            scale(1.06);
+    }
+
+}
+
+
+/* =========================================================
    QUESTION CARD
-========================================= */
+========================================================= */
 
 .question-card{
+
     position:relative;
-    padding:32px 24px;
-    border-radius:26px;
+
+    padding:
+        34px 26px 24px;
+
+    border-radius:28px;
+
     background:
+
         radial-gradient(
             circle at 50% 0%,
-            rgba(37,99,235,.2),
-            transparent 50%
+            rgba(37,99,235,.20),
+            transparent 45%
         ),
+
         linear-gradient(
             145deg,
-            rgba(15,23,42,.96),
-            rgba(3,12,32,.98)
+            rgba(12,29,62,.98),
+            rgba(2,8,25,.98)
         );
-    border:1px solid rgba(96,165,250,.28);
+
+    border:
+        1px solid
+        rgba(96,165,250,.30);
+
     box-shadow:
-        0 20px 80px rgba(0,0,0,.45),
-        inset 0 0 50px rgba(37,99,235,.05);
+
+        0 30px 90px
+        rgba(0,0,0,.55),
+
+        inset 0 0 60px
+        rgba(37,99,235,.035);
+
     overflow:hidden;
+
 }
 
 .question-card::before{
+
     content:"";
+
     position:absolute;
-    top:-150px;
+
+    top:-190px;
+
     left:50%;
-    transform:translateX(-50%);
-    width:300px;
-    height:300px;
+
+    transform:
+        translateX(-50%);
+
+    width:400px;
+
+    height:400px;
+
+    border-radius:50%;
+
     background:
+
         radial-gradient(
             circle,
-            rgba(56,189,248,.16),
-            transparent 70%
+            rgba(56,189,248,.15),
+            transparent 68%
         );
+
     pointer-events:none;
+
+}
+
+.question-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    right:0;
+
+    top:0;
+
+    height:1px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(56,189,248,.7),
+            transparent
+        );
+
 }
 
 .question-label{
+
+    position:relative;
+
     text-align:center;
+
     color:#60a5fa;
-    font-size:11px;
-    letter-spacing:2px;
+
+    font-size:10px;
+
+    letter-spacing:2.4px;
+
     text-transform:uppercase;
-    font-weight:900;
-    margin-bottom:18px;
+
+    font-weight:1000;
+
+    margin-bottom:19px;
+
 }
 
 .question-text{
+
     position:relative;
+
     text-align:center;
-    font-size:clamp(19px,3vw,29px);
-    line-height:1.5;
-    font-weight:800;
-    max-width:850px;
+
+    max-width:900px;
+
     margin:auto;
+
+    font-size:
+        clamp(20px,3vw,30px);
+
+    line-height:1.5;
+
+    font-weight:800;
+
+    min-height:70px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
 }
 
-/* =========================================
+
+/* =========================================================
+   QUESTION REVEAL
+========================================================= */
+
+.question-reveal{
+
+    animation:
+        questionReveal .55s ease;
+
+}
+
+@keyframes questionReveal{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(12px)
+            scale(.98);
+
+        filter:blur(7px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:none;
+
+        filter:none;
+
+    }
+
+}
+
+
+/* =========================================================
    OPTIONS
-========================================= */
+========================================================= */
 
 .options{
+
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-    margin-top:24px;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:13px;
+
+    margin-top:26px;
+
 }
 
 .option{
+
     position:relative;
+
     min-height:72px;
+
     display:flex;
+
     align-items:center;
+
     gap:13px;
+
     padding:13px 15px;
+
     border-radius:17px;
-    border:1px solid rgba(96,165,250,.25);
+
+    border:
+        1px solid
+        rgba(96,165,250,.25);
+
     background:
+
         linear-gradient(
             145deg,
-            rgba(15,23,42,.95),
-            rgba(7,20,47,.85)
+            rgba(15,23,42,.96),
+            rgba(7,20,47,.92)
         );
+
     color:#f8fafc;
+
     cursor:pointer;
-    transition:.18s ease;
+
+    transition:
+        transform .18s ease,
+        border .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+
     text-align:left;
+
+    overflow:hidden;
+
+}
+
+.option::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(56,189,248,.06),
+            transparent
+        );
+
+    transform:
+        translateX(-100%);
+
+    transition:.5s;
+
+}
+
+.option:hover::before{
+
+    transform:
+        translateX(100%);
+
 }
 
 .option:hover{
-    transform:translateY(-2px);
-    border-color:#38bdf8;
-    box-shadow:0 8px 25px rgba(14,165,233,.12);
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(56,189,248,.8);
+
+    box-shadow:
+        0 10px 28px
+        rgba(14,165,233,.12);
+
 }
 
 .option-letter{
-    flex:0 0 37px;
-    width:37px;
-    height:37px;
+
+    flex:0 0 38px;
+
+    width:38px;
+
+    height:38px;
+
     border-radius:50%;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
-    border:1px solid rgba(250,204,21,.45);
+
+    border:
+        1px solid
+        rgba(250,204,21,.45);
+
     color:var(--gold);
+
     font-weight:1000;
-    background:rgba(250,204,21,.06);
+
+    background:
+        rgba(250,204,21,.06);
+
 }
 
 .option-text{
+
     font-size:14px;
+
     line-height:1.45;
+
     font-weight:650;
+
 }
 
 .option.selected{
-    border-color:#facc15;
+
+    border-color:
+        var(--gold);
+
     background:
+
         linear-gradient(
             135deg,
-            rgba(30,58,138,.9),
-            rgba(8,47,73,.9)
+            rgba(30,58,138,.95),
+            rgba(8,47,73,.95)
         );
+
     box-shadow:
-        0 0 0 1px rgba(250,204,21,.2),
-        0 0 30px rgba(250,204,21,.08);
+
+        0 0 0 1px
+        rgba(250,204,21,.20),
+
+        0 0 30px
+        rgba(250,204,21,.10);
+
 }
 
-.option.hidden-option{
-    visibility:hidden;
-    pointer-events:none;
+.option.locked{
+
+    cursor:default;
+
 }
 
 .option.correct{
-    border-color:#22c55e;
-    background:rgba(22,101,52,.5);
-    animation:correctFlash .5s ease;
+
+    border-color:
+        var(--green) !important;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(20,100,55,.9),
+            rgba(8,60,40,.85)
+        ) !important;
+
+    box-shadow:
+
+        0 0 25px
+        rgba(34,197,94,.20);
+
+    animation:
+        correctFlash .65s ease;
+
 }
 
 .option.wrong{
-    border-color:#ef4444;
-    background:rgba(127,29,29,.5);
-    animation:wrongShake .4s ease;
+
+    border-color:
+        var(--red) !important;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(120,25,35,.85),
+            rgba(65,15,25,.85)
+        ) !important;
+
+    animation:
+        wrongShake .45s ease;
+
+}
+
+.option.hidden-option{
+
+    visibility:hidden;
+
+    pointer-events:none;
+
 }
 
 @keyframes correctFlash{
-    0%,100%{transform:scale(1);}
-    50%{transform:scale(1.025);}
+
+    0%{
+        transform:scale(1);
+    }
+
+    40%{
+        transform:scale(1.025);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
 }
 
 @keyframes wrongShake{
-    0%,100%{transform:translateX(0);}
-    25%{transform:translateX(-5px);}
-    75%{transform:translateX(5px);}
+
+    0%,100%{
+        transform:translateX(0);
+    }
+
+    25%{
+        transform:translateX(-6px);
+    }
+
+    75%{
+        transform:translateX(6px);
+    }
+
 }
 
-/* =========================================
-   LOCK / ACTIONS
-========================================= */
+
+/* =========================================================
+   LOCK ANIMATION
+========================================================= */
+
+.locking{
+
+    animation:
+        lockPulse .5s ease;
+
+}
+
+@keyframes lockPulse{
+
+    50%{
+        transform:scale(.96);
+        box-shadow:
+            0 0 35px
+            rgba(250,204,21,.45);
+    }
+
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
 
 .actions{
+
     display:flex;
+
     justify-content:center;
+
     gap:10px;
+
     flex-wrap:wrap;
+
     margin-top:20px;
+
 }
 
 .lock-btn{
-    min-width:190px;
-    padding:14px 22px;
+
+    min-width:205px;
+
+    padding:15px 24px;
+
     border:0;
+
     border-radius:999px;
+
     background:
+
         linear-gradient(
             135deg,
-            #facc15,
+            #fde047,
             #f59e0b
         );
+
     color:#172554;
+
     font-weight:1000;
+
     font-size:14px;
+
     cursor:pointer;
+
     box-shadow:
-        0 10px 35px rgba(245,158,11,.18);
+
+        0 10px 35px
+        rgba(245,158,11,.20);
+
+    transition:.18s;
+
+}
+
+.lock-btn:not(:disabled):hover{
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+
+        0 15px 40px
+        rgba(245,158,11,.35);
+
 }
 
 .lock-btn:disabled{
+
     opacity:.35;
+
     cursor:not-allowed;
+
 }
 
 .quit-btn{
-    padding:13px 18px;
+
+    padding:13px 19px;
+
     border-radius:999px;
+
     background:transparent;
-    border:1px solid rgba(148,163,184,.25);
+
+    border:
+        1px solid
+        rgba(148,163,184,.25);
+
     color:#cbd5e1;
+
     font-weight:750;
+
     cursor:pointer;
+
 }
 
-/* =========================================
+
+/* =========================================================
    LIFELINES
-========================================= */
+========================================================= */
 
 .lifelines{
+
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+
+    grid-template-columns:
+        repeat(4,1fr);
+
     gap:9px;
-    margin-top:18px;
+
+    margin-top:19px;
+
 }
 
 .life{
+
+    position:relative;
+
     padding:12px 5px;
+
     border-radius:14px;
-    border:1px solid rgba(148,163,184,.2);
-    background:rgba(15,23,42,.7);
+
+    border:
+        1px solid
+        rgba(148,163,184,.2);
+
+    background:
+        rgba(15,23,42,.72);
+
     color:#e2e8f0;
+
     text-align:center;
+
     cursor:pointer;
+
     font-size:11px;
-    font-weight:800;
+
+    font-weight:850;
+
+    transition:.18s;
+
+}
+
+.life:hover{
+
+    border-color:
+        rgba(56,189,248,.55);
+
+    transform:
+        translateY(-2px);
+
 }
 
 .life-icon{
+
     display:block;
+
     font-size:19px;
+
     margin-bottom:4px;
+
 }
 
 .life.used{
+
     opacity:.28;
+
     filter:grayscale(1);
+
     pointer-events:none;
+
 }
 
-/* =========================================
+
+/* =========================================================
    PROGRESS
-========================================= */
+========================================================= */
 
 .progress-box{
-    margin-top:18px;
+
+    margin-top:20px;
+
 }
 
 .progress-top{
+
     display:flex;
+
     justify-content:space-between;
+
     color:#64748b;
+
     font-size:10px;
+
     margin-bottom:7px;
+
 }
 
 .progress{
+
     height:5px;
+
     background:#0f172a;
+
     border-radius:999px;
+
     overflow:hidden;
+
 }
 
 .progress-bar{
+
     height:100%;
+
     width:0%;
+
     background:
+
         linear-gradient(
             90deg,
             #2563eb,
-            #38bdf8
+            #38bdf8,
+            #facc15
         );
-    transition:.35s;
+
+    transition:
+        width .45s ease;
+
 }
 
-/* =========================================
+
+/* =========================================================
    LADDER
-========================================= */
+========================================================= */
 
 .ladder{
+
     position:sticky;
+
     top:88px;
-    padding:16px;
-    border-radius:22px;
+
+    padding:17px;
+
+    border-radius:23px;
+
     background:
+
         linear-gradient(
             145deg,
-            rgba(15,23,42,.94),
-            rgba(2,6,23,.94)
+            rgba(15,23,42,.96),
+            rgba(2,6,23,.96)
         );
-    border:1px solid rgba(148,163,184,.16);
+
+    border:
+        1px solid
+        rgba(148,163,184,.16);
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.35);
+
 }
 
 .ladder-title{
+
     text-align:center;
+
     color:var(--gold);
+
+    font-size:13px;
+
     font-weight:1000;
-    letter-spacing:1px;
+
+    letter-spacing:1.2px;
+
     margin-bottom:12px;
+
 }
 
 .level{
+
+    position:relative;
+
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
-    padding:8px 10px;
+
+    padding:9px 11px;
+
     border-radius:10px;
+
     margin-bottom:4px;
+
     color:#64748b;
+
     font-size:12px;
+
+    transition:
+        .35s ease;
+
 }
 
 .level.safe{
+
     color:#facc15;
+
+}
+
+.level.completed{
+
+    color:#dbeafe;
+
 }
 
 .level.current{
-    color:#fff;
+
+    color:white;
+
     background:
+
         linear-gradient(
             90deg,
-            rgba(37,99,235,.45),
+            rgba(37,99,235,.48),
             rgba(30,64,175,.15)
         );
-    border:1px solid rgba(96,165,250,.3);
+
+    border:
+        1px solid
+        rgba(96,165,250,.4);
+
+    box-shadow:
+        0 0 18px
+        rgba(37,99,235,.12);
+
+}
+
+.level.completed::after{
+
+    content:"✓";
+
+    position:absolute;
+
+    right:8px;
+
+    color:var(--green);
+
+    font-weight:1000;
+
+}
+
+.level.climbing{
+
+    animation:
+        ladderClimb .8s ease;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            rgba(250,204,21,.25),
+            rgba(245,158,11,.06)
+        );
+
+    color:#fff;
+
+    box-shadow:
+
+        0 0 25px
+        rgba(250,204,21,.25);
+
 }
 
 .level-number{
+
     font-weight:900;
+
 }
 
 .level-prize{
+
     font-weight:900;
+
 }
 
-/* =========================================
+@keyframes ladderClimb{
+
+    0%{
+        transform:
+            scale(.9)
+            translateY(10px);
+
+        opacity:.5;
+    }
+
+    50%{
+        transform:
+            scale(1.06)
+            translateY(-2px);
+    }
+
+    100%{
+        transform:
+            scale(1)
+            translateY(0);
+
+        opacity:1;
+    }
+
+}
+
+
+/* =========================================================
+   LADDER CLIMB OVERLAY
+========================================================= */
+
+#climbOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:3500;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    pointer-events:none;
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(250,204,21,.08),
+            transparent 45%
+        );
+
+}
+
+#climbOverlay.show{
+
+    display:flex;
+
+    animation:
+        overlayFlash .9s ease;
+
+}
+
+.climb-content{
+
+    text-align:center;
+
+}
+
+.climb-small{
+
+    color:#fef08a;
+
+    font-size:13px;
+
+    letter-spacing:3px;
+
+    text-transform:uppercase;
+
+    font-weight:1000;
+
+}
+
+.climb-level{
+
+    margin-top:7px;
+
+    font-size:clamp(48px,12vw,90px);
+
+    line-height:1;
+
+    font-weight:1000;
+
+    color:var(--gold);
+
+    text-shadow:
+
+        0 0 20px
+        rgba(250,204,21,.55),
+
+        0 0 60px
+        rgba(245,158,11,.25);
+
+}
+
+.climb-prize{
+
+    margin-top:8px;
+
+    font-size:20px;
+
+    font-weight:900;
+
+    color:white;
+
+}
+
+@keyframes overlayFlash{
+
+    0%{
+        opacity:0;
+        transform:scale(.96);
+    }
+
+    25%{
+        opacity:1;
+        transform:scale(1);
+    }
+
+    75%{
+        opacity:1;
+    }
+
+    100%{
+        opacity:0;
+    }
+
+}
+
+
+/* =========================================================
    MODAL
-========================================= */
+========================================================= */
 
 .modal{
+
     position:fixed;
+
     inset:0;
-    z-index:1000;
+
+    z-index:3000;
+
     display:none;
+
     align-items:center;
+
     justify-content:center;
+
     padding:18px;
-    background:rgba(0,0,0,.75);
-    backdrop-filter:blur(10px);
+
+    background:
+        rgba(0,0,0,.78);
+
+    backdrop-filter:
+        blur(12px);
+
 }
 
 .modal.show{
+
     display:flex;
+
 }
 
 .modal-card{
-    width:min(100%,460px);
+
+    width:min(100%,470px);
+
     max-height:90vh;
+
     overflow:auto;
-    padding:28px;
-    border-radius:26px;
+
+    padding:29px;
+
+    border-radius:27px;
+
     background:
+
         linear-gradient(
             145deg,
             #0f172a,
             #020617
         );
-    border:1px solid rgba(250,204,21,.28);
-    box-shadow:0 30px 100px rgba(0,0,0,.65);
+
+    border:
+        1px solid
+        rgba(250,204,21,.30);
+
+    box-shadow:
+        0 35px 110px
+        rgba(0,0,0,.72);
+
     text-align:center;
+
+    animation:
+        modalIn .25s ease;
+
+}
+
+@keyframes modalIn{
+
+    from{
+        opacity:0;
+        transform:
+            scale(.93)
+            translateY(15px);
+    }
+
+    to{
+        opacity:1;
+        transform:none;
+    }
+
 }
 
 .modal-icon{
-    font-size:52px;
+
+    font-size:54px;
+
     margin-bottom:12px;
+
 }
 
 .modal-title{
+
     font-size:25px;
+
     font-weight:1000;
-    margin-bottom:10px;
+
 }
 
 .modal-message{
+
     color:#94a3b8;
-    line-height:1.6;
+
+    margin-top:10px;
+
+    line-height:1.65;
+
     font-size:14px;
+
 }
 
 .modal-prize{
+
     margin:20px 0;
-    font-size:36px;
+
+    font-size:37px;
+
     font-weight:1000;
+
     color:var(--gold);
+
 }
 
 .modal-buttons{
+
     display:grid;
+
     gap:9px;
+
     margin-top:20px;
+
 }
 
 .modal-btn{
+
     padding:14px;
+
     border-radius:13px;
+
     border:0;
+
     font-weight:900;
+
     cursor:pointer;
+
 }
 
 .modal-primary{
-    background:linear-gradient(
-        135deg,
-        #2563eb,
-        #1d4ed8
-    );
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
     color:white;
+
 }
 
 .modal-secondary{
+
     background:#0f172a;
-    border:1px solid rgba(148,163,184,.2);
+
+    border:
+        1px solid
+        rgba(148,163,184,.2);
+
     color:#cbd5e1;
+
 }
 
-/* =========================================
+
+/* =========================================================
    POLL
-========================================= */
+========================================================= */
 
 .poll-row{
+
     margin:13px 0;
+
     text-align:left;
+
 }
 
 .poll-label{
+
     display:flex;
+
     justify-content:space-between;
+
+    gap:10px;
+
     font-size:12px;
+
     margin-bottom:5px;
+
+}
+
+.poll-label span{
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
 }
 
 .poll-track{
+
     height:10px;
+
     border-radius:999px;
+
     background:#111827;
+
     overflow:hidden;
+
 }
 
 .poll-fill{
+
     height:100%;
+
     width:0;
-    background:linear-gradient(
-        90deg,
-        #2563eb,
-        #38bdf8
-    );
-    transition:1s;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #38bdf8
+        );
+
+    transition:
+        width 1s ease;
+
 }
 
-/* =========================================
+
+/* =========================================================
    TOAST
-========================================= */
+========================================================= */
 
 #toast{
+
     position:fixed;
+
     left:50%;
+
     bottom:22px;
-    transform:translateX(-50%);
+
+    transform:
+        translateX(-50%);
+
     z-index:5000;
+
     max-width:90%;
-    padding:12px 17px;
+
+    padding:12px 18px;
+
     border-radius:999px;
+
     background:#0f172a;
-    border:1px solid rgba(148,163,184,.25);
+
+    border:
+        1px solid
+        rgba(148,163,184,.25);
+
     color:white;
+
     font-size:12px;
-    box-shadow:0 15px 40px rgba(0,0,0,.4);
+
+    box-shadow:
+        0 15px 40px
+        rgba(0,0,0,.45);
+
     display:none;
+
 }
 
 #toast.show{
+
     display:block;
-    animation:toastIn .25s ease;
+
+    animation:
+        toastIn .25s ease;
+
 }
 
 @keyframes toastIn{
+
     from{
         opacity:0;
-        transform:translate(-50%,10px);
+        transform:
+            translate(-50%,10px);
     }
+
     to{
         opacity:1;
-        transform:translate(-50%,0);
+        transform:
+            translate(-50%,0);
     }
+
 }
 
-@keyframes pulse{
-    50%{transform:scale(1.06);}
-}
 
-/* =========================================
+/* =========================================================
    MOBILE
-========================================= */
+========================================================= */
 
 @media(max-width:850px){
 
     .layout{
+
         grid-template-columns:1fr;
+
         padding:14px;
+
     }
 
     .ladder{
+
         position:static;
+
         order:2;
+
     }
 
     .main-stage{
+
         order:1;
+
     }
 
     .ladder{
+
         display:grid;
-        grid-template-columns:1fr 1fr;
+
+        grid-template-columns:
+            1fr 1fr;
+
         gap:4px;
+
     }
 
     .ladder-title{
+
         grid-column:1/-1;
+
     }
 
     .level{
+
         margin:0;
+
     }
+
 }
 
 @media(max-width:600px){
 
     .topbar{
+
         height:62px;
+
         padding:0 11px;
+
     }
 
     .brand-name{
+
         font-size:14px;
+
     }
 
     .brand-sub{
+
         display:none;
+
     }
 
     .coin-box{
+
         padding:7px 9px;
+
         font-size:11px;
+
     }
 
     .layout{
-        padding:10px;
+
+        padding:9px;
+
     }
 
     .question-card{
-        padding:25px 13px 18px;
+
+        padding:
+            26px 13px 18px;
+
         border-radius:21px;
+
     }
 
     .question-text{
+
         font-size:19px;
+
+        min-height:80px;
+
     }
 
     .options{
+
         grid-template-columns:1fr;
+
         gap:9px;
+
     }
 
     .option{
-        min-height:62px;
+
+        min-height:63px;
+
     }
 
     .option-text{
+
         font-size:13px;
+
     }
 
     .lifelines{
-        grid-template-columns:repeat(4,1fr);
+
+        grid-template-columns:
+            repeat(4,1fr);
+
     }
 
     .life{
+
         padding:9px 2px;
+
         font-size:9px;
+
     }
 
     .life-icon{
+
         font-size:17px;
+
     }
 
     .game-header{
-        margin-bottom:10px;
+
+        margin-bottom:9px;
+
     }
 
     .topic-badge{
+
         max-width:48%;
+
     }
+
+    .timer{
+
+        width:74px;
+
+        height:74px;
+
+    }
+
 }
 
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
 .hidden{
+
     display:none !important;
+
 }
 
 </style>
@@ -987,9 +2276,10 @@ body{
 
 <body>
 
-<!-- =========================================
+
+<!-- =========================================================
      LOADING
-========================================= -->
+========================================================= -->
 
 <div id="loadingScreen">
 
@@ -1010,9 +2300,9 @@ body{
 </div>
 
 
-<!-- =========================================
+<!-- =========================================================
      ERROR
-========================================= -->
+========================================================= -->
 
 <div id="errorScreen">
 
@@ -1032,9 +2322,10 @@ body{
 
         <button
             class="retry-btn"
-            id="retryBtn"
-        >
+            id="retryBtn">
+
             फेरि प्रयास गर्नुहोस्
+
         </button>
 
     </div>
@@ -1042,13 +2333,14 @@ body{
 </div>
 
 
-<!-- =========================================
-     MAIN GAME
-========================================= -->
+<!-- =========================================================
+     GAME
+========================================================= -->
 
 <div id="game">
 
-    <!-- TOP BAR -->
+
+    <!-- TOPBAR -->
 
     <header class="topbar">
 
@@ -1072,13 +2364,17 @@ body{
 
         </div>
 
+
         <div class="user-area">
 
             <div class="coin-box">
+
                 🪙
+
                 <span id="coinBalance">
                     0
                 </span>
+
             </div>
 
         </div>
@@ -1086,17 +2382,19 @@ body{
     </header>
 
 
+
     <div class="layout">
+
 
         <main class="main-stage">
 
-            <!-- HEADER -->
 
             <div class="game-header">
 
                 <div class="question-counter">
 
                     प्रश्न
+
                     <strong id="questionNumber">
                         1
                     </strong>
@@ -1105,183 +2403,199 @@ body{
 
                 </div>
 
+
                 <div
                     class="topic-badge"
-                    id="topicBadge"
-                >
+                    id="topicBadge">
+
                     Loading...
+
                 </div>
 
             </div>
 
 
-            <!-- TIMER -->
 
-            <div class="timer-row">
+            <!-- HOT SEAT -->
 
-                <div
-                    class="timer"
-                    id="timer"
-                >
+            <div class="stage">
+
+
+                <div class="timer-row">
 
                     <div
-                        class="timer-number"
-                        id="timerNumber"
-                    >
-                        30
-                    </div>
-
-                    <div class="timer-label">
-                        seconds
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- QUESTION -->
-
-            <section class="question-card">
-
-                <div class="question-label">
-                    तपाईंको अन्तिम उत्तर के हो?
-                </div>
-
-                <div
-                    class="question-text"
-                    id="questionText"
-                >
-                    Question loading...
-                </div>
-
-
-                <div
-                    class="options"
-                    id="options"
-                >
-                </div>
-
-
-                <!-- ACTIONS -->
-
-                <div class="actions">
-
-                    <button
-                        class="lock-btn"
-                        id="lockBtn"
-                        disabled
-                    >
-                        🔒 उत्तर Lock गर्नुहोस्
-                    </button>
-
-                    <button
-                        class="quit-btn"
-                        id="quitBtn"
-                    >
-                        Quit
-                    </button>
-
-                </div>
-
-
-                <!-- LIFELINES -->
-
-                <div class="lifelines">
-
-                    <button
-                        class="life"
-                        id="fiftyBtn"
-                    >
-
-                        <span class="life-icon">
-                            50:50
-                        </span>
-
-                        50:50
-
-                    </button>
-
-
-                    <button
-                        class="life"
-                        id="phoneBtn"
-                    >
-
-                        <span class="life-icon">
-                            📞
-                        </span>
-
-                        Phone
-
-                    </button>
-
-
-                    <button
-                        class="life"
-                        id="audienceBtn"
-                    >
-
-                        <span class="life-icon">
-                            👥
-                        </span>
-
-                        Audience
-
-                    </button>
-
-
-                    <button
-                        class="life"
-                        id="flipBtn"
-                    >
-
-                        <span class="life-icon">
-                            🔄
-                        </span>
-
-                        Flip
-
-                    </button>
-
-                </div>
-
-
-                <!-- PROGRESS -->
-
-                <div class="progress-box">
-
-                    <div class="progress-top">
-
-                        <span>
-                            Game Progress
-                        </span>
-
-                        <span id="progressText">
-                            0%
-                        </span>
-
-                    </div>
-
-                    <div class="progress">
+                        class="timer"
+                        id="timer">
 
                         <div
-                            class="progress-bar"
-                            id="progressBar"
-                        ></div>
+                            class="timer-number"
+                            id="timerNumber">
+
+                            30
+
+                        </div>
+
+                        <div class="timer-label">
+                            seconds
+                        </div>
 
                     </div>
 
                 </div>
 
-            </section>
+
+
+                <section
+                    class="question-card"
+                    id="questionCard">
+
+
+                    <div class="question-label">
+
+                        तपाईंको अन्तिम उत्तर के हो?
+
+                    </div>
+
+
+                    <div
+                        class="question-text"
+                        id="questionText">
+
+                        Question loading...
+
+                    </div>
+
+
+                    <div
+                        class="options"
+                        id="options">
+
+                    </div>
+
+
+
+                    <div class="actions">
+
+                        <button
+                            class="lock-btn"
+                            id="lockBtn"
+                            disabled>
+
+                            🔒 उत्तर Lock गर्नुहोस्
+
+                        </button>
+
+
+                        <button
+                            class="quit-btn"
+                            id="quitBtn">
+
+                            Quit & Take Winnings
+
+                        </button>
+
+                    </div>
+
+
+
+                    <div class="lifelines">
+
+
+                        <button
+                            class="life"
+                            id="fiftyBtn">
+
+                            <span class="life-icon">
+                                50:50
+                            </span>
+
+                            50:50
+
+                        </button>
+
+
+
+                        <button
+                            class="life"
+                            id="phoneBtn">
+
+                            <span class="life-icon">
+                                📞
+                            </span>
+
+                            Phone
+
+                        </button>
+
+
+
+                        <button
+                            class="life"
+                            id="audienceBtn">
+
+                            <span class="life-icon">
+                                👥
+                            </span>
+
+                            Audience
+
+                        </button>
+
+
+
+                        <button
+                            class="life"
+                            id="flipBtn">
+
+                            <span class="life-icon">
+                                🔄
+                            </span>
+
+                            Flip
+
+                        </button>
+
+
+                    </div>
+
+
+
+                    <div class="progress-box">
+
+                        <div class="progress-top">
+
+                            <span>
+                                Game Progress
+                            </span>
+
+                            <span id="progressText">
+                                0%
+                            </span>
+
+                        </div>
+
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-bar"
+                                id="progressBar">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </section>
+
+            </div>
 
         </main>
 
 
-        <!-- =================================
-             PRIZE LADDER
-        ================================== -->
+
+        <!-- LADDER -->
 
         <aside class="ladder">
 
@@ -1293,53 +2607,95 @@ body{
 
         </aside>
 
+
     </div>
 
 </div>
 
 
-<!-- =========================================
+
+<!-- =========================================================
+     CLIMB OVERLAY
+========================================================= -->
+
+<div id="climbOverlay">
+
+    <div class="climb-content">
+
+        <div class="climb-small">
+            Correct Answer
+        </div>
+
+        <div
+            class="climb-level"
+            id="climbLevel">
+
+            ₹
+
+        </div>
+
+        <div
+            class="climb-prize"
+            id="climbPrize">
+
+            Prize secured
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
      MODAL
-========================================= -->
+========================================================= -->
 
 <div
     class="modal"
-    id="modal"
->
+    id="modal">
 
     <div class="modal-card">
 
         <div
             class="modal-icon"
-            id="modalIcon"
-        >
+            id="modalIcon">
+
             🎉
+
         </div>
+
 
         <div
             class="modal-title"
-            id="modalTitle"
-        >
+            id="modalTitle">
+
             Congratulations
+
         </div>
+
 
         <div
             class="modal-message"
-            id="modalMessage"
-        >
+            id="modalMessage">
+
         </div>
+
 
         <div
             class="modal-prize"
-            id="modalPrize"
-        >
+            id="modalPrize">
+
             🪙 0
+
         </div>
+
 
         <div
             class="modal-buttons"
-            id="modalButtons"
-        >
+            id="modalButtons">
+
         </div>
 
     </div>
@@ -1347,21 +2703,24 @@ body{
 </div>
 
 
-<!-- =========================================
+
+<!-- =========================================================
      TOAST
-========================================= -->
+========================================================= -->
 
 <div id="toast"></div>
 
 
-<!-- =========================================
+
+<!-- =========================================================
      JAVASCRIPT
-========================================= -->
+========================================================= -->
 
 <script type="module">
 
+
 /* =========================================================
-   FIREBASE IMPORTS
+   FIREBASE
 ========================================================= */
 
 import {
@@ -1369,11 +2728,13 @@ import {
 } from
 "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
+
 import {
     getAuth,
     onAuthStateChanged
 } from
 "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
 
 import {
     getFirestore,
@@ -1389,7 +2750,7 @@ import {
 
 
 /* =========================================================
-   SUPABASE IMPORT
+   SUPABASE
 ========================================================= */
 
 import {
@@ -1434,11 +2795,10 @@ const SUPABASE_URL =
 
 
 /*
- IMPORTANT:
+   IMPORTANT:
+   Paste your existing SUPABASE ANON KEY here.
 
-Paste your existing Supabase ANON KEY here.
-
-Do NOT use service_role key in browser.
+   Do NOT use service_role key.
 */
 
 const SUPABASE_ANON_KEY =
@@ -1466,12 +2826,16 @@ const supabase =
 
 
 /* =========================================================
-   GAME STATE
+   STATE
 ========================================================= */
 
 let currentUser = null;
 
 let gameQuestions = [];
+
+let allValidQuestions = [];
+
+let playedIds = new Set();
 
 let currentQuestionIndex = 0;
 
@@ -1479,13 +2843,13 @@ let selectedAnswerIndex = null;
 
 let locked = false;
 
-let timerInterval = null;
-
-let timeLeft = 30;
-
 let gameOver = false;
 
 let payoutDone = false;
+
+let timerInterval = null;
+
+let timeLeft = 30;
 
 let currentGameId =
     generateGameId();
@@ -1497,13 +2861,13 @@ let currentGameId =
 
 let lifelines = {
 
-    fifty: false,
+    fifty:false,
 
-    phone: false,
+    phone:false,
 
-    audience: false,
+    audience:false,
 
-    flip: false
+    flip:false
 
 };
 
@@ -1582,67 +2946,452 @@ const PRIZES = [
 ========================================================= */
 
 const loadingScreen =
-    document.getElementById("loadingScreen");
+    document.getElementById(
+        "loadingScreen"
+    );
 
 const errorScreen =
-    document.getElementById("errorScreen");
+    document.getElementById(
+        "errorScreen"
+    );
 
 const game =
-    document.getElementById("game");
+    document.getElementById(
+        "game"
+    );
+
+const questionCard =
+    document.getElementById(
+        "questionCard"
+    );
 
 const questionText =
-    document.getElementById("questionText");
+    document.getElementById(
+        "questionText"
+    );
 
 const optionsBox =
-    document.getElementById("options");
+    document.getElementById(
+        "options"
+    );
 
 const lockBtn =
-    document.getElementById("lockBtn");
+    document.getElementById(
+        "lockBtn"
+    );
 
 const timerNumber =
-    document.getElementById("timerNumber");
+    document.getElementById(
+        "timerNumber"
+    );
 
 const timer =
-    document.getElementById("timer");
+    document.getElementById(
+        "timer"
+    );
 
 const questionNumber =
-    document.getElementById("questionNumber");
+    document.getElementById(
+        "questionNumber"
+    );
 
 const topicBadge =
-    document.getElementById("topicBadge");
+    document.getElementById(
+        "topicBadge"
+    );
 
 const progressBar =
-    document.getElementById("progressBar");
+    document.getElementById(
+        "progressBar"
+    );
 
 const progressText =
-    document.getElementById("progressText");
+    document.getElementById(
+        "progressText"
+    );
 
 const ladderLevels =
-    document.getElementById("ladderLevels");
+    document.getElementById(
+        "ladderLevels"
+    );
 
 const modal =
-    document.getElementById("modal");
+    document.getElementById(
+        "modal"
+    );
 
 const modalIcon =
-    document.getElementById("modalIcon");
+    document.getElementById(
+        "modalIcon"
+    );
 
 const modalTitle =
-    document.getElementById("modalTitle");
+    document.getElementById(
+        "modalTitle"
+    );
 
 const modalMessage =
-    document.getElementById("modalMessage");
+    document.getElementById(
+        "modalMessage"
+    );
 
 const modalPrize =
-    document.getElementById("modalPrize");
+    document.getElementById(
+        "modalPrize"
+    );
 
 const modalButtons =
-    document.getElementById("modalButtons");
+    document.getElementById(
+        "modalButtons"
+    );
 
 const toast =
-    document.getElementById("toast");
+    document.getElementById(
+        "toast"
+    );
 
 const coinBalance =
-    document.getElementById("coinBalance");
+    document.getElementById(
+        "coinBalance"
+    );
+
+const climbOverlay =
+    document.getElementById(
+        "climbOverlay"
+    );
+
+const climbLevel =
+    document.getElementById(
+        "climbLevel"
+    );
+
+const climbPrize =
+    document.getElementById(
+        "climbPrize"
+    );
+
+
+/* =========================================================
+   AUDIO ENGINE
+========================================================= */
+
+let audioContext = null;
+
+
+function ensureAudio(){
+
+    try{
+
+        if(!audioContext){
+
+            audioContext =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+
+        }
+
+
+        if(
+            audioContext.state ===
+            "suspended"
+        ){
+
+            audioContext.resume();
+
+        }
+
+    }catch(error){
+
+        console.log(
+            "Audio unavailable"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BASIC TONE
+========================================================= */
+
+function tone(
+    frequency,
+    duration,
+    type="sine",
+    volume=.045
+){
+
+    try{
+
+        ensureAudio();
+
+        if(!audioContext){
+            return;
+        }
+
+
+        const oscillator =
+            audioContext.createOscillator();
+
+        const gain =
+            audioContext.createGain();
+
+
+        oscillator.type =
+            type;
+
+        oscillator.frequency.setValueAtTime(
+            frequency,
+            audioContext.currentTime
+        );
+
+
+        gain.gain.setValueAtTime(
+            .0001,
+            audioContext.currentTime
+        );
+
+
+        gain.gain.exponentialRampToValueAtTime(
+            volume,
+            audioContext.currentTime + .015
+        );
+
+
+        gain.gain.exponentialRampToValueAtTime(
+            .0001,
+            audioContext.currentTime + duration
+        );
+
+
+        oscillator.connect(gain);
+
+        gain.connect(
+            audioContext.destination
+        );
+
+
+        oscillator.start();
+
+        oscillator.stop(
+            audioContext.currentTime +
+            duration
+        );
+
+    }catch(error){}
+
+}
+
+
+/* =========================================================
+   SUSPENSE SOUND
+========================================================= */
+
+function suspenseTick(){
+
+    tone(
+        timeLeft <= 5
+            ? 420
+            : 280,
+        .08,
+        "sine",
+        .035
+    );
+
+}
+
+
+/* =========================================================
+   ANSWER SELECT SOUND
+========================================================= */
+
+function playSelectSound(){
+
+    tone(
+        520,
+        .08,
+        "sine",
+        .035
+    );
+
+}
+
+
+/* =========================================================
+   LOCK SOUND
+========================================================= */
+
+function playLockSound(){
+
+    tone(
+        250,
+        .10,
+        "square",
+        .035
+    );
+
+    setTimeout(
+        () => tone(
+            520,
+            .12,
+            "sine",
+            .045
+        ),
+        100
+    );
+
+}
+
+
+/* =========================================================
+   CORRECT SOUND
+========================================================= */
+
+function playCorrectSound(){
+
+    tone(
+        523,
+        .13,
+        "sine",
+        .045
+    );
+
+    setTimeout(
+        () => tone(
+            659,
+            .13,
+            "sine",
+            .045
+        ),
+        120
+    );
+
+    setTimeout(
+        () => tone(
+            784,
+            .22,
+            "sine",
+            .05
+        ),
+        240
+    );
+
+}
+
+
+/* =========================================================
+   WRONG SOUND
+========================================================= */
+
+function playWrongSound(){
+
+    tone(
+        220,
+        .18,
+        "sawtooth",
+        .035
+    );
+
+    setTimeout(
+        () => tone(
+            150,
+            .28,
+            "sawtooth",
+            .035
+        ),
+        160
+    );
+
+}
+
+
+/* =========================================================
+   LADDER SOUND
+========================================================= */
+
+function playLadderSound(){
+
+    const notes = [
+        392,
+        494,
+        587,
+        659,
+        784
+    ];
+
+    notes.forEach(
+        (frequency,index) => {
+
+            setTimeout(
+                () => {
+
+                    tone(
+                        frequency,
+                        .16,
+                        "sine",
+                        .045
+                    );
+
+                },
+                index * 95
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   VICTORY SOUND
+========================================================= */
+
+function playVictorySound(){
+
+    const notes = [
+        523,
+        659,
+        784,
+        1047
+    ];
+
+    notes.forEach(
+        (frequency,index) => {
+
+            setTimeout(
+                () => tone(
+                    frequency,
+                    .28,
+                    "sine",
+                    .055
+                ),
+                index * 130
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   WAIT
+========================================================= */
+
+function wait(ms){
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
+
+}
 
 
 /* =========================================================
@@ -1651,7 +3400,7 @@ const coinBalance =
 
 function generateGameId(){
 
-    if (
+    if(
         typeof crypto !== "undefined" &&
         crypto.randomUUID
     ){
@@ -1668,6 +3417,7 @@ function generateGameId(){
             .toString(36)
             .slice(2)
     );
+
 }
 
 
@@ -1680,13 +3430,18 @@ function showLoading(message){
     loadingScreen.style.display =
         "flex";
 
+
     const text =
         loadingScreen.querySelector(
             ".loading-text"
         );
 
+
     if(text){
-        text.textContent = message;
+
+        text.textContent =
+            message;
+
     }
 
 }
@@ -1714,14 +3469,18 @@ function showErrorScreen(message){
     errorScreen.style.display =
         "flex";
 
+
     const msg =
         document.querySelector(
             ".error-message"
         );
 
+
     if(msg){
+
         msg.textContent =
             message;
+
     }
 
 }
@@ -1744,20 +3503,27 @@ function showToast(message){
     toast.textContent =
         message;
 
-    toast.classList.add("show");
-
-    clearTimeout(
-        window.toastTimer
+    toast.classList.add(
+        "show"
     );
 
-    window.toastTimer =
-        setTimeout(() => {
 
-            toast.classList.remove(
-                "show"
-            );
+    clearTimeout(
+        window.__toastTimer
+    );
 
-        },3000);
+
+    window.__toastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2800
+        );
 
 }
 
@@ -1776,8 +3542,10 @@ function shuffleArray(array){
 
         const j =
             Math.floor(
-                Math.random() * (i+1)
+                Math.random() *
+                (i+1)
             );
+
 
         [
             array[i],
@@ -1791,20 +3559,26 @@ function shuffleArray(array){
     }
 
     return array;
+
 }
 
 
 /* =========================================================
-   NORMALIZE TEXT
+   NORMALIZE
 ========================================================= */
 
 function normalizeText(value){
 
-    return String(value ?? "")
-        .normalize("NFKC")
-        .trim()
-        .replace(/\s+/g," ")
-        .toLocaleLowerCase();
+    return String(
+        value ?? ""
+    )
+    .normalize("NFKC")
+    .trim()
+    .replace(
+        /\s+/g,
+        " "
+    )
+    .toLocaleLowerCase();
 
 }
 
@@ -1843,26 +3617,42 @@ function parseOptions(raw){
     }
 
 
-    if(typeof raw === "string"){
+    if(
+        typeof raw ===
+        "string"
+    ){
 
         try{
 
             const parsed =
                 JSON.parse(raw);
 
-            if(Array.isArray(parsed)){
+
+            if(
+                Array.isArray(parsed)
+            ){
 
                 return parsed.map(
-                    x => String(
-                        typeof x === "object"
-                            ? (
-                                x.label ??
-                                x.text ??
-                                x.value ??
+                    item => {
+
+                        if(
+                            typeof item ===
+                            "object" &&
+                            item !== null
+                        ){
+
+                            return String(
+                                item.label ??
+                                item.text ??
+                                item.value ??
                                 ""
-                            )
-                            : x
-                    )
+                            );
+
+                        }
+
+                        return String(item);
+
+                    }
                 );
 
             }
@@ -1870,8 +3660,8 @@ function parseOptions(raw){
         }catch(error){
 
             console.warn(
-                "Options JSON parse failed:",
-                raw
+                "Options parse error:",
+                error
             );
 
         }
@@ -1885,7 +3675,7 @@ function parseOptions(raw){
 
 
 /* =========================================================
-   FIND CORRECT ANSWER
+   FIND CORRECT INDEX
 ========================================================= */
 
 function getCorrectIndex(
@@ -1895,49 +3685,47 @@ function getCorrectIndex(
 
     const raw =
         String(
-            question.answer ?? ""
+            question.answer ??
+            ""
         ).trim();
+
 
     if(!raw){
         return -1;
     }
 
 
-    const normalizedAnswer =
+    const normalized =
         normalizeText(raw);
 
 
-    /* Exact option text */
-
-    const exactIndex =
+    const exact =
         options.findIndex(
             option =>
                 normalizeText(option) ===
-                normalizedAnswer
+                normalized
         );
 
-    if(exactIndex >= 0){
 
-        return exactIndex;
+    if(exact >= 0){
+
+        return exact;
 
     }
 
-
-    /* A / B / C / D */
 
     if(
         /^[ABCD]$/i.test(raw)
     ){
 
         return (
-            raw.toUpperCase()
+            raw
+                .toUpperCase()
                 .charCodeAt(0) - 65
         );
 
     }
 
-
-    /* 0 / 1 / 2 / 3 */
 
     if(
         /^\d+$/.test(raw)
@@ -1945,6 +3733,7 @@ function getCorrectIndex(
 
         const number =
             Number(raw);
+
 
         if(
             number >= 0 &&
@@ -1954,6 +3743,7 @@ function getCorrectIndex(
             return number;
 
         }
+
 
         if(
             number >= 1 &&
@@ -1973,13 +3763,13 @@ function getCorrectIndex(
 
 
 /* =========================================================
-   LOAD QUIZZES
+   LOAD SUPABASE QUESTIONS
 ========================================================= */
 
 async function loadQuizBank(){
 
     console.log(
-        "📡 Loading quizzes from Supabase..."
+        "📡 Loading from Supabase..."
     );
 
 
@@ -1989,22 +3779,12 @@ async function loadQuizBank(){
     } =
     await supabase
         .from("quizzes")
-        .select(`
-            id,
-            topic,
-            question,
-            options,
-            answer,
-            explanation
-        `);
+        .select(
+            "id,topic,question,options,answer,explanation"
+        );
 
 
     if(error){
-
-        console.error(
-            "❌ SUPABASE ERROR:",
-            error
-        );
 
         throw new Error(
             "Supabase error: " +
@@ -2014,16 +3794,10 @@ async function loadQuizBank(){
     }
 
 
-    if(!data){
-
-        throw new Error(
-            "Supabase बाट data आएन।"
-        );
-
-    }
-
-
-    if(data.length === 0){
+    if(
+        !data ||
+        data.length === 0
+    ){
 
         throw new Error(
             "quizzes table मा कुनै प्रश्न भेटिएन।"
@@ -2032,52 +3806,54 @@ async function loadQuizBank(){
     }
 
 
-    console.log(
-        "✅ Supabase questions:",
-        data.length
-    );
+    const valid =
+        data.filter(
+            question => {
+
+                const options =
+                    parseOptions(
+                        question.options
+                    );
 
 
-    const validQuestions =
-        data.filter(question => {
+                const answerIndex =
+                    getCorrectIndex(
+                        question,
+                        options
+                    );
 
-            const options =
-                parseOptions(
-                    question.options
+
+                return (
+
+                    question.id != null &&
+
+                    String(
+                        question.question ??
+                        ""
+                    ).trim() !== "" &&
+
+                    options.length >= 4 &&
+
+                    answerIndex >= 0
+
                 );
 
-            const answerIndex =
-                getCorrectIndex(
-                    question,
-                    options
-                );
-
-            return (
-                question.id != null &&
-                question.question &&
-                options.length >= 4 &&
-                answerIndex >= 0
-            );
-
-        });
+            }
+        );
 
 
-    console.log(
-        "✅ Valid questions:",
-        validQuestions.length
-    );
-
-
-    if(validQuestions.length === 0){
+    if(
+        valid.length === 0
+    ){
 
         throw new Error(
-            "Supabase questions भेटिए तर options/answer format गलत छ।"
+            "Questions भेटिए तर options/answer format गलत छ।"
         );
 
     }
 
 
-    return validQuestions;
+    return valid;
 
 }
 
@@ -2088,86 +3864,46 @@ async function loadQuizBank(){
 
 async function loadPlayedQuestions(){
 
-    const playedIds =
-        new Set();
-
-
     if(!currentUser){
 
         throw new Error(
-            "Firebase login user भेटिएन।"
+            "Firebase user भेटिएन।"
         );
 
     }
 
 
-    console.log(
-        "📚 Loading played_questions..."
+    const played =
+        new Set();
+
+
+    const ref =
+        collection(
+            db,
+            "users",
+            currentUser.uid,
+            "played_questions"
+        );
+
+
+    const snapshot =
+        await getDocs(ref);
+
+
+    snapshot.forEach(
+        item => {
+
+            played.add(
+                String(
+                    item.id
+                )
+            );
+
+        }
     );
 
 
-    try{
-
-        const playedRef =
-            collection(
-                db,
-                "users",
-                currentUser.uid,
-                "played_questions"
-            );
-
-
-        const snapshot =
-            await getDocs(
-                playedRef
-            );
-
-
-        snapshot.forEach(
-            documentSnapshot => {
-
-                playedIds.add(
-                    String(
-                        documentSnapshot.id
-                    )
-                );
-
-            }
-        );
-
-
-        console.log(
-            "✅ Played question count:",
-            playedIds.size
-        );
-
-
-    }catch(error){
-
-        console.error(
-            "❌ FIRESTORE PLAYED QUESTIONS ERROR:",
-            error
-        );
-
-
-        /*
-         Important:
-
-         History read fail हुँदा पूरा quiz
-         crash नगर्ने।
-
-         तर no-repeat guarantee temporary
-         रूपमा काम गर्दैन।
-        */
-
-        showToast(
-            "⚠️ Played history load भएन। Quiz चलाइँदैछ।"
-        );
-
-    }
-
-
-    return playedIds;
+    return played;
 
 }
 
@@ -2181,7 +3917,7 @@ async function startGame(){
     try{
 
         showLoading(
-            "Quiz loading हुँदैछ..."
+            "Hot Seat तयार हुँदैछ..."
         );
 
 
@@ -2191,34 +3927,22 @@ async function startGame(){
         if(!currentUser){
 
             throw new Error(
-                "Firebase login user भेटिएन।"
+                "Login आवश्यक छ।"
             );
 
         }
 
 
-        console.log(
-            "👤 User UID:",
-            currentUser.uid
-        );
-
-
-        /* Load Supabase */
-
-        const allQuestions =
+        allValidQuestions =
             await loadQuizBank();
 
 
-        /* Load played */
-
-        const playedIds =
+        playedIds =
             await loadPlayedQuestions();
 
 
-        /* Filter */
-
-        let unseenQuestions =
-            allQuestions.filter(
+        const unseen =
+            allValidQuestions.filter(
                 question =>
                     !playedIds.has(
                         String(question.id)
@@ -2226,26 +3950,8 @@ async function startGame(){
             );
 
 
-        console.log(
-            "📊 Total:",
-            allQuestions.length
-        );
-
-        console.log(
-            "📊 Played:",
-            playedIds.size
-        );
-
-        console.log(
-            "📊 Unseen:",
-            unseenQuestions.length
-        );
-
-
-        /* All questions completed */
-
         if(
-            unseenQuestions.length === 0
+            unseen.length === 0
         ){
 
             showNoQuestions();
@@ -2255,21 +3961,17 @@ async function startGame(){
         }
 
 
-        /* Shuffle */
-
         shuffleArray(
-            unseenQuestions
+            unseen
         );
 
 
-        /* Pick max 10 */
-
         gameQuestions =
-            unseenQuestions.slice(
+            unseen.slice(
                 0,
                 Math.min(
                     10,
-                    unseenQuestions.length
+                    unseen.length
                 )
             );
 
@@ -2292,10 +3994,13 @@ async function startGame(){
 
         renderLadder();
 
+
         hideLoading();
+
 
         game.style.display =
             "block";
+
 
         await showQuestion();
 
@@ -2303,16 +4008,21 @@ async function startGame(){
     }catch(error){
 
         console.error(
-            "🔥 FINAL QUIZ LOAD ERROR:",
+            "QUIZ LOAD ERROR:",
             error
         );
 
 
         showErrorScreen(
+
             "Quiz load हुन सकेन।\n\n" +
+
             error.message +
+
             "\n\n" +
-            "Browser Console मा exact error हेर्नुहोस्।"
+
+            "Supabase table, RLS policy र Firebase login check गर्नुहोस्।"
+
         );
 
     }
@@ -2341,19 +4051,21 @@ function resetLifelines(){
 
     document
         .querySelectorAll(".life")
-        .forEach(button => {
+        .forEach(
+            button => {
 
-            button.classList.remove(
-                "used"
-            );
+                button.classList.remove(
+                    "used"
+                );
 
-        });
+            }
+        );
 
 }
 
 
 /* =========================================================
-   MARK QUESTION PLAYED
+   MARK PLAYED
 ========================================================= */
 
 async function markQuestionPlayed(
@@ -2365,61 +4077,43 @@ async function markQuestionPlayed(
     }
 
 
-    try{
-
-        const ref =
-            doc(
-                db,
-                "users",
-                currentUser.uid,
-                "played_questions",
-                String(question.id)
-            );
-
-
-        await setDoc(
-            ref,
-            {
-
-                questionId:
-                    String(question.id),
-
-                gameId:
-                    currentGameId,
-
-                topic:
-                    question.topic ??
-                    "",
-
-                playedAt:
-                    serverTimestamp()
-
-            },
-            {
-                merge:true
-            }
+    const ref =
+        doc(
+            db,
+            "users",
+            currentUser.uid,
+            "played_questions",
+            String(question.id)
         );
 
 
-        console.log(
-            "✅ Marked played:",
-            question.id
-        );
+    await setDoc(
+        ref,
+        {
+
+            questionId:
+                String(question.id),
+
+            gameId:
+                currentGameId,
+
+            topic:
+                question.topic ??
+                "",
+
+            playedAt:
+                serverTimestamp()
+
+        },
+        {
+            merge:true
+        }
+    );
 
 
-    }catch(error){
-
-        console.error(
-            "❌ Failed to mark question played:",
-            error
-        );
-
-
-        showToast(
-            "⚠️ Question history save भएन।"
-        );
-
-    }
+    playedIds.add(
+        String(question.id)
+    );
 
 }
 
@@ -2464,8 +4158,6 @@ async function showQuestion(){
         );
 
 
-    /* Header */
-
     questionNumber.textContent =
         currentQuestionIndex + 1;
 
@@ -2475,13 +4167,25 @@ async function showQuestion(){
         "General";
 
 
+    questionText.classList.remove(
+        "question-reveal"
+    );
+
+
+    void questionText.offsetWidth;
+
+
     questionText.textContent =
         question.question;
 
 
-    /* Options */
+    questionText.classList.add(
+        "question-reveal"
+    );
 
-    optionsBox.innerHTML = "";
+
+    optionsBox.innerHTML =
+        "";
 
 
     options.forEach(
@@ -2492,8 +4196,10 @@ async function showQuestion(){
                     "button"
                 );
 
+
             button.className =
                 "option";
+
 
             button.dataset.index =
                 index;
@@ -2504,8 +4210,10 @@ async function showQuestion(){
                     "span"
                 );
 
+
             letter.className =
                 "option-letter";
+
 
             letter.textContent =
                 String.fromCharCode(
@@ -2518,8 +4226,10 @@ async function showQuestion(){
                     "span"
                 );
 
+
             text.className =
                 "option-text";
+
 
             text.textContent =
                 optionText;
@@ -2536,13 +4246,8 @@ async function showQuestion(){
 
             button.addEventListener(
                 "click",
-                () => {
-
-                    selectAnswer(
-                        index
-                    );
-
-                }
+                () =>
+                    selectAnswer(index)
             );
 
 
@@ -2557,8 +4262,6 @@ async function showQuestion(){
     lockBtn.disabled =
         true;
 
-
-    /* Progress */
 
     const progress =
         (
@@ -2576,14 +4279,41 @@ async function showQuestion(){
         "%";
 
 
-    /* Mark as played */
-
-    await markQuestionPlayed(
-        question
-    );
+    renderLadder();
 
 
-    /* Timer */
+    /*
+       IMPORTANT:
+       Mark as played as soon as
+       question is shown.
+    */
+
+    try{
+
+        await markQuestionPlayed(
+            question
+        );
+
+    }catch(error){
+
+        console.error(
+            "Played question save error:",
+            error
+        );
+
+
+        /*
+           We stop here because otherwise
+           the no-repeat guarantee is not
+           reliable.
+        */
+
+        throw new Error(
+            "Question history save हुन सकेन। Firebase rules/database check गर्नुहोस्।"
+        );
+
+    }
+
 
     startTimer();
 
@@ -2596,9 +4326,17 @@ async function showQuestion(){
 
 function selectAnswer(index){
 
-    if(locked){
+    if(
+        locked ||
+        gameOver
+    ){
+
         return;
+
     }
+
+
+    ensureAudio();
 
 
     selectedAnswerIndex =
@@ -2607,13 +4345,12 @@ function selectAnswer(index){
 
     document
         .querySelectorAll(".option")
-        .forEach(button => {
-
-            button.classList.remove(
-                "selected"
-            );
-
-        });
+        .forEach(
+            button =>
+                button.classList.remove(
+                    "selected"
+                )
+        );
 
 
     const selected =
@@ -2635,10 +4372,7 @@ function selectAnswer(index){
         false;
 
 
-    playTone(
-        550,
-        .07
-    );
+    playSelectSound();
 
 }
 
@@ -2651,7 +4385,8 @@ async function lockAnswer(){
 
     if(
         locked ||
-        selectedAnswerIndex === null
+        selectedAnswerIndex === null ||
+        gameOver
     ){
 
         return;
@@ -2663,9 +4398,36 @@ async function lockAnswer(){
 
     clearTimer();
 
+    ensureAudio();
+
+
+    lockBtn.classList.add(
+        "locking"
+    );
+
 
     lockBtn.disabled =
         true;
+
+
+    document
+        .querySelectorAll(".option")
+        .forEach(
+            option =>
+                option.classList.add(
+                    "locked"
+                )
+        );
+
+
+    playLockSound();
+
+
+    /*
+       Dramatic pause before reveal
+    */
+
+    await wait(1050);
 
 
     const question =
@@ -2695,113 +4457,251 @@ async function lockAnswer(){
         selected === correctIndex
     ){
 
-        playTone(
-            800,
-            .15
+        await handleCorrectAnswer(
+            correctIndex
         );
-
-
-        const option =
-            document.querySelector(
-                `.option[data-index="${selected}"]`
-            );
-
-
-        if(option){
-
-            option.classList.add(
-                "correct"
-            );
-
-        }
-
-
-        const prize =
-            PRIZES[
-                currentQuestionIndex
-            ];
-
-
-        showToast(
-            "✓ सही उत्तर! +" +
-            prize.coins +
-            " coins"
-        );
-
-
-        await wait(1300);
-
-
-        currentQuestionIndex++;
-
-
-        if(
-            currentQuestionIndex >=
-            gameQuestions.length
-        ){
-
-            await finishGame();
-
-        }else{
-
-            await showQuestion();
-
-        }
-
 
     }else{
 
-        playTone(
-            180,
-            .25
-        );
-
-
-        const wrongOption =
-            document.querySelector(
-                `.option[data-index="${selected}"]`
-            );
-
-
-        if(wrongOption){
-
-            wrongOption.classList.add(
-                "wrong"
-            );
-
-        }
-
-
-        const correctOption =
-            document.querySelector(
-                `.option[data-index="${correctIndex}"]`
-            );
-
-
-        if(correctOption){
-
-            correctOption.classList.add(
-                "correct"
-            );
-
-        }
-
-
-        await wait(1300);
-
-
-        const safePrize =
-            getSafePrize(
-                currentQuestionIndex
-            );
-
-
-        await endGame(
-            "wrong",
-            safePrize
+        await handleWrongAnswer(
+            selected,
+            correctIndex
         );
 
     }
+
+}
+
+
+/* =========================================================
+   CORRECT ANSWER
+========================================================= */
+
+async function handleCorrectAnswer(
+    correctIndex
+){
+
+    const option =
+        document.querySelector(
+            `.option[data-index="${correctIndex}"]`
+        );
+
+
+    if(option){
+
+        option.classList.add(
+            "correct"
+        );
+
+    }
+
+
+    playCorrectSound();
+
+
+    const prize =
+        PRIZES[
+            currentQuestionIndex
+        ];
+
+
+    /*
+       Suspense pause after
+       answer reveal
+    */
+
+    await wait(700);
+
+
+    showToast(
+        "✓ सही उत्तर! +" +
+        prize.coins +
+        " coins"
+    );
+
+
+    /*
+       BIG LADDER CLIMB
+    */
+
+    await showLadderClimb(
+        prize.level,
+        prize.coins
+    );
+
+
+    /*
+       Advance
+    */
+
+    currentQuestionIndex++;
+
+
+    renderLadder();
+
+
+    await wait(300);
+
+
+    if(
+        currentQuestionIndex >=
+        gameQuestions.length
+    ){
+
+        await finishGame();
+
+    }else{
+
+        lockBtn.classList.remove(
+            "locking"
+        );
+
+        await showQuestion();
+
+    }
+
+}
+
+
+/* =========================================================
+   LADDER CLIMB
+========================================================= */
+
+async function showLadderClimb(
+    level,
+    coins
+){
+
+    playLadderSound();
+
+
+    climbLevel.textContent =
+        "LEVEL " +
+        level;
+
+
+    climbPrize.textContent =
+        "🪙 " +
+        Number(coins)
+            .toLocaleString() +
+        " coins";
+
+
+    climbOverlay.classList.remove(
+        "show"
+    );
+
+
+    void climbOverlay.offsetWidth;
+
+
+    climbOverlay.classList.add(
+        "show"
+    );
+
+
+    /*
+       Highlight exact ladder row
+    */
+
+    document
+        .querySelectorAll(".level")
+        .forEach(
+            element => {
+
+                const rowLevel =
+                    Number(
+                        element.dataset.level
+                    );
+
+
+                element.classList.remove(
+                    "climbing"
+                );
+
+
+                if(
+                    rowLevel === level
+                ){
+
+                    element.classList.add(
+                        "climbing"
+                    );
+
+                }
+
+            }
+        );
+
+
+    await wait(900);
+
+
+    climbOverlay.classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   WRONG ANSWER
+========================================================= */
+
+async function handleWrongAnswer(
+    selected,
+    correctIndex
+){
+
+    const wrongOption =
+        document.querySelector(
+            `.option[data-index="${selected}"]`
+        );
+
+
+    if(wrongOption){
+
+        wrongOption.classList.add(
+            "wrong"
+        );
+
+    }
+
+
+    await wait(300);
+
+
+    const correctOption =
+        document.querySelector(
+            `.option[data-index="${correctIndex}"]`
+        );
+
+
+    if(correctOption){
+
+        correctOption.classList.add(
+            "correct"
+        );
+
+    }
+
+
+    playWrongSound();
+
+
+    await wait(1100);
+
+
+    const safePrize =
+        getSafePrize(
+            currentQuestionIndex
+        );
+
+
+    await endGame(
+        "wrong",
+        safePrize
+    );
 
 }
 
@@ -2817,31 +4717,49 @@ function startTimer(){
 
     timeLeft = 30;
 
+
     updateTimer();
 
 
     timerInterval =
-        setInterval(() => {
+        setInterval(
+            () => {
 
-            timeLeft--;
+                timeLeft--;
 
-            updateTimer();
+                updateTimer();
 
 
-            if(
-                timeLeft <= 0
-            ){
+                if(
+                    timeLeft <= 10 &&
+                    timeLeft > 0
+                ){
 
-                clearTimer();
+                    suspenseTick();
 
-                handleTimeOut();
+                }
 
-            }
 
-        },1000);
+                if(
+                    timeLeft <= 0
+                ){
+
+                    clearTimer();
+
+                    handleTimeOut();
+
+                }
+
+            },
+            1000
+        );
 
 }
 
+
+/* =========================================================
+   UPDATE TIMER
+========================================================= */
 
 function updateTimer(){
 
@@ -2868,6 +4786,10 @@ function updateTimer(){
 }
 
 
+/* =========================================================
+   CLEAR TIMER
+========================================================= */
+
 function clearTimer(){
 
     if(timerInterval){
@@ -2890,8 +4812,13 @@ function clearTimer(){
 
 async function handleTimeOut(){
 
-    if(locked){
+    if(
+        locked ||
+        gameOver
+    ){
+
         return;
+
     }
 
 
@@ -2921,19 +4848,22 @@ async function handleTimeOut(){
         );
 
 
-    const correctOption =
+    const correct =
         document.querySelector(
             `.option[data-index="${correctIndex}"]`
         );
 
 
-    if(correctOption){
+    if(correct){
 
-        correctOption.classList.add(
+        correct.classList.add(
             "correct"
         );
 
     }
+
+
+    playWrongSound();
 
 
     showToast(
@@ -2959,15 +4889,14 @@ async function handleTimeOut(){
 
 
 /* =========================================================
-   GET SAFE PRIZE
+   SAFE PRIZE
 ========================================================= */
 
 function getSafePrize(
     questionIndex
 ){
 
-    let safe =
-        0;
+    let safe = 0;
 
 
     for(
@@ -2995,7 +4924,7 @@ function getSafePrize(
 
 
 /* =========================================================
-   CURRENT LOCKED PRIZE
+   CURRENT WINNINGS
 ========================================================= */
 
 function getCurrentWinnings(){
@@ -3009,13 +4938,9 @@ function getCurrentWinnings(){
     }
 
 
-    const completedIndex =
-        currentQuestionIndex - 1;
-
-
     return (
         PRIZES[
-            completedIndex
+            currentQuestionIndex - 1
         ]?.coins || 0
     );
 
@@ -3053,8 +4978,13 @@ async function endGame(
     let icon =
         "😔";
 
+    let message =
+        "अर्को पटक अझ माथि पुग्ने प्रयास गर्नुहोस्।";
 
-    if(reason === "wrong"){
+
+    if(
+        reason === "wrong"
+    ){
 
         title =
             "उत्तर गलत भयो";
@@ -3062,10 +4992,15 @@ async function endGame(
         icon =
             "❌";
 
+        message =
+            "सही उत्तर reveal गरिएको छ। तपाईंको सुरक्षित prize तल देखाइएको छ।";
+
     }
 
 
-    if(reason === "timeout"){
+    if(
+        reason === "timeout"
+    ){
 
         title =
             "समय सकियो";
@@ -3073,13 +5008,16 @@ async function endGame(
         icon =
             "⏰";
 
+        message =
+            "समयभित्र answer lock हुन सकेन।";
+
     }
 
 
     showResultModal(
         icon,
         title,
-        "तपाईंले यो game बाट प्राप्त गर्नुभएको सुरक्षित prize:",
+        message,
         amount,
         false
     );
@@ -3088,7 +5026,7 @@ async function endGame(
 
 
 /* =========================================================
-   FINISH GAME
+   FINISH
 ========================================================= */
 
 async function finishGame(){
@@ -3109,6 +5047,9 @@ async function finishGame(){
         ].coins;
 
 
+    playVictorySound();
+
+
     await saveCoinHistory(
         finalPrize,
         "completed"
@@ -3117,8 +5058,8 @@ async function finishGame(){
 
     showResultModal(
         "🏆",
-        "Congratulations!",
-        "तपाईंले सबै 10 प्रश्न सही गर्नुभयो।",
+        "YOU DID IT!",
+        "तपाईंले सबै 10 प्रश्न सही गर्नुभयो। LoksewaQuest Hot Seat को शीर्ष prize जित्नुभयो!",
         finalPrize,
         true
     );
@@ -3148,7 +5089,7 @@ async function quitGame(){
         confirm(
             "Game छोडेर " +
             current +
-            " coins लिन चाहनुहुन्छ?"
+            " coins सुरक्षित गर्न चाहनुहुन्छ?"
         );
 
 
@@ -3196,10 +5137,6 @@ async function saveCoinHistory(
 
     if(payoutDone){
 
-        console.log(
-            "⚠️ Payout already completed."
-        );
-
         return;
 
     }
@@ -3207,8 +5144,8 @@ async function saveCoinHistory(
 
     if(!currentUser){
 
-        console.error(
-            "❌ No Firebase user."
+        showToast(
+            "⚠️ Firebase login भेटिएन।"
         );
 
         return;
@@ -3236,23 +5173,30 @@ async function saveCoinHistory(
             );
 
 
+        const numericAmount =
+            Number(amount || 0);
+
+
         const result =
             await runTransaction(
                 db,
                 async transaction => {
 
-                    const historySnapshot =
+                    const historySnap =
                         await transaction.get(
                             historyRef
                         );
 
 
                     /*
-                     Duplicate protection
+                       Idempotency:
+
+                       same gameId already paid?
+                       Then do nothing.
                     */
 
                     if(
-                        historySnapshot.exists()
+                        historySnap.exists()
                     ){
 
                         return false;
@@ -3260,23 +5204,22 @@ async function saveCoinHistory(
                     }
 
 
-                    const userSnapshot =
+                    const userSnap =
                         await transaction.get(
                             userRef
                         );
 
 
-                    let oldCoins =
-                        0;
+                    let oldCoins = 0;
 
 
                     if(
-                        userSnapshot.exists()
+                        userSnap.exists()
                     ){
 
                         oldCoins =
                             Number(
-                                userSnapshot.data()
+                                userSnap.data()
                                     ?.coins || 0
                             );
 
@@ -3285,11 +5228,11 @@ async function saveCoinHistory(
 
                     const newCoins =
                         oldCoins +
-                        Number(amount || 0);
+                        numericAmount;
 
 
                     if(
-                        userSnapshot.exists()
+                        userSnap.exists()
                     ){
 
                         transaction.update(
@@ -3334,13 +5277,16 @@ async function saveCoinHistory(
                                 currentGameId,
 
                             coins_won:
-                                Number(amount || 0),
+                                numericAmount,
 
                             status:
                                 status,
 
                             level:
-                                currentQuestionIndex,
+                                Math.min(
+                                    currentQuestionIndex,
+                                    10
+                                ),
 
                             question_count:
                                 gameQuestions.length,
@@ -3358,29 +5304,12 @@ async function saveCoinHistory(
             );
 
 
+        payoutDone = true;
+
+
         if(result){
 
-            payoutDone =
-                true;
-
-
-            console.log(
-                "✅ Coin history saved:",
-                amount
-            );
-
-
             await refreshCoinBalance();
-
-        }else{
-
-            payoutDone =
-                true;
-
-
-            console.log(
-                "ℹ️ Duplicate payout prevented."
-            );
 
         }
 
@@ -3388,7 +5317,7 @@ async function saveCoinHistory(
     }catch(error){
 
         console.error(
-            "❌ COIN SAVE ERROR:",
+            "COIN SAVE ERROR:",
             error
         );
 
@@ -3403,7 +5332,7 @@ async function saveCoinHistory(
 
 
 /* =========================================================
-   REFRESH COIN BALANCE
+   REFRESH COINS
 ========================================================= */
 
 async function refreshCoinBalance(){
@@ -3450,11 +5379,10 @@ async function refreshCoinBalance(){
 
         }
 
-
     }catch(error){
 
         console.error(
-            "❌ Balance load error:",
+            "Balance error:",
             error
         );
 
@@ -3469,8 +5397,14 @@ async function refreshCoinBalance(){
 
 function useFifty(){
 
-    if(lifelines.fifty){
+    if(
+        lifelines.fifty ||
+        locked ||
+        gameOver
+    ){
+
         return;
+
     }
 
 
@@ -3498,55 +5432,59 @@ function useFifty(){
     }
 
 
-    const wrongIndexes =
+    const wrong =
         options
             .map(
-                (_,i) => i
+                (_,index) =>
+                    index
             )
             .filter(
-                i => i !== correct
+                index =>
+                    index !== correct
             );
 
 
-    shuffleArray(
-        wrongIndexes
-    );
+    shuffleArray(wrong);
 
 
-    wrongIndexes
+    wrong
         .slice(0,2)
-        .forEach(index => {
+        .forEach(
+            index => {
 
-            const button =
-                document.querySelector(
-                    `.option[data-index="${index}"]`
-                );
+                const button =
+                    document.querySelector(
+                        `.option[data-index="${index}"]`
+                    );
 
-            if(button){
 
-                button.classList.add(
-                    "hidden-option"
-                );
+                if(button){
+
+                    button.classList.add(
+                        "hidden-option"
+                    );
+
+                }
 
             }
+        );
 
-        });
 
-
-    lifelines.fifty =
-        true;
+    lifelines.fifty = true;
 
 
     document
-        .getElementById("fiftyBtn")
+        .getElementById(
+            "fiftyBtn"
+        )
         .classList.add(
             "used"
         );
 
 
-    playTone(
-        500,
-        .1
+    tone(
+        600,
+        .15
     );
 
 
@@ -3558,13 +5496,19 @@ function useFifty(){
 
 
 /* =========================================================
-   AUDIENCE POLL
+   AUDIENCE
 ========================================================= */
 
 function useAudience(){
 
-    if(lifelines.audience){
+    if(
+        lifelines.audience ||
+        locked ||
+        gameOver
+    ){
+
         return;
+
     }
 
 
@@ -3596,15 +5540,8 @@ function useAudience(){
         [0,0,0,0];
 
 
-    let remaining =
-        100;
+    let remaining = 100;
 
-
-    /*
-     Give correct answer a
-     realistic but not guaranteed
-     audience advantage.
-    */
 
     const correctPercent =
         Math.floor(
@@ -3624,7 +5561,8 @@ function useAudience(){
     const wrong =
         [0,1,2,3]
             .filter(
-                i => i !== correct
+                index =>
+                    index !== correct
             );
 
 
@@ -3632,7 +5570,8 @@ function useAudience(){
         (index,pos) => {
 
             if(
-                pos === wrong.length - 1
+                pos ===
+                wrong.length - 1
             ){
 
                 values[index] =
@@ -3646,8 +5585,10 @@ function useAudience(){
                         (remaining + 1)
                     );
 
+
                 values[index] =
                     value;
+
 
                 remaining -=
                     value;
@@ -3656,25 +5597,6 @@ function useAudience(){
 
         }
     );
-
-
-    /*
-     Normalize to exactly 100
-    */
-
-    const total =
-        values.reduce(
-            (a,b) => a+b,
-            0
-        );
-
-
-    if(total !== 100){
-
-        values[correct] +=
-            100 - total;
-
-    }
 
 
     lifelines.audience =
@@ -3699,7 +5621,7 @@ function useAudience(){
 
 
 /* =========================================================
-   SHOW POLL
+   POLL MODAL
 ========================================================= */
 
 function showPollModal(
@@ -3710,14 +5632,18 @@ function showPollModal(
     modalIcon.textContent =
         "👥";
 
+
     modalTitle.textContent =
         "Audience Poll";
+
 
     modalMessage.textContent =
         "दर्शकहरूको अनुमानित मत:";
 
+
     modalPrize.textContent =
         "";
+
 
     modalButtons.innerHTML =
         "";
@@ -3730,6 +5656,7 @@ function showPollModal(
                 document.createElement(
                     "div"
                 );
+
 
             row.className =
                 "poll-row";
@@ -3750,14 +5677,16 @@ function showPollModal(
 
                 </div>
 
+
                 <div class="poll-track">
 
                     <div
                         class="poll-fill"
-                        style="width:${value}%"
-                    ></div>
+                        style="width:${value}%">
+                    </div>
 
                 </div>
+
             `;
 
 
@@ -3778,8 +5707,10 @@ function showPollModal(
     close.className =
         "modal-btn modal-primary";
 
+
     close.textContent =
         "बुझें";
+
 
     close.onclick =
         closeModal;
@@ -3798,13 +5729,19 @@ function showPollModal(
 
 
 /* =========================================================
-   PHONE A FRIEND
+   PHONE
 ========================================================= */
 
 function usePhone(){
 
-    if(lifelines.phone){
+    if(
+        lifelines.phone ||
+        locked ||
+        gameOver
+    ){
+
         return;
+
     }
 
 
@@ -3837,7 +5774,9 @@ function usePhone(){
 
 
     document
-        .getElementById("phoneBtn")
+        .getElementById(
+            "phoneBtn"
+        )
         .classList.add(
             "used"
         );
@@ -3851,8 +5790,7 @@ function usePhone(){
 
 
     const knowsCorrect =
-        Math.random() <
-        .72;
+        Math.random() < .72;
 
 
     let suggested;
@@ -3868,8 +5806,10 @@ function usePhone(){
         const wrong =
             [0,1,2,3]
                 .filter(
-                    i => i !== correct
+                    index =>
+                        index !== correct
                 );
+
 
         suggested =
             wrong[
@@ -3885,24 +5825,39 @@ function usePhone(){
     modalIcon.textContent =
         "📞";
 
+
     modalTitle.textContent =
         "Phone-a-Friend";
 
-    modalMessage.innerHTML =
-        `
+
+    modalMessage.innerHTML = `
+
         तपाईंको साथीले करिब
-        <strong>${confidence}%</strong>
-        confidence का साथ
-        <br><br>
-        “मलाई लाग्छ उत्तर
+
         <strong>
-        ${String.fromCharCode(65 + suggested)}
+            ${confidence}%
         </strong>
+
+        confidence का साथ
+
+        <br><br>
+
+        “मलाई लाग्छ उत्तर
+
+        <strong>
+            ${String.fromCharCode(
+                65 + suggested
+            )}
+        </strong>
+
         हुन सक्छ।”
-        `;
+
+    `;
+
 
     modalPrize.textContent =
         "";
+
 
     modalButtons.innerHTML =
         "";
@@ -3917,8 +5872,10 @@ function usePhone(){
     close.className =
         "modal-btn modal-primary";
 
+
     close.textContent =
         "ठीक छ";
+
 
     close.onclick =
         closeModal;
@@ -3937,52 +5894,67 @@ function usePhone(){
 
 
 /* =========================================================
-   FLIP QUESTION
+   FLIP
 ========================================================= */
 
 async function useFlip(){
 
-    if(lifelines.flip){
+    if(
+        lifelines.flip ||
+        locked ||
+        gameOver
+    ){
+
         return;
+
     }
-
-
-    const current =
-        gameQuestions[
-            currentQuestionIndex
-        ];
-
-
-    /*
-     Find another question that has
-     not already been used in this
-     current game.
-    */
-
-    const usedIds =
-        new Set(
-            gameQuestions
-                .slice(
-                    0,
-                    currentQuestionIndex + 1
-                )
-                .map(
-                    q => String(q.id)
-                )
-        );
 
 
     try{
 
-        const all =
-            await loadQuizBank();
+        const currentId =
+            String(
+                gameQuestions[
+                    currentQuestionIndex
+                ].id
+            );
 
+
+        const usedIds =
+            new Set(
+                gameQuestions
+                    .map(
+                        question =>
+                            String(
+                                question.id
+                            )
+                    )
+            );
+
+
+        /*
+           Also exclude every question
+           already played by this user.
+        */
 
         const candidates =
-            all.filter(
-                q =>
+            allValidQuestions.filter(
+                question =>
+
+                    String(
+                        question.id
+                    ) !== currentId &&
+
                     !usedIds.has(
-                        String(q.id)
+                        String(
+                            question.id
+                        )
+                    ) &&
+
+                    !playedIds.has(
+                        String(
+                            question.id
+                        )
                     )
             );
 
@@ -4009,16 +5981,13 @@ async function useFlip(){
             ];
 
 
-        lifelines.flip =
-            true;
+        /*
+           Current question was already
+           marked played.
 
-
-        document
-            .getElementById("flipBtn")
-            .classList.add(
-                "used"
-            );
-
+           Replacement is also immediately
+           marked played when shown.
+        */
 
         gameQuestions[
             currentQuestionIndex
@@ -4026,11 +5995,30 @@ async function useFlip(){
             replacement;
 
 
+        lifelines.flip =
+            true;
+
+
+        document
+            .getElementById(
+                "flipBtn"
+            )
+            .classList.add(
+                "used"
+            );
+
+
         closeModal();
 
 
+        tone(
+            420,
+            .12
+        );
+
+
         showToast(
-            "🔄 Question flip भयो!"
+            "🔄 नयाँ question!"
         );
 
 
@@ -4044,8 +6032,9 @@ async function useFlip(){
             error
         );
 
+
         showToast(
-            "Flip question load हुन सकेन।"
+            "Flip गर्न सकिएन।"
         );
 
     }
@@ -4068,11 +6057,14 @@ function showResultModal(
     modalIcon.textContent =
         icon;
 
+
     modalTitle.textContent =
         title;
 
+
     modalMessage.textContent =
         message;
+
 
     modalPrize.textContent =
         "🪙 " +
@@ -4093,16 +6085,19 @@ function showResultModal(
     newGame.className =
         "modal-btn modal-primary";
 
+
     newGame.textContent =
         "नयाँ Game खेल्नुहोस्";
 
-    newGame.onclick = () => {
 
-        closeModal();
+    newGame.onclick =
+        async () => {
 
-        startGame();
+            closeModal();
 
-    };
+            await startGame();
+
+        };
 
 
     modalButtons.appendChild(
@@ -4119,8 +6114,10 @@ function showResultModal(
     close.className =
         "modal-btn modal-secondary";
 
+
     close.textContent =
         "Close";
+
 
     close.onclick =
         closeModal;
@@ -4180,7 +6177,7 @@ function showNoQuestions(){
     if(title){
 
         title.textContent =
-            "All Questions Completed";
+            "Question Bank Completed";
 
     }
 
@@ -4188,7 +6185,10 @@ function showNoQuestions(){
     if(message){
 
         message.textContent =
-            "तपाईंले उपलब्ध सबै प्रश्नहरू खेलिसक्नुभएको छ। नयाँ questions थपिएपछि फेरि खेल्न सक्नुहुन्छ।";
+
+            "तपाईंले उपलब्ध सबै questions खेलिसक्नुभएको छ।\n\n" +
+
+            "नयाँ questions Supabase मा थपिएपछि फेरि खेल्न सक्नुहुन्छ।";
 
     }
 
@@ -4196,30 +6196,13 @@ function showNoQuestions(){
 
 
 /* =========================================================
-   MODAL CLOSE
+   CLOSE MODAL
 ========================================================= */
 
 function closeModal(){
 
     modal.classList.remove(
         "show"
-    );
-
-}
-
-
-/* =========================================================
-   WAIT
-========================================================= */
-
-function wait(ms){
-
-    return new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                ms
-            )
     );
 
 }
@@ -4250,6 +6233,10 @@ function renderLadder(){
                     "level";
 
 
+                div.dataset.level =
+                    prize.level;
+
+
                 if(prize.safe){
 
                     div.classList.add(
@@ -4261,6 +6248,18 @@ function renderLadder(){
 
                 const actualIndex =
                     prize.level - 1;
+
+
+                if(
+                    actualIndex <
+                    currentQuestionIndex
+                ){
+
+                    div.classList.add(
+                        "completed"
+                    );
+
+                }
 
 
                 if(
@@ -4283,11 +6282,12 @@ function renderLadder(){
 
                         ${
                             prize.safe
-                            ? " 🔒"
-                            : ""
+                                ? " 🔒"
+                                : ""
                         }
 
                     </span>
+
 
                     <span class="level-prize">
 
@@ -4310,7 +6310,7 @@ function renderLadder(){
 
 
 /* =========================================================
-   ESCAPE HTML
+   ESCAPE
 ========================================================= */
 
 function escapeHTML(value){
@@ -4320,8 +6320,10 @@ function escapeHTML(value){
             "div"
         );
 
+
     div.textContent =
         String(value ?? "");
+
 
     return div.innerHTML;
 
@@ -4329,93 +6331,7 @@ function escapeHTML(value){
 
 
 /* =========================================================
-   AUDIO
-========================================================= */
-
-let audioContext = null;
-
-
-function playTone(
-    frequency,
-    duration
-){
-
-    try{
-
-        if(!audioContext){
-
-            audioContext =
-                new (
-                    window.AudioContext ||
-                    window.webkitAudioContext
-                )();
-
-        }
-
-
-        const oscillator =
-            audioContext.createOscillator();
-
-
-        const gain =
-            audioContext.createGain();
-
-
-        oscillator.frequency.value =
-            frequency;
-
-        oscillator.type =
-            "sine";
-
-
-        gain.gain.setValueAtTime(
-            .0001,
-            audioContext.currentTime
-        );
-
-
-        gain.gain.exponentialRampToValueAtTime(
-            .06,
-            audioContext.currentTime + .01
-        );
-
-
-        gain.gain.exponentialRampToValueAtTime(
-            .0001,
-            audioContext.currentTime +
-            duration
-        );
-
-
-        oscillator.connect(
-            gain
-        );
-
-        gain.connect(
-            audioContext.destination
-        );
-
-
-        oscillator.start();
-
-        oscillator.stop(
-            audioContext.currentTime +
-            duration
-        );
-
-    }catch(error){
-
-        console.log(
-            "Audio unavailable"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   EVENT LISTENERS
+   EVENTS
 ========================================================= */
 
 lockBtn.addEventListener(
@@ -4425,7 +6341,9 @@ lockBtn.addEventListener(
 
 
 document
-    .getElementById("quitBtn")
+    .getElementById(
+        "quitBtn"
+    )
     .addEventListener(
         "click",
         quitGame
@@ -4433,7 +6351,9 @@ document
 
 
 document
-    .getElementById("fiftyBtn")
+    .getElementById(
+        "fiftyBtn"
+    )
     .addEventListener(
         "click",
         useFifty
@@ -4441,7 +6361,9 @@ document
 
 
 document
-    .getElementById("phoneBtn")
+    .getElementById(
+        "phoneBtn"
+    )
     .addEventListener(
         "click",
         usePhone
@@ -4449,7 +6371,9 @@ document
 
 
 document
-    .getElementById("audienceBtn")
+    .getElementById(
+        "audienceBtn"
+    )
     .addEventListener(
         "click",
         useAudience
@@ -4457,7 +6381,9 @@ document
 
 
 document
-    .getElementById("flipBtn")
+    .getElementById(
+        "flipBtn"
+    )
     .addEventListener(
         "click",
         useFlip
@@ -4465,7 +6391,9 @@ document
 
 
 document
-    .getElementById("retryBtn")
+    .getElementById(
+        "retryBtn"
+    )
     .addEventListener(
         "click",
         () => {
@@ -4476,7 +6404,28 @@ document
     );
 
 
-/* Click outside modal */
+/*
+   First interaction unlocks
+   browser audio.
+*/
+
+document.addEventListener(
+    "pointerdown",
+    () => {
+
+        ensureAudio();
+
+    },
+    {
+        once:true
+    }
+);
+
+
+/*
+   Close modal when tapping
+   outside it.
+*/
 
 modal.addEventListener(
     "click",
@@ -4496,7 +6445,7 @@ modal.addEventListener(
 
 
 /* =========================================================
-   AUTH STATE
+   FIREBASE AUTH
 ========================================================= */
 
 onAuthStateChanged(
@@ -4504,8 +6453,8 @@ onAuthStateChanged(
     async user => {
 
         console.log(
-            "🔐 AUTH STATE:",
-            user
+            "AUTH:",
+            user?.uid
         );
 
 
@@ -4530,40 +6479,43 @@ onAuthStateChanged(
             user;
 
 
-        console.log(
-            "✅ Logged in UID:",
-            currentUser.uid
-        );
+        try{
 
+            await refreshCoinBalance();
 
-        await refreshCoinBalance();
+            await startGame();
 
+        }catch(error){
 
-        await startGame();
+            console.error(
+                error
+            );
+
+        }
 
     }
 );
 
 
 /* =========================================================
-   INITIAL CONSOLE
+   INITIAL LOG
 ========================================================= */
 
 console.log(
-    "🚀 LoksewaQuest Hot Seat initialized"
+    "🚀 LoksewaQuest Hot Seat ready"
 );
 
 console.log(
-    "📡 Supabase:",
+    "Supabase:",
     SUPABASE_URL
 );
 
 console.log(
-    "🔥 Firebase:",
+    "Firebase:",
     firebaseConfig.projectId
 );
 
 </script>
 
 </body>
-      </html>
+    </html>
