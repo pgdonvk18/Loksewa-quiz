@@ -515,7 +515,8 @@
             try {
                 const { data, error } = await supabase.from('quizzes').select('*');
                 if (error) {
-                    document.getElementById('questionText').innerText = 'Supabase bata prasna load garna samasya bhayo!';
+                    console.error('Supabase Error:', error);
+                    document.getElementById('questionText').innerText = 'Supabase error: ' + error.message;
                     return;
                 }
                 if (data && data.length > 0) {
@@ -526,6 +527,7 @@
                 }
             } catch (err) {
                 console.error('Connection error:', err);
+                document.getElementById('questionText').innerText = 'Connection error occurred!';
             }
         }
 
@@ -556,15 +558,18 @@
             document.getElementById('questionText').innerText = `Q${currentQuestionIndex + 1}. ${currentQ.question}`;
             
             let optionsArray = currentQ.options;
+            // Handle jsonb or string formats securely
             if (typeof optionsArray === 'string') {
                 try { optionsArray = JSON.parse(optionsArray); } catch(e) {}
             }
 
             for (let i = 0; i < 4; i++) {
                 const btn = document.getElementById('opt' + i);
-                if (optionsArray && optionsArray[i]) {
+                if (optionsArray && optionsArray[i] !== undefined) {
                     btn.innerText = optionsArray[i];
                     btn.style.display = 'block';
+                } else {
+                    btn.style.display = 'none';
                 }
             }
 
@@ -578,6 +583,7 @@
             for (let i = 0; i < 4; i++) {
                 const btn = document.getElementById('opt' + i);
                 btn.classList.remove('selected', 'correct', 'wrong', 'hidden-option');
+                btn.style.display = 'block';
                 btn.disabled = false;
             }
         }
@@ -745,6 +751,16 @@
             document.getElementById('gameModal').style.display = 'flex';
         }
 
+        window.restartGame = functionW = function() {
+            currentQuestionIndex = 0;
+            totalCoinsEarned = 0;
+            document.getElementById('currentPrizeText').innerText = `🪙 Won: 0`;
+            lifelineUsed = { '5050': false, 'phone': false, 'audience': false, 'flip': false };
+            document.querySelectorAll('.lifeline-btn').forEach(btn => btn.disabled = false);
+            document.getElementById('gameModal').style.display = 'none';
+            fetchQuestionsFromSupabase();
+        }
+        
         window.restartGame = function() {
             currentQuestionIndex = 0;
             totalCoinsEarned = 0;
