@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoksewaQuest - KBC Solo Mode</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle, #0b192c 0%, #020813 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+        }
+
+        /* Top Bar & Lifelines */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 2px solid #d4af37;
+        }
+
+        .lifelines {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lifeline-btn {
+            background: linear-gradient(135deg, #2c3e50, #000);
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            padding: 8px 15px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .lifeline-btn:hover:not(:disabled) {
+            background: #d4af37;
+            color: #000;
+        }
+
+        .lifeline-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: #555;
+            color: #777;
+        }
+
+        .score-display {
+            font-size: 1.2rem;
+            color: #d4af37;
+            font-weight: bold;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 1px solid #d4af37;
+        }
+
+        /* Main Game Area */
+        .game-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 30px;
+            flex-grow: 1;
+            align-items: center;
+        }
+
+        .left-panel {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Question Box */
+        .question-box {
+            background: linear-gradient(135deg, #102a45, #061424);
+            border: 3px solid #d4af37;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 700px;
+            padding: 25px;
+            text-align: center;
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            position: relative;
+        }
+
+        .timer-badge {
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            background: #d4af37;
+            color: #000;
+            font-weight: bold;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            border: 2px solid #fff;
+        }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .option-btn {
+            background: linear-gradient(135deg, #14283f, #091522);
+            border: 2px solid #2a4763;
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .option-btn::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 15px;
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: #d4af37;
+            background: #1b3654;
+        }
+
+        .option-btn.selected {
+            background: #d4af37;
+            color: #000;
+            border-color: #fff;
+            font-weight: bold;
+        }
+
+        .option-btn.selected::before {
+            color: #000;
+        }
+
+        .option-btn.correct {
+            background: #27ae60 !important;
+            color: #fff !important;
+            border-color: #2ecc71 !important;
+        }
+
+        .option-btn.wrong {
+            background: #c0392b !important;
+            color: #fff !important;
+            border-color: #e74c3c !important;
+        }
+
+        .option-btn.hidden-option {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        /* Right Panel: Money Tree */
+        .right-panel {
+            flex: 1;
+            max-width: 280px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #2a4763;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .money-list {
+            list-style: none;
+        }
+
+        .money-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 10px;
+            margin-bottom: 4px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: #8899a6;
+        }
+
+        .money-item span:last-child {
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .money-item.active {
+            background: #d4af37;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .money-item.active span:last-child {
+            color: #000;
+        }
+
+        .money-item.safe-zone {
+            border-left: 4px solid #3498db;
+        }
+
+        /* Lock Button Container */
+        .action-area {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .lock-btn {
+            background: linear-gradient(135deg, #f39c12, #d35400);
+            color: #fff;
+            border: none;
+            padding: 12px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+            transition: 0.3s;
+        }
+
+        .lock-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .lock-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Modal Overlays for Results */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #102a45;
+            border: 3px solid #d4af37;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+        }
+
+        .modal-content h2 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+
+        .modal-content p {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+        }
+
+        .restart-btn {
+            background: #d4af37;
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="header-section">
+        <div class="lifelines">
+            <button class="lifeline-btn" id="ll-5050" onclick="use5050()">50:50</button>
+            <button class="lifeline-btn" id="ll-phone" onclick="usePhoneAFriend()">📞 Phone</button>
+            <button class="lifeline-btn" id="ll-audience" onclick="useAudiencePoll()">👥 Poll</button>
+            <button class="lifeline-btn" id="ll-flip" onclick="useFlipQuestion()">🔄 Flip</button>
+        </div>
+        <div class="score-display" id="currentPrizeText">Prize: रू 0</div>
+    </div>
+
+    <!-- Game Core Layout -->
+    <div class="game-container">
+        <div class="left-panel">
+            <div class="question-box">
+                <div class="timer-badge" id="timer">30</div>
+                <span id="questionText">प्रश्न लोड हुँदैछ...</span>
+            </div>
+
+            <div class="options-grid">
+                <button class="option-btn" id="optA" data-label="A" onclick="selectOption('A')"></button>
+                <button class="option-btn" id="optB" data-label="B" onclick="selectOption('B')"></button>
+                <button class="option-btn" id="optC" data-label="C" onclick="selectOption('C')"></button>
+                <button class="option-btn" id="optD" data-label="D" onclick="selectOption('D')"></button>
+            </div>
+        </div>
+
+        <!-- Right Panel: Money Tree -->
+        <div class="right-panel">
+            <ul class="money-list" id="moneyList">
+                <!-- Dynamically filled by JS -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Lock Action Button -->
+    <div class="action-area">
+        <button class="lock-btn" id="lockBtn" onclick="lockAnswer()" disabled>LOCK किया जाए?</button>
+    </div>
+
+    <!-- Modal Popup for Win/Loss -->
+    <div class="modal" id="gameModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">खेल समाप्त!</h2>
+            <p id="modalDesc">तपाईंले रू १०,००० जित्नुभयो।</p>
+            <button class="restart-btn" onclick="restartGame()">फेरि खेल्नुहोस्</button>
+        </div>
+    </div>
+
+    <script>
+        // KBC Prize Money Ladder (10 Questions)
+        const prizeLadder = [
+            { level: 10, prize: "रू 1,00,000", amount: 100000 },
+            { level: 9, prize: "रू 50,000", amount: 50000 },
+            { level: 8, prize: "रू 25,000", amount: 25000 },
+            { level: 7, prize: "रू 12,500", amount: 12500, safe: true }, // Safe Zone
+            { level: 6, prize: "रू 10,000", amount: 10000 },
+            { level: 5, prize: "रू 7,500", amount: 7500 },
+            { level: 4, prize: "रू 5,000", amount: 5000 },
+            { level: 3, prize: "रू 3,000", amount: 3000, safe: true }, // Safe Zone
+            { level: 2, prize: "रू 2,000", amount: 2000 },
+            { level: 1, prize: "रू 1,000", amount: 1000 }
+        ];
+
+        // Sample Loksewa Questions (You can connect this with your Supabase DB questions)
+        let questions = [
+            { q: "नेपालको राष्ट्रिय पक्षी कुन हो?", options: { A: "मुनाल", B: "डाफे", C: "सुगा", D: "मयूर" }, answer: "B" },
+            { q: "सगरमाथाको उचाइ कति रहेको छ?", options: { A: "८८४८ मिटर", B: "८८४८.८६ मिटर", C: "८,००० मिटर", D: "८,९०० मिटर" }, answer: "B" },
+            { q: "गौतम बुद्धको जन्मस्थल लुम्बिनी कुन जिल्लामा पर्छ?", options: { A: "कपिलवस्तु", B: "रूपन्देही", C: "नवलपरासी", D: "पाल्पा" }, answer: "B" },
+            { q: "नेपालमा संघीय शासन प्रणाली कहिलेदेखि लागू भयो?", options: { A: "२०६५ साल", B: "२०७२ साल", C: "२०७४ साल", D: "२०६३ साल" }, answer: "B" },
+            { q: "विश्वको सबैभन्दा गहिरो गल्छी 'अणधु गल्छी' कुन नदीले बनाएको हो?", options: { A: "कोशी नदी", B: "गण्डकी नदी", C: "कर्णाली नदी", D: "महाकाली नदी" }, answer: "B" },
+            { q: "नेपालको संविधान २०७२ मा कतिवटा भाग छन्?", options: { A: "३०", B: "३५", C: "३७", D: "४०" }, answer: "B" },
+            { q: "क्षेत्रफलको हिसाबले नेपालको सबैभन्दा ठूलो जिल्ला कुन हो?", options: { A: "डोल्पा", B: "हुम्ला", C: "ताप्लेजुङ", D: "गोर्खा" }, answer: "A" },
+            { q: "नेपालमा सर्वप्रथम कागजी नोटको शुरुआत कहिले भयो?", options: { A: "२००२ साल", B: "२००४ साल", C: "२०१२ साल", D: "२०१७ साल" }, answer: "B" },
+            { q: "सार्वजनिक प्रशासनमा 'रेड टेपिस्म' (Red Tapism) ले के बुझाउँछ?", options: { A: "रातो झन्डा", B: "अत्याधिक प्रक्रियागत ढिलासुस्ती", C: "आर्थिक भ्रष्टाचार", D: "गोपनीय कागजात" }, answer: "B" },
+            { q: "नेपालको पहिलो विद्युतीय बैंक कुन हो?", options: { A: "नेपाल बैंक लिमिटेड", B: "राष्ट्रिय वाणिज्य बैंक", C: "एभरेष्ट बैंक", D: "नबिल बैंक" }, answer: "A" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let selectedOptionKey = null;
+        let timerInterval;
+        let timeLeft = 30;
+
+        // Lifeline trackers
+        let lifelineUsed = {
+            '5050': false,
+            'phone': false,
+            'audience': false,
+            'flip': false
+        };
+
+        function initMoneyTree() {
+            const listEl = document.getElementById('moneyList');
+            listEl.innerHTML = '';
+            prizeLadder.forEach((item, idx) => {
+                const li = document.createElement('li');
+                li.className = `money-item ${item.safe ? 'safe-zone' : ''} ${idx === (prizeLadder.length - 1 - currentQuestionIndex) ? 'active' : ''}`;
+                li.innerHTML = `<span>Lvl ${item.level}</span> <span>${item.prize}</span>`;
+                listEl.appendChild(li);
+            });
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                endGame(true, "बधाई छ! तपाईंले करोडपति गेम सफलतापूर्वक जितेर सबै कोइनहरू हात पार्नुभयो! 🎉");
+                return;
+            }
+
+            initMoneyTree();
+            resetOptionsUI();
+
+            const currentQ = questions[currentQuestionIndex];
+            document.getElementById('questionText').innerText = `Q${currentQuestionIndex + 1}. ${currentQ.q}`;
+            document.getElementById('optA').innerText = currentQ.options.A;
+            document.getElementById('optB').innerText = currentQ.options.B;
+            document.getElementById('optC').innerText = currentQ.options.C;
+            document.getElementById('optD').innerText = currentQ.options.D;
+
+            selectedOptionKey = null;
+            document.getElementById('lockBtn').disabled = true;
+            startTimer();
+        }
+
+        function resetOptionsUI() {
+            ['A', 'B', 'C', 'D'].forEach(key => {
+                const btn = document.getElementById('opt' + key);
+                btn.classList.remove('selected', 'correct', 'wrong', 'hidden-option');
+                btn.disabled = false;
+            });
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 30;
+            document.getElementById('timer').innerText = timeLeft;
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endGame(false, "समय समाप्त भयो! (Time Out)");
+                }
+            }, 1000);
+        }
+
+        function selectOption(key) {
+            ['A', 'B', 'C', 'D'].forEach(k => {
+                document.getElementById('opt' + k).classList.remove('selected');
+            });
+            document.getElementById('opt' + key).classList.add('selected');
+            selectedOptionKey = key;
+            document.getElementById('lockBtn').disabled = false;
+        }
+
+        function lockAnswer() {
+            clearInterval(timerInterval);
+            document.getElementById('lockBtn').disabled = true;
+
+            const currentQ = questions[currentQuestionIndex];
+            const selectedBtn = document.getElementById('opt' + selectedOptionKey);
+
+            // Dramatic pause simulation before revealing answer
+            setTimeout(() => {
+                if (selectedOptionKey === currentQ.answer) {
+                    selectedBtn.classList.add('correct');
+                    setTimeout(() => {
+                        currentQuestionIndex++;
+                        loadQuestion();
+                    }, 1500);
+                } else {
+                    selectedBtn.classList.add('wrong');
+                    document.getElementById('opt' + currentQ.answer).classList.add('correct');
+                    setTimeout(() => {
+                        checkSafeZoneAndEnd();
+                    }, 2000);
+                }
+            }, 1000);
+        }
+
+        // --- Lifeline Functions ---
+        function use5050() {
+            if (lifelineUsed['5050']) return;
+            lifelineUsed['5050'] = true;
+            document.getElementById('ll-5050').disabled = true;
+
+            const currentQ = questions[currentQuestionIndex];
+            let wrongOptions = ['A', 'B', 'C', 'D'].filter(k => k !== currentQ.answer);
+            // Hide 2 random wrong options
+            wrongOptions.sort(() => Math.random() - 0.5);
+            document.getElementById('opt' + wrongOptions[0]).classList.add('hidden-option');
+            document.getElementById('opt' + wrongOptions[0]).disabled = true;
+            document.getElementById('opt' + wrongOptions[1]).classList.add('hidden-option');
+            document.getElementById('opt' + wrongOptions[1]).disabled = true;
+        }
+
+        function usePhoneAFriend() {
+            if (lifelineUsed['phone']) return;
+            lifelineUsed['phone'] = true;
+            document.getElementById('ll-phone').disabled = true;
+
+            const currentQ = questions[currentQuestionIndex];
+            alert(`📞 साथीको सल्लाह: "मलाई लाग्छ यसको सही उत्तर विकल्प (${currentQ.answer}) हुनुपर्छ!"`);
+        }
+
+        function useAudiencePoll() {
+            if (lifelineUsed['audience']) return;
+            lifelineUsed['audience'] = true;
+            document.getElementById('ll-audience').disabled = true;
+
+            const currentQ = questions[currentQuestionIndex];
+            let a = 15, b = 15, c = 15, d = 15;
+            // Give higher percentage to correct answer
+            if (currentQ.answer === 'A') a = 65;
+            else if (currentQ.answer === 'B') b = 65;
+            else if (currentQ.answer === 'C') c = 65;
+            else d = 65;
+
+            alert(`👥 अडियन्स पोलको नतिजा:\n[A]: ${a}% | [B]: ${b}% | [C]: ${c}% | [D]: ${d}%`);
+        }
+
+        function useFlipQuestion() {
+            if (lifelineUsed['flip']) return;
+            lifelineUsed['flip'] = true;
+            document.getElementById('ll-flip').disabled = true;
+
+            alert("🔄 प्रश्न परिवर्तन गरिएको छ!");
+            loadQuestion();
+        }
+
+        function checkSafeZoneAndEnd() {
+            // Calculate secured prize based on passed safe zones
+            let wonAmount = "रू 0";
+            if (currentQuestionIndex >= 7) wonAmount = "रू 12,500 (Safe Zone)";
+            else if (currentQuestionIndex >= 3) wonAmount = "रू 3,000 (Safe Zone)";
+
+            endGame(false, `उत्तर गलत भयो! तपाईं खेलबाट बाहिरिनुभयो। सुरक्षित अंक: ${wonAmount}`);
+        }
+
+        function endGame(isWin, message) {
+            clearInterval(timerInterval);
+            document.getElementById('modalTitle').innerText = isWin ? "अद्भूत! तपाईं विजेता बन्नुभयो! 🏆" : "खेल समाप्त!";
+            document.getElementById('modalDesc').innerText = message;
+            document.getElementById('gameModal').style.display = 'flex';
+        }
+
+        function restartGame() {
+            currentQuestionIndex = 0;
+            lifelineUsed = { '5050': false, 'phone': false, 'audience': false, 'flip': false };
+            document.querySelectorAll('.lifeline-btn').forEach(btn => btn.disabled = false);
+            document.getElementById('gameModal').style.display = 'none';
+            loadQuestion();
+        }
+
+        // Start the game on page load
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
