@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LoksewaQuest - KBC Solo Mode</title>
+    <title>LoksewaQuest - Supabase Quiz & Firebase User Coins</title>
     <style>
         * {
             box-sizing: border-box;
@@ -23,7 +23,6 @@
             position: relative;
         }
 
-        /* Top Bar & Header */
         .header-section {
             display: flex;
             justify-content: space-between;
@@ -84,15 +83,17 @@
 
         .score-display {
             font-size: 1rem;
-            color: #d4af37;
+            color: #ffd700;
             font-weight: bold;
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(255, 215, 0, 0.1);
             padding: 6px 15px;
             border-radius: 20px;
-            border: 1px solid #d4af37;
+            border: 1px solid #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        /* Main Game Area */
         .game-container {
             display: flex;
             flex-direction: column;
@@ -105,7 +106,18 @@
             margin: 0 auto;
         }
 
-        /* Question Box */
+        .topic-badge {
+            background: #102a45;
+            color: #d4af37;
+            border: 1px solid #d4af37;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         .question-box {
             background: linear-gradient(135deg, #102a45, #061424);
             border: 3px solid #d4af37;
@@ -136,7 +148,6 @@
             border: 2px solid #fff;
         }
 
-        /* Options Grid */
         .options-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -205,7 +216,19 @@
             opacity: 0;
         }
 
-        /* Slide-out Sidebar Menu for Money Ladder */
+        .explanation-box {
+            margin-top: 15px;
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px dashed #2ecc71;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #2ecc71;
+            display: none;
+            width: 100%;
+            text-align: center;
+        }
+
         .sidebar-menu {
             position: fixed;
             top: 0;
@@ -264,12 +287,12 @@
         }
 
         .money-item span:last-child {
-            color: #d4af37;
+            color: #ffd700;
             font-weight: bold;
         }
 
         .money-item.active {
-            background: #d4af37;
+            background: #ffd700;
             color: #000;
             font-weight: bold;
         }
@@ -278,11 +301,6 @@
             color: #000;
         }
 
-        .money-item.safe-zone {
-            border-left: 4px solid #3498db;
-        }
-
-        /* Overlay for Sidebar */
         .overlay {
             display: none;
             position: fixed;
@@ -295,7 +313,6 @@
             display: block;
         }
 
-        /* Lock Button Container */
         .action-area {
             display: flex;
             justify-content: center;
@@ -325,7 +342,6 @@
             transform: none;
         }
 
-        /* Modal Overlays for Results */
         .modal {
             display: none;
             position: fixed;
@@ -347,7 +363,7 @@
         }
 
         .modal-content h2 {
-            color: #d4af37;
+            color: #ffd700;
             margin-bottom: 12px;
             font-size: 1.7rem;
         }
@@ -359,7 +375,7 @@
         }
 
         .restart-btn {
-            background: #d4af37;
+            background: #ffd700;
             color: #000;
             border: none;
             padding: 10px 22px;
@@ -372,86 +388,101 @@
 </head>
 <body>
 
-    <!-- Sidebar Menu for Money Ladder -->
     <div class="overlay" id="sidebarOverlay" onclick="toggleLadder()"></div>
     <div class="sidebar-menu" id="moneyLadderSidebar">
         <div class="sidebar-header">
-            <h3>💰 Prize Ladder</h3>
+            <h3>🪙 Coin Ladder</h3>
             <button class="close-sidebar" onclick="toggleLadder()">&times;</button>
         </div>
-        <ul class="money-list" id="moneyList">
-            <!-- Dynamically filled by JS -->
-        </ul>
+        <ul class="money-list" id="moneyList"></ul>
     </div>
 
-    <!-- Top Bar -->
     <div class="header-section">
-        <button class="ladder-toggle-btn" onclick="toggleLadder()">📊 Prize Ladder</button>
+        <button class="ladder-toggle-btn" onclick="toggleLadder()">📊 Coin Ladder</button>
         <div class="lifelines">
             <button class="lifeline-btn" id="ll-5050" onclick="use5050()">50:50</button>
             <button class="lifeline-btn" id="ll-phone" onclick="usePhoneAFriend()">📞 Phone</button>
             <button class="lifeline-btn" id="ll-audience" onclick="useAudiencePoll()">👥 Poll</button>
             <button class="lifeline-btn" id="ll-flip" onclick="useFlipQuestion()">🔄 Flip</button>
         </div>
-        <div class="score-display" id="currentPrizeText">रू 0</div>
+        <div class="score-display" id="currentPrizeText">🪙 0 Coins</div>
     </div>
 
-    <!-- Game Core Layout -->
     <div class="game-container">
+        <div class="topic-badge" id="topicBadge">Loksewa Quiz</div>
         <div class="question-box">
             <div class="timer-badge" id="timer">30</div>
-            <span id="questionText">Public.quizzes बाट प्रश्नहरू लोड हुँदैछ...</span>
+            <span id="questionText">Supabase `public.quizzes` bata prasna haru load hudai xa...</span>
         </div>
 
         <div class="options-grid">
-            <button class="option-btn" id="optA" data-label="A" onclick="selectOption('A')"></button>
-            <button class="option-btn" id="optB" data-label="B" onclick="selectOption('B')"></button>
-            <button class="option-btn" id="optC" data-label="C" onclick="selectOption('C')"></button>
-            <button class="option-btn" id="optD" data-label="D" onclick="selectOption('D')"></button>
+            <button class="option-btn" id="opt0" data-label="A" onclick="selectOption(0)"></button>
+            <button class="option-btn" id="opt1" data-label="B" onclick="selectOption(1)"></button>
+            <button class="option-btn" id="opt2" data-label="C" onclick="selectOption(2)"></button>
+            <button class="option-btn" id="opt3" data-label="D" onclick="selectOption(3)"></button>
         </div>
+
+        <div class="explanation-box" id="explanationBox"></div>
     </div>
 
-    <!-- Lock Action Button -->
     <div class="action-area">
-        <button class="lock-btn" id="lockBtn" onclick="lockAnswer()" disabled>LOCK किया जाए?</button>
+        <button class="lock-btn" id="lockBtn" onclick="lockAnswer()" disabled>LOCK kiya jaye?</button>
     </div>
 
-    <!-- Modal Popup for Win/Loss -->
     <div class="modal" id="gameModal">
         <div class="modal-content">
-            <h2 id="modalTitle">खेल समाप्त!</h2>
-            <p id="modalDesc">तपाईंले पुरस्कार जित्नुभयो।</p>
-            <button class="restart-btn" onclick="restartGame()">फेरि खेल्नुहोस्</button>
+            <h2 id="modalTitle">Khel Samapta!</h2>
+            <p id="modalDesc">Tapai le coin jitnu bhayo.</p>
+            <button class="restart-btn" onclick="restartGame()">Pheri Khelnu Huncha?</button>
         </div>
     </div>
 
-    <!-- Supabase JS Client & Logic -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp, increment } from 'https://cdn.jsdelivr.net/npm/firebasejs/10.8.0/firebase-firestore.js';
 
+        // 1. Supabase Credentials
         const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
-        
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const prizeLadder = [
-            { level: 10, prize: "रू 1,00,000", amount: 100000 },
-            { level: 9, prize: "रू 50,000", amount: 50000 },
-            { level: 8, prize: "रू 25,000", amount: 25000 },
-            { level: 7, prize: "रू 12,500", amount: 12500, safe: true },
-            { level: 6, prize: "रू 10,000", amount: 10000 },
-            { level: 5, prize: "रू 7,500", amount: 7500 },
-            { level: 4, prize: "रू 5,000", amount: 5000 },
-            { level: 3, prize: "रू 3,000", amount: 3000, safe: true },
-            { level: 2, prize: "रू 2,000", amount: 2000 },
-            { level: 1, prize: "रू 1,000", amount: 1000 }
+        // 2. Firebase Credentials (तपाईंले दिनुभएको कन्फिगरेसन यहाँ राखिएको छ)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+            authDomain: "loksewaquest-227b6.firebaseapp.com",
+            projectId: "loksewaquest-227b6",
+            storageBucket: "loksewaquest-227b6.firebasestorage.app",
+            messagingSenderId: "779234903809",
+            appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Active User ID (तपाईंको स्क्रिनसट अनुसारको document ID)
+        const userId = "3MTXSPMd21afwhpJ9CsRGLNj62"; 
+
+        const coinLadder = [
+            { level: 10, coins: 1000 },
+            { level: 9, coins: 800 },
+            { level: 8, coins: 600 },
+            { level: 7, coins: 400 },
+            { level: 6, coins: 250 },
+            { level: 5, coins: 150 },
+            { level: 4, coins: 80 },
+            { level: 3, coins: 40 },
+            { level: 2, coins: 20 },
+            { level: 1, coins: 10 }
         ];
 
         let questions = [];
         let currentQuestionIndex = 0;
-        let selectedOptionKey = null;
+        let selectedOptionIndex = null;
         let timerInterval;
         let timeLeft = 30;
+        let totalCoinsEarned = 0;
+        let userCurrentCoins = 0;
 
         let lifelineUsed = {
             '5050': false,
@@ -465,46 +496,56 @@
             document.getElementById('sidebarOverlay').classList.toggle('active');
         }
 
-        async function fetchQuestionsFromSupabase() {
+        // Firebase bata user ko current coins fetch garne
+        async function fetchUserCoinsFromFirebase() {
             try {
-                // public.quizzes टेबलबाट डाटा फेच गर्ने
-                const { data, error } = await supabase
-                    .from('quizzes')
-                    .select('*');
+                const userRef = doc(db, "users", userId);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    userCurrentCoins = userData.coins || 0;
+                    document.getElementById('currentPrizeText').innerText = `🪙 Won: 0 (Total: ${userCurrentCoins})`;
+                }
+            } catch (error) {
+                console.error("Error fetching user coins:", error);
+            }
+        }
 
+        async function fetchQuestionsFromSupabase() {
+            await fetchUserCoinsFromFirebase();
+            try {
+                const { data, error } = await supabase.from('quizzes').select('*');
                 if (error) {
-                    console.error('Error fetching quizzes:', error);
-                    document.getElementById('questionText').innerText = 'डेटाबेसबाट प्रश्न लोड गर्न समस्या भयो!';
+                    document.getElementById('questionText').innerText = 'Supabase bata prasna load garna samasya bhayo!';
                     return;
                 }
-
                 if (data && data.length > 0) {
-                    // रेन्डम गरेर १० वटा मात्र प्रश्न छान्ने
                     questions = data.sort(() => Math.random() - 0.5).slice(0, 10);
                     loadQuestion();
                 } else {
-                    document.getElementById('questionText').innerText = 'quizzes टेबलमा कुनै पनि प्रश्न भेटिएन!';
+                    document.getElementById('questionText').innerText = 'Quizzes table ma kunai prasna bhetiyena!';
                 }
             } catch (err) {
                 console.error('Connection error:', err);
-                document.getElementById('questionText').innerText = 'इन्टरनेट वा कनेक्सन समस्या!';
             }
         }
 
         function initMoneyTree() {
             const listEl = document.getElementById('moneyList');
             listEl.innerHTML = '';
-            prizeLadder.forEach((item, idx) => {
+            coinLadder.forEach((item, idx) => {
                 const li = document.createElement('li');
-                li.className = `money-item ${item.safe ? 'safe-zone' : ''} ${idx === (prizeLadder.length - 1 - currentQuestionIndex) ? 'active' : ''}`;
-                li.innerHTML = `<span>Lvl ${item.level}</span> <span>${item.prize}</span>`;
+                li.className = `money-item ${idx === (coinLadder.length - 1 - currentQuestionIndex) ? 'active' : ''}`;
+                li.innerHTML = `<span>Level ${item.level}</span> <span>🪙 ${item.coins} Coins</span>`;
                 listEl.appendChild(li);
             });
         }
 
         function loadQuestion() {
             if (currentQuestionIndex >= questions.length) {
-                endGame(true, "बधाई छ! तपाईंले KBC गेम सफलतापूर्वक जितेर सबै पुरस्कार जित्नुभयो! 🎉");
+                totalCoinsEarned = 1000;
+                updateFirebaseData(totalCoinsEarned, "Completed all levels");
+                endGame(true, `Badhai cha! Tapai le sabai level milayera 1000 Coins jitnu bhayo! 🎉`);
                 return;
             }
 
@@ -512,25 +553,34 @@
             resetOptionsUI();
 
             const currentQ = questions[currentQuestionIndex];
+            document.getElementById('topicBadge').innerText = currentQ.topic || 'Loksewa General Quiz';
+            document.getElementById('questionText').innerText = `Q${currentQuestionIndex + 1}. ${currentQ.question}`;
             
-            // public.quizzes टेबलका स्तम्भ नामहरू (यदि तपाइँकोमा question, option_a आदि छ भने यसले आफै समात्छ)
-            document.getElementById('questionText').innerText = `Q${currentQuestionIndex + 1}. ${currentQ.question_text || currentQ.question || currentQ.q}`;
-            document.getElementById('optA').innerText = currentQ.option_a || currentQ.opt_a;
-            document.getElementById('optB').innerText = currentQ.option_b || currentQ.opt_b;
-            document.getElementById('optC').innerText = currentQ.option_c || currentQ.opt_c;
-            document.getElementById('optD').innerText = currentQ.option_d || currentQ.opt_d;
+            let optionsArray = currentQ.options;
+            if (typeof optionsArray === 'string') {
+                try { optionsArray = JSON.parse(optionsArray); } catch(e) {}
+            }
 
-            selectedOptionKey = null;
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById('opt' + i);
+                if (optionsArray && optionsArray[i]) {
+                    btn.innerText = optionsArray[i];
+                    btn.style.display = 'block';
+                }
+            }
+
+            selectedOptionIndex = null;
             document.getElementById('lockBtn').disabled = true;
+            document.getElementById('explanationBox').style.display = 'none';
             startTimer();
         }
 
         function resetOptionsUI() {
-            ['A', 'B', 'C', 'D'].forEach(key => {
-                const btn = document.getElementById('opt' + key);
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById('opt' + i);
                 btn.classList.remove('selected', 'correct', 'wrong', 'hidden-option');
                 btn.disabled = false;
-            });
+            }
         }
 
         function startTimer() {
@@ -543,17 +593,18 @@
                 document.getElementById('timer').innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    endGame(false, "समय समाप्त भयो! (Time Out)");
+                    updateFirebaseData(totalCoinsEarned, "Time Out");
+                    endGame(false, "Samay samapta bhayo! (Time Out)");
                 }
             }, 1000);
         }
 
-        window.selectOption = function(key) {
-            ['A', 'B', 'C', 'D'].forEach(k => {
-                document.getElementById('opt' + k).classList.remove('selected');
-            });
-            document.getElementById('opt' + key).classList.add('selected');
-            selectedOptionKey = key;
+        window.selectOption = function(index) {
+            for (let i = 0; i < 4; i++) {
+                document.getElementById('opt' + i).classList.remove('selected');
+            }
+            document.getElementById('opt' + index).classList.add('selected');
+            selectedOptionIndex = index;
             document.getElementById('lockBtn').disabled = false;
         }
 
@@ -562,25 +613,82 @@
             document.getElementById('lockBtn').disabled = true;
 
             const currentQ = questions[currentQuestionIndex];
-            const selectedBtn = document.getElementById('opt' + selectedOptionKey);
-            const correctKey = currentQ.correct_answer || currentQ.answer; // सहि उत्तर स्तम्भ
+            const selectedBtn = document.getElementById('opt' + selectedOptionIndex);
+            
+            let optionsArray = currentQ.options;
+            if (typeof optionsArray === 'string') {
+                try { optionsArray = JSON.parse(optionsArray); } catch(e) {}
+            }
+
+            const correctAnswerText = String(currentQ.answer).trim();
+            const selectedAnswerText = String(optionsArray[selectedOptionIndex]).trim();
+            
+            let isCorrect = (selectedAnswerText.toLowerCase() === correctAnswerText.toLowerCase()) || 
+                            (selectedOptionIndex.toString() === correctAnswerText) ||
+                            (String.fromCharCode(65 + selectedOptionIndex) === correctAnswerText.toUpperCase());
 
             setTimeout(() => {
-                if (selectedOptionKey === correctKey) {
+                if (isCorrect) {
                     selectedBtn.classList.add('correct');
-                    document.getElementById('currentPrizeText').innerText = prizeLadder[prizeLadder.length - 1 - currentQuestionIndex].prize;
+                    totalCoinsEarned = coinLadder[coinLadder.length - 1 - currentQuestionIndex].coins;
+                    document.getElementById('currentPrizeText').innerText = `🪙 Won: ${totalCoinsEarned}`;
+
+                    if (currentQ.explanation) {
+                        const expBox = document.getElementById('explanationBox');
+                        expBox.innerText = `💡 Spastikaran: ${currentQ.explanation}`;
+                        expBox.style.display = 'block';
+                    }
+
                     setTimeout(() => {
                         currentQuestionIndex++;
                         loadQuestion();
-                    }, 1500);
+                    }, 2500);
                 } else {
                     selectedBtn.classList.add('wrong');
-                    document.getElementById('opt' + correctKey).classList.add('correct');
+                    for (let i = 0; i < 4; i++) {
+                        if (String(optionsArray[i]).trim().toLowerCase() === correctAnswerText.toLowerCase() ||
+                            i.toString() === correctAnswerText ||
+                            String.fromCharCode(65 + i) === correctAnswerText.toUpperCase()) {
+                            document.getElementById('opt' + i).classList.add('correct');
+                        }
+                    }
+
+                    if (currentQ.explanation) {
+                        const expBox = document.getElementById('explanationBox');
+                        expBox.innerText = `💡 Spastikaran: ${currentQ.explanation}`;
+                        expBox.style.display = 'block';
+                    }
+
                     setTimeout(() => {
-                        checkSafeZoneAndEnd();
-                    }, 2000);
+                        updateFirebaseData(totalCoinsEarned, "Wrong Answer");
+                        endGame(false, `Uttar galat bhayo! Tapai le jamma ${totalCoinsEarned} Coins surakshit garnu bhayo.`);
+                    }, 3000);
                 }
             }, 1000);
+        }
+
+        // Firebase ma coins update garne ra `coin_history` sub-collection ma record save garne
+        async function updateFirebaseData(earnedCoins, status) {
+            if (earnedCoins <= 0) return; // Kuni coin jeetechha bhane matra update garne
+            try {
+                const userRef = doc(db, "users", userId);
+                
+                // 1. Users document ko `coins` field update garne (Increment total)
+                await updateDoc(userRef, {
+                    coins: increment(earnedCoins)
+                });
+
+                // 2. Usai ko vitra `coin_history` sub-collection ma history add garne
+                await addDoc(collection(userRef, "coin_history"), {
+                    coins_won: earnedCoins,
+                    status: status,
+                    timestamp: serverTimestamp()
+                });
+
+                console.log("Firebase successfully updated!");
+            } catch (e) {
+                console.error("Error updating Firebase: ", e);
+            }
         }
 
         // Lifelines
@@ -590,75 +698,69 @@
             document.getElementById('ll-5050').disabled = true;
 
             const currentQ = questions[currentQuestionIndex];
-            const correctKey = currentQ.correct_answer || currentQ.answer;
-            let wrongOptions = ['A', 'B', 'C', 'D'].filter(k => k !== correctKey);
-            wrongOptions.sort(() => Math.random() - 0.5);
+            let optionsArray = currentQ.options;
+            if (typeof optionsArray === 'string') {
+                try { optionsArray = JSON.parse(optionsArray); } catch(e) {}
+            }
+
+            const correctAnswerText = String(currentQ.answer).trim();
+            let correctIndex = -1;
+            for (let i = 0; i < 4; i++) {
+                if (String(optionsArray[i]).trim().toLowerCase() === correctAnswerText.toLowerCase() ||
+                    i.toString() === correctAnswerText ||
+                    String.fromCharCode(65 + i) === correctAnswerText.toUpperCase()) {
+                    correctIndex = i;
+                }
+            }
+
+            let wrongIndices = [0, 1, 2, 3].filter(i => i !== correctIndex);
+            wrongIndices.sort(() => Math.random() - 0.5);
             
-            document.getElementById('opt' + wrongOptions[0]).classList.add('hidden-option');
-            document.getElementById('opt' + wrongOptions[0]).disabled = true;
-            document.getElementById('opt' + wrongOptions[1]).classList.add('hidden-option');
-            document.getElementById('opt' + wrongOptions[1]).disabled = true;
+            document.getElementById('opt' + wrongIndices[0]).classList.add('hidden-option');
+            document.getElementById('opt' + wrongIndices[0]).disabled = true;
+            document.getElementById('opt' + wrongIndices[1]).classList.add('hidden-option');
+            document.getElementById('opt' + wrongIndices[1]).disabled = true;
         }
 
         window.usePhoneAFriend = function() {
             if (lifelineUsed['phone']) return;
             lifelineUsed['phone'] = true;
             document.getElementById('ll-phone').disabled = true;
-
-            const currentQ = questions[currentQuestionIndex];
-            const correctKey = currentQ.correct_answer || currentQ.answer;
-            alert(`📞 साथीको सल्लाह: "मलाई लाग्छ यसको सही उत्तर विकल्प (${correctKey}) हुनुपर्छ!"`);
+            alert(`📞 Sathi ko sallah: "Malai yo prasna ko sahi uttar ma purna biswas xa!"`);
         }
 
         window.useAudiencePoll = function() {
             if (lifelineUsed['audience']) return;
             lifelineUsed['audience'] = true;
             document.getElementById('ll-audience').disabled = true;
-
-            const currentQ = questions[currentQuestionIndex];
-            const correctKey = currentQ.correct_answer || currentQ.answer;
-            let a = 15, b = 15, c = 15, d = 15;
-            if (correctKey === 'A') a = 65;
-            else if (correctKey === 'B') b = 65;
-            else if (correctKey === 'C') c = 65;
-            else d = 65;
-
-            alert(`👥 अडियन्स पोलको नतिजा:\n[A]: ${a}% | [B]: ${b}% | [C]: ${c}% | [D]: ${d}%`);
+            alert(`👥 Audience Poll ko natija:\n[A]: 50% | [B]: 20% | [C]: 20% | [D]: 10%`);
         }
 
         window.useFlipQuestion = function() {
             if (lifelineUsed['flip']) return;
             lifelineUsed['flip'] = true;
             document.getElementById('ll-flip').disabled = true;
-
-            alert("🔄 प्रश्न परिवर्तन गरिएको छ!");
+            alert("🔄 Prasna pariwartan garieko xa!");
             loadQuestion();
-        }
-
-        function checkSafeZoneAndEnd() {
-            let wonAmount = "रू 0";
-            if (currentQuestionIndex >= 7) wonAmount = "रू 12,500 (Safe Zone)";
-            else if (currentQuestionIndex >= 3) wonAmount = "रू 3,000 (Safe Zone)";
-
-            endGame(false, `उत्तर गलत भयो! तपाईं खेलबाट बाहिरिनुभयो। सुरक्षित रकम: ${wonAmount}`);
         }
 
         function endGame(isWin, message) {
             clearInterval(timerInterval);
-            document.getElementById('modalTitle').innerText = isWin ? "अद्भूत! विजेता बन्नुभयो! 🏆" : "खेल समाप्त!";
+            document.getElementById('modalTitle').innerText = isWin ? "Adbhuta! Vijeta bannu bhayo! 🏆" : "Khel Samapta!";
             document.getElementById('modalDesc').innerText = message;
             document.getElementById('gameModal').style.display = 'flex';
         }
 
         window.restartGame = function() {
             currentQuestionIndex = 0;
+            totalCoinsEarned = 0;
+            document.getElementById('currentPrizeText').innerText = `🪙 Won: 0`;
             lifelineUsed = { '5050': false, 'phone': false, 'audience': false, 'flip': false };
             document.querySelectorAll('.lifeline-btn').forEach(btn => btn.disabled = false);
             document.getElementById('gameModal').style.display = 'none';
             fetchQuestionsFromSupabase();
         }
 
-        // Page load मा Supabase को quizzes टेबलबाट प्रश्न ल्याउने
         fetchQuestionsFromSupabase();
     </script>
 </body>
