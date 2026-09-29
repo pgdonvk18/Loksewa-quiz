@@ -400,7 +400,7 @@
     <div class="game-container">
         <div class="question-box">
             <div class="timer-badge" id="timer">30</div>
-            <span id="questionText">Supabase बाट प्रश्नहरू लोड हुँदैछ...</span>
+            <span id="questionText">Public.quizzes बाट प्रश्नहरू लोड हुँदैछ...</span>
         </div>
 
         <div class="options-grid">
@@ -429,7 +429,6 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-        // तपाईंको वास्तविक Supabase URL र Anon Key
         const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
         
@@ -468,12 +467,13 @@
 
         async function fetchQuestionsFromSupabase() {
             try {
+                // public.quizzes टेबलबाट डाटा फेच गर्ने
                 const { data, error } = await supabase
-                    .from('questions')
+                    .from('quizzes')
                     .select('*');
 
                 if (error) {
-                    console.error('Error fetching questions:', error);
+                    console.error('Error fetching quizzes:', error);
                     document.getElementById('questionText').innerText = 'डेटाबेसबाट प्रश्न लोड गर्न समस्या भयो!';
                     return;
                 }
@@ -483,7 +483,7 @@
                     questions = data.sort(() => Math.random() - 0.5).slice(0, 10);
                     loadQuestion();
                 } else {
-                    document.getElementById('questionText').innerText = 'कुनै पनि प्रश्न भेटिएन!';
+                    document.getElementById('questionText').innerText = 'quizzes टेबलमा कुनै पनि प्रश्न भेटिएन!';
                 }
             } catch (err) {
                 console.error('Connection error:', err);
@@ -513,12 +513,12 @@
 
             const currentQ = questions[currentQuestionIndex];
             
-            // Supabase को स्तम्भ (Column) नाम अनुसार म्याच गरिएको
-            document.getElementById('questionText').innerText = `Q${currentQuestionIndex + 1}. ${currentQ.question_text || currentQ.q}`;
-            document.getElementById('optA').innerText = currentQ.option_a;
-            document.getElementById('optB').innerText = currentQ.option_b;
-            document.getElementById('optC').innerText = currentQ.option_c;
-            document.getElementById('optD').innerText = currentQ.option_d;
+            // public.quizzes टेबलका स्तम्भ नामहरू (यदि तपाइँकोमा question, option_a आदि छ भने यसले आफै समात्छ)
+            document.getElementById('questionText').innerText = `Q${currentQuestionIndex + 1}. ${currentQ.question_text || currentQ.question || currentQ.q}`;
+            document.getElementById('optA').innerText = currentQ.option_a || currentQ.opt_a;
+            document.getElementById('optB').innerText = currentQ.option_b || currentQ.opt_b;
+            document.getElementById('optC').innerText = currentQ.option_c || currentQ.opt_c;
+            document.getElementById('optD').innerText = currentQ.option_d || currentQ.opt_d;
 
             selectedOptionKey = null;
             document.getElementById('lockBtn').disabled = true;
@@ -563,7 +563,7 @@
 
             const currentQ = questions[currentQuestionIndex];
             const selectedBtn = document.getElementById('opt' + selectedOptionKey);
-            const correctKey = currentQ.correct_answer; // Supabase को सहि उत्तर स्तम्भ
+            const correctKey = currentQ.correct_answer || currentQ.answer; // सहि उत्तर स्तम्भ
 
             setTimeout(() => {
                 if (selectedOptionKey === correctKey) {
@@ -590,7 +590,8 @@
             document.getElementById('ll-5050').disabled = true;
 
             const currentQ = questions[currentQuestionIndex];
-            let wrongOptions = ['A', 'B', 'C', 'D'].filter(k => k !== currentQ.correct_answer);
+            const correctKey = currentQ.correct_answer || currentQ.answer;
+            let wrongOptions = ['A', 'B', 'C', 'D'].filter(k => k !== correctKey);
             wrongOptions.sort(() => Math.random() - 0.5);
             
             document.getElementById('opt' + wrongOptions[0]).classList.add('hidden-option');
@@ -605,7 +606,8 @@
             document.getElementById('ll-phone').disabled = true;
 
             const currentQ = questions[currentQuestionIndex];
-            alert(`📞 साथीको सल्लाह: "मलाई लाग्छ यसको सही उत्तर विकल्प (${currentQ.correct_answer}) हुनुपर्छ!"`);
+            const correctKey = currentQ.correct_answer || currentQ.answer;
+            alert(`📞 साथीको सल्लाह: "मलाई लाग्छ यसको सही उत्तर विकल्प (${correctKey}) हुनुपर्छ!"`);
         }
 
         window.useAudiencePoll = function() {
@@ -614,10 +616,11 @@
             document.getElementById('ll-audience').disabled = true;
 
             const currentQ = questions[currentQuestionIndex];
+            const correctKey = currentQ.correct_answer || currentQ.answer;
             let a = 15, b = 15, c = 15, d = 15;
-            if (currentQ.correct_answer === 'A') a = 65;
-            else if (currentQ.correct_answer === 'B') b = 65;
-            else if (currentQ.correct_answer === 'C') c = 65;
+            if (correctKey === 'A') a = 65;
+            else if (correctKey === 'B') b = 65;
+            else if (correctKey === 'C') c = 65;
             else d = 65;
 
             alert(`👥 अडियन्स पोलको नतिजा:\n[A]: ${a}% | [B]: ${b}% | [C]: ${c}% | [D]: ${d}%`);
@@ -655,7 +658,7 @@
             fetchQuestionsFromSupabase();
         }
 
-        // Page load मा Supabase बाट प्रश्न ल्याउने
+        // Page load मा Supabase को quizzes टेबलबाट प्रश्न ल्याउने
         fetchQuestionsFromSupabase();
     </script>
 </body>
