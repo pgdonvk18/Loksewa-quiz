@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="ne">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>LoksewaQuest — Quiz Arena</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
+
+<title>LoksewaQuest Quiz Arena</title>
 
 <style>
+
 /* =========================================================
-   LOKSEWAQUEST QUIZ ARENA
-   Premium Game Show Theme
+   RESET
 ========================================================= */
 
 *{
@@ -21,556 +26,626 @@
 }
 
 :root{
-    --navy:#020817;
-    --navy2:#07152d;
-    --blue:#102d58;
-    --blue2:#17457d;
-    --gold:#f5c542;
-    --gold2:#ffd95a;
-    --orange:#ff8a00;
-    --green:#16c784;
-    --red:#ef4444;
-    --white:#ffffff;
-    --muted:#9fb1c9;
-    --border:rgba(245,197,66,.55);
-}
 
-html,body{
-    width:100%;
-    min-height:100%;
+    --bg:#020711;
+    --bg2:#06142a;
+    --panel:#0b2140;
+    --panel2:#102e55;
+
+    --gold:#f5c542;
+    --gold2:#ffd966;
+
+    --blue:#18539a;
+    --blue2:#0d3470;
+
+    --green:#19c77a;
+    --red:#e83d46;
+
+    --white:#fff;
+    --muted:#a9bad0;
+
 }
 
 body{
+
+    min-height:100vh;
+
+    color:white;
+
     font-family:
         "Segoe UI",
         system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
         sans-serif;
 
-    color:white;
     background:
-        radial-gradient(circle at 50% 25%,
-            rgba(25,72,135,.45),
-            transparent 35%),
-        radial-gradient(circle at 50% 100%,
-            rgba(212,150,20,.12),
-            transparent 35%),
-        linear-gradient(180deg,#030916 0%,#02050c 100%);
 
-    min-height:100vh;
+        radial-gradient(
+            circle at 50% 35%,
+            rgba(22,77,145,.40),
+            transparent 32%
+        ),
+
+        radial-gradient(
+            circle at 50% 100%,
+            rgba(245,197,66,.10),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            180deg,
+            #020711,
+            #00040a
+        );
+
     overflow-x:hidden;
 }
 
-/* =========================================================
-   BACKGROUND LIGHTS
-========================================================= */
-
-body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-
-    background:
-        radial-gradient(circle at 10% 20%,rgba(255,205,70,.08),transparent 20%),
-        radial-gradient(circle at 90% 30%,rgba(30,100,220,.08),transparent 25%);
-
-    z-index:-1;
-}
 
 /* =========================================================
-   TOP BAR
+   HEADER
 ========================================================= */
 
-.topbar{
-    min-height:68px;
+.header{
+
+    height:64px;
+
+    padding:8px 14px;
 
     display:flex;
     align-items:center;
     justify-content:space-between;
 
-    gap:10px;
-    padding:10px 15px;
+    border-bottom:
+        1px solid rgba(245,197,66,.35);
 
     background:
-        linear-gradient(180deg,
-            rgba(4,13,29,.97),
-            rgba(2,8,18,.94));
-
-    border-bottom:1px solid rgba(245,197,66,.45);
+        rgba(1,7,17,.92);
 
     position:sticky;
     top:0;
+
     z-index:100;
 }
 
-.top-left,
-.top-right{
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
+.logo{
 
-.game-logo{
-    font-weight:900;
-    font-size:17px;
     color:var(--gold2);
-    letter-spacing:.3px;
+
+    font-size:17px;
+
+    font-weight:900;
+
 }
 
-.game-logo span{
+.logo span{
     color:white;
 }
 
-.top-btn{
-    border:1px solid rgba(245,197,66,.55);
-    background:rgba(245,197,66,.08);
-    color:var(--gold2);
+.header-coins{
 
-    padding:8px 12px;
-    border-radius:22px;
+    padding:7px 13px;
 
-    font-weight:700;
-    cursor:pointer;
+    border:
+        1px solid rgba(245,197,66,.5);
 
-    transition:.2s;
-}
-
-.top-btn:hover{
-    background:var(--gold);
-    color:#000;
-}
-
-.total-coins{
-    border:1px solid rgba(245,197,66,.5);
-    background:rgba(245,197,66,.08);
-
-    padding:8px 12px;
-    border-radius:22px;
+    border-radius:20px;
 
     color:var(--gold2);
+
     font-weight:800;
 
-    white-space:nowrap;
+    background:
+        rgba(245,197,66,.07);
+
 }
+
 
 /* =========================================================
-   MAIN GAME
+   GAME AREA
 ========================================================= */
 
-.game-shell{
+.game{
+
     width:100%;
+
     max-width:900px;
 
-    margin:0 auto;
+    margin:auto;
 
     padding:
-        18px
-        18px
+        15px
+        15px
         35px;
 
-    display:flex;
-    flex-direction:column;
-    align-items:center;
 }
+
+
+/* =========================================================
+   TOP GAME INFO
+========================================================= */
+
+.game-info{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:14px;
+
+}
+
+.question-counter{
+
+    color:var(--gold2);
+
+    font-size:14px;
+
+    font-weight:900;
+
+}
+
+.ladder-button{
+
+    border:
+        1px solid rgba(245,197,66,.5);
+
+    background:
+        rgba(245,197,66,.08);
+
+    color:var(--gold2);
+
+    padding:7px 12px;
+
+    border-radius:20px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+}
+
 
 /* =========================================================
    PROGRESS
 ========================================================= */
 
-.progress-area{
+.progress{
+
+    height:5px;
+
     width:100%;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:12px;
-}
 
-.question-number{
-    color:var(--gold2);
-    font-weight:900;
-    white-space:nowrap;
-}
+    background:#142238;
 
-.progress-track{
-    flex:1;
-    height:7px;
-
-    background:#15233a;
     border-radius:20px;
+
     overflow:hidden;
+
+    margin-bottom:15px;
+
 }
 
 .progress-bar{
+
     height:100%;
+
     width:10%;
 
     background:
-        linear-gradient(90deg,
-            #c28a12,
-            #ffd95a,
-            #fff1a4);
-
-    border-radius:20px;
+        linear-gradient(
+            90deg,
+            #c48a13,
+            #ffd966
+        );
 
     transition:.5s;
+
 }
+
 
 /* =========================================================
    TIMER
 ========================================================= */
 
-.timer-wrap{
-    position:relative;
+.timer-area{
 
-    width:86px;
-    height:86px;
+    display:flex;
 
-    margin:8px auto 18px;
+    justify-content:center;
+
+    margin:
+        5px
+        0
+        12px;
+
 }
 
-.timer-ring{
-    width:86px;
-    height:86px;
+.timer{
+
+    width:65px;
+
+    height:65px;
 
     border-radius:50%;
 
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
+    position:relative;
 
     background:
         conic-gradient(
-            var(--gold2) var(--timer-progress,100%),
-            #17253c 0
+            var(--gold2) var(--progress,100%),
+            #17263c 0
         );
 
     box-shadow:
-        0 0 25px rgba(245,197,66,.25);
+        0 0 25px
+        rgba(245,197,66,.18);
+
 }
 
-.timer-ring::before{
+.timer::before{
+
     content:"";
 
     position:absolute;
 
-    width:70px;
-    height:70px;
+    width:52px;
 
-    background:#050c19;
+    height:52px;
+
+    background:#040b16;
 
     border-radius:50%;
+
 }
 
-.timer-number{
+.timer span{
+
     position:relative;
+
     z-index:2;
 
-    font-size:25px;
+    font-size:20px;
+
     font-weight:900;
-    color:white;
+
 }
 
 .timer-danger{
-    color:#ff5a5a;
-    animation:pulse .8s infinite;
+
+    color:#ff5b61;
+
 }
 
-@keyframes pulse{
-    50%{
-        transform:scale(1.1);
-    }
-}
 
 /* =========================================================
-   QUESTION CARD
+   TOPIC
 ========================================================= */
 
 .topic{
-    padding:5px 14px;
-
-    border-radius:20px;
-
-    color:var(--gold2);
-    border:1px solid rgba(245,197,66,.45);
-
-    background:rgba(245,197,66,.07);
-
-    font-size:12px;
-    font-weight:800;
-
-    text-transform:uppercase;
-
-    margin-bottom:10px;
-}
-
-.question-card{
-    width:100%;
-
-    padding:25px 22px;
 
     text-align:center;
 
-    background:
-        linear-gradient(145deg,
-            rgba(16,45,88,.96),
-            rgba(3,13,30,.98));
+    color:var(--gold2);
+
+    font-size:12px;
+
+    font-weight:800;
+
+    letter-spacing:.8px;
+
+    margin-bottom:8px;
+
+}
+
+
+/* =========================================================
+   QUESTION
+========================================================= */
+
+.question-box{
+
+    width:100%;
+
+    padding:27px 20px;
+
+    border-radius:20px;
 
     border:
-        2px solid rgba(245,197,66,.75);
-
-    border-radius:22px;
-
-    position:relative;
-
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,.03),
-        0 10px 45px rgba(0,0,0,.55),
-        0 0 35px rgba(245,197,66,.08);
-
-    margin-bottom:20px;
-}
-
-.question-card::before{
-    content:"";
-
-    position:absolute;
-
-    top:-2px;
-    left:12%;
-    right:12%;
-
-    height:2px;
+        2px solid
+        rgba(245,197,66,.75);
 
     background:
+
         linear-gradient(
-            90deg,
-            transparent,
-            var(--gold2),
-            transparent
+            145deg,
+            #123660,
+            #061426
         );
+
+    box-shadow:
+
+        0 0 0 1px
+        rgba(255,255,255,.02),
+
+        0 12px 40px
+        rgba(0,0,0,.55),
+
+        0 0 25px
+        rgba(245,197,66,.08);
+
+    text-align:center;
+
+    margin-bottom:18px;
+
 }
 
-.question-text{
-    font-size:clamp(18px,4vw,26px);
+.question{
+
+    font-size:
+        clamp(18px,4vw,26px);
 
     line-height:1.55;
 
     font-weight:700;
+
 }
+
 
 /* =========================================================
    OPTIONS
 ========================================================= */
 
 .options{
-    width:100%;
 
     display:grid;
-    grid-template-columns:1fr 1fr;
 
-    gap:14px;
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:12px;
+
 }
 
 .option{
-    min-height:68px;
+
+    min-height:65px;
 
     border:
-        1.5px solid rgba(105,145,195,.45);
-
-    background:
-        linear-gradient(145deg,
-            rgba(16,42,78,.95),
-            rgba(6,17,34,.98));
-
-    color:white;
+        1px solid
+        rgba(91,134,184,.55);
 
     border-radius:15px;
 
-    padding:13px 16px;
+    background:
+
+        linear-gradient(
+            145deg,
+            #102d51,
+            #061426
+        );
+
+    color:white;
 
     display:flex;
+
     align-items:center;
 
     gap:12px;
 
+    padding:
+        11px
+        14px;
+
     cursor:pointer;
+
+    font-size:15px;
 
     text-align:left;
 
     transition:.2s;
 
-    font-size:16px;
 }
 
 .option:hover:not(:disabled){
+
+    border-color:var(--gold);
+
     transform:translateY(-2px);
 
-    border-color:var(--gold2);
-
-    box-shadow:
-        0 5px 20px rgba(245,197,66,.12);
 }
 
 .option-label{
+
     width:34px;
+
     height:34px;
 
     min-width:34px;
 
-    border-radius:50%;
-
     display:flex;
+
     align-items:center;
+
     justify-content:center;
 
-    border:1px solid var(--gold);
+    border-radius:50%;
+
+    border:
+        1px solid
+        var(--gold);
 
     color:var(--gold2);
 
     font-weight:900;
+
 }
 
 .option.selected{
+
     background:
-        linear-gradient(145deg,
-            #b97d08,
-            #f5c542);
 
-    color:#080808;
+        linear-gradient(
+            135deg,
+            #9b6909,
+            #f5c542
+        );
 
-    border-color:#fff;
+    color:#000;
 
-    box-shadow:
-        0 0 25px rgba(245,197,66,.3);
+    border-color:white;
+
 }
 
-.option.selected .option-label{
+.option.selected
+.option-label{
+
     color:#000;
+
     border-color:#000;
+
 }
 
 .option.correct{
+
     background:
-        linear-gradient(145deg,#087a4e,#16c784) !important;
+        linear-gradient(
+            135deg,
+            #08784b,
+            #19c77a
+        ) !important;
 
-    border-color:#5cffbd !important;
+    border-color:
+        #72ffc2 !important;
 
-    animation:correctGlow .8s ease;
 }
 
 .option.wrong{
+
     background:
-        linear-gradient(145deg,#8d1616,#ef4444) !important;
+        linear-gradient(
+            135deg,
+            #821c21,
+            #e83d46
+        ) !important;
 
-    border-color:#ff9b9b !important;
+    border-color:
+        #ff9da2 !important;
 
-    animation:shake .45s ease;
-}
-
-@keyframes correctGlow{
-    50%{
-        box-shadow:0 0 35px rgba(22,199,132,.65);
-    }
-}
-
-@keyframes shake{
-    25%{transform:translateX(-6px);}
-    50%{transform:translateX(6px);}
-    75%{transform:translateX(-4px);}
 }
 
 .option.hidden{
+
     visibility:hidden;
+
     pointer-events:none;
+
 }
+
 
 /* =========================================================
-   ACTION AREA
+   LOCK AREA
 ========================================================= */
 
-.action-area{
+.lock-area{
+
     display:flex;
+
     flex-direction:column;
+
     align-items:center;
 
-    gap:10px;
+    margin-top:18px;
 
-    margin-top:20px;
 }
 
-.lock-btn{
-    min-width:230px;
+.lock{
+
+    min-width:220px;
 
     border:none;
 
-    padding:14px 30px;
-
     border-radius:30px;
 
-    background:
-        linear-gradient(135deg,
-            #d28b0d,
-            #ffd95a);
+    padding:14px 28px;
 
-    color:#080808;
+    font-size:16px;
 
-    font-size:17px;
     font-weight:900;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #d18b0b,
+            #ffd966
+        );
+
+    color:#050505;
 
     cursor:pointer;
 
     box-shadow:
-        0 8px 25px rgba(245,197,66,.2);
+        0 8px 25px
+        rgba(245,197,66,.18);
 
-    transition:.2s;
 }
 
-.lock-btn:hover:not(:disabled){
-    transform:translateY(-2px);
+.lock:disabled{
 
-    box-shadow:
-        0 10px 35px rgba(245,197,66,.35);
-}
-
-.lock-btn:disabled{
     opacity:.35;
+
     cursor:not-allowed;
+
 }
 
-.status-text{
+.status{
+
+    margin-top:8px;
+
     color:var(--muted);
-    font-size:13px;
+
+    font-size:12px;
+
 }
+
 
 /* =========================================================
    LIFELINES
 ========================================================= */
 
 .lifelines{
-    width:100%;
 
     display:grid;
-    grid-template-columns:repeat(4,1fr);
 
-    gap:10px;
+    grid-template-columns:
+        repeat(4,1fr);
 
-    margin-top:25px;
+    gap:9px;
+
+    margin-top:20px;
+
 }
 
-.lifeline{
-    min-height:58px;
+.life{
+
+    min-height:53px;
 
     border:
-        1px solid rgba(245,197,66,.5);
+        1px solid
+        rgba(245,197,66,.45);
 
-    border-radius:14px;
+    border-radius:13px;
 
     background:
-        linear-gradient(145deg,
-            rgba(20,47,84,.9),
-            rgba(4,15,30,.95));
+        rgba(10,35,66,.9);
 
     color:white;
 
@@ -578,388 +653,470 @@ body::before{
 
     cursor:pointer;
 
-    transition:.2s;
 }
 
-.lifeline:hover:not(:disabled){
+.life:hover:not(:disabled){
+
     border-color:var(--gold2);
 
     color:var(--gold2);
 
-    transform:translateY(-2px);
 }
 
-.lifeline:disabled{
+.life:disabled{
+
     opacity:.3;
+
     cursor:not-allowed;
+
 }
+
 
 /* =========================================================
    EXPLANATION
 ========================================================= */
 
 .explanation{
-    width:100%;
 
     display:none;
 
-    margin-top:16px;
+    margin-top:15px;
 
-    padding:14px 17px;
+    padding:12px 15px;
 
     border:
-        1px dashed rgba(22,199,132,.7);
+        1px dashed
+        rgba(25,199,122,.7);
 
-    background:rgba(22,199,132,.08);
+    border-radius:12px;
 
-    border-radius:14px;
+    color:#8effcf;
 
-    color:#8dffd0;
+    background:
+        rgba(25,199,122,.07);
 
     line-height:1.6;
 
     text-align:center;
+
 }
 
+
 /* =========================================================
-   MONEY LADDER
+   LADDER DRAWER
 ========================================================= */
 
 .overlay{
+
     position:fixed;
 
     inset:0;
 
-    background:rgba(0,0,0,.65);
+    background:
+        rgba(0,0,0,.7);
 
     display:none;
 
     z-index:500;
+
 }
 
-.overlay.active{
+.overlay.show{
     display:block;
 }
 
 .ladder{
+
     position:fixed;
 
     top:0;
+
     right:-330px;
 
     width:320px;
+
     height:100vh;
 
     z-index:600;
 
-    padding:18px;
-
     background:
-        linear-gradient(180deg,
-            #07152c,
-            #020711);
+        linear-gradient(
+            180deg,
+            #071a35,
+            #020711
+        );
 
     border-left:
-        1px solid rgba(245,197,66,.6);
+        1px solid
+        rgba(245,197,66,.5);
 
-    box-shadow:
-        -10px 0 40px rgba(0,0,0,.5);
+    padding:17px;
 
     transition:.35s;
 
-    display:flex;
-    flex-direction:column;
 }
 
 .ladder.open{
     right:0;
 }
 
-.ladder-head{
+.ladder-header{
+
     display:flex;
-    justify-content:space-between;
+
     align-items:center;
 
-    padding-bottom:15px;
+    justify-content:space-between;
 
-    border-bottom:1px solid rgba(245,197,66,.25);
+    margin-bottom:14px;
 
-    margin-bottom:12px;
+    padding-bottom:12px;
+
+    border-bottom:
+        1px solid
+        rgba(245,197,66,.2);
+
 }
 
 .ladder-title{
+
     color:var(--gold2);
+
     font-size:18px;
+
     font-weight:900;
+
 }
 
-.close-btn{
-    background:none;
+.close{
+
     border:none;
+
+    background:none;
 
     color:white;
 
     font-size:28px;
 
-    cursor:pointer;
 }
 
-.money-list{
+.money{
+
     list-style:none;
 
     display:flex;
+
     flex-direction:column;
 
     gap:5px;
 
+    max-height:
+        calc(100vh - 80px);
+
     overflow:auto;
+
 }
 
-.money-row{
+.money li{
+
     display:flex;
 
     justify-content:space-between;
-    align-items:center;
 
-    padding:9px 14px;
+    padding:8px 12px;
 
-    border-radius:9px;
+    border-radius:8px;
 
-    color:#7e91aa;
+    color:#8397b1;
 
     font-weight:700;
 
-    transition:.3s;
 }
 
-.money-row.safe{
-    border-left:3px solid var(--gold);
-}
-
-.money-row.current{
-    color:#000;
+.money li.current{
 
     background:
         linear-gradient(
             90deg,
-            #d59a14,
-            #ffd95a
+            #c58b13,
+            #ffd966
         );
 
-    box-shadow:
-        0 0 18px rgba(245,197,66,.3);
-
-    transform:scale(1.02);
-}
-
-.money-row.current span{
     color:#000;
+
 }
 
-.money-row.completed{
-    color:#35dc9b;
+.money li.safe{
+
+    border-left:
+        3px solid
+        var(--gold);
+
 }
 
-.safe-label{
-    font-size:10px;
-
-    margin-left:5px;
-
-    color:var(--gold2);
-}
 
 /* =========================================================
-   MODAL
+   CONFIRM MODAL
 ========================================================= */
 
 .modal{
+
     position:fixed;
 
     inset:0;
 
-    z-index:1000;
-
     display:none;
 
     align-items:center;
+
     justify-content:center;
+
+    z-index:1000;
 
     padding:20px;
 
     background:
-        radial-gradient(circle,
-            rgba(13,46,92,.7),
-            rgba(0,0,0,.92));
+        rgba(0,0,0,.88);
+
 }
 
 .modal-card{
-    width:100%;
-    max-width:440px;
 
-    padding:30px 22px;
+    width:100%;
+
+    max-width:400px;
+
+    padding:25px 20px;
+
+    border:
+        2px solid
+        var(--gold);
+
+    border-radius:22px;
 
     text-align:center;
 
-    border:
-        2px solid var(--gold);
-
-    border-radius:25px;
-
     background:
-        linear-gradient(145deg,
-            #102e58,
-            #030b19);
+        linear-gradient(
+            145deg,
+            #123660,
+            #030b17
+        );
 
-    box-shadow:
-        0 20px 80px rgba(0,0,0,.8),
-        0 0 50px rgba(245,197,66,.18);
-
-    animation:modalIn .35s ease;
-}
-
-@keyframes modalIn{
-    from{
-        transform:scale(.8);
-        opacity:0;
-    }
-
-    to{
-        transform:scale(1);
-        opacity:1;
-    }
-}
-
-.modal-icon{
-    font-size:55px;
-    margin-bottom:8px;
 }
 
 .modal-title{
+
     color:var(--gold2);
-    font-size:26px;
+
+    font-size:22px;
+
     font-weight:900;
 
     margin-bottom:10px;
+
 }
 
-.modal-desc{
-    color:#d7e1ef;
+.modal-question{
 
-    line-height:1.6;
+    color:#d7e2f0;
+
+    line-height:1.5;
+
+    margin-bottom:15px;
+
+}
+
+.selected-answer{
+
+    padding:13px;
+
+    border-radius:12px;
+
+    background:
+        rgba(245,197,66,.12);
+
+    border:
+        1px solid
+        rgba(245,197,66,.4);
+
+    color:var(--gold2);
+
+    font-weight:800;
 
     margin-bottom:18px;
+
 }
 
-.final-coins{
-    font-size:32px;
+.modal-buttons{
 
-    color:#ffd95a;
+    display:grid;
 
-    font-weight:900;
+    grid-template-columns:1fr 1fr;
 
-    margin:10px 0 20px;
+    gap:10px;
+
 }
 
-.restart-btn{
-    width:100%;
+.modal-buttons button{
 
-    padding:14px;
+    padding:12px;
+
+    border-radius:25px;
 
     border:none;
 
-    border-radius:28px;
+    font-weight:900;
+
+    cursor:pointer;
+
+}
+
+.confirm{
 
     background:
         linear-gradient(
             135deg,
-            #d58d0d,
-            #ffd95a
+            #c88b12,
+            #ffd966
         );
 
-    color:#050505;
+    color:#000;
+
+}
+
+.cancel{
+
+    background:#26364d;
+
+    color:white;
+
+}
+
+
+/* =========================================================
+   RESULT MODAL
+========================================================= */
+
+.result-icon{
+
+    font-size:55px;
+
+    margin-bottom:10px;
+
+}
+
+.result-coins{
+
+    color:var(--gold2);
+
+    font-size:32px;
 
     font-weight:900;
 
-    font-size:16px;
+    margin:12px 0 20px;
 
-    cursor:pointer;
 }
 
-/* =========================================================
-   LIFELINE MODAL
-========================================================= */
+.restart{
 
-.small-modal .modal-card{
-    max-width:390px;
-}
+    width:100%;
 
-.poll-bars{
-    display:flex;
-    flex-direction:column;
+    padding:13px;
 
-    gap:10px;
+    border:none;
 
-    margin:18px 0;
-}
-
-.poll-row{
-    display:grid;
-    grid-template-columns:35px 1fr 45px;
-
-    align-items:center;
-
-    gap:8px;
-}
-
-.poll-bar{
-    height:18px;
-
-    background:#172942;
-
-    border-radius:20px;
-
-    overflow:hidden;
-}
-
-.poll-fill{
-    height:100%;
+    border-radius:25px;
 
     background:
         linear-gradient(
-            90deg,
-            #bd8211,
-            #ffd95a
+            135deg,
+            #d18b0b,
+            #ffd966
         );
 
-    border-radius:20px;
+    font-weight:900;
+
 }
 
+
 /* =========================================================
-   CONFETTI
+   LOADING
 ========================================================= */
 
-.confetti{
+.loading{
+
     position:fixed;
 
-    width:8px;
-    height:14px;
-
-    top:-20px;
+    inset:0;
 
     z-index:2000;
 
-    animation:fall 2.5s linear forwards;
+    background:
+        radial-gradient(
+            circle,
+            #10325c,
+            #020711
+        );
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
 }
 
-@keyframes fall{
+.loading-logo{
+
+    color:var(--gold2);
+
+    font-size:30px;
+
+    font-weight:900;
+
+    margin-bottom:18px;
+
+}
+
+.loader{
+
+    width:42px;
+
+    height:42px;
+
+    border:
+        4px solid
+        rgba(255,255,255,.15);
+
+    border-top-color:
+        var(--gold2);
+
+    border-radius:50%;
+
+    animation:
+        spin 1s linear infinite;
+
+}
+
+.loading-text{
+
+    margin-top:15px;
+
+    color:#c5d2e3;
+
+}
+
+@keyframes spin{
+
     to{
-        transform:
-            translateY(110vh)
-            rotate(720deg);
-
-        opacity:0;
+        transform:rotate(360deg);
     }
+
 }
+
 
 /* =========================================================
    MOBILE
@@ -967,116 +1124,89 @@ body::before{
 
 @media(max-width:650px){
 
-    .topbar{
-        padding:9px 10px;
-    }
-
-    .game-logo{
+    .logo{
         font-size:14px;
-    }
-
-    .top-btn{
-        padding:7px 9px;
-        font-size:12px;
-    }
-
-    .total-coins{
-        font-size:12px;
-        padding:7px 9px;
-    }
-
-    .game-shell{
-        padding:14px 12px 30px;
-    }
-
-    .question-card{
-        padding:21px 15px;
-        border-radius:18px;
     }
 
     .options{
         grid-template-columns:1fr;
-        gap:10px;
-    }
-
-    .option{
-        min-height:62px;
-        font-size:15px;
     }
 
     .lifelines{
         grid-template-columns:1fr 1fr;
     }
 
-    .lifeline{
-        min-height:52px;
+    .question-box{
+        padding:22px 15px;
+    }
+
+    .question{
+        font-size:18px;
     }
 
     .ladder{
         width:290px;
     }
+
 }
 
-@media(max-width:380px){
-
-    .game-logo{
-        display:none;
-    }
-
-    .timer-wrap{
-        transform:scale(.9);
-        margin-bottom:10px;
-    }
-
-    .question-text{
-        font-size:17px;
-    }
-
-    .option{
-        font-size:14px;
-    }
-}
 </style>
+
 </head>
+
 
 <body>
 
-<!-- =======================================================
-     TOP BAR
-======================================================= -->
 
-<header class="topbar">
+<!-- =====================================================
+     LOADING
+===================================================== -->
 
-    <div class="top-left">
+<div
+    class="loading"
+    id="loading">
 
-        <button
-            class="top-btn"
-            onclick="toggleLadder()">
-            ☰ Ladder
-        </button>
+    <div class="loading-logo">
+        LoksewaQuest
+    </div>
 
-        <div class="game-logo">
-            <span>Loksewa</span>Quest
-        </div>
+    <div class="loader"></div>
+
+    <div
+        class="loading-text"
+        id="loadingText">
+
+        प्रश्नहरू तयार हुँदैछन्...
 
     </div>
 
-    <div class="top-right">
+</div>
 
-        <div
-            class="total-coins"
-            id="totalCoinsDisplay">
-            🪙 0
-        </div>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+    <div class="logo">
+        <span>Loksewa</span>Quest
+    </div>
+
+    <div
+        class="header-coins"
+        id="headerCoins">
+
+        🪙 0
 
     </div>
 
 </header>
 
 
-<!-- =======================================================
-     OVERLAY
-======================================================= -->
+<!-- =====================================================
+     LADDER OVERLAY
+===================================================== -->
 
 <div
     class="overlay"
@@ -1085,76 +1215,89 @@ body::before{
 </div>
 
 
-<!-- =======================================================
-     MONEY LADDER
-======================================================= -->
+<!-- =====================================================
+     LADDER
+===================================================== -->
 
 <aside
     class="ladder"
-    id="moneyLadder">
+    id="ladder">
 
-    <div class="ladder-head">
+    <div class="ladder-header">
 
         <div class="ladder-title">
-            🪙 Coin Ladder
+            🪙 Prize Ladder
         </div>
 
         <button
-            class="close-btn"
+            class="close"
             onclick="toggleLadder()">
+
             ×
+
         </button>
 
     </div>
 
     <ul
-        class="money-list"
+        class="money"
         id="moneyList">
     </ul>
 
 </aside>
 
 
-<!-- =======================================================
+<!-- =====================================================
      GAME
-======================================================= -->
+===================================================== -->
 
-<main class="game-shell">
+<main class="game">
 
-    <!-- Progress -->
 
-    <div class="progress-area">
+    <div class="game-info">
 
         <div
-            class="question-number"
-            id="questionNumber">
-            Q1 / 10
+            class="question-counter"
+            id="counter">
+
+            QUESTION 1 / 10
+
         </div>
 
-        <div class="progress-track">
+        <button
+            class="ladder-button"
+            onclick="toggleLadder()">
 
-            <div
-                class="progress-bar"
-                id="progressBar">
-            </div>
+            🪜 Ladder
 
+        </button>
+
+    </div>
+
+
+    <div class="progress">
+
+        <div
+            class="progress-bar"
+            id="progressBar">
         </div>
 
     </div>
 
 
-    <!-- Timer -->
+    <!-- TIMER -->
 
-    <div class="timer-wrap">
+    <div class="timer-area">
 
         <div
-            class="timer-ring"
+            class="timer"
             id="timerRing">
 
             <span
-                class="timer-number"
                 id="timer">
+
                 30
+
             </span>
 
         </div>
@@ -1162,85 +1305,103 @@ body::before{
     </div>
 
 
-    <!-- Topic -->
+    <!-- TOPIC -->
 
     <div
         class="topic"
-        id="topicBadge">
+        id="topic">
+
         LOKSEWA QUIZ
+
     </div>
 
 
-    <!-- Question -->
+    <!-- QUESTION -->
 
-    <section class="question-card">
+    <section class="question-box">
 
         <div
-            class="question-text"
-            id="questionText">
-            प्रश्न लोड हुँदैछ...
+            class="question"
+            id="question">
+
+            प्रश्न load हुँदैछ...
+
         </div>
 
     </section>
 
 
-    <!-- Options -->
+    <!-- OPTIONS -->
 
-    <section
-        class="options"
-        id="optionsContainer">
+    <section class="options">
 
         <button
             class="option"
-            id="opt0"
+            id="option0"
             onclick="selectOption(0)">
 
-            <span class="option-label">A</span>
+            <span class="option-label">
+                A
+            </span>
 
-            <span class="option-text"></span>
+            <span
+                class="option-text">
+            </span>
 
         </button>
 
 
         <button
             class="option"
-            id="opt1"
+            id="option1"
             onclick="selectOption(1)">
 
-            <span class="option-label">B</span>
+            <span class="option-label">
+                B
+            </span>
 
-            <span class="option-text"></span>
+            <span
+                class="option-text">
+            </span>
 
         </button>
 
 
         <button
             class="option"
-            id="opt2"
+            id="option2"
             onclick="selectOption(2)">
 
-            <span class="option-label">C</span>
+            <span class="option-label">
+                C
+            </span>
 
-            <span class="option-text"></span>
+            <span
+                class="option-text">
+            </span>
 
         </button>
 
 
         <button
             class="option"
-            id="opt3"
+            id="option3"
             onclick="selectOption(3)">
 
-            <span class="option-label">D</span>
+            <span class="option-label">
+                D
+            </span>
 
-            <span class="option-text"></span>
+            <span
+                class="option-text">
+            </span>
 
         </button>
 
     </section>
 
 
-    <!-- Explanation -->
+    <!-- EXPLANATION -->
 
     <div
         class="explanation"
@@ -1248,14 +1409,14 @@ body::before{
     </div>
 
 
-    <!-- Lock -->
+    <!-- LOCK -->
 
-    <div class="action-area">
+    <div class="lock-area">
 
         <button
-            class="lock-btn"
-            id="lockBtn"
-            onclick="lockAnswer()"
+            class="lock"
+            id="lockButton"
+            onclick="openConfirm()"
             disabled>
 
             🔒 LOCK ANSWER
@@ -1263,53 +1424,50 @@ body::before{
         </button>
 
         <div
-            class="status-text"
-            id="statusText">
+            class="status"
+            id="status">
 
-            उत्तर छान्नुहोस् अनि LOCK गर्नुहोस्
+            उत्तर चयन गर्नुहोस्
 
         </div>
 
     </div>
 
 
-    <!-- Lifelines -->
+    <!-- LIFELINES -->
 
     <section class="lifelines">
 
         <button
-            class="lifeline"
-            id="ll5050"
+            class="life"
+            id="life5050"
             onclick="use5050()">
 
-            ½ 50:50
+            50:50
 
         </button>
 
-
         <button
-            class="lifeline"
-            id="llPhone"
+            class="life"
+            id="lifePhone"
             onclick="usePhone()">
 
             📞 Phone
 
         </button>
 
-
         <button
-            class="lifeline"
-            id="llAudience"
+            class="life"
+            id="lifeAudience"
             onclick="useAudience()">
 
             👥 Audience
 
         </button>
 
-
         <button
-            class="lifeline"
-            id="llFlip"
+            class="life"
+            id="lifeFlip"
             onclick="useFlip()">
 
             🔄 Flip
@@ -1321,41 +1479,99 @@ body::before{
 </main>
 
 
-<!-- =======================================================
-     GAME OVER MODAL
-======================================================= -->
+<!-- =====================================================
+     LOCK CONFIRM MODAL
+===================================================== -->
 
 <div
     class="modal"
-    id="gameModal">
+    id="confirmModal">
+
+    <div class="modal-card">
+
+        <div class="modal-title">
+
+            🔒 Final Answer?
+
+        </div>
+
+        <div class="modal-question">
+
+            तपाईंको चयन:
+
+        </div>
+
+        <div
+            class="selected-answer"
+            id="selectedAnswer">
+        </div>
+
+        <div class="modal-buttons">
+
+            <button
+                class="cancel"
+                onclick="closeConfirm()">
+
+                होइन, फेरि हेर्छु
+
+            </button>
+
+            <button
+                class="confirm"
+                onclick="confirmLock()">
+
+                🔒 LOCK
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     RESULT MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="resultModal">
 
     <div class="modal-card">
 
         <div
-            class="modal-icon"
-            id="modalIcon">
+            class="result-icon"
+            id="resultIcon">
+
             🏆
+
         </div>
 
         <div
             class="modal-title"
-            id="modalTitle">
+            id="resultTitle">
+
             Congratulations!
+
         </div>
 
         <div
-            class="modal-desc"
-            id="modalDesc">
+            class="modal-question"
+            id="resultMessage">
         </div>
 
         <div
-            class="final-coins"
-            id="finalCoins">
+            class="result-coins"
+            id="resultCoins">
+
             🪙 0
+
         </div>
 
         <button
-            class="restart-btn"
+            class="restart"
             onclick="restartGame()">
 
             🔄 फेरि खेल्नुहोस्
@@ -1367,71 +1583,42 @@ body::before{
 </div>
 
 
-<!-- =======================================================
-     LIFELINE MODAL
-======================================================= -->
-
-<div
-    class="modal small-modal"
-    id="lifelineModal">
-
-    <div class="modal-card">
-
-        <div
-            class="modal-icon"
-            id="lifeIcon">
-            📞
-        </div>
-
-        <div
-            class="modal-title"
-            id="lifeTitle">
-            Phone a Friend
-        </div>
-
-        <div
-            class="modal-desc"
-            id="lifeDescription">
-        </div>
-
-        <div
-            class="poll-bars"
-            id="pollBars"
-            style="display:none;">
-        </div>
-
-        <button
-            class="restart-btn"
-            onclick="closeLifelineModal()">
-
-            ठीक छ
-
-        </button>
-
-    </div>
-
-</div>
-
+<!-- =====================================================
+     FIREBASE + SUPABASE
+===================================================== -->
 
 <script type="module">
 
+
 /* =========================================================
-   IMPORTS
+   IMPORT SUPABASE
 ========================================================= */
 
 import {
     createClient
-} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+}
+from
+"https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+
+/* =========================================================
+   FIREBASE
+========================================================= */
 
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+}
+from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
 
 import {
     getAuth,
-    onAuthStateChanged,
-    signInAnonymously
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    onAuthStateChanged
+}
+from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
 
 import {
     getFirestore,
@@ -1443,104 +1630,104 @@ import {
     addDoc,
     serverTimestamp,
     increment
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+}
+from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 
 /* =========================================================
-   SUPABASE
+   SUPABASE CONFIG
 ========================================================= */
 
 const SUPABASE_URL =
-    "https://edyirdedkiarguvurpxq.supabase.co";
-
-const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJj...";
-
-
-const supabase =
-    createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
+"https://edyirdedkiarguvurpxq.supabase.co";
 
 
 /*
- IMPORTANT:
- आफ्नो existing full Supabase anon key माथि राख्नुहोस्।
- तपाईंले original code मा दिएको पूरा key नै राख्नुहोस्।
+ यहाँ आफ्नो original FULL anon key राख्नुहोस्
 */
+
+const SUPABASE_ANON_KEY =
+"YOUR_EXISTING_SUPABASE_ANON_KEY";
+
+
+const supabase =
+createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 
 
 /* =========================================================
-   FIREBASE
+   FIREBASE CONFIG
 ========================================================= */
 
 const firebaseConfig = {
 
     apiKey:
-        "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+    "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
 
     authDomain:
-        "loksewaquest-227b6.firebaseapp.com",
+    "loksewaquest-227b6.firebaseapp.com",
 
     projectId:
-        "loksewaquest-227b6",
+    "loksewaquest-227b6",
 
     storageBucket:
-        "loksewaquest-227b6.firebasestorage.app",
+    "loksewaquest-227b6.firebasestorage.app",
 
     messagingSenderId:
-        "779234903809",
+    "779234903809",
 
     appId:
-        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
 };
 
 
-const app =
-    initializeApp(firebaseConfig);
+const firebaseApp =
+initializeApp(firebaseConfig);
+
 
 const auth =
-    getAuth(app);
+getAuth(firebaseApp);
+
 
 const db =
-    getFirestore(app);
+getFirestore(firebaseApp);
 
 
 /* =========================================================
-   GAME CONFIG
+   PRIZE LADDER
 ========================================================= */
 
-const TOTAL_QUESTIONS = 10;
+const PRIZES = [
 
-const QUESTION_TIME = 30;
-
-
-/*
- Q5 र Q10 safe levels
-*/
-
-const SAFE_LEVELS = [5,10];
-
-
-/*
- IMPORTANT:
- index 0 = Q1
- index 9 = Q10
-*/
-
-const PRIZE_LADDER = [
     10,
     20,
     40,
     80,
-    150,
+
+    150,  // SAFE
+
     250,
     400,
     600,
     800,
-    1000
+
+    1000  // FINAL
+
 ];
+
+
+const SAFE_LEVELS = [
+    5,
+    10
+];
+
+
+const TOTAL =
+PRIZES.length;
 
 
 /* =========================================================
@@ -1549,37 +1736,36 @@ const PRIZE_LADDER = [
 
 let questions = [];
 
-let currentQuestionIndex = 0;
+let currentIndex = 0;
 
-let selectedOptionIndex = null;
+let selectedIndex = null;
 
 let timerInterval = null;
 
-let timeLeft = QUESTION_TIME;
-
-let totalCoinsEarned = 0;
-
-let safeCoins = 0;
-
-let userCurrentCoins = 0;
+let timeLeft = 30;
 
 let currentUser = null;
 
-let rewardAlreadyProcessed = false;
+let userCoins = 0;
+
+let winnings = 0;
+
+let safeWinnings = 0;
+
+let rewardSaved = false;
 
 let answerLocked = false;
 
-let flipUsed = false;
 
 let lifelines = {
 
-    "5050": false,
+    fifty:false,
 
-    "phone": false,
+    phone:false,
 
-    "audience": false,
+    audience:false,
 
-    "flip": false
+    flip:false
 
 };
 
@@ -1588,49 +1774,24 @@ let lifelines = {
    FIREBASE AUTH
 ========================================================= */
 
-function waitForAuth(){
+function waitForUser(){
 
-    return new Promise((resolve)=>{
+    return new Promise(resolve => {
 
         const unsubscribe =
-            onAuthStateChanged(
-                auth,
-                async user => {
+        onAuthStateChanged(
+            auth,
+            user => {
 
-                    unsubscribe();
+                unsubscribe();
 
-                    if(user){
+                currentUser =
+                    user;
 
-                        currentUser = user;
+                resolve(user);
 
-                        resolve(user);
-
-                        return;
-                    }
-
-
-                    try{
-
-                        const result =
-                            await signInAnonymously(auth);
-
-                        currentUser =
-                            result.user;
-
-                        resolve(currentUser);
-
-                    }catch(error){
-
-                        console.error(
-                            "Anonymous auth failed:",
-                            error
-                        );
-
-                        resolve(null);
-                    }
-
-                }
-            );
+            }
+        );
 
     });
 
@@ -1638,10 +1799,10 @@ function waitForAuth(){
 
 
 /* =========================================================
-   USER COINS
+   LOAD USER COINS
 ========================================================= */
 
-async function loadUserCoins(){
+async function loadCoins(){
 
     if(!currentUser)
         return;
@@ -1649,48 +1810,35 @@ async function loadUserCoins(){
 
     try{
 
-        const userRef =
-            doc(
-                db,
-                "users",
-                currentUser.uid
-            );
+        const ref =
+        doc(
+            db,
+            "users",
+            currentUser.uid
+        );
 
 
         const snap =
-            await getDoc(userRef);
+        await getDoc(ref);
 
 
         if(snap.exists()){
 
-            userCurrentCoins =
-                Number(
-                    snap.data().coins || 0
-                );
-
-        }else{
-
-            userCurrentCoins = 0;
-
-            await setDoc(
-                userRef,
-                {
-                    coins:0,
-                    createdAt:serverTimestamp()
-                },
-                {merge:true}
+            userCoins =
+            Number(
+                snap.data().coins || 0
             );
 
         }
 
 
-        updateCoinDisplay();
+        updateCoinUI();
 
 
     }catch(error){
 
         console.error(
-            "Could not load coins:",
+            "Coin loading error:",
             error
         );
 
@@ -1700,225 +1848,95 @@ async function loadUserCoins(){
 
 
 /* =========================================================
-   COIN DISPLAY
+   COIN UI
 ========================================================= */
 
-function updateCoinDisplay(){
+function updateCoinUI(){
 
     document.getElementById(
-        "totalCoinsDisplay"
+        "headerCoins"
     ).innerText =
-        `🪙 ${userCurrentCoins.toLocaleString()}`;
+        `🪙 ${userCoins.toLocaleString()}`;
 
 }
 
 
 /* =========================================================
-   LOAD QUESTIONS
+   FETCH QUESTIONS FROM SUPABASE
 ========================================================= */
 
-async function loadQuestions(){
+async function fetchQuestions(){
 
-    try{
-
-        const {
-            data,
-            error
-        } =
-            await supabase
-            .from("quizzes")
-            .select("*");
+    setLoading(
+        "Supabase बाट प्रश्नहरू ल्याउँदै..."
+    );
 
 
-        if(error)
-            throw error;
+    const {
+        data,
+        error
+    } =
+    await supabase
+
+        .from("quizzes")
+
+        .select(`
+            id,
+            topic,
+            question,
+            options,
+            answer,
+            explanation
+        `);
 
 
-        if(!data || data.length < TOTAL_QUESTIONS)
-            throw new Error(
-                "Not enough questions"
-            );
+    if(error){
 
-
-        /*
-         Shuffle questions
-        */
-
-        questions =
-            [...data]
-            .sort(
-                () => Math.random() - .5
-            )
-            .slice(
-                0,
-                TOTAL_QUESTIONS
-            );
-
-
-    }catch(error){
-
-        console.warn(
-            "Supabase failed:",
-            error
+        throw new Error(
+            "Supabase error: " +
+            error.message
         );
-
-
-        questions = getFallbackQuestions();
 
     }
 
-}
+
+    if(!data || data.length < TOTAL){
+
+        throw new Error(
+            `quizzes table मा कम्तीमा ${TOTAL} questions आवश्यक छ। हाल ${data?.length || 0} मात्र छन्।`
+        );
+
+    }
 
 
-/* =========================================================
-   FALLBACK QUESTIONS
-========================================================= */
+    /*
+     IMPORTANT:
+     Questions are coming ONLY from Supabase.
+     */
 
-function getFallbackQuestions(){
+    const shuffled =
+    [...data]
+        .sort(
+            () =>
+                Math.random() - 0.5
+        );
 
-    return [
 
-        {
-            topic:"सामान्य ज्ञान",
-            question:"सगरमाथाको उचाइ कति हो?",
-            options:[
-                "८८४८.८६ मिटर",
-                "८८४८ मिटर",
-                "८८५० मिटर",
-                "८९०० मिटर"
-            ],
-            answer:"८८४८.८६ मिटर",
-            explanation:
-                "सगरमाथाको हालको आधिकारिक उचाइ ८८४८.८६ मिटर हो।"
-        },
+    /*
+     First 10 questions
+     */
 
-        {
-            topic:"नेपाल भूगोल",
-            question:"नेपालको सबैभन्दा लामो नदी कुन हो?",
-            options:[
-                "कोशी",
-                "कर्णाली",
-                "गण्डकी",
-                "महाकाली"
-            ],
-            answer:"कर्णाली",
-            explanation:
-                "कर्णालीलाई नेपालको सबैभन्दा लामो नदी मानिन्छ।"
-        },
+    questions =
+        shuffled.slice(
+            0,
+            TOTAL
+        );
 
-        {
-            topic:"संविधान",
-            question:"नेपालको संविधान कहिले जारी भयो?",
-            options:[
-                "२०७२ असोज ३",
-                "२०७२ भदौ ३",
-                "२०७३ असोज ३",
-                "२०७१ असोज ३"
-            ],
-            answer:"२०७२ असोज ३",
-            explanation:
-                "नेपालको संविधान २०७२ असोज ३ गते जारी भएको हो।"
-        },
 
-        {
-            topic:"इतिहास",
-            question:"नेपालको एकीकरण अभियानको नेतृत्व कसले गरेका थिए?",
-            options:[
-                "जंगबहादुर राणा",
-                "पृथ्वीनारायण शाह",
-                "त्रिभुवन",
-                "महेंद्र"
-            ],
-            answer:"पृथ्वीनारायण शाह",
-            explanation:
-                "नेपाल एकीकरण अभियानको नेतृत्व पृथ्वीनारायण शाहले गरेका थिए।"
-        },
-
-        {
-            topic:"लोकसेवा",
-            question:"लोक सेवा आयोग नेपालको संविधानको कुन भागमा व्यवस्था गरिएको छ?",
-            options:[
-                "भाग २१",
-                "भाग २२",
-                "भाग २३",
-                "भाग २४"
-            ],
-            answer:"भाग २३",
-            explanation:
-                "नेपालको संविधानको भाग २३ मा लोक सेवा आयोगसम्बन्धी व्यवस्था छ।"
-        },
-
-        {
-            topic:"शासन",
-            question:"सुशासनको प्रमुख आधारमध्ये कुन हो?",
-            options:[
-                "पारदर्शिता",
-                "गोपनीयता",
-                "केन्द्रीकरण",
-                "ढिलासुस्ती"
-            ],
-            answer:"पारदर्शिता",
-            explanation:
-                "पारदर्शिता सुशासनको महत्वपूर्ण आधार हो।"
-        },
-
-        {
-            topic:"अर्थतन्त्र",
-            question:"नेपालको केन्द्रीय बैंक कुन हो?",
-            options:[
-                "नेपाल बैंक",
-                "राष्ट्रिय वाणिज्य बैंक",
-                "नेपाल राष्ट्र बैंक",
-                "कृषि विकास बैंक"
-            ],
-            answer:"नेपाल राष्ट्र बैंक",
-            explanation:
-                "नेपाल राष्ट्र बैंक नेपालको केन्द्रीय बैंक हो।"
-        },
-
-        {
-            topic:"भूगोल",
-            question:"नेपालमा कति प्रदेश छन्?",
-            options:[
-                "५",
-                "६",
-                "७",
-                "८"
-            ],
-            answer:"७",
-            explanation:
-                "नेपालमा ७ वटा प्रदेश छन्।"
-        },
-
-        {
-            topic:"लोकसेवा",
-            question:"सार्वजनिक सेवा प्रवाहको मुख्य उद्देश्य के हो?",
-            options:[
-                "जनतालाई सेवा प्रदान गर्नु",
-                "कर बढाउनु",
-                "कर्मचारी घटाउनु",
-                "कार्यालय विस्तार गर्नु"
-            ],
-            answer:"जनतालाई सेवा प्रदान गर्नु",
-            explanation:
-                "सार्वजनिक प्रशासनको मूल उद्देश्य नागरिकलाई प्रभावकारी सेवा प्रदान गर्नु हो।"
-        },
-
-        {
-            topic:"सामान्य ज्ञान",
-            question:"नेपालको राष्ट्रिय फूल कुन हो?",
-            options:[
-                "कमल",
-                "लालीगुराँस",
-                "सयपत्री",
-                "गोदावरी"
-            ],
-            answer:"लालीगुराँस",
-            explanation:
-                "लालीगुराँस नेपालको राष्ट्रिय फूल हो।"
-        }
-
-    ];
+    console.log(
+        "Loaded Supabase questions:",
+        questions
+    );
 
 }
 
@@ -1933,18 +1951,24 @@ function getOptions(question){
         question.options;
 
 
+    /*
+     JSONB normally arrives as
+     JS array automatically.
+
+     But this also handles
+     stringified JSON.
+     */
+
     if(typeof options === "string"){
 
         try{
 
             options =
-                JSON.parse(options);
+            JSON.parse(options);
 
-        }catch(error){
+        }catch{
 
-            console.warn(
-                "Could not parse options"
-            );
+            return [];
 
         }
 
@@ -1959,152 +1983,152 @@ function getOptions(question){
 
 
 /* =========================================================
-   FIND CORRECT INDEX
+   FIND ANSWER INDEX
 ========================================================= */
 
 function getCorrectIndex(question){
 
     const options =
-        getOptions(question);
+    getOptions(question);
 
 
     const answer =
-        String(
-            question.answer ?? ""
-        )
-        .trim();
+    String(
+        question.answer ?? ""
+    )
+    .trim();
 
 
     /*
-     Answer can be:
-     actual option text
-     0/1/2/3
-     A/B/C/D
-    */
+     Case 1:
+     answer = A/B/C/D
+     */
 
-    const letter =
-        answer.toUpperCase();
+    if(
+        ["A","B","C","D"]
+        .includes(
+            answer.toUpperCase()
+        )
+    ){
 
-
-    if(["A","B","C","D"].includes(letter)){
-
-        return "ABCD".indexOf(letter);
+        return "ABCD"
+            .indexOf(
+                answer.toUpperCase()
+            );
 
     }
 
 
-    if(/^[0-3]$/.test(answer)){
+    /*
+     Case 2:
+     answer = 0/1/2/3
+     */
+
+    if(
+        ["0","1","2","3"]
+        .includes(answer)
+    ){
 
         return Number(answer);
 
     }
 
 
-    const index =
-        options.findIndex(
-            option =>
-                String(option)
-                .trim()
-                .toLowerCase() ===
-                answer.toLowerCase()
-        );
+    /*
+     Case 3:
+     answer = actual option text
+     */
+
+    const normalized =
+    answer
+        .toLowerCase()
+        .trim();
 
 
-    return index;
+    return options.findIndex(
+        option =>
+        String(option)
+            .toLowerCase()
+            .trim()
+        === normalized
+    );
 
 }
 
 
 /* =========================================================
-   INIT MONEY LADDER
+   DRAW LADDER
 ========================================================= */
 
-function renderMoneyLadder(){
+function renderLadder(){
 
     const list =
-        document.getElementById(
-            "moneyList"
-        );
+    document.getElementById(
+        "moneyList"
+    );
 
 
     list.innerHTML = "";
 
 
-    /*
-     Display Q10 at top
-    */
-
     for(
-        let i = PRIZE_LADDER.length - 1;
+        let i = TOTAL - 1;
         i >= 0;
         i--
     ){
 
-        const questionNumber =
-            i + 1;
-
-        const row =
-            document.createElement("li");
+        const level =
+        i + 1;
 
 
-        row.className =
-            "money-row";
+        const li =
+        document.createElement(
+            "li"
+        );
 
 
         if(
-            SAFE_LEVELS.includes(
-                questionNumber
-            )
+            level ===
+            currentIndex + 1
         ){
 
-            row.classList.add("safe");
+            li.classList.add(
+                "current"
+            );
 
         }
 
 
         if(
-            questionNumber ===
-            currentQuestionIndex + 1
+            SAFE_LEVELS.includes(level)
         ){
 
-            row.classList.add("current");
+            li.classList.add(
+                "safe"
+            );
 
         }
 
 
-        if(
-            questionNumber <=
-            currentQuestionIndex
-        ){
-
-            row.classList.add("completed");
-
-        }
-
-
-        const safe =
-            SAFE_LEVELS.includes(
-                questionNumber
-            )
-            ? `<small class="safe-label">🔒 SAFE</small>`
-            : "";
-
-
-        row.innerHTML = `
+        li.innerHTML = `
 
             <span>
-                Q${questionNumber}
-                ${safe}
+                Q${level}
+                ${
+                    SAFE_LEVELS.includes(level)
+                    ? " 🔒"
+                    : ""
+                }
             </span>
 
-            <span>
-                🪙 ${PRIZE_LADDER[i]}
-            </span>
+            <strong>
+                🪙 ${PRIZES[i]}
+            </strong>
 
         `;
 
 
-        list.appendChild(row);
+        list.appendChild(li);
 
     }
 
@@ -2112,12 +2136,15 @@ function renderMoneyLadder(){
 
 
 /* =========================================================
-   LOAD QUESTION
+   LOAD CURRENT QUESTION
 ========================================================= */
 
 function loadQuestion(){
 
-    if(currentQuestionIndex >= questions.length){
+    if(
+        currentIndex >=
+        questions.length
+    ){
 
         finishGame(
             true,
@@ -2131,122 +2158,70 @@ function loadQuestion(){
 
     answerLocked = false;
 
-    selectedOptionIndex = null;
+    selectedIndex = null;
 
 
-    const question =
-        questions[
-            currentQuestionIndex
-        ];
+    const q =
+    questions[
+        currentIndex
+    ];
 
 
     const options =
-        getOptions(question);
+    getOptions(q);
 
+
+    /*
+     UI
+     */
 
     document.getElementById(
-        "questionNumber"
+        "counter"
     ).innerText =
-        `Q${currentQuestionIndex + 1} / ${TOTAL_QUESTIONS}`;
+        `QUESTION ${currentIndex + 1} / ${TOTAL}`;
 
 
     document.getElementById(
         "progressBar"
     ).style.width =
-        `${(
-            (currentQuestionIndex + 1) /
-            TOTAL_QUESTIONS
-        ) * 100}%`;
+        `${
+            ((currentIndex + 1) / TOTAL) * 100
+        }%`;
 
 
     document.getElementById(
-        "topicBadge"
+        "topic"
     ).innerText =
-        question.topic ||
-        "Loksewa Quiz";
+        q.topic ||
+        "LOKSEWA QUIZ";
 
 
     document.getElementById(
-        "questionText"
+        "question"
     ).innerText =
-        question.question ||
-        "प्रश्न उपलब्ध छैन।";
+        q.question;
 
 
-    resetOptions();
+    /*
+     Options
+     */
 
-
-    for(let i=0;i<4;i++){
+    for(
+        let i=0;
+        i<4;
+        i++
+    ){
 
         const button =
-            document.getElementById(
-                `opt${i}`
-            );
+        document.getElementById(
+            `option${i}`
+        );
 
 
         const text =
-            button.querySelector(
-                ".option-text"
-            );
-
-
-        if(
-            options[i] !== undefined
-        ){
-
-            text.innerText =
-                options[i];
-
-            button.style.display =
-                "flex";
-
-        }else{
-
-            button.style.display =
-                "none";
-
-        }
-
-    }
-
-
-    document.getElementById(
-        "lockBtn"
-    ).disabled = true;
-
-
-    document.getElementById(
-        "statusText"
-    ).innerText =
-        "उत्तर छान्नुहोस् अनि LOCK गर्नुहोस्";
-
-
-    document.getElementById(
-        "explanation"
-    ).style.display =
-        "none";
-
-
-    renderMoneyLadder();
-
-
-    startTimer();
-
-}
-
-
-/* =========================================================
-   RESET OPTIONS
-========================================================= */
-
-function resetOptions(){
-
-    for(let i=0;i<4;i++){
-
-        const button =
-            document.getElementById(
-                `opt${i}`
-            );
+        button.querySelector(
+            ".option-text"
+        );
 
 
         button.classList.remove(
@@ -2257,103 +2232,58 @@ function resetOptions(){
         );
 
 
-        button.disabled = false;
+        button.disabled =
+        false;
+
+
+        if(
+            options[i] !== undefined
+        ){
+
+            text.innerText =
+            options[i];
+
+            button.style.display =
+            "flex";
+
+        }else{
+
+            button.style.display =
+            "none";
+
+        }
 
     }
 
-}
+
+    document.getElementById(
+        "lockButton"
+    ).disabled =
+    true;
 
 
-/* =========================================================
-   TIMER
-========================================================= */
-
-function startTimer(){
-
-    clearInterval(timerInterval);
+    document.getElementById(
+        "status"
+    ).innerText =
+    "उत्तर चयन गर्नुहोस्";
 
 
-    timeLeft =
-        QUESTION_TIME;
+    document.getElementById(
+        "explanation"
+    ).style.display =
+    "none";
 
 
-    updateTimerUI();
+    renderLadder();
 
 
-    timerInterval =
-        setInterval(()=>{
-
-            if(answerLocked)
-                return;
-
-
-            timeLeft--;
-
-
-            updateTimerUI();
-
-
-            if(timeLeft <= 0){
-
-                clearInterval(
-                    timerInterval
-                );
-
-
-                handleTimeout();
-
-            }
-
-        },1000);
+    startTimer();
 
 }
 
 
 /* =========================================================
-   TIMER UI
-========================================================= */
-
-function updateTimerUI(){
-
-    const timer =
-        document.getElementById(
-            "timer"
-        );
-
-
-    const ring =
-        document.getElementById(
-            "timerRing"
-        );
-
-
-    timer.innerText =
-        timeLeft;
-
-
-    const percentage =
-        Math.max(
-            0,
-            (timeLeft / QUESTION_TIME) * 100
-        );
-
-
-    ring.style.setProperty(
-        "--timer-progress",
-        `${percentage}%`
-    );
-
-
-    timer.classList.toggle(
-        "timer-danger",
-        timeLeft <= 8
-    );
-
-}
-
-
-/* =========================================================
-   SELECT OPTION
+   OPTION SELECT
 ========================================================= */
 
 window.selectOption =
@@ -2364,25 +2294,26 @@ function(index){
 
 
     const button =
-        document.getElementById(
-            `opt${index}`
-        );
+    document.getElementById(
+        `option${index}`
+    );
 
 
     if(
         button.disabled ||
         button.classList.contains("hidden")
-    ){
-
+    )
         return;
 
-    }
 
-
-    for(let i=0;i<4;i++){
+    for(
+        let i=0;
+        i<4;
+        i++
+    ){
 
         document.getElementById(
-            `opt${i}`
+            `option${i}`
         )
         .classList.remove(
             "selected"
@@ -2396,20 +2327,91 @@ function(index){
     );
 
 
-    selectedOptionIndex =
-        index;
+    selectedIndex =
+    index;
 
 
     document.getElementById(
-        "lockBtn"
+        "lockButton"
     ).disabled =
-        false;
+    false;
 
 
     document.getElementById(
-        "statusText"
+        "status"
     ).innerText =
-        "उत्तर चयन भयो — अब LOCK गर्नुहोस्";
+    "उत्तर चयन भयो";
+
+};
+
+
+/* =========================================================
+   OPEN LOCK CONFIRMATION
+========================================================= */
+
+window.openConfirm =
+function(){
+
+    if(
+        selectedIndex === null ||
+        answerLocked
+    )
+        return;
+
+
+    const q =
+    questions[
+        currentIndex
+    ];
+
+
+    const options =
+    getOptions(q);
+
+
+    document.getElementById(
+        "selectedAnswer"
+    ).innerText =
+    `${"ABCD"[selectedIndex]}. ${options[selectedIndex]}`;
+
+
+    document.getElementById(
+        "confirmModal"
+    ).style.display =
+    "flex";
+
+};
+
+
+/* =========================================================
+   CLOSE CONFIRM
+========================================================= */
+
+window.closeConfirm =
+function(){
+
+    document.getElementById(
+        "confirmModal"
+    ).style.display =
+    "none";
+
+};
+
+
+/* =========================================================
+   CONFIRM LOCK
+========================================================= */
+
+window.confirmLock =
+function(){
+
+    document.getElementById(
+        "confirmModal"
+    ).style.display =
+    "none";
+
+
+    lockAnswer();
 
 };
 
@@ -2418,20 +2420,17 @@ function(index){
    LOCK ANSWER
 ========================================================= */
 
-window.lockAnswer =
-function(){
+function lockAnswer(){
 
     if(
-        selectedOptionIndex === null ||
+        selectedIndex === null ||
         answerLocked
-    ){
-
+    )
         return;
 
-    }
 
-
-    answerLocked = true;
+    answerLocked =
+    true;
 
 
     clearInterval(
@@ -2439,212 +2438,201 @@ function(){
     );
 
 
+    /*
+     Disable everything during reveal
+     */
+
     document.getElementById(
-        "lockBtn"
+        "lockButton"
     ).disabled =
+    true;
+
+
+    for(
+        let i=0;
+        i<4;
+        i++
+    ){
+
+        document.getElementById(
+            `option${i}`
+        ).disabled =
         true;
 
-
-    for(let i=0;i<4;i++){
-
-        document.getElementById(
-            `opt${i}`
-        ).disabled =
-            true;
-
     }
 
 
     document.getElementById(
-        "statusText"
+        "status"
     ).innerText =
-        "🔒 ANSWER LOCKED";
-
-
-    const question =
-        questions[
-            currentQuestionIndex
-        ];
-
-
-    const correctIndex =
-        getCorrectIndex(
-            question
-        );
-
-
-    const selectedButton =
-        document.getElementById(
-            `opt${selectedOptionIndex}`
-        );
+    "🔒 LOCKED — उत्तर जाँच हुँदैछ...";
 
 
     /*
-     Small dramatic delay
-    */
+     Dramatic pause
+     */
 
-    setTimeout(()=>{
-
-        if(
-            selectedOptionIndex ===
-            correctIndex
-        ){
-
-            handleCorrect(
-                selectedButton
-            );
-
-        }else{
-
-            handleWrong(
-                selectedButton,
-                correctIndex
-            );
-
-        }
-
-    },900);
-
-};
-
-
-/* =========================================================
-   CORRECT ANSWER
-========================================================= */
-
-function handleCorrect(button){
-
-    button.classList.remove(
-        "selected"
+    setTimeout(
+        revealAnswer,
+        1500
     );
-
-
-    button.classList.add(
-        "correct"
-    );
-
-
-    const questionNumber =
-        currentQuestionIndex + 1;
-
-
-    totalCoinsEarned =
-        PRIZE_LADDER[
-            currentQuestionIndex
-        ];
-
-
-    /*
-     Safe level update
-    */
-
-    if(
-        SAFE_LEVELS.includes(
-            questionNumber
-        )
-    ){
-
-        safeCoins =
-            totalCoinsEarned;
-
-    }
-
-
-    document.getElementById(
-        "statusText"
-    ).innerText =
-        `🎉 सही उत्तर! +${totalCoinsEarned} Coins`;
-
-
-    showExplanation();
-
-
-    if(
-        questionNumber ===
-        TOTAL_QUESTIONS
-    ){
-
-        setTimeout(()=>{
-
-            finishGame(
-                true,
-                "अविश्वसनीय! तपाईंले सबै 10 प्रश्न सही गर्नुभयो।"
-            );
-
-        },2600);
-
-        createConfetti();
-
-        return;
-
-    }
-
-
-    createSmallCelebration();
-
-
-    setTimeout(()=>{
-
-        currentQuestionIndex++;
-
-        loadQuestion();
-
-    },2200);
 
 }
 
 
 /* =========================================================
-   WRONG ANSWER
+   REVEAL ANSWER
 ========================================================= */
 
-function handleWrong(
-    selectedButton,
-    correctIndex
-){
+function revealAnswer(){
 
-    selectedButton.classList.add(
-        "wrong"
+    const q =
+    questions[
+        currentIndex
+    ];
+
+
+    const correctIndex =
+    getCorrectIndex(q);
+
+
+    const selectedButton =
+    document.getElementById(
+        `option${selectedIndex}`
     );
 
 
-    if(correctIndex >= 0){
+    /*
+     CORRECT
+     */
 
-        document.getElementById(
-            `opt${correctIndex}`
-        )
-        .classList.add(
+    if(
+        selectedIndex ===
+        correctIndex
+    ){
+
+        selectedButton.classList.remove(
+            "selected"
+        );
+
+
+        selectedButton.classList.add(
             "correct"
         );
 
+
+        winnings =
+        PRIZES[
+            currentIndex
+        ];
+
+
+        /*
+         Safe level
+         */
+
+        if(
+            SAFE_LEVELS.includes(
+                currentIndex + 1
+            )
+        ){
+
+            safeWinnings =
+            winnings;
+
+        }
+
+
+        document.getElementById(
+            "status"
+        ).innerText =
+        `🎉 सही उत्तर! ${winnings} Coins`;
+
+
+        showExplanation();
+
+
+        /*
+         Final question
+         */
+
+        if(
+            currentIndex ===
+            TOTAL - 1
+        ){
+
+            setTimeout(
+                () =>
+                finishGame(
+                    true,
+                    "अविश्वसनीय! तपाईंले अन्तिम प्रश्न पनि सही गर्नुभयो।"
+                ),
+                2500
+            );
+
+            return;
+
+        }
+
+
+        setTimeout(()=>{
+
+            currentIndex++;
+
+            loadQuestion();
+
+        },2300);
+
+
     }
 
+    /*
+     WRONG
+     */
 
-    showExplanation();
+    else{
 
-
-    const banked =
-        getSafeCoins();
-
-
-    totalCoinsEarned =
-        banked;
-
-
-    document.getElementById(
-        "statusText"
-    ).innerText =
-        `❌ गलत उत्तर — सुरक्षित Coins: ${banked}`;
-
-
-    setTimeout(()=>{
-
-        finishGame(
-            false,
-            `उत्तर गलत भयो। तपाईंले ${banked.toLocaleString()} Coins सुरक्षित गर्नुभयो।`
+        selectedButton.classList.add(
+            "wrong"
         );
 
-    },2800);
+
+        if(
+            correctIndex >= 0
+        ){
+
+            document.getElementById(
+                `option${correctIndex}`
+            )
+            .classList.add(
+                "correct"
+            );
+
+        }
+
+
+        showExplanation();
+
+
+        /*
+         Player gets SAFE amount,
+         not current question prize.
+         */
+
+        winnings =
+        safeWinnings;
+
+
+        setTimeout(()=>{
+
+            finishGame(
+                false,
+                `उत्तर गलत भयो। तपाईंले ${safeWinnings.toLocaleString()} Coins सुरक्षित गर्नुभयो।`
+            );
+
+        },2800);
+
+    }
 
 }
 
@@ -2653,36 +2641,128 @@ function handleWrong(
    TIMEOUT
 ========================================================= */
 
-function handleTimeout(){
+function startTimer(){
 
-    answerLocked = true;
+    clearInterval(
+        timerInterval
+    );
 
 
-    for(let i=0;i<4;i++){
+    timeLeft =
+    30;
+
+
+    updateTimer();
+
+
+    timerInterval =
+    setInterval(()=>{
+
+        timeLeft--;
+
+        updateTimer();
+
+
+        if(
+            timeLeft <= 0
+        ){
+
+            clearInterval(
+                timerInterval
+            );
+
+
+            timeoutAnswer();
+
+        }
+
+    },1000);
+
+}
+
+
+/* =========================================================
+   UPDATE TIMER
+========================================================= */
+
+function updateTimer(){
+
+    const timer =
+    document.getElementById(
+        "timer"
+    );
+
+
+    const ring =
+    document.getElementById(
+        "timerRing"
+    );
+
+
+    timer.innerText =
+    timeLeft;
+
+
+    ring.style.setProperty(
+        "--progress",
+        `${
+            (timeLeft / 30) * 100
+        }%`
+    );
+
+
+    timer.classList.toggle(
+        "timer-danger",
+        timeLeft <= 7
+    );
+
+}
+
+
+/* =========================================================
+   TIMEOUT
+========================================================= */
+
+function timeoutAnswer(){
+
+    if(answerLocked)
+        return;
+
+
+    answerLocked =
+    true;
+
+
+    for(
+        let i=0;
+        i<4;
+        i++
+    ){
 
         document.getElementById(
-            `opt${i}`
-        ).disabled = true;
+            `option${i}`
+        ).disabled =
+        true;
 
     }
 
 
-    const question =
-        questions[
-            currentQuestionIndex
-        ];
+    const q =
+    questions[
+        currentIndex
+    ];
 
 
     const correctIndex =
-        getCorrectIndex(
-            question
-        );
+    getCorrectIndex(q);
 
 
-    if(correctIndex >= 0){
+    if(
+        correctIndex >= 0
+    ){
 
         document.getElementById(
-            `opt${correctIndex}`
+            `option${correctIndex}`
         )
         .classList.add(
             "correct"
@@ -2694,61 +2774,24 @@ function handleTimeout(){
     showExplanation();
 
 
-    const banked =
-        getSafeCoins();
-
-
-    totalCoinsEarned =
-        banked;
+    winnings =
+    safeWinnings;
 
 
     document.getElementById(
-        "statusText"
+        "status"
     ).innerText =
-        `⏰ समय सकियो — सुरक्षित Coins: ${banked}`;
+    `⏰ समय सकियो — सुरक्षित ${safeWinnings} Coins`;
 
 
     setTimeout(()=>{
 
         finishGame(
             false,
-            `समय सकियो। तपाईंले ${banked.toLocaleString()} Coins सुरक्षित गर्नुभयो।`
+            `समय सकियो। तपाईंले ${safeWinnings.toLocaleString()} Coins सुरक्षित गर्नुभयो।`
         );
 
     },2500);
-
-}
-
-
-/* =========================================================
-   SAFE COINS
-========================================================= */
-
-function getSafeCoins(){
-
-    /*
-     Find highest completed safe level
-    */
-
-    let safe = 0;
-
-
-    for(const level of SAFE_LEVELS){
-
-        if(
-            currentQuestionIndex + 1 >
-            level
-        ){
-
-            safe =
-                PRIZE_LADDER[level - 1];
-
-        }
-
-    }
-
-
-    return safe;
 
 }
 
@@ -2759,32 +2802,28 @@ function getSafeCoins(){
 
 function showExplanation(){
 
-    const question =
-        questions[
-            currentQuestionIndex
-        ];
+    const q =
+    questions[
+        currentIndex
+    ];
 
 
-    const explanation =
-        question.explanation;
-
-
-    if(!explanation)
+    if(!q.explanation)
         return;
 
 
     const box =
-        document.getElementById(
-            "explanation"
-        );
+    document.getElementById(
+        "explanation"
+    );
 
 
     box.innerText =
-        `💡 ${explanation}`;
+    `💡 ${q.explanation}`;
 
 
     box.style.display =
-        "block";
+    "block";
 
 }
 
@@ -2797,165 +2836,252 @@ window.use5050 =
 function(){
 
     if(
-        lifelines["5050"] ||
+        lifelines.fifty ||
         answerLocked
     )
         return;
 
 
-    lifelines["5050"] =
+    lifelines.fifty =
+    true;
+
+
+    document.getElementById(
+        "life5050"
+    ).disabled =
+    true;
+
+
+    const q =
+    questions[
+        currentIndex
+    ];
+
+
+    const correct =
+    getCorrectIndex(q);
+
+
+    const wrong =
+    [0,1,2,3]
+    .filter(
+        i => i !== correct
+    )
+    .sort(
+        () =>
+            Math.random() - .5
+    )
+    .slice(0,2);
+
+
+    wrong.forEach(i=>{
+
+        document.getElementById(
+            `option${i}`
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+        document.getElementById(
+            `option${i}`
+        ).disabled =
         true;
 
-
-    document.getElementById(
-        "ll5050"
-    ).disabled = true;
-
-
-    const question =
-        questions[
-            currentQuestionIndex
-        ];
-
-
-    const correctIndex =
-        getCorrectIndex(
-            question
-        );
-
-
-    if(correctIndex < 0)
-        return;
-
-
-    const wrongIndexes =
-        [0,1,2,3]
-        .filter(
-            index =>
-                index !== correctIndex
-        )
-        .sort(
-            () => Math.random() - .5
-        );
-
-
-    /*
-     Remove exactly two wrong answers
-    */
-
-    wrongIndexes
-        .slice(0,2)
-        .forEach(index=>{
-
-            const button =
-                document.getElementById(
-                    `opt${index}`
-                );
-
-
-            button.classList.add(
-                "hidden"
-            );
-
-
-            button.disabled =
-                true;
-
-        });
+    });
 
 
     document.getElementById(
-        "statusText"
+        "status"
     ).innerText =
-        "½ 50:50 प्रयोग गरियो — 2 वटा गलत विकल्प हटाइयो।";
+    "50:50 प्रयोग गरियो";
 
 };
 
 
 /* =========================================================
-   PHONE A FRIEND
+   PHONE
 ========================================================= */
 
 window.usePhone =
 function(){
 
     if(
-        lifelines["phone"] ||
+        lifelines.phone ||
         answerLocked
     )
         return;
 
 
-    lifelines["phone"] =
-        true;
+    lifelines.phone =
+    true;
 
 
     document.getElementById(
-        "llPhone"
-    ).disabled = true;
+        "lifePhone"
+    ).disabled =
+    true;
 
 
-    const question =
-        questions[
-            currentQuestionIndex
-        ];
+    const q =
+    questions[
+        currentIndex
+    ];
 
 
-    const correctIndex =
-        getCorrectIndex(
-            question
-        );
-
-
-    const confidence =
-        Math.floor(
-            70 + Math.random() * 25
-        );
+    const correct =
+    getCorrectIndex(q);
 
 
     const letters =
-        ["A","B","C","D"];
-
-
-    let suggestedIndex =
-        correctIndex;
+    ["A","B","C","D"];
 
 
     /*
-     Small chance friend gives wrong suggestion
-    */
+     Friend usually knows,
+     but not always.
+     */
+
+    let suggestion =
+    correct;
+
 
     if(
-        Math.random() > .88
+        Math.random() < .12
     ){
 
-        const alternatives =
-            [0,1,2,3]
-            .filter(
-                x =>
-                    x !== correctIndex
-            );
+        const wrong =
+        [0,1,2,3]
+        .filter(
+            i => i !== correct
+        );
 
 
-        suggestedIndex =
-            alternatives[
-                Math.floor(
-                    Math.random() *
-                    alternatives.length
-                )
-            ];
+        suggestion =
+        wrong[
+            Math.floor(
+                Math.random() *
+                wrong.length
+            )
+        ];
 
     }
 
 
-    showLifelineModal(
+    alert(
+        `📞 Phone a Friend\n\n` +
+        `साथी भन्छ:\n\n` +
+        `"मलाई ${letters[suggestion]} उत्तर सही जस्तो लाग्छ।"`
+    );
 
-        "📞",
+};
 
-        "Phone a Friend",
 
-        `साथीको अनुमान अनुसार <strong>${letters[suggestedIndex]}</strong> विकल्प सही हुन सक्छ।<br><br>
-         Confidence: <strong>${confidence}%</strong>`
+/* =========================================================
+   AUDIENCE
+========================================================= */
+
+window.useAudience =
+function(){
+
+    if(
+        lifelines.audience ||
+        answerLocked
+    )
+        return;
+
+
+    lifelines.audience =
+    true;
+
+
+    document.getElementById(
+        "lifeAudience"
+    ).disabled =
+    true;
+
+
+    const q =
+    questions[
+        currentIndex
+    ];
+
+
+    const correct =
+    getCorrectIndex(q);
+
+
+    /*
+     Generate realistic distribution
+     */
+
+    let values =
+    [10,10,10,10];
+
+
+    values[correct] =
+    50 +
+    Math.floor(
+        Math.random() * 25
+    );
+
+
+    let remaining =
+    100 -
+    values[correct];
+
+
+    const wrong =
+    [0,1,2,3]
+    .filter(
+        i => i !== correct
+    );
+
+
+    wrong.forEach(
+        (index,pos)=>{
+
+            if(
+                pos ===
+                wrong.length - 1
+            ){
+
+                values[index] =
+                remaining;
+
+            }else{
+
+                const value =
+                Math.floor(
+                    Math.random() *
+                    (remaining + 1)
+                );
+
+
+                values[index] =
+                value;
+
+                remaining -=
+                value;
+
+            }
+
+        }
+    );
+
+
+    alert(
+
+        `👥 Audience Poll\n\n` +
+
+        `A: ${values[0]}%\n` +
+
+        `B: ${values[1]}%\n` +
+
+        `C: ${values[2]}%\n` +
+
+        `D: ${values[3]}%`
 
     );
 
@@ -2963,316 +3089,349 @@ function(){
 
 
 /* =========================================================
-   AUDIENCE POLL
-========================================================= */
-
-window.useAudience =
-function(){
-
-    if(
-        lifelines["audience"] ||
-        answerLocked
-    )
-        return;
-
-
-    lifelines["audience"] =
-        true;
-
-
-    document.getElementById(
-        "llAudience"
-    ).disabled = true;
-
-
-    const question =
-        questions[
-            currentQuestionIndex
-        ];
-
-
-    const correctIndex =
-        getCorrectIndex(
-            question
-        );
-
-
-    let percentages =
-        [10,10,10,10];
-
-
-    /*
-     Generate realistic poll
-    */
-
-    let remaining = 100;
-
-
-    for(let i=0;i<4;i++){
-
-        if(
-            i === correctIndex
-        )
-            continue;
-
-
-        const max =
-            Math.min(
-                20,
-                remaining
-            );
-
-
-        const value =
-            Math.floor(
-                Math.random() *
-                max
-            );
-
-
-        percentages[i] =
-            value;
-
-        remaining -= value;
-
-    }
-
-
-    percentages[correctIndex] =
-        remaining;
-
-
-    /*
-     Shuffle visual percentages
-     slightly if needed
-    */
-
-    showPoll(percentages);
-
-};
-
-
-/* =========================================================
-   SHOW POLL
-========================================================= */
-
-function showPoll(percentages){
-
-    const modal =
-        document.getElementById(
-            "lifelineModal"
-        );
-
-
-    document.getElementById(
-        "lifeIcon"
-    ).innerText =
-        "👥";
-
-
-    document.getElementById(
-        "lifeTitle"
-    ).innerText =
-        "Audience Poll";
-
-
-    document.getElementById(
-        "lifeDescription"
-    ).innerText =
-        "दर्शकहरूको अनुमान:";
-
-
-    const bars =
-        document.getElementById(
-            "pollBars"
-        );
-
-
-    bars.style.display =
-        "flex";
-
-
-    bars.innerHTML = "";
-
-
-    ["A","B","C","D"]
-    .forEach((letter,index)=>{
-
-        const row =
-            document.createElement(
-                "div"
-            );
-
-
-        row.className =
-            "poll-row";
-
-
-        row.innerHTML = `
-
-            <strong>${letter}</strong>
-
-            <div class="poll-bar">
-
-                <div
-                    class="poll-fill"
-                    style="width:${percentages[index]}%">
-                </div>
-
-            </div>
-
-            <strong>
-                ${percentages[index]}%
-            </strong>
-
-        `;
-
-
-        bars.appendChild(row);
-
-    });
-
-
-    modal.style.display =
-        "flex";
-
-}
-
-
-/* =========================================================
-   FLIP QUESTION
+   FLIP
 ========================================================= */
 
 window.useFlip =
 function(){
 
     if(
-        lifelines["flip"] ||
+        lifelines.flip ||
         answerLocked
     )
         return;
 
 
-    lifelines["flip"] =
-        true;
+    lifelines.flip =
+    true;
 
 
     document.getElementById(
-        "llFlip"
-    ).disabled = true;
+        "lifeFlip"
+    ).disabled =
+    true;
 
 
     /*
-     Find unused replacement
-    */
+     Fetch a NEW question directly
+     from Supabase.
 
-    const usedQuestions =
-        questions
-        .slice(
-            0,
-            currentQuestionIndex + 1
-        );
+     This is better than using
+     another already-loaded question.
+     */
 
-
-    const candidates =
-        questions
-        .filter(
-            q =>
-                !usedQuestions.includes(q)
-        );
-
-
-    if(candidates.length === 0){
-
-        document.getElementById(
-            "statusText"
-        ).innerText =
-            "🔄 नयाँ प्रश्न उपलब्ध छैन।";
-
-        return;
-
-    }
-
-
-    const replacement =
-        candidates[
-            Math.floor(
-                Math.random() *
-                candidates.length
-            )
-        ];
-
-
-    questions[
-        currentQuestionIndex
-    ] =
-        replacement;
-
-
-    selectedOptionIndex =
-        null;
-
-
-    document.getElementById(
-        "statusText"
-    ).innerText =
-        "🔄 प्रश्न Flip गरियो!";
-
-
-    loadQuestion();
+    fetchReplacementQuestion();
 
 };
 
 
 /* =========================================================
-   LIFELINE MODAL
+   FETCH REPLACEMENT FROM SUPABASE
 ========================================================= */
 
-function showLifelineModal(
-    icon,
-    title,
-    description
-){
+async function fetchReplacementQuestion(){
 
-    document.getElementById(
-        "lifeIcon"
-    ).innerText =
-        icon;
+    try{
+
+        document.getElementById(
+            "status"
+        ).innerText =
+        "🔄 नयाँ प्रश्न Supabase बाट ल्याउँदै...";
 
 
-    document.getElementById(
-        "lifeTitle"
-    ).innerText =
-        title;
+        const currentIds =
+        questions.map(
+            q => q.id
+        );
 
 
-    document.getElementById(
-        "lifeDescription"
-    ).innerHTML =
-        description;
+        const {
+            data,
+            error
+        } =
+        await supabase
+
+            .from("quizzes")
+
+            .select(`
+                id,
+                topic,
+                question,
+                options,
+                answer,
+                explanation
+            `);
 
 
-    document.getElementById(
-        "pollBars"
-    ).style.display =
-        "none";
+        if(error)
+            throw error;
 
 
-    document.getElementById(
-        "lifelineModal"
-    ).style.display =
-        "flex";
+        const available =
+        data.filter(
+            q =>
+            !currentIds.includes(
+                q.id
+            )
+        );
+
+
+        if(
+            available.length === 0
+        ){
+
+            document.getElementById(
+                "status"
+            ).innerText =
+            "नयाँ प्रश्न उपलब्ध भएन।";
+
+            return;
+
+        }
+
+
+        const replacement =
+        available[
+            Math.floor(
+                Math.random() *
+                available.length
+            )
+        ];
+
+
+        questions[
+            currentIndex
+        ] =
+        replacement;
+
+
+        loadQuestion();
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+
+        document.getElementById(
+            "status"
+        ).innerText =
+        "प्रश्न load गर्न सकिएन।";
+
+    }
 
 }
 
 
-window.closeLifelineModal =
-function(){
+/* =========================================================
+   FINISH GAME
+========================================================= */
+
+async function finishGame(
+    won,
+    message
+){
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    if(rewardSaved)
+        return;
+
+
+    rewardSaved =
+    true;
+
+
+    /*
+     Reward ONLY once.
+     */
+
+    if(
+        winnings > 0 &&
+        currentUser
+    ){
+
+        try{
+
+            const userRef =
+            doc(
+                db,
+                "users",
+                currentUser.uid
+            );
+
+
+            await updateDoc(
+                userRef,
+                {
+                    coins:
+                    increment(
+                        winnings
+                    )
+                }
+            );
+
+
+            await addDoc(
+                collection(
+                    userRef,
+                    "coin_history"
+                ),
+                {
+
+                    coins_won:
+                    winnings,
+
+                    status:
+                    won
+                    ? "KBC Quiz Jackpot"
+                    : "KBC Quiz Safe Amount",
+
+                    source:
+                    "loksewaquest_kbc_quiz",
+
+                    timestamp:
+                    serverTimestamp()
+
+                }
+            );
+
+
+            userCoins +=
+            winnings;
+
+
+            updateCoinUI();
+
+
+        }catch(error){
+
+            console.error(
+                "Reward error:",
+                error
+            );
+
+        }
+
+    }
+
 
     document.getElementById(
-        "lifelineModal"
+        "resultIcon"
+    ).innerText =
+    won
+    ? "🏆"
+    : winnings > 0
+    ? "🪙"
+    : "😔";
+
+
+    document.getElementById(
+        "resultTitle"
+    ).innerText =
+    won
+    ? "अभिनन्दन!"
+    : "Khel Samapta";
+
+
+    document.getElementById(
+        "resultMessage"
+    ).innerText =
+    message;
+
+
+    document.getElementById(
+        "resultCoins"
+    ).innerText =
+    `🪙 ${winnings.toLocaleString()} Coins`;
+
+
+    document.getElementById(
+        "resultModal"
     ).style.display =
-        "none";
+    "flex";
+
+}
+
+
+/* =========================================================
+   RESTART
+========================================================= */
+
+window.restartGame =
+async function(){
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    document.getElementById(
+        "resultModal"
+    ).style.display =
+    "none";
+
+
+    currentIndex =
+    0;
+
+
+    selectedIndex =
+    null;
+
+
+    winnings =
+    0;
+
+
+    safeWinnings =
+    0;
+
+
+    rewardSaved =
+    false;
+
+
+    answerLocked =
+    false;
+
+
+    lifelines = {
+
+        fifty:false,
+        phone:false,
+        audience:false,
+        flip:false
+
+    };
+
+
+    document
+    .querySelectorAll(".life")
+    .forEach(
+        btn =>
+        btn.disabled = false
+    );
+
+
+    try{
+
+        await fetchQuestions();
+
+        loadQuestion();
+
+    }catch(error){
+
+        showLoadingError(
+            error.message
+        );
+
+    }
 
 };
 
@@ -3285,7 +3444,7 @@ window.toggleLadder =
 function(){
 
     document.getElementById(
-        "moneyLadder"
+        "ladder"
     )
     .classList.toggle(
         "open"
@@ -3296,371 +3455,42 @@ function(){
         "overlay"
     )
     .classList.toggle(
-        "active"
+        "show"
     );
 
 };
 
 
 /* =========================================================
-   FINISH GAME
+   LOADING
 ========================================================= */
 
-async function finishGame(
-    isWin,
-    message
-){
-
-    if(rewardAlreadyProcessed)
-        return;
-
-
-    rewardAlreadyProcessed =
-        true;
-
-
-    clearInterval(
-        timerInterval
-    );
-
-
-    const finalReward =
-        Math.max(
-            0,
-            totalCoinsEarned
-        );
-
-
-    /*
-     Firebase reward exactly once
-    */
-
-    if(
-        finalReward > 0 &&
-        currentUser
-    ){
-
-        await saveReward(
-            finalReward,
-            isWin
-                ? "KBC Quiz Completed"
-                : "KBC Quiz Safe Amount"
-        );
-
-    }
-
+function setLoading(text){
 
     document.getElementById(
-        "modalIcon"
+        "loadingText"
     ).innerText =
-        isWin
-            ? "🏆"
-            : finalReward > 0
-                ? "🪙"
-                : "🎮";
-
-
-    document.getElementById(
-        "modalTitle"
-    ).innerText =
-        isWin
-            ? "अभिनन्दन! 🏆"
-            : "Khel Samapta";
-
-
-    document.getElementById(
-        "modalDesc"
-    ).innerText =
-        message;
-
-
-    document.getElementById(
-        "finalCoins"
-    ).innerText =
-        `🪙 ${finalReward.toLocaleString()} Coins`;
-
-
-    document.getElementById(
-        "gameModal"
-    ).style.display =
-        "flex";
-
-
-    if(isWin){
-
-        createConfetti();
-
-    }
+    text;
 
 }
 
 
-/* =========================================================
-   FIREBASE REWARD
-========================================================= */
+function hideLoading(){
 
-async function saveReward(
-    coins,
-    status
-){
-
-    if(
-        coins <= 0 ||
-        !currentUser
-    )
-        return;
-
-
-    try{
-
-        const userRef =
-            doc(
-                db,
-                "users",
-                currentUser.uid
-            );
-
-
-        /*
-         Atomic increment
-        */
-
-        await updateDoc(
-            userRef,
-            {
-                coins:
-                    increment(coins)
-            }
-        );
-
-
-        /*
-         History
-        */
-
-        await addDoc(
-            collection(
-                userRef,
-                "coin_history"
-            ),
-            {
-                coins_won:coins,
-
-                status:status,
-
-                source:"kbc_quiz",
-
-                question_count:
-                    currentQuestionIndex + 1,
-
-                timestamp:
-                    serverTimestamp()
-            }
-        );
-
-
-        /*
-         Local display
-        */
-
-        userCurrentCoins += coins;
-
-        updateCoinDisplay();
-
-
-    }catch(error){
-
-        console.error(
-            "Reward save error:",
-            error
-        );
-
-    }
+    document.getElementById(
+        "loading"
+    ).style.display =
+    "none";
 
 }
 
 
-/* =========================================================
-   RESTART
-========================================================= */
-
-window.restartGame =
-function(){
-
-    clearInterval(
-        timerInterval
-    );
-
-
-    currentQuestionIndex = 0;
-
-    selectedOptionIndex = null;
-
-    totalCoinsEarned = 0;
-
-    safeCoins = 0;
-
-    rewardAlreadyProcessed = false;
-
-    answerLocked = false;
-
-
-    lifelines = {
-
-        "5050":false,
-
-        "phone":false,
-
-        "audience":false,
-
-        "flip":false
-
-    };
-
-
-    document
-    .querySelectorAll(
-        ".lifeline"
-    )
-    .forEach(
-        button =>
-            button.disabled = false
-    );
-
+function showLoadingError(message){
 
     document.getElementById(
-        "gameModal"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "lifelineModal"
-    ).style.display =
-        "none";
-
-
-    loadQuestions()
-    .then(()=>{
-
-        loadQuestion();
-
-    });
-
-};
-
-
-/* =========================================================
-   CONFETTI
-========================================================= */
-
-function createConfetti(){
-
-    const pieces = 80;
-
-
-    for(
-        let i=0;
-        i<pieces;
-        i++
-    ){
-
-        const piece =
-            document.createElement(
-                "div"
-            );
-
-
-        piece.className =
-            "confetti";
-
-
-        piece.style.left =
-            Math.random() * 100 + "%";
-
-
-        piece.style.background =
-            [
-                "#ffd95a",
-                "#f5c542",
-                "#16c784",
-                "#3b82f6",
-                "#ef4444",
-                "#ffffff"
-            ][
-                Math.floor(
-                    Math.random() * 6
-                )
-            ];
-
-
-        piece.style.animationDuration =
-            (1.5 +
-            Math.random() * 2) + "s";
-
-
-        document.body.appendChild(
-            piece
-        );
-
-
-        setTimeout(()=>{
-
-            piece.remove();
-
-        },4000);
-
-    }
-
-}
-
-
-/* =========================================================
-   SMALL CELEBRATION
-========================================================= */
-
-function createSmallCelebration(){
-
-    for(
-        let i=0;
-        i<18;
-        i++
-    ){
-
-        const piece =
-            document.createElement(
-                "div"
-            );
-
-
-        piece.className =
-            "confetti";
-
-
-        piece.style.left =
-            (40 +
-            Math.random() * 20) + "%";
-
-
-        piece.style.background =
-            "#ffd95a";
-
-
-        piece.style.animationDuration =
-            "1.4s";
-
-
-        document.body.appendChild(
-            piece
-        );
-
-
-        setTimeout(
-            () => piece.remove(),
-            1800
-        );
-
-    }
+        "loadingText"
+    ).innerText =
+    "❌ " + message;
 
 }
 
@@ -3671,34 +3501,54 @@ function createSmallCelebration(){
 
 async function init(){
 
-    /*
-     Authentication first
-    */
+    try{
 
-    await waitForAuth();
-
-
-    /*
-     Load existing coins
-    */
-
-    await loadUserCoins();
+        setLoading(
+            "User authentication जाँच हुँदैछ..."
+        );
 
 
-    /*
-     Load questions
-    */
-
-    await loadQuestions();
+        await waitForUser();
 
 
-    /*
-     Start game
-    */
+        setLoading(
+            "तपाईंको coins load हुँदैछ..."
+        );
 
-    renderMoneyLadder();
 
-    loadQuestion();
+        await loadCoins();
+
+
+        setLoading(
+            "Supabase quizzes table बाट प्रश्नहरू load हुँदैछन्..."
+        );
+
+
+        await fetchQuestions();
+
+
+        renderLadder();
+
+
+        hideLoading();
+
+
+        loadQuestion();
+
+
+    }catch(error){
+
+        console.error(
+            "GAME INIT ERROR:",
+            error
+        );
+
+
+        showLoadingError(
+            error.message
+        );
+
+    }
 
 }
 
@@ -3712,4 +3562,4 @@ init();
 </script>
 
 </body>
-    </html>
+      </html>
