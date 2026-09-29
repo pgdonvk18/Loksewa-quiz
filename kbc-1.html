@@ -59,8 +59,8 @@
                 
                 <div class="bg-slate-900 p-6 rounded-xl border border-slate-700 mb-6 text-left">
                     <h3 class="font-semibold text-amber-400 mb-2">तपाईँको युजर प्रोफाइल:</h3>
-                    <p class="text-sm text-slate-300">UID: <span id="profile-uid" class="font-mono text-slate-400">-</span></p>
-                    <p class="text-sm text-slate-300">इमेल: <span id="profile-email" class="font-mono text-slate-400">-</span></p>
+                    <p class="text-sm text-slate-300">UID: <span id="profile-uid" class="font-mono text-amber-300 font-semibold">-</span></p>
+                    <p class="text-sm text-slate-300 mt-1">इमेल: <span id="profile-email" class="font-mono text-slate-300">-</span></p>
                 </div>
 
                 <button id="start-quiz-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl transition shadow-lg">क्विज सुरु गर्नुहोस्</button>
@@ -71,7 +71,7 @@
         <!-- Footer -->
         <footer class="text-center p-4 text-xs text-slate-500 border-t border-slate-800">
             &copy; 2026 LoksewaQuest. All rights reserved.
-        </div>
+        </footer>
 
     </div>
 
@@ -88,16 +88,14 @@
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ==========================================
-        // आफ्नो वास्तविक Firebase Config यहाँ राख्नुहोला
-        // ==========================================
+        // Firebase कन्फिगरेसन
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+          apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+          authDomain: "loksewaquest-227b6.firebaseapp.com",
+          projectId: "loksewaquest-227b6",
+          storageBucket: "loksewaquest-227b6.firebasestorage.app",
+          messagingSenderId: "779234903809",
+          appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
         };
 
         // Firebase Initialize
@@ -117,71 +115,74 @@
         const profileUid = document.getElementById('profile-uid');
         const profileEmail = document.getElementById('profile-email');
 
-        // १. Persistence सेट गर्ने (ब्राजबर बन्द गरे पनि लगइन भइरहने सुनिश्चित गर्न)
+        // १. Persistence सेट गर्ने (ब्राउजर बन्द गरे पनि वा पेज रिफ्रेस गर्दा लगइन नरहने समस्या हटाउन)
         setPersistence(auth, browserLocalPersistence)
             .then(() => {
-                // Persistence সফল रूपमा सेट भयो
+                // युजर स्टेट ट्र्याक गर्ने मुख्य लजिक (Session & User ID Auto-detect)
+                onAuthStateChanged(auth, (user) => {
+                    // लोडिङ स्क्रिन हटाउने
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => loadingScreen.classList.add('hidden'), 300);
+                    appContainer.classList.remove('hidden');
+
+                    if (user) {
+                        // युजर लगइन छ (Session Active)
+                        console.log("Active User ID:", user.uid);
+                        
+                        // स्वतः युजरको इमेल र UID देखाउने
+                        userEmailDisplay.textContent = user.email;
+                        profileUid.textContent = user.uid;
+                        profileEmail.textContent = user.email;
+
+                        // लगइन सेक्सन लुकाएर ड्याशबोर्ड देखाउने
+                        loginSection.classList.add('hidden');
+                        dashboardSection.classList.remove('hidden');
+                    } else {
+                        // युजर लगइन छैन (Not Logged In)
+                        console.log("No active session found.");
+                        dashboardSection.classList.add('hidden');
+                        loginSection.classList.remove('hidden');
+                    }
+                });
             })
             .catch((error) => {
                 console.error("Persistence Error:", error.message);
             });
 
-        // २. युजरको स्टेट ट्र्याक गर्ने (AuthState Observer)
-        onAuthStateChanged(auth, (user) => {
-            // लोडिङ स्क्रिन हटाउने
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => loadingScreen.classList.add('hidden'), 300);
-            appContainer.classList.remove('hidden');
-
-            if (user) {
-                // युजर लगइन छ (पहिल्यै लगइन थियो वार् रिफ्रेस गरियो)
-                console.log("Logged in user:", user.email);
-                userEmailDisplay.textContent = user.email;
-                profileUid.textContent = user.uid;
-                profileEmail.textContent = user.email;
-
-                loginSection.classList.add('hidden');
-                dashboardSection.classList.remove('hidden');
-            } else {
-                // युजर लगइन छैन
-                console.log("No user logged in.");
-                dashboardSection.classList.add('hidden');
-                loginSection.classList.remove('hidden');
-            }
-        });
-
-        // ३. इमेल र पासवर्डबाट लगइन गर्ने ह्यान्डलिङ
+        // २. इमेल र पासवर्डबाट लगइन गर्ने ह्यान्डलिङ
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             loginError.classList.add('hidden');
             
-            const email = document.getElementById('login-email').value;
+            const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                // सफल भएपछि onAuthStateChanged ले आफैं ड्याशबोर्ड देखाउनेछ
+                // सफल भएपछि माथिको onAuthStateChanged ले आफैं युजर डिटेक्ट गरेर ड्याशबोर्ड देखाउनेछ
             } catch (error) {
                 console.error("Login Error:", error.message);
-                loginError.textContent = "लगइन असफल भयो: गलत इमेल वा पासवर्ड।";
+                loginError.textContent = "लगइन असफल भयो: इमेल वा पासवर्ड मिलटेन।";
                 loginError.classList.remove('hidden');
             }
         });
 
-        // ४. 로그आउट (Logout) ह्यान्डलिङ
+        // ३. लगआउट (Logout) ह्यान्डलिङ
         logoutBtn.addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                // लगआउट भएपछि onAuthStateChanged ले आफैं लगइन स्क्रिन देखाउनेछ
+                // लगआउट भएपछि onAuthStateChanged ले आफैं लगइन स्क्रिनमा फर्काउनेछ
             } catch (error) {
                 console.error("Logout Error:", error.message);
             }
         });
 
-        // ५. क्विज सुरु गर्ने बटनको एक्शन (तपाईँको थप क्विज कोड यहाँ जोड्न सक्नुहुन्छ)
+        // ४. क्विज सुरु गर्ने बटनको एक्शन
         document.getElementById('start-quiz-btn').addEventListener('click', () => {
-            alert("सुविधा: यहाँबाट तपाईंको क्विज प्रश्नहरू लोड हुनेछन्!");
-            // उदाहरणका लागि Supabase वा Firestore बाट प्रश्नहरू फेच गर्ने कोड यहाँ राख्न सक्नुहुन्छ।
+            // हाल लगइन भएका युजरको UID यहाँ सीधै लिन सकिन्छ
+            const currentUserId = auth.currentUser ? auth.currentUser.uid : null;
+            alert("क्विज सुरु हुँदैछ! हालको युजर UID: " + currentUserId);
+            // यहाँबाट तपाईं Firestore मा युजरको स्कोर सेभ गर्ने वा क्विज डेटा लोड गर्ने काम गर्न सक्नुहुन्छ।
         });
     </script>
 </body>
