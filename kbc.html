@@ -214,6 +214,7 @@
         .option-btn.hidden-option {
             visibility: hidden;
             opacity: 0;
+            pointer-events: none;
         }
 
         .explanation-box {
@@ -447,7 +448,7 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 2. Firebase Credentials (तपाईंले दिनुभएको कन्फिगरेसन यहाँ राखिएको छ)
+        // 2. Firebase Credentials
         const firebaseConfig = {
             apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
             authDomain: "loksewaquest-227b6.firebaseapp.com",
@@ -460,7 +461,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Active User ID (तपाईंको स्क्रिनसट अनुसारको document ID)
         const userId = "3MTXSPMd21afwhpJ9CsRGLNj62"; 
 
         const coinLadder = [
@@ -496,7 +496,6 @@
             document.getElementById('sidebarOverlay').classList.toggle('active');
         }
 
-        // Firebase bata user ko current coins fetch garne
         async function fetchUserCoinsFromFirebase() {
             try {
                 const userRef = doc(db, "users", userId);
@@ -667,18 +666,14 @@
             }, 1000);
         }
 
-        // Firebase ma coins update garne ra `coin_history` sub-collection ma record save garne
         async function updateFirebaseData(earnedCoins, status) {
-            if (earnedCoins <= 0) return; // Kuni coin jeetechha bhane matra update garne
+            if (earnedCoins <= 0) return;
             try {
                 const userRef = doc(db, "users", userId);
-                
-                // 1. Users document ko `coins` field update garne (Increment total)
                 await updateDoc(userRef, {
                     coins: increment(earnedCoins)
                 });
 
-                // 2. Usai ko vitra `coin_history` sub-collection ma history add garne
                 await addDoc(collection(userRef, "coin_history"), {
                     coins_won: earnedCoins,
                     status: status,
@@ -691,7 +686,6 @@
             }
         }
 
-        // Lifelines
         window.use5050 = function() {
             if (lifelineUsed['5050']) return;
             lifelineUsed['5050'] = true;
