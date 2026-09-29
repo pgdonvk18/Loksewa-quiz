@@ -1,388 +1,3715 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ne">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LoksewaQuest - Quiz Game</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: radial-gradient(circle, #0b192c 0%, #020813 100%); color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow-x: hidden; }
-        .header-section { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0, 0, 0, 0.6); border-bottom: 2px solid #d4af37; flex-wrap: wrap; gap: 10px; }
-        .ladder-toggle-btn, .lifeline-btn { background: #102a45; color: #d4af37; border: 2px solid #d4af37; padding: 6px 14px; font-weight: bold; border-radius: 20px; cursor: pointer; transition: 0.3s; }
-        .ladder-toggle-btn:hover, .lifeline-btn:hover:not(:disabled) { background: #d4af37; color: #000; }
-        .lifeline-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #555; color: #777; }
-        .score-display { font-size: 1rem; color: #ffd700; font-weight: bold; background: rgba(255, 215, 0, 0.1); padding: 6px 15px; border-radius: 20px; border: 1px solid #ffd700; }
-        .game-container { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; flex-grow: 1; width: 100%; max-width: 800px; margin: 0 auto; }
-        .topic-badge { background: #102a45; color: #d4af37; border: 1px solid #d4af37; padding: 4px 12px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 10px; text-transform: uppercase; }
-        .question-box { background: linear-gradient(135deg, #102a45, #061424); border: 3px solid #d4af37; border-radius: 15px; width: 100%; padding: 25px 20px; text-align: center; font-size: 1.25rem; margin-bottom: 25px; position: relative; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
-        .timer-badge { position: absolute; top: -20px; right: 20px; background: #d4af37; color: #000; font-weight: bold; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 15px; width: 100%; }
-        @media (min-width: 600px) { .options-grid { grid-template-columns: 1fr 1fr; } }
-        .option-btn { background: linear-gradient(135deg, #14283f, #091522); border: 2px solid #2a4763; color: #ffffff; padding: 14px 20px; border-radius: 30px; font-size: 1rem; cursor: pointer; text-align: left; position: relative; padding-left: 45px; transition: 0.2s; }
-        .option-btn::before { content: attr(data-label); position: absolute; left: 15px; color: #d4af37; font-weight: bold; }
-        .option-btn:hover:not(:disabled) { border-color: #d4af37; background: #1b3654; }
-        .option-btn.selected { background: #d4af37; color: #000; border-color: #fff; font-weight: bold; }
-        .option-btn.selected::before { color: #000; }
-        .option-btn.correct { background: #27ae60 !important; color: #fff !important; }
-        .option-btn.wrong { background: #c0392b !important; color: #fff !important; }
-        .option-btn.hidden-option { visibility: hidden; opacity: 0; pointer-events: none; }
-        .explanation-box { margin-top: 15px; background: rgba(46, 204, 113, 0.1); border: 1px dashed #2ecc71; padding: 10px 15px; border-radius: 8px; font-size: 0.95rem; color: #2ecc71; display: none; width: 100%; text-align: center; }
-        .sidebar-menu { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: rgba(5, 13, 23, 0.95); border-right: 2px solid #d4af37; z-index: 1001; transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; }
-        .sidebar-menu.open { left: 0; }
-        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #2a4763; padding-bottom: 10px; }
-        .sidebar-header h3 { color: #d4af37; }
-        .close-sidebar { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
-        .money-list { list-style: none; overflow-y: auto; flex-grow: 1; }
-        .money-item { display: flex; justify-content: space-between; padding: 8px 12px; margin-bottom: 5px; border-radius: 5px; color: #8899a6; }
-        .money-item span:last-child { color: #ffd700; font-weight: bold; }
-        .money-item.active { background: #ffd700; color: #000; font-weight: bold; }
-        .money-item.active span:last-child { color: #000; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
-        .overlay.active { display: block; }
-        .action-area { display: flex; justify-content: center; padding: 15px; }
-        .lock-btn { background: linear-gradient(135deg, #f39c12, #d35400); color: #fff; border: none; padding: 12px 35px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4); transition: 0.3s; }
-        .lock-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1100; }
-        .modal-content { background: #102a45; border: 3px solid #d4af37; padding: 30px 20px; border-radius: 20px; text-align: center; max-width: 400px; width: 90%; }
-        .modal-content h2 { color: #ffd700; margin-bottom: 12px; }
-        .restart-btn { background: #ffd700; color: #000; border: none; padding: 10px 22px; font-weight: bold; border-radius: 20px; cursor: pointer; margin-top: 15px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>LoksewaQuest — Quiz Arena</title>
+
+<style>
+/* =========================================================
+   LOKSEWAQUEST QUIZ ARENA
+   Premium Game Show Theme
+========================================================= */
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+    --navy:#020817;
+    --navy2:#07152d;
+    --blue:#102d58;
+    --blue2:#17457d;
+    --gold:#f5c542;
+    --gold2:#ffd95a;
+    --orange:#ff8a00;
+    --green:#16c784;
+    --red:#ef4444;
+    --white:#ffffff;
+    --muted:#9fb1c9;
+    --border:rgba(245,197,66,.55);
+}
+
+html,body{
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    font-family:
+        "Segoe UI",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+
+    color:white;
+    background:
+        radial-gradient(circle at 50% 25%,
+            rgba(25,72,135,.45),
+            transparent 35%),
+        radial-gradient(circle at 50% 100%,
+            rgba(212,150,20,.12),
+            transparent 35%),
+        linear-gradient(180deg,#030916 0%,#02050c 100%);
+
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* =========================================================
+   BACKGROUND LIGHTS
+========================================================= */
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+
+    background:
+        radial-gradient(circle at 10% 20%,rgba(255,205,70,.08),transparent 20%),
+        radial-gradient(circle at 90% 30%,rgba(30,100,220,.08),transparent 25%);
+
+    z-index:-1;
+}
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.topbar{
+    min-height:68px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:10px;
+    padding:10px 15px;
+
+    background:
+        linear-gradient(180deg,
+            rgba(4,13,29,.97),
+            rgba(2,8,18,.94));
+
+    border-bottom:1px solid rgba(245,197,66,.45);
+
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.top-left,
+.top-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.game-logo{
+    font-weight:900;
+    font-size:17px;
+    color:var(--gold2);
+    letter-spacing:.3px;
+}
+
+.game-logo span{
+    color:white;
+}
+
+.top-btn{
+    border:1px solid rgba(245,197,66,.55);
+    background:rgba(245,197,66,.08);
+    color:var(--gold2);
+
+    padding:8px 12px;
+    border-radius:22px;
+
+    font-weight:700;
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.top-btn:hover{
+    background:var(--gold);
+    color:#000;
+}
+
+.total-coins{
+    border:1px solid rgba(245,197,66,.5);
+    background:rgba(245,197,66,.08);
+
+    padding:8px 12px;
+    border-radius:22px;
+
+    color:var(--gold2);
+    font-weight:800;
+
+    white-space:nowrap;
+}
+
+/* =========================================================
+   MAIN GAME
+========================================================= */
+
+.game-shell{
+    width:100%;
+    max-width:900px;
+
+    margin:0 auto;
+
+    padding:
+        18px
+        18px
+        35px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress-area{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.question-number{
+    color:var(--gold2);
+    font-weight:900;
+    white-space:nowrap;
+}
+
+.progress-track{
+    flex:1;
+    height:7px;
+
+    background:#15233a;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:100%;
+    width:10%;
+
+    background:
+        linear-gradient(90deg,
+            #c28a12,
+            #ffd95a,
+            #fff1a4);
+
+    border-radius:20px;
+
+    transition:.5s;
+}
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+.timer-wrap{
+    position:relative;
+
+    width:86px;
+    height:86px;
+
+    margin:8px auto 18px;
+}
+
+.timer-ring{
+    width:86px;
+    height:86px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        conic-gradient(
+            var(--gold2) var(--timer-progress,100%),
+            #17253c 0
+        );
+
+    box-shadow:
+        0 0 25px rgba(245,197,66,.25);
+}
+
+.timer-ring::before{
+    content:"";
+
+    position:absolute;
+
+    width:70px;
+    height:70px;
+
+    background:#050c19;
+
+    border-radius:50%;
+}
+
+.timer-number{
+    position:relative;
+    z-index:2;
+
+    font-size:25px;
+    font-weight:900;
+    color:white;
+}
+
+.timer-danger{
+    color:#ff5a5a;
+    animation:pulse .8s infinite;
+}
+
+@keyframes pulse{
+    50%{
+        transform:scale(1.1);
+    }
+}
+
+/* =========================================================
+   QUESTION CARD
+========================================================= */
+
+.topic{
+    padding:5px 14px;
+
+    border-radius:20px;
+
+    color:var(--gold2);
+    border:1px solid rgba(245,197,66,.45);
+
+    background:rgba(245,197,66,.07);
+
+    font-size:12px;
+    font-weight:800;
+
+    text-transform:uppercase;
+
+    margin-bottom:10px;
+}
+
+.question-card{
+    width:100%;
+
+    padding:25px 22px;
+
+    text-align:center;
+
+    background:
+        linear-gradient(145deg,
+            rgba(16,45,88,.96),
+            rgba(3,13,30,.98));
+
+    border:
+        2px solid rgba(245,197,66,.75);
+
+    border-radius:22px;
+
+    position:relative;
+
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,.03),
+        0 10px 45px rgba(0,0,0,.55),
+        0 0 35px rgba(245,197,66,.08);
+
+    margin-bottom:20px;
+}
+
+.question-card::before{
+    content:"";
+
+    position:absolute;
+
+    top:-2px;
+    left:12%;
+    right:12%;
+
+    height:2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--gold2),
+            transparent
+        );
+}
+
+.question-text{
+    font-size:clamp(18px,4vw,26px);
+
+    line-height:1.55;
+
+    font-weight:700;
+}
+
+/* =========================================================
+   OPTIONS
+========================================================= */
+
+.options{
+    width:100%;
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+
+    gap:14px;
+}
+
+.option{
+    min-height:68px;
+
+    border:
+        1.5px solid rgba(105,145,195,.45);
+
+    background:
+        linear-gradient(145deg,
+            rgba(16,42,78,.95),
+            rgba(6,17,34,.98));
+
+    color:white;
+
+    border-radius:15px;
+
+    padding:13px 16px;
+
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+
+    cursor:pointer;
+
+    text-align:left;
+
+    transition:.2s;
+
+    font-size:16px;
+}
+
+.option:hover:not(:disabled){
+    transform:translateY(-2px);
+
+    border-color:var(--gold2);
+
+    box-shadow:
+        0 5px 20px rgba(245,197,66,.12);
+}
+
+.option-label{
+    width:34px;
+    height:34px;
+
+    min-width:34px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid var(--gold);
+
+    color:var(--gold2);
+
+    font-weight:900;
+}
+
+.option.selected{
+    background:
+        linear-gradient(145deg,
+            #b97d08,
+            #f5c542);
+
+    color:#080808;
+
+    border-color:#fff;
+
+    box-shadow:
+        0 0 25px rgba(245,197,66,.3);
+}
+
+.option.selected .option-label{
+    color:#000;
+    border-color:#000;
+}
+
+.option.correct{
+    background:
+        linear-gradient(145deg,#087a4e,#16c784) !important;
+
+    border-color:#5cffbd !important;
+
+    animation:correctGlow .8s ease;
+}
+
+.option.wrong{
+    background:
+        linear-gradient(145deg,#8d1616,#ef4444) !important;
+
+    border-color:#ff9b9b !important;
+
+    animation:shake .45s ease;
+}
+
+@keyframes correctGlow{
+    50%{
+        box-shadow:0 0 35px rgba(22,199,132,.65);
+    }
+}
+
+@keyframes shake{
+    25%{transform:translateX(-6px);}
+    50%{transform:translateX(6px);}
+    75%{transform:translateX(-4px);}
+}
+
+.option.hidden{
+    visibility:hidden;
+    pointer-events:none;
+}
+
+/* =========================================================
+   ACTION AREA
+========================================================= */
+
+.action-area{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    gap:10px;
+
+    margin-top:20px;
+}
+
+.lock-btn{
+    min-width:230px;
+
+    border:none;
+
+    padding:14px 30px;
+
+    border-radius:30px;
+
+    background:
+        linear-gradient(135deg,
+            #d28b0d,
+            #ffd95a);
+
+    color:#080808;
+
+    font-size:17px;
+    font-weight:900;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 8px 25px rgba(245,197,66,.2);
+
+    transition:.2s;
+}
+
+.lock-btn:hover:not(:disabled){
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 10px 35px rgba(245,197,66,.35);
+}
+
+.lock-btn:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}
+
+.status-text{
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* =========================================================
+   LIFELINES
+========================================================= */
+
+.lifelines{
+    width:100%;
+
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+
+    gap:10px;
+
+    margin-top:25px;
+}
+
+.lifeline{
+    min-height:58px;
+
+    border:
+        1px solid rgba(245,197,66,.5);
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(145deg,
+            rgba(20,47,84,.9),
+            rgba(4,15,30,.95));
+
+    color:white;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.lifeline:hover:not(:disabled){
+    border-color:var(--gold2);
+
+    color:var(--gold2);
+
+    transform:translateY(-2px);
+}
+
+.lifeline:disabled{
+    opacity:.3;
+    cursor:not-allowed;
+}
+
+/* =========================================================
+   EXPLANATION
+========================================================= */
+
+.explanation{
+    width:100%;
+
+    display:none;
+
+    margin-top:16px;
+
+    padding:14px 17px;
+
+    border:
+        1px dashed rgba(22,199,132,.7);
+
+    background:rgba(22,199,132,.08);
+
+    border-radius:14px;
+
+    color:#8dffd0;
+
+    line-height:1.6;
+
+    text-align:center;
+}
+
+/* =========================================================
+   MONEY LADDER
+========================================================= */
+
+.overlay{
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.65);
+
+    display:none;
+
+    z-index:500;
+}
+
+.overlay.active{
+    display:block;
+}
+
+.ladder{
+    position:fixed;
+
+    top:0;
+    right:-330px;
+
+    width:320px;
+    height:100vh;
+
+    z-index:600;
+
+    padding:18px;
+
+    background:
+        linear-gradient(180deg,
+            #07152c,
+            #020711);
+
+    border-left:
+        1px solid rgba(245,197,66,.6);
+
+    box-shadow:
+        -10px 0 40px rgba(0,0,0,.5);
+
+    transition:.35s;
+
+    display:flex;
+    flex-direction:column;
+}
+
+.ladder.open{
+    right:0;
+}
+
+.ladder-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding-bottom:15px;
+
+    border-bottom:1px solid rgba(245,197,66,.25);
+
+    margin-bottom:12px;
+}
+
+.ladder-title{
+    color:var(--gold2);
+    font-size:18px;
+    font-weight:900;
+}
+
+.close-btn{
+    background:none;
+    border:none;
+
+    color:white;
+
+    font-size:28px;
+
+    cursor:pointer;
+}
+
+.money-list{
+    list-style:none;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:5px;
+
+    overflow:auto;
+}
+
+.money-row{
+    display:flex;
+
+    justify-content:space-between;
+    align-items:center;
+
+    padding:9px 14px;
+
+    border-radius:9px;
+
+    color:#7e91aa;
+
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.money-row.safe{
+    border-left:3px solid var(--gold);
+}
+
+.money-row.current{
+    color:#000;
+
+    background:
+        linear-gradient(
+            90deg,
+            #d59a14,
+            #ffd95a
+        );
+
+    box-shadow:
+        0 0 18px rgba(245,197,66,.3);
+
+    transform:scale(1.02);
+}
+
+.money-row.current span{
+    color:#000;
+}
+
+.money-row.completed{
+    color:#35dc9b;
+}
+
+.safe-label{
+    font-size:10px;
+
+    margin-left:5px;
+
+    color:var(--gold2);
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal{
+    position:fixed;
+
+    inset:0;
+
+    z-index:1000;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:
+        radial-gradient(circle,
+            rgba(13,46,92,.7),
+            rgba(0,0,0,.92));
+}
+
+.modal-card{
+    width:100%;
+    max-width:440px;
+
+    padding:30px 22px;
+
+    text-align:center;
+
+    border:
+        2px solid var(--gold);
+
+    border-radius:25px;
+
+    background:
+        linear-gradient(145deg,
+            #102e58,
+            #030b19);
+
+    box-shadow:
+        0 20px 80px rgba(0,0,0,.8),
+        0 0 50px rgba(245,197,66,.18);
+
+    animation:modalIn .35s ease;
+}
+
+@keyframes modalIn{
+    from{
+        transform:scale(.8);
+        opacity:0;
+    }
+
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+.modal-icon{
+    font-size:55px;
+    margin-bottom:8px;
+}
+
+.modal-title{
+    color:var(--gold2);
+    font-size:26px;
+    font-weight:900;
+
+    margin-bottom:10px;
+}
+
+.modal-desc{
+    color:#d7e1ef;
+
+    line-height:1.6;
+
+    margin-bottom:18px;
+}
+
+.final-coins{
+    font-size:32px;
+
+    color:#ffd95a;
+
+    font-weight:900;
+
+    margin:10px 0 20px;
+}
+
+.restart-btn{
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #d58d0d,
+            #ffd95a
+        );
+
+    color:#050505;
+
+    font-weight:900;
+
+    font-size:16px;
+
+    cursor:pointer;
+}
+
+/* =========================================================
+   LIFELINE MODAL
+========================================================= */
+
+.small-modal .modal-card{
+    max-width:390px;
+}
+
+.poll-bars{
+    display:flex;
+    flex-direction:column;
+
+    gap:10px;
+
+    margin:18px 0;
+}
+
+.poll-row{
+    display:grid;
+    grid-template-columns:35px 1fr 45px;
+
+    align-items:center;
+
+    gap:8px;
+}
+
+.poll-bar{
+    height:18px;
+
+    background:#172942;
+
+    border-radius:20px;
+
+    overflow:hidden;
+}
+
+.poll-fill{
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #bd8211,
+            #ffd95a
+        );
+
+    border-radius:20px;
+}
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+.confetti{
+    position:fixed;
+
+    width:8px;
+    height:14px;
+
+    top:-20px;
+
+    z-index:2000;
+
+    animation:fall 2.5s linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:
+            translateY(110vh)
+            rotate(720deg);
+
+        opacity:0;
+    }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:650px){
+
+    .topbar{
+        padding:9px 10px;
+    }
+
+    .game-logo{
+        font-size:14px;
+    }
+
+    .top-btn{
+        padding:7px 9px;
+        font-size:12px;
+    }
+
+    .total-coins{
+        font-size:12px;
+        padding:7px 9px;
+    }
+
+    .game-shell{
+        padding:14px 12px 30px;
+    }
+
+    .question-card{
+        padding:21px 15px;
+        border-radius:18px;
+    }
+
+    .options{
+        grid-template-columns:1fr;
+        gap:10px;
+    }
+
+    .option{
+        min-height:62px;
+        font-size:15px;
+    }
+
+    .lifelines{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .lifeline{
+        min-height:52px;
+    }
+
+    .ladder{
+        width:290px;
+    }
+}
+
+@media(max-width:380px){
+
+    .game-logo{
+        display:none;
+    }
+
+    .timer-wrap{
+        transform:scale(.9);
+        margin-bottom:10px;
+    }
+
+    .question-text{
+        font-size:17px;
+    }
+
+    .option{
+        font-size:14px;
+    }
+}
+</style>
 </head>
+
 <body>
 
-    <div class="overlay" id="sidebarOverlay" onclick="toggleLadder()"></div>
-    <div class="sidebar-menu" id="moneyLadderSidebar">
-        <div class="sidebar-header">
-            <h3>🪙 Coin Ladder</h3>
-            <button class="close-sidebar" onclick="toggleLadder()">&times;</button>
+<!-- =======================================================
+     TOP BAR
+======================================================= -->
+
+<header class="topbar">
+
+    <div class="top-left">
+
+        <button
+            class="top-btn"
+            onclick="toggleLadder()">
+            ☰ Ladder
+        </button>
+
+        <div class="game-logo">
+            <span>Loksewa</span>Quest
         </div>
-        <ul class="money-list" id="moneyList"></ul>
+
     </div>
 
-    <div class="header-section">
-        <button class="ladder-toggle-btn" onclick="toggleLadder()">📊 Coin Ladder</button>
-        <div class="lifelines">
-            <button class="lifeline-btn" id="ll-5050" onclick="use5050()">50:50</button>
-            <button class="lifeline-btn" id="ll-phone" onclick="usePhoneAFriend()">📞 Phone</button>
-            <button class="lifeline-btn" id="ll-audience" onclick="useAudiencePoll()">👥 Poll</button>
-            <button class="lifeline-btn" id="ll-flip" onclick="useFlipQuestion()">🔄 Flip</button>
+    <div class="top-right">
+
+        <div
+            class="total-coins"
+            id="totalCoinsDisplay">
+            🪙 0
         </div>
-        <div class="score-display" id="currentPrizeText">🪙 0 Coins</div>
+
     </div>
 
-    <div class="game-container">
-        <div class="topic-badge" id="topicBadge">Loksewa Quiz</div>
-        <div class="question-box">
-            <div class="timer-badge" id="timer">30</div>
-            <span id="questionText">Prasna load hudai xa...</span>
+</header>
+
+
+<!-- =======================================================
+     OVERLAY
+======================================================= -->
+
+<div
+    class="overlay"
+    id="overlay"
+    onclick="toggleLadder()">
+</div>
+
+
+<!-- =======================================================
+     MONEY LADDER
+======================================================= -->
+
+<aside
+    class="ladder"
+    id="moneyLadder">
+
+    <div class="ladder-head">
+
+        <div class="ladder-title">
+            🪙 Coin Ladder
         </div>
 
-        <div class="options-grid">
-            <button class="option-btn" id="opt0" data-label="A" onclick="selectOption(0)"></button>
-            <button class="option-btn" id="opt1" data-label="B" onclick="selectOption(1)"></button>
-            <button class="option-btn" id="opt2" data-label="C" onclick="selectOption(2)"></button>
-            <button class="option-btn" id="opt3" data-label="D" onclick="selectOption(3)"></button>
-        </div>
+        <button
+            class="close-btn"
+            onclick="toggleLadder()">
+            ×
+        </button>
 
-        <div class="explanation-box" id="explanationBox"></div>
     </div>
+
+    <ul
+        class="money-list"
+        id="moneyList">
+    </ul>
+
+</aside>
+
+
+<!-- =======================================================
+     GAME
+======================================================= -->
+
+<main class="game-shell">
+
+    <!-- Progress -->
+
+    <div class="progress-area">
+
+        <div
+            class="question-number"
+            id="questionNumber">
+            Q1 / 10
+        </div>
+
+        <div class="progress-track">
+
+            <div
+                class="progress-bar"
+                id="progressBar">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Timer -->
+
+    <div class="timer-wrap">
+
+        <div
+            class="timer-ring"
+            id="timerRing">
+
+            <span
+                class="timer-number"
+                id="timer">
+                30
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- Topic -->
+
+    <div
+        class="topic"
+        id="topicBadge">
+        LOKSEWA QUIZ
+    </div>
+
+
+    <!-- Question -->
+
+    <section class="question-card">
+
+        <div
+            class="question-text"
+            id="questionText">
+            प्रश्न लोड हुँदैछ...
+        </div>
+
+    </section>
+
+
+    <!-- Options -->
+
+    <section
+        class="options"
+        id="optionsContainer">
+
+        <button
+            class="option"
+            id="opt0"
+            onclick="selectOption(0)">
+
+            <span class="option-label">A</span>
+
+            <span class="option-text"></span>
+
+        </button>
+
+
+        <button
+            class="option"
+            id="opt1"
+            onclick="selectOption(1)">
+
+            <span class="option-label">B</span>
+
+            <span class="option-text"></span>
+
+        </button>
+
+
+        <button
+            class="option"
+            id="opt2"
+            onclick="selectOption(2)">
+
+            <span class="option-label">C</span>
+
+            <span class="option-text"></span>
+
+        </button>
+
+
+        <button
+            class="option"
+            id="opt3"
+            onclick="selectOption(3)">
+
+            <span class="option-label">D</span>
+
+            <span class="option-text"></span>
+
+        </button>
+
+    </section>
+
+
+    <!-- Explanation -->
+
+    <div
+        class="explanation"
+        id="explanation">
+    </div>
+
+
+    <!-- Lock -->
 
     <div class="action-area">
-        <button class="lock-btn" id="lockBtn" onclick="lockAnswer()" disabled>LOCK kiya jaye?</button>
-    </div>
 
-    <div class="modal" id="gameModal">
-        <div class="modal-content">
-            <h2 id="modalTitle">Khel Samapta!</h2>
-            <p id="modalDesc">Tapai le coin jitnu bhayo.</p>
-            <button class="restart-btn" onclick="restartGame()">Pheri Khelnu Huncha?</button>
+        <button
+            class="lock-btn"
+            id="lockBtn"
+            onclick="lockAnswer()"
+            disabled>
+
+            🔒 LOCK ANSWER
+
+        </button>
+
+        <div
+            class="status-text"
+            id="statusText">
+
+            उत्तर छान्नुहोस् अनि LOCK गर्नुहोस्
+
         </div>
+
     </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp, increment } from 'https://cdn.jsdelivr.net/npm/firebasejs/10.8.0/firebase-firestore.js';
 
-        const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <!-- Lifelines -->
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-            authDomain: "loksewaquest-227b6.firebaseapp.com",
-            projectId: "loksewaquest-227b6",
-            storageBucket: "loksewaquest-227b6.firebasestorage.app",
-            messagingSenderId: "779234903809",
-            appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-        };
+    <section class="lifelines">
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const userId = "3MTXSPMd21afwhpJ9CsRGLNj62"; 
+        <button
+            class="lifeline"
+            id="ll5050"
+            onclick="use5050()">
 
-        const coinLadder = [
-            { level: 10, coins: 1000 }, { level: 9, coins: 800 }, { level: 8, coins: 600 },
-            { level: 7, coins: 400 }, { level: 6, coins: 250 }, { level: 5, coins: 150 },
-            { level: 4, coins: 80 }, { level: 3, coins: 40 }, { level: 2, coins: 20 }, { level: 1, coins: 10 }
+            ½ 50:50
+
+        </button>
+
+
+        <button
+            class="lifeline"
+            id="llPhone"
+            onclick="usePhone()">
+
+            📞 Phone
+
+        </button>
+
+
+        <button
+            class="lifeline"
+            id="llAudience"
+            onclick="useAudience()">
+
+            👥 Audience
+
+        </button>
+
+
+        <button
+            class="lifeline"
+            id="llFlip"
+            onclick="useFlip()">
+
+            🔄 Flip
+
+        </button>
+
+    </section>
+
+</main>
+
+
+<!-- =======================================================
+     GAME OVER MODAL
+======================================================= -->
+
+<div
+    class="modal"
+    id="gameModal">
+
+    <div class="modal-card">
+
+        <div
+            class="modal-icon"
+            id="modalIcon">
+            🏆
+        </div>
+
+        <div
+            class="modal-title"
+            id="modalTitle">
+            Congratulations!
+        </div>
+
+        <div
+            class="modal-desc"
+            id="modalDesc">
+        </div>
+
+        <div
+            class="final-coins"
+            id="finalCoins">
+            🪙 0
+        </div>
+
+        <button
+            class="restart-btn"
+            onclick="restartGame()">
+
+            🔄 फेरि खेल्नुहोस्
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =======================================================
+     LIFELINE MODAL
+======================================================= -->
+
+<div
+    class="modal small-modal"
+    id="lifelineModal">
+
+    <div class="modal-card">
+
+        <div
+            class="modal-icon"
+            id="lifeIcon">
+            📞
+        </div>
+
+        <div
+            class="modal-title"
+            id="lifeTitle">
+            Phone a Friend
+        </div>
+
+        <div
+            class="modal-desc"
+            id="lifeDescription">
+        </div>
+
+        <div
+            class="poll-bars"
+            id="pollBars"
+            style="display:none;">
+        </div>
+
+        <button
+            class="restart-btn"
+            onclick="closeLifelineModal()">
+
+            ठीक छ
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+/* =========================================================
+   IMPORTS
+========================================================= */
+
+import {
+    createClient
+} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signInAnonymously
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    updateDoc,
+    setDoc,
+    collection,
+    addDoc,
+    serverTimestamp,
+    increment
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+    "https://edyirdedkiarguvurpxq.supabase.co";
+
+const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJj...";
+
+
+const supabase =
+    createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+/*
+ IMPORTANT:
+ आफ्नो existing full Supabase anon key माथि राख्नुहोस्।
+ तपाईंले original code मा दिएको पूरा key नै राख्नुहोस्।
+*/
+
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+
+    authDomain:
+        "loksewaquest-227b6.firebaseapp.com",
+
+    projectId:
+        "loksewaquest-227b6",
+
+    storageBucket:
+        "loksewaquest-227b6.firebasestorage.app",
+
+    messagingSenderId:
+        "779234903809",
+
+    appId:
+        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+};
+
+
+const app =
+    initializeApp(firebaseConfig);
+
+const auth =
+    getAuth(app);
+
+const db =
+    getFirestore(app);
+
+
+/* =========================================================
+   GAME CONFIG
+========================================================= */
+
+const TOTAL_QUESTIONS = 10;
+
+const QUESTION_TIME = 30;
+
+
+/*
+ Q5 र Q10 safe levels
+*/
+
+const SAFE_LEVELS = [5,10];
+
+
+/*
+ IMPORTANT:
+ index 0 = Q1
+ index 9 = Q10
+*/
+
+const PRIZE_LADDER = [
+    10,
+    20,
+    40,
+    80,
+    150,
+    250,
+    400,
+    600,
+    800,
+    1000
+];
+
+
+/* =========================================================
+   GAME STATE
+========================================================= */
+
+let questions = [];
+
+let currentQuestionIndex = 0;
+
+let selectedOptionIndex = null;
+
+let timerInterval = null;
+
+let timeLeft = QUESTION_TIME;
+
+let totalCoinsEarned = 0;
+
+let safeCoins = 0;
+
+let userCurrentCoins = 0;
+
+let currentUser = null;
+
+let rewardAlreadyProcessed = false;
+
+let answerLocked = false;
+
+let flipUsed = false;
+
+let lifelines = {
+
+    "5050": false,
+
+    "phone": false,
+
+    "audience": false,
+
+    "flip": false
+
+};
+
+
+/* =========================================================
+   FIREBASE AUTH
+========================================================= */
+
+function waitForAuth(){
+
+    return new Promise((resolve)=>{
+
+        const unsubscribe =
+            onAuthStateChanged(
+                auth,
+                async user => {
+
+                    unsubscribe();
+
+                    if(user){
+
+                        currentUser = user;
+
+                        resolve(user);
+
+                        return;
+                    }
+
+
+                    try{
+
+                        const result =
+                            await signInAnonymously(auth);
+
+                        currentUser =
+                            result.user;
+
+                        resolve(currentUser);
+
+                    }catch(error){
+
+                        console.error(
+                            "Anonymous auth failed:",
+                            error
+                        );
+
+                        resolve(null);
+                    }
+
+                }
+            );
+
+    });
+
+}
+
+
+/* =========================================================
+   USER COINS
+========================================================= */
+
+async function loadUserCoins(){
+
+    if(!currentUser)
+        return;
+
+
+    try{
+
+        const userRef =
+            doc(
+                db,
+                "users",
+                currentUser.uid
+            );
+
+
+        const snap =
+            await getDoc(userRef);
+
+
+        if(snap.exists()){
+
+            userCurrentCoins =
+                Number(
+                    snap.data().coins || 0
+                );
+
+        }else{
+
+            userCurrentCoins = 0;
+
+            await setDoc(
+                userRef,
+                {
+                    coins:0,
+                    createdAt:serverTimestamp()
+                },
+                {merge:true}
+            );
+
+        }
+
+
+        updateCoinDisplay();
+
+
+    }catch(error){
+
+        console.error(
+            "Could not load coins:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   COIN DISPLAY
+========================================================= */
+
+function updateCoinDisplay(){
+
+    document.getElementById(
+        "totalCoinsDisplay"
+    ).innerText =
+        `🪙 ${userCurrentCoins.toLocaleString()}`;
+
+}
+
+
+/* =========================================================
+   LOAD QUESTIONS
+========================================================= */
+
+async function loadQuestions(){
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+            await supabase
+            .from("quizzes")
+            .select("*");
+
+
+        if(error)
+            throw error;
+
+
+        if(!data || data.length < TOTAL_QUESTIONS)
+            throw new Error(
+                "Not enough questions"
+            );
+
+
+        /*
+         Shuffle questions
+        */
+
+        questions =
+            [...data]
+            .sort(
+                () => Math.random() - .5
+            )
+            .slice(
+                0,
+                TOTAL_QUESTIONS
+            );
+
+
+    }catch(error){
+
+        console.warn(
+            "Supabase failed:",
+            error
+        );
+
+
+        questions = getFallbackQuestions();
+
+    }
+
+}
+
+
+/* =========================================================
+   FALLBACK QUESTIONS
+========================================================= */
+
+function getFallbackQuestions(){
+
+    return [
+
+        {
+            topic:"सामान्य ज्ञान",
+            question:"सगरमाथाको उचाइ कति हो?",
+            options:[
+                "८८४८.८६ मिटर",
+                "८८४८ मिटर",
+                "८८५० मिटर",
+                "८९०० मिटर"
+            ],
+            answer:"८८४८.८६ मिटर",
+            explanation:
+                "सगरमाथाको हालको आधिकारिक उचाइ ८८४८.८६ मिटर हो।"
+        },
+
+        {
+            topic:"नेपाल भूगोल",
+            question:"नेपालको सबैभन्दा लामो नदी कुन हो?",
+            options:[
+                "कोशी",
+                "कर्णाली",
+                "गण्डकी",
+                "महाकाली"
+            ],
+            answer:"कर्णाली",
+            explanation:
+                "कर्णालीलाई नेपालको सबैभन्दा लामो नदी मानिन्छ।"
+        },
+
+        {
+            topic:"संविधान",
+            question:"नेपालको संविधान कहिले जारी भयो?",
+            options:[
+                "२०७२ असोज ३",
+                "२०७२ भदौ ३",
+                "२०७३ असोज ३",
+                "२०७१ असोज ३"
+            ],
+            answer:"२०७२ असोज ३",
+            explanation:
+                "नेपालको संविधान २०७२ असोज ३ गते जारी भएको हो।"
+        },
+
+        {
+            topic:"इतिहास",
+            question:"नेपालको एकीकरण अभियानको नेतृत्व कसले गरेका थिए?",
+            options:[
+                "जंगबहादुर राणा",
+                "पृथ्वीनारायण शाह",
+                "त्रिभुवन",
+                "महेंद्र"
+            ],
+            answer:"पृथ्वीनारायण शाह",
+            explanation:
+                "नेपाल एकीकरण अभियानको नेतृत्व पृथ्वीनारायण शाहले गरेका थिए।"
+        },
+
+        {
+            topic:"लोकसेवा",
+            question:"लोक सेवा आयोग नेपालको संविधानको कुन भागमा व्यवस्था गरिएको छ?",
+            options:[
+                "भाग २१",
+                "भाग २२",
+                "भाग २३",
+                "भाग २४"
+            ],
+            answer:"भाग २३",
+            explanation:
+                "नेपालको संविधानको भाग २३ मा लोक सेवा आयोगसम्बन्धी व्यवस्था छ।"
+        },
+
+        {
+            topic:"शासन",
+            question:"सुशासनको प्रमुख आधारमध्ये कुन हो?",
+            options:[
+                "पारदर्शिता",
+                "गोपनीयता",
+                "केन्द्रीकरण",
+                "ढिलासुस्ती"
+            ],
+            answer:"पारदर्शिता",
+            explanation:
+                "पारदर्शिता सुशासनको महत्वपूर्ण आधार हो।"
+        },
+
+        {
+            topic:"अर्थतन्त्र",
+            question:"नेपालको केन्द्रीय बैंक कुन हो?",
+            options:[
+                "नेपाल बैंक",
+                "राष्ट्रिय वाणिज्य बैंक",
+                "नेपाल राष्ट्र बैंक",
+                "कृषि विकास बैंक"
+            ],
+            answer:"नेपाल राष्ट्र बैंक",
+            explanation:
+                "नेपाल राष्ट्र बैंक नेपालको केन्द्रीय बैंक हो।"
+        },
+
+        {
+            topic:"भूगोल",
+            question:"नेपालमा कति प्रदेश छन्?",
+            options:[
+                "५",
+                "६",
+                "७",
+                "८"
+            ],
+            answer:"७",
+            explanation:
+                "नेपालमा ७ वटा प्रदेश छन्।"
+        },
+
+        {
+            topic:"लोकसेवा",
+            question:"सार्वजनिक सेवा प्रवाहको मुख्य उद्देश्य के हो?",
+            options:[
+                "जनतालाई सेवा प्रदान गर्नु",
+                "कर बढाउनु",
+                "कर्मचारी घटाउनु",
+                "कार्यालय विस्तार गर्नु"
+            ],
+            answer:"जनतालाई सेवा प्रदान गर्नु",
+            explanation:
+                "सार्वजनिक प्रशासनको मूल उद्देश्य नागरिकलाई प्रभावकारी सेवा प्रदान गर्नु हो।"
+        },
+
+        {
+            topic:"सामान्य ज्ञान",
+            question:"नेपालको राष्ट्रिय फूल कुन हो?",
+            options:[
+                "कमल",
+                "लालीगुराँस",
+                "सयपत्री",
+                "गोदावरी"
+            ],
+            answer:"लालीगुराँस",
+            explanation:
+                "लालीगुराँस नेपालको राष्ट्रिय फूल हो।"
+        }
+
+    ];
+
+}
+
+
+/* =========================================================
+   NORMALIZE OPTIONS
+========================================================= */
+
+function getOptions(question){
+
+    let options =
+        question.options;
+
+
+    if(typeof options === "string"){
+
+        try{
+
+            options =
+                JSON.parse(options);
+
+        }catch(error){
+
+            console.warn(
+                "Could not parse options"
+            );
+
+        }
+
+    }
+
+
+    return Array.isArray(options)
+        ? options
+        : [];
+
+}
+
+
+/* =========================================================
+   FIND CORRECT INDEX
+========================================================= */
+
+function getCorrectIndex(question){
+
+    const options =
+        getOptions(question);
+
+
+    const answer =
+        String(
+            question.answer ?? ""
+        )
+        .trim();
+
+
+    /*
+     Answer can be:
+     actual option text
+     0/1/2/3
+     A/B/C/D
+    */
+
+    const letter =
+        answer.toUpperCase();
+
+
+    if(["A","B","C","D"].includes(letter)){
+
+        return "ABCD".indexOf(letter);
+
+    }
+
+
+    if(/^[0-3]$/.test(answer)){
+
+        return Number(answer);
+
+    }
+
+
+    const index =
+        options.findIndex(
+            option =>
+                String(option)
+                .trim()
+                .toLowerCase() ===
+                answer.toLowerCase()
+        );
+
+
+    return index;
+
+}
+
+
+/* =========================================================
+   INIT MONEY LADDER
+========================================================= */
+
+function renderMoneyLadder(){
+
+    const list =
+        document.getElementById(
+            "moneyList"
+        );
+
+
+    list.innerHTML = "";
+
+
+    /*
+     Display Q10 at top
+    */
+
+    for(
+        let i = PRIZE_LADDER.length - 1;
+        i >= 0;
+        i--
+    ){
+
+        const questionNumber =
+            i + 1;
+
+        const row =
+            document.createElement("li");
+
+
+        row.className =
+            "money-row";
+
+
+        if(
+            SAFE_LEVELS.includes(
+                questionNumber
+            )
+        ){
+
+            row.classList.add("safe");
+
+        }
+
+
+        if(
+            questionNumber ===
+            currentQuestionIndex + 1
+        ){
+
+            row.classList.add("current");
+
+        }
+
+
+        if(
+            questionNumber <=
+            currentQuestionIndex
+        ){
+
+            row.classList.add("completed");
+
+        }
+
+
+        const safe =
+            SAFE_LEVELS.includes(
+                questionNumber
+            )
+            ? `<small class="safe-label">🔒 SAFE</small>`
+            : "";
+
+
+        row.innerHTML = `
+
+            <span>
+                Q${questionNumber}
+                ${safe}
+            </span>
+
+            <span>
+                🪙 ${PRIZE_LADDER[i]}
+            </span>
+
+        `;
+
+
+        list.appendChild(row);
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD QUESTION
+========================================================= */
+
+function loadQuestion(){
+
+    if(currentQuestionIndex >= questions.length){
+
+        finishGame(
+            true,
+            "तपाईंले सबै प्रश्न सही गर्नुभयो!"
+        );
+
+        return;
+
+    }
+
+
+    answerLocked = false;
+
+    selectedOptionIndex = null;
+
+
+    const question =
+        questions[
+            currentQuestionIndex
         ];
 
-        let questions = [];
-        let currentQuestionIndex = 0;
-        let selectedOptionIndex = null;
-        let timerInterval;
-        let timeLeft = 30;
-        let totalCoinsEarned = 0;
-        let userCurrentCoins = 0;
 
-        let lifelineUsed = { '5050': false, 'phone': false, 'audience': false, 'flip': false };
+    const options =
+        getOptions(question);
 
-        window.toggleLadder = function() {
-            document.getElementById('moneyLadderSidebar').classList.toggle('open');
-            document.getElementById('sidebarOverlay').classList.toggle('active');
+
+    document.getElementById(
+        "questionNumber"
+    ).innerText =
+        `Q${currentQuestionIndex + 1} / ${TOTAL_QUESTIONS}`;
+
+
+    document.getElementById(
+        "progressBar"
+    ).style.width =
+        `${(
+            (currentQuestionIndex + 1) /
+            TOTAL_QUESTIONS
+        ) * 100}%`;
+
+
+    document.getElementById(
+        "topicBadge"
+    ).innerText =
+        question.topic ||
+        "Loksewa Quiz";
+
+
+    document.getElementById(
+        "questionText"
+    ).innerText =
+        question.question ||
+        "प्रश्न उपलब्ध छैन।";
+
+
+    resetOptions();
+
+
+    for(let i=0;i<4;i++){
+
+        const button =
+            document.getElementById(
+                `opt${i}`
+            );
+
+
+        const text =
+            button.querySelector(
+                ".option-text"
+            );
+
+
+        if(
+            options[i] !== undefined
+        ){
+
+            text.innerText =
+                options[i];
+
+            button.style.display =
+                "flex";
+
+        }else{
+
+            button.style.display =
+                "none";
+
         }
 
-        async function fetchUserCoinsFromFirebase() {
-            try {
-                const userRef = doc(db, "users", userId);
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists()) {
-                    userCurrentCoins = userSnap.data().coins || 0;
-                    document.getElementById('currentPrizeText').innerText = `🪙 Won: 0 (Total: ${userCurrentCoins})`;
-                }
-            } catch (error) { console.error("Firebase error:", error); }
-        }
+    }
 
-        async function initGame() {
-            await fetchUserCoinsFromFirebase();
-            try {
-                const { data, error } = await supabase.from('quizzes').select('*');
-                if (error) throw error;
 
-                if (data && data.length > 0) {
-                    questions = data.sort(() => Math.random() - 0.5).slice(0, 10);
-                } else {
-                    throw new Error("No data in table");
-                }
-            } catch (err) {
-                console.warn('Supabase fetch failed or empty, using fallback questions:', err);
-                // Fallback sample questions if Supabase fails to load
-                questions = [
-                    { topic: "Samanya Gyan", question: "सगरमाथाको उचाई कति रहेको छ?", options: ["८८४८.८६ मिटर", "८,००० मिटर", "८,५०० मिटर", "९,००० मिटर"], answer: "८८४८.८६ मिटर", explanation: "सगरमाथाको हालको उचाई ८८४८.८६ मिटर हो।" },
-                    { topic: "Geography", question: "नेपालको सबैभन्दा लामो नदी कौन हो?", options: ["कोशी", "कर्णाली", "गण्डकी", "महाकाली"], answer: "कर्णाली", explanation: "कर्णाली नेपालको सबैभन्दा लामो नदी हो।" }
-                ];
-            }
-            loadQuestion();
-        }
+    document.getElementById(
+        "lockBtn"
+    ).disabled = true;
 
-        function initMoneyTree() {
-            const listEl = document.getElementById('moneyList');
-            listEl.innerHTML = '';
-            coinLadder.forEach((item, idx) => {
-                const li = document.createElement('li');
-                li.className = `money-item ${idx === (coinLadder.length - 1 - currentQuestionIndex) ? 'active' : ''}`;
-                li.innerHTML = `<span>Level ${item.level}</span> <span>🪙 ${item.coins} Coins</span>`;
-                listEl.appendChild(li);
-            });
-        }
 
-        function loadQuestion() {
-            if (currentQuestionIndex >= questions.length) {
-                totalCoinsEarned = 1000;
-                updateFirebaseData(totalCoinsEarned, "Completed all levels");
-                endGame(true, `Badhai cha! Tapai le sabai level milayera Coins jitnu bhayo! 🎉`);
+    document.getElementById(
+        "statusText"
+    ).innerText =
+        "उत्तर छान्नुहोस् अनि LOCK गर्नुहोस्";
+
+
+    document.getElementById(
+        "explanation"
+    ).style.display =
+        "none";
+
+
+    renderMoneyLadder();
+
+
+    startTimer();
+
+}
+
+
+/* =========================================================
+   RESET OPTIONS
+========================================================= */
+
+function resetOptions(){
+
+    for(let i=0;i<4;i++){
+
+        const button =
+            document.getElementById(
+                `opt${i}`
+            );
+
+
+        button.classList.remove(
+            "selected",
+            "correct",
+            "wrong",
+            "hidden"
+        );
+
+
+        button.disabled = false;
+
+    }
+
+}
+
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+function startTimer(){
+
+    clearInterval(timerInterval);
+
+
+    timeLeft =
+        QUESTION_TIME;
+
+
+    updateTimerUI();
+
+
+    timerInterval =
+        setInterval(()=>{
+
+            if(answerLocked)
                 return;
+
+
+            timeLeft--;
+
+
+            updateTimerUI();
+
+
+            if(timeLeft <= 0){
+
+                clearInterval(
+                    timerInterval
+                );
+
+
+                handleTimeout();
+
             }
 
-            initMoneyTree();
-            resetOptionsUI();
+        },1000);
 
-            const currentQ = questions[currentQuestionIndex];
-            document.getElementById('topicBadge').innerText = currentQ.topic || 'Loksewa Quiz';
-            document.getElementById('questionText').innerText = `Q${currentQuestionIndex + 1}. ${currentQ.question}`;
-            
-            let optionsArray = currentQ.options;
-            if (typeof optionsArray === 'string') {
-                try { optionsArray = JSON.parse(optionsArray); } catch(e) {}
+}
+
+
+/* =========================================================
+   TIMER UI
+========================================================= */
+
+function updateTimerUI(){
+
+    const timer =
+        document.getElementById(
+            "timer"
+        );
+
+
+    const ring =
+        document.getElementById(
+            "timerRing"
+        );
+
+
+    timer.innerText =
+        timeLeft;
+
+
+    const percentage =
+        Math.max(
+            0,
+            (timeLeft / QUESTION_TIME) * 100
+        );
+
+
+    ring.style.setProperty(
+        "--timer-progress",
+        `${percentage}%`
+    );
+
+
+    timer.classList.toggle(
+        "timer-danger",
+        timeLeft <= 8
+    );
+
+}
+
+
+/* =========================================================
+   SELECT OPTION
+========================================================= */
+
+window.selectOption =
+function(index){
+
+    if(answerLocked)
+        return;
+
+
+    const button =
+        document.getElementById(
+            `opt${index}`
+        );
+
+
+    if(
+        button.disabled ||
+        button.classList.contains("hidden")
+    ){
+
+        return;
+
+    }
+
+
+    for(let i=0;i<4;i++){
+
+        document.getElementById(
+            `opt${i}`
+        )
+        .classList.remove(
+            "selected"
+        );
+
+    }
+
+
+    button.classList.add(
+        "selected"
+    );
+
+
+    selectedOptionIndex =
+        index;
+
+
+    document.getElementById(
+        "lockBtn"
+    ).disabled =
+        false;
+
+
+    document.getElementById(
+        "statusText"
+    ).innerText =
+        "उत्तर चयन भयो — अब LOCK गर्नुहोस्";
+
+};
+
+
+/* =========================================================
+   LOCK ANSWER
+========================================================= */
+
+window.lockAnswer =
+function(){
+
+    if(
+        selectedOptionIndex === null ||
+        answerLocked
+    ){
+
+        return;
+
+    }
+
+
+    answerLocked = true;
+
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    document.getElementById(
+        "lockBtn"
+    ).disabled =
+        true;
+
+
+    for(let i=0;i<4;i++){
+
+        document.getElementById(
+            `opt${i}`
+        ).disabled =
+            true;
+
+    }
+
+
+    document.getElementById(
+        "statusText"
+    ).innerText =
+        "🔒 ANSWER LOCKED";
+
+
+    const question =
+        questions[
+            currentQuestionIndex
+        ];
+
+
+    const correctIndex =
+        getCorrectIndex(
+            question
+        );
+
+
+    const selectedButton =
+        document.getElementById(
+            `opt${selectedOptionIndex}`
+        );
+
+
+    /*
+     Small dramatic delay
+    */
+
+    setTimeout(()=>{
+
+        if(
+            selectedOptionIndex ===
+            correctIndex
+        ){
+
+            handleCorrect(
+                selectedButton
+            );
+
+        }else{
+
+            handleWrong(
+                selectedButton,
+                correctIndex
+            );
+
+        }
+
+    },900);
+
+};
+
+
+/* =========================================================
+   CORRECT ANSWER
+========================================================= */
+
+function handleCorrect(button){
+
+    button.classList.remove(
+        "selected"
+    );
+
+
+    button.classList.add(
+        "correct"
+    );
+
+
+    const questionNumber =
+        currentQuestionIndex + 1;
+
+
+    totalCoinsEarned =
+        PRIZE_LADDER[
+            currentQuestionIndex
+        ];
+
+
+    /*
+     Safe level update
+    */
+
+    if(
+        SAFE_LEVELS.includes(
+            questionNumber
+        )
+    ){
+
+        safeCoins =
+            totalCoinsEarned;
+
+    }
+
+
+    document.getElementById(
+        "statusText"
+    ).innerText =
+        `🎉 सही उत्तर! +${totalCoinsEarned} Coins`;
+
+
+    showExplanation();
+
+
+    if(
+        questionNumber ===
+        TOTAL_QUESTIONS
+    ){
+
+        setTimeout(()=>{
+
+            finishGame(
+                true,
+                "अविश्वसनीय! तपाईंले सबै 10 प्रश्न सही गर्नुभयो।"
+            );
+
+        },2600);
+
+        createConfetti();
+
+        return;
+
+    }
+
+
+    createSmallCelebration();
+
+
+    setTimeout(()=>{
+
+        currentQuestionIndex++;
+
+        loadQuestion();
+
+    },2200);
+
+}
+
+
+/* =========================================================
+   WRONG ANSWER
+========================================================= */
+
+function handleWrong(
+    selectedButton,
+    correctIndex
+){
+
+    selectedButton.classList.add(
+        "wrong"
+    );
+
+
+    if(correctIndex >= 0){
+
+        document.getElementById(
+            `opt${correctIndex}`
+        )
+        .classList.add(
+            "correct"
+        );
+
+    }
+
+
+    showExplanation();
+
+
+    const banked =
+        getSafeCoins();
+
+
+    totalCoinsEarned =
+        banked;
+
+
+    document.getElementById(
+        "statusText"
+    ).innerText =
+        `❌ गलत उत्तर — सुरक्षित Coins: ${banked}`;
+
+
+    setTimeout(()=>{
+
+        finishGame(
+            false,
+            `उत्तर गलत भयो। तपाईंले ${banked.toLocaleString()} Coins सुरक्षित गर्नुभयो।`
+        );
+
+    },2800);
+
+}
+
+
+/* =========================================================
+   TIMEOUT
+========================================================= */
+
+function handleTimeout(){
+
+    answerLocked = true;
+
+
+    for(let i=0;i<4;i++){
+
+        document.getElementById(
+            `opt${i}`
+        ).disabled = true;
+
+    }
+
+
+    const question =
+        questions[
+            currentQuestionIndex
+        ];
+
+
+    const correctIndex =
+        getCorrectIndex(
+            question
+        );
+
+
+    if(correctIndex >= 0){
+
+        document.getElementById(
+            `opt${correctIndex}`
+        )
+        .classList.add(
+            "correct"
+        );
+
+    }
+
+
+    showExplanation();
+
+
+    const banked =
+        getSafeCoins();
+
+
+    totalCoinsEarned =
+        banked;
+
+
+    document.getElementById(
+        "statusText"
+    ).innerText =
+        `⏰ समय सकियो — सुरक्षित Coins: ${banked}`;
+
+
+    setTimeout(()=>{
+
+        finishGame(
+            false,
+            `समय सकियो। तपाईंले ${banked.toLocaleString()} Coins सुरक्षित गर्नुभयो।`
+        );
+
+    },2500);
+
+}
+
+
+/* =========================================================
+   SAFE COINS
+========================================================= */
+
+function getSafeCoins(){
+
+    /*
+     Find highest completed safe level
+    */
+
+    let safe = 0;
+
+
+    for(const level of SAFE_LEVELS){
+
+        if(
+            currentQuestionIndex + 1 >
+            level
+        ){
+
+            safe =
+                PRIZE_LADDER[level - 1];
+
+        }
+
+    }
+
+
+    return safe;
+
+}
+
+
+/* =========================================================
+   EXPLANATION
+========================================================= */
+
+function showExplanation(){
+
+    const question =
+        questions[
+            currentQuestionIndex
+        ];
+
+
+    const explanation =
+        question.explanation;
+
+
+    if(!explanation)
+        return;
+
+
+    const box =
+        document.getElementById(
+            "explanation"
+        );
+
+
+    box.innerText =
+        `💡 ${explanation}`;
+
+
+    box.style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   50:50
+========================================================= */
+
+window.use5050 =
+function(){
+
+    if(
+        lifelines["5050"] ||
+        answerLocked
+    )
+        return;
+
+
+    lifelines["5050"] =
+        true;
+
+
+    document.getElementById(
+        "ll5050"
+    ).disabled = true;
+
+
+    const question =
+        questions[
+            currentQuestionIndex
+        ];
+
+
+    const correctIndex =
+        getCorrectIndex(
+            question
+        );
+
+
+    if(correctIndex < 0)
+        return;
+
+
+    const wrongIndexes =
+        [0,1,2,3]
+        .filter(
+            index =>
+                index !== correctIndex
+        )
+        .sort(
+            () => Math.random() - .5
+        );
+
+
+    /*
+     Remove exactly two wrong answers
+    */
+
+    wrongIndexes
+        .slice(0,2)
+        .forEach(index=>{
+
+            const button =
+                document.getElementById(
+                    `opt${index}`
+                );
+
+
+            button.classList.add(
+                "hidden"
+            );
+
+
+            button.disabled =
+                true;
+
+        });
+
+
+    document.getElementById(
+        "statusText"
+    ).innerText =
+        "½ 50:50 प्रयोग गरियो — 2 वटा गलत विकल्प हटाइयो।";
+
+};
+
+
+/* =========================================================
+   PHONE A FRIEND
+========================================================= */
+
+window.usePhone =
+function(){
+
+    if(
+        lifelines["phone"] ||
+        answerLocked
+    )
+        return;
+
+
+    lifelines["phone"] =
+        true;
+
+
+    document.getElementById(
+        "llPhone"
+    ).disabled = true;
+
+
+    const question =
+        questions[
+            currentQuestionIndex
+        ];
+
+
+    const correctIndex =
+        getCorrectIndex(
+            question
+        );
+
+
+    const confidence =
+        Math.floor(
+            70 + Math.random() * 25
+        );
+
+
+    const letters =
+        ["A","B","C","D"];
+
+
+    let suggestedIndex =
+        correctIndex;
+
+
+    /*
+     Small chance friend gives wrong suggestion
+    */
+
+    if(
+        Math.random() > .88
+    ){
+
+        const alternatives =
+            [0,1,2,3]
+            .filter(
+                x =>
+                    x !== correctIndex
+            );
+
+
+        suggestedIndex =
+            alternatives[
+                Math.floor(
+                    Math.random() *
+                    alternatives.length
+                )
+            ];
+
+    }
+
+
+    showLifelineModal(
+
+        "📞",
+
+        "Phone a Friend",
+
+        `साथीको अनुमान अनुसार <strong>${letters[suggestedIndex]}</strong> विकल्प सही हुन सक्छ।<br><br>
+         Confidence: <strong>${confidence}%</strong>`
+
+    );
+
+};
+
+
+/* =========================================================
+   AUDIENCE POLL
+========================================================= */
+
+window.useAudience =
+function(){
+
+    if(
+        lifelines["audience"] ||
+        answerLocked
+    )
+        return;
+
+
+    lifelines["audience"] =
+        true;
+
+
+    document.getElementById(
+        "llAudience"
+    ).disabled = true;
+
+
+    const question =
+        questions[
+            currentQuestionIndex
+        ];
+
+
+    const correctIndex =
+        getCorrectIndex(
+            question
+        );
+
+
+    let percentages =
+        [10,10,10,10];
+
+
+    /*
+     Generate realistic poll
+    */
+
+    let remaining = 100;
+
+
+    for(let i=0;i<4;i++){
+
+        if(
+            i === correctIndex
+        )
+            continue;
+
+
+        const max =
+            Math.min(
+                20,
+                remaining
+            );
+
+
+        const value =
+            Math.floor(
+                Math.random() *
+                max
+            );
+
+
+        percentages[i] =
+            value;
+
+        remaining -= value;
+
+    }
+
+
+    percentages[correctIndex] =
+        remaining;
+
+
+    /*
+     Shuffle visual percentages
+     slightly if needed
+    */
+
+    showPoll(percentages);
+
+};
+
+
+/* =========================================================
+   SHOW POLL
+========================================================= */
+
+function showPoll(percentages){
+
+    const modal =
+        document.getElementById(
+            "lifelineModal"
+        );
+
+
+    document.getElementById(
+        "lifeIcon"
+    ).innerText =
+        "👥";
+
+
+    document.getElementById(
+        "lifeTitle"
+    ).innerText =
+        "Audience Poll";
+
+
+    document.getElementById(
+        "lifeDescription"
+    ).innerText =
+        "दर्शकहरूको अनुमान:";
+
+
+    const bars =
+        document.getElementById(
+            "pollBars"
+        );
+
+
+    bars.style.display =
+        "flex";
+
+
+    bars.innerHTML = "";
+
+
+    ["A","B","C","D"]
+    .forEach((letter,index)=>{
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+
+        row.className =
+            "poll-row";
+
+
+        row.innerHTML = `
+
+            <strong>${letter}</strong>
+
+            <div class="poll-bar">
+
+                <div
+                    class="poll-fill"
+                    style="width:${percentages[index]}%">
+                </div>
+
+            </div>
+
+            <strong>
+                ${percentages[index]}%
+            </strong>
+
+        `;
+
+
+        bars.appendChild(row);
+
+    });
+
+
+    modal.style.display =
+        "flex";
+
+}
+
+
+/* =========================================================
+   FLIP QUESTION
+========================================================= */
+
+window.useFlip =
+function(){
+
+    if(
+        lifelines["flip"] ||
+        answerLocked
+    )
+        return;
+
+
+    lifelines["flip"] =
+        true;
+
+
+    document.getElementById(
+        "llFlip"
+    ).disabled = true;
+
+
+    /*
+     Find unused replacement
+    */
+
+    const usedQuestions =
+        questions
+        .slice(
+            0,
+            currentQuestionIndex + 1
+        );
+
+
+    const candidates =
+        questions
+        .filter(
+            q =>
+                !usedQuestions.includes(q)
+        );
+
+
+    if(candidates.length === 0){
+
+        document.getElementById(
+            "statusText"
+        ).innerText =
+            "🔄 नयाँ प्रश्न उपलब्ध छैन।";
+
+        return;
+
+    }
+
+
+    const replacement =
+        candidates[
+            Math.floor(
+                Math.random() *
+                candidates.length
+            )
+        ];
+
+
+    questions[
+        currentQuestionIndex
+    ] =
+        replacement;
+
+
+    selectedOptionIndex =
+        null;
+
+
+    document.getElementById(
+        "statusText"
+    ).innerText =
+        "🔄 प्रश्न Flip गरियो!";
+
+
+    loadQuestion();
+
+};
+
+
+/* =========================================================
+   LIFELINE MODAL
+========================================================= */
+
+function showLifelineModal(
+    icon,
+    title,
+    description
+){
+
+    document.getElementById(
+        "lifeIcon"
+    ).innerText =
+        icon;
+
+
+    document.getElementById(
+        "lifeTitle"
+    ).innerText =
+        title;
+
+
+    document.getElementById(
+        "lifeDescription"
+    ).innerHTML =
+        description;
+
+
+    document.getElementById(
+        "pollBars"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "lifelineModal"
+    ).style.display =
+        "flex";
+
+}
+
+
+window.closeLifelineModal =
+function(){
+
+    document.getElementById(
+        "lifelineModal"
+    ).style.display =
+        "none";
+
+};
+
+
+/* =========================================================
+   LADDER
+========================================================= */
+
+window.toggleLadder =
+function(){
+
+    document.getElementById(
+        "moneyLadder"
+    )
+    .classList.toggle(
+        "open"
+    );
+
+
+    document.getElementById(
+        "overlay"
+    )
+    .classList.toggle(
+        "active"
+    );
+
+};
+
+
+/* =========================================================
+   FINISH GAME
+========================================================= */
+
+async function finishGame(
+    isWin,
+    message
+){
+
+    if(rewardAlreadyProcessed)
+        return;
+
+
+    rewardAlreadyProcessed =
+        true;
+
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    const finalReward =
+        Math.max(
+            0,
+            totalCoinsEarned
+        );
+
+
+    /*
+     Firebase reward exactly once
+    */
+
+    if(
+        finalReward > 0 &&
+        currentUser
+    ){
+
+        await saveReward(
+            finalReward,
+            isWin
+                ? "KBC Quiz Completed"
+                : "KBC Quiz Safe Amount"
+        );
+
+    }
+
+
+    document.getElementById(
+        "modalIcon"
+    ).innerText =
+        isWin
+            ? "🏆"
+            : finalReward > 0
+                ? "🪙"
+                : "🎮";
+
+
+    document.getElementById(
+        "modalTitle"
+    ).innerText =
+        isWin
+            ? "अभिनन्दन! 🏆"
+            : "Khel Samapta";
+
+
+    document.getElementById(
+        "modalDesc"
+    ).innerText =
+        message;
+
+
+    document.getElementById(
+        "finalCoins"
+    ).innerText =
+        `🪙 ${finalReward.toLocaleString()} Coins`;
+
+
+    document.getElementById(
+        "gameModal"
+    ).style.display =
+        "flex";
+
+
+    if(isWin){
+
+        createConfetti();
+
+    }
+
+}
+
+
+/* =========================================================
+   FIREBASE REWARD
+========================================================= */
+
+async function saveReward(
+    coins,
+    status
+){
+
+    if(
+        coins <= 0 ||
+        !currentUser
+    )
+        return;
+
+
+    try{
+
+        const userRef =
+            doc(
+                db,
+                "users",
+                currentUser.uid
+            );
+
+
+        /*
+         Atomic increment
+        */
+
+        await updateDoc(
+            userRef,
+            {
+                coins:
+                    increment(coins)
             }
+        );
 
-            for (let i = 0; i < 4; i++) {
-                const btn = document.getElementById('opt' + i);
-                if (optionsArray && optionsArray[i] !== undefined) {
-                    btn.innerText = optionsArray[i];
-                    btn.style.display = 'block';
-                } else {
-                    btn.style.display = 'none';
-                }
+
+        /*
+         History
+        */
+
+        await addDoc(
+            collection(
+                userRef,
+                "coin_history"
+            ),
+            {
+                coins_won:coins,
+
+                status:status,
+
+                source:"kbc_quiz",
+
+                question_count:
+                    currentQuestionIndex + 1,
+
+                timestamp:
+                    serverTimestamp()
             }
+        );
 
-            selectedOptionIndex = null;
-            document.getElementById('lockBtn').disabled = true;
-            document.getElementById('explanationBox').style.display = 'none';
-            startTimer();
-        }
 
-        function resetOptionsUI() {
-            for (let i = 0; i < 4; i++) {
-                const btn = document.getElementById('opt' + i);
-                btn.classList.remove('selected', 'correct', 'wrong', 'hidden-option');
-                btn.style.display = 'block';
-                btn.disabled = false;
-            }
-        }
+        /*
+         Local display
+        */
 
-        function startTimer() {
-            clearInterval(timerInterval);
-            timeLeft = 30;
-            document.getElementById('timer').innerText = timeLeft;
+        userCurrentCoins += coins;
 
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    endGame(false, "Samay samapta bhayo!");
-                }
-            }, 1000);
-        }
+        updateCoinDisplay();
 
-        window.selectOption = function(index) {
-            for (let i = 0; i < 4; i++) document.getElementById('opt' + i).classList.remove('selected');
-            document.getElementById('opt' + index).classList.add('selected');
-            selectedOptionIndex = index;
-            document.getElementById('lockBtn').disabled = false;
-        }
 
-        window.lockAnswer = function() {
-            clearInterval(timerInterval);
-            document.getElementById('lockBtn').disabled = true;
+    }catch(error){
 
-            const currentQ = questions[currentQuestionIndex];
-            const selectedBtn = document.getElementById('opt' + selectedOptionIndex);
-            
-            let optionsArray = currentQ.options;
-            if (typeof optionsArray === 'string') {
-                try { optionsArray = JSON.parse(optionsArray); } catch(e) {}
-            }
+        console.error(
+            "Reward save error:",
+            error
+        );
 
-            const correctAnswerText = String(currentQ.answer).trim();
-            const selectedAnswerText = String(optionsArray[selectedOptionIndex]).trim();
-            
-            let isCorrect = (selectedAnswerText.toLowerCase() === correctAnswerText.toLowerCase()) || 
-                            (selectedOptionIndex.toString() === correctAnswerText) ||
-                            (String.fromCharCode(65 + selectedOptionIndex) === correctAnswerText.toUpperCase());
+    }
 
-            setTimeout(() => {
-                if (isCorrect) {
-                    selectedBtn.classList.add('correct');
-                    totalCoinsEarned = coinLadder[coinLadder.length - 1 - currentQuestionIndex]?.coins || 10;
-                    document.getElementById('currentPrizeText').innerText = `🪙 Won: ${totalCoinsEarned}`;
+}
 
-                    if (currentQ.explanation) {
-                        const expBox = document.getElementById('explanationBox');
-                        expBox.innerText = `💡 Spastikaran: ${currentQ.explanation}`;
-                        expBox.style.display = 'block';
-                    }
 
-                    setTimeout(() => {
-                        currentQuestionIndex++;
-                        loadQuestion();
-                    }, 2500);
-                } else {
-                    selectedBtn.classList.add('wrong');
-                    for (let i = 0; i < 4; i++) {
-                        if (String(optionsArray[i]).trim().toLowerCase() === correctAnswerText.toLowerCase()) {
-                            document.getElementById('opt' + i).classList.add('correct');
-                        }
-                    }
+/* =========================================================
+   RESTART
+========================================================= */
 
-                    if (currentQ.explanation) {
-                        const expBox = document.getElementById('explanationBox');
-                        expBox.innerText = `💡 Spastikaran: ${currentQ.explanation}`;
-                        expBox.style.display = 'block';
-                    }
+window.restartGame =
+function(){
 
-                    setTimeout(() => {
-                        updateFirebaseData(totalCoinsEarned, "Wrong Answer");
-                        endGame(false, `Uttar galat bhayo! Tapai le jamma ${totalCoinsEarned} Coins surakshit garnu bhayo.`);
-                    }, 3000);
-                }
-            }, 1000);
-        }
+    clearInterval(
+        timerInterval
+    );
 
-        async function updateFirebaseData(earnedCoins, status) {
-            if (earnedCoins <= 0) return;
-            try {
-                const userRef = doc(db, "users", userId);
-                await updateDoc(userRef, { coins: increment(earnedCoins) });
-                await addDoc(collection(userRef, "coin_history"), { coins_won: earnedCoins, status: status, timestamp: serverTimestamp() });
-            } catch (e) { console.error("Firebase update error: ", e); }
-        }
 
-        window.use5050 = function() {
-            if (lifelineUsed['5050']) return;
-            lifelineUsed['5050'] = true;
-            document.getElementById('ll-5050').disabled = true;
+    currentQuestionIndex = 0;
 
-            const currentQ = questions[currentQuestionIndex];
-            let optionsArray = currentQ.options;
-            if (typeof optionsArray === 'string') { try { optionsArray = JSON.parse(optionsArray); } catch(e) {} }
+    selectedOptionIndex = null;
 
-            const correctAnswerText = String(currentQ.answer).trim();
-            let correctIndex = -1;
-            for (let i = 0; i < 4; i++) {
-                if (String(optionsArray[i]).trim().toLowerCase() === correctAnswerText.toLowerCase()) correctIndex = i;
-            }
+    totalCoinsEarned = 0;
 
-            let wrongIndices = [0, 1, 2, 3].filter(i => i !== correctIndex);
-            wrongIndices.sort(() => Math.random() - 0.5);
-            
-            document.getElementById('opt' + wrongIndices[0]).classList.add('hidden-option');
-            document.getElementById('opt' + wrongIndices[0]).disabled = true;
-            document.getElementById('opt' + wrongIndices[1]).classList.add('hidden-option');
-            document.getElementById('opt' + wrongIndices[1]).disabled = true;
-        }
+    safeCoins = 0;
 
-        window.usePhoneAFriend = function() {
-            if (lifelineUsed['phone']) return;
-            lifelineUsed['phone'] = true;
-            document.getElementById('ll-phone').disabled = true;
-            alert(`📞 Sathi ko sallah: "Malai यो उत्तर सही लाग्छ!"`);
-        }
+    rewardAlreadyProcessed = false;
 
-        window.useAudiencePoll = function() {
-            if (lifelineUsed['audience']) return;
-            lifelineUsed['audience'] = true;
-            document.getElementById('ll-audience').disabled = true;
-            alert(`👥 Audience Poll: [A]: 60% | [B]: 20% | [C]: 15% | [D]: 5%`);
-        }
+    answerLocked = false;
 
-        window.useFlipQuestion = function() {
-            if (lifelineUsed['flip']) return;
-            lifelineUsed['flip'] = true;
-            document.getElementById('ll-flip').disabled = true;
-            currentQuestionIndex++;
-            loadQuestion();
-        }
 
-        function endGame(isWin, message) {
-            clearInterval(timerInterval);
-            document.getElementById('modalTitle').innerText = isWin ? "Vijeta bannu bhayo! 🏆" : "Khel Samapta!";
-            document.getElementById('modalDesc').innerText = message;
-            document.getElementById('gameModal').style.display = 'flex';
-        }
+    lifelines = {
 
-        window.restartGame = function() {
-            currentQuestionIndex = 0;
-            totalCoinsEarned = 0;
-            document.getElementById('currentPrizeText').innerText = `🪙 Won: 0`;
-            lifelineUsed = { '5050': false, 'phone': false, 'audience': false, 'flip': false };
-            document.querySelectorAll('.lifeline-btn').forEach(btn => btn.disabled = false);
-            document.getElementById('gameModal').style.display = 'none';
-            initGame();
-        }
+        "5050":false,
 
-        initGame();
-    </script>
+        "phone":false,
+
+        "audience":false,
+
+        "flip":false
+
+    };
+
+
+    document
+    .querySelectorAll(
+        ".lifeline"
+    )
+    .forEach(
+        button =>
+            button.disabled = false
+    );
+
+
+    document.getElementById(
+        "gameModal"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "lifelineModal"
+    ).style.display =
+        "none";
+
+
+    loadQuestions()
+    .then(()=>{
+
+        loadQuestion();
+
+    });
+
+};
+
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+function createConfetti(){
+
+    const pieces = 80;
+
+
+    for(
+        let i=0;
+        i<pieces;
+        i++
+    ){
+
+        const piece =
+            document.createElement(
+                "div"
+            );
+
+
+        piece.className =
+            "confetti";
+
+
+        piece.style.left =
+            Math.random() * 100 + "%";
+
+
+        piece.style.background =
+            [
+                "#ffd95a",
+                "#f5c542",
+                "#16c784",
+                "#3b82f6",
+                "#ef4444",
+                "#ffffff"
+            ][
+                Math.floor(
+                    Math.random() * 6
+                )
+            ];
+
+
+        piece.style.animationDuration =
+            (1.5 +
+            Math.random() * 2) + "s";
+
+
+        document.body.appendChild(
+            piece
+        );
+
+
+        setTimeout(()=>{
+
+            piece.remove();
+
+        },4000);
+
+    }
+
+}
+
+
+/* =========================================================
+   SMALL CELEBRATION
+========================================================= */
+
+function createSmallCelebration(){
+
+    for(
+        let i=0;
+        i<18;
+        i++
+    ){
+
+        const piece =
+            document.createElement(
+                "div"
+            );
+
+
+        piece.className =
+            "confetti";
+
+
+        piece.style.left =
+            (40 +
+            Math.random() * 20) + "%";
+
+
+        piece.style.background =
+            "#ffd95a";
+
+
+        piece.style.animationDuration =
+            "1.4s";
+
+
+        document.body.appendChild(
+            piece
+        );
+
+
+        setTimeout(
+            () => piece.remove(),
+            1800
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function init(){
+
+    /*
+     Authentication first
+    */
+
+    await waitForAuth();
+
+
+    /*
+     Load existing coins
+    */
+
+    await loadUserCoins();
+
+
+    /*
+     Load questions
+    */
+
+    await loadQuestions();
+
+
+    /*
+     Start game
+    */
+
+    renderMoneyLadder();
+
+    loadQuestion();
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+init();
+
+</script>
+
 </body>
-</html>
+    </html>
