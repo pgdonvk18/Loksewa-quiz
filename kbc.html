@@ -20,28 +20,50 @@
             flex-direction: column;
             justify-content: space-between;
             overflow-x: hidden;
+            position: relative;
         }
 
-        /* Top Bar & Lifelines */
+        /* Top Bar & Header */
         .header-section {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 30px;
-            background: rgba(0, 0, 0, 0.4);
+            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.6);
             border-bottom: 2px solid #d4af37;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .ladder-toggle-btn {
+            background: #102a45;
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            padding: 6px 14px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .ladder-toggle-btn:hover {
+            background: #d4af37;
+            color: #000;
         }
 
         .lifelines {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .lifeline-btn {
             background: linear-gradient(135deg, #2c3e50, #000);
             color: #d4af37;
             border: 2px solid #d4af37;
-            padding: 8px 15px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
             font-weight: bold;
             border-radius: 20px;
             cursor: pointer;
@@ -61,11 +83,11 @@
         }
 
         .score-display {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #d4af37;
             font-weight: bold;
             background: rgba(212, 175, 55, 0.1);
-            padding: 8px 20px;
+            padding: 6px 15px;
             border-radius: 20px;
             border: 1px solid #d4af37;
         }
@@ -73,18 +95,14 @@
         /* Main Game Area */
         .game-container {
             display: flex;
-            justify-content: space-between;
-            padding: 20px 30px;
-            flex-grow: 1;
-            align-items: center;
-        }
-
-        .left-panel {
-            flex: 3;
-            display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            padding: 20px;
+            flex-grow: 1;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         /* Question Box */
@@ -93,11 +111,10 @@
             border: 3px solid #d4af37;
             border-radius: 15px;
             width: 100%;
-            max-width: 700px;
-            padding: 25px;
+            padding: 25px 20px;
             text-align: center;
-            font-size: 1.4rem;
-            margin-bottom: 30px;
+            font-size: 1.25rem;
+            margin-bottom: 25px;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
             position: relative;
         }
@@ -109,37 +126,42 @@
             background: #d4af37;
             color: #000;
             font-weight: bold;
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1rem;
             border: 2px solid #fff;
         }
 
         /* Options Grid */
         .options-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 1fr;
+            gap: 15px;
             width: 100%;
-            max-width: 700px;
+        }
+
+        @media (min-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         .option-btn {
             background: linear-gradient(135deg, #14283f, #091522);
             border: 2px solid #2a4763;
             color: #ffffff;
-            padding: 15px 20px;
+            padding: 14px 20px;
             border-radius: 30px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: pointer;
             text-align: left;
             transition: 0.2s;
             position: relative;
-            padding-left: 50px;
+            padding-left: 45px;
         }
 
         .option-btn::before {
@@ -183,27 +205,59 @@
             opacity: 0;
         }
 
-        /* Right Panel: Money Tree */
-        .right-panel {
-            flex: 1;
-            max-width: 280px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #2a4763;
-            border-radius: 10px;
-            padding: 15px;
-            max-height: 450px;
-            overflow-y: auto;
+        /* Slide-out Sidebar Menu for Money Ladder */
+        .sidebar-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100%;
+            background: rgba(5, 13, 23, 0.95);
+            border-right: 2px solid #d4af37;
+            z-index: 1001;
+            transition: 0.3s ease-in-out;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-menu.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #2a4763;
+            padding-bottom: 10px;
+        }
+
+        .sidebar-header h3 {
+            color: #d4af37;
+            font-size: 1.2rem;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
 
         .money-list {
             list-style: none;
+            overflow-y: auto;
+            flex-grow: 1;
         }
 
         .money-item {
             display: flex;
             justify-content: space-between;
-            padding: 6px 10px;
-            margin-bottom: 4px;
+            padding: 8px 12px;
+            margin-bottom: 5px;
             border-radius: 5px;
             font-size: 0.95rem;
             color: #8899a6;
@@ -228,19 +282,32 @@
             border-left: 4px solid #3498db;
         }
 
+        /* Overlay for Sidebar */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
         /* Lock Button Container */
         .action-area {
             display: flex;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         .lock-btn {
             background: linear-gradient(135deg, #f39c12, #d35400);
             color: #fff;
             border: none;
-            padding: 12px 40px;
-            font-size: 1.2rem;
+            padding: 12px 35px;
+            font-size: 1.1rem;
             font-weight: bold;
             border-radius: 30px;
             cursor: pointer;
@@ -263,40 +330,41 @@
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 1100;
         }
 
         .modal-content {
             background: #102a45;
             border: 3px solid #d4af37;
-            padding: 40px;
+            padding: 30px 20px;
             border-radius: 20px;
             text-align: center;
-            max-width: 450px;
+            max-width: 400px;
             width: 90%;
         }
 
         .modal-content h2 {
             color: #d4af37;
-            margin-bottom: 15px;
-            font-size: 2rem;
+            margin-bottom: 12px;
+            font-size: 1.7rem;
         }
 
         .modal-content p {
-            font-size: 1.2rem;
-            margin-bottom: 25px;
+            font-size: 1.05rem;
+            margin-bottom: 20px;
+            color: #ddd;
         }
 
         .restart-btn {
             background: #d4af37;
             color: #000;
             border: none;
-            padding: 10px 25px;
+            padding: 10px 22px;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1rem;
             border-radius: 20px;
             cursor: pointer;
         }
@@ -304,38 +372,42 @@
 </head>
 <body>
 
+    <!-- Sidebar Menu for Money Ladder -->
+    <div class="overlay" id="sidebarOverlay" onclick="toggleLadder()"></div>
+    <div class="sidebar-menu" id="moneyLadderSidebar">
+        <div class="sidebar-header">
+            <h3>💰 Prize Ladder</h3>
+            <button class="close-sidebar" onclick="toggleLadder()">&times;</button>
+        </div>
+        <ul class="money-list" id="moneyList">
+            <!-- Dynamically filled by JS -->
+        </ul>
+    </div>
+
     <!-- Top Bar -->
     <div class="header-section">
+        <button class="ladder-toggle-btn" onclick="toggleLadder()">📊 Prize Ladder</button>
         <div class="lifelines">
             <button class="lifeline-btn" id="ll-5050" onclick="use5050()">50:50</button>
             <button class="lifeline-btn" id="ll-phone" onclick="usePhoneAFriend()">📞 Phone</button>
             <button class="lifeline-btn" id="ll-audience" onclick="useAudiencePoll()">👥 Poll</button>
             <button class="lifeline-btn" id="ll-flip" onclick="useFlipQuestion()">🔄 Flip</button>
         </div>
-        <div class="score-display" id="currentPrizeText">Prize: रू 0</div>
+        <div class="score-display" id="currentPrizeText">रू 0</div>
     </div>
 
     <!-- Game Core Layout -->
     <div class="game-container">
-        <div class="left-panel">
-            <div class="question-box">
-                <div class="timer-badge" id="timer">30</div>
-                <span id="questionText">प्रश्न लोड हुँदैछ...</span>
-            </div>
-
-            <div class="options-grid">
-                <button class="option-btn" id="optA" data-label="A" onclick="selectOption('A')"></button>
-                <button class="option-btn" id="optB" data-label="B" onclick="selectOption('B')"></button>
-                <button class="option-btn" id="optC" data-label="C" onclick="selectOption('C')"></button>
-                <button class="option-btn" id="optD" data-label="D" onclick="selectOption('D')"></button>
-            </div>
+        <div class="question-box">
+            <div class="timer-badge" id="timer">30</div>
+            <span id="questionText">Supabase बाट प्रश्नहरू लोड हुँदैछ...</span>
         </div>
 
-        <!-- Right Panel: Money Tree -->
-        <div class="right-panel">
-            <ul class="money-list" id="moneyList">
-                <!-- Dynamically filled by JS -->
-            </ul>
+        <div class="options-grid">
+            <button class="option-btn" id="optA" data-label="A" onclick="selectOption('A')"></button>
+            <button class="option-btn" id="optB" data-label="B" onclick="selectOption('B')"></button>
+            <button class="option-btn" id="optC" data-label="C" onclick="selectOption('C')"></button>
+            <button class="option-btn" id="optD" data-label="D" onclick="selectOption('D')"></button>
         </div>
     </div>
 
@@ -348,52 +420,75 @@
     <div class="modal" id="gameModal">
         <div class="modal-content">
             <h2 id="modalTitle">खेल समाप्त!</h2>
-            <p id="modalDesc">तपाईंले रू १०,००० जित्नुभयो।</p>
+            <p id="modalDesc">तपाईंले पुरस्कार जित्नुभयो।</p>
             <button class="restart-btn" onclick="restartGame()">फेरि खेल्नुहोस्</button>
         </div>
     </div>
 
-    <script>
-        // KBC Prize Money Ladder (10 Questions)
+    <!-- Supabase JS Client -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        // आफ्नै Supabase को URL र Anon Key यहाँ राख्नुहोला
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         const prizeLadder = [
             { level: 10, prize: "रू 1,00,000", amount: 100000 },
             { level: 9, prize: "रू 50,000", amount: 50000 },
             { level: 8, prize: "रू 25,000", amount: 25000 },
-            { level: 7, prize: "रू 12,500", amount: 12500, safe: true }, // Safe Zone
+            { level: 7, prize: "रू 12,500", amount: 12500, safe: true },
             { level: 6, prize: "रू 10,000", amount: 10000 },
             { level: 5, prize: "रू 7,500", amount: 7500 },
             { level: 4, prize: "रू 5,000", amount: 5000 },
-            { level: 3, prize: "रू 3,000", amount: 3000, safe: true }, // Safe Zone
+            { level: 3, prize: "रू 3,000", amount: 3000, safe: true },
             { level: 2, prize: "रू 2,000", amount: 2000 },
             { level: 1, prize: "रू 1,000", amount: 1000 }
         ];
 
-        // Sample Loksewa Questions (You can connect this with your Supabase DB questions)
-        let questions = [
-            { q: "नेपालको राष्ट्रिय पक्षी कुन हो?", options: { A: "मुनाल", B: "डाफे", C: "सुगा", D: "मयूर" }, answer: "B" },
-            { q: "सगरमाथाको उचाइ कति रहेको छ?", options: { A: "८८४८ मिटर", B: "८८४८.८६ मिटर", C: "८,००० मिटर", D: "८,९०० मिटर" }, answer: "B" },
-            { q: "गौतम बुद्धको जन्मस्थल लुम्बिनी कुन जिल्लामा पर्छ?", options: { A: "कपिलवस्तु", B: "रूपन्देही", C: "नवलपरासी", D: "पाल्पा" }, answer: "B" },
-            { q: "नेपालमा संघीय शासन प्रणाली कहिलेदेखि लागू भयो?", options: { A: "२०६५ साल", B: "२०७२ साल", C: "२०७४ साल", D: "२०६३ साल" }, answer: "B" },
-            { q: "विश्वको सबैभन्दा गहिरो गल्छी 'अणधु गल्छी' कुन नदीले बनाएको हो?", options: { A: "कोशी नदी", B: "गण्डकी नदी", C: "कर्णाली नदी", D: "महाकाली नदी" }, answer: "B" },
-            { q: "नेपालको संविधान २०७२ मा कतिवटा भाग छन्?", options: { A: "३०", B: "३५", C: "३७", D: "४०" }, answer: "B" },
-            { q: "क्षेत्रफलको हिसाबले नेपालको सबैभन्दा ठूलो जिल्ला कुन हो?", options: { A: "डोल्पा", B: "हुम्ला", C: "ताप्लेजुङ", D: "गोर्खा" }, answer: "A" },
-            { q: "नेपालमा सर्वप्रथम कागजी नोटको शुरुआत कहिले भयो?", options: { A: "२००२ साल", B: "२००४ साल", C: "२०१२ साल", D: "२०१७ साल" }, answer: "B" },
-            { q: "सार्वजनिक प्रशासनमा 'रेड टेपिस्म' (Red Tapism) ले के बुझाउँछ?", options: { A: "रातो झन्डा", B: "अत्याधिक प्रक्रियागत ढिलासुस्ती", C: "आर्थिक भ्रष्टाचार", D: "गोपनीय कागजात" }, answer: "B" },
-            { q: "नेपालको पहिलो विद्युतीय बैंक कुन हो?", options: { A: "नेपाल बैंक लिमिटेड", B: "राष्ट्रिय वाणिज्य बैंक", C: "एभरेष्ट बैंक", D: "नबिल बैंक" }, answer: "A" }
-        ];
-
+        let questions = [];
         let currentQuestionIndex = 0;
         let selectedOptionKey = null;
         let timerInterval;
         let timeLeft = 30;
 
-        // Lifeline trackers
         let lifelineUsed = {
             '5050': false,
             'phone': false,
             'audience': false,
             'flip': false
         };
+
+        window.toggleLadder = function() {
+            document.getElementById('moneyLadderSidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        async function fetchQuestionsFromSupabase() {
+            try {
+                const { data, error } = await supabase
+                    .from('questions')
+                    .select('*');
+
+                if (error) {
+                    console.error('Error fetching questions:', error);
+                    document.getElementById('questionText').innerText = 'डेटाबेसबाट प्रश्न लोड गर्न समस्या भयो!';
+                    return;
+                }
+
+                if (data && data.length > 0) {
+                    // रेन्डम गरेर १० वटा मात्र प्रश्न छान्ने
+                    questions = data.sort(() => Math.random() - 0.5).slice(0, 10);
+                    loadQuestion();
+                } else {
+                    document.getElementById('questionText').innerText = 'कुनै पनि प्रश्न भेटिएन!';
+                }
+            } catch (err) {
+                console.error('Connection error:', err);
+                document.getElementById('questionText').innerText = 'इन्टरनेट वा कनेक्सन समस्या!';
+            }
+        }
 
         function initMoneyTree() {
             const listEl = document.getElementById('moneyList');
@@ -408,7 +503,7 @@
 
         function loadQuestion() {
             if (currentQuestionIndex >= questions.length) {
-                endGame(true, "बधाई छ! तपाईंले करोडपति गेम सफलतापूर्वक जितेर सबै कोइनहरू हात पार्नुभयो! 🎉");
+                endGame(true, "बधाई छ! तपाईंले KBC गेम सफलतापूर्वक जितेर सबै पुरस्कार जित्नुभयो! 🎉");
                 return;
             }
 
@@ -416,11 +511,13 @@
             resetOptionsUI();
 
             const currentQ = questions[currentQuestionIndex];
-            document.getElementById('questionText').innerText = `Q${currentQuestionIndex + 1}. ${currentQ.q}`;
-            document.getElementById('optA').innerText = currentQ.options.A;
-            document.getElementById('optB').innerText = currentQ.options.B;
-            document.getElementById('optC').innerText = currentQ.options.C;
-            document.getElementById('optD').innerText = currentQ.options.D;
+            
+            // Supabase को स्तम्भ (Column) नाम अनुसार म्याच गरिएको
+            document.getElementById('questionText').innerText = `Q${currentQuestionIndex + 1}. ${currentQ.question_text || currentQ.q}`;
+            document.getElementById('optA').innerText = currentQ.option_a;
+            document.getElementById('optB').innerText = currentQ.option_b;
+            document.getElementById('optC').innerText = currentQ.option_c;
+            document.getElementById('optD').innerText = currentQ.option_d;
 
             selectedOptionKey = null;
             document.getElementById('lockBtn').disabled = true;
@@ -450,7 +547,7 @@
             }, 1000);
         }
 
-        function selectOption(key) {
+        window.selectOption = function(key) {
             ['A', 'B', 'C', 'D'].forEach(k => {
                 document.getElementById('opt' + k).classList.remove('selected');
             });
@@ -459,24 +556,25 @@
             document.getElementById('lockBtn').disabled = false;
         }
 
-        function lockAnswer() {
+        window.lockAnswer = function() {
             clearInterval(timerInterval);
             document.getElementById('lockBtn').disabled = true;
 
             const currentQ = questions[currentQuestionIndex];
             const selectedBtn = document.getElementById('opt' + selectedOptionKey);
+            const correctKey = currentQ.correct_answer; // Supabase को सहि उत्तर स्तम्भ
 
-            // Dramatic pause simulation before revealing answer
             setTimeout(() => {
-                if (selectedOptionKey === currentQ.answer) {
+                if (selectedOptionKey === correctKey) {
                     selectedBtn.classList.add('correct');
+                    document.getElementById('currentPrizeText').innerText = prizeLadder[prizeLadder.length - 1 - currentQuestionIndex].prize;
                     setTimeout(() => {
                         currentQuestionIndex++;
                         loadQuestion();
                     }, 1500);
                 } else {
                     selectedBtn.classList.add('wrong');
-                    document.getElementById('opt' + currentQ.answer).classList.add('correct');
+                    document.getElementById('opt' + correctKey).classList.add('correct');
                     setTimeout(() => {
                         checkSafeZoneAndEnd();
                     }, 2000);
@@ -484,48 +582,47 @@
             }, 1000);
         }
 
-        // --- Lifeline Functions ---
-        function use5050() {
+        // Lifelines
+        window.use5050 = function() {
             if (lifelineUsed['5050']) return;
             lifelineUsed['5050'] = true;
             document.getElementById('ll-5050').disabled = true;
 
             const currentQ = questions[currentQuestionIndex];
-            let wrongOptions = ['A', 'B', 'C', 'D'].filter(k => k !== currentQ.answer);
-            // Hide 2 random wrong options
+            let wrongOptions = ['A', 'B', 'C', 'D'].filter(k => k !== currentQ.correct_answer);
             wrongOptions.sort(() => Math.random() - 0.5);
+            
             document.getElementById('opt' + wrongOptions[0]).classList.add('hidden-option');
             document.getElementById('opt' + wrongOptions[0]).disabled = true;
             document.getElementById('opt' + wrongOptions[1]).classList.add('hidden-option');
             document.getElementById('opt' + wrongOptions[1]).disabled = true;
         }
 
-        function usePhoneAFriend() {
+        window.usePhoneAFriend = function() {
             if (lifelineUsed['phone']) return;
             lifelineUsed['phone'] = true;
             document.getElementById('ll-phone').disabled = true;
 
             const currentQ = questions[currentQuestionIndex];
-            alert(`📞 साथीको सल्लाह: "मलाई लाग्छ यसको सही उत्तर विकल्प (${currentQ.answer}) हुनुपर्छ!"`);
+            alert(`📞 साथीको सल्लाह: "मलाई लाग्छ यसको सही उत्तर विकल्प (${currentQ.correct_answer}) हुनुपर्छ!"`);
         }
 
-        function useAudiencePoll() {
+        window.useAudiencePoll = function() {
             if (lifelineUsed['audience']) return;
             lifelineUsed['audience'] = true;
             document.getElementById('ll-audience').disabled = true;
 
             const currentQ = questions[currentQuestionIndex];
             let a = 15, b = 15, c = 15, d = 15;
-            // Give higher percentage to correct answer
-            if (currentQ.answer === 'A') a = 65;
-            else if (currentQ.answer === 'B') b = 65;
-            else if (currentQ.answer === 'C') c = 65;
+            if (currentQ.correct_answer === 'A') a = 65;
+            else if (currentQ.correct_answer === 'B') b = 65;
+            else if (currentQ.correct_answer === 'C') c = 65;
             else d = 65;
 
             alert(`👥 अडियन्स पोलको नतिजा:\n[A]: ${a}% | [B]: ${b}% | [C]: ${c}% | [D]: ${d}%`);
         }
 
-        function useFlipQuestion() {
+        window.useFlipQuestion = function() {
             if (lifelineUsed['flip']) return;
             lifelineUsed['flip'] = true;
             document.getElementById('ll-flip').disabled = true;
@@ -535,31 +632,30 @@
         }
 
         function checkSafeZoneAndEnd() {
-            // Calculate secured prize based on passed safe zones
             let wonAmount = "रू 0";
             if (currentQuestionIndex >= 7) wonAmount = "रू 12,500 (Safe Zone)";
             else if (currentQuestionIndex >= 3) wonAmount = "रू 3,000 (Safe Zone)";
 
-            endGame(false, `उत्तर गलत भयो! तपाईं खेलबाट बाहिरिनुभयो। सुरक्षित अंक: ${wonAmount}`);
+            endGame(false, `उत्तर गलत भयो! तपाईं खेलबाट बाहिरिनुभयो। सुरक्षित रकम: ${wonAmount}`);
         }
 
         function endGame(isWin, message) {
             clearInterval(timerInterval);
-            document.getElementById('modalTitle').innerText = isWin ? "अद्भूत! तपाईं विजेता बन्नुभयो! 🏆" : "खेल समाप्त!";
+            document.getElementById('modalTitle').innerText = isWin ? "अद्भूत! विजेता बन्नुभयो! 🏆" : "खेल समाप्त!";
             document.getElementById('modalDesc').innerText = message;
             document.getElementById('gameModal').style.display = 'flex';
         }
 
-        function restartGame() {
+        window.restartGame = function() {
             currentQuestionIndex = 0;
             lifelineUsed = { '5050': false, 'phone': false, 'audience': false, 'flip': false };
             document.querySelectorAll('.lifeline-btn').forEach(btn => btn.disabled = false);
-            document.getElementById('gameModal').style.display = 'none';
-            loadQuestion();
+            document.getElementById('gameModal').style.display, document.getElementById('gameModal').style.display = 'none';
+            fetchQuestionsFromSupabase();
         }
 
-        // Start the game on page load
-        window.onload = loadQuestion;
+        // Page load मा Supabase बाट प्रश्न ल्याउने
+        fetchQuestionsFromSupabase();
     </script>
 </body>
 </html>
