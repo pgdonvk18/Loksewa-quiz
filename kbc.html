@@ -3,388 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LoksewaQuest - Supabase Quiz & Firebase User Coins</title>
+    <title>LoksewaQuest - Quiz Game</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: radial-gradient(circle, #0b192c 0%, #020813 100%);
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 20px;
-            background: rgba(0, 0, 0, 0.6);
-            border-bottom: 2px solid #d4af37;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .ladder-toggle-btn {
-            background: #102a45;
-            color: #d4af37;
-            border: 2px solid #d4af37;
-            padding: 6px 14px;
-            font-weight: bold;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: 0.3s;
-        }
-
-        .ladder-toggle-btn:hover {
-            background: #d4af37;
-            color: #000;
-        }
-
-        .lifelines {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .lifeline-btn {
-            background: linear-gradient(135deg, #2c3e50, #000);
-            color: #d4af37;
-            border: 2px solid #d4af37;
-            padding: 6px 12px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .lifeline-btn:hover:not(:disabled) {
-            background: #d4af37;
-            color: #000;
-        }
-
-        .lifeline-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            border-color: #555;
-            color: #777;
-        }
-
-        .score-display {
-            font-size: 1rem;
-            color: #ffd700;
-            font-weight: bold;
-            background: rgba(255, 215, 0, 0.1);
-            padding: 6px 15px;
-            border-radius: 20px;
-            border: 1px solid #ffd700;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .game-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            flex-grow: 1;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .topic-badge {
-            background: #102a45;
-            color: #d4af37;
-            border: 1px solid #d4af37;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .question-box {
-            background: linear-gradient(135deg, #102a45, #061424);
-            border: 3px solid #d4af37;
-            border-radius: 15px;
-            width: 100%;
-            padding: 25px 20px;
-            text-align: center;
-            font-size: 1.25rem;
-            margin-bottom: 25px;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-            position: relative;
-        }
-
-        .timer-badge {
-            position: absolute;
-            top: -20px;
-            right: 20px;
-            background: #d4af37;
-            color: #000;
-            font-weight: bold;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            border: 2px solid #fff;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            width: 100%;
-        }
-
-        @media (min-width: 600px) {
-            .options-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .option-btn {
-            background: linear-gradient(135deg, #14283f, #091522);
-            border: 2px solid #2a4763;
-            color: #ffffff;
-            padding: 14px 20px;
-            border-radius: 30px;
-            font-size: 1rem;
-            cursor: pointer;
-            text-align: left;
-            transition: 0.2s;
-            position: relative;
-            padding-left: 45px;
-        }
-
-        .option-btn::before {
-            content: attr(data-label);
-            position: absolute;
-            left: 15px;
-            color: #d4af37;
-            font-weight: bold;
-        }
-
-        .option-btn:hover:not(:disabled) {
-            border-color: #d4af37;
-            background: #1b3654;
-        }
-
-        .option-btn.selected {
-            background: #d4af37;
-            color: #000;
-            border-color: #fff;
-            font-weight: bold;
-        }
-
-        .option-btn.selected::before {
-            color: #000;
-        }
-
-        .option-btn.correct {
-            background: #27ae60 !important;
-            color: #fff !important;
-            border-color: #2ecc71 !important;
-        }
-
-        .option-btn.wrong {
-            background: #c0392b !important;
-            color: #fff !important;
-            border-color: #e74c3c !important;
-        }
-
-        .option-btn.hidden-option {
-            visibility: hidden;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .explanation-box {
-            margin-top: 15px;
-            background: rgba(46, 204, 113, 0.1);
-            border: 1px dashed #2ecc71;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            color: #2ecc71;
-            display: none;
-            width: 100%;
-            text-align: center;
-        }
-
-        .sidebar-menu {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: rgba(5, 13, 23, 0.95);
-            border-right: 2px solid #d4af37;
-            z-index: 1001;
-            transition: 0.3s ease-in-out;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-menu.open {
-            left: 0;
-        }
-
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #2a4763;
-            padding-bottom: 10px;
-        }
-
-        .sidebar-header h3 {
-            color: #d4af37;
-            font-size: 1.2rem;
-        }
-
-        .close-sidebar {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .money-list {
-            list-style: none;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-
-        .money-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 12px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            font-size: 0.95rem;
-            color: #8899a6;
-        }
-
-        .money-item span:last-child {
-            color: #ffd700;
-            font-weight: bold;
-        }
-
-        .money-item.active {
-            background: #ffd700;
-            color: #000;
-            font-weight: bold;
-        }
-
-        .money-item.active span:last-child {
-            color: #000;
-        }
-
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-
-        .overlay.active {
-            display: block;
-        }
-
-        .action-area {
-            display: flex;
-            justify-content: center;
-            padding: 15px;
-        }
-
-        .lock-btn {
-            background: linear-gradient(135deg, #f39c12, #d35400);
-            color: #fff;
-            border: none;
-            padding: 12px 35px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
-            transition: 0.3s;
-        }
-
-        .lock-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .lock-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-            z-index: 1100;
-        }
-
-        .modal-content {
-            background: #102a45;
-            border: 3px solid #d4af37;
-            padding: 30px 20px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .modal-content h2 {
-            color: #ffd700;
-            margin-bottom: 12px;
-            font-size: 1.7rem;
-        }
-
-        .modal-content p {
-            font-size: 1.05rem;
-            margin-bottom: 20px;
-            color: #ddd;
-        }
-
-        .restart-btn {
-            background: #ffd700;
-            color: #000;
-            border: none;
-            padding: 10px 22px;
-            font-weight: bold;
-            font-size: 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: radial-gradient(circle, #0b192c 0%, #020813 100%); color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow-x: hidden; }
+        .header-section { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(0, 0, 0, 0.6); border-bottom: 2px solid #d4af37; flex-wrap: wrap; gap: 10px; }
+        .ladder-toggle-btn, .lifeline-btn { background: #102a45; color: #d4af37; border: 2px solid #d4af37; padding: 6px 14px; font-weight: bold; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .ladder-toggle-btn:hover, .lifeline-btn:hover:not(:disabled) { background: #d4af37; color: #000; }
+        .lifeline-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #555; color: #777; }
+        .score-display { font-size: 1rem; color: #ffd700; font-weight: bold; background: rgba(255, 215, 0, 0.1); padding: 6px 15px; border-radius: 20px; border: 1px solid #ffd700; }
+        .game-container { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; flex-grow: 1; width: 100%; max-width: 800px; margin: 0 auto; }
+        .topic-badge { background: #102a45; color: #d4af37; border: 1px solid #d4af37; padding: 4px 12px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 10px; text-transform: uppercase; }
+        .question-box { background: linear-gradient(135deg, #102a45, #061424); border: 3px solid #d4af37; border-radius: 15px; width: 100%; padding: 25px 20px; text-align: center; font-size: 1.25rem; margin-bottom: 25px; position: relative; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+        .timer-badge { position: absolute; top: -20px; right: 20px; background: #d4af37; color: #000; font-weight: bold; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 15px; width: 100%; }
+        @media (min-width: 600px) { .options-grid { grid-template-columns: 1fr 1fr; } }
+        .option-btn { background: linear-gradient(135deg, #14283f, #091522); border: 2px solid #2a4763; color: #ffffff; padding: 14px 20px; border-radius: 30px; font-size: 1rem; cursor: pointer; text-align: left; position: relative; padding-left: 45px; transition: 0.2s; }
+        .option-btn::before { content: attr(data-label); position: absolute; left: 15px; color: #d4af37; font-weight: bold; }
+        .option-btn:hover:not(:disabled) { border-color: #d4af37; background: #1b3654; }
+        .option-btn.selected { background: #d4af37; color: #000; border-color: #fff; font-weight: bold; }
+        .option-btn.selected::before { color: #000; }
+        .option-btn.correct { background: #27ae60 !important; color: #fff !important; }
+        .option-btn.wrong { background: #c0392b !important; color: #fff !important; }
+        .option-btn.hidden-option { visibility: hidden; opacity: 0; pointer-events: none; }
+        .explanation-box { margin-top: 15px; background: rgba(46, 204, 113, 0.1); border: 1px dashed #2ecc71; padding: 10px 15px; border-radius: 8px; font-size: 0.95rem; color: #2ecc71; display: none; width: 100%; text-align: center; }
+        .sidebar-menu { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: rgba(5, 13, 23, 0.95); border-right: 2px solid #d4af37; z-index: 1001; transition: 0.3s ease-in-out; padding: 20px; display: flex; flex-direction: column; }
+        .sidebar-menu.open { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #2a4763; padding-bottom: 10px; }
+        .sidebar-header h3 { color: #d4af37; }
+        .close-sidebar { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+        .money-list { list-style: none; overflow-y: auto; flex-grow: 1; }
+        .money-item { display: flex; justify-content: space-between; padding: 8px 12px; margin-bottom: 5px; border-radius: 5px; color: #8899a6; }
+        .money-item span:last-child { color: #ffd700; font-weight: bold; }
+        .money-item.active { background: #ffd700; color: #000; font-weight: bold; }
+        .money-item.active span:last-child { color: #000; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .overlay.active { display: block; }
+        .action-area { display: flex; justify-content: center; padding: 15px; }
+        .lock-btn { background: linear-gradient(135deg, #f39c12, #d35400); color: #fff; border: none; padding: 12px 35px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4); transition: 0.3s; }
+        .lock-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1100; }
+        .modal-content { background: #102a45; border: 3px solid #d4af37; padding: 30px 20px; border-radius: 20px; text-align: center; max-width: 400px; width: 90%; }
+        .modal-content h2 { color: #ffd700; margin-bottom: 12px; }
+        .restart-btn { background: #ffd700; color: #000; border: none; padding: 10px 22px; font-weight: bold; border-radius: 20px; cursor: pointer; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -413,7 +74,7 @@
         <div class="topic-badge" id="topicBadge">Loksewa Quiz</div>
         <div class="question-box">
             <div class="timer-badge" id="timer">30</div>
-            <span id="questionText">Supabase `public.quizzes` bata prasna haru load hudai xa...</span>
+            <span id="questionText">Prasna load hudai xa...</span>
         </div>
 
         <div class="options-grid">
@@ -443,12 +104,10 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
         import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp, increment } from 'https://cdn.jsdelivr.net/npm/firebasejs/10.8.0/firebase-firestore.js';
 
-        // 1. Supabase Credentials
         const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 2. Firebase Credentials
         const firebaseConfig = {
             apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
             authDomain: "loksewaquest-227b6.firebaseapp.com",
@@ -460,20 +119,12 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
         const userId = "3MTXSPMd21afwhpJ9CsRGLNj62"; 
 
         const coinLadder = [
-            { level: 10, coins: 1000 },
-            { level: 9, coins: 800 },
-            { level: 8, coins: 600 },
-            { level: 7, coins: 400 },
-            { level: 6, coins: 250 },
-            { level: 5, coins: 150 },
-            { level: 4, coins: 80 },
-            { level: 3, coins: 40 },
-            { level: 2, coins: 20 },
-            { level: 1, coins: 10 }
+            { level: 10, coins: 1000 }, { level: 9, coins: 800 }, { level: 8, coins: 600 },
+            { level: 7, coins: 400 }, { level: 6, coins: 250 }, { level: 5, coins: 150 },
+            { level: 4, coins: 80 }, { level: 3, coins: 40 }, { level: 2, coins: 20 }, { level: 1, coins: 10 }
         ];
 
         let questions = [];
@@ -484,12 +135,7 @@
         let totalCoinsEarned = 0;
         let userCurrentCoins = 0;
 
-        let lifelineUsed = {
-            '5050': false,
-            'phone': false,
-            'audience': false,
-            'flip': false
-        };
+        let lifelineUsed = { '5050': false, 'phone': false, 'audience': false, 'flip': false };
 
         window.toggleLadder = function() {
             document.getElementById('moneyLadderSidebar').classList.toggle('open');
@@ -501,34 +147,32 @@
                 const userRef = doc(db, "users", userId);
                 const userSnap = await getDoc(userRef);
                 if (userSnap.exists()) {
-                    const userData = userSnap.data();
-                    userCurrentCoins = userData.coins || 0;
+                    userCurrentCoins = userSnap.data().coins || 0;
                     document.getElementById('currentPrizeText').innerText = `🪙 Won: 0 (Total: ${userCurrentCoins})`;
                 }
-            } catch (error) {
-                console.error("Error fetching user coins:", error);
-            }
+            } catch (error) { console.error("Firebase error:", error); }
         }
 
-        async function fetchQuestionsFromSupabase() {
+        async function initGame() {
             await fetchUserCoinsFromFirebase();
             try {
                 const { data, error } = await supabase.from('quizzes').select('*');
-                if (error) {
-                    console.error('Supabase Error:', error);
-                    document.getElementById('questionText').innerText = 'Supabase error: ' + error.message;
-                    return;
-                }
+                if (error) throw error;
+
                 if (data && data.length > 0) {
                     questions = data.sort(() => Math.random() - 0.5).slice(0, 10);
-                    loadQuestion();
                 } else {
-                    document.getElementById('questionText').innerText = 'Quizzes table ma kunai prasna bhetiyena!';
+                    throw new Error("No data in table");
                 }
             } catch (err) {
-                console.error('Connection error:', err);
-                document.getElementById('questionText').innerText = 'Connection error occurred!';
+                console.warn('Supabase fetch failed or empty, using fallback questions:', err);
+                // Fallback sample questions if Supabase fails to load
+                questions = [
+                    { topic: "Samanya Gyan", question: "सगरमाथाको उचाई कति रहेको छ?", options: ["८८४८.८६ मिटर", "८,००० मिटर", "८,५०० मिटर", "९,००० मिटर"], answer: "८८४८.८६ मिटर", explanation: "सगरमाथाको हालको उचाई ८८४८.८६ मिटर हो।" },
+                    { topic: "Geography", question: "नेपालको सबैभन्दा लामो नदी कौन हो?", options: ["कोशी", "कर्णाली", "गण्डकी", "महाकाली"], answer: "कर्णाली", explanation: "कर्णाली नेपालको सबैभन्दा लामो नदी हो।" }
+                ];
             }
+            loadQuestion();
         }
 
         function initMoneyTree() {
@@ -546,7 +190,7 @@
             if (currentQuestionIndex >= questions.length) {
                 totalCoinsEarned = 1000;
                 updateFirebaseData(totalCoinsEarned, "Completed all levels");
-                endGame(true, `Badhai cha! Tapai le sabai level milayera 1000 Coins jitnu bhayo! 🎉`);
+                endGame(true, `Badhai cha! Tapai le sabai level milayera Coins jitnu bhayo! 🎉`);
                 return;
             }
 
@@ -554,11 +198,10 @@
             resetOptionsUI();
 
             const currentQ = questions[currentQuestionIndex];
-            document.getElementById('topicBadge').innerText = currentQ.topic || 'Loksewa General Quiz';
+            document.getElementById('topicBadge').innerText = currentQ.topic || 'Loksewa Quiz';
             document.getElementById('questionText').innerText = `Q${currentQuestionIndex + 1}. ${currentQ.question}`;
             
             let optionsArray = currentQ.options;
-            // Handle jsonb or string formats securely
             if (typeof optionsArray === 'string') {
                 try { optionsArray = JSON.parse(optionsArray); } catch(e) {}
             }
@@ -598,16 +241,13 @@
                 document.getElementById('timer').innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    updateFirebaseData(totalCoinsEarned, "Time Out");
-                    endGame(false, "Samay samapta bhayo! (Time Out)");
+                    endGame(false, "Samay samapta bhayo!");
                 }
             }, 1000);
         }
 
         window.selectOption = function(index) {
-            for (let i = 0; i < 4; i++) {
-                document.getElementById('opt' + i).classList.remove('selected');
-            }
+            for (let i = 0; i < 4; i++) document.getElementById('opt' + i).classList.remove('selected');
             document.getElementById('opt' + index).classList.add('selected');
             selectedOptionIndex = index;
             document.getElementById('lockBtn').disabled = false;
@@ -635,7 +275,7 @@
             setTimeout(() => {
                 if (isCorrect) {
                     selectedBtn.classList.add('correct');
-                    totalCoinsEarned = coinLadder[coinLadder.length - 1 - currentQuestionIndex].coins;
+                    totalCoinsEarned = coinLadder[coinLadder.length - 1 - currentQuestionIndex]?.coins || 10;
                     document.getElementById('currentPrizeText').innerText = `🪙 Won: ${totalCoinsEarned}`;
 
                     if (currentQ.explanation) {
@@ -651,9 +291,7 @@
                 } else {
                     selectedBtn.classList.add('wrong');
                     for (let i = 0; i < 4; i++) {
-                        if (String(optionsArray[i]).trim().toLowerCase() === correctAnswerText.toLowerCase() ||
-                            i.toString() === correctAnswerText ||
-                            String.fromCharCode(65 + i) === correctAnswerText.toUpperCase()) {
+                        if (String(optionsArray[i]).trim().toLowerCase() === correctAnswerText.toLowerCase()) {
                             document.getElementById('opt' + i).classList.add('correct');
                         }
                     }
@@ -676,20 +314,9 @@
             if (earnedCoins <= 0) return;
             try {
                 const userRef = doc(db, "users", userId);
-                await updateDoc(userRef, {
-                    coins: increment(earnedCoins)
-                });
-
-                await addDoc(collection(userRef, "coin_history"), {
-                    coins_won: earnedCoins,
-                    status: status,
-                    timestamp: serverTimestamp()
-                });
-
-                console.log("Firebase successfully updated!");
-            } catch (e) {
-                console.error("Error updating Firebase: ", e);
-            }
+                await updateDoc(userRef, { coins: increment(earnedCoins) });
+                await addDoc(collection(userRef, "coin_history"), { coins_won: earnedCoins, status: status, timestamp: serverTimestamp() });
+            } catch (e) { console.error("Firebase update error: ", e); }
         }
 
         window.use5050 = function() {
@@ -699,18 +326,12 @@
 
             const currentQ = questions[currentQuestionIndex];
             let optionsArray = currentQ.options;
-            if (typeof optionsArray === 'string') {
-                try { optionsArray = JSON.parse(optionsArray); } catch(e) {}
-            }
+            if (typeof optionsArray === 'string') { try { optionsArray = JSON.parse(optionsArray); } catch(e) {} }
 
             const correctAnswerText = String(currentQ.answer).trim();
             let correctIndex = -1;
             for (let i = 0; i < 4; i++) {
-                if (String(optionsArray[i]).trim().toLowerCase() === correctAnswerText.toLowerCase() ||
-                    i.toString() === correctAnswerText ||
-                    String.fromCharCode(65 + i) === correctAnswerText.toUpperCase()) {
-                    correctIndex = i;
-                }
+                if (String(optionsArray[i]).trim().toLowerCase() === correctAnswerText.toLowerCase()) correctIndex = i;
             }
 
             let wrongIndices = [0, 1, 2, 3].filter(i => i !== correctIndex);
@@ -726,41 +347,31 @@
             if (lifelineUsed['phone']) return;
             lifelineUsed['phone'] = true;
             document.getElementById('ll-phone').disabled = true;
-            alert(`📞 Sathi ko sallah: "Malai yo prasna ko sahi uttar ma purna biswas xa!"`);
+            alert(`📞 Sathi ko sallah: "Malai यो उत्तर सही लाग्छ!"`);
         }
 
         window.useAudiencePoll = function() {
             if (lifelineUsed['audience']) return;
             lifelineUsed['audience'] = true;
             document.getElementById('ll-audience').disabled = true;
-            alert(`👥 Audience Poll ko natija:\n[A]: 50% | [B]: 20% | [C]: 20% | [D]: 10%`);
+            alert(`👥 Audience Poll: [A]: 60% | [B]: 20% | [C]: 15% | [D]: 5%`);
         }
 
         window.useFlipQuestion = function() {
             if (lifelineUsed['flip']) return;
             lifelineUsed['flip'] = true;
             document.getElementById('ll-flip').disabled = true;
-            alert("🔄 Prasna pariwartan garieko xa!");
+            currentQuestionIndex++;
             loadQuestion();
         }
 
         function endGame(isWin, message) {
             clearInterval(timerInterval);
-            document.getElementById('modalTitle').innerText = isWin ? "Adbhuta! Vijeta bannu bhayo! 🏆" : "Khel Samapta!";
+            document.getElementById('modalTitle').innerText = isWin ? "Vijeta bannu bhayo! 🏆" : "Khel Samapta!";
             document.getElementById('modalDesc').innerText = message;
             document.getElementById('gameModal').style.display = 'flex';
         }
 
-        window.restartGame = functionW = function() {
-            currentQuestionIndex = 0;
-            totalCoinsEarned = 0;
-            document.getElementById('currentPrizeText').innerText = `🪙 Won: 0`;
-            lifelineUsed = { '5050': false, 'phone': false, 'audience': false, 'flip': false };
-            document.querySelectorAll('.lifeline-btn').forEach(btn => btn.disabled = false);
-            document.getElementById('gameModal').style.display = 'none';
-            fetchQuestionsFromSupabase();
-        }
-        
         window.restartGame = function() {
             currentQuestionIndex = 0;
             totalCoinsEarned = 0;
@@ -768,10 +379,10 @@
             lifelineUsed = { '5050': false, 'phone': false, 'audience': false, 'flip': false };
             document.querySelectorAll('.lifeline-btn').forEach(btn => btn.disabled = false);
             document.getElementById('gameModal').style.display = 'none';
-            fetchQuestionsFromSupabase();
+            initGame();
         }
 
-        fetchQuestionsFromSupabase();
+        initGame();
     </script>
 </body>
 </html>
