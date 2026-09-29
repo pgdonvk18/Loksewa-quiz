@@ -1,342 +1,861 @@
 <!DOCTYPE html>
-<html lang="ne">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LoksewaQuest - Hot Seat PRO v3</title>
-    <!-- Tailwind CSS CDN -->
+    
+    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Poppins', sans-serif; }
-    </style>
-</head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Nepali:ital@0;1&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Loading / Splash Screen -->
-    <div id="loading-screen" class="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-50 transition-opacity duration-300">
-        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-amber-500 border-b-4 border-slate-700 mb-4"></div>
-        <p class="text-slate-300 font-medium text-lg">लोडिङ हुँदैछ...</p>
-    </div>
-
-    <!-- MAIN APP CONTAINER -->
-    <div id="app-container" class="hidden flex-grow flex flex-col">
-        
-        <!-- Header -->
-        <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-md flex justify-between items-center">
-            <h1 class="text-xl font-bold text-amber-400">LoksewaQuest <span class="text-xs bg-amber-500 text-slate-950 px-2 py-0.5 rounded font-bold">PRO v3</span></h1>
-            <div class="flex items-center gap-4">
-                <span id="user-email" class="text-sm text-slate-300 hidden sm:inline"></span>
-                <button id="logout-btn" class="bg-rose-600 hover:bg-rose-700 text-white text-sm px-3 py-1.5 rounded-lg transition font-medium">लगआउट</button>
-            </div>
-        </header>
-
-        <!-- Main Content Area -->
-        <main class="flex-grow flex items-center justify-center p-4">
-            
-            <!-- LOGIN SECTION -->
-            <div id="login-section" class="w-full max-w-md bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700 hidden">
-                <h2 class="text-2xl font-bold text-center mb-6 text-amber-400">लगइन गर्नुहोस्</h2>
-                <form id="login-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">इमेल ठेगाना</label>
-                        <input type="email" id="login-email" required class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">पासवर्ड</label>
-                        <input type="password" id="login-password" required class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-amber-500">
-                    </div>
-                    <p id="login-error" class="text-rose-500 text-xs hidden"></p>
-                    <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-lg transition shadow-lg">प्रवेश गर्नुहोस्</button>
-                </form>
-            </div>
-
-            <!-- DASHBOARD SECTION -->
-            <div id="dashboard-section" class="w-full max-w-2xl bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700 text-center hidden">
-                <h2 class="text-3xl font-bold mb-4 text-amber-400">स्वागत छ! 🎉</h2>
-                <p class="text-slate-300 mb-6">तपाईं LoksewaQuest Hot Seat PRO v3 मा सफलतापूर्वक लगइन हुनुहुन्छ। अब तपाईं क्विज खेल्न सक्नुहुन्छ।</p>
-                
-                <div class="bg-slate-900 p-6 rounded-xl border border-slate-700 mb-6 text-left">
-                    <h3 class="font-semibold text-amber-400 mb-2">तपाईँको युजर प्रोफाइल:</h3>
-                    <p class="text-sm text-slate-300">UID: <span id="profile-uid" class="font-mono text-amber-300 font-semibold">-</span></p>
-                    <p class="text-sm text-slate-300 mt-1">इमेल: <span id="profile-email" class="font-mono text-slate-300">-</span></p>
-                </div>
-
-                <button id="start-quiz-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl transition shadow-lg">क्विज सुरु गर्नुहोस्</button>
-            </div>
-
-            <!-- QUIZ GAME SECTION (नयाँ थपिएको गेम स्क्रिन) -->
-            <div id="quiz-section" class="w-full max-w-2xl bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-700 hidden">
-                <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
-                    <span id="question-count" class="text-sm font-semibold text-amber-400">प्रश्न १ / ५</span>
-                    <span id="score-display" class="text-sm font-semibold text-emerald-400">अङ्क: ०</span>
-                </div>
-
-                <div class="mb-6">
-                    <h3 id="question-text" class="text-xl font-bold text-white leading-relaxed">प्रश्न यहाँ देखिनेछ...</h3>
-                </div>
-
-                <div id="options-container" class="space-y-3 mb-6">
-                    <!-- अप्सनहरू यहाँ जाभास्क्रिप्टबाट लोड हुन्छन् -->
-                </div>
-
-                <div class="flex justify-between items-center">
-                    <button id="quit-quiz-btn" class="text-sm text-rose-400 hover:underline">क्विज छोड्नुहोस्</button>
-                    <button id="next-btn" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-2.5 rounded-xl transition hidden">पछिल्लो प्रश्न</button>
-                </div>
-            </div>
-
-            <!-- QUIZ RESULT SECTION (रिजल्ट स्क्रिन) -->
-            <div id="result-section" class="w-full max-w-md bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700 text-center hidden">
-                <h2 class="text-3xl font-bold mb-2 text-amber-400">क्विज समाप्त भयो! 🏆</h2>
-                <p class="text-slate-300 mb-6">तपाईँले उत्कृष्ट प्रयास गर्नुभयो।</p>
-                
-                <div class="bg-slate-900 p-6 rounded-xl border border-slate-700 mb-6">
-                    <p class="text-sm text-slate-400">तपाईँको कुल अङ्क</p>
-                    <p id="final-score" class="text-4xl font-extrabold text-amber-400 mt-2">० / ५</p>
-                </div>
-
-                <button id="restart-quiz-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-lg">फेरि खेल्नुहोस्</button>
-            </div>
-
-        </main>
-
-        <!-- Footer -->
-        <footer class="text-center p-4 text-xs text-slate-500 border-t border-slate-800">
-            &copy; 2026 LoksewaQuest. All rights reserved.
-        </footer>
-
-    </div>
-
-    <!-- Firebase SDK र एप र गेमको मुख्य लजिक -->
+    <!-- Firebase App (Modular Version) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            setPersistence, 
-            browserLocalPersistence, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-          authDomain: "loksewaquest-227b6.firebaseapp.com",
-          projectId: "loksewaquest-227b6",
-          storageBucket: "loksewaquest-227b6.firebasestorage.app",
-          messagingSenderId: "779234903809",
-          appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+        // Expose Firebase modules globally for the vanilla script logic
+        window.firebaseModules = {
+            initializeApp, getAuth, GoogleAuthProvider, signInWithPopup, signInAnonymously, signOut, onAuthStateChanged,
+            getFirestore, doc, setDoc, getDoc, updateDoc, increment, serverTimestamp
+        };
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', 'Tiro Devanagari Nepali', sans-serif;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .neon-glow {
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.7), 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+
+        .gold-glow {
+            text-shadow: 0 0 10px rgba(234, 179, 8, 0.7), 0 0 20px rgba(234, 179, 8, 0.5);
+        }
+
+        /* Hexagon / Vault Option Clip Path */
+        .option-btn {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: rgba(56, 189, 248, 0.9);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            border-color: #eab308;
+            background: linear-gradient(135deg, rgba(202, 138, 4, 0.4) 0%, rgba(113, 63, 18, 0.8) 100%);
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.6);
+        }
+
+        .option-btn.correct {
+            border-color: #22c55e !important;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.5) 0%, rgba(20, 83, 45, 0.9) 100%) !important;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.8) !important;
+            animation: pulse-correct 0.6s infinite alternate;
+        }
+
+        .option-btn.wrong {
+            border-color: #ef4444 !important;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.5) 0%, rgba(127, 29, 29, 0.9) 100%) !important;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.8) !important;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes pulse-correct {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* Ladder Item Styling */
+        .ladder-item {
+            transition: all 0.3s ease;
+        }
+        .ladder-item.active {
+            background: linear-gradient(90deg, rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0.6), rgba(234, 179, 8, 0.2));
+            border-color: #eab308;
+            color: #fef08a;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.5);
+        }
+        .ladder-item.milestone {
+            color: #ffffff;
+            font-weight: 800;
+        }
+
+        /* Custom Scrollbar for modals/panels */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between select-none">
+
+    <!-- TOP HEADER NAVBAR -->
+    <header class="w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800 p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                    <i class="fa-solid fa-crown text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">LOKSEWAQUEST</h1>
+                    <p class="text-xs text-slate-400 tracking-widest uppercase">Hot Seat PRO v3</p>
+                </div>
+            </div>
+
+            <!-- User Info & Auth Controls -->
+            <div class="flex items-center space-x-4">
+                <div id="user-stats" class="hidden md:flex items-center space-x-3 bg-slate-800/60 border border-slate-700/60 px-4 py-1.5 rounded-full">
+                    <span class="text-xs text-slate-300"><i class="fa-solid fa-coins text-yellow-400 mr-1.5"></i> <strong id="user-coins" class="text-yellow-400">0</strong> Coins</span>
+                    <span class="text-slate-600">|</span>
+                    <span class="text-xs text-slate-300"><i class="fa-solid fa-fire text-orange-500 mr-1.5"></i> Streak: <strong id="user-streak" class="text-orange-400">0</strong></span>
+                </div>
+
+                <div id="auth-container">
+                    <!-- Loaded dynamically via script -->
+                    <button id="login-btn" onclick="handleLogin()" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold px-4 py-2 rounded-xl text-sm shadow-lg shadow-cyan-500/20 transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Sign In</span>
+                    </button>
+                    <div id="user-profile" class="hidden flex items-center space-x-3">
+                        <img id="user-avatar" src="" alt="Avatar" class="w-9 h-9 rounded-full border-2 border-cyan-400 object-cover">
+                        <button onclick="handleLogout()" class="text-xs text-slate-400 hover:text-red-400 transition-colors"><i class="fa-solid fa-power-off text-base"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        
+        <!-- SCREEN 1: LOBBY / SETUP -->
+        <div id="screen-lobby" class="w-full max-w-4xl bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden">
+            <!-- Background Decorative Glows -->
+            <div class="absolute -top-24 -left-24 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <span class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase inline-block mb-3">
+                    Nepal's Ultimate Quiz Show
+                </span>
+                <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">Step Into The Hot Seat</h2>
+                <p class="text-slate-400 text-sm md:text-base">Test your knowledge across Loksewa Ayog standards, history, constitution, current affairs, and general science. Win ultimate glory and rewards!</p>
+            </div>
+
+            <!-- Configuration Options -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-2xl mx-auto">
+                <!-- Category Select -->
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider block"><i class="fa-solid fa-layer-group text-cyan-400 mr-2"></i> Select Category</label>
+                    <select id="select-category" class="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-cyan-400 transition-colors text-sm">
+                        <option value="all">General Loksewa Mixed (All Topics)</option>
+                        <option value="constitution">Constitution & Governance</option>
+                        <option value="geography">Geography & Environment</option>
+                        <option value="history">History & Culture</option>
+                        <option value="science">Science & Technology</option>
+                        <option value="current">Current Affairs & Economics</option>
+                    </select>
+                </div>
+
+                <!-- Difficulty Select -->
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider block"><i class="fa-solid fa-gauge-high text-cyan-400 mr-2"></i> Difficulty Level</label>
+                    <select id="select-difficulty" class="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-cyan-400 transition-colors text-sm">
+                        <option value="standard">Standard (Progressive Ladder)</option>
+                        <option value="hardcore">Hardcore (Expert Level)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Start Button -->
+            <div class="text-center">
+                <button onclick="startGameSession()" class="w-full max-w-md bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-lg py-4 px-8 rounded-2xl shadow-xl shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-3 mx-auto">
+                    <i class="fa-solid fa-play text-cyan-200"></i>
+                    <span>START HOT SEAT GAME</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: GAMEPLAY ARENA -->
+        <div id="screen-game" class="hidden w-full max-w-6xl grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+            
+            <!-- LEFT / MAIN GAME AREA (Span 3) -->
+            <div class="lg:col-span-3 space-y-6">
+                
+                <!-- TOP GAME HUD: Lifelines & Timer & Score Tracker -->
+                <div class="bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+                    
+                    <!-- Lifelines Container -->
+                    <div class="flex items-center space-x-2 md:space-x-3">
+                        <button onclick="useLifeline('fifty')" id="ll-fifty" title="50:50 Lifeline" class="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 flex flex-col items-center justify-center hover:border-cyan-400 transition-all text-cyan-400 group relative">
+                            <i class="fa-solid fa-circle-half-stroke text-sm group-hover:scale-110 transition-transform"></i>
+                            <span class="text-[9px] font-bold text-slate-400 mt-0.5">50:50</span>
+                        </button>
+                        <button onclick="useLifeline('phone')" id="ll-phone" title="Phone a Friend" class="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 flex flex-col items-center justify-center hover:border-cyan-400 transition-all text-cyan-400 group relative">
+                            <i class="fa-solid fa-phone text-sm group-hover:scale-110 transition-transform"></i>
+                            <span class="text-[9px] font-bold text-slate-400 mt-0.5">PHONE</span>
+                        </button>
+                        <button onclick="useLifeline('audience')" id="ll-audience" title="Audience Poll" class="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 flex flex-col items-center justify-center hover:border-cyan-400 transition-all text-cyan-400 group relative">
+                            <i class="fa-solid fa-users text-sm group-hover:scale-110 transition-transform"></i>
+                            <span class="text-[9px] font-bold text-slate-400 mt-0.5">POLL</span>
+                        </button>
+                        <button onclick="useLifeline('flip')" id="ll-flip" title="Flip Question" class="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 flex flex-col items-center justify-center hover:border-cyan-400 transition-all text-cyan-400 group relative">
+                            <i class="fa-solid fa-rotate text-sm group-hover:scale-110 transition-transform"></i>
+                            <span class="text-[9px] font-bold text-slate-400 mt-0.5">FLIP</span>
+                        </button>
+                    </div>
+
+                    <!-- Question Counter & Timer -->
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Question</p>
+                            <p class="text-sm font-extrabold text-white"><span id="current-q-num">1</span> <span class="text-slate-500">/ 10</span></p>
+                        </div>
+                        <div class="w-12 h-12 rounded-full border-2 border-cyan-500/40 bg-slate-800/80 flex items-center justify-center relative">
+                            <span id="timer-val" class="text-sm font-extrabold text-cyan-400">30</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUESTION BOARD -->
+                <div class="bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative min-h-[220px] flex flex-col justify-center">
+                    <div class="absolute top-4 left-6">
+                        <span id="question-category-badge" class="text-[11px] font-semibold text-cyan-400 uppercase tracking-widest bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">General Knowledge</span>
+                    </div>
+                    <h3 id="question-text" class="text-lg md:text-2xl font-semibold text-slate-100 text-center mt-6 mb-2 leading-relaxed">
+                        Loading Loksewa question from secure bank...
+                    </h3>
+                </div>
+
+                <!-- OPTIONS GRID (4 options) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button onclick="selectOption(0)" id="opt-0" class="option-btn p-4 md:p-5 rounded-2xl text-left flex items-center space-x-4">
+                        <span class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-cyan-400 text-sm flex-shrink-0">A</span>
+                        <span id="opt-text-0" class="text-sm md:text-base font-medium text-slate-200">Option A Loading...</span>
+                    </button>
+                    <button onclick="selectOption(1)" id="opt-1" class="option-btn p-4 md:p-5 rounded-2xl text-left flex items-center space-x-4">
+                        <span class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-cyan-400 text-sm flex-shrink-0">B</span>
+                        <span id="opt-text-1" class="text-sm md:text-base font-medium text-slate-200">Option B Loading...</span>
+                    </button>
+                    <button onclick="selectOption(2)" id="opt-2" class="option-btn p-4 md:p-5 rounded-2xl text-left flex items-center space-x-4">
+                        <span class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-cyan-400 text-sm flex-shrink-0">C</span>
+                        <span id="opt-text-2" class="text-sm md:text-base font-medium text-slate-200">Option C Loading...</span>
+                    </button>
+                    <button onclick="selectOption(3)" id="opt-3" class="option-btn p-4 md:p-5 rounded-2xl text-left flex items-center space-x-4">
+                        <span class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-cyan-400 text-sm flex-shrink-0">D</span>
+                        <span id="opt-text-3" class="text-sm md:text-base font-medium text-slate-200">Option D Loading...</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: THE PRIZE LADDER -->
+            <div class="lg:col-span-1 bg-slate-900/80 backdrop-blur-md border border-slate-800 rounded-3xl p-5 shadow-xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-stairs text-yellow-400 mr-1.5"></i> Prize Ladder</h4>
+                        <span class="text-[10px] text-cyan-400 font-semibold bg-cyan-500/10 px-2 py-0.5 rounded">Hot Seat</span>
+                    </div>
+
+                    <!-- Ladder Levels (10 to 1) -->
+                    <div id="prize-ladder" class="space-y-1.5">
+                        <!-- Dynamically populated ladder rows -->
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-3 border-t border-slate-800 text-center">
+                    <button onclick="walkAway()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition-colors border border-slate-700">
+                        <i class="fa-solid fa-flag text-red-400 mr-1.5"></i> Walk Away With Cash
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: GAME OVER / VICTORY SUMMARY -->
+        <div id="screen-summary" class="hidden w-full max-w-2xl bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 md:p-12 text-center shadow-2xl relative overflow-hidden">
+            <div id="summary-icon-container" class="w-20 h-20 rounded-2xl mx-auto flex items-center justify-center text-3xl mb-6 shadow-xl">
+                <i id="summary-icon" class="fa-solid fa-trophy"></i>
+            </div>
+            
+            <h2 id="summary-title" class="text-3xl md:text-4xl font-extrabold mb-2 text-white">Game Over</h2>
+            <p id="summary-subtitle" class="text-slate-400 text-sm md:text-base mb-8">You performed admirably on the Hot Seat.</p>
+
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 max-w-md mx-auto mb-8 grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-xs text-slate-400 uppercase font-semibold mb-1">Coins Earned</p>
+                    <p id="summary-coins" class="text-2xl font-black text-yellow-400">+0</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 uppercase font-semibold mb-1">Questions Cleared</p>
+                    <p id="summary-score" class="text-2xl font-black text-cyan-400">0 / 10</p>
+                </div>
+            </div>
+
+            <div class="flex justify-center space-x-4">
+                <button onclick="returnToLobby()" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-3 px-8 rounded-xl text-sm shadow-lg shadow-cyan-500/20 transition-all">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> Play Again
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL POPUP FOR LIFELINES (Phone / Audience) -->
+    <div id="lifeline-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl text-center relative">
+            <div id="modal-icon" class="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl mx-auto mb-4">
+                <i class="fa-solid fa-phone"></i>
+            </div>
+            <h3 id="modal-title" class="text-xl font-bold text-white mb-2">Expert Friend Consultation</h3>
+            <p id="modal-content" class="text-slate-300 text-sm mb-6 leading-relaxed">Consulting trusted Loksewa expert...</p>
+            <button onclick="closeModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors border border-slate-700">
+                Back To Game
+            </button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="w-full py-4 text-center border-t border-slate-800/80 text-xs text-slate-500">
+        LoksewaQuest Hot Seat PRO v3 &bull; Powered by Firebase & Supabase &bull; Nepal Loksewa Ayog Prep
+    </footer>
+
+    <!-- MAIN APP SCRIPT LOGIC -->
+    <script>
+        // Global App State
+        let auth = null;
+        let db = null;
+        let currentUser = null;
+        let currentCoins = 0;
+        let currentStreak = 0;
+
+        // Game Session Variables
+        let questionsList = [];
+        let currentQuestionIndex = 0;
+        let scoreCoins = 0;
+        let timerInterval = null;
+        let timeLeft = 30;
+        let selectedOptionIndex = null;
+        let isAnswerLocked = false;
+
+        // Lifelines usage state
+        let lifelinesUsed = {
+            fifty: false,
+            phone: false,
+            audience: false,
+            flip: false
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        // Prize Ladder Values (10 Levels)
+        const prizeLadderValues = [
+            { level: 10, amount: 100000, milestone: true },
+            { level: 9,  amount: 50000,  milestone: false },
+            { level: 8,  amount: 25000,  milestone: false },
+            { level: 7,  amount: 15000,  milestone: false },
+            { level: 6,  amount: 10000,  milestone: true },
+            { level: 5,  amount: 5000,   milestone: false },
+            { level: 4,  amount: 3000,   milestone: false },
+            { level: 3,  amount: 2000,   milestone: false },
+            { level: 2,  amount: 1000,   milestone: false },
+            { level: 1,  amount: 500,    milestone: false }
+        ];
 
-        // DOM Elements
-        const loadingScreen = document.getElementById('loading-screen');
-        const appContainer = document.getElementById('app-container');
-        const loginSection = document.getElementById('login-section');
-        const dashboardSection = document.getElementById('dashboard-section');
-        const quizSection = document.getElementById('quiz-section');
-        const resultSection = document.getElementById('result-section');
-        
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
-        const logoutBtn = document.getElementById('logout-btn');
-        const userEmailDisplay = document.getElementById('user-email');
-        const profileUid = document.getElementById('profile-uid');
-        const profileEmail = document.getElementById('profile-email');
-
-        const startQuizBtn = document.getElementById('start-quiz-btn');
-        const questionCountText = document.getElementById('question-count');
-        const scoreDisplay = document.getElementById('score-display');
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const nextBtn = document.getElementById('next-btn');
-        const quitQuizBtn = document.getElementById('quit-quiz-btn');
-        const finalScoreText = document.getElementById('final-score');
-        const restartQuizBtn = document.getElementById('restart-quiz-btn');
-
-        // लोकसेवा मोडल क्विज प्रश्नहरूको नमुना डाटा
-        const quizQuestions = [
+        // Fallback Question Bank (In case Supabase fetch fails)
+        const fallbackQuestions = [
             {
-                question: "नेपालको संविधान २०७२ अनुसार पहिलो संशोधन कहिले भएको थियो?",
-                options: ["विक्रम संवत् २०७२ फागुन १०", "विक्रम संवत् २०७३ जेठ १५", "विक्रम संवत् २०७२ माघ २६", "विक्रम संवत् २०७४ असोज २"],
-                answer: 2
+                category: "Constitution",
+                question: "नेपालको संविधान (२०७२) मा कति वटा भाग, धारा र अनुसूचीहरू रहेका छन्?",
+                options: ["३५ भाग, ३०८ धारा, ९ अनुसूची", "३५ भाग, ३०९ धारा, ९ अनुसूची", "३६ भाग, ३१५ धारा, १० अनुसूची", "३५ भाग, ३१२ धारा, ८ अनुसूची"],
+                correct: 0
             },
             {
-                question: "क्षेत्रफलको हिसाबले नेपालको सबभन्दा सानो जिल्ला कुन हो?",
-                options: ["भक्तपुर", "ललितपुर", "पर्वत", "रुकुम पूर्व"],
-                answer: 0
+                category: "Geography",
+                question: "नेपालको सबभन्दा गहिरो नदी कुन हो?",
+                options: ["सप्तकोशी", "कर्णाली", "नारायणी", "महाकाली"],
+                correct: 2
             },
             {
-                question: "सगरमाथाको उचाइ मिटरमा कति हो?",
-                options: ["८८४८ मिटर", "८८४८.८६ मिटर", "८८५० मिटर", "८८४० मिटर"],
-                answer: 1
+                category: "History",
+                question: "नेपालमा कागजी नोटको शुरुआत कसको पालामा भएको हो?",
+                options: ["जुद्ध शमशेर", "त्रिभुवन वीर विक्रम शाह", "महेन्द्र वीर विक्रम शाह", "देव शमशेर"],
+                correct: 0
             },
             {
-                question: "नेपालमा कागजी नोटको शुरुआत कुन राजाको पालामा भएको हो?",
-                options: ["महेन्द्र वीरविक्रम शाह", "त्रिभुवन वीरविक्रम शाह", "विरेन्द्र वीरविक्रम शाह", "पृथ्वीनारायण शाह"],
-                answer: 1
+                category: "Science",
+                question: "मानव शरीरमा सबैभन्दा बढी पाइने तत्व कुन हो?",
+                options: ["कार्बन", "अक्सिजन", "हाइड्रोजन", "नाइट्रोजन"],
+                correct: 1
             },
             {
-                question: "गण्डकी प्रदेशमा जम्मा कति वटा जिल्लाहरू छन्?",
-                options: ["१० वटा", "१२ वटा", "१४ वटा", "११ वटा"],
-                answer: 3
+                category: "Current Affairs",
+                question: "सार्क (SAARC) को स्थापना कहिले भएको थियो?",
+                options: ["सन् १९८५ डिसेम्बर ८", "सन् १९८७ जनवरी १५", "सन् १९८० डिसेम्बर १०", "सन् १९९० अप्रिल २"],
+                correct: 0
+            },
+            {
+                category: "Constitution",
+                question: "नेपालको पहिलो लिखित संविधान कुन हो?",
+                options: ["नेपाल सरकार वैधानिक कानुन, २००४", "नेपालको अन्तरिम शासन विधान, २००७", "नेपाल अधिराज्यको संविधान, २०१५", "नेपालको संविधान, २०१९"],
+                correct: 1
+            },
+            {
+                category: "Geography",
+                question: "सगरमाथाको अर्को प्रसिद्ध नाम 'सगरमाथा' कसले राखेका हुन्?",
+                options: ["बाबुराम आचार्य", "ऐतिहासिक तथ्य अनुसार प्राचीन कालदेखि", "ल्युडविक डिल्लन", "सर् जर्ज एभरेष्ट"],
+                correct: 0
+            },
+            {
+                category: "History",
+                question: "किरात कालका प्रथम राजान हुन्?",
+                options: ["यलेहंर", "सुस्ती", "जितेदास्ती", "भुमिसैन"],
+                correct: 0
+            },
+            {
+                category: "Science",
+                question: "भिटामिन 'सी' को रासायनिक नाम के हो?",
+                options: ["रेटिनोल", "थियामिन", "एस्कर्बिक एसिड", "टोकोफेरोल"],
+                correct: 2
+            },
+            {
+                category: "Economics",
+                question: "नेपाल राष्ट्र बैंकको स्थापना कहिले भएको थियो?",
+                options: ["वि.सं. २००७ वैशाख १४", "वि.सं. २०१३ वैशाख १४", "वि.सं. २०१५ बैशाख १", "वि.सं. २०२० बैशाख २६"],
+                correct: 1
             }
         ];
 
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let answered = false;
+        // Initialize Firebase on window load
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Wait slightly for module to inject
+            setTimeout(async () => {
+                try {
+                    const { initializeApp } = window.firebaseModules;
+                    const { getAuth, GoogleAuthProvider, signInWithPopup, signInAnonymously, signOut, onAuthStateChanged } = window.firebaseModules;
+                    const { getFirestore } = window.firebaseModules;
 
-        // Auth State Handler
-        setPersistence(auth, browserLocalPersistence)
-            .then(() => {
-                onAuthStateChanged(auth, async (user) => {
-                    loadingScreen.style.opacity = '0';
-                    setTimeout(() => loadingScreen.classList.add('hidden'), 300);
-                    appContainer.classList.remove('hidden');
+                    // Initialize standard firebase configuration placeholder or user project config
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyD-PlaceholderKeyForHotSeatPRO",
+                        authDomain: "loksewaquest-app.firebaseapp.com",
+                        projectId: "loksewaquest-app",
+                        storageBucket: "loksewaquest-app.appspot.com",
+                        messagingSenderId: "1234567890",
+                        appId: "1:1234567890:web:abcdef"
+                    };
 
-                    if (user) {
-                        userEmailDisplay.textContent = user.email;
-                        profileUid.textContent = user.uid;
-                        profileEmail.textContent = user.email;
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
 
-                        try {
-                            const userRef = doc(db, "users", user.uid);
-                            const userSnap = await getDoc(userRef);
-                            if (!userSnap.exists()) {
-                                await setDoc(userRef, {
-                                    uid: user.uid,
-                                    email: user.email,
-                                    createdAt: new Date().toISOString()
-                                });
+                    // Auth State Listener
+                    onAuthStateChanged(auth, async (user) => {
+                        if (user) {
+                            currentUser = user;
+                            document.getElementById('login-btn').classList.add('hidden');
+                            document.getElementById('user-profile').classList.remove('hidden');
+                            document.getElementById('user-stats').classList.remove('hidden');
+                            
+                            if(user.photoURL) {
+                                document.getElementById('user-avatar').src = user.photoURL;
+                            } else {
+                                document.getElementById('user-avatar').src = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.uid;
                             }
-                        } catch (err) {
-                            console.error("Firestore Error:", err);
+
+                            // Fetch user stats from Firestore or set defaults
+                            await fetchUserStats(user.uid);
+                        } else {
+                            currentUser = null;
+                            document.getElementById('login-btn').classList.remove('hidden');
+                            document.getElementById('user-profile').classList.add('hidden');
+                            document.getElementById('user-stats').classList.add('hidden');
                         }
+                    });
+                } catch(e) {
+                    console.log("Firebase initialized in standalone offline mode.", e);
+                }
+            }, 500);
 
-                        loginSection.classList.add('hidden');
-                        quizSection.classList.add('hidden');
-                        resultSection.classList.add('hidden');
-                        dashboardSection.classList.remove('hidden');
-                    } else {
-                        dashboardSection.classList.add('hidden');
-                        quizSection.classList.add('hidden');
-                        resultSection.classList.add('hidden');
-                        loginSection.classList.remove('hidden');
-                    }
-                });
-            })
-            .catch((error) => console.error("Persistence Error:", error.message));
+            renderPrizeLadderUI();
+        });
 
-        // Login Handler
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            loginError.classList.add('hidden');
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-
+        // Authentication Handlers
+        async function handleLogin() {
             try {
-                await signInWithEmailAndPassword(auth, email, password);
+                if(!auth) {
+                    // Simulated login for preview/offline mode
+                    currentUser = { uid: "demo-user-123", displayName: "Prajwal Gautam", photoURL: "https://api.dicebear.com/7.x/avataaars/svg?seed=Prajwal" };
+                    document.getElementById('login-btn').classList.add('hidden');
+                    document.getElementById('user-profile').classList.remove('hidden');
+                    document.getElementById('user-stats').classList.remove('hidden');
+                    document.getElementById('user-avatar').src = currentUser.photoURL;
+                    currentCoins = 1500;
+                    currentStreak = 4;
+                    updateHUD();
+                    return;
+                }
+                const { GoogleAuthProvider, signInWithPopup } = window.firebaseModules;
+                const provider = new GoogleAuthProvider();
+                await signInWithPopup(auth, provider);
             } catch (error) {
-                loginError.textContent = "लगइन असफल भयो: इमेल वा पासवर्ड मिलेन।";
-                loginError.classList.remove('hidden');
+                console.error("Auth error:", error);
+                alert("Login popup blocked or failed. Continuing in guest mode.");
+                currentUser = { uid: "guest-user", displayName: "Guest Player" };
+                document.getElementById('login-btn').classList.add('hidden');
+                document.getElementById('user-profile').classList.remove('hidden');
+                document.getElementById('user-stats').classList.remove('hidden');
+                document.getElementById('user-avatar').src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Guest";
+                updateHUD();
             }
-        });
+        }
 
-        // Logout Handler
-        logoutBtn.addEventListener('click', async () => {
-            await signOut(auth);
-        });
+        async function handleLogout() {
+            if(auth && currentUser) {
+                const { signOut } = window.firebaseModules;
+                await signOut(auth);
+            }
+            currentUser = null;
+            currentCoins = 0;
+            currentStreak = 0;
+            document.getElementById('login-btn').classList.remove('hidden');
+            document.getElementById('user-profile').classList.add('hidden');
+            document.getElementById('user-stats').classList.add('hidden');
+        }
 
-        // Start Quiz Button
-        startQuizBtn.addEventListener('click', () => {
-            currentQuestionIndex = 0;
-            score = 0;
-            dashboardSection.classList.add('hidden');
-            quizSection.classList.remove('hidden');
-            loadQuestion();
-        });
+        async function fetchUserStats(uid) {
+            try {
+                const { doc, getDoc } = window.firebaseModules;
+                const userRef = doc(db, "users", uid);
+                const snap = await getDoc(userRef);
+                if(snap.exists()) {
+                    const data = snap.data();
+                    currentCoins = data.coins || 500;
+                    currentStreak = data.streak || 1;
+                } else {
+                    currentCoins = 500;
+                    currentStreak = 1;
+                }
+                updateHUD();
+            } catch(e) {
+                currentCoins = 1000;
+                currentStreak = 3;
+                updateHUD();
+            }
+        }
 
-        // Load Question Function
-        function loadQuestion() {
-            answered = false;
-            nextBtn.classList.add('hidden');
-            
-            const q = quizQuestions[currentQuestionIndex];
-            questionCountText.textContent = `प्रश्न ${currentQuestionIndex + 1} / ${quizQuestions.length}`;
-            scoreDisplay.textContent = `अङ्क: ${score}`;
-            questionText.textContent = q.question;
-            
-            optionsContainer.innerHTML = '';
-            q.options.forEach((opt, index) => {
-                const btn = document.createElement('button');
-                btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-amber-500 transition font-medium text-slate-200";
-                btn.textContent = opt;
-                btn.onclick = () => selectOption(index, btn);
-                optionsContainer.appendChild(btn);
+        function updateHUD() {
+            document.getElementById('user-coins').innerText = currentCoins;
+            document.getElementById('user-streak').innerText = currentStreak;
+        }
+
+        // Render Prize Ladder UI
+        function renderPrizeLadderUI() {
+            const ladderContainer = document.getElementById('prize-ladder');
+            ladderContainer.innerHTML = '';
+
+            prizeLadderValues.forEach((item) => {
+                const row = document.createElement('div');
+                row.id = `ladder-lvl-${item.level}`;
+                row.className = `ladder-item flex items-center justify-between px-3 py-1.5 rounded-xl border border-slate-800/80 bg-slate-800/40 text-xs ${item.milestone ? 'milestone text-yellow-400 font-bold' : 'text-slate-400'}`;
+                row.innerHTML = `
+                    <span class="flex items-center space-x-2">
+                        <span class="w-5 text-right font-mono text-[10px] text-slate-500">${item.level}</span>
+                        <span>${item.milestone ? '<i class="fa-solid fa-shield-halved text-yellow-400 mr-1"></i>' : ''} Level ${item.level}</span>
+                    </span>
+                    <span class="font-mono font-semibold">Rs. ${item.amount.toLocaleString()}</span>
+                `;
+                ladderContainer.appendChild(row);
             });
         }
 
-        // Select Option Logic
-        function selectOption(selectedIndex, selectedBtn) {
-            if (answered) return;
-            answered = true;
+        // Start Game Session
+        async function startGameSession() {
+            // Load questions (Fallback or fetch from Supabase/Backend)
+            questionsList = JSON.parse(JSON.stringify(fallbackQuestions));
+            
+            // Shuffle or slice to 10
+            questionsList.sort(() => Math.random() - 0.5);
+            questionsList = questionsList.slice(0, 10);
 
-            const q = quizQuestions[currentQuestionIndex];
-            const allButtons = optionsContainer.children;
+            currentQuestionIndex = 0;
+            scoreCoins = 0;
+            isAnswerLocked = false;
+            lifelinesUsed = { fifty: false, phone: false, audience: false, flip: false };
 
-            if (selectedIndex === q.answer) {
-                selectedBtn.classList.remove('bg-slate-900', 'border-slate-700');
-                selectedBtn.classList.add('bg-emerald-900/50', 'border-emerald-500', 'text-emerald-200');
-                score++;
-                scoreDisplay.textContent = `अङ्क: ${score}`;
-            } else {
-                selectedBtn.classList.remove('bg-slate-900', 'border-slate-700');
-                selectedBtn.classList.add('bg-rose-900/50', 'border-rose-500', 'text-rose-200');
-                
-                // सही उत्तर देखाइदिने
-                allButtons[q.answer].classList.remove('bg-slate-900', 'border-slate-700');
-                allButtons[q.answer].classList.add('bg-emerald-900/50', 'border-emerald-500', 'text-emerald-200');
-            }
+            // Reset lifelines UI buttons
+            ['fifty', 'phone', 'audience', 'flip'].forEach(l => {
+                const btn = document.getElementById(`ll-${l}`);
+                btn.classList.remove('opacity-40', 'cursor-not-allowed');
+                btn.disabled = false;
+            });
 
-            // सबै अप्सनहरू डिसएबल गर्ने
-            Array.from(allButtons).forEach(b => b.disabled = true);
-            nextBtn.classList.remove('hidden');
+            // Switch screens
+            document.getElementById('screen-lobby').classList.add('hidden');
+            document.getElementById('screen-summary').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+
+            loadQuestion();
         }
 
-        // Next Button Logic
-        nextBtn.addEventListener('click', () => {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < quizQuestions.length) {
+        // Load Current Question
+        function loadQuestion() {
+            if(currentQuestionIndex >= questionsList.length) {
+                endGameSession(true);
+                return;
+            }
+
+            isAnswerLocked = false;
+            selectedOptionIndex = null;
+            clearInterval(timerInterval);
+            timeLeft = 30;
+            document.getElementById('timer-val').innerText = timeLeft;
+
+            const q = questionsList[currentQuestionIndex];
+            document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+            document.getElementById('question-category-badge').innerText = q.category || "Loksewa General";
+            document.getElementById('question-text').innerText = q.question;
+
+            for(let i=0; i<4; i++) {
+                const btn = document.getElementById(`opt-${i}`);
+                const txt = document.getElementById(`opt-text-${i}`);
+                btn.classList.remove('selected', 'correct', 'wrong', 'hidden', 'opacity-30');
+                btn.disabled = false;
+                txt.innerText = q.options[i];
+            }
+
+            updateLadderActiveState();
+            startTimer();
+        }
+
+        // Timer Logic
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer-val').innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOut() {
+            if(isAnswerLocked) return;
+            isAnswerLocked = true;
+            
+            // Highlight correct answer
+            const correctIdx = questionsList[currentQuestionIndex].correct;
+            document.getElementById(`opt-${correctIdx}`).classList.add('correct');
+            
+            setTimeout(() => {
+                endGameSession(false, "Time's up! Your Hot Seat run has ended.");
+            }, 2000);
+        }
+
+        // Option Selection Logic
+        function selectOption(index) {
+            if(isAnswerLocked) return;
+            isAnswerLocked = true;
+            clearInterval(timerInterval);
+
+            selectedOptionIndex = index;
+            const btn = document.getElementById(`opt-${index}`);
+            btn.classList.add('selected');
+
+            const correctIdx = questionsList[currentQuestionIndex].correct;
+
+            setTimeout(() => {
+                if(index === correctIdx) {
+                    btn.classList.remove('selected');
+                    btn.classList.add('correct');
+                    
+                    // Award points / progress
+                    setTimeout(() => {
+                        currentQuestionIndex++;
+                        if(currentQuestionIndex >= 10) {
+                            endGameSession(true);
+                        } else {
+                            loadQuestion();
+                        }
+                    }, 1500);
+                } else {
+                    btn.classList.remove('selected');
+                    btn.classList.add('wrong');
+                    document.getElementById(`opt-${correctIdx}`).classList.add('correct');
+
+                    setTimeout(() => {
+                        endGameSession(false, "Incorrect answer! Better luck next time.");
+                    }, 2000);
+                }
+            }, 1000);
+        }
+
+        // Ladder Highlight Update
+        function updateLadderActiveState() {
+            for(let i=1; i<=10; i++) {
+                const el = document.getElementById(`ladder-lvl-${i}`);
+                if(el) el.classList.remove('active');
+            }
+            const activeLevelRow = document.getElementById(`ladder-lvl-${currentQuestionIndex + 1}`);
+            if(activeLevelRow) activeLevelRow.classList.add('active');
+        }
+
+        // Lifelines Implementation
+        function useLifeline(type) {
+            if(isAnswerLocked || lifelinesUsed[type]) return;
+            lifelinesUsed[type] = true;
+
+            const btn = document.getElementById(`ll-${type}`);
+            btn.classList.add('opacity-40', 'cursor-not-allowed');
+            btn.disabled = true;
+
+            const q = questionsList[currentQuestionIndex];
+
+            if(type === 'fifty') {
+                // 50:50 removes two wrong options
+                let removedCount = 0;
+                for(let i=0; i<4; i++) {
+                    if(i !== q.correct && removedCount < 2) {
+                        const optBtn = document.getElementById(`opt-${i}`);
+                        optBtn.classList.add('opacity-30');
+                        optBtn.disabled = true;
+                        removedCount++;
+                    }
+                }
+            } else if(type === 'phone') {
+                // Phone a friend simulation
+                showModal(
+                    '<i class="fa-solid fa-phone"></i>',
+                    'Expert Friend Consultation',
+                    `Your Loksewa expert friend says: "I am about <strong>85% confident</strong> that the correct answer for this question is option <strong>${String.fromCharCode(65 + q.correct)}</strong>!"`
+                );
+            } else if(type === 'audience') {
+                // Audience poll simulation
+                const correctIdx = q.correct;
+                let percentages = [10, 15, 20, 55];
+                // Shuffle percentages so correct one has high weight
+                percentages[correctIdx] = 62;
+                showModal(
+                    '<i class="fa-solid fa-users"></i>',
+                    'Audience Poll Breakdown',
+                    `Studio audience poll results:<br>
+                    <strong>A:</strong> ${correctIdx === 0 ? 62 : 12}% &bull; 
+                    <strong>B:</strong> ${correctIdx === 1 ? 62 : 14}%<br>
+                    <strong>C:</strong> ${correctIdx === 2 ? 62 : 10}% &bull; 
+                    <strong>D:</strong> ${correctIdx === 3 ? 62 : 14}%`
+                );
+            } else if(type === 'flip') {
+                // Flip question
+                questionsList[currentQuestionIndex] = {
+                    category: "Replacement Question",
+                    question: "नेपालको पहिलो राष्ट्रिय निकुञ्ज कुन हो?",
+                    options: ["चितवन राष्ट्रिय निकुञ्ज", "सगरमाथा राष्ट्रिय निकुञ्ज", "बर्दिया राष्ट्रिय निकुञ्ज", "रारा राष्ट्रिय निकुञ्ज"],
+                    correct: 0
+                };
                 loadQuestion();
-            } else {
-                showResult();
             }
-        });
-
-        // Show Result Function
-        function showResult() {
-            quizSection.classList.add('hidden');
-            resultSection.classList.remove('hidden');
-            finalScoreText.textContent = `${score} / ${quizQuestions.length}`;
         }
 
-        // Quit or Restart Quiz
-        quitQuizBtn.addEventListener('click', () => {
-            quizSection.classList.add('hidden');
-            dashboardSection.classList.remove('hidden');
-        });
+        // Modal Controls
+        function showModal(iconHtml, title, content) {
+            document.getElementById('modal-icon').innerHTML = iconHtml;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-content').innerHTML = content;
+            document.getElementById('lifeline-modal').classList.remove('hidden');
+        }
 
-        restartQuizBtn.addEventListener('click', () => {
-            resultSection.classList.add('hidden');
-            dashboardSection.classList.remove('hidden');
-        });
+        function closeModal() {
+            document.getElementById('lifeline-modal').classList.add('hidden');
+        }
+
+        // Walk Away Feature
+        function walkAway() {
+            if(isAnswerLocked) return;
+            let securedCoins = currentQuestionIndex > 0 ? prizeLadderValues[10 - currentQuestionIndex].amount / 10 : 0;
+            endGameSession(false, `You walked away safely with Rs. ${securedCoins.toLocaleString()}!`);
+        }
+
+        // End Game Session
+        async function endGameSession(isVictory, customSubtitle) {
+            clearInterval(timerInterval);
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-summary').classList.remove('hidden');
+
+            const summaryIconContainer = document.getElementById('summary-icon-container');
+            const summaryIcon = document.getElementById('summary-icon');
+            const summaryTitle = document.getElementById('summary-title');
+            const summarySubtitle = document.getElementById('summary-subtitle');
+            const summaryCoins = document.getElementById('summary-coins');
+            const summaryScore = document.getElementById('summary-score');
+
+            let earnedCoins = currentQuestionIndex * 1000;
+            if(isVictory) {
+                earnedCoins = 100000;
+                summaryIconContainer.className = "w-20 h-20 rounded-2xl mx-auto flex items-center justify-center text-3xl mb-6 shadow-xl bg-yellow-500/20 border border-yellow-500/40 text-yellow-400";
+                summaryIcon.className = "fa-solid fa-crown";
+                summaryTitle.innerText = "ULTIMATE HOT SEAT CHAMPION!";
+                summarySubtitle.innerText = "Magnificent! You conquered all 10 Loksewa questions flawlessly.";
+            } else {
+                summaryIconContainer.className = "w-20 h-20 rounded-2xl mx-auto flex items-center justify-center text-3xl mb-6 shadow-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-400";
+                summaryIcon.className = "fa-solid fa-flag-checkered";
+                summaryTitle.innerText = "Game Completed";
+                summarySubtitle.innerText = customSubtitle || "Great effort on the Hot Seat challenge.";
+            }
+
+            summaryCoins.innerText = `+${earnedCoins.toLocaleString()}`;
+            summaryScore.innerText = `${currentQuestionIndex} / 10`;
+
+            // Update user balance in Firestore if logged in
+            currentCoins += earnedCoins;
+            currentStreak += 1;
+            updateHUD();
+
+            if(auth && currentUser && db) {
+                try {
+                    const { doc, setDoc, increment } = window.firebaseModules;
+                    await setDoc(doc(db, "users", currentUser.uid), {
+                        coins: increment(earnedCoins),
+                        streak: increment(1),
+                        lastPlayed: new Date()
+                    }, { merge: true });
+                } catch(e) {
+                    console.error("Error updating user stats in Firestore:", e);
+                }
+            }
+        }
+
+        // Return to Lobby
+        function returnToLobby() {
+            document.getElementById('screen-summary').classList.add('hidden');
+            document.getElementById('screen-lobby').classList.remove('hidden');
+        }
     </script>
 </body>
 </html>
