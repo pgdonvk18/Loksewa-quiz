@@ -1,1539 +1,1780 @@
 <!DOCTYPE html>
 <html lang="ne">
-
 <head>
-
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
->
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>LoksewaQuest Quiz Arena</title>
+<title>LoksewaQuest - Quiz Arena</title>
 
 <style>
 
 /* =========================================================
-   RESET
+   LOKSEWAQUEST QUIZ ARENA
+   KBC-INSPIRED TV QUIZ SHOW UI
 ========================================================= */
 
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
-    -webkit-tap-highlight-color:transparent;
+    font-family:
+        "Segoe UI",
+        "Noto Sans Devanagari",
+        Arial,
+        sans-serif;
 }
 
 :root{
+    --navy:#020817;
+    --navy2:#06152d;
+    --blue:#09295a;
+    --blue2:#0b3d91;
 
-    --bg:#020711;
-    --bg2:#06142a;
-    --panel:#0b2140;
-    --panel2:#102e55;
+    --gold:#f6c945;
+    --gold2:#ffdc73;
+    --gold-dark:#b88700;
 
-    --gold:#f5c542;
-    --gold2:#ffd966;
+    --white:#ffffff;
+    --muted:#aebbd0;
 
-    --blue:#18539a;
-    --blue2:#0d3470;
+    --green:#16a34a;
+    --red:#dc2626;
 
-    --green:#19c77a;
-    --red:#e83d46;
+    --panel-border:rgba(246,201,69,.45);
+}
 
-    --white:#fff;
-    --muted:#a9bad0;
-
+html,
+body{
+    width:100%;
+    min-height:100%;
 }
 
 body{
-
-    min-height:100vh;
-
-    color:white;
-
-    font-family:
-        "Segoe UI",
-        system-ui,
-        sans-serif;
-
     background:
-
-        radial-gradient(
-            circle at 50% 35%,
-            rgba(22,77,145,.40),
-            transparent 32%
-        ),
-
-        radial-gradient(
-            circle at 50% 100%,
-            rgba(245,197,66,.10),
-            transparent 35%
-        ),
-
-        linear-gradient(
-            180deg,
-            #020711,
-            #00040a
-        );
-
+        radial-gradient(circle at 50% 35%, #0b2c63 0%, #041329 32%, #010611 75%);
+    color:white;
     overflow-x:hidden;
 }
 
-
 /* =========================================================
-   HEADER
+   BACKGROUND
 ========================================================= */
 
-.header{
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    background:
+        radial-gradient(circle at 20% 20%, rgba(44,119,255,.12), transparent 28%),
+        radial-gradient(circle at 80% 30%, rgba(246,201,69,.08), transparent 25%);
+
+    pointer-events:none;
+    z-index:-2;
+}
+
+.stars{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:-1;
+    opacity:.55;
+}
+
+.star{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:#fff;
+    border-radius:50%;
+    animation:twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle{
+    from{opacity:.15;}
+    to{opacity:1;}
+}
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.topbar{
+    position:sticky;
+    top:0;
+    z-index:100;
 
     height:64px;
 
-    padding:8px 14px;
-
     display:flex;
     align-items:center;
     justify-content:space-between;
 
-    border-bottom:
-        1px solid rgba(245,197,66,.35);
+    padding:8px 14px;
 
     background:
-        rgba(1,7,17,.92);
+        linear-gradient(
+            180deg,
+            rgba(1,8,22,.97),
+            rgba(2,13,32,.92)
+        );
 
-    position:sticky;
-    top:0;
+    border-bottom:1px solid rgba(246,201,69,.35);
 
-    z-index:100;
+    backdrop-filter:blur(14px);
 }
 
-.logo{
+.brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
 
-    color:var(--gold2);
+.brand-logo{
+    width:38px;
+    height:38px;
 
-    font-size:17px;
+    border-radius:50%;
 
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#071326;
+    font-size:18px;
     font-weight:900;
 
-}
-
-.logo span{
-    color:white;
-}
-
-.header-coins{
-
-    padding:7px 13px;
-
-    border:
-        1px solid rgba(245,197,66,.5);
-
-    border-radius:20px;
-
-    color:var(--gold2);
-
-    font-weight:800;
-
     background:
-        rgba(245,197,66,.07);
+        radial-gradient(circle at 35% 30%, #fff6bd, var(--gold) 45%, #bd8900);
 
+    box-shadow:
+        0 0 15px rgba(246,201,69,.35);
 }
 
+.brand-text{
+    font-weight:900;
+    font-size:15px;
+    letter-spacing:.5px;
+}
+
+.brand-text span{
+    display:block;
+    color:var(--gold);
+    font-size:10px;
+    letter-spacing:1.5px;
+    margin-top:1px;
+}
+
+.top-actions{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.icon-btn{
+    width:40px;
+    height:40px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(246,201,69,.4);
+
+    color:white;
+    background:rgba(10,38,78,.8);
+
+    cursor:pointer;
+    font-size:17px;
+
+    transition:.2s;
+}
+
+.icon-btn:active{
+    transform:scale(.92);
+}
 
 /* =========================================================
-   GAME AREA
+   INTRO SCREEN
 ========================================================= */
 
-.game{
+.screen{
+    width:100%;
+    min-height:calc(100vh - 64px);
+}
 
+#introScreen{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:25px 16px;
+}
+
+.intro-card{
+    width:100%;
+    max-width:520px;
+
+    text-align:center;
+
+    padding:35px 22px;
+
+    border:1px solid rgba(246,201,69,.4);
+    border-radius:28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10,43,88,.92),
+            rgba(2,12,29,.96)
+        );
+
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.55),
+        0 0 35px rgba(246,201,69,.08);
+}
+
+.intro-emblem{
+    width:115px;
+    height:115px;
+
+    margin:0 auto 22px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:42px;
+    font-weight:900;
+
+    color:#071326;
+
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            #fff6bd,
+            #f6c945 48%,
+            #9d6e00
+        );
+
+    border:5px solid rgba(255,255,255,.8);
+
+    box-shadow:
+        0 0 0 7px rgba(246,201,69,.12),
+        0 0 45px rgba(246,201,69,.4);
+}
+
+.intro-title{
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:.5px;
+}
+
+.intro-title span{
+    color:var(--gold);
+}
+
+.intro-subtitle{
+    color:#b9c6d9;
+    margin-top:8px;
+    line-height:1.6;
+}
+
+.rules{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+
+    margin:25px 0;
+}
+
+.rule{
+    padding:12px 8px;
+
+    border-radius:13px;
+
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+
+    font-size:12px;
+    color:#dbe5f5;
+}
+
+.rule strong{
+    display:block;
+    color:var(--gold);
+    font-size:15px;
+    margin-bottom:3px;
+}
+
+.start-btn{
     width:100%;
 
-    max-width:900px;
+    border:none;
+
+    padding:15px 20px;
+
+    border-radius:30px;
+
+    font-size:17px;
+    font-weight:900;
+
+    color:#071326;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff0a6,
+            #f6c945 45%,
+            #d49b00
+        );
+
+    box-shadow:
+        0 8px 25px rgba(246,201,69,.22);
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.start-btn:active{
+    transform:scale(.97);
+}
+
+/* =========================================================
+   GAME SCREEN
+========================================================= */
+
+#gameScreen{
+    display:none;
+
+    padding:12px 12px 25px;
+}
+
+.game-layout{
+    width:100%;
+    max-width:1100px;
 
     margin:auto;
 
-    padding:
-        15px
-        15px
-        35px;
+    display:grid;
 
+    grid-template-columns:
+        minmax(0,1fr)
+        260px;
+
+    gap:16px;
 }
-
 
 /* =========================================================
-   TOP GAME INFO
+   MAIN GAME
 ========================================================= */
 
-.game-info{
+.game-main{
+    min-width:0;
+}
 
+/* QUESTION HEADER */
+
+.question-header{
     display:flex;
-
+    justify-content:space-between;
     align-items:center;
 
-    justify-content:space-between;
-
-    margin-bottom:14px;
-
+    margin-bottom:12px;
 }
 
-.question-counter{
-
-    color:var(--gold2);
-
-    font-size:14px;
-
-    font-weight:900;
-
-}
-
-.ladder-button{
-
-    border:
-        1px solid rgba(245,197,66,.5);
-
-    background:
-        rgba(245,197,66,.08);
-
-    color:var(--gold2);
-
+.progress-pill{
     padding:7px 12px;
 
     border-radius:20px;
 
-    font-weight:700;
+    background:rgba(10,42,87,.8);
 
-    cursor:pointer;
+    border:1px solid rgba(246,201,69,.35);
 
+    color:#dbe7f7;
+
+    font-size:12px;
+    font-weight:800;
 }
 
+.progress-pill strong{
+    color:var(--gold);
+}
 
-/* =========================================================
-   PROGRESS
-========================================================= */
-
-.progress{
-
-    height:5px;
-
-    width:100%;
-
-    background:#142238;
+.prize-pill{
+    padding:7px 12px;
 
     border-radius:20px;
 
-    overflow:hidden;
-
-    margin-bottom:15px;
-
-}
-
-.progress-bar{
-
-    height:100%;
-
-    width:10%;
+    color:#071326;
 
     background:
         linear-gradient(
-            90deg,
-            #c48a13,
-            #ffd966
+            135deg,
+            #ffe99a,
+            #f6c945
         );
 
-    transition:.5s;
+    font-size:12px;
+    font-weight:900;
 
+    box-shadow:
+        0 0 15px rgba(246,201,69,.16);
 }
 
+/* TIMER */
 
-/* =========================================================
-   TIMER
-========================================================= */
-
-.timer-area{
-
+.timer-wrap{
     display:flex;
-
     justify-content:center;
 
-    margin:
-        5px
-        0
-        12px;
-
+    margin-bottom:14px;
 }
 
 .timer{
-
-    width:65px;
-
-    height:65px;
+    width:58px;
+    height:58px;
 
     border-radius:50%;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     position:relative;
 
+    font-size:20px;
+    font-weight:900;
+
+    color:white;
+
     background:
+        radial-gradient(circle,#09234a 52%,transparent 54%),
         conic-gradient(
-            var(--gold2) var(--progress,100%),
-            #17263c 0
+            var(--gold) var(--timer-progress,100%),
+            rgba(255,255,255,.1) 0
         );
 
     box-shadow:
-        0 0 25px
-        rgba(245,197,66,.18);
-
+        0 0 20px rgba(246,201,69,.18);
 }
 
-.timer::before{
+.timer.danger{
+    color:#fff;
+    background:
+        radial-gradient(circle,#491018 52%,transparent 54%),
+        conic-gradient(
+            #ef4444 var(--timer-progress,100%),
+            rgba(255,255,255,.1) 0
+        );
 
+    animation:timerPulse .7s infinite alternate;
+}
+
+@keyframes timerPulse{
+    from{transform:scale(1);}
+    to{transform:scale(1.08);}
+}
+
+/* TOPIC */
+
+.topic{
+    text-align:center;
+
+    color:var(--gold);
+
+    font-size:11px;
+    font-weight:800;
+
+    text-transform:uppercase;
+
+    letter-spacing:1.5px;
+
+    margin-bottom:8px;
+}
+
+/* QUESTION BOX */
+
+.question-box{
+    position:relative;
+
+    padding:27px 20px;
+
+    min-height:130px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12,51,103,.98),
+            rgba(3,18,43,.98)
+        );
+
+    border:
+        2px solid rgba(246,201,69,.72);
+
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,.04) inset,
+        0 0 30px rgba(246,201,69,.12),
+        0 15px 40px rgba(0,0,0,.35);
+
+    overflow:hidden;
+}
+
+.question-box::before{
     content:"";
 
     position:absolute;
 
-    width:52px;
+    top:0;
+    left:10%;
+    right:10%;
 
-    height:52px;
-
-    background:#040b16;
-
-    border-radius:50%;
-
-}
-
-.timer span{
-
-    position:relative;
-
-    z-index:2;
-
-    font-size:20px;
-
-    font-weight:900;
-
-}
-
-.timer-danger{
-
-    color:#ff5b61;
-
-}
-
-
-/* =========================================================
-   TOPIC
-========================================================= */
-
-.topic{
-
-    text-align:center;
-
-    color:var(--gold2);
-
-    font-size:12px;
-
-    font-weight:800;
-
-    letter-spacing:.8px;
-
-    margin-bottom:8px;
-
-}
-
-
-/* =========================================================
-   QUESTION
-========================================================= */
-
-.question-box{
-
-    width:100%;
-
-    padding:27px 20px;
-
-    border-radius:20px;
-
-    border:
-        2px solid
-        rgba(245,197,66,.75);
+    height:2px;
 
     background:
-
         linear-gradient(
-            145deg,
-            #123660,
-            #061426
+            90deg,
+            transparent,
+            #fff4af,
+            var(--gold),
+            #fff4af,
+            transparent
         );
 
     box-shadow:
-
-        0 0 0 1px
-        rgba(255,255,255,.02),
-
-        0 12px 40px
-        rgba(0,0,0,.55),
-
-        0 0 25px
-        rgba(245,197,66,.08);
-
-    text-align:center;
-
-    margin-bottom:18px;
-
+        0 0 12px var(--gold);
 }
 
-.question{
+.question-number{
+    position:absolute;
 
-    font-size:
-        clamp(18px,4vw,26px);
+    top:8px;
+    left:50%;
 
-    line-height:1.55;
+    transform:translateX(-50%);
+
+    color:#8295b3;
+
+    font-size:9px;
+    font-weight:800;
+
+    letter-spacing:1px;
+}
+
+#questionText{
+    font-size:clamp(17px,4vw,24px);
+    line-height:1.6;
 
     font-weight:700;
 
+    max-width:850px;
 }
-
 
 /* =========================================================
    OPTIONS
 ========================================================= */
 
 .options{
-
     display:grid;
 
-    grid-template-columns:
-        1fr 1fr;
+    grid-template-columns:1fr 1fr;
 
     gap:12px;
 
+    margin-top:15px;
 }
 
 .option{
-
     min-height:65px;
 
-    border:
-        1px solid
-        rgba(91,134,184,.55);
+    display:flex;
+    align-items:center;
 
-    border-radius:15px;
+    text-align:left;
+
+    padding:12px 15px;
+
+    border-radius:17px;
+
+    border:
+        1px solid rgba(151,177,211,.3);
 
     background:
-
         linear-gradient(
             145deg,
-            #102d51,
-            #061426
+            rgba(12,47,91,.95),
+            rgba(5,23,47,.96)
         );
 
     color:white;
 
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-    padding:
-        11px
-        14px;
-
     cursor:pointer;
 
-    font-size:15px;
+    transition:
+        transform .18s,
+        border .18s,
+        background .18s,
+        box-shadow .18s;
 
-    text-align:left;
+    position:relative;
 
-    transition:.2s;
-
+    overflow:hidden;
 }
 
-.option:hover:not(:disabled){
-
-    border-color:var(--gold);
-
-    transform:translateY(-2px);
-
+.option:hover{
+    border-color:rgba(246,201,69,.75);
 }
 
-.option-label{
+.option:active{
+    transform:scale(.98);
+}
 
+.option-letter{
     width:34px;
-
     height:34px;
 
-    min-width:34px;
+    flex:0 0 34px;
+
+    margin-right:10px;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     border-radius:50%;
 
-    border:
-        1px solid
-        var(--gold);
+    color:var(--gold);
 
-    color:var(--gold2);
+    border:1px solid rgba(246,201,69,.55);
 
     font-weight:900;
+    font-size:13px;
+}
 
+.option-text{
+    font-size:14px;
+    line-height:1.4;
 }
 
 .option.selected{
+    border-color:#ffe88b;
 
     background:
-
         linear-gradient(
             135deg,
-            #9b6909,
-            #f5c542
+            #7e5c00,
+            #c79608,
+            #6d4d00
         );
 
-    color:#000;
-
-    border-color:white;
-
+    box-shadow:
+        0 0 25px rgba(246,201,69,.25);
 }
 
-.option.selected
-.option-label{
-
-    color:#000;
-
-    border-color:#000;
-
+.option.selected .option-letter{
+    background:#fff0a6;
+    color:#111;
+    border-color:white;
 }
 
 .option.correct{
-
     background:
         linear-gradient(
             135deg,
-            #08784b,
-            #19c77a
+            #075d32,
+            #159447
         ) !important;
 
-    border-color:
-        #72ffc2 !important;
+    border-color:#5aff9a !important;
 
+    animation:correctGlow .7s infinite alternate;
+}
+
+@keyframes correctGlow{
+    from{
+        box-shadow:0 0 10px rgba(40,255,130,.2);
+    }
+    to{
+        box-shadow:0 0 30px rgba(40,255,130,.5);
+    }
 }
 
 .option.wrong{
-
     background:
         linear-gradient(
             135deg,
-            #821c21,
-            #e83d46
+            #7a1515,
+            #c62828
         ) !important;
 
-    border-color:
-        #ff9da2 !important;
+    border-color:#ff7373 !important;
 
+    animation:wrongShake .45s;
 }
 
-.option.hidden{
+@keyframes wrongShake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-7px);}
+    75%{transform:translateX(7px);}
+}
 
-    visibility:hidden;
-
+.option.eliminated{
+    opacity:0;
+    transform:scale(.85);
     pointer-events:none;
-
 }
-
 
 /* =========================================================
-   LOCK AREA
+   LOCK / ACTION
 ========================================================= */
 
 .lock-area{
+    margin-top:15px;
 
     display:flex;
+    justify-content:center;
 
-    flex-direction:column;
-
-    align-items:center;
-
-    margin-top:18px;
-
+    gap:10px;
 }
 
-.lock{
-
+.lock-btn{
     min-width:220px;
 
-    border:none;
+    padding:14px 22px;
 
     border-radius:30px;
 
-    padding:14px 28px;
+    border:1px solid #fff1a8;
 
-    font-size:16px;
+    color:#071326;
 
+    font-size:15px;
     font-weight:900;
 
     background:
-
         linear-gradient(
             135deg,
-            #d18b0b,
-            #ffd966
+            #fff0a6,
+            #f6c945 48%,
+            #c99000
         );
 
-    color:#050505;
-
-    cursor:pointer;
-
     box-shadow:
-        0 8px 25px
-        rgba(245,197,66,.18);
-
-}
-
-.lock:disabled{
-
-    opacity:.35;
-
-    cursor:not-allowed;
-
-}
-
-.status{
-
-    margin-top:8px;
-
-    color:var(--muted);
-
-    font-size:12px;
-
-}
-
-
-/* =========================================================
-   LIFELINES
-========================================================= */
-
-.lifelines{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap:9px;
-
-    margin-top:20px;
-
-}
-
-.life{
-
-    min-height:53px;
-
-    border:
-        1px solid
-        rgba(245,197,66,.45);
-
-    border-radius:13px;
-
-    background:
-        rgba(10,35,66,.9);
-
-    color:white;
-
-    font-weight:800;
+        0 8px 25px rgba(246,201,69,.2);
 
     cursor:pointer;
-
 }
 
-.life:hover:not(:disabled){
-
-    border-color:var(--gold2);
-
-    color:var(--gold2);
-
-}
-
-.life:disabled{
-
-    opacity:.3;
-
+.lock-btn:disabled{
+    opacity:.35;
     cursor:not-allowed;
-
+    filter:grayscale(.6);
 }
 
+.take-btn{
+    padding:13px 17px;
+
+    border-radius:30px;
+
+    color:#dce7f6;
+
+    border:1px solid rgba(255,255,255,.18);
+
+    background:rgba(255,255,255,.05);
+
+    cursor:pointer;
+}
 
 /* =========================================================
    EXPLANATION
 ========================================================= */
 
 .explanation{
-
     display:none;
 
-    margin-top:15px;
+    margin-top:13px;
 
-    padding:12px 15px;
+    padding:13px 15px;
 
-    border:
-        1px dashed
-        rgba(25,199,122,.7);
+    border-radius:14px;
 
-    border-radius:12px;
+    color:#dfffe9;
 
-    color:#8effcf;
+    background:rgba(22,163,74,.09);
 
-    background:
-        rgba(25,199,122,.07);
-
-    line-height:1.6;
+    border:1px solid rgba(34,197,94,.35);
 
     text-align:center;
 
-}
+    font-size:13px;
 
+    line-height:1.55;
+}
 
 /* =========================================================
-   LADDER DRAWER
+   LIFELINES
 ========================================================= */
 
-.overlay{
+.lifelines{
+    display:grid;
 
-    position:fixed;
+    grid-template-columns:repeat(4,1fr);
 
-    inset:0;
+    gap:8px;
 
-    background:
-        rgba(0,0,0,.7);
-
-    display:none;
-
-    z-index:500;
-
+    margin-top:15px;
 }
 
-.overlay.show{
-    display:block;
-}
+.life-btn{
+    min-height:48px;
 
-.ladder{
+    border-radius:14px;
 
-    position:fixed;
+    border:1px solid rgba(246,201,69,.35);
 
-    top:0;
-
-    right:-330px;
-
-    width:320px;
-
-    height:100vh;
-
-    z-index:600;
+    color:#f6e9bd;
 
     background:
         linear-gradient(
-            180deg,
-            #071a35,
-            #020711
+            145deg,
+            rgba(14,51,96,.95),
+            rgba(4,20,40,.95)
         );
 
-    border-left:
-        1px solid
-        rgba(245,197,66,.5);
+    cursor:pointer;
 
-    padding:17px;
+    font-size:11px;
+    font-weight:800;
 
-    transition:.35s;
-
+    transition:.2s;
 }
 
-.ladder.open{
-    right:0;
+.life-btn span{
+    display:block;
+    font-size:17px;
+    margin-bottom:2px;
 }
 
-.ladder-header{
+.life-btn:active{
+    transform:scale(.95);
+}
 
-    display:flex;
+.life-btn:disabled{
+    opacity:.28;
+    cursor:not-allowed;
+}
 
-    align-items:center;
+/* =========================================================
+   LADDER
+========================================================= */
 
-    justify-content:space-between;
+.ladder{
+    position:sticky;
+    top:80px;
 
-    margin-bottom:14px;
+    height:max-content;
 
-    padding-bottom:12px;
+    padding:14px;
 
-    border-bottom:
-        1px solid
-        rgba(245,197,66,.2);
+    border-radius:22px;
 
+    background:
+        linear-gradient(
+            145deg,
+            rgba(5,28,60,.96),
+            rgba(2,12,27,.98)
+        );
+
+    border:1px solid rgba(246,201,69,.35);
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.35);
 }
 
 .ladder-title{
+    text-align:center;
 
-    color:var(--gold2);
+    color:var(--gold);
 
-    font-size:18px;
-
+    font-size:14px;
     font-weight:900;
 
+    margin-bottom:9px;
 }
 
-.close{
-
-    border:none;
-
-    background:none;
-
-    color:white;
-
-    font-size:28px;
-
-}
-
-.money{
-
-    list-style:none;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:5px;
-
-    max-height:
-        calc(100vh - 80px);
-
-    overflow:auto;
-
-}
-
-.money li{
-
+.ladder-item{
     display:flex;
 
     justify-content:space-between;
+    align-items:center;
 
-    padding:8px 12px;
+    padding:7px 10px;
+
+    margin:3px 0;
 
     border-radius:8px;
 
-    color:#8397b1;
+    color:#8ea1bb;
 
-    font-weight:700;
-
+    font-size:12px;
 }
 
-.money li.current{
+.ladder-item span:last-child{
+    color:#c8d2e0;
+    font-weight:800;
+}
+
+.ladder-item.safe{
+    color:#83a2c7;
+}
+
+.ladder-item.safe::after{
+    content:"SAFE";
+    font-size:8px;
+    margin-left:5px;
+    color:#7dd3fc;
+}
+
+.ladder-item.active{
+    color:#071326;
 
     background:
         linear-gradient(
             90deg,
-            #c58b13,
-            #ffd966
+            #fff0a6,
+            #f6c945,
+            #d69e00
         );
 
-    color:#000;
+    font-weight:900;
 
+    box-shadow:
+        0 0 18px rgba(246,201,69,.25);
 }
 
-.money li.safe{
-
-    border-left:
-        3px solid
-        var(--gold);
-
+.ladder-item.active span:last-child{
+    color:#071326;
 }
-
 
 /* =========================================================
-   CONFIRM MODAL
+   MOBILE LADDER
+========================================================= */
+
+.ladder-mobile-btn{
+    display:none;
+}
+
+.ladder-overlay{
+    display:none;
+}
+
+/* =========================================================
+   MODALS
 ========================================================= */
 
 .modal{
-
     position:fixed;
 
     inset:0;
 
+    z-index:500;
+
     display:none;
 
     align-items:center;
-
     justify-content:center;
-
-    z-index:1000;
 
     padding:20px;
 
-    background:
-        rgba(0,0,0,.88);
+    background:rgba(0,5,15,.86);
 
+    backdrop-filter:blur(10px);
 }
 
 .modal-card{
-
     width:100%;
+    max-width:430px;
 
-    max-width:400px;
+    padding:27px 20px;
 
-    padding:25px 20px;
-
-    border:
-        2px solid
-        var(--gold);
-
-    border-radius:22px;
+    border-radius:24px;
 
     text-align:center;
 
     background:
         linear-gradient(
             145deg,
-            #123660,
-            #030b17
+            #0b315f,
+            #031328
         );
 
+    border:2px solid rgba(246,201,69,.65);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.65);
+}
+
+.modal-icon{
+    font-size:48px;
+    margin-bottom:10px;
 }
 
 .modal-title{
-
-    color:var(--gold2);
-
-    font-size:22px;
-
+    color:var(--gold);
+    font-size:23px;
     font-weight:900;
-
-    margin-bottom:10px;
-
 }
 
-.modal-question{
-
-    color:#d7e2f0;
-
-    line-height:1.5;
-
-    margin-bottom:15px;
-
-}
-
-.selected-answer{
-
-    padding:13px;
-
-    border-radius:12px;
-
-    background:
-        rgba(245,197,66,.12);
-
-    border:
-        1px solid
-        rgba(245,197,66,.4);
-
-    color:var(--gold2);
-
-    font-weight:800;
-
-    margin-bottom:18px;
-
+.modal-text{
+    color:#b8c7db;
+    line-height:1.6;
+    margin-top:8px;
 }
 
 .modal-buttons{
-
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    gap:10px;
-
+    display:flex;
+    gap:9px;
+    margin-top:20px;
 }
 
-.modal-buttons button{
+.modal-btn{
+    flex:1;
 
     padding:12px;
 
     border-radius:25px;
 
-    border:none;
-
-    font-weight:900;
-
-    cursor:pointer;
-
-}
-
-.confirm{
-
-    background:
-        linear-gradient(
-            135deg,
-            #c88b12,
-            #ffd966
-        );
-
-    color:#000;
-
-}
-
-.cancel{
-
-    background:#26364d;
+    border:1px solid rgba(246,201,69,.4);
 
     color:white;
 
+    background:#092b55;
+
+    cursor:pointer;
+
+    font-weight:800;
 }
 
-
-/* =========================================================
-   RESULT MODAL
-========================================================= */
-
-.result-icon{
-
-    font-size:55px;
-
-    margin-bottom:10px;
-
-}
-
-.result-coins{
-
-    color:var(--gold2);
-
-    font-size:32px;
-
-    font-weight:900;
-
-    margin:12px 0 20px;
-
-}
-
-.restart{
-
-    width:100%;
-
-    padding:13px;
-
-    border:none;
-
-    border-radius:25px;
+.modal-btn.primary{
+    color:#071326;
 
     background:
         linear-gradient(
             135deg,
-            #d18b0b,
-            #ffd966
+            #fff0a6,
+            #f6c945
         );
+}
+
+/* =========================================================
+   AUDIENCE POLL
+========================================================= */
+
+.poll{
+    margin-top:20px;
+}
+
+.poll-row{
+    display:grid;
+
+    grid-template-columns:28px 1fr 48px;
+
+    align-items:center;
+
+    gap:7px;
+
+    margin:10px 0;
+
+    font-size:12px;
+}
+
+.bar{
+    height:12px;
+
+    overflow:hidden;
+
+    border-radius:20px;
+
+    background:#0a1c36;
+}
+
+.bar-fill{
+    height:100%;
+
+    width:0;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #2764c7,
+            #f6c945
+        );
+
+    transition:width 1s ease;
+}
+
+/* =========================================================
+   PHONE FRIEND
+========================================================= */
+
+.phone-box{
+    margin-top:18px;
+
+    padding:17px;
+
+    border-radius:15px;
+
+    background:rgba(0,0,0,.2);
+
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.phone-confidence{
+    font-size:30px;
+
+    color:var(--gold);
 
     font-weight:900;
 
+    margin:8px 0;
 }
-
 
 /* =========================================================
    LOADING
 ========================================================= */
 
 .loading{
-
     position:fixed;
 
     inset:0;
 
-    z-index:2000;
+    z-index:1000;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
 
     background:
         radial-gradient(
             circle,
-            #10325c,
-            #020711
+            #092e68,
+            #010611 70%
         );
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-    justify-content:center;
-
-}
-
-.loading-logo{
-
-    color:var(--gold2);
-
-    font-size:30px;
-
-    font-weight:900;
-
-    margin-bottom:18px;
-
 }
 
 .loader{
+    text-align:center;
+}
 
-    width:42px;
+.loader-circle{
+    width:65px;
+    height:65px;
 
-    height:42px;
-
-    border:
-        4px solid
-        rgba(255,255,255,.15);
-
-    border-top-color:
-        var(--gold2);
+    margin:auto auto 18px;
 
     border-radius:50%;
 
-    animation:
-        spin 1s linear infinite;
+    border:
+        4px solid rgba(246,201,69,.2);
 
-}
+    border-top-color:var(--gold);
 
-.loading-text{
-
-    margin-top:15px;
-
-    color:#c5d2e3;
-
+    animation:spin 1s linear infinite;
 }
 
 @keyframes spin{
-
-    to{
-        transform:rotate(360deg);
-    }
-
+    to{transform:rotate(360deg);}
 }
 
-
 /* =========================================================
-   MOBILE
+   TOAST
 ========================================================= */
 
-@media(max-width:650px){
+.toast{
+    position:fixed;
 
-    .logo{
-        font-size:14px;
+    left:50%;
+    bottom:25px;
+
+    transform:
+        translate(-50%,20px);
+
+    z-index:800;
+
+    padding:11px 17px;
+
+    border-radius:25px;
+
+    color:white;
+
+    background:
+        rgba(7,27,54,.95);
+
+    border:1px solid rgba(246,201,69,.4);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.3s;
+
+    font-size:12px;
+
+    box-shadow:0 10px 35px rgba(0,0,0,.4);
+}
+
+.toast.show{
+    opacity:1;
+
+    transform:
+        translate(-50%,0);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:800px){
+
+    .game-layout{
+        grid-template-columns:1fr;
+    }
+
+    .ladder{
+        position:fixed;
+
+        top:0;
+        right:-300px;
+
+        width:280px;
+
+        height:100vh;
+
+        z-index:450;
+
+        border-radius:0;
+
+        transition:.3s;
+
+        overflow-y:auto;
+    }
+
+    .ladder.open{
+        right:0;
+    }
+
+    .ladder-mobile-btn{
+        display:block;
+
+        position:fixed;
+
+        right:12px;
+        bottom:17px;
+
+        z-index:300;
+
+        width:53px;
+        height:53px;
+
+        border-radius:50%;
+
+        border:1px solid #ffe68c;
+
+        color:#071326;
+
+        background:
+            linear-gradient(
+                135deg,
+                #fff0a6,
+                #f6c945
+            );
+
+        box-shadow:
+            0 8px 30px rgba(0,0,0,.45);
+    }
+
+    .ladder-overlay{
+        position:fixed;
+        inset:0;
+
+        z-index:440;
+
+        background:rgba(0,0,0,.6);
+
+        display:none;
+    }
+
+    .ladder-overlay.open{
+        display:block;
+    }
+}
+
+@media(max-width:560px){
+
+    #gameScreen{
+        padding:10px 10px 85px;
+    }
+
+    .brand-text{
+        font-size:13px;
+    }
+
+    .top-actions .icon-btn{
+        width:36px;
+        height:36px;
+    }
+
+    .question-box{
+        min-height:145px;
+        padding:28px 15px 22px;
     }
 
     .options{
         grid-template-columns:1fr;
+        gap:9px;
+    }
+
+    .option{
+        min-height:58px;
+    }
+
+    .lock-area{
+        flex-direction:column;
+    }
+
+    .lock-btn,
+    .take-btn{
+        width:100%;
     }
 
     .lifelines{
-        grid-template-columns:1fr 1fr;
+        gap:6px;
     }
 
-    .question-box{
-        padding:22px 15px;
+    .life-btn{
+        font-size:9px;
     }
 
-    .question{
-        font-size:18px;
+    .intro-card{
+        padding:28px 17px;
     }
 
-    .ladder{
-        width:290px;
+    .intro-title{
+        font-size:26px;
     }
-
 }
 
 </style>
-
 </head>
-
 
 <body>
 
+<!-- =========================================================
+     STAR BACKGROUND
+========================================================= -->
 
-<!-- =====================================================
-     LOADING
-===================================================== -->
+<div class="stars" id="stars"></div>
 
-<div
-    class="loading"
-    id="loading">
+<!-- =========================================================
+     TOP BAR
+========================================================= -->
 
-    <div class="loading-logo">
-        LoksewaQuest
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            🪙
+        </div>
+
+        <div class="brand-text">
+            LOKSEWAQUEST
+            <span>QUIZ ARENA</span>
+        </div>
+
     </div>
 
-    <div class="loader"></div>
+    <div class="top-actions">
 
-    <div
-        class="loading-text"
-        id="loadingText">
+        <button
+            class="icon-btn"
+            id="soundBtn"
+            onclick="toggleSound()"
+            title="Sound">
+            🔊
+        </button>
 
-        प्रश्नहरू तयार हुँदैछन्...
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
-<header class="header">
-
-    <div class="logo">
-        <span>Loksewa</span>Quest
-    </div>
-
-    <div
-        class="header-coins"
-        id="headerCoins">
-
-        🪙 0
+        <button
+            class="icon-btn"
+            onclick="showRules()"
+            title="Rules">
+            ?
+        </button>
 
     </div>
 
 </header>
 
 
-<!-- =====================================================
-     LADDER OVERLAY
-===================================================== -->
+<!-- =========================================================
+     LOADING
+========================================================= -->
+
+<div class="loading" id="loadingScreen">
+
+    <div class="loader">
+
+        <div class="loader-circle"></div>
+
+        <div style="color:#f6c945;font-weight:900;">
+            प्रश्नहरू तयार हुँदैछन्...
+        </div>
+
+        <div style="color:#91a3bc;font-size:12px;margin-top:5px;">
+            Supabase बाट प्रश्नहरू load हुँदैछ
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     INTRO
+========================================================= -->
+
+<section class="screen" id="introScreen">
+
+    <div class="intro-card">
+
+        <div class="intro-emblem">
+            LQ
+        </div>
+
+        <div class="intro-title">
+            LOKSEWA<span> QUIZ</span>
+        </div>
+
+        <div class="intro-subtitle">
+            ज्ञान, समय र निर्णयको परीक्षा।
+            <br>
+            कति Coin जित्न सक्नुहुन्छ?
+        </div>
+
+        <div class="rules">
+
+            <div class="rule">
+                <strong>10</strong>
+                Questions
+            </div>
+
+            <div class="rule">
+                <strong>30s</strong>
+                Per Question
+            </div>
+
+            <div class="rule">
+                <strong>4</strong>
+                Lifelines
+            </div>
+
+            <div class="rule">
+                <strong>1000</strong>
+                Max Coins
+            </div>
+
+        </div>
+
+        <button
+            class="start-btn"
+            onclick="startGame()">
+
+            🎬 खेल सुरु गरौं
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     GAME
+========================================================= -->
+
+<section class="screen" id="gameScreen">
+
+    <div class="game-layout">
+
+        <!-- MAIN -->
+
+        <main class="game-main">
+
+            <div class="question-header">
+
+                <div class="progress-pill">
+                    प्रश्न
+                    <strong id="questionNumber">1</strong>
+                    /
+                    <strong id="totalQuestions">10</strong>
+                </div>
+
+                <div class="prize-pill">
+                    🪙
+                    <span id="currentPrize">10</span>
+                </div>
+
+            </div>
+
+
+            <!-- TIMER -->
+
+            <div class="timer-wrap">
+
+                <div
+                    class="timer"
+                    id="timer">
+
+                    30
+
+                </div>
+
+            </div>
+
+
+            <!-- TOPIC -->
+
+            <div
+                class="topic"
+                id="topic">
+                LOKSEWA QUIZ
+            </div>
+
+
+            <!-- QUESTION -->
+
+            <div class="question-box">
+
+                <div
+                    class="question-number"
+                    id="questionLabel">
+                    QUESTION 1
+                </div>
+
+                <div id="questionText">
+                    प्रश्न load हुँदैछ...
+                </div>
+
+            </div>
+
+
+            <!-- OPTIONS -->
+
+            <div
+                class="options"
+                id="optionsContainer">
+
+                <button
+                    class="option"
+                    id="opt0"
+                    onclick="selectOption(0)">
+
+                    <span class="option-letter">A</span>
+
+                    <span
+                        class="option-text"
+                        id="optText0">
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="option"
+                    id="opt1"
+                    onclick="selectOption(1)">
+
+                    <span class="option-letter">B</span>
+
+                    <span
+                        class="option-text"
+                        id="optText1">
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="option"
+                    id="opt2"
+                    onclick="selectOption(2)">
+
+                    <span class="option-letter">C</span>
+
+                    <span
+                        class="option-text"
+                        id="optText2">
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="option"
+                    id="opt3"
+                    onclick="selectOption(3)">
+
+                    <span class="option-letter">D</span>
+
+                    <span
+                        class="option-text"
+                        id="optText3">
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- EXPLANATION -->
+
+            <div
+                class="explanation"
+                id="explanation">
+            </div>
+
+
+            <!-- LOCK -->
+
+            <div class="lock-area">
+
+                <button
+                    class="lock-btn"
+                    id="lockBtn"
+                    onclick="lockAnswer()"
+                    disabled>
+
+                    🔒 LOCK ANSWER
+
+                </button>
+
+                <button
+                    class="take-btn"
+                    onclick="takeHome()">
+
+                    🏠 Take Home
+
+                </button>
+
+            </div>
+
+
+            <!-- LIFELINES -->
+
+            <div class="lifelines">
+
+                <button
+                    class="life-btn"
+                    id="life5050"
+                    onclick="use5050()">
+
+                    <span>50:50</span>
+                    दुई विकल्प हटाउने
+
+                </button>
+
+
+                <button
+                    class="life-btn"
+                    id="lifePhone"
+                    onclick="usePhone()">
+
+                    <span>📞</span>
+                    Phone a Friend
+
+                </button>
+
+
+                <button
+                    class="life-btn"
+                    id="lifePoll"
+                    onclick="usePoll()">
+
+                    <span>👥</span>
+                    Audience Poll
+
+                </button>
+
+
+                <button
+                    class="life-btn"
+                    id="lifeFlip"
+                    onclick="useFlip()">
+
+                    <span>🔄</span>
+                    Flip Question
+
+                </button>
+
+            </div>
+
+        </main>
+
+
+        <!-- DESKTOP LADDER -->
+
+        <aside
+            class="ladder"
+            id="ladder">
+
+            <div class="ladder-title">
+                🏆 COIN LADDER
+            </div>
+
+            <div id="ladderList"></div>
+
+        </aside>
+
+    </div>
+
+</section>
+
+
+<!-- MOBILE LADDER -->
+
+<button
+    class="ladder-mobile-btn"
+    onclick="toggleLadder()">
+
+    🏆
+
+</button>
 
 <div
-    class="overlay"
-    id="overlay"
+    class="ladder-overlay"
+    id="ladderOverlay"
     onclick="toggleLadder()">
 </div>
 
 
-<!-- =====================================================
-     LADDER
-===================================================== -->
-
-<aside
-    class="ladder"
-    id="ladder">
-
-    <div class="ladder-header">
-
-        <div class="ladder-title">
-            🪙 Prize Ladder
-        </div>
-
-        <button
-            class="close"
-            onclick="toggleLadder()">
-
-            ×
-
-        </button>
-
-    </div>
-
-    <ul
-        class="money"
-        id="moneyList">
-    </ul>
-
-</aside>
-
-
-<!-- =====================================================
-     GAME
-===================================================== -->
-
-<main class="game">
-
-
-    <div class="game-info">
-
-        <div
-            class="question-counter"
-            id="counter">
-
-            QUESTION 1 / 10
-
-        </div>
-
-        <button
-            class="ladder-button"
-            onclick="toggleLadder()">
-
-            🪜 Ladder
-
-        </button>
-
-    </div>
-
-
-    <div class="progress">
-
-        <div
-            class="progress-bar"
-            id="progressBar">
-        </div>
-
-    </div>
-
-
-    <!-- TIMER -->
-
-    <div class="timer-area">
-
-        <div
-            class="timer"
-            id="timerRing">
-
-            <span
-                id="timer">
-
-                30
-
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <!-- TOPIC -->
-
-    <div
-        class="topic"
-        id="topic">
-
-        LOKSEWA QUIZ
-
-    </div>
-
-
-    <!-- QUESTION -->
-
-    <section class="question-box">
-
-        <div
-            class="question"
-            id="question">
-
-            प्रश्न load हुँदैछ...
-
-        </div>
-
-    </section>
-
-
-    <!-- OPTIONS -->
-
-    <section class="options">
-
-        <button
-            class="option"
-            id="option0"
-            onclick="selectOption(0)">
-
-            <span class="option-label">
-                A
-            </span>
-
-            <span
-                class="option-text">
-            </span>
-
-        </button>
-
-
-        <button
-            class="option"
-            id="option1"
-            onclick="selectOption(1)">
-
-            <span class="option-label">
-                B
-            </span>
-
-            <span
-                class="option-text">
-            </span>
-
-        </button>
-
-
-        <button
-            class="option"
-            id="option2"
-            onclick="selectOption(2)">
-
-            <span class="option-label">
-                C
-            </span>
-
-            <span
-                class="option-text">
-            </span>
-
-        </button>
-
-
-        <button
-            class="option"
-            id="option3"
-            onclick="selectOption(3)">
-
-            <span class="option-label">
-                D
-            </span>
-
-            <span
-                class="option-text">
-            </span>
-
-        </button>
-
-    </section>
-
-
-    <!-- EXPLANATION -->
-
-    <div
-        class="explanation"
-        id="explanation">
-    </div>
-
-
-    <!-- LOCK -->
-
-    <div class="lock-area">
-
-        <button
-            class="lock"
-            id="lockButton"
-            onclick="openConfirm()"
-            disabled>
-
-            🔒 LOCK ANSWER
-
-        </button>
-
-        <div
-            class="status"
-            id="status">
-
-            उत्तर चयन गर्नुहोस्
-
-        </div>
-
-    </div>
-
-
-    <!-- LIFELINES -->
-
-    <section class="lifelines">
-
-        <button
-            class="life"
-            id="life5050"
-            onclick="use5050()">
-
-            50:50
-
-        </button>
-
-        <button
-            class="life"
-            id="lifePhone"
-            onclick="usePhone()">
-
-            📞 Phone
-
-        </button>
-
-        <button
-            class="life"
-            id="lifeAudience"
-            onclick="useAudience()">
-
-            👥 Audience
-
-        </button>
-
-        <button
-            class="life"
-            id="lifeFlip"
-            onclick="useFlip()">
-
-            🔄 Flip
-
-        </button>
-
-    </section>
-
-</main>
-
-
-<!-- =====================================================
-     LOCK CONFIRM MODAL
-===================================================== -->
-
-<div
-    class="modal"
-    id="confirmModal">
-
-    <div class="modal-card">
-
-        <div class="modal-title">
-
-            🔒 Final Answer?
-
-        </div>
-
-        <div class="modal-question">
-
-            तपाईंको चयन:
-
-        </div>
-
-        <div
-            class="selected-answer"
-            id="selectedAnswer">
-        </div>
-
-        <div class="modal-buttons">
-
-            <button
-                class="cancel"
-                onclick="closeConfirm()">
-
-                होइन, फेरि हेर्छु
-
-            </button>
-
-            <button
-                class="confirm"
-                onclick="confirmLock()">
-
-                🔒 LOCK
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
+<!-- =========================================================
      RESULT MODAL
-===================================================== -->
+========================================================= -->
 
 <div
     class="modal"
@@ -1542,39 +1783,111 @@ body{
     <div class="modal-card">
 
         <div
-            class="result-icon"
+            class="modal-icon"
             id="resultIcon">
-
             🏆
-
         </div>
 
         <div
             class="modal-title"
             id="resultTitle">
-
-            Congratulations!
-
+            खेल समाप्त!
         </div>
 
         <div
-            class="modal-question"
-            id="resultMessage">
+            class="modal-text"
+            id="resultText">
         </div>
 
-        <div
-            class="result-coins"
-            id="resultCoins">
+        <div class="modal-buttons">
 
-            🪙 0
+            <button
+                class="modal-btn"
+                onclick="goHome()">
+
+                Home
+
+            </button>
+
+            <button
+                class="modal-btn primary"
+                onclick="restartGame()">
+
+                फेरि खेल्ने
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     POLL MODAL
+========================================================= -->
+
+<div
+    class="modal"
+    id="pollModal">
+
+    <div class="modal-card">
+
+        <div class="modal-icon">
+            👥
+        </div>
+
+        <div class="modal-title">
+            Audience Poll
+        </div>
+
+        <div class="modal-text">
+            दर्शकहरूले कुन उत्तर रोजे?
+        </div>
+
+        <div class="poll">
+
+            <div class="poll-row">
+                <strong>A</strong>
+                <div class="bar">
+                    <div class="bar-fill" id="pollA"></div>
+                </div>
+                <span id="pollAText">0%</span>
+            </div>
+
+            <div class="poll-row">
+                <strong>B</strong>
+                <div class="bar">
+                    <div class="bar-fill" id="pollB"></div>
+                </div>
+                <span id="pollBText">0%</span>
+            </div>
+
+            <div class="poll-row">
+                <strong>C</strong>
+                <div class="bar">
+                    <div class="bar-fill" id="pollC"></div>
+                </div>
+                <span id="pollCText">0%</span>
+            </div>
+
+            <div class="poll-row">
+                <strong>D</strong>
+                <div class="bar">
+                    <div class="bar-fill" id="pollD"></div>
+                </div>
+                <span id="pollDText">0%</span>
+            </div>
 
         </div>
 
         <button
-            class="restart"
-            onclick="restartGame()">
+            class="modal-btn primary"
+            style="width:100%;margin-top:20px;"
+            onclick="closePoll()">
 
-            🔄 फेरि खेल्नुहोस्
+            Continue
 
         </button>
 
@@ -1583,42 +1896,138 @@ body{
 </div>
 
 
-<!-- =====================================================
-     FIREBASE + SUPABASE
-===================================================== -->
+<!-- =========================================================
+     PHONE MODAL
+========================================================= -->
+
+<div
+    class="modal"
+    id="phoneModal">
+
+    <div class="modal-card">
+
+        <div class="modal-icon">
+            📞
+        </div>
+
+        <div class="modal-title">
+            Phone a Friend
+        </div>
+
+        <div class="phone-box">
+
+            <div style="color:#9fb0c7;">
+                साथीको अनुमान
+            </div>
+
+            <div
+                class="phone-confidence"
+                id="phoneConfidence">
+                78%
+            </div>
+
+            <div
+                id="phoneAnswer"
+                style="color:#dfe9f7;">
+            </div>
+
+        </div>
+
+        <button
+            class="modal-btn primary"
+            style="width:100%;margin-top:18px;"
+            onclick="closePhone()">
+
+            Continue
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     RULES MODAL
+========================================================= -->
+
+<div
+    class="modal"
+    id="rulesModal">
+
+    <div class="modal-card">
+
+        <div class="modal-icon">
+            📜
+        </div>
+
+        <div class="modal-title">
+            Game Rules
+        </div>
+
+        <div
+            class="modal-text"
+            style="text-align:left;">
+
+            • प्रत्येक प्रश्नका लागि 30 seconds हुन्छ।
+            <br><br>
+
+            • उत्तर छानेपछि <b>LOCK ANSWER</b> थिच्नुहोस्।
+            <br><br>
+
+            • गलत उत्तर वा समय सकिएपछि game समाप्त हुन्छ।
+            <br><br>
+
+            • Safe level पुगेपछि कम्तीमा त्यति Coin सुरक्षित हुन्छ।
+            <br><br>
+
+            • Lifeline प्रत्येक game मा एकपटक मात्र प्रयोग गर्न सकिन्छ।
+
+        </div>
+
+        <button
+            class="modal-btn primary"
+            style="width:100%;margin-top:18px;"
+            onclick="closeRules()">
+
+            बुझें
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast">
+</div>
+
 
 <script type="module">
 
-
 /* =========================================================
-   IMPORT SUPABASE
+   IMPORTS
 ========================================================= */
 
 import {
     createClient
-}
-from
-"https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-
-/* =========================================================
-   FIREBASE
-========================================================= */
+} from
+'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 import {
     initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
+} from
+'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 
 import {
     getAuth,
     onAuthStateChanged
-}
-from
-"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
+} from
+'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
 import {
     getFirestore,
@@ -1629,27 +2038,21 @@ import {
     collection,
     addDoc,
     serverTimestamp,
-    increment
-}
-from
-"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    increment,
+    runTransaction
+} from
+'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
 
 /* =========================================================
-   SUPABASE CONFIG
+   SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
-"https://edyirdedkiarguvurpxq.supabase.co";
-
-
-/*
- यहाँ आफ्नो original FULL anon key राख्नुहोस्
-*/
+'https://edyirdedkiarguvurpxq.supabase.co';
 
 const SUPABASE_ANON_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
-
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
 
 const supabase =
 createClient(
@@ -1659,7 +2062,7 @@ createClient(
 
 
 /* =========================================================
-   FIREBASE CONFIG
+   FIREBASE
 ========================================================= */
 
 const firebaseConfig = {
@@ -1684,162 +2087,268 @@ const firebaseConfig = {
 
 };
 
-
 const firebaseApp =
 initializeApp(firebaseConfig);
 
-
 const auth =
 getAuth(firebaseApp);
-
 
 const db =
 getFirestore(firebaseApp);
 
 
 /* =========================================================
-   PRIZE LADDER
+   GAME SETTINGS
 ========================================================= */
 
-const PRIZES = [
+const TOTAL_QUESTIONS = 10;
 
+const TIME_PER_QUESTION = 30;
+
+
+/*
+    Coin ladder.
+
+    Index 0 = question 1
+    Index 9 = question 10
+*/
+
+const coinLadder = [
     10,
     20,
     40,
     80,
-
-    150,  // SAFE
-
+    150,
     250,
     400,
     600,
     800,
-
-    1000  // FINAL
-
+    1000
 ];
 
 
-const SAFE_LEVELS = [
-    5,
-    10
-];
+/*
+    Safe levels.
 
+    If player reaches Q5:
+    minimum secured coins = 150
 
-const TOTAL =
-PRIZES.length;
+    If player reaches Q10:
+    = 1000
+*/
+
+const SAFE_LEVELS = [5,10];
 
 
 /* =========================================================
    GAME STATE
 ========================================================= */
 
+let currentUser = null;
+
 let questions = [];
 
-let currentIndex = 0;
+let currentQuestionIndex = 0;
 
-let selectedIndex = null;
+let selectedOptionIndex = null;
+
+let currentOptions = [];
 
 let timerInterval = null;
 
-let timeLeft = 30;
+let timeLeft = TIME_PER_QUESTION;
 
-let currentUser = null;
-
-let userCoins = 0;
-
-let winnings = 0;
-
-let safeWinnings = 0;
-
-let rewardSaved = false;
+let gameStarted = false;
 
 let answerLocked = false;
 
+let totalCoinsWon = 0;
 
-let lifelines = {
+let securedCoins = 0;
 
-    fifty:false,
 
-    phone:false,
+/*
+    This is VERY important.
 
-    audience:false,
+    Prevents the same game from adding coins twice.
+*/
 
-    flip:false
+let rewardSaved = false;
+
+
+/*
+    Lifelines.
+*/
+
+let lifelineUsed = {
+
+    fifty:
+    false,
+
+    phone:
+    false,
+
+    poll:
+    false,
+
+    flip:
+    false
 
 };
+
+
+/*
+    Sound.
+*/
+
+let soundEnabled = true;
+
+
+/*
+    Audio context.
+*/
+
+let audioContext = null;
 
 
 /* =========================================================
    FIREBASE AUTH
 ========================================================= */
 
-function waitForUser(){
+onAuthStateChanged(
+    auth,
+    async user => {
 
-    return new Promise(resolve => {
+        currentUser = user;
 
-        const unsubscribe =
-        onAuthStateChanged(
-            auth,
-            user => {
+        if(user){
 
-                unsubscribe();
+            console.log(
+                "Logged in user:",
+                user.uid
+            );
 
-                currentUser =
-                    user;
+        }else{
 
-                resolve(user);
-
-            }
-        );
-
-    });
-
-}
-
-
-/* =========================================================
-   LOAD USER COINS
-========================================================= */
-
-async function loadCoins(){
-
-    if(!currentUser)
-        return;
-
-
-    try{
-
-        const ref =
-        doc(
-            db,
-            "users",
-            currentUser.uid
-        );
-
-
-        const snap =
-        await getDoc(ref);
-
-
-        if(snap.exists()){
-
-            userCoins =
-            Number(
-                snap.data().coins || 0
+            console.warn(
+                "No Firebase user logged in."
             );
 
         }
 
+    }
+);
 
-        updateCoinUI();
+
+/* =========================================================
+   STAR FIELD
+========================================================= */
+
+function createStars(){
+
+    const container =
+    document.getElementById("stars");
+
+    for(
+        let i = 0;
+        i < 70;
+        i++
+    ){
+
+        const star =
+        document.createElement("div");
+
+        star.className = "star";
+
+        star.style.left =
+        Math.random()*100 + "%";
+
+        star.style.top =
+        Math.random()*100 + "%";
+
+        star.style.animationDelay =
+        Math.random()*2 + "s";
+
+        container.appendChild(star);
+
+    }
+
+}
+
+createStars();
 
 
-    }catch(error){
+/* =========================================================
+   SOUND ENGINE
+========================================================= */
 
-        console.error(
-            "Coin loading error:",
-            error
+function initAudio(){
+
+    if(!audioContext){
+
+        audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+    }
+
+}
+
+
+function beep(
+    frequency,
+    duration = 0.15,
+    type = "sine",
+    volume = 0.04
+){
+
+    if(!soundEnabled) return;
+
+    try{
+
+        initAudio();
+
+        const oscillator =
+        audioContext.createOscillator();
+
+        const gain =
+        audioContext.createGain();
+
+        oscillator.type =
+        type;
+
+        oscillator.frequency.value =
+        frequency;
+
+        gain.gain.setValueAtTime(
+            volume,
+            audioContext.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.001,
+            audioContext.currentTime + duration
+        );
+
+        oscillator.connect(gain);
+
+        gain.connect(
+            audioContext.destination
+        );
+
+        oscillator.start();
+
+        oscillator.stop(
+            audioContext.currentTime + duration
+        );
+
+    }catch(e){
+
+        console.log(
+            "Audio unavailable",
+            e
         );
 
     }
@@ -1847,117 +2356,229 @@ async function loadCoins(){
 }
 
 
-/* =========================================================
-   COIN UI
-========================================================= */
+function playSelectSound(){
 
-function updateCoinUI(){
+    beep(550,.08,"sine",.03);
+
+}
+
+
+function playLockSound(){
+
+    beep(250,.12,"triangle",.05);
+
+    setTimeout(
+        () => beep(420,.15,"triangle",.04),
+        120
+    );
+
+}
+
+
+function playCorrectSound(){
+
+    beep(520,.12,"sine",.04);
+
+    setTimeout(
+        () => beep(660,.12,"sine",.04),
+        130
+    );
+
+    setTimeout(
+        () => beep(820,.22,"sine",.05),
+        260
+    );
+
+}
+
+
+function playWrongSound(){
+
+    beep(230,.18,"sawtooth",.04);
+
+    setTimeout(
+        () => beep(150,.35,"sawtooth",.04),
+        170
+    );
+
+}
+
+
+function toggleSound(){
+
+    soundEnabled =
+    !soundEnabled;
 
     document.getElementById(
-        "headerCoins"
+        "soundBtn"
     ).innerText =
-        `🪙 ${userCoins.toLocaleString()}`;
+    soundEnabled
+    ? "🔊"
+    : "🔇";
 
 }
 
 
 /* =========================================================
-   FETCH QUESTIONS FROM SUPABASE
+   AUTH CHECK
 ========================================================= */
 
-async function fetchQuestions(){
+function requireUser(){
 
-    setLoading(
-        "Supabase बाट प्रश्नहरू ल्याउँदै..."
-    );
+    if(!currentUser){
 
+        showToast(
+            "कृपया पहिले login गर्नुहोस्।"
+        );
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+/* =========================================================
+   START GAME
+========================================================= */
+
+window.startGame =
+async function(){
+
+    if(!requireUser()) return;
+
+    initAudio();
+
+    if(audioContext &&
+       audioContext.state === "suspended"){
+
+        await audioContext.resume();
+
+    }
+
+    showLoading(true);
+
+    try{
+
+        await loadQuestions();
+
+        resetGameState();
+
+        document.getElementById(
+            "introScreen"
+        ).style.display =
+        "none";
+
+        document.getElementById(
+            "gameScreen"
+        ).style.display =
+        "block";
+
+        gameStarted = true;
+
+        renderLadder();
+
+        showToast(
+            "Game सुरु भयो! शुभकामना 🎯"
+        );
+
+        await countdown();
+
+        loadQuestion();
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message ||
+            "प्रश्न load हुन सकेन।"
+        );
+
+    }finally{
+
+        showLoading(false);
+
+    }
+
+};
+
+
+/* =========================================================
+   LOAD QUESTIONS FROM SUPABASE
+========================================================= */
+
+async function loadQuestions(){
+
+    /*
+        IMPORTANT:
+
+        Questions are coming directly from:
+        public.quizzes
+    */
 
     const {
         data,
         error
     } =
     await supabase
-
-        .from("quizzes")
-
-        .select(`
-            id,
-            topic,
-            question,
-            options,
-            answer,
-            explanation
-        `);
-
+    .from("quizzes")
+    .select(
+        "id,topic,question,options,answer,explanation"
+    );
 
     if(error){
 
         throw new Error(
-            "Supabase error: " +
-            error.message
+            "Supabase बाट प्रश्न load हुन सकेन।"
         );
 
     }
 
-
-    if(!data || data.length < TOTAL){
+    if(!data || data.length < TOTAL_QUESTIONS){
 
         throw new Error(
-            `quizzes table मा कम्तीमा ${TOTAL} questions आवश्यक छ। हाल ${data?.length || 0} मात्र छन्।`
+            `कम्तीमा ${TOTAL_QUESTIONS} वटा प्रश्न आवश्यक छ। अहिले ${data?.length || 0} वटा मात्र छन्।`
         );
 
     }
 
 
     /*
-     IMPORTANT:
-     Questions are coming ONLY from Supabase.
-     */
+        Shuffle questions.
+    */
 
     const shuffled =
-    [...data]
-        .sort(
-            () =>
-                Math.random() - 0.5
-        );
+    [...data].sort(
+        () => Math.random() - .5
+    );
 
-
-    /*
-     First 10 questions
-     */
 
     questions =
-        shuffled.slice(
-            0,
-            TOTAL
-        );
-
-
-    console.log(
-        "Loaded Supabase questions:",
-        questions
-    );
+    shuffled
+    .slice(0,TOTAL_QUESTIONS)
+    .map(normalizeQuestion);
 
 }
 
 
 /* =========================================================
-   NORMALIZE OPTIONS
+   NORMALIZE QUESTION
 ========================================================= */
 
-function getOptions(question){
+function normalizeQuestion(q){
 
     let options =
-        question.options;
+    q.options;
 
 
     /*
-     JSONB normally arrives as
-     JS array automatically.
+        JSONB normally comes as array.
 
-     But this also handles
-     stringified JSON.
-     */
+        But this also supports string JSON.
+    */
 
     if(typeof options === "string"){
 
@@ -1966,63 +2587,633 @@ function getOptions(question){
             options =
             JSON.parse(options);
 
-        }catch{
+        }catch(e){
 
-            return [];
+            console.error(
+                "Options parse error:",
+                e
+            );
+
+            options = [];
 
         }
 
     }
 
 
-    return Array.isArray(options)
-        ? options
-        : [];
+    if(!Array.isArray(options)){
+
+        options = [];
+
+    }
+
+
+    return {
+
+        id:
+        q.id,
+
+        topic:
+        q.topic || "Loksewa Quiz",
+
+        question:
+        q.question || "",
+
+        options:
+        options.map(
+            x => String(x)
+        ),
+
+        answer:
+        q.answer == null
+        ? ""
+        : String(q.answer),
+
+        explanation:
+        q.explanation || ""
+
+    };
 
 }
 
 
 /* =========================================================
-   FIND ANSWER INDEX
+   COUNTDOWN
 ========================================================= */
 
-function getCorrectIndex(question){
+function countdown(){
 
-    const options =
-    getOptions(question);
+    return new Promise(resolve => {
+
+        const overlay =
+        document.createElement("div");
+
+        overlay.style.position =
+        "fixed";
+
+        overlay.style.inset =
+        "0";
+
+        overlay.style.zIndex =
+        "1200";
+
+        overlay.style.display =
+        "flex";
+
+        overlay.style.alignItems =
+        "center";
+
+        overlay.style.justifyContent =
+        "center";
+
+        overlay.style.background =
+        "#010611";
+
+        overlay.innerHTML = `
+
+            <div style="
+                text-align:center;
+                font-weight:900;
+            ">
+
+                <div style="
+                    font-size:16px;
+                    color:#f6c945;
+                    letter-spacing:2px;
+                    margin-bottom:15px;
+                ">
+                    GET READY
+                </div>
+
+                <div
+                    id="countNumber"
+                    style="
+                        font-size:100px;
+                        color:#fff;
+                        text-shadow:
+                            0 0 30px #f6c945;
+                    ">
+                    3
+                </div>
+
+            </div>
+
+        `;
+
+        document.body.appendChild(
+            overlay
+        );
 
 
-    const answer =
-    String(
-        question.answer ?? ""
-    )
-    .trim();
+        let n = 3;
+
+        beep(500,.12);
+
+        const interval =
+        setInterval(() => {
+
+            n--;
+
+            const el =
+            overlay.querySelector(
+                "#countNumber"
+            );
+
+            if(n > 0){
+
+                el.innerText =
+                n;
+
+                beep(
+                    500 + n*80,
+                    .12
+                );
+
+            }else{
+
+                el.innerText =
+                "GO!";
+
+                beep(
+                    850,
+                    .25,
+                    "triangle",
+                    .06
+                );
+
+                setTimeout(() => {
+
+                    overlay.remove();
+
+                    resolve();
+
+                },500);
+
+                clearInterval(
+                    interval
+                );
+
+            }
+
+        },700);
+
+    });
+
+}
+
+
+/* =========================================================
+   RESET GAME
+========================================================= */
+
+function resetGameState(){
+
+    currentQuestionIndex = 0;
+
+    selectedOptionIndex = null;
+
+    currentOptions = [];
+
+    totalCoinsWon = 0;
+
+    securedCoins = 0;
+
+    rewardSaved = false;
+
+    answerLocked = false;
+
+    lifelineUsed = {
+
+        fifty:false,
+        phone:false,
+        poll:false,
+        flip:false
+
+    };
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    document.querySelectorAll(
+        ".life-btn"
+    ).forEach(
+        btn => btn.disabled = false
+    );
+
+}
+
+
+/* =========================================================
+   LOAD QUESTION
+========================================================= */
+
+function loadQuestion(){
+
+    clearInterval(
+        timerInterval
+    );
 
 
     /*
-     Case 1:
-     answer = A/B/C/D
-     */
+        Game complete.
+    */
 
     if(
-        ["A","B","C","D"]
-        .includes(
-            answer.toUpperCase()
-        )
+        currentQuestionIndex >=
+        questions.length
     ){
 
-        return "ABCD"
-            .indexOf(
-                answer.toUpperCase()
-            );
+        finishGame(
+            true,
+            "तपाईंले सबै प्रश्न सही गर्नुभयो! 🏆"
+        );
+
+        return;
 
     }
 
 
+    const q =
+    questions[
+        currentQuestionIndex
+    ];
+
+
+    selectedOptionIndex = null;
+
+    answerLocked = false;
+
+
+    currentOptions =
+    [...q.options];
+
+
+    document.getElementById(
+        "questionNumber"
+    ).innerText =
+    currentQuestionIndex + 1;
+
+
+    document.getElementById(
+        "totalQuestions"
+    ).innerText =
+    questions.length;
+
+
+    document.getElementById(
+        "questionLabel"
+    ).innerText =
+    `QUESTION ${currentQuestionIndex + 1}`;
+
+
+    document.getElementById(
+        "topic"
+    ).innerText =
+    q.topic ||
+    "LOKSEWA QUIZ";
+
+
+    document.getElementById(
+        "questionText"
+    ).innerText =
+    q.question;
+
+
     /*
-     Case 2:
-     answer = 0/1/2/3
-     */
+        Current question prize.
+    */
+
+    document.getElementById(
+        "currentPrize"
+    ).innerText =
+    coinLadder[
+        currentQuestionIndex
+    ];
+
+
+    /*
+        Reset explanation.
+    */
+
+    const explanation =
+    document.getElementById(
+        "explanation"
+    );
+
+    explanation.style.display =
+    "none";
+
+    explanation.innerText =
+    "";
+
+
+    /*
+        Reset options.
+    */
+
+    for(
+        let i=0;
+        i<4;
+        i++
+    ){
+
+        const btn =
+        document.getElementById(
+            "opt"+i
+        );
+
+        btn.className =
+        "option";
+
+        btn.disabled =
+        false;
+
+        if(
+            currentOptions[i] !== undefined
+        ){
+
+            btn.style.display =
+            "flex";
+
+            document.getElementById(
+                "optText"+i
+            ).innerText =
+            currentOptions[i];
+
+        }else{
+
+            btn.style.display =
+            "none";
+
+        }
+
+    }
+
+
+    document.getElementById(
+        "lockBtn"
+    ).disabled = true;
+
+
+    renderLadder();
+
+    startTimer();
+
+}
+
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+function startTimer(){
+
+    clearInterval(
+        timerInterval
+    );
+
+    timeLeft =
+    TIME_PER_QUESTION;
+
+
+    updateTimerUI();
+
+
+    timerInterval =
+    setInterval(() => {
+
+        timeLeft--;
+
+        updateTimerUI();
+
+
+        if(
+            timeLeft <= 5 &&
+            timeLeft > 0
+        ){
+
+            beep(
+                700,
+                .08,
+                "square",
+                .025
+            );
+
+        }
+
+
+        if(timeLeft <= 0){
+
+            clearInterval(
+                timerInterval
+            );
+
+            timeExpired();
+
+        }
+
+    },1000);
+
+}
+
+
+/* =========================================================
+   TIMER UI
+========================================================= */
+
+function updateTimerUI(){
+
+    const timer =
+    document.getElementById(
+        "timer"
+    );
+
+    timer.innerText =
+    timeLeft;
+
+
+    const percentage =
+    (timeLeft / TIME_PER_QUESTION)
+    * 100;
+
+
+    timer.style
+    .setProperty(
+        "--timer-progress",
+        percentage + "%"
+    );
+
+
+    if(timeLeft <= 8){
+
+        timer.classList.add(
+            "danger"
+        );
+
+    }else{
+
+        timer.classList.remove(
+            "danger"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SELECT OPTION
+========================================================= */
+
+window.selectOption =
+function(index){
+
+    if(answerLocked) return;
+
+    const btn =
+    document.getElementById(
+        "opt"+index
+    );
+
+
+    if(
+        btn.style.display ===
+        "none"
+    ) return;
+
+
+    document.querySelectorAll(
+        ".option"
+    ).forEach(
+        el =>
+        el.classList.remove(
+            "selected"
+        )
+    );
+
+
+    btn.classList.add(
+        "selected"
+    );
+
+
+    selectedOptionIndex =
+    index;
+
+
+    document.getElementById(
+        "lockBtn"
+    ).disabled = false;
+
+
+    playSelectSound();
+
+};
+
+
+/* =========================================================
+   LOCK ANSWER
+========================================================= */
+
+window.lockAnswer =
+function(){
+
+    if(answerLocked) return;
+
+    if(
+        selectedOptionIndex === null
+    ){
+
+        showToast(
+            "पहिले एउटा उत्तर छान्नुहोस्।"
+        );
+
+        return;
+
+    }
+
+
+    answerLocked = true;
+
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    document.getElementById(
+        "lockBtn"
+    ).disabled = true;
+
+
+    document.querySelectorAll(
+        ".option"
+    ).forEach(
+        btn =>
+        btn.disabled = true
+    );
+
+
+    playLockSound();
+
+
+    /*
+        Suspense delay.
+    */
+
+    showToast(
+        "उत्तर lock भयो... 🎬"
+    );
+
+
+    setTimeout(
+        revealAnswer,
+        1500
+    );
+
+};
+
+
+/* =========================================================
+   FIND CORRECT ANSWER
+========================================================= */
+
+function getCorrectIndex(q){
+
+    const answer =
+    String(q.answer)
+    .trim()
+    .toLowerCase();
+
+
+    /*
+        Supports:
+        - exact option text
+        - 0/1/2/3
+        - A/B/C/D
+    */
+
+    for(
+        let i=0;
+        i<q.options.length;
+        i++
+    ){
+
+        if(
+            String(q.options[i])
+            .trim()
+            .toLowerCase()
+            === answer
+        ){
+
+            return i;
+
+        }
+
+    }
+
 
     if(
         ["0","1","2","3"]
@@ -2034,448 +3225,25 @@ function getCorrectIndex(question){
     }
 
 
-    /*
-     Case 3:
-     answer = actual option text
-     */
-
-    const normalized =
-    answer
-        .toLowerCase()
-        .trim();
-
-
-    return options.findIndex(
-        option =>
-        String(option)
-            .toLowerCase()
-            .trim()
-        === normalized
-    );
-
-}
-
-
-/* =========================================================
-   DRAW LADDER
-========================================================= */
-
-function renderLadder(){
-
-    const list =
-    document.getElementById(
-        "moneyList"
-    );
-
-
-    list.innerHTML = "";
-
-
-    for(
-        let i = TOTAL - 1;
-        i >= 0;
-        i--
-    ){
-
-        const level =
-        i + 1;
-
-
-        const li =
-        document.createElement(
-            "li"
-        );
-
-
-        if(
-            level ===
-            currentIndex + 1
-        ){
-
-            li.classList.add(
-                "current"
-            );
-
-        }
-
-
-        if(
-            SAFE_LEVELS.includes(level)
-        ){
-
-            li.classList.add(
-                "safe"
-            );
-
-        }
-
-
-        li.innerHTML = `
-
-            <span>
-                Q${level}
-                ${
-                    SAFE_LEVELS.includes(level)
-                    ? " 🔒"
-                    : ""
-                }
-            </span>
-
-            <strong>
-                🪙 ${PRIZES[i]}
-            </strong>
-
-        `;
-
-
-        list.appendChild(li);
-
-    }
-
-}
-
-
-/* =========================================================
-   LOAD CURRENT QUESTION
-========================================================= */
-
-function loadQuestion(){
-
-    if(
-        currentIndex >=
-        questions.length
-    ){
-
-        finishGame(
-            true,
-            "तपाईंले सबै प्रश्न सही गर्नुभयो!"
-        );
-
-        return;
-
-    }
-
-
-    answerLocked = false;
-
-    selectedIndex = null;
-
-
-    const q =
-    questions[
-        currentIndex
-    ];
-
-
-    const options =
-    getOptions(q);
-
-
-    /*
-     UI
-     */
-
-    document.getElementById(
-        "counter"
-    ).innerText =
-        `QUESTION ${currentIndex + 1} / ${TOTAL}`;
-
-
-    document.getElementById(
-        "progressBar"
-    ).style.width =
-        `${
-            ((currentIndex + 1) / TOTAL) * 100
-        }%`;
-
-
-    document.getElementById(
-        "topic"
-    ).innerText =
-        q.topic ||
-        "LOKSEWA QUIZ";
-
-
-    document.getElementById(
-        "question"
-    ).innerText =
-        q.question;
-
-
-    /*
-     Options
-     */
-
-    for(
-        let i=0;
-        i<4;
-        i++
-    ){
-
-        const button =
-        document.getElementById(
-            `option${i}`
-        );
-
-
-        const text =
-        button.querySelector(
-            ".option-text"
-        );
-
-
-        button.classList.remove(
-            "selected",
-            "correct",
-            "wrong",
-            "hidden"
-        );
-
-
-        button.disabled =
-        false;
-
-
-        if(
-            options[i] !== undefined
-        ){
-
-            text.innerText =
-            options[i];
-
-            button.style.display =
-            "flex";
-
-        }else{
-
-            button.style.display =
-            "none";
-
-        }
-
-    }
-
-
-    document.getElementById(
-        "lockButton"
-    ).disabled =
-    true;
-
-
-    document.getElementById(
-        "status"
-    ).innerText =
-    "उत्तर चयन गर्नुहोस्";
-
-
-    document.getElementById(
-        "explanation"
-    ).style.display =
-    "none";
-
-
-    renderLadder();
-
-
-    startTimer();
-
-}
-
-
-/* =========================================================
-   OPTION SELECT
-========================================================= */
-
-window.selectOption =
-function(index){
-
-    if(answerLocked)
-        return;
-
-
-    const button =
-    document.getElementById(
-        `option${index}`
-    );
+    const letter =
+    answer.toUpperCase();
 
 
     if(
-        button.disabled ||
-        button.classList.contains("hidden")
-    )
-        return;
-
-
-    for(
-        let i=0;
-        i<4;
-        i++
+        ["A","B","C","D"]
+        .includes(letter)
     ){
 
-        document.getElementById(
-            `option${i}`
-        )
-        .classList.remove(
-            "selected"
+        return (
+            "ABCD".indexOf(
+                letter
+            )
         );
 
     }
 
 
-    button.classList.add(
-        "selected"
-    );
-
-
-    selectedIndex =
-    index;
-
-
-    document.getElementById(
-        "lockButton"
-    ).disabled =
-    false;
-
-
-    document.getElementById(
-        "status"
-    ).innerText =
-    "उत्तर चयन भयो";
-
-};
-
-
-/* =========================================================
-   OPEN LOCK CONFIRMATION
-========================================================= */
-
-window.openConfirm =
-function(){
-
-    if(
-        selectedIndex === null ||
-        answerLocked
-    )
-        return;
-
-
-    const q =
-    questions[
-        currentIndex
-    ];
-
-
-    const options =
-    getOptions(q);
-
-
-    document.getElementById(
-        "selectedAnswer"
-    ).innerText =
-    `${"ABCD"[selectedIndex]}. ${options[selectedIndex]}`;
-
-
-    document.getElementById(
-        "confirmModal"
-    ).style.display =
-    "flex";
-
-};
-
-
-/* =========================================================
-   CLOSE CONFIRM
-========================================================= */
-
-window.closeConfirm =
-function(){
-
-    document.getElementById(
-        "confirmModal"
-    ).style.display =
-    "none";
-
-};
-
-
-/* =========================================================
-   CONFIRM LOCK
-========================================================= */
-
-window.confirmLock =
-function(){
-
-    document.getElementById(
-        "confirmModal"
-    ).style.display =
-    "none";
-
-
-    lockAnswer();
-
-};
-
-
-/* =========================================================
-   LOCK ANSWER
-========================================================= */
-
-function lockAnswer(){
-
-    if(
-        selectedIndex === null ||
-        answerLocked
-    )
-        return;
-
-
-    answerLocked =
-    true;
-
-
-    clearInterval(
-        timerInterval
-    );
-
-
-    /*
-     Disable everything during reveal
-     */
-
-    document.getElementById(
-        "lockButton"
-    ).disabled =
-    true;
-
-
-    for(
-        let i=0;
-        i<4;
-        i++
-    ){
-
-        document.getElementById(
-            `option${i}`
-        ).disabled =
-        true;
-
-    }
-
-
-    document.getElementById(
-        "status"
-    ).innerText =
-    "🔒 LOCKED — उत्तर जाँच हुँदैछ...";
-
-
-    /*
-     Dramatic pause
-     */
-
-    setTimeout(
-        revealAnswer,
-        1500
-    );
+    return -1;
 
 }
 
@@ -2488,7 +3256,7 @@ function revealAnswer(){
 
     const q =
     questions[
-        currentIndex
+        currentQuestionIndex
     ];
 
 
@@ -2496,141 +3264,127 @@ function revealAnswer(){
     getCorrectIndex(q);
 
 
-    const selectedButton =
-    document.getElementById(
-        `option${selectedIndex}`
-    );
+    const selected =
+    selectedOptionIndex;
 
 
     /*
-     CORRECT
-     */
+        Correct.
+    */
 
     if(
-        selectedIndex ===
+        selected ===
         correctIndex
     ){
 
-        selectedButton.classList.remove(
-            "selected"
-        );
-
-
-        selectedButton.classList.add(
+        document.getElementById(
+            "opt"+selected
+        ).classList.add(
             "correct"
         );
 
 
-        winnings =
-        PRIZES[
-            currentIndex
+        totalCoinsWon =
+        coinLadder[
+            currentQuestionIndex
         ];
 
 
-        /*
-         Safe level
-         */
+        securedCoins =
+        totalCoinsWon;
+
 
         if(
             SAFE_LEVELS.includes(
-                currentIndex + 1
+                currentQuestionIndex + 1
             )
         ){
 
-            safeWinnings =
-            winnings;
+            securedCoins =
+            totalCoinsWon;
 
         }
 
 
-        document.getElementById(
-            "status"
-        ).innerText =
-        `🎉 सही उत्तर! ${winnings} Coins`;
-
-
-        showExplanation();
-
-
-        /*
-         Final question
-         */
-
-        if(
-            currentIndex ===
-            TOTAL - 1
-        ){
-
-            setTimeout(
-                () =>
-                finishGame(
-                    true,
-                    "अविश्वसनीय! तपाईंले अन्तिम प्रश्न पनि सही गर्नुभयो।"
-                ),
-                2500
-            );
-
-            return;
-
-        }
-
-
-        setTimeout(()=>{
-
-            currentIndex++;
-
-            loadQuestion();
-
-        },2300);
-
-
-    }
-
-    /*
-     WRONG
-     */
-
-    else{
-
-        selectedButton.classList.add(
-            "wrong"
+        showExplanation(
+            q.explanation
         );
 
 
-        if(
-            correctIndex >= 0
-        ){
+        playCorrectSound();
+
+
+        showToast(
+            `सही उत्तर! +${totalCoinsWon} Coins 🎉`
+        );
+
+
+        setTimeout(() => {
+
+            currentQuestionIndex++;
+
+            loadQuestion();
+
+        },2500);
+
+
+    }else{
+
+        /*
+            Wrong answer.
+        */
+
+        if(selected !== null){
 
             document.getElementById(
-                `option${correctIndex}`
-            )
-            .classList.add(
+                "opt"+selected
+            ).classList.add(
+                "wrong"
+            );
+
+        }
+
+
+        if(correctIndex >= 0){
+
+            document.getElementById(
+                "opt"+correctIndex
+            ).classList.add(
                 "correct"
             );
 
         }
 
 
-        showExplanation();
+        playWrongSound();
+
+
+        showExplanation(
+            q.explanation
+        );
 
 
         /*
-         Player gets SAFE amount,
-         not current question prize.
-         */
+            Secure amount.
 
-        winnings =
-        safeWinnings;
+            Example:
+            Q6 wrong -> Q5 safe = 150
+
+            Q4 wrong -> no safe level reached = 0
+        */
+
+        securedCoins =
+        getSecuredCoins();
 
 
-        setTimeout(()=>{
+        setTimeout(() => {
 
             finishGame(
                 false,
-                `उत्तर गलत भयो। तपाईंले ${safeWinnings.toLocaleString()} Coins सुरक्षित गर्नुभयो।`
+                `गलत उत्तर भयो। तपाईंले ${securedCoins} Coins सुरक्षित गर्नुभयो।`
             );
 
-        },2800);
+        },3000);
 
     }
 
@@ -2638,160 +3392,92 @@ function revealAnswer(){
 
 
 /* =========================================================
-   TIMEOUT
+   TIME EXPIRED
 ========================================================= */
 
-function startTimer(){
+function timeExpired(){
 
-    clearInterval(
-        timerInterval
+    answerLocked = true;
+
+
+    document.querySelectorAll(
+        ".option"
+    ).forEach(
+        btn =>
+        btn.disabled = true
     );
 
 
-    timeLeft =
-    30;
+    playWrongSound();
 
 
-    updateTimer();
+    securedCoins =
+    getSecuredCoins();
 
 
-    timerInterval =
-    setInterval(()=>{
-
-        timeLeft--;
-
-        updateTimer();
-
-
-        if(
-            timeLeft <= 0
-        ){
-
-            clearInterval(
-                timerInterval
-            );
-
-
-            timeoutAnswer();
-
-        }
-
-    },1000);
-
-}
-
-
-/* =========================================================
-   UPDATE TIMER
-========================================================= */
-
-function updateTimer(){
-
-    const timer =
-    document.getElementById(
-        "timer"
-    );
-
-
-    const ring =
-    document.getElementById(
-        "timerRing"
-    );
-
-
-    timer.innerText =
-    timeLeft;
-
-
-    ring.style.setProperty(
-        "--progress",
-        `${
-            (timeLeft / 30) * 100
-        }%`
-    );
-
-
-    timer.classList.toggle(
-        "timer-danger",
-        timeLeft <= 7
+    finishGame(
+        false,
+        `समय सकियो! तपाईंले ${securedCoins} Coins सुरक्षित गर्नुभयो।`
     );
 
 }
 
 
 /* =========================================================
-   TIMEOUT
+   SECURED COINS
 ========================================================= */
 
-function timeoutAnswer(){
+function getSecuredCoins(){
 
-    if(answerLocked)
-        return;
+    /*
+        If current question is Q6:
+        previous completed level = Q5
+        secured = 150.
 
-
-    answerLocked =
-    true;
-
-
-    for(
-        let i=0;
-        i<4;
-        i++
-    ){
-
-        document.getElementById(
-            `option${i}`
-        ).disabled =
-        true;
-
-    }
-
-
-    const q =
-    questions[
-        currentIndex
-    ];
-
-
-    const correctIndex =
-    getCorrectIndex(q);
-
+        If player hasn't completed Q5:
+        = 0
+    */
 
     if(
-        correctIndex >= 0
+        currentQuestionIndex <= 0
     ){
 
-        document.getElementById(
-            `option${correctIndex}`
-        )
-        .classList.add(
-            "correct"
-        );
+        return 0;
 
     }
 
 
-    showExplanation();
+    const previousLevel =
+    currentQuestionIndex;
 
 
-    winnings =
-    safeWinnings;
+    /*
+        Find highest safe level
+        already completed.
+    */
+
+    let safeCoins = 0;
 
 
-    document.getElementById(
-        "status"
-    ).innerText =
-    `⏰ समय सकियो — सुरक्षित ${safeWinnings} Coins`;
+    SAFE_LEVELS.forEach(
+        level => {
+
+            if(
+                previousLevel >= level
+            ){
+
+                safeCoins =
+                coinLadder[
+                    level - 1
+                ];
+
+            }
+
+        }
+    );
 
 
-    setTimeout(()=>{
-
-        finishGame(
-            false,
-            `समय सकियो। तपाईंले ${safeWinnings.toLocaleString()} Coins सुरक्षित गर्नुभयो।`
-        );
-
-    },2500);
+    return safeCoins;
 
 }
 
@@ -2800,27 +3486,17 @@ function timeoutAnswer(){
    EXPLANATION
 ========================================================= */
 
-function showExplanation(){
+function showExplanation(text){
 
-    const q =
-    questions[
-        currentIndex
-    ];
-
-
-    if(!q.explanation)
-        return;
-
+    if(!text) return;
 
     const box =
     document.getElementById(
         "explanation"
     );
 
-
     box.innerText =
-    `💡 ${q.explanation}`;
-
+    "💡 " + text;
 
     box.style.display =
     "block";
@@ -2836,354 +3512,490 @@ window.use5050 =
 function(){
 
     if(
-        lifelines.fifty ||
+        lifelineUsed.fifty ||
         answerLocked
-    )
-        return;
+    ) return;
 
 
-    lifelines.fifty =
-    true;
+    lifelineUsed.fifty = true;
 
 
     document.getElementById(
         "life5050"
-    ).disabled =
-    true;
+    ).disabled = true;
 
 
     const q =
     questions[
-        currentIndex
+        currentQuestionIndex
     ];
 
 
-    const correct =
+    const correctIndex =
     getCorrectIndex(q);
 
 
-    const wrong =
+    let wrongIndices =
     [0,1,2,3]
     .filter(
-        i => i !== correct
-    )
-    .sort(
+        i =>
+        i !== correctIndex &&
+        currentOptions[i] !== undefined
+    );
+
+
+    wrongIndices.sort(
         () =>
-            Math.random() - .5
-    )
-    .slice(0,2);
+        Math.random()-.5
+    );
 
 
-    wrong.forEach(i=>{
+    /*
+        Remove two wrong answers.
+    */
 
+    wrongIndices
+    .slice(0,2)
+    .forEach(index => {
+
+        const btn =
         document.getElementById(
-            `option${i}`
-        )
-        .classList.add(
-            "hidden"
+            "opt"+index
         );
 
+        btn.classList.add(
+            "eliminated"
+        );
 
-        document.getElementById(
-            `option${i}`
-        ).disabled =
-        true;
+        btn.disabled = true;
 
     });
 
 
-    document.getElementById(
-        "status"
-    ).innerText =
-    "50:50 प्रयोग गरियो";
+    showToast(
+        "50:50 प्रयोग भयो!"
+    );
+
+    beep(800,.18);
 
 };
 
 
 /* =========================================================
-   PHONE
+   PHONE A FRIEND
 ========================================================= */
 
 window.usePhone =
 function(){
 
     if(
-        lifelines.phone ||
+        lifelineUsed.phone ||
         answerLocked
-    )
-        return;
+    ) return;
 
 
-    lifelines.phone =
-    true;
+    lifelineUsed.phone = true;
 
 
     document.getElementById(
         "lifePhone"
-    ).disabled =
-    true;
+    ).disabled = true;
 
 
     const q =
     questions[
-        currentIndex
+        currentQuestionIndex
     ];
 
 
-    const correct =
+    const correctIndex =
     getCorrectIndex(q);
 
 
-    const letters =
-    ["A","B","C","D"];
+    /*
+        Simulated friend confidence.
+
+        Does not reveal answer directly.
+    */
+
+    const confidence =
+    Math.floor(
+        62 +
+        Math.random()*30
+    );
+
+
+    let friendIndex;
 
 
     /*
-     Friend usually knows,
-     but not always.
-     */
-
-    let suggestion =
-    correct;
-
+        Most of the time friend gives
+        correct answer, but not always.
+    */
 
     if(
-        Math.random() < .12
+        Math.random() < .82 &&
+        correctIndex >= 0
     ){
 
-        const wrong =
+        friendIndex =
+        correctIndex;
+
+    }else{
+
+        const possible =
         [0,1,2,3]
         .filter(
-            i => i !== correct
+            i =>
+            i !== correctIndex &&
+            q.options[i] !== undefined
         );
 
-
-        suggestion =
-        wrong[
+        friendIndex =
+        possible[
             Math.floor(
-                Math.random() *
-                wrong.length
+                Math.random()*possible.length
             )
         ];
 
     }
 
 
-    alert(
-        `📞 Phone a Friend\n\n` +
-        `साथी भन्छ:\n\n` +
-        `"मलाई ${letters[suggestion]} उत्तर सही जस्तो लाग्छ।"`
-    );
+    document.getElementById(
+        "phoneConfidence"
+    ).innerText =
+    confidence + "%";
+
+
+    document.getElementById(
+        "phoneAnswer"
+    ).innerText =
+    `“मलाई ${"ABCD"[friendIndex]} उत्तर सही जस्तो लाग्छ।”`;
+
+
+    document.getElementById(
+        "phoneModal"
+    ).style.display =
+    "flex";
+
+
+    beep(600,.2);
 
 };
 
 
 /* =========================================================
-   AUDIENCE
+   CLOSE PHONE
 ========================================================= */
 
-window.useAudience =
+window.closePhone =
+function(){
+
+    document.getElementById(
+        "phoneModal"
+    ).style.display =
+    "none";
+
+};
+
+
+/* =========================================================
+   AUDIENCE POLL
+========================================================= */
+
+window.usePoll =
 function(){
 
     if(
-        lifelines.audience ||
+        lifelineUsed.poll ||
         answerLocked
-    )
-        return;
+    ) return;
 
 
-    lifelines.audience =
-    true;
+    lifelineUsed.poll = true;
 
 
     document.getElementById(
-        "lifeAudience"
-    ).disabled =
-    true;
+        "lifePoll"
+    ).disabled = true;
 
 
     const q =
     questions[
-        currentIndex
+        currentQuestionIndex
     ];
 
 
-    const correct =
+    const correctIndex =
     getCorrectIndex(q);
 
 
     /*
-     Generate realistic distribution
-     */
+        Generate realistic-looking poll.
+
+        Correct answer generally receives
+        higher percentage.
+    */
 
     let values =
     [10,10,10,10];
 
 
-    values[correct] =
-    50 +
-    Math.floor(
-        Math.random() * 25
-    );
+    if(correctIndex >= 0){
+
+        values[correctIndex] =
+        45 +
+        Math.floor(
+            Math.random()*25
+        );
+
+    }
 
 
     let remaining =
     100 -
-    values[correct];
+    values.reduce(
+        (a,b)=>a+b,
+        0
+    );
 
 
-    const wrong =
+    const wrongs =
     [0,1,2,3]
     .filter(
-        i => i !== correct
+        i =>
+        i !== correctIndex
     );
 
 
-    wrong.forEach(
-        (index,pos)=>{
+    while(remaining > 0){
 
-            if(
-                pos ===
-                wrong.length - 1
-            ){
-
-                values[index] =
-                remaining;
-
-            }else{
-
-                const value =
-                Math.floor(
-                    Math.random() *
-                    (remaining + 1)
-                );
+        const i =
+        wrongs[
+            Math.floor(
+                Math.random() *
+                wrongs.length
+            )
+        ];
 
 
-                values[index] =
-                value;
+        if(
+            values[i] < 30
+        ){
 
-                remaining -=
-                value;
+            values[i]++;
 
-            }
+            remaining--;
 
         }
+
+    }
+
+
+    values =
+    normalizePercentages(
+        values
     );
 
 
-    alert(
+    for(
+        let i=0;
+        i<4;
+        i++
+    ){
 
-        `👥 Audience Poll\n\n` +
+        document.getElementById(
+            "poll"+String.fromCharCode(65+i)
+        ).style.width =
+        "0%";
 
-        `A: ${values[0]}%\n` +
+        document.getElementById(
+            "poll"+String.fromCharCode(65+i)+"Text"
+        ).innerText =
+        "0%";
 
-        `B: ${values[1]}%\n` +
+    }
 
-        `C: ${values[2]}%\n` +
 
-        `D: ${values[3]}%`
+    document.getElementById(
+        "pollModal"
+    ).style.display =
+    "flex";
 
-    );
+
+    setTimeout(() => {
+
+        for(
+            let i=0;
+            i<4;
+            i++
+        ){
+
+            const letter =
+            String.fromCharCode(
+                65+i
+            );
+
+
+            document.getElementById(
+                "poll"+letter
+            ).style.width =
+            values[i]+"%";
+
+
+            document.getElementById(
+                "poll"+letter+"Text"
+            ).innerText =
+            values[i]+"%";
+
+        }
+
+    },150);
+
+
+    beep(650,.2);
 
 };
 
 
 /* =========================================================
-   FLIP
+   NORMALIZE POLL
+========================================================= */
+
+function normalizePercentages(values){
+
+    let total =
+    values.reduce(
+        (a,b)=>a+b,
+        0
+    );
+
+
+    if(total === 100)
+        return values;
+
+
+    return values.map(
+        x =>
+        Math.round(
+            x * 100 / total
+        )
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE POLL
+========================================================= */
+
+window.closePoll =
+function(){
+
+    document.getElementById(
+        "pollModal"
+    ).style.display =
+    "none";
+
+};
+
+
+/* =========================================================
+   FLIP QUESTION
 ========================================================= */
 
 window.useFlip =
 function(){
 
     if(
-        lifelines.flip ||
+        lifelineUsed.flip ||
         answerLocked
-    )
-        return;
+    ) return;
 
 
-    lifelines.flip =
-    true;
+    lifelineUsed.flip = true;
 
 
     document.getElementById(
         "lifeFlip"
-    ).disabled =
-    true;
+    ).disabled = true;
+
+
+    clearInterval(
+        timerInterval
+    );
 
 
     /*
-     Fetch a NEW question directly
-     from Supabase.
+        Get an unused question from
+        current Supabase-loaded list.
 
-     This is better than using
-     another already-loaded question.
-     */
+        Since original game already has
+        10 questions, find another question
+        from the remaining pool isn't possible.
 
-    fetchReplacementQuestion();
+        Therefore fetch one additional question
+        from Supabase.
+    */
+
+    fetchFlipQuestion();
 
 };
 
 
 /* =========================================================
-   FETCH REPLACEMENT FROM SUPABASE
+   FETCH FLIP QUESTION
 ========================================================= */
 
-async function fetchReplacementQuestion(){
+async function fetchFlipQuestion(){
+
+    showToast(
+        "नयाँ प्रश्न खोजिँदैछ..."
+    );
+
 
     try{
-
-        document.getElementById(
-            "status"
-        ).innerText =
-        "🔄 नयाँ प्रश्न Supabase बाट ल्याउँदै...";
-
-
-        const currentIds =
-        questions.map(
-            q => q.id
-        );
-
 
         const {
             data,
             error
         } =
         await supabase
-
-            .from("quizzes")
-
-            .select(`
-                id,
-                topic,
-                question,
-                options,
-                answer,
-                explanation
-            `);
+        .from("quizzes")
+        .select(
+            "id,topic,question,options,answer,explanation"
+        )
+        .limit(50);
 
 
         if(error)
             throw error;
 
 
-        const available =
-        data.filter(
-            q =>
-            !currentIds.includes(
-                q.id
+        const usedIds =
+        new Set(
+            questions.map(
+                q => String(q.id)
             )
         );
 
 
-        if(
-            available.length === 0
-        ){
+        const available =
+        data
+        .map(normalizeQuestion)
+        .filter(
+            q =>
+            !usedIds.has(
+                String(q.id)
+            )
+        );
 
-            document.getElementById(
-                "status"
-            ).innerText =
-            "नयाँ प्रश्न उपलब्ध भएन।";
+
+        if(!available.length){
+
+            showToast(
+                "Flip का लागि नयाँ प्रश्न भेटिएन।"
+            );
 
             return;
 
@@ -3200,7 +4012,7 @@ async function fetchReplacementQuestion(){
 
 
         questions[
-            currentIndex
+            currentQuestionIndex
         ] =
         replacement;
 
@@ -3208,17 +4020,23 @@ async function fetchReplacementQuestion(){
         loadQuestion();
 
 
-    }catch(error){
-
-        console.error(
-            error
+        beep(
+            750,
+            .25,
+            "triangle"
         );
 
 
-        document.getElementById(
-            "status"
-        ).innerText =
-        "प्रश्न load गर्न सकिएन।";
+    }catch(error){
+
+        console.error(
+            "Flip error:",
+            error
+        );
+
+        showToast(
+            "नयाँ प्रश्न load हुन सकेन।"
+        );
 
     }
 
@@ -3226,11 +4044,48 @@ async function fetchReplacementQuestion(){
 
 
 /* =========================================================
+   TAKE HOME
+========================================================= */
+
+window.takeHome =
+function(){
+
+    if(!gameStarted) return;
+
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    /*
+        If player hasn't answered current
+        question, current secured amount
+        remains previous safe amount.
+    */
+
+    const amount =
+    getSecuredCoins();
+
+
+    securedCoins =
+    amount;
+
+
+    finishGame(
+        false,
+        `तपाईंले खेल रोक्नुभयो। ${amount} Coins लिएर घर जानुभयो।`
+    );
+
+};
+
+
+/* =========================================================
    FINISH GAME
 ========================================================= */
 
 async function finishGame(
-    won,
+    isWin,
     message
 ){
 
@@ -3239,116 +4094,299 @@ async function finishGame(
     );
 
 
-    if(rewardSaved)
-        return;
-
-
-    rewardSaved =
-    true;
-
-
-    /*
-     Reward ONLY once.
-     */
-
     if(
-        winnings > 0 &&
-        currentUser
+        rewardSaved
     ){
 
-        try{
+        showResult(
+            isWin,
+            message,
+            securedCoins
+        );
 
-            const userRef =
-            doc(
-                db,
-                "users",
-                currentUser.uid
-            );
-
-
-            await updateDoc(
-                userRef,
-                {
-                    coins:
-                    increment(
-                        winnings
-                    )
-                }
-            );
-
-
-            await addDoc(
-                collection(
-                    userRef,
-                    "coin_history"
-                ),
-                {
-
-                    coins_won:
-                    winnings,
-
-                    status:
-                    won
-                    ? "KBC Quiz Jackpot"
-                    : "KBC Quiz Safe Amount",
-
-                    source:
-                    "loksewaquest_kbc_quiz",
-
-                    timestamp:
-                    serverTimestamp()
-
-                }
-            );
-
-
-            userCoins +=
-            winnings;
-
-
-            updateCoinUI();
-
-
-        }catch(error){
-
-            console.error(
-                "Reward error:",
-                error
-            );
-
-        }
+        return;
 
     }
 
 
+    /*
+        For full completion,
+        reward = 1000.
+    */
+
+    if(isWin){
+
+        securedCoins =
+        coinLadder[
+            coinLadder.length-1
+        ];
+
+    }
+
+
+    const reward =
+    Math.max(
+        0,
+        securedCoins
+    );
+
+
+    /*
+        Save exactly once.
+    */
+
+    const saved =
+    await saveRewardOnce(
+        reward,
+        isWin
+        ? "Completed all levels"
+        : "Quiz ended"
+    );
+
+
+    if(saved){
+
+        rewardSaved = true;
+
+    }
+
+
+    showResult(
+        isWin,
+        message,
+        reward
+    );
+
+}
+
+
+/* =========================================================
+   FIREBASE REWARD
+========================================================= */
+
+async function saveRewardOnce(
+    reward,
+    status
+){
+
+    if(reward <= 0){
+
+        return true;
+
+    }
+
+
+    if(!currentUser){
+
+        showToast(
+            "Login user भेटिएन। Coin save हुन सकेन।"
+        );
+
+        return false;
+
+    }
+
+
+    const uid =
+    currentUser.uid;
+
+
+    try{
+
+        /*
+            IMPORTANT:
+
+            Firestore transaction makes the
+            coin update + history creation
+            safer against accidental duplicate
+            clicks.
+
+            A unique game document is created
+            under:
+
+            users/{uid}/coin_history
+        */
+
+
+        const gameId =
+        crypto.randomUUID();
+
+
+        const userRef =
+        doc(
+            db,
+            "users",
+            uid
+        );
+
+
+        const historyRef =
+        doc(
+            collection(
+                userRef,
+                "coin_history"
+            ),
+            gameId
+        );
+
+
+        await runTransaction(
+            db,
+            async transaction => {
+
+                const userSnap =
+                await transaction.get(
+                    userRef
+                );
+
+
+                if(!userSnap.exists()){
+
+                    /*
+                        If user document doesn't exist,
+                        create it.
+                    */
+
+                    transaction.set(
+                        userRef,
+                        {
+                            coins: reward,
+                            updatedAt:
+                            serverTimestamp()
+                        }
+                    );
+
+                }else{
+
+                    transaction.update(
+                        userRef,
+                        {
+                            coins:
+                            increment(
+                                reward
+                            ),
+
+                            updatedAt:
+                            serverTimestamp()
+                        }
+                    );
+
+                }
+
+
+                /*
+                    Save coin history.
+                */
+
+                transaction.set(
+                    historyRef,
+                    {
+
+                        type:
+                        "quiz_reward",
+
+                        coins_won:
+                        reward,
+
+                        status:
+                        status,
+
+                        game:
+                        "LoksewaQuest Quiz Arena",
+
+                        question_count:
+                        questions.length,
+
+                        timestamp:
+                        serverTimestamp()
+
+                    }
+                );
+
+            }
+        );
+
+
+        console.log(
+            "Coins saved:",
+            reward
+        );
+
+
+        return true;
+
+
+    }catch(error){
+
+        console.error(
+            "Firebase coin save error:",
+            error
+        );
+
+
+        showToast(
+            "Coin save गर्न समस्या भयो।"
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+function showResult(
+    isWin,
+    message,
+    reward
+){
+
     document.getElementById(
         "resultIcon"
     ).innerText =
-    won
+    isWin
     ? "🏆"
-    : winnings > 0
+    : reward > 0
     ? "🪙"
-    : "😔";
+    : "🎯";
 
 
     document.getElementById(
         "resultTitle"
     ).innerText =
-    won
-    ? "अभिनन्दन!"
-    : "Khel Samapta";
+    isWin
+    ? "CONGRATULATIONS!"
+    : "GAME OVER";
 
 
     document.getElementById(
-        "resultMessage"
-    ).innerText =
-    message;
+        "resultText"
+    ).innerHTML =
+    `
+        ${message}
+        <br><br>
 
+        <strong style="
+            font-size:30px;
+            color:#f6c945;
+        ">
+            🪙 ${reward}
+        </strong>
 
-    document.getElementById(
-        "resultCoins"
-    ).innerText =
-    `🪙 ${winnings.toLocaleString()} Coins`;
+        <br>
+
+        <span style="
+            font-size:11px;
+            color:#91a3bc;
+        ">
+            Coins
+        </span>
+    `;
 
 
     document.getElementById(
@@ -3366,6 +4404,52 @@ async function finishGame(
 window.restartGame =
 async function(){
 
+    document.getElementById(
+        "resultModal"
+    ).style.display =
+    "none";
+
+
+    resetGameState();
+
+
+    showLoading(true);
+
+
+    try{
+
+        await loadQuestions();
+
+        renderLadder();
+
+        await countdown();
+
+        loadQuestion();
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message
+        );
+
+    }finally{
+
+        showLoading(false);
+
+    }
+
+};
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+window.goHome =
+function(){
+
     clearInterval(
         timerInterval
     );
@@ -3377,61 +4461,19 @@ async function(){
     "none";
 
 
-    currentIndex =
-    0;
+    document.getElementById(
+        "gameScreen"
+    ).style.display =
+    "none";
 
 
-    selectedIndex =
-    null;
+    document.getElementById(
+        "introScreen"
+    ).style.display =
+    "flex";
 
 
-    winnings =
-    0;
-
-
-    safeWinnings =
-    0;
-
-
-    rewardSaved =
-    false;
-
-
-    answerLocked =
-    false;
-
-
-    lifelines = {
-
-        fifty:false,
-        phone:false,
-        audience:false,
-        flip:false
-
-    };
-
-
-    document
-    .querySelectorAll(".life")
-    .forEach(
-        btn =>
-        btn.disabled = false
-    );
-
-
-    try{
-
-        await fetchQuestions();
-
-        loadQuestion();
-
-    }catch(error){
-
-        showLoadingError(
-            error.message
-        );
-
-    }
+    gameStarted = false;
 
 };
 
@@ -3440,112 +4482,82 @@ async function(){
    LADDER
 ========================================================= */
 
-window.toggleLadder =
-function(){
+function renderLadder(){
 
+    const list =
     document.getElementById(
-        "ladder"
-    )
-    .classList.toggle(
-        "open"
+        "ladderList"
     );
 
 
-    document.getElementById(
-        "overlay"
-    )
-    .classList.toggle(
-        "show"
-    );
-
-};
+    list.innerHTML = "";
 
 
-/* =========================================================
-   LOADING
-========================================================= */
+    for(
+        let i=9;
+        i>=0;
+        i--
+    ){
 
-function setLoading(text){
-
-    document.getElementById(
-        "loadingText"
-    ).innerText =
-    text;
-
-}
+        const level =
+        i+1;
 
 
-function hideLoading(){
-
-    document.getElementById(
-        "loading"
-    ).style.display =
-    "none";
-
-}
-
-
-function showLoadingError(message){
-
-    document.getElementById(
-        "loadingText"
-    ).innerText =
-    "❌ " + message;
-
-}
-
-
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
-async function init(){
-
-    try{
-
-        setLoading(
-            "User authentication जाँच हुँदैछ..."
+        const item =
+        document.createElement(
+            "div"
         );
 
 
-        await waitForUser();
+        item.className =
+        "ladder-item";
 
 
-        setLoading(
-            "तपाईंको coins load हुँदैछ..."
-        );
+        /*
+            Current question.
+
+            currentQuestionIndex = 0
+            means level 1.
+        */
+
+        if(
+            i === currentQuestionIndex
+        ){
+
+            item.classList.add(
+                "active"
+            );
+
+        }
 
 
-        await loadCoins();
+        if(
+            SAFE_LEVELS.includes(
+                level
+            )
+        ){
+
+            item.classList.add(
+                "safe"
+            );
+
+        }
 
 
-        setLoading(
-            "Supabase quizzes table बाट प्रश्नहरू load हुँदैछन्..."
-        );
+        item.innerHTML =
+        `
+            <span>
+                ${level}
+            </span>
+
+            <span>
+                🪙 ${coinLadder[i]}
+            </span>
+        `;
 
 
-        await fetchQuestions();
-
-
-        renderLadder();
-
-
-        hideLoading();
-
-
-        loadQuestion();
-
-
-    }catch(error){
-
-        console.error(
-            "GAME INIT ERROR:",
-            error
-        );
-
-
-        showLoadingError(
-            error.message
+        list.appendChild(
+            item
         );
 
     }
@@ -3554,12 +4566,124 @@ async function init(){
 
 
 /* =========================================================
-   START
+   MOBILE LADDER
 ========================================================= */
 
-init();
+window.toggleLadder =
+function(){
+
+    const ladder =
+    document.getElementById(
+        "ladder"
+    );
+
+    const overlay =
+    document.getElementById(
+        "ladderOverlay"
+    );
+
+
+    ladder.classList.toggle(
+        "open"
+    );
+
+    overlay.classList.toggle(
+        "open"
+    );
+
+};
+
+
+/* =========================================================
+   RULES
+========================================================= */
+
+window.showRules =
+function(){
+
+    document.getElementById(
+        "rulesModal"
+    ).style.display =
+    "flex";
+
+};
+
+
+window.closeRules =
+function(){
+
+    document.getElementById(
+        "rulesModal"
+    ).style.display =
+    "none";
+
+};
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+function showLoading(show){
+
+    document.getElementById(
+        "loadingScreen"
+    ).style.display =
+    show
+    ? "flex"
+    : "none";
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+function showToast(message){
+
+    const toast =
+    document.getElementById(
+        "toast"
+    );
+
+
+    toast.innerText =
+    message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer =
+    setTimeout(() => {
+
+        toast.classList.remove(
+            "show"
+        );
+
+    },2200);
+
+}
+
+
+/* =========================================================
+   EXPOSE FUNCTIONS
+========================================================= */
+
+window.closePoll =
+window.closePoll;
 
 </script>
 
 </body>
-      </html>
+    </html>
