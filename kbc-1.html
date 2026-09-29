@@ -14,7 +14,7 @@
 </head>
 <body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
 
-    <!-- Loading / Splash Screen (जबसम्म Auth चेक हुन्छ) -->
+    <!-- Loading / Splash Screen -->
     <div id="loading-screen" class="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-50 transition-opacity duration-300">
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-amber-500 border-b-4 border-slate-700 mb-4"></div>
         <p class="text-slate-300 font-medium text-lg">लोडिङ हुँदैछ...</p>
@@ -35,7 +35,7 @@
         <!-- Main Content Area -->
         <main class="flex-grow flex items-center justify-center p-4">
             
-            <!-- LOGIN SECTION (यदि युजर लगइन छैन भने देखिन्छ) -->
+            <!-- LOGIN SECTION -->
             <div id="login-section" class="w-full max-w-md bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700 hidden">
                 <h2 class="text-2xl font-bold text-center mb-6 text-amber-400">लगइन गर्नुहोस्</h2>
                 <form id="login-form" class="space-y-4">
@@ -52,7 +52,7 @@
                 </form>
             </div>
 
-            <!-- DASHBOARD / QUIZ SECTION (यदि युजर लगइन छ भने देखिन्छ) -->
+            <!-- DASHBOARD SECTION -->
             <div id="dashboard-section" class="w-full max-w-2xl bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700 text-center hidden">
                 <h2 class="text-3xl font-bold mb-4 text-amber-400">स्वागत छ! 🎉</h2>
                 <p class="text-slate-300 mb-6">तपाईं LoksewaQuest Hot Seat PRO v3 मा सफलतापूर्वक लगइन हुनुहुन्छ। अब तपाईं क्विज खेल्न सक्नुहुन्छ।</p>
@@ -66,6 +66,40 @@
                 <button id="start-quiz-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-xl transition shadow-lg">क्विज सुरु गर्नुहोस्</button>
             </div>
 
+            <!-- QUIZ GAME SECTION (नयाँ थपिएको गेम स्क्रिन) -->
+            <div id="quiz-section" class="w-full max-w-2xl bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-700 hidden">
+                <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+                    <span id="question-count" class="text-sm font-semibold text-amber-400">प्रश्न १ / ५</span>
+                    <span id="score-display" class="text-sm font-semibold text-emerald-400">अङ्क: ०</span>
+                </div>
+
+                <div class="mb-6">
+                    <h3 id="question-text" class="text-xl font-bold text-white leading-relaxed">प्रश्न यहाँ देखिनेछ...</h3>
+                </div>
+
+                <div id="options-container" class="space-y-3 mb-6">
+                    <!-- अप्सनहरू यहाँ जाभास्क्रिप्टबाट लोड हुन्छन् -->
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button id="quit-quiz-btn" class="text-sm text-rose-400 hover:underline">क्विज छोड्नुहोस्</button>
+                    <button id="next-btn" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-2.5 rounded-xl transition hidden">पछिल्लो प्रश्न</button>
+                </div>
+            </div>
+
+            <!-- QUIZ RESULT SECTION (रिजल्ट स्क्रिन) -->
+            <div id="result-section" class="w-full max-w-md bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700 text-center hidden">
+                <h2 class="text-3xl font-bold mb-2 text-amber-400">क्विज समाप्त भयो! 🏆</h2>
+                <p class="text-slate-300 mb-6">तपाईँले उत्कृष्ट प्रयास गर्नुभयो।</p>
+                
+                <div class="bg-slate-900 p-6 rounded-xl border border-slate-700 mb-6">
+                    <p class="text-sm text-slate-400">तपाईँको कुल अङ्क</p>
+                    <p id="final-score" class="text-4xl font-extrabold text-amber-400 mt-2">० / ५</p>
+                </div>
+
+                <button id="restart-quiz-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-lg">फेरि खेल्नुहोस्</button>
+            </div>
+
         </main>
 
         <!-- Footer -->
@@ -75,7 +109,7 @@
 
     </div>
 
-    <!-- Firebase SDK (Modular v10) र एप लजिक -->
+    <!-- Firebase SDK र एप र गेमको मुख्य लजिक -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
@@ -88,7 +122,6 @@
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Firebase कन्फिगरेसन
         const firebaseConfig = {
           apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
           authDomain: "loksewaquest-227b6.firebaseapp.com",
@@ -98,7 +131,6 @@
           appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
         };
 
-        // Firebase Initialize
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -108,6 +140,9 @@
         const appContainer = document.getElementById('app-container');
         const loginSection = document.getElementById('login-section');
         const dashboardSection = document.getElementById('dashboard-section');
+        const quizSection = document.getElementById('quiz-section');
+        const resultSection = document.getElementById('result-section');
+        
         const loginForm = document.getElementById('login-form');
         const loginError = document.getElementById('login-error');
         const logoutBtn = document.getElementById('logout-btn');
@@ -115,95 +150,192 @@
         const profileUid = document.getElementById('profile-uid');
         const profileEmail = document.getElementById('profile-email');
 
-        // १. Persistence सेट गर्ने (ब्राउजर बन्द गरे पनि वा पेज रिफ्रेस गर्दा लगइन नरहने समस्या हटाउन)
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const questionCountText = document.getElementById('question-count');
+        const scoreDisplay = document.getElementById('score-display');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const quitQuizBtn = document.getElementById('quit-quiz-btn');
+        const finalScoreText = document.getElementById('final-score');
+        const restartQuizBtn = document.getElementById('restart-quiz-btn');
+
+        // लोकसेवा मोडल क्विज प्रश्नहरूको नमुना डाटा
+        const quizQuestions = [
+            {
+                question: "नेपालको संविधान २०७२ अनुसार पहिलो संशोधन कहिले भएको थियो?",
+                options: ["विक्रम संवत् २०७२ फागुन १०", "विक्रम संवत् २०७३ जेठ १५", "विक्रम संवत् २०७२ माघ २६", "विक्रम संवत् २०७४ असोज २"],
+                answer: 2
+            },
+            {
+                question: "क्षेत्रफलको हिसाबले नेपालको सबभन्दा सानो जिल्ला कुन हो?",
+                options: ["भक्तपुर", "ललितपुर", "पर्वत", "रुकुम पूर्व"],
+                answer: 0
+            },
+            {
+                question: "सगरमाथाको उचाइ मिटरमा कति हो?",
+                options: ["८८४८ मिटर", "८८४८.८६ मिटर", "८८५० मिटर", "८८४० मिटर"],
+                answer: 1
+            },
+            {
+                question: "नेपालमा कागजी नोटको शुरुआत कुन राजाको पालामा भएको हो?",
+                options: ["महेन्द्र वीरविक्रम शाह", "त्रिभुवन वीरविक्रम शाह", "विरेन्द्र वीरविक्रम शाह", "पृथ्वीनारायण शाह"],
+                answer: 1
+            },
+            {
+                question: "गण्डकी प्रदेशमा जम्मा कति वटा जिल्लाहरू छन्?",
+                options: ["१० वटा", "१२ वटा", "१४ वटा", "११ वटा"],
+                answer: 3
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // Auth State Handler
         setPersistence(auth, browserLocalPersistence)
             .then(() => {
-                // युजर स्टेट ट्र्याक गर्ने मुख्य लजिक (Session & User ID Auto-detect)
                 onAuthStateChanged(auth, async (user) => {
-                    // लोडिङ स्क्रिन हटाउने
                     loadingScreen.style.opacity = '0';
                     setTimeout(() => loadingScreen.classList.add('hidden'), 300);
                     appContainer.classList.remove('hidden');
 
                     if (user) {
-                        // युजर लगइन छ (Session Active)
-                        console.log("Active User ID:", user.uid);
-                        
-                        // स्वतः युजरको इमेल र UID देखाउने
                         userEmailDisplay.textContent = user.email;
                         profileUid.textContent = user.uid;
                         profileEmail.textContent = user.email;
 
-                        // Firestore मा युजर డాక్యुमेन्ट (profile) स्वतः चेक गरी सेभ/अपडेट गर्ने
                         try {
                             const userRef = doc(db, "users", user.uid);
                             const userSnap = await getDoc(userRef);
-
                             if (!userSnap.exists()) {
-                                // यदि पहिलो पटक लगइन हो भने Firestore मा युजरको डाटा राख्ने
                                 await setDoc(userRef, {
                                     uid: user.uid,
                                     email: user.email,
                                     createdAt: new Date().toISOString()
                                 });
-                                console.log("New user profile created in Firestore.");
-                            } else {
-                                console.log("User profile already exists in Firestore.");
                             }
                         } catch (err) {
-                            console.error("Error checking/creating user profile in Firestore:", err);
+                            console.error("Firestore Error:", err);
                         }
 
-                        // लगइन सेक्सन लुकाएर ड्याशबोर्ड देखाउने
                         loginSection.classList.add('hidden');
+                        quizSection.classList.add('hidden');
+                        resultSection.classList.add('hidden');
                         dashboardSection.classList.remove('hidden');
                     } else {
-                        // युजर लगइन छैन (Not Logged In)
-                        console.log("No active session found.");
                         dashboardSection.classList.add('hidden');
+                        quizSection.classList.add('hidden');
+                        resultSection.classList.add('hidden');
                         loginSection.classList.remove('hidden');
                     }
                 });
             })
-            .catch((error) => {
-                console.error("Persistence Error:", error.message);
-            });
+            .catch((error) => console.error("Persistence Error:", error.message));
 
-        // २. इमेल र पासवर्डबाट लगइन गर्ने ह्यान्डलिङ
+        // Login Handler
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             loginError.classList.add('hidden');
-            
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                // सफल भएपछि माथिको onAuthStateChanged ले आफैं युजर डिटेक्ट गरेर ड्याशबोर्ड देखाउनेछ
             } catch (error) {
-                console.error("Login Error:", error.message);
-                loginError.textContent = "लगइन असफल भयो: इमेल वा पासवर्ड मिलटेन।";
-                loginError.classList.add('hidden'); // Fix toggle if needed, ensure error shows properly
+                loginError.textContent = "लगइन असफल भयो: इमेल वा पासवर्ड मिलेन।";
                 loginError.classList.remove('hidden');
             }
         });
 
-        // ३. लगआउट (Logout) ह्यान्डलिङ
+        // Logout Handler
         logoutBtn.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                // लगआउट भएपछि onAuthStateChanged ले आफैं लगइन स्क्रिनमा फर्काउनेछ
-            } catch (error) {
-                console.error("Logout Error:", error.message);
+            await signOut(auth);
+        });
+
+        // Start Quiz Button
+        startQuizBtn.addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            score = 0;
+            dashboardSection.classList.add('hidden');
+            quizSection.classList.remove('hidden');
+            loadQuestion();
+        });
+
+        // Load Question Function
+        function loadQuestion() {
+            answered = false;
+            nextBtn.classList.add('hidden');
+            
+            const q = quizQuestions[currentQuestionIndex];
+            questionCountText.textContent = `प्रश्न ${currentQuestionIndex + 1} / ${quizQuestions.length}`;
+            scoreDisplay.textContent = `अङ्क: ${score}`;
+            questionText.textContent = q.question;
+            
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-amber-500 transition font-medium text-slate-200";
+                btn.textContent = opt;
+                btn.onclick = () => selectOption(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // Select Option Logic
+        function selectOption(selectedIndex, selectedBtn) {
+            if (answered) return;
+            answered = true;
+
+            const q = quizQuestions[currentQuestionIndex];
+            const allButtons = optionsContainer.children;
+
+            if (selectedIndex === q.answer) {
+                selectedBtn.classList.remove('bg-slate-900', 'border-slate-700');
+                selectedBtn.classList.add('bg-emerald-900/50', 'border-emerald-500', 'text-emerald-200');
+                score++;
+                scoreDisplay.textContent = `अङ्क: ${score}`;
+            } else {
+                selectedBtn.classList.remove('bg-slate-900', 'border-slate-700');
+                selectedBtn.classList.add('bg-rose-900/50', 'border-rose-500', 'text-rose-200');
+                
+                // सही उत्तर देखाइदिने
+                allButtons[q.answer].classList.remove('bg-slate-900', 'border-slate-700');
+                allButtons[q.answer].classList.add('bg-emerald-900/50', 'border-emerald-500', 'text-emerald-200');
+            }
+
+            // सबै अप्सनहरू डिसएबल गर्ने
+            Array.from(allButtons).forEach(b => b.disabled = true);
+            nextBtn.classList.remove('hidden');
+        }
+
+        // Next Button Logic
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizQuestions.length) {
+                loadQuestion();
+            } else {
+                showResult();
             }
         });
 
-        // ४. क्विज सुरु गर्ने बटनको एक्शन
-        document.getElementById('start-quiz-btn').addEventListener('click', () => {
-            // हाल लगइन भएका युजरको UID यहाँ सीधै लिन सकिन्छ
-            const currentUserId = auth.currentUser ? auth.currentUser.uid : null;
-            alert("क्विज सुरु हुँदैछ! हालको युजर UID: " + currentUserId);
-            // यहाँबाट तपाईं Firestore मा युजरको स्कोर सेभ गर्ने वा क्विज डेटा लोड गर्ने काम गर्न सक्नुहुन्छ।
+        // Show Result Function
+        function showResult() {
+            quizSection.classList.add('hidden');
+            resultSection.classList.remove('hidden');
+            finalScoreText.textContent = `${score} / ${quizQuestions.length}`;
+        }
+
+        // Quit or Restart Quiz
+        quitQuizBtn.addEventListener('click', () => {
+            quizSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+        });
+
+        restartQuizBtn.addEventListener('click', () => {
+            resultSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
         });
     </script>
 </body>
