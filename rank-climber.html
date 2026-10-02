@@ -1071,229 +1071,58 @@ body {
 
 </div>
 
+<script type="module">
 
-<script>
+/* =========================================================
+   LOKSEWAQUEST - RANK CLIMBER
+   STEP 2: SUPABASE QUESTION LOADING
+========================================================= */
 
-/* =====================================================
-   GAME DATA
-===================================================== */
+import { createClient }
+    from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-const questions = [
 
-    {
-        question:
-        "नेपालको संविधान कहिले जारी भएको हो?",
+/* =========================================================
+   1. SUPABASE CONFIG
+=========================================================
 
-        options: [
-            "२०७२ असोज ३",
-            "२०७२ भदौ ३०",
-            "२०७३ वैशाख १",
-            "२०७१ माघ १"
-        ],
+   IMPORTANT:
+   Use your existing Supabase URL + ANON KEY.
 
-        correct: 0,
+   NEVER put the service_role key in frontend code.
+========================================================= */
 
-        difficulty: "medium",
+const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
 
-        explanation:
-        "नेपालको संविधान २०७२ असोज ३ गते जारी भएको हो।"
-    },
+const supabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 
 
-    {
-        question:
-        "नेपालको संघीय संसदमा कति सदन छन्?",
+/* =========================================================
+   2. GAME CONFIG
+========================================================= */
 
-        options: [
-            "एक",
-            "दुई",
-            "तीन",
-            "चार"
-        ],
+const TOTAL_QUESTIONS = 10;
+const QUESTION_TIME = 15;
 
-        correct: 1,
+const STARTING_RANK = 47;
 
-        difficulty: "easy",
 
-        explanation:
-        "नेपालको संघीय संसद प्रतिनिधि सभा र राष्ट्रिय सभा गरी दुई सदनात्मक छ।"
-    },
+/* =========================================================
+   3. GAME STATE
+========================================================= */
 
-
-    {
-        question:
-        "नेपालको सबैभन्दा अग्लो हिमाल कुन हो?",
-
-        options: [
-            "कञ्चनजंघा",
-            "धौलागिरी",
-            "सगरमाथा",
-            "मनास्लु"
-        ],
-
-        correct: 2,
-
-        difficulty: "easy",
-
-        explanation:
-        "सगरमाथा नेपालको तथा विश्वकै सबैभन्दा अग्लो हिमाल हो।"
-    },
-
-
-    {
-        question:
-        "नेपालमा गणतन्त्र दिवस कहिले मनाइन्छ?",
-
-        options: [
-            "जेठ १५",
-            "असोज ३",
-            "फागुन ७",
-            "बैशाख ११"
-        ],
-
-        correct: 0,
-
-        difficulty: "medium",
-
-        explanation:
-        "जेठ १५ गते गणतन्त्र दिवस मनाइन्छ।"
-    },
-
-
-    {
-        question:
-        "नेपालको संविधानमा मौलिक हक कति वटा छन्?",
-
-        options: [
-            "२५",
-            "३०",
-            "३१",
-            "३५"
-        ],
-
-        correct: 2,
-
-        difficulty: "hard",
-
-        explanation:
-        "नेपालको संविधानमा भाग ३ अन्तर्गत ३१ वटा मौलिक हकको व्यवस्था गरिएको छ।"
-    },
-
-
-    {
-        question:
-        "नेपालको राष्ट्रिय फूल कुन हो?",
-
-        options: [
-            "गुलाब",
-            "लालीगुराँस",
-            "कमल",
-            "सुनाखरी"
-        ],
-
-        correct: 1,
-
-        difficulty: "easy",
-
-        explanation:
-        "लालीगुराँस नेपालको राष्ट्रिय फूल हो।"
-    },
-
-
-    {
-        question:
-        "नेपालको संविधानको धारा १ केसँग सम्बन्धित छ?",
-
-        options: [
-            "नागरिकता",
-            "सार्वभौमसत्ता",
-            "राष्ट्र",
-            "मौलिक हक"
-        ],
-
-        correct: 2,
-
-        difficulty: "hard",
-
-        explanation:
-        "धारा १ नेपालको संविधानसँग सम्बन्धित आधारभूत व्यवस्थासँग सम्बन्धित छ।"
-    },
-
-
-    {
-        question:
-        "नेपालको राष्ट्रिय जनावर कुन हो?",
-
-        options: [
-            "गाई",
-            "बाघ",
-            "गैंडा",
-            "हात्ती"
-        ],
-
-        correct: 0,
-
-        difficulty: "easy",
-
-        explanation:
-        "गाई नेपालको राष्ट्रिय जनावर हो।"
-    },
-
-
-    {
-        question:
-        "नेपालको पहिलो निर्वाचित प्रधानमन्त्री को हुन्?",
-
-        options: [
-            "बी.पी. कोइराला",
-            "मातृका प्रसाद कोइराला",
-            "टंकप्रसाद आचार्य",
-            "गिरिजाप्रसाद कोइराला"
-        ],
-
-        correct: 0,
-
-        difficulty: "medium",
-
-        explanation:
-        "बी.पी. कोइराला नेपालको पहिलो निर्वाचित प्रधानमन्त्री हुन्।"
-    },
-
-
-    {
-        question:
-        "नेपालको संविधानमा राज्यको स्वरूप कस्तो छ?",
-
-        options: [
-            "एकात्मक",
-            "संघीय लोकतान्त्रिक गणतन्त्रात्मक",
-            "राजतन्त्रात्मक",
-            "सैनिक शासन"
-        ],
-
-        correct: 1,
-
-        difficulty: "medium",
-
-        explanation:
-        "नेपाल संघीय लोकतान्त्रिक गणतन्त्रात्मक राज्य हो।"
-    }
-
-];
-
-
-/* =====================================================
-   GAME STATE
-===================================================== */
+let questions = [];
 
 let currentQuestion = 0;
 
-let currentRank = 47;
-
-let startingRank = 47;
+let currentRank = STARTING_RANK;
+let startingRank = STARTING_RANK;
 
 let streak = 0;
-
 let bestStreak = 0;
 
 let correctAnswers = 0;
@@ -1301,47 +1130,541 @@ let correctAnswers = 0;
 let xp = 0;
 
 let coins = 780;
-
 let earnedCoins = 0;
 
-let timer = 15;
-
+let timer = QUESTION_TIME;
 let timerInterval = null;
 
 let answered = false;
 
+let gameStarted = false;
 
-/* =====================================================
-   SCREEN MANAGEMENT
-===================================================== */
+let gameLoading = false;
 
-function showScreen(id) {
 
-    document
-        .querySelectorAll(".screen")
-        .forEach(screen => {
+/* =========================================================
+   4. DOM HELPERS
+========================================================= */
 
-            screen.classList.remove("active");
-
-        });
-
-    document
-        .getElementById(id)
-        .classList.add("active");
+function $(id) {
+    return document.getElementById(id);
 }
 
 
-/* =====================================================
-   START GAME
-===================================================== */
+function setText(id, value) {
 
-function startGame() {
+    const element = $(id);
+
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+
+function showElement(id) {
+
+    const element = $(id);
+
+    if (element) {
+        element.classList.remove("hidden");
+    }
+}
+
+
+function hideElement(id) {
+
+    const element = $(id);
+
+    if (element) {
+        element.classList.add("hidden");
+    }
+}
+
+
+/* =========================================================
+   5. SCREEN MANAGEMENT
+========================================================= */
+
+function showScreen(screenId) {
+
+    const screens = [
+        "introScreen",
+        "countdownScreen",
+        "gameScreen",
+        "feedbackScreen",
+        "resultScreen",
+        "leaderboardScreen"
+    ];
+
+    screens.forEach(id => {
+
+        const screen = $(id);
+
+        if (screen) {
+            screen.classList.add("hidden");
+        }
+
+    });
+
+    const target = $(screenId);
+
+    if (target) {
+        target.classList.remove("hidden");
+    }
+
+}
+
+
+/* =========================================================
+   6. LOADING STATE
+========================================================= */
+
+function setStartButtonLoading(isLoading) {
+
+    const button = $("startBtn");
+
+    if (!button) return;
+
+    if (isLoading) {
+
+        button.disabled = true;
+
+        button.dataset.originalText =
+            button.innerHTML;
+
+        button.innerHTML = `
+            <i class="fas fa-spinner fa-spin mr-2"></i>
+            प्रश्नहरू लोड हुँदैछन्...
+        `;
+
+        button.classList.add(
+            "opacity-70",
+            "cursor-not-allowed"
+        );
+
+    } else {
+
+        button.disabled = false;
+
+        button.innerHTML =
+            button.dataset.originalText ||
+            `
+            <i class="fas fa-play mr-2"></i>
+            START CLIMB
+            `;
+
+        button.classList.remove(
+            "opacity-70",
+            "cursor-not-allowed"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   7. GENERAL ERROR MESSAGE
+========================================================= */
+
+function showGameError(message) {
+
+    console.error("Rank Climber Error:", message);
+
+    const errorBox = $("gameError");
+
+    if (errorBox) {
+
+        errorBox.textContent = message;
+
+        errorBox.classList.remove("hidden");
+
+        return;
+    }
+
+    alert(message);
+}
+
+
+/* =========================================================
+   8. HIDE ERROR
+========================================================= */
+
+function hideGameError() {
+
+    const errorBox = $("gameError");
+
+    if (errorBox) {
+        errorBox.classList.add("hidden");
+    }
+
+}
+
+
+/* =========================================================
+   9. SHUFFLE ARRAY
+========================================================= */
+
+function shuffleArray(array) {
+
+    const arr = [...array];
+
+    for (
+        let i = arr.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(Math.random() * (i + 1));
+
+        [
+            arr[i],
+            arr[j]
+        ] = [
+            arr[j],
+            arr[i]
+        ];
+
+    }
+
+    return arr;
+}
+
+
+/* =========================================================
+   10. PARSE OPTIONS
+========================================================= */
+
+function parseOptions(options) {
+
+    if (Array.isArray(options)) {
+        return options;
+    }
+
+    if (typeof options === "string") {
+
+        try {
+
+            const parsed =
+                JSON.parse(options);
+
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Could not parse options:",
+                options
+            );
+
+        }
+
+    }
+
+    return [];
+}
+
+
+/* =========================================================
+   11. NORMALIZE QUESTION
+========================================================= */
+
+function normalizeQuestion(row) {
+
+    const options =
+        parseOptions(row.options);
+
+    if (!row.question) {
+        return null;
+    }
+
+    if (!row.answer) {
+        return null;
+    }
+
+    if (options.length < 2) {
+        return null;
+    }
+
+    const cleanOptions =
+        options
+            .map(option => String(option).trim())
+            .filter(option => option.length > 0);
+
+    if (cleanOptions.length < 2) {
+        return null;
+    }
+
+    const correctAnswer =
+        String(row.answer).trim();
+
+    /*
+       Your database stores:
+
+       options = ["A", "B", "C", "D"]
+       answer  = "B"
+
+       Therefore we keep the correct answer
+       as TEXT rather than index.
+    */
+
+    return {
+
+        id: row.id,
+
+        topic:
+            row.topic ||
+            "General",
+
+        question:
+            String(row.question).trim(),
+
+        options:
+            cleanOptions,
+
+        correct:
+            correctAnswer,
+
+        difficulty:
+            "medium",
+
+        explanation:
+            row.explanation ||
+            "यस प्रश्नको व्याख्या उपलब्ध छैन।"
+
+    };
+
+}
+
+
+/* =========================================================
+   12. LOAD QUESTIONS FROM SUPABASE
+========================================================= */
+
+async function loadQuestionsFromSupabase() {
+
+    if (gameLoading) {
+        return false;
+    }
+
+    gameLoading = true;
+
+    hideGameError();
+
+    setStartButtonLoading(true);
+
+    try {
+
+        console.log(
+            "Loading Rank Climber questions..."
+        );
+
+
+        /* -----------------------------------------
+           CHECK SUPABASE CONFIG
+        ----------------------------------------- */
+
+        if (
+            !SUPABASE_URL ||
+            SUPABASE_URL === "YOUR_SUPABASE_URL" ||
+            !SUPABASE_ANON_KEY ||
+            SUPABASE_ANON_KEY === "YOUR_SUPABASE_ANON_KEY"
+        ) {
+
+            throw new Error(
+                "Supabase URL वा ANON KEY सेट गरिएको छैन।"
+            );
+
+        }
+
+
+        /* -----------------------------------------
+           FETCH QUESTIONS
+        ----------------------------------------- */
+
+        const {
+            data,
+            error
+        } = await supabase
+
+            .from("quizzes")
+
+            .select(`
+                id,
+                topic,
+                question,
+                options,
+                answer,
+                explanation
+            `);
+
+
+        /* -----------------------------------------
+           SUPABASE ERROR
+        ----------------------------------------- */
+
+        if (error) {
+
+            console.error(
+                "Supabase Error:",
+                error
+            );
+
+            throw new Error(
+                `Supabase प्रश्न लोड गर्न सकेन: ${error.message}`
+            );
+
+        }
+
+
+        /* -----------------------------------------
+           EMPTY RESULT
+        ----------------------------------------- */
+
+        if (!data || data.length === 0) {
+
+            throw new Error(
+                "Supabase मा कुनै quiz question भेटिएन।"
+            );
+
+        }
+
+
+        console.log(
+            `Supabase returned ${data.length} questions.`
+        );
+
+
+        /* -----------------------------------------
+           NORMALIZE QUESTIONS
+        ----------------------------------------- */
+
+        const normalizedQuestions =
+            data
+                .map(normalizeQuestion)
+                .filter(question => question !== null);
+
+
+        console.log(
+            `Valid questions: ${normalizedQuestions.length}`
+        );
+
+
+        /* -----------------------------------------
+           CHECK MINIMUM
+        ----------------------------------------- */
+
+        if (
+            normalizedQuestions.length <
+            TOTAL_QUESTIONS
+        ) {
+
+            throw new Error(
+                `कम्तीमा ${TOTAL_QUESTIONS} वटा valid questions आवश्यक छ। अहिले ${normalizedQuestions.length} वटा मात्र छन्।`
+            );
+
+        }
+
+
+        /* -----------------------------------------
+           RANDOMIZE
+        ----------------------------------------- */
+
+        const shuffledQuestions =
+            shuffleArray(
+                normalizedQuestions
+            );
+
+
+        /* -----------------------------------------
+           SELECT 10
+        ----------------------------------------- */
+
+        questions =
+            shuffledQuestions.slice(
+                0,
+                TOTAL_QUESTIONS
+            );
+
+
+        console.log(
+            "Rank Climber selected questions:",
+            questions
+        );
+
+
+        /* -----------------------------------------
+           FINAL VALIDATION
+        ----------------------------------------- */
+
+        for (const q of questions) {
+
+            const answerExists =
+                q.options.some(
+                    option =>
+                        option.trim().toLowerCase() ===
+                        q.correct.trim().toLowerCase()
+                );
+
+            if (!answerExists) {
+
+                console.warn(
+                    "Correct answer not found inside options:",
+                    q
+                );
+
+            }
+
+        }
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "Question loading failed:",
+            error
+        );
+
+        showGameError(
+            error.message ||
+            "प्रश्नहरू लोड गर्न सकिएन।"
+        );
+
+        return false;
+
+
+    } finally {
+
+        gameLoading = false;
+
+        setStartButtonLoading(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   13. RESET GAME
+========================================================= */
+
+function resetGameState() {
+
+    stopTimer();
 
     currentQuestion = 0;
 
-    currentRank = 47;
+    currentRank =
+        STARTING_RANK;
 
-    startingRank = 47;
+    startingRank =
+        STARTING_RANK;
 
     streak = 0;
 
@@ -1353,225 +1676,668 @@ function startGame() {
 
     earnedCoins = 0;
 
-    showScreen("gameScreen");
+    timer = QUESTION_TIME;
+
+    answered = false;
+
+    gameStarted = false;
+
+}
+
+
+/* =========================================================
+   14. START GAME
+========================================================= */
+
+async function startGame() {
+
+    if (gameLoading) {
+        return;
+    }
+
+    resetGameState();
+
+    const loaded =
+        await loadQuestionsFromSupabase();
+
+    if (!loaded) {
+        return;
+    }
+
+
+    /* -----------------------------------------
+       QUESTIONS READY
+    ----------------------------------------- */
+
+    gameStarted = true;
+
+    currentQuestion = 0;
+
+
+    /* -----------------------------------------
+       SHOW COUNTDOWN
+    ----------------------------------------- */
+
+    showScreen(
+        "countdownScreen"
+    );
 
     startCountdown();
 
 }
 
 
-/* =====================================================
-   COUNTDOWN
-===================================================== */
+/* =========================================================
+   15. COUNTDOWN
+========================================================= */
 
 function startCountdown() {
 
-    const overlay =
-        document.getElementById("countdown");
-
-    const number =
-        document.getElementById("countNumber");
-
-    overlay.classList.add("active");
-
     let count = 3;
 
-    number.textContent = count;
+    const countdownNumber =
+        $("countdownNumber");
 
-    const interval = setInterval(() => {
+    if (countdownNumber) {
+        countdownNumber.textContent =
+            count;
+    }
 
-        count--;
+    const interval =
+        setInterval(() => {
 
-        if (count <= 0) {
+            count--;
 
-            clearInterval(interval);
+            if (countdownNumber) {
 
-            overlay.classList.remove("active");
+                if (count > 0) {
 
-            loadQuestion();
+                    countdownNumber.textContent =
+                        count;
 
-            return;
-        }
+                } else {
 
-        number.textContent = count;
+                    countdownNumber.textContent =
+                        "GO!";
 
-    }, 700);
+                }
+
+            }
+
+
+            if (count <= 0) {
+
+                clearInterval(interval);
+
+                setTimeout(() => {
+
+                    showScreen(
+                        "gameScreen"
+                    );
+
+                    loadQuestion();
+
+                }, 500);
+
+            }
+
+        }, 1000);
 
 }
 
 
-/* =====================================================
-   LOAD QUESTION
-===================================================== */
+/* =========================================================
+   16. LOAD CURRENT QUESTION
+========================================================= */
 
 function loadQuestion() {
 
-    answered = false;
+    if (
+        currentQuestion >=
+        questions.length
+    ) {
+
+        finishGame();
+
+        return;
+    }
+
 
     const q =
         questions[currentQuestion];
 
-    document.getElementById(
-        "questionNumber"
-    ).textContent =
-        currentQuestion + 1;
+    if (!q) {
 
-    document.getElementById(
-        "gameRank"
-    ).textContent =
-        "#" + currentRank;
+        finishGame();
 
-    document.getElementById(
-        "streakDisplay"
-    ).textContent =
-        streak;
-
-    document.getElementById(
-        "questionText"
-    ).textContent =
-        q.question;
-
-    document.getElementById(
-        "progressBar"
-    ).style.width =
-        ((currentQuestion + 1) / 10 * 100) + "%";
+        return;
+    }
 
 
-    const container =
-        document.getElementById(
-            "optionsContainer"
-        );
-
-    container.innerHTML = "";
+    answered = false;
 
 
-    const letters = ["A","B","C","D"];
+    /* -----------------------------------------
+       QUESTION NUMBER
+    ----------------------------------------- */
+
+    setText(
+        "questionNumber",
+        `QUESTION ${currentQuestion + 1}/${TOTAL_QUESTIONS}`
+    );
+
+    setText(
+        "questionCounter",
+        `${currentQuestion + 1}/${TOTAL_QUESTIONS}`
+    );
 
 
-    q.options.forEach((option,index) => {
+    /* -----------------------------------------
+       RANK
+    ----------------------------------------- */
 
-        const button =
-            document.createElement("button");
+    setText(
+        "currentRank",
+        `#${currentRank}`
+    );
 
-        button.className =
-            "option";
+    setText(
+        "rankNumber",
+        `#${currentRank}`
+    );
 
-        button.innerHTML = `
 
-            <span class="option-letter">
-                ${letters[index]}
-            </span>
+    /* -----------------------------------------
+       STREAK
+    ----------------------------------------- */
 
-            <span>
-                ${option}
-            </span>
+    setText(
+        "streakNumber",
+        streak
+    );
 
-        `;
 
-        button.onclick =
-            () => selectAnswer(index);
+    /* -----------------------------------------
+       QUESTION
+    ----------------------------------------- */
 
-        container.appendChild(button);
+    setText(
+        "questionText",
+        q.question
+    );
 
-    });
 
+    /* -----------------------------------------
+       TOPIC
+    ----------------------------------------- */
+
+    setText(
+        "questionTopic",
+        q.topic
+    );
+
+
+    /* -----------------------------------------
+       PROGRESS
+    ----------------------------------------- */
+
+    const progress =
+        (
+            currentQuestion /
+            TOTAL_QUESTIONS
+        ) * 100;
+
+    const progressBar =
+        $("progressBar");
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            `${progress}%`;
+
+    }
+
+
+    /* -----------------------------------------
+       RENDER ANSWERS
+    ----------------------------------------- */
+
+    renderAnswerOptions(
+        q.options
+    );
+
+
+    /* -----------------------------------------
+       START TIMER
+    ----------------------------------------- */
 
     startTimer();
 
 }
 
 
-/* =====================================================
-   TIMER
-===================================================== */
+/* =========================================================
+   17. RENDER ANSWER OPTIONS
+========================================================= */
 
-function startTimer() {
+function renderAnswerOptions(options) {
 
-    clearInterval(timerInterval);
+    const container =
+        $("answerOptions");
 
-    timer = 15;
+    if (container) {
 
-    document.getElementById(
-        "timer"
-    ).textContent = timer;
+        container.innerHTML = "";
+
+        options.forEach(
+            (option, index) => {
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+                button.type = "button";
+
+                button.className = `
+                    answer-option
+                    w-full
+                    text-left
+                    p-4
+                    rounded-xl
+                    border
+                    border-slate-600
+                    bg-slate-800
+                    hover:bg-slate-700
+                    transition
+                    duration-200
+                `;
+
+                button.dataset.index =
+                    index;
+
+                button.innerHTML = `
+                    <span class="inline-flex
+                                 items-center
+                                 justify-center
+                                 w-8 h-8
+                                 rounded-full
+                                 bg-slate-700
+                                 mr-3
+                                 font-bold">
+                        ${String.fromCharCode(65 + index)}
+                    </span>
+
+                    <span>
+                        ${escapeHTML(option)}
+                    </span>
+                `;
+
+                button.addEventListener(
+                    "click",
+                    () => {
+                        selectAnswer(index);
+                    }
+                );
+
+                container.appendChild(
+                    button
+                );
+
+            }
+        );
+
+        return;
+    }
 
 
-    timerInterval = setInterval(() => {
+    /* -----------------------------------------
+       FALLBACK
+       Existing option0, option1...
+    ----------------------------------------- */
 
-        timer--;
+    options.forEach(
+        (option, index) => {
 
-        document.getElementById(
-            "timer"
-        ).textContent = timer;
+            const button =
+                $(`option${index}`);
 
+            if (!button) {
+                return;
+            }
 
-        if (timer <= 0) {
+            button.textContent =
+                `${String.fromCharCode(65 + index)}. ${option}`;
 
-            clearInterval(timerInterval);
+            button.disabled = false;
 
-            handleTimeout();
+            button.dataset.index =
+                index;
+
+            button.onclick = () => {
+
+                selectAnswer(index);
+
+            };
 
         }
-
-    },1000);
+    );
 
 }
 
 
-/* =====================================================
-   ANSWER
-===================================================== */
+/* =========================================================
+   18. ESCAPE HTML
+========================================================= */
 
-function selectAnswer(index) {
+function escapeHTML(value) {
 
-    if(answered) return;
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
-    answered = true;
-
-    clearInterval(timerInterval);
-
-    const q =
-        questions[currentQuestion];
-
-    const options =
-        document.querySelectorAll(".option");
-
-    options.forEach((option,i) => {
-
-        option.disabled = true;
-
-        if(i === q.correct) {
-
-            option.classList.add("correct");
-
-        }
-
-        if(i === index &&
-           index !== q.correct) {
-
-            option.classList.add("wrong");
-
-        }
-
-    });
+}
 
 
-    if(index === q.correct) {
+/* =========================================================
+   19. START TIMER
+========================================================= */
 
-        handleCorrect(q);
+function startTimer() {
 
-    } else {
+    stopTimer();
 
-        handleWrong(q);
+    timer =
+        QUESTION_TIME;
+
+    updateTimerDisplay();
+
+
+    timerInterval =
+        setInterval(() => {
+
+            timer--;
+
+            updateTimerDisplay();
+
+
+            if (timer <= 0) {
+
+                stopTimer();
+
+                handleTimeout();
+
+            }
+
+        }, 1000);
+
+}
+
+
+/* =========================================================
+   20. UPDATE TIMER
+========================================================= */
+
+function updateTimerDisplay() {
+
+    setText(
+        "timer",
+        timer
+    );
+
+    setText(
+        "timerNumber",
+        timer
+    );
+
+
+    const timerBar =
+        $("timerBar");
+
+    if (timerBar) {
+
+        const percentage =
+            (
+                timer /
+                QUESTION_TIME
+            ) * 100;
+
+        timerBar.style.width =
+            `${percentage}%`;
+
+    }
+
+
+    const timerCircle =
+        $("timerCircle");
+
+    if (timerCircle) {
+
+        timerCircle.style.setProperty(
+            "--timer-progress",
+            `${timer * 24}deg`
+        );
 
     }
 
 }
 
 
-/* =====================================================
-   CORRECT
-===================================================== */
+/* =========================================================
+   21. STOP TIMER
+========================================================= */
+
+function stopTimer() {
+
+    if (timerInterval) {
+
+        clearInterval(
+            timerInterval
+        );
+
+        timerInterval = null;
+
+    }
+
+}
+
+
+/* =========================================================
+   22. ANSWER QUESTION
+========================================================= */
+
+function selectAnswer(index) {
+
+    if (answered) {
+        return;
+    }
+
+    const q =
+        questions[currentQuestion];
+
+    if (!q) {
+        return;
+    }
+
+    answered = true;
+
+    stopTimer();
+
+
+    /* -----------------------------------------
+       GET SELECTED ANSWER TEXT
+    ----------------------------------------- */
+
+    const selectedAnswer =
+        String(
+            q.options[index] ?? ""
+        ).trim();
+
+
+    /* -----------------------------------------
+       DATABASE ANSWER
+    ----------------------------------------- */
+
+    const correctAnswer =
+        String(
+            q.correct ?? ""
+        ).trim();
+
+
+    /* -----------------------------------------
+       CASE-INSENSITIVE COMPARISON
+    ----------------------------------------- */
+
+    const isCorrect =
+        selectedAnswer.toLowerCase() ===
+        correctAnswer.toLowerCase();
+
+
+    console.log({
+        selectedAnswer,
+        correctAnswer,
+        isCorrect
+    });
+
+
+    /* -----------------------------------------
+       DISABLE OPTIONS
+    ----------------------------------------- */
+
+    disableAnswerButtons();
+
+
+    /* -----------------------------------------
+       CORRECT / WRONG
+    ----------------------------------------- */
+
+    if (isCorrect) {
+
+        handleCorrect(q);
+
+    } else {
+
+        handleWrong(
+            q,
+            selectedAnswer
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   23. DISABLE ANSWERS
+========================================================= */
+
+function disableAnswerButtons() {
+
+    const buttons =
+        document.querySelectorAll(
+            ".answer-option"
+        );
+
+    buttons.forEach(button => {
+
+        button.disabled = true;
+
+        button.classList.add(
+            "opacity-70",
+            "cursor-not-allowed"
+        );
+
+    });
+
+
+    for (let i = 0; i < 4; i++) {
+
+        const button =
+            $(`option${i}`);
+
+        if (button) {
+
+            button.disabled = true;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   24. CALCULATE RANK GAIN
+========================================================= */
+
+function calculateRankGain(
+    difficulty,
+    currentStreak
+) {
+
+    let gain = 5;
+
+
+    switch (
+        String(difficulty).toLowerCase()
+    ) {
+
+        case "easy":
+            gain = 3;
+            break;
+
+        case "medium":
+            gain = 5;
+            break;
+
+        case "hard":
+            gain = 8;
+            break;
+
+        case "expert":
+            gain = 12;
+            break;
+
+        default:
+            gain = 5;
+
+    }
+
+
+    /* -----------------------------------------
+       STREAK BONUS
+    ----------------------------------------- */
+
+    let streakBonus = 0;
+
+    if (currentStreak >= 2) {
+
+        streakBonus =
+            Math.min(
+                currentStreak - 1,
+                5
+            );
+
+    }
+
+
+    return {
+        base: gain,
+        streakBonus,
+        total:
+            gain +
+            streakBonus
+    };
+
+}
+
+
+/* =========================================================
+   25. HANDLE CORRECT
+========================================================= */
 
 function handleCorrect(q) {
 
@@ -1579,47 +2345,23 @@ function handleCorrect(q) {
 
     streak++;
 
-    if(streak > bestStreak) {
+    if (streak > bestStreak) {
 
-        bestStreak = streak;
-
-    }
-
-
-    let rankGain = 5;
-
-
-    if(q.difficulty === "easy") {
-
-        rankGain = 3;
-
-    }
-
-    if(q.difficulty === "medium") {
-
-        rankGain = 5;
-
-    }
-
-    if(q.difficulty === "hard") {
-
-        rankGain = 8;
+        bestStreak =
+            streak;
 
     }
 
 
-    let streakBonus = 0;
+    /* -----------------------------------------
+       RANK
+    ----------------------------------------- */
 
-
-    if(streak >= 2) {
-
-        streakBonus = Math.min(streak - 1,5);
-
-    }
-
-
-    const totalGain =
-        rankGain + streakBonus;
+    const rankChange =
+        calculateRankGain(
+            q.difficulty,
+            streak
+        );
 
 
     const oldRank =
@@ -1629,438 +2371,864 @@ function handleCorrect(q) {
     currentRank =
         Math.max(
             1,
-            currentRank - totalGain
+            currentRank -
+            rankChange.total
         );
 
 
-    xp += 10;
+    /* -----------------------------------------
+       XP
+    ----------------------------------------- */
 
-    coins += 5;
+    const earnedXP = 10;
 
-    earnedCoins += 5;
-
-
-    document.getElementById(
-        "feedbackIcon"
-    ).textContent = "✅";
+    xp += earnedXP;
 
 
-    document.getElementById(
-        "feedbackTitle"
-    ).textContent = "CORRECT!";
+    /* -----------------------------------------
+       COINS
+    ----------------------------------------- */
+
+    const earned =
+        5;
+
+    earnedCoins += earned;
 
 
-    document.getElementById(
-        "feedbackRank"
-    ).textContent =
-        "#" + currentRank;
+    /* -----------------------------------------
+       FEEDBACK
+    ----------------------------------------- */
 
+    showCorrectFeedback({
 
-    document.getElementById(
-        "rankMove"
-    ).textContent =
-        `#${oldRank} → #${currentRank}`;
+        question: q,
 
+        oldRank,
 
-    document.getElementById(
-        "rankReward"
-    ).textContent =
-        "+" + totalGain;
+        newRank: currentRank,
 
+        rankGain:
+            rankChange.total,
 
-    showScreen("feedbackScreen");
+        streak,
+
+        xp: earnedXP,
+
+        coins: earned
+
+    });
 
 }
 
 
-/* =====================================================
-   WRONG
-===================================================== */
+/* =========================================================
+   26. HANDLE WRONG
+========================================================= */
 
-function handleWrong(q) {
+function handleWrong(
+    q,
+    selectedAnswer = ""
+) {
 
     const oldRank =
         currentRank;
 
+
+    /* -----------------------------------------
+       RESET STREAK
+    ----------------------------------------- */
+
     streak = 0;
+
+
+    /* -----------------------------------------
+       RANK PENALTY
+    ----------------------------------------- */
+
+    const penalty = 3;
 
     currentRank =
         Math.min(
             startingRank + 13,
-            currentRank + 3
+            currentRank + penalty
         );
 
 
-    document.getElementById(
-        "feedbackIcon"
-    ).textContent = "❌";
+    /* -----------------------------------------
+       FEEDBACK
+    ----------------------------------------- */
 
+    showWrongFeedback({
 
-    document.getElementById(
-        "feedbackTitle"
-    ).textContent = "NOT QUITE";
+        question: q,
 
+        oldRank,
 
-    document.getElementById(
-        "feedbackRank"
-    ).textContent =
-        "#" + currentRank;
+        newRank: currentRank,
 
+        penalty,
 
-    document.getElementById(
-        "rankMove"
-    ).textContent =
-        `#${oldRank} → #${currentRank}`;
+        selectedAnswer
 
-
-    document.getElementById(
-        "rankReward"
-    ).textContent =
-        "-3";
-
-
-    showScreen("feedbackScreen");
+    });
 
 }
 
 
-/* =====================================================
-   TIMEOUT
-===================================================== */
+/* =========================================================
+   27. TIMEOUT
+========================================================= */
 
 function handleTimeout() {
 
-    if(answered) return;
+    if (answered) {
+        return;
+    }
 
     answered = true;
+
+    stopTimer();
+
 
     const q =
         questions[currentQuestion];
 
-    handleWrong(q);
+    if (!q) {
+        finishGame();
+        return;
+    }
+
+
+    const oldRank =
+        currentRank;
+
+
+    /* -----------------------------------------
+       BREAK STREAK
+    ----------------------------------------- */
+
+    streak = 0;
+
+
+    /* -----------------------------------------
+       RANK PENALTY
+    ----------------------------------------- */
+
+    const penalty = 3;
+
+    currentRank =
+        Math.min(
+            startingRank + 13,
+            currentRank + penalty
+        );
+
+
+    disableAnswerButtons();
+
+
+    showTimeoutFeedback({
+
+        question: q,
+
+        oldRank,
+
+        newRank: currentRank,
+
+        penalty
+
+    });
 
 }
 
 
-/* =====================================================
-   NEXT QUESTION
-===================================================== */
+/* =========================================================
+   28. CORRECT FEEDBACK
+========================================================= */
+
+function showCorrectFeedback(data) {
+
+    showScreen(
+        "feedbackScreen"
+    );
+
+
+    setText(
+        "feedbackTitle",
+        "CORRECT!"
+    );
+
+    setText(
+        "feedbackIcon",
+        "✓"
+    );
+
+    setText(
+        "feedbackMessage",
+        "सही उत्तर!"
+    );
+
+
+    setText(
+        "feedbackRank",
+        `#${data.oldRank} → #${data.newRank}`
+    );
+
+    setText(
+        "rankMovement",
+        `↑ ${data.rankGain} positions`
+    );
+
+
+    setText(
+        "feedbackStreak",
+        `🔥 ${data.streak} streak`
+    );
+
+
+    setText(
+        "feedbackXP",
+        `+${data.xp} XP`
+    );
+
+
+    setText(
+        "feedbackCoins",
+        `+${data.coins} coins`
+    );
+
+
+    setText(
+        "explanation",
+        data.question.explanation
+    );
+
+
+    setTimeout(() => {
+
+        nextQuestion();
+
+    }, 1800);
+
+}
+
+
+/* =========================================================
+   29. WRONG FEEDBACK
+========================================================= */
+
+function showWrongFeedback(data) {
+
+    showScreen(
+        "feedbackScreen"
+    );
+
+
+    setText(
+        "feedbackTitle",
+        "NOT QUITE"
+    );
+
+    setText(
+        "feedbackIcon",
+        "✕"
+    );
+
+    setText(
+        "feedbackMessage",
+        "यसपटक सही भएन।"
+    );
+
+
+    setText(
+        "feedbackRank",
+        `#${data.oldRank} → #${data.newRank}`
+    );
+
+
+    setText(
+        "rankMovement",
+        `↓ ${data.penalty} positions`
+    );
+
+
+    setText(
+        "feedbackStreak",
+        "🔥 Streak reset"
+    );
+
+
+    setText(
+        "feedbackXP",
+        "+0 XP"
+    );
+
+
+    setText(
+        "feedbackCoins",
+        "+0 coins"
+    );
+
+
+    setText(
+        "correctAnswer",
+        `सही उत्तर: ${data.question.correct}`
+    );
+
+
+    setText(
+        "explanation",
+        data.question.explanation
+    );
+
+
+    setTimeout(() => {
+
+        nextQuestion();
+
+    }, 2200);
+
+}
+
+
+/* =========================================================
+   30. TIMEOUT FEEDBACK
+========================================================= */
+
+function showTimeoutFeedback(data) {
+
+    showScreen(
+        "feedbackScreen"
+    );
+
+
+    setText(
+        "feedbackTitle",
+        "TIME'S UP!"
+    );
+
+
+    setText(
+        "feedbackIcon",
+        "⏱"
+    );
+
+
+    setText(
+        "feedbackMessage",
+        "समय सकियो!"
+    );
+
+
+    setText(
+        "feedbackRank",
+        `#${data.oldRank} → #${data.newRank}`
+    );
+
+
+    setText(
+        "rankMovement",
+        `↓ ${data.penalty} positions`
+    );
+
+
+    setText(
+        "feedbackStreak",
+        "🔥 Streak reset"
+    );
+
+
+    setText(
+        "feedbackXP",
+        "+0 XP"
+    );
+
+
+    setText(
+        "feedbackCoins",
+        "+0 coins"
+    );
+
+
+    setText(
+        "correctAnswer",
+        `सही उत्तर: ${data.question.correct}`
+    );
+
+
+    setText(
+        "explanation",
+        data.question.explanation
+    );
+
+
+    setTimeout(() => {
+
+        nextQuestion();
+
+    }, 2200);
+
+}
+
+
+/* =========================================================
+   31. NEXT QUESTION
+========================================================= */
 
 function nextQuestion() {
 
     currentQuestion++;
 
-    if(currentQuestion >= 10) {
+    if (
+        currentQuestion >=
+        TOTAL_QUESTIONS
+    ) {
 
         finishGame();
 
         return;
-
     }
 
-    showScreen("gameScreen");
+
+    showScreen(
+        "gameScreen"
+    );
 
     loadQuestion();
 
 }
 
 
-/* =====================================================
-   FINISH GAME
-===================================================== */
+/* =========================================================
+   32. FINISH GAME
+========================================================= */
 
 function finishGame() {
 
-    clearInterval(timerInterval);
+    stopTimer();
+
+    gameStarted = false;
+
+
+    /* -----------------------------------------
+       FINAL XP
+    ----------------------------------------- */
+
+    const streakBonusXP =
+        bestStreak * 5;
+
+    xp += streakBonusXP;
+
+
+    /* -----------------------------------------
+       PERFECT BONUS
+    ----------------------------------------- */
+
+    const perfect =
+        correctAnswers ===
+        TOTAL_QUESTIONS;
+
+
+    if (perfect) {
+
+        xp += 50;
+
+        earnedCoins += 30;
+
+    }
+
+
+    /* -----------------------------------------
+       STREAK COIN BONUS
+    ----------------------------------------- */
+
+    earnedCoins +=
+        bestStreak * 2;
+
+
+    /* -----------------------------------------
+       POSITIONS CLIMBED
+    ----------------------------------------- */
+
+    const positionsClimbed =
+        startingRank -
+        currentRank;
+
+
+    /* -----------------------------------------
+       ACCURACY
+    ----------------------------------------- */
 
     const accuracy =
         Math.round(
-            (correctAnswers / 10) * 100
+            (
+                correctAnswers /
+                TOTAL_QUESTIONS
+            ) * 100
         );
 
 
-    const positionsClimbed =
-        startingRank - currentRank;
+    /* -----------------------------------------
+       RESULT SCREEN
+    ----------------------------------------- */
+
+    showScreen(
+        "resultScreen"
+    );
 
 
-    const finalXP =
-        xp +
-        (bestStreak * 5) +
-        (accuracy === 100 ? 50 : 0);
+    setText(
+        "finalRank",
+        `#${currentRank}`
+    );
 
 
-    const finalCoins =
-        earnedCoins +
-        10 +
-        (bestStreak * 2) +
-        (accuracy === 100 ? 30 : 0);
+    setText(
+        "positionsClimbed",
+        positionsClimbed >= 0
+            ? `↑ ${positionsClimbed}`
+            : `↓ ${Math.abs(positionsClimbed)}`
+    );
 
 
-    document.getElementById(
-        "finalRank"
-    ).textContent =
-        "#" + currentRank;
+    setText(
+        "correctAnswers",
+        `${correctAnswers}/${TOTAL_QUESTIONS}`
+    );
 
 
-    document.getElementById(
-        "positionsClimbed"
-    ).textContent =
-        Math.max(0,positionsClimbed);
+    setText(
+        "accuracy",
+        `${accuracy}%`
+    );
 
 
-    document.getElementById(
-        "correctResult"
-    ).textContent =
-        `${correctAnswers}/10`;
+    setText(
+        "bestStreak",
+        bestStreak
+    );
 
 
-    document.getElementById(
-        "accuracyResult"
-    ).textContent =
-        accuracy + "%";
+    setText(
+        "totalXP",
+        `+${xp} XP`
+    );
 
 
-    document.getElementById(
-        "bestStreakResult"
-    ).textContent =
-        bestStreak;
+    setText(
+        "totalCoins",
+        `+${earnedCoins}`
+    );
 
 
-    document.getElementById(
-        "xpResult"
-    ).textContent =
-        finalXP;
+    /* -----------------------------------------
+       PERFECT MESSAGE
+    ----------------------------------------- */
+
+    if (perfect) {
+
+        setText(
+            "resultMessage",
+            "🏆 PERFECT CLIMB!"
+        );
+
+    } else if (currentRank === 1) {
+
+        setText(
+            "resultMessage",
+            "👑 YOU ARE ON TOP!"
+        );
+
+    } else {
+
+        setText(
+            "resultMessage",
+            "CLIMB COMPLETE!"
+        );
+
+    }
 
 
-    document.getElementById(
-        "coinsEarned"
-    ).textContent =
-        finalCoins;
-
-
-    document.getElementById(
-        "resultCoins"
-    ).textContent =
-        finalCoins;
-
-
-    showScreen("resultScreen");
+    console.log(
+        "Rank Climber Result:",
+        {
+            startingRank,
+            finalRank: currentRank,
+            correctAnswers,
+            accuracy,
+            bestStreak,
+            xp,
+            earnedCoins
+        }
+    );
 
 }
 
 
-/* =====================================================
-   RESTART
-===================================================== */
+/* =========================================================
+   33. RESTART GAME
+========================================================= */
 
-function restartGame() {
+async function restartGame() {
 
-    startGame();
+    resetGameState();
+
+    showScreen(
+        "introScreen"
+    );
+
+    await startGame();
 
 }
 
 
-/* =====================================================
-   HOME
-===================================================== */
+/* =========================================================
+   34. GO HOME
+========================================================= */
 
 function goHome() {
 
-    showScreen("introScreen");
+    stopTimer();
+
+    gameStarted = false;
+
+    showScreen(
+        "introScreen"
+    );
 
 }
 
 
-/* =====================================================
-   BACK
-===================================================== */
+/* =========================================================
+   35. GO BACK
+========================================================= */
 
 function goBack() {
 
-    goHome();
+    if (!gameStarted) {
+
+        goHome();
+
+        return;
+    }
+
+    confirmExit();
 
 }
 
 
-/* =====================================================
-   EXIT CONFIRMATION
-===================================================== */
+/* =========================================================
+   36. CONFIRM EXIT
+========================================================= */
 
 function confirmExit() {
 
-    const leave =
+    const confirmed =
         confirm(
-            "Are you sure you want to leave this climb?"
+            "के तपाईं यो Rank Climber game छोड्न चाहनुहुन्छ?"
         );
 
-    if(leave) {
+    if (confirmed) {
 
-        clearInterval(timerInterval);
+        stopTimer();
 
-        goHome();
+        gameStarted = false;
+
+        showScreen(
+            "introScreen"
+        );
 
     }
 
 }
 
 
-/* =====================================================
-   LEADERBOARD
-===================================================== */
+/* =========================================================
+   37. LEADERBOARD
+========================================================= */
 
 function showLeaderboard() {
 
-    showScreen("leaderboardScreen");
+    stopTimer();
 
-    loadLeaderboard("global");
+    showScreen(
+        "leaderboardScreen"
+    );
 
 }
 
 
-function loadLeaderboard(type) {
+/* =========================================================
+   38. LEADERBOARD PLACEHOLDER
+========================================================= */
 
-    const players = [
+function loadLeaderboard(type = "global") {
 
-        {
-            name: "LoksewaPro",
-            score: 142,
-            rank: 1
-        },
+    console.log(
+        "Leaderboard:",
+        type
+    );
 
-        {
-            name: "AspirantNepal",
-            score: 137,
-            rank: 2
-        },
-
-        {
-            name: "QuizMaster",
-            score: 133,
-            rank: 3
-        },
-
-        {
-            name: "GK Hunter",
-            score: 129,
-            rank: 4
-        },
-
-        {
-            name: "OfficerDream",
-            score: 127,
-            rank: 5
-        },
-
-        {
-            name: "NepalAspirant",
-            score: 121,
-            rank: 6
-        },
-
-        {
-            name: "StudyWarrior",
-            score: 117,
-            rank: 7
-        },
-
-        {
-            name: "You",
-            score: 91,
-            rank: 47
-        }
-
-    ];
+}
 
 
-    const container =
-        document.getElementById(
-            "leaderboardList"
+/* =========================================================
+   39. INITIAL UI
+========================================================= */
+
+function initializeRankClimber() {
+
+    resetGameState();
+
+    showScreen(
+        "introScreen"
+    );
+
+
+    /* -----------------------------------------
+       INITIAL RANK
+    ----------------------------------------- */
+
+    setText(
+        "currentRank",
+        `#${STARTING_RANK}`
+    );
+
+    setText(
+        "rankNumber",
+        `#${STARTING_RANK}`
+    );
+
+
+    /* -----------------------------------------
+       START BUTTON
+    ----------------------------------------- */
+
+    const startButton =
+        $("startBtn");
+
+    if (startButton) {
+
+        startButton.addEventListener(
+            "click",
+            startGame
         );
 
-
-    container.innerHTML = "";
-
-
-    players.forEach(player => {
-
-        const row =
-            document.createElement("div");
+    }
 
 
-        row.style.cssText = `
+    /* -----------------------------------------
+       RESTART BUTTON
+    ----------------------------------------- */
 
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
+    const restartButton =
+        $("restartBtn");
 
-            padding:15px;
+    if (restartButton) {
 
-            margin-bottom:8px;
+        restartButton.addEventListener(
+            "click",
+            restartGame
+        );
 
-            border-radius:16px;
-
-            background:
-            ${player.name === "You"
-                ? "rgba(37,99,235,.35)"
-                : "rgba(255,255,255,.07)"};
-
-            border:
-            1px solid
-            rgba(255,255,255,.08);
-
-        `;
+    }
 
 
-        let medal = "";
+    /* -----------------------------------------
+       HOME BUTTON
+    ----------------------------------------- */
 
-        if(player.rank === 1)
-            medal = "🥇";
+    const homeButton =
+        $("homeBtn");
 
-        else if(player.rank === 2)
-            medal = "🥈";
+    if (homeButton) {
 
-        else if(player.rank === 3)
-            medal = "🥉";
+        homeButton.addEventListener(
+            "click",
+            goHome
+        );
 
-        else
-            medal = "#" + player.rank;
-
-
-        row.innerHTML = `
-
-            <div>
-
-                <div style="
-                    font-weight:700;
-                ">
-
-                    ${medal}
-                    &nbsp;
-                    ${player.name}
-
-                </div>
-
-            </div>
-
-            <div style="
-                font-weight:800;
-                color:#facc15;
-            ">
-
-                ${player.score}
-
-            </div>
-
-        `;
+    }
 
 
-        container.appendChild(row);
+    /* -----------------------------------------
+       LEADERBOARD BUTTON
+    ----------------------------------------- */
 
-    });
+    const leaderboardButton =
+        $("leaderboardBtn");
+
+    if (leaderboardButton) {
+
+        leaderboardButton.addEventListener(
+            "click",
+            showLeaderboard
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       BACK BUTTON
+    ----------------------------------------- */
+
+    const backButton =
+        $("backBtn");
+
+    if (backButton) {
+
+        backButton.addEventListener(
+            "click",
+            goBack
+        );
+
+    }
+
+
+    console.log(
+        "Rank Climber initialized."
+    );
 
 }
 
-</script>
 
-</body>
+/* =========================================================
+   40. EXPOSE FUNCTIONS
+   Useful if existing HTML has onclick=""
+========================================================= */
+
+window.startGame =
+    startGame;
+
+window.restartGame =
+    restartGame;
+
+window.goHome =
+    goHome;
+
+window.goBack =
+    goBack;
+
+window.confirmExit =
+    confirmExit;
+
+window.showLeaderboard =
+    showLeaderboard;
+
+window.loadLeaderboard =
+    loadLeaderboard;
+
+window.selectAnswer =
+    selectAnswer;
+
+
+/* =========================================================
+   41. START APP
+========================================================= */
+
+initializeRankClimber();
+
+
+</script>
+ 
+    </body>
 </html>
