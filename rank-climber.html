@@ -5,74 +5,184 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
 
 <title>LoksewaQuest - Rank Climber</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
-<link rel="preconnect"
-      href="https://fonts.googleapis.com">
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
 
-<link rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
 
 <style>
 
 *{
     box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
+html,
 body{
     margin:0;
-    font-family:'Poppins',sans-serif;
+    padding:0;
+    min-height:100%;
+    font-family:"Poppins",sans-serif;
     background:
         radial-gradient(
             circle at top,
-            #1e40af 0%,
-            #0f172a 55%
+            #173d8f 0%,
+            #071936 42%,
+            #020817 100%
         );
-    min-height:100vh;
-    color:white;
+    color:#fff;
 }
 
-.app{
-    width:100%;
-    max-width:500px;
+body{
     min-height:100vh;
-    margin:auto;
-    padding:16px;
+    overflow-x:hidden;
 }
+
+button{
+    font-family:inherit;
+}
+
+button:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+.hidden{
+    display:none !important;
+}
+
+/* =========================================================
+   APP
+========================================================= */
+
+#app{
+    width:100%;
+    min-height:100vh;
+}
+
+.app-shell{
+    width:100%;
+    max-width:520px;
+    min-height:100vh;
+    margin:0 auto;
+    padding-bottom:30px;
+}
+
+/* =========================================================
+   TOP BAR
+========================================================= */
 
 .topbar{
+    position:sticky;
+    top:0;
+    z-index:50;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
-    margin-bottom:20px;
+
+    padding:13px 14px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(3,14,35,.97),
+            rgba(3,14,35,.88)
+        );
+
+    border-bottom:1px solid
+        rgba(255,255,255,.08);
+
+    backdrop-filter:blur(16px);
 }
 
-.back-btn{
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.brand-icon{
     width:42px;
     height:42px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.15);
-    background:rgba(255,255,255,.08);
-    color:white;
-    font-size:20px;
-    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    font-size:14px;
+    font-weight:800;
+
+    background:
+        linear-gradient(
+            135deg,
+            #60a5fa,
+            #2563eb
+        );
+
+    box-shadow:
+        0 8px 25px
+        rgba(37,99,235,.35);
 }
 
-.coins{
-    background:rgba(255,255,255,.10);
-    padding:8px 13px;
-    border-radius:20px;
+.brand-title{
     font-size:14px;
+    font-weight:800;
+    line-height:1.1;
 }
+
+.brand-subtitle{
+    margin-top:3px;
+    font-size:9px;
+    color:#94a3b8;
+}
+
+.coin-display{
+    display:flex;
+    align-items:center;
+    gap:5px;
+
+    padding:8px 11px;
+
+    border-radius:12px;
+
+    font-size:12px;
+    font-weight:700;
+
+    background:
+        rgba(251,191,36,.10);
+
+    border:1px solid
+        rgba(251,191,36,.25);
+
+    color:#fbbf24;
+}
+
+/* =========================================================
+   SCREEN
+========================================================= */
 
 .screen{
     display:none;
@@ -82,483 +192,1261 @@ body{
     display:block;
 }
 
-.hero{
-    text-align:center;
-    padding:25px 0;
+/* =========================================================
+   INTRO
+========================================================= */
+
+.intro{
+    padding:20px 14px;
 }
 
-.trophy{
-    width:90px;
-    height:90px;
-    margin:auto;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+.hero-card{
+    position:relative;
+    overflow:hidden;
+
+    padding:25px 20px;
+
+    border-radius:25px;
+
     background:
         linear-gradient(
             145deg,
-            #facc15,
-            #f59e0b
+            rgba(37,99,235,.96),
+            rgba(30,58,138,.96)
         );
-    font-size:46px;
+
+    border:1px solid
+        rgba(147,197,253,.20);
+
     box-shadow:
-        0 15px 40px rgba(250,204,21,.25);
+        0 22px 55px
+        rgba(0,0,0,.25);
 }
 
-.title{
-    margin-top:18px;
-    font-size:30px;
+.hero-card::before{
+    content:"";
+    position:absolute;
+
+    width:170px;
+    height:170px;
+
+    right:-75px;
+    top:-75px;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.08);
+}
+
+.hero-card::after{
+    content:"";
+    position:absolute;
+
+    width:120px;
+    height:120px;
+
+    left:-60px;
+    bottom:-60px;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.05);
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+}
+
+.hero-label{
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:1.7px;
+    color:#bfdbfe;
+    text-transform:uppercase;
+}
+
+.hero-title{
+    margin-top:7px;
+
+    font-size:28px;
+    line-height:1.15;
     font-weight:800;
 }
 
-.subtitle{
-    color:#cbd5e1;
-    font-size:14px;
-    margin-top:5px;
-}
+.hero-text{
+    margin-top:9px;
 
-.rank-box{
-    margin-top:25px;
-    padding:25px;
-    border-radius:24px;
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.10);
-}
-
-.rank-label{
-    color:#cbd5e1;
     font-size:12px;
+    line-height:1.7;
+
+    color:#dbeafe;
 }
 
-.rank-number{
-    font-size:55px;
+.rank-card{
+    margin-top:14px;
+
+    padding:17px;
+
+    border-radius:20px;
+
+    background:
+        rgba(2,8,23,.40);
+
+    border:1px solid
+        rgba(255,255,255,.10);
+}
+
+.rank-card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.rank-caption{
+    font-size:10px;
+    color:#93c5fd;
+}
+
+.rank-value{
+    margin-top:3px;
+
+    font-size:27px;
     font-weight:800;
-    line-height:1.1;
-    color:#facc15;
 }
 
 .rank-change{
-    color:#4ade80;
-    font-size:14px;
-}
-
-.info-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    margin-top:15px;
-}
-
-.info-card{
-    padding:15px 8px;
-    text-align:center;
-    border-radius:18px;
-    background:rgba(255,255,255,.07);
-    border:1px solid rgba(255,255,255,.08);
-}
-
-.info-icon{
-    font-size:20px;
-}
-
-.info-value{
-    font-size:15px;
+    font-size:11px;
     font-weight:700;
-    margin-top:5px;
+    color:#86efac;
 }
 
-.info-label{
-    font-size:9px;
+.stats-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:9px;
+
+    margin-top:14px;
+}
+
+.stat-card{
+    padding:13px 8px;
+
+    text-align:center;
+
+    border-radius:17px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:1px solid
+        rgba(255,255,255,.08);
+}
+
+.stat-icon{
+    font-size:19px;
+}
+
+.stat-value{
+    margin-top:5px;
+
+    font-size:15px;
+    font-weight:800;
+}
+
+.stat-label{
+    margin-top:2px;
+
+    font-size:8px;
     color:#94a3b8;
 }
 
-.primary-btn{
+.start-button{
     width:100%;
+
+    margin-top:16px;
+    padding:15px;
+
     border:none;
-    padding:16px;
-    margin-top:20px;
     border-radius:17px;
+
     background:
         linear-gradient(
             135deg,
-            #2563eb,
-            #3b82f6
+            #fbbf24,
+            #f59e0b
         );
-    color:white;
-    font-size:16px;
-    font-weight:700;
-    cursor:pointer;
+
+    color:#111827;
+
+    font-size:14px;
+    font-weight:800;
+
     box-shadow:
-        0 10px 25px rgba(37,99,235,.30);
-    transition:.2s;
+        0 12px 28px
+        rgba(245,158,11,.22);
+
+    cursor:pointer;
+
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease;
 }
 
-.primary-btn:active{
-    transform:scale(.97);
+.start-button:active{
+    transform:scale(.98);
 }
 
-.primary-btn:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-}
-
-.secondary-btn{
+.secondary-button{
     width:100%;
-    border:1px solid rgba(255,255,255,.12);
-    padding:14px;
+
     margin-top:10px;
-    border-radius:17px;
-    background:rgba(255,255,255,.07);
-    color:white;
-    font-weight:600;
+    padding:12px;
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:1px solid
+        rgba(255,255,255,.10);
+
+    color:#dbeafe;
+
+    font-size:11px;
+    font-weight:700;
+
     cursor:pointer;
 }
 
-.game-header{
+.game-error{
+    margin-top:12px;
+
+    padding:11px 13px;
+
+    border-radius:13px;
+
+    background:
+        rgba(239,68,68,.10);
+
+    border:1px solid
+        rgba(239,68,68,.25);
+
+    color:#fecaca;
+
+    font-size:10px;
+    line-height:1.6;
+}
+
+/* =========================================================
+   GAME
+========================================================= */
+
+.game-container{
+    padding:14px;
+}
+
+.game-top{
     display:flex;
     align-items:center;
     justify-content:space-between;
+
+    margin-bottom:12px;
+}
+
+.exit-button{
+    width:38px;
+    height:38px;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:1px solid
+        rgba(255,255,255,.08);
+
+    color:#cbd5e1;
+
+    cursor:pointer;
 }
 
 .game-rank{
-    font-weight:700;
-    color:#facc15;
+    text-align:center;
 }
 
-.question-count{
-    font-size:13px;
-    color:#cbd5e1;
+.game-rank-label{
+    font-size:8px;
+    color:#64748b;
 }
 
-.progress{
+.game-rank-value{
+    font-size:17px;
+    font-weight:800;
+}
+
+.game-progress-wrap{
+    flex:1;
+    max-width:120px;
+
+    margin-left:10px;
+}
+
+.game-progress-text{
+    display:flex;
+    justify-content:space-between;
+
+    margin-bottom:4px;
+
+    font-size:8px;
+    color:#94a3b8;
+}
+
+.progress-track{
     width:100%;
-    height:7px;
-    background:rgba(255,255,255,.12);
-    border-radius:10px;
+    height:6px;
+
     overflow:hidden;
-    margin-top:15px;
+
+    border-radius:999px;
+
+    background:#172554;
 }
 
 .progress-bar{
     height:100%;
     width:0%;
+
+    border-radius:999px;
+
     background:
         linear-gradient(
             90deg,
-            #22c55e,
-            #84cc16
+            #60a5fa,
+            #2563eb
         );
-    transition:width .3s;
-}
 
-.timer{
-    margin:22px auto 18px;
-    width:75px;
-    height:75px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(255,255,255,.08);
-    border:4px solid #3b82f6;
-    font-size:20px;
-    font-weight:800;
-}
-
-.timer.warning{
-    border-color:#f97316;
-    color:#fb923c;
-}
-
-.timer.danger{
-    border-color:#ef4444;
-    color:#f87171;
+    transition:
+        width .3s ease;
 }
 
 .question-card{
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:22px;
-    padding:20px;
+    padding:18px;
+
+    border-radius:23px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15,35,75,.98),
+            rgba(7,22,48,.98)
+        );
+
+    border:1px solid
+        rgba(96,165,250,.12);
+
+    box-shadow:
+        0 20px 45px
+        rgba(0,0,0,.20);
+}
+
+.question-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
     margin-bottom:15px;
 }
 
-.question-topic{
+.topic-badge{
+    max-width:65%;
+
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+    padding:5px 9px;
+
+    border-radius:999px;
+
+    font-size:8px;
+    font-weight:700;
+
+    color:#bfdbfe;
+
+    background:
+        rgba(59,130,246,.12);
+
+    border:1px solid
+        rgba(96,165,250,.18);
+}
+
+.timer-box{
+    display:flex;
+    align-items:center;
+    gap:4px;
+
     font-size:11px;
-    color:#60a5fa;
-    font-weight:600;
-    margin-bottom:8px;
+    font-weight:800;
+
+    color:#fbbf24;
+}
+
+.timer-box.warning{
+    color:#fb923c;
+}
+
+.timer-box.danger{
+    color:#f87171;
+}
+
+.question-number{
+    font-size:9px;
+    color:#64748b;
 }
 
 .question-text{
-    font-size:18px;
-    line-height:1.7;
-    font-weight:600;
-}
+    min-height:100px;
 
-.answer-option{
-    width:100%;
     display:flex;
     align-items:center;
-    gap:12px;
-    padding:15px;
-    margin-top:10px;
+
+    font-size:18px;
+    line-height:1.6;
+
+    font-weight:700;
+    color:#f8fafc;
+}
+
+.options{
+    display:grid;
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:9px;
+
+    margin-top:16px;
+}
+
+.option{
+    position:relative;
+
+    min-height:68px;
+
+    display:flex;
+    align-items:center;
+
+    padding:11px;
+
     border-radius:16px;
-    border:1px solid rgba(255,255,255,.12);
-    background:rgba(255,255,255,.06);
-    color:white;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:1px solid
+        rgba(255,255,255,.09);
+
+    color:#e2e8f0;
+
     text-align:left;
+
     cursor:pointer;
-    transition:.2s;
+
+    transition:
+        transform .12s ease,
+        border .12s ease,
+        background .12s ease;
 }
 
-.answer-option:hover{
-    background:rgba(255,255,255,.12);
-}
-
-.answer-option:disabled{
-    cursor:not-allowed;
-}
-
-.answer-option.correct{
-    background:rgba(34,197,94,.25);
-    border-color:#22c55e;
-}
-
-.answer-option.wrong{
-    background:rgba(239,68,68,.25);
-    border-color:#ef4444;
+.option:active{
+    transform:scale(.985);
 }
 
 .option-letter{
-    width:34px;
-    height:34px;
-    min-width:34px;
-    border-radius:10px;
+    flex:0 0 28px;
+
+    width:28px;
+    height:28px;
+
     display:flex;
     align-items:center;
     justify-content:center;
-    background:rgba(255,255,255,.10);
+
+    margin-right:8px;
+
+    border-radius:9px;
+
+    background:#172554;
+
+    color:#93c5fd;
+
+    font-size:10px;
+    font-weight:800;
+}
+
+.option-text{
+    font-size:11px;
+    line-height:1.45;
+    font-weight:600;
+}
+
+.option.selected{
+    border-color:#60a5fa;
+
+    background:
+        rgba(37,99,235,.18);
+}
+
+.option.correct{
+    border-color:#22c55e;
+
+    background:
+        rgba(34,197,94,.15);
+
+    color:#bbf7d0;
+}
+
+.option.correct .option-letter{
+    background:#166534;
+    color:#dcfce7;
+}
+
+.option.wrong{
+    border-color:#ef4444;
+
+    background:
+        rgba(239,68,68,.14);
+
+    color:#fecaca;
+}
+
+.option.wrong .option-letter{
+    background:#991b1b;
+    color:#fee2e2;
+}
+
+.question-footer{
+    margin-top:14px;
+}
+
+.answer-button{
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+    border-radius:15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color:white;
+
+    font-size:12px;
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+.answer-button:active{
+    transform:scale(.985);
+}
+
+.streak-strip{
+    margin-top:10px;
+
+    min-height:25px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#fbbf24;
+
+    font-size:9px;
     font-weight:700;
 }
 
-.streak{
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+.feedback-container{
+    padding:20px 14px;
+}
+
+.feedback-card{
+    padding:22px 17px;
+
     text-align:center;
-    margin-top:15px;
-    color:#fb923c;
-    font-weight:700;
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15,35,75,.98),
+            rgba(5,18,40,.98)
+        );
+
+    border:1px solid
+        rgba(255,255,255,.08);
+
+    box-shadow:
+        0 20px 45px
+        rgba(0,0,0,.25);
 }
 
 .feedback-icon{
-    font-size:65px;
-    text-align:center;
+    width:64px;
+    height:64px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin:0 auto 12px;
+
+    border-radius:50%;
+
+    font-size:29px;
+
+    background:
+        rgba(34,197,94,.13);
+
+    border:1px solid
+        rgba(34,197,94,.25);
 }
 
 .feedback-title{
-    text-align:center;
-    font-size:28px;
+    font-size:21px;
     font-weight:800;
-    margin-top:10px;
 }
 
 .feedback-message{
-    text-align:center;
-    color:#cbd5e1;
-    margin-top:5px;
-}
+    margin-top:6px;
 
-.feedback-rank{
-    margin-top:20px;
-    padding:20px;
-    text-align:center;
-    border-radius:20px;
-    background:rgba(255,255,255,.08);
-}
+    font-size:10px;
+    line-height:1.7;
 
-.rank-move{
-    font-size:28px;
-    font-weight:800;
-    color:#facc15;
-}
-
-.reward-row{
-    display:flex;
-    justify-content:space-around;
-    margin-top:15px;
-}
-
-.reward-item{
-    text-align:center;
-}
-
-.reward-value{
-    font-weight:800;
-}
-
-.reward-label{
-    font-size:11px;
     color:#94a3b8;
 }
 
-.feedback-extra{
-    margin-top:18px;
-    padding:15px;
-    border-radius:15px;
-    background:rgba(255,255,255,.06);
-    font-size:13px;
-    line-height:1.6;
+.feedback-stats{
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:8px;
+
+    margin-top:16px;
 }
 
-.explanation{
-    color:#cbd5e1;
-    margin-top:8px;
+.feedback-stat{
+    padding:11px;
+
+    border-radius:14px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:1px solid
+        rgba(255,255,255,.07);
 }
 
-.result-hero{
-    text-align:center;
-    padding:25px 0;
+.feedback-stat-label{
+    font-size:8px;
+    color:#64748b;
 }
 
-.final-rank{
-    font-size:70px;
+.feedback-stat-value{
+    margin-top:3px;
+
+    font-size:14px;
     font-weight:800;
-    color:#facc15;
+}
+
+.explanation-box{
+    margin-top:12px;
+
+    padding:13px;
+
+    text-align:left;
+
+    border-radius:14px;
+
+    background:
+        rgba(59,130,246,.07);
+
+    border:1px solid
+        rgba(96,165,250,.12);
+}
+
+.explanation-title{
+    font-size:9px;
+    font-weight:800;
+    color:#93c5fd;
+}
+
+.explanation-text{
+    margin-top:5px;
+
+    font-size:10px;
+    line-height:1.65;
+
+    color:#cbd5e1;
+}
+
+.next-button{
+    width:100%;
+
+    margin-top:14px;
+    padding:14px;
+
+    border:none;
+    border-radius:15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color:#fff;
+
+    font-size:11px;
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+.result-container{
+    padding:20px 14px;
+}
+
+.result-card{
+    padding:23px 17px;
+
+    text-align:center;
+
+    border-radius:25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(30,64,175,.96),
+            rgba(7,22,48,.98)
+        );
+
+    border:1px solid
+        rgba(147,197,253,.16);
+
+    box-shadow:
+        0 22px 55px
+        rgba(0,0,0,.28);
+}
+
+.result-icon{
+    font-size:43px;
+}
+
+.result-title{
+    margin-top:6px;
+
+    font-size:24px;
+    font-weight:800;
+}
+
+.result-message{
+    margin-top:6px;
+
+    font-size:10px;
+    line-height:1.7;
+
+    color:#bfdbfe;
+}
+
+.result-rank{
+    margin-top:18px;
+
+    padding:15px;
+
+    border-radius:18px;
+
+    background:
+        rgba(2,8,23,.40);
+}
+
+.result-rank-label{
+    font-size:8px;
+    color:#93c5fd;
+}
+
+.result-rank-value{
+    margin-top:2px;
+
+    font-size:31px;
+    font-weight:800;
 }
 
 .result-grid{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:8px;
+
+    margin-top:12px;
 }
 
-.result-card{
-    padding:15px;
-    border-radius:18px;
-    background:rgba(255,255,255,.07);
-    text-align:center;
+.result-stat{
+    padding:12px;
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.055);
+
+    border:1px solid
+        rgba(255,255,255,.07);
 }
 
-.result-value{
-    font-size:20px;
-    font-weight:800;
-}
-
-.result-label{
-    font-size:11px;
+.result-stat-label{
+    font-size:8px;
     color:#94a3b8;
 }
 
-.countdown{
-    position:fixed;
-    inset:0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    background:rgba(2,6,23,.95);
-    z-index:100;
-}
+.result-stat-value{
+    margin-top:3px;
 
-.countdown.active{
-    display:flex;
-}
-
-.count-number{
-    font-size:100px;
+    font-size:16px;
     font-weight:800;
-    color:#facc15;
 }
 
-.leaderboard-row{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:14px;
-    margin-top:8px;
-    border-radius:16px;
-    background:rgba(255,255,255,.07);
+.result-buttons{
+    margin-top:13px;
 }
 
-.leaderboard-row.me{
-    border:1px solid rgba(250,204,21,.5);
-    background:rgba(250,204,21,.10);
-}
-
-.leaderboard-position{
-    width:35px;
-    font-weight:800;
-    color:#facc15;
-}
-
-.leaderboard-avatar{
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(59,130,246,.25);
-    overflow:hidden;
-}
-
-.leaderboard-avatar img{
+.result-button{
     width:100%;
-    height:100%;
-    object-fit:cover;
-}
 
-.leaderboard-name{
-    flex:1;
-    font-weight:600;
-    font-size:14px;
-}
+    padding:13px;
 
-.leaderboard-score{
+    border:none;
+    border-radius:14px;
+
+    margin-top:8px;
+
+    font-size:11px;
     font-weight:800;
-    color:#facc15;
+
+    cursor:pointer;
 }
 
-.leaderboard-tabs{
+.result-button.primary{
+    background:#f59e0b;
+    color:#111827;
+}
+
+.result-button.secondary{
+    background:
+        rgba(255,255,255,.07);
+
+    color:#dbeafe;
+
+    border:1px solid
+        rgba(255,255,255,.09);
+}
+
+/* =========================================================
+   LEADERBOARD
+========================================================= */
+
+.leaderboard-container{
+    padding:18px 14px;
+}
+
+.leaderboard-header{
     display:flex;
-    gap:7px;
+    align-items:center;
+    justify-content:space-between;
+
     margin-bottom:15px;
 }
 
+.back-button{
+    width:38px;
+    height:38px;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:1px solid
+        rgba(255,255,255,.08);
+
+    color:#cbd5e1;
+
+    cursor:pointer;
+}
+
+.leaderboard-title{
+    font-size:17px;
+    font-weight:800;
+}
+
+.leaderboard-tabs{
+    display:grid;
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:7px;
+
+    margin-bottom:11px;
+}
+
 .leaderboard-tab{
-    flex:1;
-    border:1px solid rgba(255,255,255,.12);
-    padding:12px;
-    border-radius:15px;
-    background:rgba(255,255,255,.07);
-    color:white;
+    padding:10px;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.05);
+
+    border:1px solid
+        rgba(255,255,255,.07);
+
+    color:#94a3b8;
+
+    font-size:9px;
     font-weight:700;
+
     cursor:pointer;
 }
 
 .leaderboard-tab.active{
-    background:#2563eb;
-    border-color:#3b82f6;
+    color:white;
+
+    background:
+        rgba(37,99,235,.30);
+
+    border-color:
+        rgba(96,165,250,.25);
 }
 
-.loading{
+.leaderboard-list{
+    display:flex;
+    flex-direction:column;
+
+    gap:7px;
+}
+
+.leader-row{
+    display:grid;
+
+    grid-template-columns:
+        36px 1fr auto;
+
+    align-items:center;
+
+    gap:9px;
+
+    padding:11px;
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:1px solid
+        rgba(255,255,255,.07);
+}
+
+.leader-position{
+    width:31px;
+    height:31px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:10px;
+
+    background:#172554;
+
+    font-size:10px;
+    font-weight:800;
+}
+
+.leader-name{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+    font-size:10px;
+    font-weight:700;
+}
+
+.leader-sub{
+    margin-top:2px;
+
+    font-size:8px;
+    color:#64748b;
+}
+
+.leader-score{
+    text-align:right;
+
+    font-size:11px;
+    font-weight:800;
+
+    color:#fbbf24;
+}
+
+.empty-leaderboard{
+    padding:30px 15px;
+
     text-align:center;
+
+    color:#64748b;
+
+    font-size:10px;
+}
+
+/* =========================================================
+   COUNTDOWN
+========================================================= */
+
+.countdown-overlay{
+    position:fixed;
+    inset:0;
+
+    z-index:100;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    background:
+        rgba(2,8,23,.92);
+
+    backdrop-filter:blur(10px);
+}
+
+.countdown-overlay.show{
+    display:flex;
+}
+
+.countdown-number{
+    font-size:100px;
+    font-weight:800;
+
+    color:#60a5fa;
+
+    text-shadow:
+        0 0 45px
+        rgba(96,165,250,.55);
+
+    animation:
+        countdownPop .8s ease;
+}
+
+@keyframes countdownPop{
+
+    0%{
+        opacity:0;
+        transform:scale(.4);
+    }
+
+    60%{
+        opacity:1;
+        transform:scale(1.12);
+    }
+
+    100%{
+        opacity:1;
+        transform:scale(1);
+    }
+
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast{
+    position:fixed;
+
+    left:50%;
+    bottom:24px;
+
+    z-index:150;
+
+    transform:
+        translateX(-50%)
+        translateY(20px);
+
+    opacity:0;
+    pointer-events:none;
+
+    max-width:calc(100% - 30px);
+
+    padding:10px 14px;
+
+    border-radius:12px;
+
+    background:
+        rgba(15,23,42,.96);
+
+    border:1px solid
+        rgba(255,255,255,.10);
+
+    box-shadow:
+        0 12px 35px
+        rgba(0,0,0,.30);
+
+    color:#e2e8f0;
+
+    font-size:10px;
+    font-weight:600;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease;
+}
+
+.toast.show{
+    opacity:1;
+
+    transform:
+        translateX(-50%)
+        translateY(0);
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-screen{
+    position:fixed;
+    inset:0;
+
+    z-index:200;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #173d8f,
+            #020817 70%
+        );
+}
+
+.loading-box{
+    text-align:center;
+}
+
+.loading-logo{
+    width:70px;
+    height:70px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin:auto;
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #60a5fa,
+            #2563eb
+        );
+
+    font-size:20px;
+    font-weight:800;
+
+    box-shadow:
+        0 15px 45px
+        rgba(37,99,235,.30);
+}
+
+.loading-title{
+    margin-top:13px;
+
+    font-size:19px;
+    font-weight:800;
+}
+
+.loading-text{
+    margin-top:5px;
+
+    font-size:10px;
     color:#94a3b8;
-    padding:30px 10px;
 }
 
-.error-box{
-    margin-top:15px;
-    padding:14px;
-    border-radius:14px;
-    background:rgba(239,68,68,.15);
-    border:1px solid rgba(239,68,68,.35);
-    color:#fca5a5;
-    font-size:13px;
-    line-height:1.6;
+.spinner{
+    width:28px;
+    height:28px;
+
+    margin:17px auto 0;
+
+    border-radius:50%;
+
+    border:3px solid
+        rgba(255,255,255,.12);
+
+    border-top-color:#60a5fa;
+
+    animation:
+        spin .8s linear infinite;
 }
 
-.hidden{
-    display:none !important;
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:380px){
+
+    .question-text{
+        font-size:16px;
+    }
+
+    .option-text{
+        font-size:10px;
+    }
+
+    .hero-title{
+        font-size:24px;
+    }
+
 }
 
 </style>
@@ -567,586 +1455,859 @@ body{
 
 <body>
 
-<div class="app">
+<div id="app">
 
-<section id="introScreen"
-         class="screen active">
+    <!-- =====================================================
+         LOADING
+    ====================================================== -->
 
-    <div class="topbar">
+    <div
+        class="loading-screen"
+        id="loadingScreen"
+    >
 
-        <button class="back-btn"
-                id="backBtn">
+        <div class="loading-box">
 
-            ←
-
-        </button>
-
-        <div class="coins">
-
-            🪙
-            <span id="coinDisplay">
-                0
-            </span>
-
-        </div>
-
-    </div>
-
-    <div class="hero">
-
-        <div class="trophy">
-            🏆
-        </div>
-
-        <div class="title">
-            RANK CLIMBER
-        </div>
-
-        <div class="subtitle">
-            Climb your way to Rank #1
-        </div>
-
-    </div>
-
-    <div class="rank-box">
-
-        <div class="rank-label">
-            YOUR CURRENT RANK
-        </div>
-
-        <div class="rank-number"
-             id="currentRank">
-
-            ...
-
-        </div>
-
-        <div class="rank-change"
-             id="rankChangeText">
-
-            Loading your rank...
-
-        </div>
-
-    </div>
-
-    <div class="info-grid">
-
-        <div class="info-card">
-
-            <div class="info-icon">
-                🎯
+            <div class="loading-logo">
+                LQ
             </div>
 
-            <div class="info-value">
-                10
+            <div class="loading-title">
+                LoksewaQuest
             </div>
 
-            <div class="info-label">
-                QUESTIONS
+            <div class="loading-text">
+                Rank Climber तयार हुँदैछ...
             </div>
 
-        </div>
-
-        <div class="info-card">
-
-            <div class="info-icon">
-                ⏱️
-            </div>
-
-            <div class="info-value">
-                15s
-            </div>
-
-            <div class="info-label">
-                EACH
-            </div>
-
-        </div>
-
-        <div class="info-card">
-
-            <div class="info-icon">
-                🔥
-            </div>
-
-            <div class="info-value"
-                 id="introStreak">
-
-                0
-
-            </div>
-
-            <div class="info-label">
-                STREAK
-            </div>
+            <div class="spinner"></div>
 
         </div>
 
     </div>
 
-    <button class="primary-btn"
-            id="startBtn">
 
-        🚀 START CLIMB
+    <!-- =====================================================
+         MAIN APP
+    ====================================================== -->
 
-    </button>
+    <div
+        class="app-shell"
+        id="mainApp"
+        style="display:none;"
+    >
 
-    <button class="secondary-btn"
-            id="leaderboardBtn">
+        <!-- =================================================
+             TOP BAR
+        ================================================== -->
 
-        🏆 View Leaderboard
+        <header class="topbar">
 
-    </button>
+            <div class="brand">
 
-    <div id="gameError"
-         class="error-box hidden">
-    </div>
-
-</section>
-
-
-<section id="gameScreen"
-         class="screen">
-
-    <div class="topbar">
-
-        <button class="back-btn"
-                id="exitGameBtn">
-
-            ×
-
-        </button>
-
-        <div class="game-rank">
-
-            Rank
-            <span id="gameRank">
-                #...
-            </span>
-
-        </div>
-
-    </div>
-
-    <div class="game-header">
-
-        <div class="question-count">
-
-            Question
-            <span id="questionNumber">
-                1
-            </span>
-            / 10
-
-        </div>
-
-        <div class="question-count">
-
-            🔥
-            <span id="streakDisplay">
-                0
-            </span>
-
-        </div>
-
-    </div>
-
-    <div class="progress">
-
-        <div id="progressBar"
-             class="progress-bar">
-        </div>
-
-    </div>
-
-    <div id="timer"
-         class="timer">
-
-        15
-
-    </div>
-
-    <div class="question-card">
-
-        <div id="questionTopic"
-             class="question-topic">
-
-            General
-
-        </div>
-
-        <div id="questionText"
-             class="question-text">
-
-            प्रश्न लोड हुँदैछ...
-
-        </div>
-
-    </div>
-
-    <div id="answerOptions">
-    </div>
-
-    <div id="streakMessage"
-         class="streak">
-    </div>
-
-</section>
-
-
-<section id="feedbackScreen"
-         class="screen">
-
-    <div class="topbar">
-
-        <div></div>
-
-        <div class="game-rank">
-
-            Rank
-            <span id="feedbackRankTop">
-                #...
-            </span>
-
-        </div>
-
-    </div>
-
-    <div style="padding-top:45px;">
-
-        <div id="feedbackIcon"
-             class="feedback-icon">
-            ✓
-        </div>
-
-        <div id="feedbackTitle"
-             class="feedback-title">
-            CORRECT!
-        </div>
-
-        <div id="feedbackMessage"
-             class="feedback-message">
-        </div>
-
-        <div class="feedback-rank">
-
-            <div id="rankMove"
-                 class="rank-move">
-
-                #... → #...
-
-            </div>
-
-            <div style="
-                color:#94a3b8;
-                font-size:13px;
-                margin-top:5px;
-            ">
-                Rank Movement
-            </div>
-
-        </div>
-
-        <div class="reward-row">
-
-            <div class="reward-item">
-
-                <div id="rankReward"
-                     class="reward-value">
-                    +0
+                <div class="brand-icon">
+                    LQ
                 </div>
 
-                <div class="reward-label">
-                    RANK
+                <div>
+
+                    <div class="brand-title">
+                        LoksewaQuest
+                    </div>
+
+                    <div class="brand-subtitle">
+                        RANK CLIMBER
+                    </div>
+
                 </div>
 
             </div>
 
-            <div class="reward-item">
 
-                <div id="feedbackXP"
-                     class="reward-value">
-                    +0 XP
-                </div>
-
-                <div class="reward-label">
-                    XP
-                </div>
-
-            </div>
-
-            <div class="reward-item">
-
-                <div id="feedbackCoins"
-                     class="reward-value">
-                    +0
-                </div>
-
-                <div class="reward-label">
-                    COINS
-                </div>
-
-            </div>
-
-        </div>
-
-        <div id="feedbackStreak"
-             class="streak">
-        </div>
-
-        <div class="feedback-extra">
-
-            <div id="correctAnswer">
-            </div>
-
-            <div id="explanation"
-                 class="explanation">
-            </div>
-
-        </div>
-
-        <button class="primary-btn"
-                id="nextQuestionBtn">
-
-            NEXT QUESTION →
-
-        </button>
-
-    </div>
-
-</section>
-
-
-<section id="resultScreen"
-         class="screen">
-
-    <div class="topbar">
-
-        <button class="back-btn"
-                id="homeBtn">
-
-            ←
-
-        </button>
-
-        <div>
-            🪙
-            <span id="resultCoins">
-                0
-            </span>
-        </div>
-
-    </div>
-
-    <div class="result-hero">
-
-        <div style="
-            font-size:20px;
-            font-weight:700;
-        ">
-
-            🏆
-            <span id="resultMessage">
-                CLIMB COMPLETE
-            </span>
-
-        </div>
-
-        <div id="finalRank"
-             class="final-rank">
-
-            #...
-
-        </div>
-
-        <div style="
-            color:#4ade80;
-            font-weight:600;
-        ">
-
-            <span id="positionsClimbed">
-                ↑ 0
-            </span>
-            positions
-
-        </div>
-
-    </div>
-
-    <div class="result-grid">
-
-        <div class="result-card">
-
-            <div id="correctAnswers"
-                 class="result-value">
-                0/10
-            </div>
-
-            <div class="result-label">
-                CORRECT
-            </div>
-
-        </div>
-
-        <div class="result-card">
-
-            <div id="accuracy"
-                 class="result-value">
-                0%
-            </div>
-
-            <div class="result-label">
-                ACCURACY
-            </div>
-
-        </div>
-
-        <div class="result-card">
-
-            <div id="bestStreak"
-                 class="result-value">
-                0
-            </div>
-
-            <div class="result-label">
-                BEST STREAK
-            </div>
-
-        </div>
-
-        <div class="result-card">
-
-            <div class="result-value">
-
-                ⭐
-                <span id="totalXP">
-                    0
+            <div
+                class="coin-display"
+                id="coinDisplay"
+            >
+                🪙
+                <span id="coinAmount">
+                    ...
                 </span>
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             INTRO SCREEN
+        ================================================== -->
+
+        <section
+            class="screen active"
+            id="introScreen"
+        >
+
+            <div class="intro">
+
+                <div class="hero-card">
+
+                    <div class="hero-content">
+
+                        <div class="hero-label">
+                            Competitive Practice
+                        </div>
+
+                        <div class="hero-title">
+                            Rank Climber
+                        </div>
+
+                        <div class="hero-text">
+                            सही उत्तर दिएर आफ्नो LoksewaQuest rank माथि चढाउनुहोस्।
+                            प्रत्येक सही उत्तरले तपाईंलाई अगाडि लैजान्छ।
+                        </div>
+
+
+                        <div class="rank-card">
+
+                            <div class="rank-card-top">
+
+                                <div>
+
+                                    <div class="rank-caption">
+                                        CURRENT RANK
+                                    </div>
+
+                                    <div
+                                        class="rank-value"
+                                        id="currentRank"
+                                    >
+                                        —
+                                    </div>
+
+                                </div>
+
+                                <div
+                                    class="rank-change"
+                                    id="rankChangeText"
+                                >
+                                    Ready
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            🔥
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="introStreak"
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-label">
+                            STREAK
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            ⭐
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="introXP"
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-label">
+                            TOTAL XP
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            🪙
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="introCoins"
+                        >
+                            ...
+                        </div>
+
+                        <div class="stat-label">
+                            COINS
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="start-button"
+                    id="startBtn"
+                    disabled
+                >
+                    🚀 CLIMB START गर्नुहोस्
+                </button>
+
+
+                <button
+                    class="secondary-button"
+                    id="leaderboardBtn"
+                >
+                    🏆 Leaderboard हेर्नुहोस्
+                </button>
+
+
+                <div
+                    class="game-error hidden"
+                    id="gameError"
+                ></div>
 
             </div>
 
-            <div class="result-label">
-                XP EARNED
+        </section>
+
+
+        <!-- =================================================
+             GAME SCREEN
+        ================================================== -->
+
+        <section
+            class="screen"
+            id="gameScreen"
+        >
+
+            <div class="game-container">
+
+                <div class="game-top">
+
+                    <button
+                        class="exit-button"
+                        id="exitGameBtn"
+                    >
+                        ✕
+                    </button>
+
+
+                    <div class="game-rank">
+
+                        <div class="game-rank-label">
+                            RANK
+                        </div>
+
+                        <div
+                            class="game-rank-value"
+                            id="gameRank"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+
+                    <div class="game-progress-wrap">
+
+                        <div class="game-progress-text">
+
+                            <span>
+                                Progress
+                            </span>
+
+                            <span
+                                id="questionNumber"
+                            >
+                                1/10
+                            </span>
+
+                        </div>
+
+                        <div class="progress-track">
+
+                            <div
+                                class="progress-bar"
+                                id="progressBar"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="question-card">
+
+                    <div class="question-meta">
+
+                        <div
+                            class="topic-badge"
+                            id="questionTopic"
+                        >
+                            General
+                        </div>
+
+
+                        <div
+                            class="timer-box"
+                            id="timerBox"
+                        >
+
+                            ⏱️
+
+                            <span id="timer">
+                                15
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="question-text"
+                        id="questionText"
+                    >
+                        प्रश्न loading...
+                    </div>
+
+
+                    <div
+                        class="options"
+                        id="answerOptions"
+                    ></div>
+
+
+                    <div class="question-footer">
+
+                        <button
+                            class="answer-button"
+                            id="submitAnswerBtn"
+                            disabled
+                        >
+                            उत्तर Submit गर्नुहोस्
+                        </button>
+
+                        <div
+                            class="streak-strip"
+                            id="streakMessage"
+                        >
+                            🔥 Streak सुरु गर्नुहोस्
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
-        </div>
+        </section>
+
+
+        <!-- =================================================
+             FEEDBACK SCREEN
+        ================================================== -->
+
+        <section
+            class="screen"
+            id="feedbackScreen"
+        >
+
+            <div class="feedback-container">
+
+                <div class="feedback-card">
+
+                    <div
+                        class="feedback-icon"
+                        id="feedbackIcon"
+                    >
+                        ✓
+                    </div>
+
+
+                    <div
+                        class="feedback-title"
+                        id="feedbackTitle"
+                    >
+                        सही उत्तर!
+                    </div>
+
+
+                    <div
+                        class="feedback-message"
+                        id="feedbackMessage"
+                    >
+                        राम्रो!
+                    </div>
+
+
+                    <div class="feedback-stats">
+
+                        <div class="feedback-stat">
+
+                            <div class="feedback-stat-label">
+                                RANK MOVE
+                            </div>
+
+                            <div
+                                class="feedback-stat-value"
+                                id="rankMove"
+                            >
+                                +0
+                            </div>
+
+                        </div>
+
+
+                        <div class="feedback-stat">
+
+                            <div class="feedback-stat-label">
+                                RANK REWARD
+                            </div>
+
+                            <div
+                                class="feedback-stat-value"
+                                id="rankReward"
+                            >
+                                +0
+                            </div>
+
+                        </div>
+
+
+                        <div class="feedback-stat">
+
+                            <div class="feedback-stat-label">
+                                XP
+                            </div>
+
+                            <div
+                                class="feedback-stat-value"
+                                id="feedbackXP"
+                            >
+                                +10
+                            </div>
+
+                        </div>
+
+
+                        <div class="feedback-stat">
+
+                            <div class="feedback-stat-label">
+                                COINS
+                            </div>
+
+                            <div
+                                class="feedback-stat-value"
+                                id="feedbackCoins"
+                            >
+                                +5
+                            </div>
+
+                        </div>
+
+
+                        <div class="feedback-stat">
+
+                            <div class="feedback-stat-label">
+                                STREAK
+                            </div>
+
+                            <div
+                                class="feedback-stat-value"
+                                id="feedbackStreak"
+                            >
+                                0
+                            </div>
+
+                        </div>
+
+
+                        <div class="feedback-stat">
+
+                            <div class="feedback-stat-label">
+                                CORRECT ANSWER
+                            </div>
+
+                            <div
+                                class="feedback-stat-value"
+                                id="correctAnswer"
+                            >
+                                —
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="explanation-box">
+
+                        <div class="explanation-title">
+                            📘 स्पष्टीकरण
+                        </div>
+
+                        <div
+                            class="explanation-text"
+                            id="explanation"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="next-button"
+                        id="nextQuestionBtn"
+                    >
+                        अर्को प्रश्न →
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RESULT SCREEN
+        ================================================== -->
+
+        <section
+            class="screen"
+            id="resultScreen"
+        >
+
+            <div class="result-container">
+
+                <div class="result-card">
+
+                    <div class="result-icon">
+                        🏆
+                    </div>
+
+
+                    <div class="result-title">
+                        CLIMB COMPLETE
+                    </div>
+
+
+                    <div
+                        class="result-message"
+                        id="resultMessage"
+                    >
+                        तपाईंको Rank Climber game सकियो।
+                    </div>
+
+
+                    <div class="result-rank">
+
+                        <div class="result-rank-label">
+                            FINAL RANK
+                        </div>
+
+                        <div
+                            class="result-rank-value"
+                            id="finalRank"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+
+                    <div class="result-grid">
+
+                        <div class="result-stat">
+
+                            <div class="result-stat-label">
+                                COINS
+                            </div>
+
+                            <div
+                                class="result-stat-value"
+                                id="resultCoins"
+                            >
+                                0
+                            </div>
+
+                        </div>
+
+
+                        <div class="result-stat">
+
+                            <div class="result-stat-label">
+                                POSITION CLIMBED
+                            </div>
+
+                            <div
+                                class="result-stat-value"
+                                id="positionsClimbed"
+                            >
+                                0
+                            </div>
+
+                        </div>
+
+
+                        <div class="result-stat">
+
+                            <div class="result-stat-label">
+                                CORRECT
+                            </div>
+
+                            <div
+                                class="result-stat-value"
+                                id="correctAnswers"
+                            >
+                                0/10
+                            </div>
+
+                        </div>
+
+
+                        <div class="result-stat">
+
+                            <div class="result-stat-label">
+                                ACCURACY
+                            </div>
+
+                            <div
+                                class="result-stat-value"
+                                id="accuracy"
+                            >
+                                0%
+                            </div>
+
+                        </div>
+
+
+                        <div class="result-stat">
+
+                            <div class="result-stat-label">
+                                BEST STREAK
+                            </div>
+
+                            <div
+                                class="result-stat-value"
+                                id="bestStreak"
+                            >
+                                0
+                            </div>
+
+                        </div>
+
+
+                        <div class="result-stat">
+
+                            <div class="result-stat-label">
+                                SESSION XP
+                            </div>
+
+                            <div
+                                class="result-stat-value"
+                                id="totalXP"
+                            >
+                                0
+                            </div>
+
+                        </div>
+
+
+                        <div class="result-stat">
+
+                            <div class="result-stat-label">
+                                TOTAL COINS
+                            </div>
+
+                            <div
+                                class="result-stat-value"
+                                id="totalCoins"
+                            >
+                                0
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="result-buttons">
+
+                        <button
+                            class="result-button primary"
+                            id="restartBtn"
+                        >
+                            🔄 फेरि खेल्नुहोस्
+                        </button>
+
+
+                        <button
+                            class="result-button secondary"
+                            id="resultLeaderboardBtn"
+                        >
+                            🏆 Leaderboard
+                        </button>
+
+
+                        <button
+                            class="result-button secondary"
+                            id="homeBtn"
+                        >
+                            🏠 Home
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             LEADERBOARD SCREEN
+        ================================================== -->
+
+        <section
+            class="screen"
+            id="leaderboardScreen"
+        >
+
+            <div class="leaderboard-container">
+
+                <div class="leaderboard-header">
+
+                    <button
+                        class="back-button"
+                        id="leaderboardBackBtn"
+                    >
+                        ←
+                    </button>
+
+                    <div class="leaderboard-title">
+                        🏆 Leaderboard
+                    </div>
+
+                    <div style="width:38px;"></div>
+
+                </div>
+
+
+                <div class="leaderboard-tabs">
+
+                    <button
+                        class="leaderboard-tab active"
+                        id="globalLeaderboardBtn"
+                    >
+                        🌎 Global
+                    </button>
+
+
+                    <button
+                        class="leaderboard-tab"
+                        id="dailyLeaderboardBtn"
+                    >
+                        📅 Daily
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="leaderboard-list"
+                    id="leaderboardList"
+                >
+
+                    <div class="empty-leaderboard">
+                        Loading...
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
 
     </div>
-
-    <div class="rank-box"
-         style="
-            margin-top:15px;
-            text-align:center;
-         ">
-
-        <div style="
-            font-size:13px;
-            color:#94a3b8;
-        ">
-            COINS EARNED
-        </div>
-
-        <div style="
-            font-size:30px;
-            font-weight:800;
-            color:#facc15;
-        ">
-
-            🪙 +
-            <span id="totalCoins">
-                0
-            </span>
-
-        </div>
-
-    </div>
-
-    <button class="primary-btn"
-            id="restartBtn">
-
-        🔥 CLIMB AGAIN
-
-    </button>
-
-    <button class="secondary-btn"
-            id="resultLeaderboardBtn">
-
-        🏆 VIEW LEADERBOARD
-
-    </button>
-
-</section>
-
-
-<section id="leaderboardScreen"
-         class="screen">
-
-    <div class="topbar">
-
-        <button class="back-btn"
-                id="leaderboardBackBtn">
-
-            ←
-
-        </button>
-
-        <div style="font-weight:700;">
-            🏆 Leaderboard
-        </div>
-
-        <div></div>
-
-    </div>
-
-    <div class="leaderboard-tabs">
-
-        <button id="globalLeaderboardBtn"
-                class="leaderboard-tab active">
-
-            GLOBAL
-
-        </button>
-
-        <button id="dailyLeaderboardBtn"
-                class="leaderboard-tab">
-
-            TODAY
-
-        </button>
-
-    </div>
-
-    <div id="leaderboardList">
-    </div>
-
-</section>
 
 </div>
 
 
-<div id="countdown"
-     class="countdown">
+<!-- =========================================================
+     COUNTDOWN
+========================================================= -->
 
-    <div id="countNumber"
-         class="count-number">
+<div
+    class="countdown-overlay"
+    id="countdown"
+>
 
+    <div
+        class="countdown-number"
+        id="countNumber"
+    >
         3
-
     </div>
 
 </div>
 
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
 
 <script type="module">
+
+/* =========================================================
+   IMPORTS
+========================================================= */
 
 import {
     createClient
 } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
+
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
 
 import {
     getAuth,
@@ -1154,48 +2315,79 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc,
+    collection,
+    addDoc,
+    serverTimestamp,
+    runTransaction,
+    increment
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
 /* =========================================================
-   SUPABASE
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyCkKCU1re5b9MtdAF1F4xI6rGxmxhGZak",
+
+    authDomain:
+        "loksewaquest-227b6.firebaseapp.com",
+
+    projectId:
+        "loksewaquest-227b6",
+
+    storageBucket:
+        "loksewaquest-227b6.firebasestorage.app",
+
+    messagingSenderId:
+        "779234903809",
+
+    appId:
+        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
+};
+
+
+/* =========================================================
+   SUPABASE CONFIG
 ========================================================= */
 
 const SUPABASE_URL =
     "https://edyirdedkiarguvurpxq.supabase.co";
 
+
 const SUPABASE_ANON_KEY =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+const firebaseApp =
+    initializeApp(firebaseConfig);
+
+
+const auth =
+    getAuth(firebaseApp);
+
+
+const db =
+    getFirestore(firebaseApp);
+
 
 const supabase =
     createClient(
         SUPABASE_URL,
         SUPABASE_ANON_KEY
-    );
-
-
-/* =========================================================
-   FIREBASE CONFIG
-   =========================================================
-   Replace only these values with your existing
-   LoksewaQuest Firebase configuration.
-========================================================= */
-
-const firebaseConfig = {
-      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-      authDomain: "loksewaquest-227b6.firebaseapp.com",
-      projectId: "loksewaquest-227b6",
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",
-      messagingSenderId: "779234903809",
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-    };
-
-
-const firebaseApp =
-    initializeApp(
-        firebaseConfig
-    );
-
-const auth =
-    getAuth(
-        firebaseApp
     );
 
 
@@ -1211,6 +2403,108 @@ const DEFAULT_RANK = 999999;
 
 
 /* =========================================================
+   DOM HELPERS
+========================================================= */
+
+const $ = id =>
+    document.getElementById(id);
+
+
+function setText(
+    id,
+    value
+){
+
+    const element = $(id);
+
+    if(element){
+        element.textContent =
+            value;
+    }
+
+}
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const loadingScreen =
+    $("loadingScreen");
+
+const mainApp =
+    $("mainApp");
+
+
+const introScreen =
+    $("introScreen");
+
+const gameScreen =
+    $("gameScreen");
+
+const feedbackScreen =
+    $("feedbackScreen");
+
+const resultScreen =
+    $("resultScreen");
+
+const leaderboardScreen =
+    $("leaderboardScreen");
+
+
+const startBtn =
+    $("startBtn");
+
+const leaderboardBtn =
+    $("leaderboardBtn");
+
+const exitGameBtn =
+    $("exitGameBtn");
+
+
+const submitAnswerBtn =
+    $("submitAnswerBtn");
+
+const nextQuestionBtn =
+    $("nextQuestionBtn");
+
+
+const homeBtn =
+    $("homeBtn");
+
+const restartBtn =
+    $("restartBtn");
+
+const resultLeaderboardBtn =
+    $("resultLeaderboardBtn");
+
+
+const leaderboardBackBtn =
+    $("leaderboardBackBtn");
+
+const globalLeaderboardBtn =
+    $("globalLeaderboardBtn");
+
+const dailyLeaderboardBtn =
+    $("dailyLeaderboardBtn");
+
+
+const answerOptions =
+    $("answerOptions");
+
+
+const gameError =
+    $("gameError");
+
+
+const countdown =
+    $("countdown");
+
+const countNumber =
+    $("countNumber");
+
+
+/* =========================================================
    STATE
 ========================================================= */
 
@@ -1220,16 +2514,33 @@ let firebaseUser =
 let userId =
     null;
 
-let questions = [];
+let userName =
+    "Aspirant";
+
+
+let questions =
+    [];
 
 let currentQuestion =
     0;
+
 
 let currentRank =
     DEFAULT_RANK;
 
 let startingRank =
     DEFAULT_RANK;
+
+let bestRank =
+    DEFAULT_RANK;
+
+
+let totalXP =
+    0;
+
+let sessionXP =
+    0;
+
 
 let streak =
     0;
@@ -1240,8 +2551,6 @@ let bestStreak =
 let correctAnswers =
     0;
 
-let xp =
-    0;
 
 let coins =
     0;
@@ -1249,10 +2558,15 @@ let coins =
 let earnedCoins =
     0;
 
+
 let timer =
     QUESTION_TIME;
 
 let timerInterval =
+    null;
+
+
+let selectedAnswer =
     null;
 
 let answered =
@@ -1261,51 +2575,69 @@ let answered =
 let gameStarted =
     false;
 
+let gameFinished =
+    false;
+
+let rewardSaved =
+    false;
+
+
 let gameLoading =
     false;
 
 let savingAnswer =
     false;
 
+
 let sessionId =
+    null;
+
+let gameId =
     null;
 
 let sessionStartTime =
     null;
 
+
 let feedbackTimeout =
     null;
+
 
 let currentLeaderboardType =
     "global";
 
 
+let currentQuestionReward =
+    0;
+
+let currentRankChange =
+    0;
+
+
 /* =========================================================
-   DOM
+   GAME ID
 ========================================================= */
 
-function $(id){
+function createGameId(){
 
-    return document.getElementById(
-        id
-    );
+    if(
+        globalThis.crypto &&
+        typeof globalThis.crypto.randomUUID ===
+            "function"
+    ){
 
-}
-
-function setText(
-    id,
-    value
-){
-
-    const element =
-        $(id);
-
-    if(element){
-
-        element.textContent =
-            value;
+        return globalThis.crypto.randomUUID();
 
     }
+
+    return (
+        "rank_" +
+        Date.now() +
+        "_" +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
 
 }
 
@@ -1314,53 +2646,45 @@ function setText(
    SCREEN
 ========================================================= */
 
-function showScreen(id){
+function showScreen(
+    screen
+){
 
-    const screens = [
+    [
+        introScreen,
+        gameScreen,
+        feedbackScreen,
+        resultScreen,
+        leaderboardScreen
+    ].forEach(
+        element => {
 
-        "introScreen",
-        "gameScreen",
-        "feedbackScreen",
-        "resultScreen",
-        "leaderboardScreen"
-
-    ];
-
-    screens.forEach(
-        screenId => {
-
-            const screen =
-                $(screenId);
-
-            if(screen){
-
-                screen.classList.remove(
-                    "active"
-                );
-
-                screen.classList.add(
-                    "hidden"
-                );
-
-            }
+            element.classList.remove(
+                "active"
+            );
 
         }
     );
 
-    const target =
-        $(id);
 
-    if(target){
+    screen.classList.add(
+        "active"
+    );
 
-        target.classList.remove(
-            "hidden"
-        );
+}
 
-        target.classList.add(
-            "active"
-        );
 
-    }
+/* =========================================================
+   LOADING
+========================================================= */
+
+function hideLoading(){
+
+    loadingScreen.style.display =
+        "none";
+
+    mainApp.style.display =
+        "block";
 
 }
 
@@ -1369,318 +2693,74 @@ function showScreen(id){
    ERROR
 ========================================================= */
 
-function showGameError(
+function showError(
     message
 ){
 
-    console.error(
-        "Rank Climber:",
-        message
+    gameError.textContent =
+        message;
+
+    gameError.classList.remove(
+        "hidden"
     );
 
-    const box =
-        $("gameError");
-
-    if(box){
-
-        box.textContent =
-            message;
-
-        box.classList.remove(
-            "hidden"
-        );
-
-    }
-
 }
 
-function hideGameError(){
 
-    const box =
-        $("gameError");
+function hideError(){
 
-    if(box){
-
-        box.classList.add(
-            "hidden"
-        );
-
-    }
+    gameError.classList.add(
+        "hidden"
+    );
 
 }
 
 
 /* =========================================================
-   SHUFFLE
+   TOAST
 ========================================================= */
 
-function shuffleArray(array){
-
-    const arr =
-        [...array];
-
-    for(
-        let i = arr.length - 1;
-        i > 0;
-        i--
-    ){
-
-        const j =
-            Math.floor(
-                Math.random() *
-                (i + 1)
-            );
-
-        [
-            arr[i],
-            arr[j]
-        ] =
-        [
-            arr[j],
-            arr[i]
-        ];
-
-    }
-
-    return arr;
-
-}
+let toastTimeout =
+    null;
 
 
-/* =========================================================
-   OPTIONS
-========================================================= */
-
-function parseOptions(
-    options
+function showToast(
+    message
 ){
 
-    if(
-        Array.isArray(options)
-    ){
+    const toast =
+        $("toast");
 
-        return options;
+    toast.textContent =
+        message;
 
-    }
+    toast.classList.add(
+        "show"
+    );
 
-    if(
-        typeof options ===
-        "string"
-    ){
 
-        try{
+    clearTimeout(
+        toastTimeout
+    );
 
-            const parsed =
-                JSON.parse(
-                    options
+
+    toastTimeout =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
                 );
 
-            if(
-                Array.isArray(parsed)
-            ){
-
-                return parsed;
-
-            }
-
-        }catch(error){
-
-            console.warn(
-                "Options parse failed"
-            );
-
-        }
-
-    }
-
-    return [];
-
-}
-
-
-/* =========================================================
-   CORRECT INDEX
-========================================================= */
-
-function findCorrectIndex(
-    answer,
-    options
-){
-
-    if(
-        answer === null ||
-        answer === undefined
-    ){
-
-        return -1;
-
-    }
-
-    const clean =
-        String(answer)
-            .trim();
-
-    if(!clean){
-
-        return -1;
-
-    }
-
-    if(
-        /^\d+$/.test(clean)
-    ){
-
-        const number =
-            Number(clean);
-
-        if(
-            number >= 0 &&
-            number < options.length
-        ){
-
-            return number;
-
-        }
-
-        if(
-            number >= 1 &&
-            number <= options.length
-        ){
-
-            return number - 1;
-
-        }
-
-    }
-
-    if(
-        /^[A-Za-z]$/.test(clean)
-    ){
-
-        const index =
-            clean
-                .toUpperCase()
-                .charCodeAt(0) -
-            65;
-
-        if(
-            index >= 0 &&
-            index < options.length
-        ){
-
-            return index;
-
-        }
-
-    }
-
-    const lower =
-        clean.toLowerCase();
-
-    return options.findIndex(
-        option =>
-            String(option)
-                .trim()
-                .toLowerCase() ===
-            lower
-    );
-
-}
-
-
-/* =========================================================
-   NORMALIZE QUESTION
-========================================================= */
-
-function normalizeQuestion(
-    row
-){
-
-    if(
-        !row ||
-        !row.question
-    ){
-
-        return null;
-
-    }
-
-    const options =
-        parseOptions(
-            row.options
-        )
-        .map(
-            option =>
-                String(option).trim()
-        )
-        .filter(
-            option =>
-                option.length > 0
+            },
+            2200
         );
 
-    if(
-        options.length < 2
-    ){
-
-        return null;
-
-    }
-
-    const correctIndex =
-        findCorrectIndex(
-            row.answer,
-            options
-        );
-
-    if(
-        correctIndex < 0 ||
-        correctIndex >= options.length
-    ){
-
-        return null;
-
-    }
-
-    return {
-
-        id:
-            row.id,
-
-        topic:
-            row.topic ||
-            "General",
-
-        question:
-            String(
-                row.question
-            ).trim(),
-
-        options:
-            options,
-
-        correctIndex:
-            correctIndex,
-
-        correct:
-            options[
-                correctIndex
-            ],
-
-        difficulty:
-            row.difficulty ||
-            "medium",
-
-        explanation:
-            row.explanation ||
-            "यस प्रश्नको व्याख्या उपलब्ध छैन।"
-
-    };
-
 }
 
 
 /* =========================================================
-   FIREBASE AUTH
+   AUTH WAIT
 ========================================================= */
 
 function waitForFirebaseUser(){
@@ -1688,20 +2768,26 @@ function waitForFirebaseUser(){
     return new Promise(
         resolve => {
 
+            let finished =
+                false;
+
             const unsubscribe =
                 onAuthStateChanged(
                     auth,
                     user => {
 
+                        if(
+                            finished
+                        ){
+
+                            return;
+
+                        }
+
+                        finished =
+                            true;
+
                         unsubscribe();
-
-                        firebaseUser =
-                            user || null;
-
-                        userId =
-                            user
-                                ? user.uid
-                                : null;
 
                         resolve(
                             user || null
@@ -1722,183 +2808,320 @@ function waitForFirebaseUser(){
 
 async function loadPlayer(){
 
-    if(!userId){
+    if(!firebaseUser){
 
-        showGameError(
-            "लगइन आवश्यक छ। कृपया Google Login गरेर फेरि प्रयास गर्नुहोस्।"
+        throw new Error(
+            "लगइन आवश्यक छ।"
         );
-
-        return false;
 
     }
 
-    try{
 
-        const {
-            data,
-            error
-        } =
+    userId =
+        firebaseUser.uid;
+
+
+    userName =
+        firebaseUser.displayName ||
+        firebaseUser.email?.split("@")[0] ||
+        "Aspirant";
+
+
+    const {
+        data,
+        error
+    } =
         await supabase
             .from(
                 "rank_climber_players"
             )
-            .select(`
-                user_id,
-                current_rank,
-                best_rank,
-                total_xp,
-                current_streak,
-                best_streak
-            `)
+            .select(
+                "user_id,current_rank,best_rank,total_xp,current_streak,best_streak"
+            )
             .eq(
                 "user_id",
                 userId
             )
             .maybeSingle();
 
-        if(error){
 
-            throw error;
+    if(error){
 
-        }
+        throw error;
 
-        if(data){
+    }
 
-            currentRank =
-                Number(
-                    data.current_rank
-                ) || DEFAULT_RANK;
 
-            startingRank =
-                currentRank;
+    if(data){
 
-            xp =
-                Number(
-                    data.total_xp
-                ) || 0;
+        currentRank =
+            Number(
+                data.current_rank ??
+                DEFAULT_RANK
+            );
 
-            streak =
-                Number(
-                    data.current_streak
-                ) || 0;
+        bestRank =
+            Number(
+                data.best_rank ??
+                currentRank
+            );
 
-            bestStreak =
-                Number(
-                    data.best_streak
-                ) || 0;
+        totalXP =
+            Number(
+                data.total_xp ??
+                0
+            );
 
-        }else{
+        streak =
+            Number(
+                data.current_streak ??
+                0
+            );
 
-            currentRank =
-                DEFAULT_RANK;
+        bestStreak =
+            Number(
+                data.best_streak ??
+                0
+            );
 
-            startingRank =
-                DEFAULT_RANK;
+    }else{
 
-            const {
-                error:
-                insertError
-            } =
-            await supabase
-                .from(
-                    "rank_climber_players"
-                )
-                .insert({
+        currentRank =
+            DEFAULT_RANK;
 
+        bestRank =
+            DEFAULT_RANK;
+
+        totalXP =
+            0;
+
+        streak =
+            0;
+
+        bestStreak =
+            0;
+
+
+        await supabase
+            .from(
+                "rank_climber_players"
+            )
+            .upsert(
+                {
                     user_id:
                         userId,
 
                     current_rank:
-                        DEFAULT_RANK,
+                        currentRank,
 
                     best_rank:
-                        DEFAULT_RANK,
+                        bestRank,
 
                     total_xp:
-                        0,
+                        totalXP,
 
                     current_streak:
-                        0,
+                        streak,
 
                     best_streak:
-                        0
+                        bestStreak,
 
-                });
-
-            if(insertError){
-
-                console.warn(
-                    "Player creation:",
-                    insertError
-                );
-
-            }
-
-        }
-
-        updateIntroUI();
-
-        return true;
-
-    }catch(error){
-
-        console.error(
-            "Player load failed:",
-            error
-        );
-
-        showGameError(
-            "Player rank load गर्न सकिएन: " +
-            error.message
-        );
-
-        return false;
+                    updated_at:
+                        new Date()
+                        .toISOString()
+                },
+                {
+                    onConflict:
+                        "user_id"
+                }
+            );
 
     }
+
+
+    updateIntroUI();
 
 }
 
 
 /* =========================================================
-   UPDATE INTRO
+   LOAD FIREBASE COINS
+========================================================= */
+
+async function loadCoinsFromFirebase(){
+
+    if(!firebaseUser){
+
+        throw new Error(
+            "Firebase login भेटिएन।"
+        );
+
+    }
+
+
+    setText(
+        "coinAmount",
+        "..."
+    );
+
+
+    const userRef =
+        doc(
+            db,
+            "users",
+            firebaseUser.uid
+        );
+
+
+    const snapshot =
+        await getDoc(
+            userRef
+        );
+
+
+    if(
+        !snapshot.exists()
+    ){
+
+        throw new Error(
+            "Firebase user profile भेटिएन।"
+        );
+
+    }
+
+
+    const data =
+        snapshot.data();
+
+
+    coins =
+        Number(
+            data.coins ??
+            0
+        );
+
+
+    updateCoinUI();
+
+}
+
+
+/* =========================================================
+   COIN UI
+========================================================= */
+
+function updateCoinUI(){
+
+    const formatted =
+        Number(
+            coins || 0
+        ).toLocaleString();
+
+
+    setText(
+        "coinAmount",
+        formatted
+    );
+
+    setText(
+        "introCoins",
+        formatted
+    );
+
+    setText(
+        "resultCoins",
+        formatted
+    );
+
+    setText(
+        "totalCoins",
+        formatted
+    );
+
+}
+
+
+/* =========================================================
+   INTRO UI
 ========================================================= */
 
 function updateIntroUI(){
 
     setText(
         "currentRank",
-        currentRank >= DEFAULT_RANK
-            ? "#—"
-            : `#${currentRank}`
+        formatRank(
+            currentRank
+        )
     );
+
 
     setText(
         "introStreak",
         streak
     );
 
+
     setText(
-        "coinDisplay",
-        coins
+        "introXP",
+        Number(
+            totalXP
+        ).toLocaleString()
     );
 
+
+    setText(
+        "introCoins",
+        Number(
+            coins
+        ).toLocaleString()
+    );
+
+
+    setText(
+        "gameRank",
+        formatRank(
+            currentRank
+        )
+    );
+
+}
+
+
+/* =========================================================
+   RANK FORMAT
+========================================================= */
+
+function formatRank(
+    rank
+){
+
+    const numericRank =
+        Number(rank);
+
+
     if(
-        currentRank >= DEFAULT_RANK
+        !Number.isFinite(
+            numericRank
+        )
     ){
 
-        setText(
-            "rankChangeText",
-            "Your rank is being initialized..."
-        );
-
-    }else{
-
-        setText(
-            "rankChangeText",
-            "Persistent rank"
-        );
+        return "—";
 
     }
+
+
+    if(
+        numericRank >=
+        DEFAULT_RANK
+    ){
+
+        return "Unranked";
+
+    }
+
+
+    return "#" +
+        numericRank.toLocaleString();
 
 }
 
@@ -1907,126 +3130,420 @@ function updateIntroUI(){
    LOAD QUESTIONS
 ========================================================= */
 
-async function loadQuestionsFromSupabase(){
+async function loadQuestions(){
 
-    if(gameLoading){
-
-        return false;
-
-    }
-
-    gameLoading =
-        true;
-
-    hideGameError();
-
-    const startButton =
-        $("startBtn");
-
-    if(startButton){
-
-        startButton.disabled =
-            true;
-
-        startButton.innerHTML =
-            "⏳ प्रश्नहरू लोड हुँदैछन्...";
-
-    }
-
-    try{
-
-        const {
-            data,
-            error
-        } =
+    const {
+        data,
+        error
+    } =
         await supabase
-            .from("quizzes")
-            .select(`
-                id,
-                topic,
-                question,
-                options,
-                answer,
-                explanation,
-                difficulty
-            `);
-
-        if(error){
-
-            throw error;
-
-        }
-
-        if(
-            !data ||
-            data.length === 0
-        ){
-
-            throw new Error(
-                "Supabase मा कुनै प्रश्न भेटिएन।"
+            .from(
+                "quizzes"
+            )
+            .select(
+                "id,topic,question,options,answer,explanation,difficulty"
+            )
+            .limit(
+                200
             );
 
-        }
 
-        const normalized =
-            data
-                .map(
-                    normalizeQuestion
-                )
-                .filter(
-                    q => q !== null
+    if(error){
+
+        throw error;
+
+    }
+
+
+    if(
+        !data ||
+        data.length <
+        TOTAL_QUESTIONS
+    ){
+
+        throw new Error(
+            "पर्याप्त quiz questions भेटिएनन्।"
+        );
+
+    }
+
+
+    const shuffled =
+        [...data];
+
+
+    shuffleArray(
+        shuffled
+    );
+
+
+    questions =
+        shuffled.slice(
+            0,
+            TOTAL_QUESTIONS
+        );
+
+}
+
+
+/* =========================================================
+   SHUFFLE
+========================================================= */
+
+function shuffleArray(
+    array
+){
+
+    for(
+        let i =
+            array.length - 1;
+        i > 0;
+        i--
+    ){
+
+        const j =
+            Math.floor(
+                Math.random() *
+                (i + 1)
+            );
+
+
+        [
+            array[i],
+            array[j]
+        ] =
+        [
+            array[j],
+            array[i]
+        ];
+
+    }
+
+
+    return array;
+
+}
+
+
+/* =========================================================
+   PARSE OPTIONS
+========================================================= */
+
+function parseOptions(
+    value
+){
+
+    if(
+        Array.isArray(
+            value
+        )
+    ){
+
+        return value;
+
+    }
+
+
+    if(
+        typeof value ===
+        "string"
+    ){
+
+        try{
+
+            const parsed =
+                JSON.parse(
+                    value
                 );
 
-        if(
-            normalized.length <
-            TOTAL_QUESTIONS
-        ){
 
-            throw new Error(
-                `कम्तीमा ${TOTAL_QUESTIONS} वटा valid questions आवश्यक छ।`
-            );
+            if(
+                Array.isArray(
+                    parsed
+                )
+            ){
+
+                return parsed;
+
+            }
+
+        }catch(error){
 
         }
 
-        questions =
-            shuffleArray(
-                normalized
-            ).slice(
-                0,
-                TOTAL_QUESTIONS
+
+        return value
+            .split(/\r?\n/)
+            .map(
+                item =>
+                    item
+                        .replace(
+                            /^[A-Da-d][.)]\s*/,
+                            ""
+                        )
+                        .trim()
+            )
+            .filter(
+                Boolean
             );
 
-        return true;
+    }
 
-    }catch(error){
 
-        console.error(
-            error
-        );
+    return [];
 
-        showGameError(
-            error.message ||
-            "प्रश्नहरू लोड गर्न सकिएन।"
-        );
+}
 
-        return false;
 
-    }finally{
+/* =========================================================
+   CORRECT INDEX
+========================================================= */
 
-        gameLoading =
-            false;
+function getCorrectIndex(
+    question,
+    options
+){
 
-        if(startButton){
+    const answer =
+        question.answer;
 
-            startButton.disabled =
-                false;
 
-            startButton.innerHTML =
-                "🚀 START CLIMB";
+    if(
+        typeof answer ===
+        "number"
+    ){
+
+        if(
+            answer >= 0 &&
+            answer <
+                options.length
+        ){
+
+            return answer;
 
         }
 
     }
+
+
+    if(
+        typeof answer ===
+        "string"
+    ){
+
+        const normalized =
+            answer
+                .trim()
+                .toLowerCase();
+
+
+        if(
+            /^[a-d]$/.test(
+                normalized
+            )
+        ){
+
+            return (
+                normalized.charCodeAt(0) -
+                "a".charCodeAt(0)
+            );
+
+        }
+
+
+        if(
+            /^\d+$/.test(
+                normalized
+            )
+        ){
+
+            const number =
+                Number(
+                    normalized
+                );
+
+
+            if(
+                number >= 0 &&
+                number <
+                    options.length
+            ){
+
+                return number;
+
+            }
+
+
+            if(
+                number >= 1 &&
+                number <=
+                    options.length
+            ){
+
+                return number - 1;
+
+            }
+
+        }
+
+
+        const exact =
+            options.findIndex(
+                option =>
+                    String(option)
+                        .trim()
+                        .toLowerCase() ===
+                    normalized
+            );
+
+
+        if(
+            exact !== -1
+        ){
+
+            return exact;
+
+        }
+
+
+        const partial =
+            options.findIndex(
+                option =>
+                    normalized.includes(
+                        String(option)
+                            .trim()
+                            .toLowerCase()
+                    ) ||
+                    String(option)
+                        .trim()
+                        .toLowerCase()
+                        .includes(
+                            normalized
+                        )
+            );
+
+
+        if(
+            partial !== -1
+        ){
+
+            return partial;
+
+        }
+
+    }
+
+
+    if(
+        typeof question.correct_index ===
+        "number"
+    ){
+
+        return question.correct_index;
+
+    }
+
+
+    return 0;
+
+}
+
+
+/* =========================================================
+   DIFFICULTY
+========================================================= */
+
+function normalizeDifficulty(
+    difficulty
+){
+
+    return String(
+        difficulty ||
+        "medium"
+    )
+        .trim()
+        .toLowerCase();
+
+}
+
+
+/* =========================================================
+   RANK GAIN
+========================================================= */
+
+function calculateRankGain(
+    difficulty,
+    currentStreak
+){
+
+    const difficultyValue =
+        normalizeDifficulty(
+            difficulty
+        );
+
+
+    let base =
+        5;
+
+
+    if(
+        difficultyValue ===
+        "easy"
+    ){
+
+        base =
+            3;
+
+    }else if(
+        difficultyValue ===
+        "medium"
+    ){
+
+        base =
+            5;
+
+    }else if(
+        difficultyValue ===
+        "hard"
+    ){
+
+        base =
+            8;
+
+    }else if(
+        difficultyValue ===
+        "expert"
+    ){
+
+        base =
+            12;
+
+    }
+
+
+    const streakBonus =
+        Math.min(
+            5,
+            Math.max(
+                0,
+                currentStreak - 1
+            )
+        );
+
+
+    return base +
+        streakBonus;
+
+}
+
+
+/* =========================================================
+   RANK PENALTY
+========================================================= */
+
+function calculateRankPenalty(){
+
+    return 3;
 
 }
 
@@ -2036,19 +3553,6 @@ async function loadQuestionsFromSupabase(){
 ========================================================= */
 
 function resetGameState(){
-
-    stopTimer();
-
-    if(feedbackTimeout){
-
-        clearTimeout(
-            feedbackTimeout
-        );
-
-        feedbackTimeout =
-            null;
-
-    }
 
     currentQuestion =
         0;
@@ -2065,11 +3569,17 @@ function resetGameState(){
     correctAnswers =
         0;
 
+    sessionXP =
+        0;
+
     earnedCoins =
         0;
 
     timer =
         QUESTION_TIME;
+
+    selectedAnswer =
+        null;
 
     answered =
         false;
@@ -2077,11 +3587,42 @@ function resetGameState(){
     gameStarted =
         false;
 
+    gameFinished =
+        false;
+
+    rewardSaved =
+        false;
+
     sessionId =
         null;
 
     sessionStartTime =
         null;
+
+    currentQuestionReward =
+        0;
+
+    currentRankChange =
+        0;
+
+    gameId =
+        createGameId();
+
+
+    clearTimer();
+
+
+    if(feedbackTimeout){
+
+        clearTimeout(
+            feedbackTimeout
+        );
+
+        feedbackTimeout =
+            null;
+
+    }
+
 
     updateIntroUI();
 
@@ -2089,64 +3630,47 @@ function resetGameState(){
 
 
 /* =========================================================
-   START SESSION
+   CREATE SESSION
 ========================================================= */
 
-async function createGameSession(){
-
-    if(!userId){
-
-        throw new Error(
-            "Firebase user भेटिएन।"
-        );
-
-    }
+async function createSession(){
 
     sessionStartTime =
-        new Date();
+        new Date()
+            .toISOString();
+
 
     const {
         data,
         error
     } =
-    await supabase
-        .from(
-            "rank_climber_sessions"
-        )
-        .insert({
+        await supabase
+            .from(
+                "rank_climber_sessions"
+            )
+            .insert(
+                {
+                    user_id:
+                        userId,
 
-            user_id:
-                userId,
+                    session_id:
+                        gameId,
 
-            starting_rank:
-                startingRank,
+                    starting_rank:
+                        startingRank,
 
-            final_rank:
-                startingRank,
+                    total_questions:
+                        TOTAL_QUESTIONS,
 
-            total_questions:
-                TOTAL_QUESTIONS,
+                    started_at:
+                        sessionStartTime
+                }
+            )
+            .select(
+                "id"
+            )
+            .single();
 
-            correct_answers:
-                0,
-
-            accuracy:
-                0,
-
-            best_streak:
-                0,
-
-            xp_earned:
-                0,
-
-            coins_earned:
-                0
-
-        })
-        .select(
-            "id"
-        )
-        .single();
 
     if(error){
 
@@ -2154,8 +3678,10 @@ async function createGameSession(){
 
     }
 
+
     sessionId =
-        data.id;
+        data?.id ||
+        gameId;
 
 }
 
@@ -2166,15 +3692,20 @@ async function createGameSession(){
 
 async function startGame(){
 
-    if(gameLoading){
+    if(
+        gameLoading
+    ){
 
         return;
 
     }
 
-    if(!userId){
 
-        showGameError(
+    if(
+        !firebaseUser
+    ){
+
+        showError(
             "लगइन आवश्यक छ।"
         );
 
@@ -2182,44 +3713,68 @@ async function startGame(){
 
     }
 
-    resetGameState();
 
-    const loaded =
-        await loadQuestionsFromSupabase();
+    gameLoading =
+        true;
 
-    if(!loaded){
+    hideError();
 
-        return;
 
-    }
+    startBtn.disabled =
+        true;
+
 
     try{
 
-        await createGameSession();
+        await loadCoinsFromFirebase();
+
+        await loadQuestions();
+
+        resetGameState();
+
+        await createSession();
+
+        gameStarted =
+            true;
+
+        showScreen(
+            gameScreen
+        );
+
+        await runCountdown();
+
+        renderQuestion();
 
     }catch(error){
 
         console.error(
-            "Session creation:",
+            "START GAME ERROR:",
             error
         );
 
-        showGameError(
-            "Game session save गर्न सकिएन: " +
-            error.message
+
+        showScreen(
+            introScreen
         );
 
-        return;
+
+        showError(
+            "Game सुरु हुन सकेन।\n\n" +
+            (
+                error?.message ||
+                "Unknown error"
+            )
+        );
+
+    }finally{
+
+        gameLoading =
+            false;
+
+        startBtn.disabled =
+            false;
 
     }
-
-    gameStarted =
-        true;
-
-    currentQuestion =
-        0;
-
-    showCountdown();
 
 }
 
@@ -2228,91 +3783,63 @@ async function startGame(){
    COUNTDOWN
 ========================================================= */
 
-function showCountdown(){
+async function runCountdown(){
 
-    const overlay =
-        $("countdown");
+    countdown.classList.add(
+        "show"
+    );
 
-    const number =
-        $("countNumber");
 
-    if(!overlay){
+    const numbers =
+        [
+            "3",
+            "2",
+            "1",
+            "GO!"
+        ];
 
-        showScreen(
-            "gameScreen"
+
+    for(
+        const number of numbers
+    ){
+
+        countNumber.textContent =
+            number;
+
+
+        countNumber.style.animation =
+            "none";
+
+
+        void countNumber.offsetWidth;
+
+
+        countNumber.style.animation =
+            "countdownPop .8s ease";
+
+
+        await delay(
+            800
         );
-
-        loadQuestion();
-
-        return;
 
     }
 
-    overlay.classList.add(
-        "active"
+
+    countdown.classList.remove(
+        "show"
     );
-
-    let count =
-        3;
-
-    number.textContent =
-        count;
-
-    const interval =
-        setInterval(
-            () => {
-
-                count--;
-
-                if(count > 0){
-
-                    number.textContent =
-                        count;
-
-                }else{
-
-                    number.textContent =
-                        "GO!";
-
-                }
-
-                if(count <= 0){
-
-                    clearInterval(
-                        interval
-                    );
-
-                    setTimeout(
-                        () => {
-
-                            overlay.classList.remove(
-                                "active"
-                            );
-
-                            showScreen(
-                                "gameScreen"
-                            );
-
-                            loadQuestion();
-
-                        },
-                        500
-                    );
-
-                }
-
-            },
-            1000
-        );
 
 }
 
 
 /* =========================================================
-   LOAD QUESTION
+   RENDER QUESTION
 ========================================================= */
 
-function loadQuestion(){
+function renderQuestion(){
+
+    clearTimer();
+
 
     if(
         currentQuestion >=
@@ -2325,131 +3852,82 @@ function loadQuestion(){
 
     }
 
-    const q =
+
+    const question =
         questions[
             currentQuestion
         ];
 
-    if(!q){
 
-        finishGame();
-
-        return;
-
-    }
+    selectedAnswer =
+        null;
 
     answered =
         false;
 
+    currentQuestionReward =
+        0;
+
+    currentRankChange =
+        0;
+
+
     setText(
         "questionNumber",
-        currentQuestion + 1
+        `${currentQuestion + 1}/${TOTAL_QUESTIONS}`
     );
+
 
     setText(
         "gameRank",
-        `#${currentRank}`
+        formatRank(
+            currentRank
+        )
     );
 
-    setText(
-        "streakDisplay",
-        streak
-    );
 
     setText(
         "questionTopic",
-        q.topic
+        question.topic ||
+        "General"
     );
+
 
     setText(
         "questionText",
-        q.question
+        question.question ||
+        "प्रश्न उपलब्ध छैन।"
     );
+
 
     setText(
         "streakMessage",
-        streak >= 2
-            ? `🔥 ${streak} answer streak!`
-            : ""
+        streak > 0
+            ? `🔥 ${streak} streak`
+            : "🔥 Streak सुरु गर्नुहोस्"
     );
 
-    const progress =
+
+    const percentage =
         (
             currentQuestion /
             TOTAL_QUESTIONS
         ) * 100;
 
-    const progressBar =
-        $("progressBar");
 
-    if(progressBar){
-
-        progressBar.style.width =
-            `${progress}%`;
-
-    }
-
-    renderAnswerOptions(
-        q.options
-    );
-
-    startTimer();
-
-}
+    $("progressBar").style.width =
+        percentage + "%";
 
 
-/* =========================================================
-   ESCAPE
-========================================================= */
-
-function escapeHTML(
-    value
-){
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
+    const options =
+        parseOptions(
+            question.options
         );
 
-}
 
-
-/* =========================================================
-   OPTIONS
-========================================================= */
-
-function renderAnswerOptions(
-    options
-){
-
-    const container =
-        $("answerOptions");
-
-    if(!container){
-
-        return;
-
-    }
-
-    container.innerHTML =
+    answerOptions.innerHTML =
         "";
+
 
     options.forEach(
         (
@@ -2462,16 +3940,24 @@ function renderAnswerOptions(
                     "button"
                 );
 
+
             button.type =
                 "button";
 
+
             button.className =
-                "answer-option";
+                "option";
+
+
+            button.dataset.index =
+                index;
+
 
             const letter =
                 String.fromCharCode(
                     65 + index
                 );
+
 
             button.innerHTML = `
 
@@ -2479,11 +3965,12 @@ function renderAnswerOptions(
                     ${letter}
                 </span>
 
-                <span>
+                <span class="option-text">
                     ${escapeHTML(option)}
                 </span>
 
             `;
+
 
             button.addEventListener(
                 "click",
@@ -2496,12 +3983,579 @@ function renderAnswerOptions(
                 }
             );
 
-            container.appendChild(
+
+            answerOptions.appendChild(
                 button
             );
 
         }
     );
+
+
+    submitAnswerBtn.disabled =
+        true;
+
+
+    timer =
+        QUESTION_TIME;
+
+
+    updateTimer();
+
+
+    startTimer();
+
+}
+
+
+/* =========================================================
+   SELECT ANSWER
+========================================================= */
+
+function selectAnswer(
+    index
+){
+
+    if(
+        answered ||
+        !gameStarted ||
+        gameFinished
+    ){
+
+        return;
+
+    }
+
+
+    selectedAnswer =
+        index;
+
+
+    document
+        .querySelectorAll(
+            ".option"
+        )
+        .forEach(
+            option => {
+
+                option.classList.remove(
+                    "selected"
+                );
+
+            }
+        );
+
+
+    const selected =
+        document.querySelector(
+            `.option[data-index="${index}"]`
+        );
+
+
+    if(selected){
+
+        selected.classList.add(
+            "selected"
+        );
+
+    }
+
+
+    submitAnswerBtn.disabled =
+        false;
+
+}
+
+
+/* =========================================================
+   SUBMIT ANSWER
+========================================================= */
+
+async function submitAnswer(){
+
+    if(
+        answered ||
+        selectedAnswer === null ||
+        gameFinished
+    ){
+
+        return;
+
+    }
+
+
+    answered =
+        true;
+
+
+    clearTimer();
+
+
+    submitAnswerBtn.disabled =
+        true;
+
+
+    document
+        .querySelectorAll(
+            ".option"
+        )
+        .forEach(
+            option => {
+
+                option.disabled =
+                    true;
+
+            }
+        );
+
+
+    const question =
+        questions[
+            currentQuestion
+        ];
+
+
+    const options =
+        parseOptions(
+            question.options
+        );
+
+
+    const correctIndex =
+        getCorrectIndex(
+            question,
+            options
+        );
+
+
+    const isCorrect =
+        Number(
+            selectedAnswer
+        ) ===
+        Number(
+            correctIndex
+        );
+
+
+    if(isCorrect){
+
+        await handleCorrect(
+            question,
+            correctIndex,
+            options
+        );
+
+    }else{
+
+        await handleWrong(
+            question,
+            correctIndex,
+            options
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CORRECT
+========================================================= */
+
+async function handleCorrect(
+    question,
+    correctIndex,
+    options
+){
+
+    correctAnswers++;
+
+    streak++;
+
+    bestStreak =
+        Math.max(
+            bestStreak,
+            streak
+        );
+
+
+    const rankGain =
+        calculateRankGain(
+            question.difficulty,
+            streak
+        );
+
+
+    currentRank =
+        Math.max(
+            1,
+            currentRank -
+            rankGain
+        );
+
+
+    currentRankChange =
+        rankGain;
+
+
+    currentQuestionReward =
+        rankGain;
+
+
+    sessionXP +=
+        10;
+
+
+    earnedCoins +=
+        5;
+
+
+    const selected =
+        document.querySelector(
+            `.option[data-index="${selectedAnswer}"]`
+        );
+
+
+    if(selected){
+
+        selected.classList.remove(
+            "selected"
+        );
+
+        selected.classList.add(
+            "correct"
+        );
+
+    }
+
+
+    playCorrectEffect();
+
+
+    updateGameUI();
+
+
+    await saveAnswerRecord(
+        question,
+        true,
+        selectedAnswer,
+        correctIndex,
+        rankGain
+    );
+
+
+    showFeedback(
+        true,
+        question,
+        options,
+        correctIndex,
+        rankGain,
+        5
+    );
+
+}
+
+
+/* =========================================================
+   WRONG
+========================================================= */
+
+async function handleWrong(
+    question,
+    correctIndex,
+    options
+){
+
+    streak =
+        0;
+
+
+    const penalty =
+        calculateRankPenalty();
+
+
+    currentRank +=
+        penalty;
+
+
+    currentRankChange =
+        -penalty;
+
+
+    currentQuestionReward =
+        -penalty;
+
+
+    const selected =
+        document.querySelector(
+            `.option[data-index="${selectedAnswer}"]`
+        );
+
+
+    if(selected){
+
+        selected.classList.remove(
+            "selected"
+        );
+
+        selected.classList.add(
+            "wrong"
+        );
+
+    }
+
+
+    const correct =
+        document.querySelector(
+            `.option[data-index="${correctIndex}"]`
+        );
+
+
+    if(correct){
+
+        correct.classList.add(
+            "correct"
+        );
+
+    }
+
+
+    playWrongEffect();
+
+
+    updateGameUI();
+
+
+    await saveAnswerRecord(
+        question,
+        false,
+        selectedAnswer,
+        correctIndex,
+        -penalty
+    );
+
+
+    showFeedback(
+        false,
+        question,
+        options,
+        correctIndex,
+        penalty,
+        0
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE GAME UI
+========================================================= */
+
+function updateGameUI(){
+
+    setText(
+        "gameRank",
+        formatRank(
+            currentRank
+        )
+    );
+
+
+    setText(
+        "streakMessage",
+        streak > 0
+            ? `🔥 ${streak} streak`
+            : "Streak reset"
+    );
+
+
+    updateIntroUI();
+
+}
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+function showFeedback(
+    isCorrect,
+    question,
+    options,
+    correctIndex,
+    rankAmount,
+    coinAmount
+){
+
+    showScreen(
+        feedbackScreen
+    );
+
+
+    if(isCorrect){
+
+        setText(
+            "feedbackIcon",
+            "✓"
+        );
+
+        setText(
+            "feedbackTitle",
+            "सही उत्तर!"
+        );
+
+        setText(
+            "feedbackMessage",
+            streak >= 3
+                ? `🔥 Excellent! ${streak} लगातार सही उत्तर।`
+                : "राम्रो! तपाईं Rank माथि चढ्दै हुनुहुन्छ।"
+        );
+
+        setText(
+            "rankMove",
+            `+${rankAmount}`
+        );
+
+        setText(
+            "rankReward",
+            `#${currentRank.toLocaleString()}`
+        );
+
+    }else{
+
+        setText(
+            "feedbackIcon",
+            "✕"
+        );
+
+        setText(
+            "feedbackTitle",
+            "उत्तर गलत भयो"
+        );
+
+        setText(
+            "feedbackMessage",
+            `Rank मा ${rankAmount} position penalty भयो।`
+        );
+
+        setText(
+            "rankMove",
+            `-${rankAmount}`
+        );
+
+        setText(
+            "rankReward",
+            `#${currentRank.toLocaleString()}`
+        );
+
+    }
+
+
+    setText(
+        "feedbackXP",
+        isCorrect
+            ? "+10"
+            : "0"
+    );
+
+
+    setText(
+        "feedbackCoins",
+        coinAmount > 0
+            ? `+${coinAmount}`
+            : "0"
+    );
+
+
+    setText(
+        "feedbackStreak",
+        streak
+    );
+
+
+    setText(
+        "correctAnswer",
+        options[
+            correctIndex
+        ] ??
+        "—"
+    );
+
+
+    setText(
+        "explanation",
+        question.explanation ||
+        "यस प्रश्नको स्पष्टीकरण उपलब्ध छैन।"
+    );
+
+
+    if(feedbackTimeout){
+
+        clearTimeout(
+            feedbackTimeout
+        );
+
+    }
+
+
+    feedbackTimeout =
+        setTimeout(
+            () => {
+
+                nextQuestion();
+
+            },
+            1800
+        );
+
+}
+
+
+/* =========================================================
+   NEXT QUESTION
+========================================================= */
+
+function nextQuestion(){
+
+    if(
+        savingAnswer
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        gameFinished
+    ){
+
+        return;
+
+    }
+
+
+    currentQuestion++;
+
+
+    if(
+        currentQuestion >=
+        TOTAL_QUESTIONS
+    ){
+
+        finishGame();
+
+        return;
+
+    }
+
+
+    showScreen(
+        gameScreen
+    );
+
+
+    renderQuestion();
 
 }
 
@@ -2512,24 +4566,43 @@ function renderAnswerOptions(
 
 function startTimer(){
 
-    stopTimer();
+    clearTimer();
+
 
     timer =
         QUESTION_TIME;
 
-    updateTimerDisplay();
+
+    updateTimer();
+
 
     timerInterval =
         setInterval(
             () => {
 
+                if(
+                    answered ||
+                    gameFinished
+                ){
+
+                    clearTimer();
+
+                    return;
+
+                }
+
+
                 timer--;
 
-                updateTimerDisplay();
 
-                if(timer <= 0){
+                updateTimer();
 
-                    stopTimer();
+
+                if(
+                    timer <= 0
+                ){
+
+                    clearTimer();
 
                     handleTimeout();
 
@@ -2541,42 +4614,62 @@ function startTimer(){
 
 }
 
-function updateTimerDisplay(){
 
-    const element =
-        $("timer");
+/* =========================================================
+   UPDATE TIMER
+========================================================= */
+
+function updateTimer(){
 
     setText(
         "timer",
         timer
     );
 
-    if(element){
 
-        element.classList.remove(
-            "warning",
-            "danger"
+    const timerBox =
+        $("timerBox");
+
+
+    timerBox.classList.remove(
+        "warning",
+        "danger"
+    );
+
+
+    if(
+        timer <= 8
+    ){
+
+        timerBox.classList.add(
+            "warning"
         );
 
-        if(timer <= 5){
+    }
 
-            element.classList.add(
-                "danger"
-            );
 
-        }else if(timer <= 8){
+    if(
+        timer <= 4
+    ){
 
-            element.classList.add(
-                "warning"
-            );
+        timerBox.classList.remove(
+            "warning"
+        );
 
-        }
+        timerBox.classList.add(
+            "danger"
+        );
 
     }
 
 }
 
-function stopTimer(){
+
+/* =========================================================
+   CLEAR TIMER
+========================================================= */
+
+function clearTimer(){
 
     if(timerInterval){
 
@@ -2593,913 +4686,220 @@ function stopTimer(){
 
 
 /* =========================================================
-   RANK CALCULATION
-========================================================= */
-
-function calculateRankGain(
-    difficulty,
-    currentStreak
-){
-
-    let gain =
-        5;
-
-    switch(
-        String(
-            difficulty
-        ).toLowerCase()
-    ){
-
-        case "easy":
-
-            gain = 3;
-
-            break;
-
-        case "medium":
-
-            gain = 5;
-
-            break;
-
-        case "hard":
-
-            gain = 8;
-
-            break;
-
-        case "expert":
-
-            gain = 12;
-
-            break;
-
-    }
-
-    const streakBonus =
-        currentStreak >= 2
-            ? Math.min(
-                currentStreak - 1,
-                5
-            )
-            : 0;
-
-    return {
-
-        base:
-            gain,
-
-        streakBonus:
-            streakBonus,
-
-        total:
-            gain +
-            streakBonus
-
-    };
-
-}
-
-
-/* =========================================================
-   SAVE ANSWER
-========================================================= */
-
-async function saveAnswerRecord({
-
-    question,
-    selectedIndex,
-    selectedAnswer,
-    isCorrect,
-    responseTime,
-    timedOut,
-    rankBefore,
-    rankAfter,
-    xpEarned,
-    coinsEarned
-
-}){
-
-    if(
-        !userId ||
-        !sessionId
-    ){
-
-        return;
-
-    }
-
-    try{
-
-        const {
-            error
-        } =
-        await supabase
-            .from(
-                "rank_climber_answers"
-            )
-            .insert({
-
-                session_id:
-                    sessionId,
-
-                user_id:
-                    userId,
-
-                question_id:
-                    question.id,
-
-                question_number:
-                    currentQuestion + 1,
-
-                selected_answer:
-                    selectedAnswer || null,
-
-                selected_index:
-                    selectedIndex,
-
-                correct_answer:
-                    question.correct,
-
-                correct_index:
-                    question.correctIndex,
-
-                is_correct:
-                    isCorrect,
-
-                timed_out:
-                    timedOut,
-
-                response_time:
-                    responseTime,
-
-                difficulty:
-                    question.difficulty,
-
-                rank_before:
-                    rankBefore,
-
-                rank_after:
-                    rankAfter,
-
-                xp_earned:
-                    xpEarned,
-
-                coins_earned:
-                    coinsEarned
-
-            });
-
-        if(error){
-
-            console.error(
-                "Answer save error:",
-                error
-            );
-
-        }
-
-    }catch(error){
-
-        console.error(
-            "Answer record failed:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   SELECT ANSWER
-========================================================= */
-
-async function selectAnswer(
-    index
-){
-
-    if(answered || savingAnswer){
-
-        return;
-
-    }
-
-    const q =
-        questions[
-            currentQuestion
-        ];
-
-    if(!q){
-
-        return;
-
-    }
-
-    answered =
-        true;
-
-    savingAnswer =
-        true;
-
-    stopTimer();
-
-    const selectedAnswer =
-        q.options[index];
-
-    const isCorrect =
-        index ===
-        q.correctIndex;
-
-    const responseTime =
-        QUESTION_TIME -
-        timer;
-
-    const rankBefore =
-        currentRank;
-
-    markAnswerButtons(
-        index,
-        q.correctIndex
-    );
-
-    if(isCorrect){
-
-        handleCorrect(
-            q
-        );
-
-    }else{
-
-        handleWrong(
-            q,
-            selectedAnswer
-        );
-
-    }
-
-    const rankAfter =
-        currentRank;
-
-    const gainedXP =
-        isCorrect
-            ? 10
-            : 0;
-
-    const gainedCoins =
-        isCorrect
-            ? 5
-            : 0;
-
-    await saveAnswerRecord({
-
-        question:
-            q,
-
-        selectedIndex:
-            index,
-
-        selectedAnswer:
-            selectedAnswer,
-
-        isCorrect:
-            isCorrect,
-
-        responseTime:
-            responseTime,
-
-        timedOut:
-            false,
-
-        rankBefore:
-            rankBefore,
-
-        rankAfter:
-            rankAfter,
-
-        xpEarned:
-            gainedXP,
-
-        coinsEarned:
-            gainedCoins
-
-    });
-
-    savingAnswer =
-        false;
-
-}
-
-
-/* =========================================================
-   MARK BUTTONS
-========================================================= */
-
-function markAnswerButtons(
-    selectedIndex,
-    correctIndex
-){
-
-    const buttons =
-        document.querySelectorAll(
-            ".answer-option"
-        );
-
-    buttons.forEach(
-        (
-            button,
-            index
-        ) => {
-
-            button.disabled =
-                true;
-
-            if(
-                index ===
-                correctIndex
-            ){
-
-                button.classList.add(
-                    "correct"
-                );
-
-            }
-
-            if(
-                index ===
-                selectedIndex &&
-                index !== correctIndex
-            ){
-
-                button.classList.add(
-                    "wrong"
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   CORRECT
-========================================================= */
-
-function handleCorrect(
-    q
-){
-
-    correctAnswers++;
-
-    streak++;
-
-    if(
-        streak >
-        bestStreak
-    ){
-
-        bestStreak =
-            streak;
-
-    }
-
-    const rankChange =
-        calculateRankGain(
-            q.difficulty,
-            streak
-        );
-
-    const oldRank =
-        currentRank;
-
-    currentRank =
-        Math.max(
-            1,
-            currentRank -
-            rankChange.total
-        );
-
-    xp += 10;
-
-    earnedCoins += 5;
-
-    showCorrectFeedback({
-
-        question:
-            q,
-
-        oldRank:
-            oldRank,
-
-        newRank:
-            currentRank,
-
-        rankGain:
-            rankChange.total,
-
-        streak:
-            streak,
-
-        xp:
-            10,
-
-        coins:
-            5
-
-    });
-
-}
-
-
-/* =========================================================
-   WRONG
-========================================================= */
-
-function handleWrong(
-    q,
-    selectedAnswer
-){
-
-    const oldRank =
-        currentRank;
-
-    streak =
-        0;
-
-    const penalty =
-        3;
-
-    currentRank =
-        Math.min(
-            startingRank + 13,
-            currentRank + penalty
-        );
-
-    showWrongFeedback({
-
-        question:
-            q,
-
-        oldRank:
-            oldRank,
-
-        newRank:
-            currentRank,
-
-        penalty:
-            penalty,
-
-        selectedAnswer:
-            selectedAnswer
-
-    });
-
-}
-
-
-/* =========================================================
    TIMEOUT
 ========================================================= */
 
 async function handleTimeout(){
 
-    if(answered){
+    if(
+        answered ||
+        gameFinished
+    ){
 
         return;
 
     }
+
 
     answered =
         true;
 
-    stopTimer();
 
-    const q =
+    const question =
         questions[
             currentQuestion
         ];
 
-    if(!q){
 
-        finishGame();
+    const options =
+        parseOptions(
+            question.options
+        );
 
-        return;
+
+    const correctIndex =
+        getCorrectIndex(
+            question,
+            options
+        );
+
+
+    document
+        .querySelectorAll(
+            ".option"
+        )
+        .forEach(
+            option => {
+
+                option.disabled =
+                    true;
+
+            }
+        );
+
+
+    const correct =
+        document.querySelector(
+            `.option[data-index="${correctIndex}"]`
+        );
+
+
+    if(correct){
+
+        correct.classList.add(
+            "correct"
+        );
 
     }
 
-    const oldRank =
-        currentRank;
 
     streak =
         0;
 
+
     const penalty =
-        3;
+        calculateRankPenalty();
 
-    currentRank =
-        Math.min(
-            startingRank + 13,
-            currentRank + penalty
-        );
 
-    markAnswerButtons(
-        -1,
-        q.correctIndex
+    currentRank +=
+        penalty;
+
+
+    currentRankChange =
+        -penalty;
+
+
+    playWrongEffect();
+
+
+    updateGameUI();
+
+
+    await saveAnswerRecord(
+        question,
+        false,
+        null,
+        correctIndex,
+        -penalty
     );
 
-    await saveAnswerRecord({
 
-        question:
-            q,
+    showFeedback(
+        false,
+        question,
+        options,
+        correctIndex,
+        penalty,
+        0
+    );
 
-        selectedIndex:
-            -1,
 
-        selectedAnswer:
-            null,
+    setText(
+        "feedbackTitle",
+        "⏰ समय सकियो!"
+    );
 
-        isCorrect:
-            false,
 
-        responseTime:
-            QUESTION_TIME,
-
-        timedOut:
-            true,
-
-        rankBefore:
-            oldRank,
-
-        rankAfter:
-            currentRank,
-
-        xpEarned:
-            0,
-
-        coinsEarned:
-            0
-
-    });
-
-    showTimeoutFeedback({
-
-        question:
-            q,
-
-        oldRank:
-            oldRank,
-
-        newRank:
-            currentRank,
-
-        penalty:
-            penalty
-
-    });
+    setText(
+        "feedbackMessage",
+        `उत्तर नदिइएकोले ${penalty} rank penalty भयो।`
+    );
 
 }
 
 
 /* =========================================================
-   FEEDBACK
+   SAVE ANSWER RECORD
 ========================================================= */
 
-function showCorrectFeedback(
-    data
+async function saveAnswerRecord(
+    question,
+    isCorrect,
+    selectedIndex,
+    correctIndex,
+    rankChange
 ){
 
-    showScreen(
-        "feedbackScreen"
-    );
+    savingAnswer =
+        true;
 
-    setText(
-        "feedbackIcon",
-        "✓"
-    );
-
-    setText(
-        "feedbackTitle",
-        "CORRECT!"
-    );
-
-    setText(
-        "feedbackMessage",
-        "सही उत्तर! राम्रो गरिरहनुभएको छ।"
-    );
-
-    setText(
-        "feedbackRankTop",
-        `#${data.newRank}`
-    );
-
-    setText(
-        "rankMove",
-        `#${data.oldRank} → #${data.newRank}`
-    );
-
-    setText(
-        "rankReward",
-        `+${data.rankGain}`
-    );
-
-    setText(
-        "feedbackXP",
-        `+${data.xp} XP`
-    );
-
-    setText(
-        "feedbackCoins",
-        `+${data.coins}`
-    );
-
-    setText(
-        "feedbackStreak",
-        `🔥 ${data.streak} streak`
-    );
-
-    setText(
-        "correctAnswer",
-        `सही उत्तर: ${data.question.correct}`
-    );
-
-    setText(
-        "explanation",
-        data.question.explanation
-    );
-
-    feedbackTimeout =
-        setTimeout(
-            nextQuestion,
-            1800
-        );
-
-}
-
-
-function showWrongFeedback(
-    data
-){
-
-    showScreen(
-        "feedbackScreen"
-    );
-
-    setText(
-        "feedbackIcon",
-        "✕"
-    );
-
-    setText(
-        "feedbackTitle",
-        "NOT QUITE"
-    );
-
-    setText(
-        "feedbackMessage",
-        "यसपटक सही भएन।"
-    );
-
-    setText(
-        "feedbackRankTop",
-        `#${data.newRank}`
-    );
-
-    setText(
-        "rankMove",
-        `#${data.oldRank} → #${data.newRank}`
-    );
-
-    setText(
-        "rankReward",
-        `-${data.penalty}`
-    );
-
-    setText(
-        "feedbackXP",
-        "+0 XP"
-    );
-
-    setText(
-        "feedbackCoins",
-        "+0"
-    );
-
-    setText(
-        "feedbackStreak",
-        "🔥 Streak reset"
-    );
-
-    setText(
-        "correctAnswer",
-        `सही उत्तर: ${data.question.correct}`
-    );
-
-    setText(
-        "explanation",
-        data.question.explanation
-    );
-
-    feedbackTimeout =
-        setTimeout(
-            nextQuestion,
-            2200
-        );
-
-}
-
-
-function showTimeoutFeedback(
-    data
-){
-
-    showScreen(
-        "feedbackScreen"
-    );
-
-    setText(
-        "feedbackIcon",
-        "⏱"
-    );
-
-    setText(
-        "feedbackTitle",
-        "TIME'S UP!"
-    );
-
-    setText(
-        "feedbackMessage",
-        "समय सकियो!"
-    );
-
-    setText(
-        "feedbackRankTop",
-        `#${data.newRank}`
-    );
-
-    setText(
-        "rankMove",
-        `#${data.oldRank} → #${data.newRank}`
-    );
-
-    setText(
-        "rankReward",
-        `-${data.penalty}`
-    );
-
-    setText(
-        "feedbackXP",
-        "+0 XP"
-    );
-
-    setText(
-        "feedbackCoins",
-        "+0"
-    );
-
-    setText(
-        "feedbackStreak",
-        "🔥 Streak reset"
-    );
-
-    setText(
-        "correctAnswer",
-        `सही उत्तर: ${data.question.correct}`
-    );
-
-    setText(
-        "explanation",
-        data.question.explanation
-    );
-
-    feedbackTimeout =
-        setTimeout(
-            nextQuestion,
-            2200
-        );
-
-}
-
-
-/* =========================================================
-   NEXT
-========================================================= */
-
-function nextQuestion(){
-
-    if(feedbackTimeout){
-
-        clearTimeout(
-            feedbackTimeout
-        );
-
-        feedbackTimeout =
-            null;
-
-    }
-
-    currentQuestion++;
-
-    if(
-        currentQuestion >=
-        TOTAL_QUESTIONS
-    ){
-
-        finishGame();
-
-        return;
-
-    }
-
-    showScreen(
-        "gameScreen"
-    );
-
-    loadQuestion();
-
-}
-
-
-/* =========================================================
-   SAVE FINAL SESSION
-========================================================= */
-
-async function saveFinalSession(){
-
-    if(
-        !sessionId ||
-        !userId
-    ){
-
-        return;
-
-    }
-
-    const accuracy =
-        Math.round(
-            (
-                correctAnswers /
-                TOTAL_QUESTIONS
-            ) * 100
-        );
-
-    const positionsClimbed =
-        startingRank -
-        currentRank;
 
     try{
+
+        if(!sessionId){
+
+            return;
+
+        }
+
+
+        const answerData = {
+
+            session_id:
+                sessionId,
+
+            user_id:
+                userId,
+
+            question_id:
+                question.id,
+
+            question_number:
+                currentQuestion + 1,
+
+            selected_answer:
+                selectedIndex,
+
+            correct_answer:
+                correctIndex,
+
+            is_correct:
+                isCorrect,
+
+            rank_change:
+                rankChange,
+
+            xp_earned:
+                isCorrect
+                    ? 10
+                    : 0,
+
+            coins_earned:
+                isCorrect
+                    ? 5
+                    : 0,
+
+            topic:
+                question.topic ||
+                null,
+
+            difficulty:
+                question.difficulty ||
+                null,
+
+            answered_at:
+                new Date()
+                    .toISOString()
+
+        };
+
 
         const {
             error
         } =
-        await supabase
-            .from(
-                "rank_climber_sessions"
-            )
-            .update({
+            await supabase
+                .from(
+                    "rank_climber_answers"
+                )
+                .insert(
+                    answerData
+                );
 
-                final_rank:
-                    currentRank,
-
-                correct_answers:
-                    correctAnswers,
-
-                accuracy:
-                    accuracy,
-
-                best_streak:
-                    bestStreak,
-
-                xp_earned:
-                    xp,
-
-                coins_earned:
-                    earnedCoins,
-
-                positions_climbed:
-                    positionsClimbed,
-
-                completed:
-                    true,
-
-                completed_at:
-                    new Date().toISOString()
-
-            })
-            .eq(
-                "id",
-                sessionId
-            )
-            .eq(
-                "user_id",
-                userId
-            );
 
         if(error){
 
             console.error(
-                "Session update:",
+                "ANSWER SAVE ERROR:",
                 error
             );
 
@@ -3508,252 +4908,14 @@ async function saveFinalSession(){
     }catch(error){
 
         console.error(
-            "Final session save:",
+            "ANSWER RECORD ERROR:",
             error
         );
 
-    }
+    }finally{
 
-}
-
-
-/* =========================================================
-   UPDATE PLAYER
-========================================================= */
-
-async function updatePersistentPlayer(){
-
-    if(!userId){
-
-        return;
-
-    }
-
-    try{
-
-        const {
-            data:
-            existing,
-            error:
-            fetchError
-        } =
-        await supabase
-            .from(
-                "rank_climber_players"
-            )
-            .select(
-                "best_rank,total_xp,best_streak"
-            )
-            .eq(
-                "user_id",
-                userId
-            )
-            .maybeSingle();
-
-        if(fetchError){
-
-            throw fetchError;
-
-        }
-
-        const oldBest =
-            Number(
-                existing?.best_rank
-            ) || DEFAULT_RANK;
-
-        const oldXP =
-            Number(
-                existing?.total_xp
-            ) || 0;
-
-        const oldBestStreak =
-            Number(
-                existing?.best_streak
-            ) || 0;
-
-        const newBest =
-            Math.min(
-                oldBest,
-                currentRank
-            );
-
-        const {
-            error
-        } =
-        await supabase
-            .from(
-                "rank_climber_players"
-            )
-            .upsert({
-
-                user_id:
-                    userId,
-
-                current_rank:
-                    currentRank,
-
-                best_rank:
-                    newBest,
-
-                total_xp:
-                    oldXP + xp,
-
-                current_streak:
-                    streak,
-
-                best_streak:
-                    Math.max(
-                        oldBestStreak,
-                        bestStreak
-                    ),
-
-                updated_at:
-                    new Date().toISOString()
-
-            },{
-
-                onConflict:
-                    "user_id"
-
-            });
-
-        if(error){
-
-            throw error;
-
-        }
-
-    }catch(error){
-
-        console.error(
-            "Persistent player update:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   SAVE DAILY LEADERBOARD
-========================================================= */
-
-async function saveDailyLeaderboard(){
-
-    if(!userId){
-
-        return;
-
-    }
-
-    const today =
-        new Date()
-            .toISOString()
-            .slice(
-                0,
-                10
-            );
-
-    try{
-
-        const {
-            data:
-            existing,
-            error:
-            fetchError
-        } =
-        await supabase
-            .from(
-                "rank_climber_daily"
-            )
-            .select(
-                "best_score,best_rank"
-            )
-            .eq(
-                "user_id",
-                userId
-            )
-            .eq(
-                "leaderboard_date",
-                today
-            )
-            .maybeSingle();
-
-        if(fetchError){
-
-            throw fetchError;
-
-        }
-
-        const score =
-            (
-                correctAnswers * 100
-            ) +
-            (
-                bestStreak * 20
-            ) +
-            xp;
-
-        const oldScore =
-            Number(
-                existing?.best_score
-            ) || 0;
-
-        const oldRank =
-            Number(
-                existing?.best_rank
-            ) || DEFAULT_RANK;
-
-        const {
-            error
-        } =
-        await supabase
-            .from(
-                "rank_climber_daily"
-            )
-            .upsert({
-
-                user_id:
-                    userId,
-
-                leaderboard_date:
-                    today,
-
-                best_score:
-                    Math.max(
-                        oldScore,
-                        score
-                    ),
-
-                best_rank:
-                    Math.min(
-                        oldRank,
-                        currentRank
-                    ),
-
-                updated_at:
-                    new Date().toISOString()
-
-            },{
-
-                onConflict:
-                    "user_id,leaderboard_date"
-
-            });
-
-        if(error){
-
-            throw error;
-
-        }
-
-    }catch(error){
-
-        console.error(
-            "Daily leaderboard:",
-            error
-        );
+        savingAnswer =
+            false;
 
     }
 
@@ -3766,207 +4928,598 @@ async function saveDailyLeaderboard(){
 
 async function finishGame(){
 
-    stopTimer();
+    if(
+        gameFinished
+    ){
+
+        return;
+
+    }
+
+
+    gameFinished =
+        true;
+
 
     gameStarted =
         false;
 
-    xp +=
+
+    clearTimer();
+
+
+    /*
+       Session completion bonuses.
+    */
+
+    sessionXP +=
         bestStreak * 5;
 
-    const perfect =
+
+    if(
         correctAnswers ===
-        TOTAL_QUESTIONS;
+        TOTAL_QUESTIONS
+    ){
 
-    if(perfect){
+        sessionXP +=
+            50;
 
-        xp += 50;
-
-        earnedCoins += 30;
+        earnedCoins +=
+            30;
 
     }
+
 
     earnedCoins +=
         bestStreak * 2;
 
-    const positionsClimbed =
-        startingRank -
-        currentRank;
 
     const accuracy =
-        Math.round(
-            (
+        TOTAL_QUESTIONS > 0
+            ? (
                 correctAnswers /
                 TOTAL_QUESTIONS
             ) * 100
+            : 0;
+
+
+    /*
+       Save Firebase reward first.
+    */
+
+    let rewardResult;
+
+
+    try{
+
+        rewardResult =
+            await saveCoinRewardToFirebase();
+
+    }catch(error){
+
+        console.error(
+            "COIN REWARD ERROR:",
+            error
         );
 
-    await saveFinalSession();
 
-    await updatePersistentPlayer();
+        showScreen(
+            resultScreen
+        );
 
-    await saveDailyLeaderboard();
-
-    coins +=
-        earnedCoins;
-
-    showScreen(
-        "resultScreen"
-    );
-
-    setText(
-        "finalRank",
-        `#${currentRank}`
-    );
-
-    setText(
-        "positionsClimbed",
-        positionsClimbed >= 0
-            ? `↑ ${positionsClimbed}`
-            : `↓ ${Math.abs(
-                positionsClimbed
-            )}`
-    );
-
-    setText(
-        "correctAnswers",
-        `${correctAnswers}/${TOTAL_QUESTIONS}`
-    );
-
-    setText(
-        "accuracy",
-        `${accuracy}%`
-    );
-
-    setText(
-        "bestStreak",
-        bestStreak
-    );
-
-    setText(
-        "totalXP",
-        `+${xp}`
-    );
-
-    setText(
-        "totalCoins",
-        earnedCoins
-    );
-
-    setText(
-        "resultCoins",
-        coins
-    );
-
-    if(perfect){
 
         setText(
             "resultMessage",
-            "🏆 PERFECT CLIMB!"
+            "Game पूरा भयो तर coin save हुन सकेन। कृपया result फेरि जाँच गर्नुहोस्।"
         );
 
-    }else if(
-        currentRank === 1
+
+        setText(
+            "totalXP",
+            sessionXP
+        );
+
+
+        setText(
+            "correctAnswers",
+            `${correctAnswers}/${TOTAL_QUESTIONS}`
+        );
+
+
+        setText(
+            "accuracy",
+            `${accuracy.toFixed(1)}%`
+        );
+
+
+        setText(
+            "bestStreak",
+            bestStreak
+        );
+
+
+        setText(
+            "finalRank",
+            formatRank(
+                currentRank
+            )
+        );
+
+
+        setText(
+            "positionsClimbed",
+            calculatePositionsClimbed()
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+       Save Supabase session.
+    */
+
+    await saveFinalSession(
+        accuracy
+    );
+
+
+    /*
+       Update persistent player.
+    */
+
+    await updatePersistentPlayer();
+
+
+    /*
+       Save daily leaderboard.
+    */
+
+    await saveDailyLeaderboard(
+        accuracy
+    );
+
+
+    /*
+       Result UI.
+    */
+
+    showScreen(
+        resultScreen
+    );
+
+
+    if(
+        rewardResult.alreadySaved
     ){
 
         setText(
             "resultMessage",
-            "👑 YOU ARE ON TOP!"
+            "यो game को coin reward पहिले नै save भइसकेको छ।"
         );
 
     }else{
 
         setText(
             "resultMessage",
-            "CLIMB COMPLETE"
+            `Game पूरा भयो! +${earnedCoins} coins तपाईंको Firebase balance मा थपियो।`
         );
 
     }
+
+
+    setText(
+        "resultCoins",
+        coins
+    );
+
+
+    setText(
+        "finalRank",
+        formatRank(
+            currentRank
+        )
+    );
+
+
+    setText(
+        "positionsClimbed",
+        calculatePositionsClimbed()
+    );
+
+
+    setText(
+        "correctAnswers",
+        `${correctAnswers}/${TOTAL_QUESTIONS}`
+    );
+
+
+    setText(
+        "accuracy",
+        `${accuracy.toFixed(1)}%`
+    );
+
+
+    setText(
+        "bestStreak",
+        bestStreak
+    );
+
+
+    setText(
+        "totalXP",
+        sessionXP
+    );
+
+
+    setText(
+        "totalCoins",
+        coins
+    );
+
+
+    updateCoinUI();
 
 }
 
 
 /* =========================================================
-   LEADERBOARD
+   POSITION CLIMBED
 ========================================================= */
 
-async function showLeaderboard(){
+function calculatePositionsClimbed(){
 
-    stopTimer();
-
-    showScreen(
-        "leaderboardScreen"
-    );
-
-    await loadLeaderboard(
-        "global"
+    return Math.max(
+        0,
+        startingRank -
+        currentRank
     );
 
 }
 
 
-async function loadLeaderboard(
-    type = "global"
+/* =========================================================
+   SAVE COIN REWARD
+========================================================= */
+
+async function saveCoinRewardToFirebase(){
+
+    if(
+        rewardSaved
+    ){
+
+        return {
+
+            alreadySaved:
+                true,
+
+            balance:
+                coins
+
+        };
+
+    }
+
+
+    if(
+        !firebaseUser
+    ){
+
+        throw new Error(
+            "Firebase user भेटिएन।"
+        );
+
+    }
+
+
+    if(
+        !gameId
+    ){
+
+        throw new Error(
+            "Game ID भेटिएन।"
+        );
+
+    }
+
+
+    const userRef =
+        doc(
+            db,
+            "users",
+            firebaseUser.uid
+        );
+
+
+    const historyRef =
+        doc(
+            db,
+            "users",
+            firebaseUser.uid,
+            "coin_history",
+            gameId
+        );
+
+
+    const result =
+        await runTransaction(
+            db,
+            async transaction => {
+
+                /*
+                   All reads happen before writes.
+                */
+
+                const userSnap =
+                    await transaction.get(
+                        userRef
+                    );
+
+
+                const historySnap =
+                    await transaction.get(
+                        historyRef
+                    );
+
+
+                /*
+                   Duplicate protection.
+                */
+
+                if(
+                    historySnap.exists()
+                ){
+
+                    return {
+
+                        alreadySaved:
+                            true,
+
+                        balance:
+                            Number(
+                                userSnap.exists()
+                                    ? (
+                                        userSnap.data()
+                                            .coins ??
+                                        0
+                                    )
+                                    : 0
+                            )
+
+                    };
+
+                }
+
+
+                if(
+                    !userSnap.exists()
+                ){
+
+                    throw new Error(
+                        "Firebase user profile भेटिएन।"
+                    );
+
+                }
+
+
+                const oldCoins =
+                    Number(
+                        userSnap.data()
+                            .coins ??
+                        0
+                    );
+
+
+                const reward =
+                    Math.max(
+                        0,
+                        Number(
+                            earnedCoins ||
+                            0
+                        )
+                    );
+
+
+                const newBalance =
+                    oldCoins +
+                    reward;
+
+
+                transaction.update(
+                    userRef,
+                    {
+
+                        coins:
+                            increment(
+                                reward
+                            ),
+
+                        updatedAt:
+                            serverTimestamp()
+
+                    }
+                );
+
+
+                transaction.set(
+                    historyRef,
+                    {
+
+                        game_id:
+                            gameId,
+
+                        game:
+                            "rank_climber",
+
+                        source:
+                            "rank_climber",
+
+                        status:
+                            "completed",
+
+                        coins_won:
+                            reward,
+
+                        coins_before:
+                            oldCoins,
+
+                        coins_after:
+                            newBalance,
+
+                        questions:
+                            TOTAL_QUESTIONS,
+
+                        correct_answers:
+                            correctAnswers,
+
+                        accuracy:
+                            TOTAL_QUESTIONS > 0
+                                ? (
+                                    correctAnswers /
+                                    TOTAL_QUESTIONS
+                                ) * 100
+                                : 0,
+
+                        best_streak:
+                            bestStreak,
+
+                        starting_rank:
+                            startingRank,
+
+                        final_rank:
+                            currentRank,
+
+                        positions_climbed:
+                            calculatePositionsClimbed(),
+
+                        xp_earned:
+                            sessionXP,
+
+                        created_at:
+                            serverTimestamp(),
+
+                        timestamp:
+                            serverTimestamp()
+
+                    }
+                );
+
+
+                return {
+
+                    alreadySaved:
+                        false,
+
+                    balance:
+                        newBalance
+
+                };
+
+            }
+        );
+
+
+    rewardSaved =
+        true;
+
+
+    coins =
+        Number(
+            result.balance ??
+            coins
+        );
+
+
+    updateCoinUI();
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   SAVE FINAL SESSION
+========================================================= */
+
+async function saveFinalSession(
+    accuracy
 ){
 
-    currentLeaderboardType =
-        type;
-
-    const list =
-        $("leaderboardList");
-
-    if(!list){
+    if(
+        !sessionId
+    ){
 
         return;
 
     }
 
-    list.innerHTML = `
-        <div class="loading">
-            ⏳ Leaderboard लोड हुँदैछ...
-        </div>
-    `;
-
-    $("globalLeaderboardBtn")
-        ?.classList.toggle(
-            "active",
-            type === "global"
-        );
-
-    $("dailyLeaderboardBtn")
-        ?.classList.toggle(
-            "active",
-            type === "daily"
-        );
 
     try{
 
-        if(type === "global"){
+        const {
+            error
+        } =
+            await supabase
+                .from(
+                    "rank_climber_sessions"
+                )
+                .update(
+                    {
 
-            await loadGlobalLeaderboard();
+                        ended_at:
+                            new Date()
+                                .toISOString(),
 
-        }else{
+                        final_rank:
+                            currentRank,
 
-            await loadDailyLeaderboard();
+                        correct_answers:
+                            correctAnswers,
+
+                        accuracy:
+                            accuracy,
+
+                        best_streak:
+                            bestStreak,
+
+                        xp_earned:
+                            sessionXP,
+
+                        coins_earned:
+                            earnedCoins,
+
+                        positions_climbed:
+                            calculatePositionsClimbed(),
+
+                        completed:
+                            true
+
+                    }
+                )
+                .eq(
+                    "id",
+                    sessionId
+                );
+
+
+        if(error){
+
+            console.error(
+                "SESSION UPDATE ERROR:",
+                error
+            );
 
         }
 
     }catch(error){
 
         console.error(
-            "Leaderboard:",
+            "SESSION SAVE ERROR:",
             error
         );
-
-        list.innerHTML = `
-            <div class="error-box">
-                Leaderboard load गर्न सकिएन।
-                <br>
-                ${escapeHTML(
-                    error.message
-                )}
-            </div>
-        `;
 
     }
 
@@ -3974,85 +5527,152 @@ async function loadLeaderboard(
 
 
 /* =========================================================
-   GLOBAL LEADERBOARD
+   UPDATE PERSISTENT PLAYER
 ========================================================= */
 
-async function loadGlobalLeaderboard(){
+async function updatePersistentPlayer(){
 
-    const list =
-        $("leaderboardList");
+    const newTotalXP =
+        totalXP +
+        sessionXP;
 
-    const {
-        data,
-        error
-    } =
-    await supabase
-        .from(
-            "rank_climber_players"
-        )
-        .select(`
-            user_id,
-            current_rank,
-            best_rank,
-            total_xp
-        `)
-        .order(
-            "current_rank",
+
+    totalXP =
+        newTotalXP;
+
+
+    bestRank =
+        Math.min(
+            bestRank,
+            currentRank
+        );
+
+
+    try{
+
+        const {
+            error
+        } =
+            await supabase
+                .from(
+                    "rank_climber_players"
+                )
+                .upsert(
+                    {
+
+                        user_id:
+                            userId,
+
+                        display_name:
+                            userName,
+
+                        current_rank:
+                            currentRank,
+
+                        best_rank:
+                            bestRank,
+
+                        total_xp:
+                            newTotalXP,
+
+                        current_streak:
+                            streak,
+
+                        best_streak:
+                            bestStreak,
+
+                        updated_at:
+                            new Date()
+                                .toISOString()
+
+                    },
+                    {
+
+                        onConflict:
+                            "user_id"
+
+                    }
+                );
+
+
+        if(error){
+
+            console.error(
+                "PLAYER UPDATE ERROR:",
+                error
+            );
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "PLAYER UPDATE ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   NEPAL DATE
+========================================================= */
+
+function getNepalDate(){
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-CA",
             {
-                ascending:true
+
+                timeZone:
+                    "Asia/Kathmandu",
+
+                year:
+                    "numeric",
+
+                month:
+                    "2-digit",
+
+                day:
+                    "2-digit"
+
             }
-        )
-        .limit(50);
+        ).formatToParts(
+            new Date()
+        );
 
-    if(error){
 
-        throw error;
+    const values = {};
 
-    }
 
-    if(
-        !data ||
-        data.length === 0
-    ){
+    parts.forEach(
+        part => {
 
-        list.innerHTML = `
-            <div class="loading">
-                अहिले leaderboard खाली छ।
-            </div>
-        `;
+            if(
+                part.type !==
+                "literal"
+            ){
 
-        return;
+                values[
+                    part.type
+                ] =
+                    part.value;
 
-    }
+            }
 
-    renderLeaderboard(
-        data.map(
-            (player,index) => ({
+        }
+    );
 
-                userId:
-                    player.user_id,
 
-                position:
-                    index + 1,
-
-                name:
-                    player.user_id === userId
-                        ? getUserDisplayName()
-                        : `Aspirant ${String(
-                            index + 1
-                        )}`,
-
-                avatar:
-                    "🎯",
-
-                score:
-                    player.current_rank,
-
-                rank:
-                    player.current_rank
-
-            })
-        )
+    return (
+        values.year +
+        "-" +
+        values.month +
+        "-" +
+        values.day
     );
 
 }
@@ -4062,217 +5682,407 @@ async function loadGlobalLeaderboard(){
    DAILY LEADERBOARD
 ========================================================= */
 
-async function loadDailyLeaderboard(){
-
-    const list =
-        $("leaderboardList");
+async function saveDailyLeaderboard(
+    accuracy
+){
 
     const today =
-        new Date()
-            .toISOString()
-            .slice(
-                0,
-                10
+        getNepalDate();
+
+
+    const score =
+        (
+            correctAnswers *
+            100
+        ) +
+        (
+            bestStreak *
+            20
+        ) +
+        sessionXP;
+
+
+    try{
+
+        const {
+            error
+        } =
+            await supabase
+                .from(
+                    "rank_climber_daily"
+                )
+                .upsert(
+                    {
+
+                        user_id:
+                            userId,
+
+                        date:
+                            today,
+
+                        display_name:
+                            userName,
+
+                        score:
+                            score,
+
+                        correct_answers:
+                            correctAnswers,
+
+                        accuracy:
+                            accuracy,
+
+                        best_streak:
+                            bestStreak,
+
+                        xp:
+                            sessionXP,
+
+                        final_rank:
+                            currentRank,
+
+                        updated_at:
+                            new Date()
+                                .toISOString()
+
+                    },
+                    {
+
+                        onConflict:
+                            "user_id,date"
+
+                    }
+                );
+
+
+        if(error){
+
+            console.error(
+                "DAILY LEADERBOARD ERROR:",
+                error
             );
 
-    const {
-        data,
-        error
-    } =
-    await supabase
-        .from(
-            "rank_climber_daily"
-        )
-        .select(`
-            user_id,
-            best_score,
-            best_rank
-        `)
-        .eq(
-            "leaderboard_date",
-            today
-        )
-        .order(
-            "best_score",
-            {
-                ascending:false
-            }
-        )
-        .limit(50);
+        }
 
-    if(error){
+    }catch(error){
 
-        throw error;
+        console.error(
+            "DAILY LEADERBOARD ERROR:",
+            error
+        );
 
     }
 
-    if(
-        !data ||
-        data.length === 0
-    ){
+}
 
-        list.innerHTML = `
-            <div class="loading">
-                आजको leaderboard मा
-                अझै कोही छैन।
-            </div>
-        `;
 
-        return;
+/* =========================================================
+   OPEN LEADERBOARD
+========================================================= */
 
-    }
+async function openLeaderboard(
+    type = "global"
+){
 
-    renderLeaderboard(
-        data.map(
-            (player,index) => ({
+    currentLeaderboardType =
+        type;
 
-                userId:
-                    player.user_id,
 
-                position:
-                    index + 1,
+    showScreen(
+        leaderboardScreen
+    );
 
-                name:
-                    player.user_id === userId
-                        ? getUserDisplayName()
-                        : `Aspirant ${String(
-                            index + 1
-                        )}`,
 
-                avatar:
-                    "🔥",
+    globalLeaderboardBtn.classList.toggle(
+        "active",
+        type === "global"
+    );
 
-                score:
-                    player.best_score,
 
-                rank:
-                    player.best_rank
+    dailyLeaderboardBtn.classList.toggle(
+        "active",
+        type === "daily"
+    );
 
-            })
-        )
+
+    await loadLeaderboard(
+        type
     );
 
 }
 
 
 /* =========================================================
-   DISPLAY NAME
+   LOAD LEADERBOARD
 ========================================================= */
 
-function getUserDisplayName(){
-
-    if(
-        firebaseUser
-    ){
-
-        return (
-            firebaseUser.displayName ||
-            firebaseUser.email?.split("@")[0] ||
-            "You"
-        );
-
-    }
-
-    return "You";
-
-}
-
-
-/* =========================================================
-   RENDER LEADERBOARD
-========================================================= */
-
-function renderLeaderboard(
-    players
+async function loadLeaderboard(
+    type
 ){
 
     const list =
         $("leaderboardList");
 
+
     list.innerHTML =
-        "";
+        `
+        <div class="empty-leaderboard">
+            Loading...
+        </div>
+        `;
 
-    players.forEach(
-        player => {
 
-            const row =
-                document.createElement(
-                    "div"
-                );
+    try{
 
-            row.className =
-                "leaderboard-row" +
-                (
-                    player.userId === userId
-                        ? " me"
-                        : ""
-                );
+        let response;
 
-            const displayScore =
-                currentLeaderboardType ===
-                "global"
-                    ? `#${player.rank}`
-                    : player.score;
 
-            row.innerHTML = `
+        if(
+            type ===
+            "global"
+        ){
 
-                <div class="leaderboard-position">
+            response =
+                await supabase
+                    .from(
+                        "rank_climber_players"
+                    )
+                    .select(
+                        "user_id,display_name,current_rank,best_rank,total_xp,best_streak"
+                    )
+                    .order(
+                        "current_rank",
+                        {
+                            ascending:
+                                true
+                        }
+                    )
+                    .limit(
+                        50
+                    );
 
-                    #${player.position}
+        }else{
 
-                </div>
+            const today =
+                getNepalDate();
 
-                <div class="leaderboard-avatar">
 
-                    ${player.avatar}
-
-                </div>
-
-                <div class="leaderboard-name">
-
-                    ${escapeHTML(
-                        player.name
-                    )}
-
-                    ${
-                        player.userId === userId
-                            ? " • You"
-                            : ""
-                    }
-
-                </div>
-
-                <div class="leaderboard-score">
-
-                    ${displayScore}
-
-                </div>
-
-            `;
-
-            list.appendChild(
-                row
-            );
+            response =
+                await supabase
+                    .from(
+                        "rank_climber_daily"
+                    )
+                    .select(
+                        "user_id,display_name,score,correct_answers,accuracy,best_streak,xp,final_rank"
+                    )
+                    .eq(
+                        "date",
+                        today
+                    )
+                    .order(
+                        "score",
+                        {
+                            ascending:
+                                false
+                        }
+                    )
+                    .limit(
+                        50
+                    );
 
         }
-    );
+
+
+        if(response.error){
+
+            throw response.error;
+
+        }
+
+
+        const data =
+            response.data ||
+            [];
+
+
+        if(
+            data.length ===
+            0
+        ){
+
+            list.innerHTML =
+                `
+                <div class="empty-leaderboard">
+                    अहिले leaderboard data छैन।
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        list.innerHTML =
+            "";
+
+
+        data.forEach(
+            (
+                player,
+                index
+            ) => {
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "leader-row";
+
+
+                const displayName =
+                    player.display_name ||
+                    (
+                        player.user_id ===
+                        userId
+                            ? userName
+                            : "Aspirant"
+                    );
+
+
+                let scoreText =
+                    "";
+
+
+                let subText =
+                    "";
+
+
+                if(
+                    type ===
+                    "global"
+                ){
+
+                    scoreText =
+                        formatRank(
+                            player.current_rank
+                        );
+
+
+                    subText =
+                        `${Number(player.total_xp || 0).toLocaleString()} XP`;
+
+                }else{
+
+                    scoreText =
+                        Number(
+                            player.score ||
+                            0
+                        ).toLocaleString();
+
+
+                    subText =
+                        `${Number(player.correct_answers || 0)}/${TOTAL_QUESTIONS} correct`;
+
+                }
+
+
+                row.innerHTML = `
+
+                    <div class="leader-position">
+                        ${getMedal(index)}
+                    </div>
+
+                    <div>
+
+                        <div class="leader-name">
+                            ${escapeHTML(displayName)}
+                        </div>
+
+                        <div class="leader-sub">
+                            ${escapeHTML(subText)}
+                        </div>
+
+                    </div>
+
+                    <div class="leader-score">
+                        ${escapeHTML(scoreText)}
+                    </div>
+
+                `;
+
+
+                list.appendChild(
+                    row
+                );
+
+            }
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "LEADERBOARD ERROR:",
+            error
+        );
+
+
+        list.innerHTML =
+            `
+            <div class="empty-leaderboard">
+                Leaderboard load हुन सकेन।
+                <br><br>
+                ${escapeHTML(error?.message || "")}
+            </div>
+            `;
+
+    }
 
 }
 
 
 /* =========================================================
-   RESTART
+   MEDAL
 ========================================================= */
 
-async function restartGame(){
+function getMedal(
+    index
+){
 
-    showScreen(
-        "introScreen"
-    );
+    if(
+        index ===
+        0
+    ){
 
-    await loadPlayer();
+        return "🥇";
 
-    await startGame();
+    }
+
+
+    if(
+        index ===
+        1
+    ){
+
+        return "🥈";
+
+    }
+
+
+    if(
+        index ===
+        2
+    ){
+
+        return "🥉";
+
+    }
+
+
+    return index + 1;
 
 }
 
@@ -4283,64 +6093,620 @@ async function restartGame(){
 
 async function goHome(){
 
-    stopTimer();
+    clearTimer();
 
-    if(feedbackTimeout){
-
-        clearTimeout(
-            feedbackTimeout
-        );
-
-        feedbackTimeout =
-            null;
-
-    }
 
     gameStarted =
         false;
 
+
+    gameFinished =
+        false;
+
+
     showScreen(
-        "introScreen"
+        introScreen
     );
 
-    await loadPlayer();
+
+    try{
+
+        await loadPlayer();
+
+        await loadCoinsFromFirebase();
+
+    }catch(error){
+
+        console.error(
+            "HOME REFRESH ERROR:",
+            error
+        );
+
+    }
 
 }
 
 
 /* =========================================================
-   EXIT
+   RESTART
 ========================================================= */
 
-function confirmExit(){
+async function restartGame(){
 
-    if(!gameStarted){
+    clearTimer();
 
-        goHome();
+
+    gameStarted =
+        false;
+
+
+    gameFinished =
+        false;
+
+
+    showScreen(
+        introScreen
+    );
+
+
+    try{
+
+        await loadPlayer();
+
+        await loadCoinsFromFirebase();
+
+        await startGame();
+
+    }catch(error){
+
+        console.error(
+            "RESTART ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   EXIT GAME
+========================================================= */
+
+async function exitGame(){
+
+    if(
+        !gameStarted ||
+        gameFinished
+    ){
+
+        await goHome();
 
         return;
 
     }
 
-    const confirmed =
-        confirm(
-            "के तपाईं यो Rank Climber game छोड्न चाहनुहुन्छ?"
+
+    const shouldExit =
+        window.confirm(
+            "Game छोड्ने हो?\n\nयो game को earned reward मात्र save हुनेछ।"
         );
 
-    if(confirmed){
 
-        stopTimer();
+    if(
+        !shouldExit
+    ){
 
-        gameStarted =
-            false;
-
-        showScreen(
-            "introScreen"
-        );
-
-        loadPlayer();
+        return;
 
     }
+
+
+    clearTimer();
+
+
+    gameStarted =
+        false;
+
+
+    gameFinished =
+        true;
+
+
+    const accuracy =
+        TOTAL_QUESTIONS > 0
+            ? (
+                correctAnswers /
+                TOTAL_QUESTIONS
+            ) * 100
+            : 0;
+
+
+    /*
+       Save the coins earned so far.
+       We do not add completion bonuses
+       when the user exits early.
+    */
+
+    try{
+
+        await saveExitCoinReward();
+
+
+        await saveFinalSessionForExit(
+            accuracy
+        );
+
+
+        await updatePersistentPlayer();
+
+
+        await saveDailyLeaderboard(
+            accuracy
+        );
+
+
+        showScreen(
+            resultScreen
+        );
+
+
+        setText(
+            "resultMessage",
+            `Game छोडियो। तपाईंले अहिलेसम्म कमाएको ${earnedCoins} coins सुरक्षित गरिएको छ।`
+        );
+
+
+        setText(
+            "resultCoins",
+            coins
+        );
+
+
+        setText(
+            "totalCoins",
+            coins
+        );
+
+
+        setText(
+            "finalRank",
+            formatRank(
+                currentRank
+            )
+        );
+
+
+        setText(
+            "positionsClimbed",
+            calculatePositionsClimbed()
+        );
+
+
+        setText(
+            "correctAnswers",
+            `${correctAnswers}/${TOTAL_QUESTIONS}`
+        );
+
+
+        setText(
+            "accuracy",
+            `${accuracy.toFixed(1)}%`
+        );
+
+
+        setText(
+            "bestStreak",
+            bestStreak
+        );
+
+
+        setText(
+            "totalXP",
+            sessionXP
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "EXIT ERROR:",
+            error
+        );
+
+
+        showScreen(
+            introScreen
+        );
+
+
+        showError(
+            "Game exit reward save हुन सकेन।\n\n" +
+            (
+                error?.message ||
+                ""
+            )
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   EXIT COIN REWARD
+========================================================= */
+
+async function saveExitCoinReward(){
+
+    if(
+        rewardSaved
+    ){
+
+        return {
+
+            alreadySaved:
+                true,
+
+            balance:
+                coins
+
+        };
+
+    }
+
+
+    if(
+        !firebaseUser ||
+        !gameId
+    ){
+
+        throw new Error(
+            "Firebase user/game ID भेटिएन।"
+        );
+
+    }
+
+
+    const userRef =
+        doc(
+            db,
+            "users",
+            firebaseUser.uid
+        );
+
+
+    const historyRef =
+        doc(
+            db,
+            "users",
+            firebaseUser.uid,
+            "coin_history",
+            gameId
+        );
+
+
+    const result =
+        await runTransaction(
+            db,
+            async transaction => {
+
+                const userSnap =
+                    await transaction.get(
+                        userRef
+                    );
+
+
+                const historySnap =
+                    await transaction.get(
+                        historyRef
+                    );
+
+
+                if(
+                    historySnap.exists()
+                ){
+
+                    return {
+
+                        alreadySaved:
+                            true,
+
+                        balance:
+                            Number(
+                                userSnap.data()
+                                    ?.coins ??
+                                0
+                            )
+
+                    };
+
+                }
+
+
+                if(
+                    !userSnap.exists()
+                ){
+
+                    throw new Error(
+                        "Firebase user profile भेटिएन।"
+                    );
+
+                }
+
+
+                const oldCoins =
+                    Number(
+                        userSnap.data()
+                            ?.coins ??
+                        0
+                    );
+
+
+                const reward =
+                    Math.max(
+                        0,
+                        Number(
+                            earnedCoins ||
+                            0
+                        )
+                    );
+
+
+                const newBalance =
+                    oldCoins +
+                    reward;
+
+
+                transaction.update(
+                    userRef,
+                    {
+
+                        coins:
+                            increment(
+                                reward
+                            ),
+
+                        updatedAt:
+                            serverTimestamp()
+
+                    }
+                );
+
+
+                transaction.set(
+                    historyRef,
+                    {
+
+                        game_id:
+                            gameId,
+
+                        game:
+                            "rank_climber",
+
+                        source:
+                            "rank_climber",
+
+                        status:
+                            "quit",
+
+                        coins_won:
+                            reward,
+
+                        coins_before:
+                            oldCoins,
+
+                        coins_after:
+                            newBalance,
+
+                        questions:
+                            TOTAL_QUESTIONS,
+
+                        correct_answers:
+                            correctAnswers,
+
+                        accuracy:
+                            TOTAL_QUESTIONS > 0
+                                ? (
+                                    correctAnswers /
+                                    TOTAL_QUESTIONS
+                                ) * 100
+                                : 0,
+
+                        best_streak:
+                            bestStreak,
+
+                        starting_rank:
+                            startingRank,
+
+                        final_rank:
+                            currentRank,
+
+                        positions_climbed:
+                            calculatePositionsClimbed(),
+
+                        xp_earned:
+                            sessionXP,
+
+                        created_at:
+                            serverTimestamp(),
+
+                        timestamp:
+                            serverTimestamp()
+
+                    }
+                );
+
+
+                return {
+
+                    alreadySaved:
+                        false,
+
+                    balance:
+                        newBalance
+
+                };
+
+            }
+        );
+
+
+    rewardSaved =
+        true;
+
+
+    coins =
+        Number(
+            result.balance ??
+            coins
+        );
+
+
+    updateCoinUI();
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   SAVE EXIT SESSION
+========================================================= */
+
+async function saveFinalSessionForExit(
+    accuracy
+){
+
+    if(
+        !sessionId
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        await supabase
+            .from(
+                "rank_climber_sessions"
+            )
+            .update(
+                {
+
+                    ended_at:
+                        new Date()
+                            .toISOString(),
+
+                    final_rank:
+                        currentRank,
+
+                    correct_answers:
+                        correctAnswers,
+
+                    accuracy:
+                        accuracy,
+
+                    best_streak:
+                        bestStreak,
+
+                    xp_earned:
+                        sessionXP,
+
+                    coins_earned:
+                        earnedCoins,
+
+                    positions_climbed:
+                        calculatePositionsClimbed(),
+
+                    completed:
+                        false
+
+                }
+            )
+            .eq(
+                "id",
+                sessionId
+            );
+
+    }catch(error){
+
+        console.error(
+            "EXIT SESSION ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   EFFECTS
+========================================================= */
+
+function playCorrectEffect(){
+
+    showToast(
+        "✅ सही उत्तर! +5 coins"
+    );
+
+}
+
+
+function playWrongEffect(){
+
+    showToast(
+        "❌ उत्तर गलत भयो"
+    );
+
+}
+
+
+/* =========================================================
+   DELAY
+========================================================= */
+
+function delay(
+    ms
+){
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(
+    value
+){
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        String(
+            value ??
+            ""
+        );
+
+
+    return div.innerHTML;
 
 }
 
@@ -4349,148 +6715,279 @@ function confirmExit(){
    EVENTS
 ========================================================= */
 
-$("startBtn")
-    ?.addEventListener(
-        "click",
-        startGame
-    );
+startBtn.addEventListener(
+    "click",
+    startGame
+);
 
-$("restartBtn")
-    ?.addEventListener(
-        "click",
-        restartGame
-    );
 
-$("homeBtn")
-    ?.addEventListener(
-        "click",
-        goHome
-    );
+submitAnswerBtn.addEventListener(
+    "click",
+    submitAnswer
+);
 
-$("leaderboardBtn")
-    ?.addEventListener(
-        "click",
-        showLeaderboard
-    );
 
-$("resultLeaderboardBtn")
-    ?.addEventListener(
-        "click",
-        showLeaderboard
-    );
+nextQuestionBtn.addEventListener(
+    "click",
+    nextQuestion
+);
 
-$("backBtn")
-    ?.addEventListener(
-        "click",
-        goHome
-    );
 
-$("exitGameBtn")
-    ?.addEventListener(
-        "click",
-        confirmExit
-    );
+exitGameBtn.addEventListener(
+    "click",
+    exitGame
+);
 
-$("leaderboardBackBtn")
-    ?.addEventListener(
-        "click",
-        goHome
-    );
 
-$("globalLeaderboardBtn")
-    ?.addEventListener(
-        "click",
-        () => {
+homeBtn.addEventListener(
+    "click",
+    goHome
+);
 
-            loadLeaderboard(
-                "global"
-            );
 
-        }
-    );
+restartBtn.addEventListener(
+    "click",
+    restartGame
+);
 
-$("dailyLeaderboardBtn")
-    ?.addEventListener(
-        "click",
-        () => {
 
-            loadLeaderboard(
-                "daily"
-            );
+leaderboardBtn.addEventListener(
+    "click",
+    () =>
+        openLeaderboard(
+            "global"
+        )
+);
 
-        }
-    );
 
-$("nextQuestionBtn")
-    ?.addEventListener(
-        "click",
-        nextQuestion
-    );
+resultLeaderboardBtn.addEventListener(
+    "click",
+    () =>
+        openLeaderboard(
+            "global"
+        )
+);
+
+
+leaderboardBackBtn.addEventListener(
+    "click",
+    () =>
+        goHome()
+);
+
+
+globalLeaderboardBtn.addEventListener(
+    "click",
+    () =>
+        openLeaderboard(
+            "global"
+        )
+);
+
+
+dailyLeaderboardBtn.addEventListener(
+    "click",
+    () =>
+        openLeaderboard(
+            "daily"
+        )
+);
 
 
 /* =========================================================
    AUTH INITIALIZATION
 ========================================================= */
 
-async function initialize(){
+async function initializeRankClimber(){
 
-    showGameError(
-        "लगइन जाँच हुँदैछ..."
-    );
+    try{
 
-    const user =
-        await waitForFirebaseUser();
+        const user =
+            await waitForFirebaseUser();
 
-    if(!user){
 
-        showGameError(
-            "लगइन आवश्यक छ। कृपया आफ्नो LoksewaQuest Google account बाट login गर्नुहोस्।"
-        );
+        if(
+            !user
+        ){
 
-        const startButton =
-            $("startBtn");
+            hideLoading();
 
-        if(startButton){
 
-            startButton.disabled =
+            startBtn.disabled =
                 true;
+
+
+            showError(
+                "लगइन आवश्यक छ। पहिले LoksewaQuest मा Firebase login गर्नुहोस्।"
+            );
+
+
+            setText(
+                "currentRank",
+                "Login"
+            );
+
+
+            return;
 
         }
 
-        return;
 
-    }
+        firebaseUser =
+            user;
 
-    const loaded =
+
+        userId =
+            user.uid;
+
+
+        userName =
+            user.displayName ||
+            user.email?.split("@")[0] ||
+            "Aspirant";
+
+
         await loadPlayer();
 
-    if(!loaded){
 
-        return;
+        await loadCoinsFromFirebase();
 
-    }
 
-    hideGameError();
+        hideLoading();
 
-    const startButton =
-        $("startBtn");
 
-    if(startButton){
+        hideError();
 
-        startButton.disabled =
+
+        startBtn.disabled =
             false;
 
-    }
 
-    console.log(
-        "Rank Climber ready:",
-        user.uid
-    );
+        showScreen(
+            introScreen
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "INITIALIZATION ERROR:",
+            error
+        );
+
+
+        hideLoading();
+
+
+        startBtn.disabled =
+            true;
+
+
+        showError(
+            "Rank Climber load हुन सकेन।\n\n" +
+            (
+                error?.message ||
+                "Unknown error"
+            )
+        );
+
+    }
 
 }
 
 
-initialize();
+/* =========================================================
+   START
+========================================================= */
+
+initializeRankClimber();
+
+
+/* =========================================================
+   AUTH STATE MONITOR
+========================================================= */
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        if(
+            user &&
+            (
+                !firebaseUser ||
+                firebaseUser.uid !==
+                user.uid
+            )
+        ){
+
+            firebaseUser =
+                user;
+
+            userId =
+                user.uid;
+
+            userName =
+                user.displayName ||
+                user.email?.split("@")[0] ||
+                "Aspirant";
+
+
+            try{
+
+                await loadPlayer();
+
+                await loadCoinsFromFirebase();
+
+                hideError();
+
+                startBtn.disabled =
+                    false;
+
+            }catch(error){
+
+                console.error(
+                    "AUTH REFRESH ERROR:",
+                    error
+                );
+
+                showError(
+                    error?.message ||
+                    "User data load हुन सकेन।"
+                );
+
+            }
+
+        }
+
+
+        if(
+            !user &&
+            firebaseUser
+        ){
+
+            firebaseUser =
+                null;
+
+            userId =
+                null;
+
+            startBtn.disabled =
+                true;
+
+            clearTimer();
+
+            showScreen(
+                introScreen
+            );
+
+            showError(
+                "Session समाप्त भयो। फेरि login गर्नुहोस्।"
+            );
+
+        }
+
+    }
+);
 
 </script>
 
