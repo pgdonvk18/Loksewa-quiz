@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>LoksewaQuest - Rank Climber</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet">
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background:
+        radial-gradient(circle at top, #1e40af 0%, #0f172a 55%);
+    min-height: 100vh;
+    color: white;
+}
+
+.app {
+    width: 100%;
+    max-width: 500px;
+    min-height: 100vh;
+    margin: auto;
+    padding: 16px;
+}
+
+/* ------------------------------
+   HEADER
+------------------------------ */
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.08);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.coins {
+    background: rgba(255,255,255,.10);
+    padding: 8px 13px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+/* ------------------------------
+   SCREENS
+------------------------------ */
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* ------------------------------
+   INTRO
+------------------------------ */
+
+.hero {
+    text-align: center;
+    padding: 25px 0;
+}
+
+.trophy {
+    width: 90px;
+    height: 90px;
+    margin: auto;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(145deg, #facc15, #f59e0b);
+
+    font-size: 46px;
+
+    box-shadow:
+        0 15px 40px rgba(250,204,21,.25);
+}
+
+.title {
+    margin-top: 18px;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.subtitle {
+    color: #cbd5e1;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.rank-box {
+    margin-top: 25px;
+    padding: 25px;
+
+    border-radius: 24px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid rgba(255,255,255,.10);
+}
+
+.rank-label {
+    color: #cbd5e1;
+    font-size: 12px;
+}
+
+.rank-number {
+    font-size: 55px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #facc15;
+}
+
+.rank-change {
+    color: #4ade80;
+    font-size: 14px;
+}
+
+/* ------------------------------
+   INFO CARDS
+------------------------------ */
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.info-card {
+    padding: 15px 8px;
+    text-align: center;
+
+    border-radius: 18px;
+
+    background:
+        rgba(255,255,255,.07);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+}
+
+.info-icon {
+    font-size: 20px;
+}
+
+.info-value {
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+.info-label {
+    font-size: 9px;
+    color: #94a3b8;
+}
+
+/* ------------------------------
+   BUTTON
+------------------------------ */
+
+.primary-btn {
+    width: 100%;
+    border: none;
+    padding: 16px;
+    margin-top: 20px;
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(135deg,#2563eb,#3b82f6);
+
+    color: white;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 25px rgba(37,99,235,.30);
+
+    transition: .2s;
+}
+
+.primary-btn:active {
+    transform: scale(.97);
+}
+
+.secondary-btn {
+    width: 100%;
+    border: 1px solid rgba(255,255,255,.12);
+    padding: 14px;
+
+    margin-top: 10px;
+
+    border-radius: 17px;
+
+    background: rgba(255,255,255,.07);
+    color: white;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+/* ------------------------------
+   QUESTION
+------------------------------ */
+
+.game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.game-rank {
+    font-weight: 700;
+    color: #facc15;
+}
+
+.question-count {
+    font-size: 13px;
+    color: #cbd5e1;
+}
+
+.progress {
+    width: 100%;
+    height: 7px;
+    background: rgba(255,255,255,.12);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 10%;
+
+    background:
+        linear-gradient(90deg,#22c55e,#84cc16);
+
+    transition: width .3s;
+}
+
+.timer {
+    margin: 22px auto 18px;
+
+    width: 75px;
+    height: 75px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        4px solid #3b82f6;
+
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.question-card {
+    background: rgba(255,255,255,.08);
+
+    border:
+        1px solid rgba(255,255,255,.10);
+
+    border-radius: 22px;
+
+    padding: 20px;
+
+    margin-bottom: 15px;
+}
+
+.question-text {
+    font-size: 18px;
+    line-height: 1.7;
+    font-weight: 600;
+}
+
+/* ------------------------------
+   OPTIONS
+------------------------------ */
+
+.option {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 15px;
+
+    margin-top: 10px;
+
+    border-radius: 16px;
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    background:
+        rgba(255,255,255,.06);
+
+    color: white;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.option:hover {
+    background:
+        rgba(255,255,255,.12);
+}
+
+.option-letter {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(255,255,255,.10);
+
+    font-weight: 700;
+}
+
+.option.correct {
+    background: rgba(34,197,94,.25);
+    border-color: #22c55e;
+}
+
+.option.wrong {
+    background: rgba(239,68,68,.25);
+    border-color: #ef4444;
+}
+
+/* ------------------------------
+   STREAK
+------------------------------ */
+
+.streak {
+    text-align: center;
+
+    margin-top: 15px;
+
+    color: #fb923c;
+
+    font-weight: 700;
+}
+
+/* ------------------------------
+   FEEDBACK
+------------------------------ */
+
+.feedback-icon {
+    font-size: 65px;
+    text-align: center;
+}
+
+.feedback-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 800;
+    margin-top: 10px;
+}
+
+.feedback-rank {
+    margin-top: 20px;
+    padding: 20px;
+
+    text-align: center;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,.08);
+}
+
+.rank-move {
+    font-size: 28px;
+    font-weight: 800;
+    color: #facc15;
+}
+
+.reward-row {
+    display: flex;
+    justify-content: space-around;
+
+    margin-top: 15px;
+}
+
+.reward-item {
+    text-align: center;
+}
+
+.reward-value {
+    font-weight: 800;
+}
+
+.reward-label {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* ------------------------------
+   RESULT
+------------------------------ */
+
+.result-hero {
+    text-align: center;
+    padding: 25px 0;
+}
+
+.final-rank {
+    font-size: 70px;
+    font-weight: 800;
+    color: #facc15;
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px;
+}
+
+.result-card {
+    padding: 15px;
+    border-radius: 18px;
+
+    background: rgba(255,255,255,.07);
+
+    text-align: center;
+}
+
+.result-value {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.result-label {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* ------------------------------
+   COUNTDOWN
+------------------------------ */
+
+.countdown {
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(2,6,23,.95);
+
+    z-index: 100;
+}
+
+.countdown.active {
+    display: flex;
+}
+
+.count-number {
+    font-size: 100px;
+    font-weight: 800;
+    color: #facc15;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- =========================================
+         INTRO SCREEN
+    ========================================== -->
+
+    <section id="introScreen" class="screen active">
+
+        <div class="topbar">
+
+            <button class="back-btn"
+                    onclick="goBack()">
+                ←
+            </button>
+
+            <div class="coins">
+                🪙 <span id="coinDisplay">780</span>
+            </div>
+
+        </div>
+
+
+        <div class="hero">
+
+            <div class="trophy">
+                🏆
+            </div>
+
+            <div class="title">
+                RANK CLIMBER
+            </div>
+
+            <div class="subtitle">
+                Climb your way to Rank #1
+            </div>
+
+        </div>
+
+
+        <div class="rank-box">
+
+            <div class="rank-label">
+                YOUR CURRENT RANK
+            </div>
+
+            <div class="rank-number"
+                 id="currentRank">
+                #47
+            </div>
+
+            <div class="rank-change">
+                ↑ 8 positions this week
+            </div>
+
+        </div>
+
+
+        <div class="info-grid">
+
+            <div class="info-card">
+
+                <div class="info-icon">
+                    🎯
+                </div>
+
+                <div class="info-value">
+                    10
+                </div>
+
+                <div class="info-label">
+                    QUESTIONS
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <div class="info-icon">
+                    ⏱️
+                </div>
+
+                <div class="info-value">
+                    15s
+                </div>
+
+                <div class="info-label">
+                    EACH
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <div class="info-icon">
+                    🔥
+                </div>
+
+                <div class="info-value"
+                     id="introStreak">
+                    7
+                </div>
+
+                <div class="info-label">
+                    STREAK
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <button class="primary-btn"
+                onclick="startGame()">
+
+            🚀 START CLIMB
+
+        </button>
+
+
+        <button class="secondary-btn"
+                onclick="showLeaderboard()">
+
+            🏆 View Leaderboard
+
+        </button>
+
+    </section>
+
+
+    <!-- =========================================
+         GAME SCREEN
+    ========================================== -->
+
+    <section id="gameScreen" class="screen">
+
+        <div class="topbar">
+
+            <button class="back-btn"
+                    onclick="confirmExit()">
+                ×
+            </button>
+
+            <div class="game-rank">
+                Rank <span id="gameRank">#47</span>
+            </div>
+
+        </div>
+
+
+        <div class="game-header">
+
+            <div class="question-count">
+
+                Question
+                <span id="questionNumber">
+                    1
+                </span>
+                / 10
+
+            </div>
+
+            <div class="question-count">
+
+                🔥 <span id="streakDisplay">
+                    0
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="progress">
+
+            <div id="progressBar"
+                 class="progress-bar">
+            </div>
+
+        </div>
+
+
+        <div id="timer"
+             class="timer">
+            15
+        </div>
+
+
+        <div class="question-card">
+
+            <div id="questionText"
+                 class="question-text">
+            </div>
+
+        </div>
+
+
+        <div id="optionsContainer">
+        </div>
+
+
+        <div class="streak"
+             id="streakMessage">
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         FEEDBACK SCREEN
+    ========================================== -->
+
+    <section id="feedbackScreen"
+             class="screen">
+
+        <div class="topbar">
+
+            <div></div>
+
+            <div class="game-rank">
+                Rank <span id="feedbackRank">
+                    #47
+                </span>
+            </div>
+
+        </div>
+
+
+        <div style="padding-top:60px;">
+
+            <div id="feedbackIcon"
+                 class="feedback-icon">
+                ✅
+            </div>
+
+            <div id="feedbackTitle"
+                 class="feedback-title">
+
+                CORRECT!
+
+            </div>
+
+
+            <div class="feedback-rank">
+
+                <div class="rank-move"
+                     id="rankMove">
+
+                    #47 → #39
+
+                </div>
+
+                <div style="color:#94a3b8;
+                            font-size:13px;
+                            margin-top:5px;">
+
+                    Rank Movement
+
+                </div>
+
+            </div>
+
+
+            <div class="reward-row">
+
+                <div class="reward-item">
+
+                    <div class="reward-value"
+                         id="rankReward">
+                        +8
+                    </div>
+
+                    <div class="reward-label">
+                        RANK
+                    </div>
+
+                </div>
+
+
+                <div class="reward-item">
+
+                    <div class="reward-value">
+                        +10
+                    </div>
+
+                    <div class="reward-label">
+                        XP
+                    </div>
+
+                </div>
+
+
+                <div class="reward-item">
+
+                    <div class="reward-value">
+                        +5
+                    </div>
+
+                    <div class="reward-label">
+                        COINS
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button class="primary-btn"
+                    onclick="nextQuestion()">
+
+                NEXT QUESTION →
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         RESULT SCREEN
+    ========================================== -->
+
+    <section id="resultScreen"
+             class="screen">
+
+        <div class="topbar">
+
+            <button class="back-btn"
+                    onclick="goHome()">
+                ←
+            </button>
+
+            <div>
+                🪙 <span id="resultCoins">
+                    0
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="result-hero">
+
+            <div style="font-size:20px;
+                        font-weight:700;">
+
+                🏆 CLIMB COMPLETE
+
+            </div>
+
+            <div class="final-rank"
+                 id="finalRank">
+
+                #12
+
+            </div>
+
+            <div style="color:#4ade80;
+                        font-weight:600;">
+
+                ↑ <span id="positionsClimbed">
+                    35
+                </span>
+                positions
+
+            </div>
+
+        </div>
+
+
+        <div class="result-grid">
+
+            <div class="result-card">
+
+                <div class="result-value"
+                     id="correctResult">
+                    9/10
+                </div>
+
+                <div class="result-label">
+                    CORRECT
+                </div>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <div class="result-value"
+                     id="accuracyResult">
+                    90%
+                </div>
+
+                <div class="result-label">
+                    ACCURACY
+                </div>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <div class="result-value"
+                     id="bestStreakResult">
+                    7
+                </div>
+
+                <div class="result-label">
+                    BEST STREAK
+                </div>
+
+            </div>
+
+
+            <div class="result-card">
+
+                <div class="result-value">
+                    ⭐ <span id="xpResult">
+                        135
+                    </span>
+                </div>
+
+                <div class="result-label">
+                    XP EARNED
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="rank-box"
+             style="margin-top:15px;
+                    text-align:center;">
+
+            <div style="font-size:13px;
+                        color:#94a3b8;">
+
+                COINS EARNED
+
+            </div>
+
+            <div style="font-size:30px;
+                        font-weight:800;
+                        color:#facc15;">
+
+                🪙 +<span id="coinsEarned">
+                    65
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <button class="primary-btn"
+                onclick="restartGame()">
+
+            🔥 CLIMB AGAIN
+
+        </button>
+
+
+        <button class="secondary-btn"
+                onclick="showLeaderboard()">
+
+            🏆 VIEW LEADERBOARD
+
+        </button>
+
+    </section>
+
+
+    <!-- =========================================
+         LEADERBOARD
+    ========================================== -->
+
+    <section id="leaderboardScreen"
+             class="screen">
+
+        <div class="topbar">
+
+            <button class="back-btn"
+                    onclick="goHome()">
+                ←
+            </button>
+
+            <div style="font-weight:700;">
+                🏆 Leaderboard
+            </div>
+
+            <div></div>
+
+        </div>
+
+
+        <div style="
+            display:flex;
+            gap:7px;
+            margin-bottom:15px;
+        ">
+
+            <button class="secondary-btn"
+                    style="margin:0;"
+                    onclick="loadLeaderboard('global')">
+
+                GLOBAL
+
+            </button>
+
+            <button class="secondary-btn"
+                    style="margin:0;"
+                    onclick="loadLeaderboard('friends')">
+
+                FRIENDS
+
+            </button>
+
+        </div>
+
+
+        <div id="leaderboardList">
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- =========================================
+     COUNTDOWN
+========================================== -->
+
+<div id="countdown"
+     class="countdown">
+
+    <div id="countNumber"
+         class="count-number">
+
+        3
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   GAME DATA
+===================================================== */
+
+const questions = [
+
+    {
+        question:
+        "नेपालको संविधान कहिले जारी भएको हो?",
+
+        options: [
+            "२०७२ असोज ३",
+            "२०७२ भदौ ३०",
+            "२०७३ वैशाख १",
+            "२०७१ माघ १"
+        ],
+
+        correct: 0,
+
+        difficulty: "medium",
+
+        explanation:
+        "नेपालको संविधान २०७२ असोज ३ गते जारी भएको हो।"
+    },
+
+
+    {
+        question:
+        "नेपालको संघीय संसदमा कति सदन छन्?",
+
+        options: [
+            "एक",
+            "दुई",
+            "तीन",
+            "चार"
+        ],
+
+        correct: 1,
+
+        difficulty: "easy",
+
+        explanation:
+        "नेपालको संघीय संसद प्रतिनिधि सभा र राष्ट्रिय सभा गरी दुई सदनात्मक छ।"
+    },
+
+
+    {
+        question:
+        "नेपालको सबैभन्दा अग्लो हिमाल कुन हो?",
+
+        options: [
+            "कञ्चनजंघा",
+            "धौलागिरी",
+            "सगरमाथा",
+            "मनास्लु"
+        ],
+
+        correct: 2,
+
+        difficulty: "easy",
+
+        explanation:
+        "सगरमाथा नेपालको तथा विश्वकै सबैभन्दा अग्लो हिमाल हो।"
+    },
+
+
+    {
+        question:
+        "नेपालमा गणतन्त्र दिवस कहिले मनाइन्छ?",
+
+        options: [
+            "जेठ १५",
+            "असोज ३",
+            "फागुन ७",
+            "बैशाख ११"
+        ],
+
+        correct: 0,
+
+        difficulty: "medium",
+
+        explanation:
+        "जेठ १५ गते गणतन्त्र दिवस मनाइन्छ।"
+    },
+
+
+    {
+        question:
+        "नेपालको संविधानमा मौलिक हक कति वटा छन्?",
+
+        options: [
+            "२५",
+            "३०",
+            "३१",
+            "३५"
+        ],
+
+        correct: 2,
+
+        difficulty: "hard",
+
+        explanation:
+        "नेपालको संविधानमा भाग ३ अन्तर्गत ३१ वटा मौलिक हकको व्यवस्था गरिएको छ।"
+    },
+
+
+    {
+        question:
+        "नेपालको राष्ट्रिय फूल कुन हो?",
+
+        options: [
+            "गुलाब",
+            "लालीगुराँस",
+            "कमल",
+            "सुनाखरी"
+        ],
+
+        correct: 1,
+
+        difficulty: "easy",
+
+        explanation:
+        "लालीगुराँस नेपालको राष्ट्रिय फूल हो।"
+    },
+
+
+    {
+        question:
+        "नेपालको संविधानको धारा १ केसँग सम्बन्धित छ?",
+
+        options: [
+            "नागरिकता",
+            "सार्वभौमसत्ता",
+            "राष्ट्र",
+            "मौलिक हक"
+        ],
+
+        correct: 2,
+
+        difficulty: "hard",
+
+        explanation:
+        "धारा १ नेपालको संविधानसँग सम्बन्धित आधारभूत व्यवस्थासँग सम्बन्धित छ।"
+    },
+
+
+    {
+        question:
+        "नेपालको राष्ट्रिय जनावर कुन हो?",
+
+        options: [
+            "गाई",
+            "बाघ",
+            "गैंडा",
+            "हात्ती"
+        ],
+
+        correct: 0,
+
+        difficulty: "easy",
+
+        explanation:
+        "गाई नेपालको राष्ट्रिय जनावर हो।"
+    },
+
+
+    {
+        question:
+        "नेपालको पहिलो निर्वाचित प्रधानमन्त्री को हुन्?",
+
+        options: [
+            "बी.पी. कोइराला",
+            "मातृका प्रसाद कोइराला",
+            "टंकप्रसाद आचार्य",
+            "गिरिजाप्रसाद कोइराला"
+        ],
+
+        correct: 0,
+
+        difficulty: "medium",
+
+        explanation:
+        "बी.पी. कोइराला नेपालको पहिलो निर्वाचित प्रधानमन्त्री हुन्।"
+    },
+
+
+    {
+        question:
+        "नेपालको संविधानमा राज्यको स्वरूप कस्तो छ?",
+
+        options: [
+            "एकात्मक",
+            "संघीय लोकतान्त्रिक गणतन्त्रात्मक",
+            "राजतन्त्रात्मक",
+            "सैनिक शासन"
+        ],
+
+        correct: 1,
+
+        difficulty: "medium",
+
+        explanation:
+        "नेपाल संघीय लोकतान्त्रिक गणतन्त्रात्मक राज्य हो।"
+    }
+
+];
+
+
+/* =====================================================
+   GAME STATE
+===================================================== */
+
+let currentQuestion = 0;
+
+let currentRank = 47;
+
+let startingRank = 47;
+
+let streak = 0;
+
+let bestStreak = 0;
+
+let correctAnswers = 0;
+
+let xp = 0;
+
+let coins = 780;
+
+let earnedCoins = 0;
+
+let timer = 15;
+
+let timerInterval = null;
+
+let answered = false;
+
+
+/* =====================================================
+   SCREEN MANAGEMENT
+===================================================== */
+
+function showScreen(id) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+function startGame() {
+
+    currentQuestion = 0;
+
+    currentRank = 47;
+
+    startingRank = 47;
+
+    streak = 0;
+
+    bestStreak = 0;
+
+    correctAnswers = 0;
+
+    xp = 0;
+
+    earnedCoins = 0;
+
+    showScreen("gameScreen");
+
+    startCountdown();
+
+}
+
+
+/* =====================================================
+   COUNTDOWN
+===================================================== */
+
+function startCountdown() {
+
+    const overlay =
+        document.getElementById("countdown");
+
+    const number =
+        document.getElementById("countNumber");
+
+    overlay.classList.add("active");
+
+    let count = 3;
+
+    number.textContent = count;
+
+    const interval = setInterval(() => {
+
+        count--;
+
+        if (count <= 0) {
+
+            clearInterval(interval);
+
+            overlay.classList.remove("active");
+
+            loadQuestion();
+
+            return;
+        }
+
+        number.textContent = count;
+
+    }, 700);
+
+}
+
+
+/* =====================================================
+   LOAD QUESTION
+===================================================== */
+
+function loadQuestion() {
+
+    answered = false;
+
+    const q =
+        questions[currentQuestion];
+
+    document.getElementById(
+        "questionNumber"
+    ).textContent =
+        currentQuestion + 1;
+
+    document.getElementById(
+        "gameRank"
+    ).textContent =
+        "#" + currentRank;
+
+    document.getElementById(
+        "streakDisplay"
+    ).textContent =
+        streak;
+
+    document.getElementById(
+        "questionText"
+    ).textContent =
+        q.question;
+
+    document.getElementById(
+        "progressBar"
+    ).style.width =
+        ((currentQuestion + 1) / 10 * 100) + "%";
+
+
+    const container =
+        document.getElementById(
+            "optionsContainer"
+        );
+
+    container.innerHTML = "";
+
+
+    const letters = ["A","B","C","D"];
+
+
+    q.options.forEach((option,index) => {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "option";
+
+        button.innerHTML = `
+
+            <span class="option-letter">
+                ${letters[index]}
+            </span>
+
+            <span>
+                ${option}
+            </span>
+
+        `;
+
+        button.onclick =
+            () => selectAnswer(index);
+
+        container.appendChild(button);
+
+    });
+
+
+    startTimer();
+
+}
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+function startTimer() {
+
+    clearInterval(timerInterval);
+
+    timer = 15;
+
+    document.getElementById(
+        "timer"
+    ).textContent = timer;
+
+
+    timerInterval = setInterval(() => {
+
+        timer--;
+
+        document.getElementById(
+            "timer"
+        ).textContent = timer;
+
+
+        if (timer <= 0) {
+
+            clearInterval(timerInterval);
+
+            handleTimeout();
+
+        }
+
+    },1000);
+
+}
+
+
+/* =====================================================
+   ANSWER
+===================================================== */
+
+function selectAnswer(index) {
+
+    if(answered) return;
+
+    answered = true;
+
+    clearInterval(timerInterval);
+
+    const q =
+        questions[currentQuestion];
+
+    const options =
+        document.querySelectorAll(".option");
+
+    options.forEach((option,i) => {
+
+        option.disabled = true;
+
+        if(i === q.correct) {
+
+            option.classList.add("correct");
+
+        }
+
+        if(i === index &&
+           index !== q.correct) {
+
+            option.classList.add("wrong");
+
+        }
+
+    });
+
+
+    if(index === q.correct) {
+
+        handleCorrect(q);
+
+    } else {
+
+        handleWrong(q);
+
+    }
+
+}
+
+
+/* =====================================================
+   CORRECT
+===================================================== */
+
+function handleCorrect(q) {
+
+    correctAnswers++;
+
+    streak++;
+
+    if(streak > bestStreak) {
+
+        bestStreak = streak;
+
+    }
+
+
+    let rankGain = 5;
+
+
+    if(q.difficulty === "easy") {
+
+        rankGain = 3;
+
+    }
+
+    if(q.difficulty === "medium") {
+
+        rankGain = 5;
+
+    }
+
+    if(q.difficulty === "hard") {
+
+        rankGain = 8;
+
+    }
+
+
+    let streakBonus = 0;
+
+
+    if(streak >= 2) {
+
+        streakBonus = Math.min(streak - 1,5);
+
+    }
+
+
+    const totalGain =
+        rankGain + streakBonus;
+
+
+    const oldRank =
+        currentRank;
+
+
+    currentRank =
+        Math.max(
+            1,
+            currentRank - totalGain
+        );
+
+
+    xp += 10;
+
+    coins += 5;
+
+    earnedCoins += 5;
+
+
+    document.getElementById(
+        "feedbackIcon"
+    ).textContent = "✅";
+
+
+    document.getElementById(
+        "feedbackTitle"
+    ).textContent = "CORRECT!";
+
+
+    document.getElementById(
+        "feedbackRank"
+    ).textContent =
+        "#" + currentRank;
+
+
+    document.getElementById(
+        "rankMove"
+    ).textContent =
+        `#${oldRank} → #${currentRank}`;
+
+
+    document.getElementById(
+        "rankReward"
+    ).textContent =
+        "+" + totalGain;
+
+
+    showScreen("feedbackScreen");
+
+}
+
+
+/* =====================================================
+   WRONG
+===================================================== */
+
+function handleWrong(q) {
+
+    const oldRank =
+        currentRank;
+
+    streak = 0;
+
+    currentRank =
+        Math.min(
+            startingRank + 13,
+            currentRank + 3
+        );
+
+
+    document.getElementById(
+        "feedbackIcon"
+    ).textContent = "❌";
+
+
+    document.getElementById(
+        "feedbackTitle"
+    ).textContent = "NOT QUITE";
+
+
+    document.getElementById(
+        "feedbackRank"
+    ).textContent =
+        "#" + currentRank;
+
+
+    document.getElementById(
+        "rankMove"
+    ).textContent =
+        `#${oldRank} → #${currentRank}`;
+
+
+    document.getElementById(
+        "rankReward"
+    ).textContent =
+        "-3";
+
+
+    showScreen("feedbackScreen");
+
+}
+
+
+/* =====================================================
+   TIMEOUT
+===================================================== */
+
+function handleTimeout() {
+
+    if(answered) return;
+
+    answered = true;
+
+    const q =
+        questions[currentQuestion];
+
+    handleWrong(q);
+
+}
+
+
+/* =====================================================
+   NEXT QUESTION
+===================================================== */
+
+function nextQuestion() {
+
+    currentQuestion++;
+
+    if(currentQuestion >= 10) {
+
+        finishGame();
+
+        return;
+
+    }
+
+    showScreen("gameScreen");
+
+    loadQuestion();
+
+}
+
+
+/* =====================================================
+   FINISH GAME
+===================================================== */
+
+function finishGame() {
+
+    clearInterval(timerInterval);
+
+    const accuracy =
+        Math.round(
+            (correctAnswers / 10) * 100
+        );
+
+
+    const positionsClimbed =
+        startingRank - currentRank;
+
+
+    const finalXP =
+        xp +
+        (bestStreak * 5) +
+        (accuracy === 100 ? 50 : 0);
+
+
+    const finalCoins =
+        earnedCoins +
+        10 +
+        (bestStreak * 2) +
+        (accuracy === 100 ? 30 : 0);
+
+
+    document.getElementById(
+        "finalRank"
+    ).textContent =
+        "#" + currentRank;
+
+
+    document.getElementById(
+        "positionsClimbed"
+    ).textContent =
+        Math.max(0,positionsClimbed);
+
+
+    document.getElementById(
+        "correctResult"
+    ).textContent =
+        `${correctAnswers}/10`;
+
+
+    document.getElementById(
+        "accuracyResult"
+    ).textContent =
+        accuracy + "%";
+
+
+    document.getElementById(
+        "bestStreakResult"
+    ).textContent =
+        bestStreak;
+
+
+    document.getElementById(
+        "xpResult"
+    ).textContent =
+        finalXP;
+
+
+    document.getElementById(
+        "coinsEarned"
+    ).textContent =
+        finalCoins;
+
+
+    document.getElementById(
+        "resultCoins"
+    ).textContent =
+        finalCoins;
+
+
+    showScreen("resultScreen");
+
+}
+
+
+/* =====================================================
+   RESTART
+===================================================== */
+
+function restartGame() {
+
+    startGame();
+
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function goHome() {
+
+    showScreen("introScreen");
+
+}
+
+
+/* =====================================================
+   BACK
+===================================================== */
+
+function goBack() {
+
+    goHome();
+
+}
+
+
+/* =====================================================
+   EXIT CONFIRMATION
+===================================================== */
+
+function confirmExit() {
+
+    const leave =
+        confirm(
+            "Are you sure you want to leave this climb?"
+        );
+
+    if(leave) {
+
+        clearInterval(timerInterval);
+
+        goHome();
+
+    }
+
+}
+
+
+/* =====================================================
+   LEADERBOARD
+===================================================== */
+
+function showLeaderboard() {
+
+    showScreen("leaderboardScreen");
+
+    loadLeaderboard("global");
+
+}
+
+
+function loadLeaderboard(type) {
+
+    const players = [
+
+        {
+            name: "LoksewaPro",
+            score: 142,
+            rank: 1
+        },
+
+        {
+            name: "AspirantNepal",
+            score: 137,
+            rank: 2
+        },
+
+        {
+            name: "QuizMaster",
+            score: 133,
+            rank: 3
+        },
+
+        {
+            name: "GK Hunter",
+            score: 129,
+            rank: 4
+        },
+
+        {
+            name: "OfficerDream",
+            score: 127,
+            rank: 5
+        },
+
+        {
+            name: "NepalAspirant",
+            score: 121,
+            rank: 6
+        },
+
+        {
+            name: "StudyWarrior",
+            score: 117,
+            rank: 7
+        },
+
+        {
+            name: "You",
+            score: 91,
+            rank: 47
+        }
+
+    ];
+
+
+    const container =
+        document.getElementById(
+            "leaderboardList"
+        );
+
+
+    container.innerHTML = "";
+
+
+    players.forEach(player => {
+
+        const row =
+            document.createElement("div");
+
+
+        row.style.cssText = `
+
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+
+            padding:15px;
+
+            margin-bottom:8px;
+
+            border-radius:16px;
+
+            background:
+            ${player.name === "You"
+                ? "rgba(37,99,235,.35)"
+                : "rgba(255,255,255,.07)"};
+
+            border:
+            1px solid
+            rgba(255,255,255,.08);
+
+        `;
+
+
+        let medal = "";
+
+        if(player.rank === 1)
+            medal = "🥇";
+
+        else if(player.rank === 2)
+            medal = "🥈";
+
+        else if(player.rank === 3)
+            medal = "🥉";
+
+        else
+            medal = "#" + player.rank;
+
+
+        row.innerHTML = `
+
+            <div>
+
+                <div style="
+                    font-weight:700;
+                ">
+
+                    ${medal}
+                    &nbsp;
+                    ${player.name}
+
+                </div>
+
+            </div>
+
+            <div style="
+                font-weight:800;
+                color:#facc15;
+            ">
+
+                ${player.score}
+
+            </div>
+
+        `;
+
+
+        container.appendChild(row);
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
