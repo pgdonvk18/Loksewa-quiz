@@ -21,6 +21,11 @@
 
 <link
     rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
+
+<link
+    rel="preconnect"
     href="https://fonts.gstatic.com"
     crossorigin
 >
@@ -440,6 +445,8 @@ button:disabled{
 
     font-size:10px;
     line-height:1.6;
+
+    white-space:pre-line;
 }
 
 /* =========================================================
@@ -1457,831 +1464,790 @@ button:disabled{
 
 <div id="app">
 
-    <!-- =====================================================
-         LOADING
-    ====================================================== -->
+<div
+    class="loading-screen"
+    id="loadingScreen"
+>
 
-    <div
-        class="loading-screen"
-        id="loadingScreen"
-    >
+    <div class="loading-box">
 
-        <div class="loading-box">
+        <div class="loading-logo">
+            LQ
+        </div>
 
-            <div class="loading-logo">
-                LQ
-            </div>
+        <div class="loading-title">
+            LoksewaQuest
+        </div>
 
-            <div class="loading-title">
+        <div class="loading-text">
+            Rank Climber तयार हुँदैछ...
+        </div>
+
+        <div class="spinner"></div>
+
+    </div>
+
+</div>
+
+
+<div
+    class="app-shell"
+    id="mainApp"
+    style="display:none;"
+>
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            LQ
+        </div>
+
+        <div>
+
+            <div class="brand-title">
                 LoksewaQuest
             </div>
 
-            <div class="loading-text">
-                Rank Climber तयार हुँदैछ...
+            <div class="brand-subtitle">
+                RANK CLIMBER
             </div>
-
-            <div class="spinner"></div>
 
         </div>
 
     </div>
 
 
-    <!-- =====================================================
-         MAIN APP
-    ====================================================== -->
-
     <div
-        class="app-shell"
-        id="mainApp"
-        style="display:none;"
+        class="coin-display"
+        id="coinDisplay"
     >
 
-        <!-- =================================================
-             TOP BAR
-        ================================================== -->
-
-        <header class="topbar">
-
-            <div class="brand">
-
-                <div class="brand-icon">
-                    LQ
-                </div>
-
-                <div>
-
-                    <div class="brand-title">
-                        LoksewaQuest
-                    </div>
-
-                    <div class="brand-subtitle">
-                        RANK CLIMBER
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div
-                class="coin-display"
-                id="coinDisplay"
-            >
-                🪙
-                <span id="coinAmount">
-                    ...
-                </span>
-            </div>
-
-        </header>
-
-
-        <!-- =================================================
-             INTRO SCREEN
-        ================================================== -->
-
-        <section
-            class="screen active"
-            id="introScreen"
-        >
-
-            <div class="intro">
-
-                <div class="hero-card">
-
-                    <div class="hero-content">
-
-                        <div class="hero-label">
-                            Competitive Practice
-                        </div>
-
-                        <div class="hero-title">
-                            Rank Climber
-                        </div>
-
-                        <div class="hero-text">
-                            सही उत्तर दिएर आफ्नो LoksewaQuest rank माथि चढाउनुहोस्।
-                            प्रत्येक सही उत्तरले तपाईंलाई अगाडि लैजान्छ।
-                        </div>
-
-
-                        <div class="rank-card">
-
-                            <div class="rank-card-top">
-
-                                <div>
-
-                                    <div class="rank-caption">
-                                        CURRENT RANK
-                                    </div>
-
-                                    <div
-                                        class="rank-value"
-                                        id="currentRank"
-                                    >
-                                        —
-                                    </div>
-
-                                </div>
-
-                                <div
-                                    class="rank-change"
-                                    id="rankChangeText"
-                                >
-                                    Ready
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="stats-grid">
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon">
-                            🔥
-                        </div>
-
-                        <div
-                            class="stat-value"
-                            id="introStreak"
-                        >
-                            0
-                        </div>
-
-                        <div class="stat-label">
-                            STREAK
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon">
-                            ⭐
-                        </div>
-
-                        <div
-                            class="stat-value"
-                            id="introXP"
-                        >
-                            0
-                        </div>
-
-                        <div class="stat-label">
-                            TOTAL XP
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon">
-                            🪙
-                        </div>
-
-                        <div
-                            class="stat-value"
-                            id="introCoins"
-                        >
-                            ...
-                        </div>
-
-                        <div class="stat-label">
-                            COINS
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    class="start-button"
-                    id="startBtn"
-                    disabled
-                >
-                    🚀 CLIMB START गर्नुहोस्
-                </button>
-
-
-                <button
-                    class="secondary-button"
-                    id="leaderboardBtn"
-                >
-                    🏆 Leaderboard हेर्नुहोस्
-                </button>
-
-
-                <div
-                    class="game-error hidden"
-                    id="gameError"
-                ></div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             GAME SCREEN
-        ================================================== -->
-
-        <section
-            class="screen"
-            id="gameScreen"
-        >
-
-            <div class="game-container">
-
-                <div class="game-top">
-
-                    <button
-                        class="exit-button"
-                        id="exitGameBtn"
-                    >
-                        ✕
-                    </button>
-
-
-                    <div class="game-rank">
-
-                        <div class="game-rank-label">
-                            RANK
-                        </div>
-
-                        <div
-                            class="game-rank-value"
-                            id="gameRank"
-                        >
-                            —
-                        </div>
-
-                    </div>
-
-
-                    <div class="game-progress-wrap">
-
-                        <div class="game-progress-text">
-
-                            <span>
-                                Progress
-                            </span>
-
-                            <span
-                                id="questionNumber"
-                            >
-                                1/10
-                            </span>
-
-                        </div>
-
-                        <div class="progress-track">
-
-                            <div
-                                class="progress-bar"
-                                id="progressBar"
-                            ></div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="question-card">
-
-                    <div class="question-meta">
-
-                        <div
-                            class="topic-badge"
-                            id="questionTopic"
-                        >
-                            General
-                        </div>
-
-
-                        <div
-                            class="timer-box"
-                            id="timerBox"
-                        >
-
-                            ⏱️
-
-                            <span id="timer">
-                                15
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        class="question-text"
-                        id="questionText"
-                    >
-                        प्रश्न loading...
-                    </div>
-
-
-                    <div
-                        class="options"
-                        id="answerOptions"
-                    ></div>
-
-
-                    <div class="question-footer">
-
-                        <button
-                            class="answer-button"
-                            id="submitAnswerBtn"
-                            disabled
-                        >
-                            उत्तर Submit गर्नुहोस्
-                        </button>
-
-                        <div
-                            class="streak-strip"
-                            id="streakMessage"
-                        >
-                            🔥 Streak सुरु गर्नुहोस्
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             FEEDBACK SCREEN
-        ================================================== -->
-
-        <section
-            class="screen"
-            id="feedbackScreen"
-        >
-
-            <div class="feedback-container">
-
-                <div class="feedback-card">
-
-                    <div
-                        class="feedback-icon"
-                        id="feedbackIcon"
-                    >
-                        ✓
-                    </div>
-
-
-                    <div
-                        class="feedback-title"
-                        id="feedbackTitle"
-                    >
-                        सही उत्तर!
-                    </div>
-
-
-                    <div
-                        class="feedback-message"
-                        id="feedbackMessage"
-                    >
-                        राम्रो!
-                    </div>
-
-
-                    <div class="feedback-stats">
-
-                        <div class="feedback-stat">
-
-                            <div class="feedback-stat-label">
-                                RANK MOVE
-                            </div>
-
-                            <div
-                                class="feedback-stat-value"
-                                id="rankMove"
-                            >
-                                +0
-                            </div>
-
-                        </div>
-
-
-                        <div class="feedback-stat">
-
-                            <div class="feedback-stat-label">
-                                RANK REWARD
-                            </div>
-
-                            <div
-                                class="feedback-stat-value"
-                                id="rankReward"
-                            >
-                                +0
-                            </div>
-
-                        </div>
-
-
-                        <div class="feedback-stat">
-
-                            <div class="feedback-stat-label">
-                                XP
-                            </div>
-
-                            <div
-                                class="feedback-stat-value"
-                                id="feedbackXP"
-                            >
-                                +10
-                            </div>
-
-                        </div>
-
-
-                        <div class="feedback-stat">
-
-                            <div class="feedback-stat-label">
-                                COINS
-                            </div>
-
-                            <div
-                                class="feedback-stat-value"
-                                id="feedbackCoins"
-                            >
-                                +5
-                            </div>
-
-                        </div>
-
-
-                        <div class="feedback-stat">
-
-                            <div class="feedback-stat-label">
-                                STREAK
-                            </div>
-
-                            <div
-                                class="feedback-stat-value"
-                                id="feedbackStreak"
-                            >
-                                0
-                            </div>
-
-                        </div>
-
-
-                        <div class="feedback-stat">
-
-                            <div class="feedback-stat-label">
-                                CORRECT ANSWER
-                            </div>
-
-                            <div
-                                class="feedback-stat-value"
-                                id="correctAnswer"
-                            >
-                                —
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="explanation-box">
-
-                        <div class="explanation-title">
-                            📘 स्पष्टीकरण
-                        </div>
-
-                        <div
-                            class="explanation-text"
-                            id="explanation"
-                        >
-                            —
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        class="next-button"
-                        id="nextQuestionBtn"
-                    >
-                        अर्को प्रश्न →
-                    </button>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             RESULT SCREEN
-        ================================================== -->
-
-        <section
-            class="screen"
-            id="resultScreen"
-        >
-
-            <div class="result-container">
-
-                <div class="result-card">
-
-                    <div class="result-icon">
-                        🏆
-                    </div>
-
-
-                    <div class="result-title">
-                        CLIMB COMPLETE
-                    </div>
-
-
-                    <div
-                        class="result-message"
-                        id="resultMessage"
-                    >
-                        तपाईंको Rank Climber game सकियो।
-                    </div>
-
-
-                    <div class="result-rank">
-
-                        <div class="result-rank-label">
-                            FINAL RANK
-                        </div>
-
-                        <div
-                            class="result-rank-value"
-                            id="finalRank"
-                        >
-                            —
-                        </div>
-
-                    </div>
-
-
-                    <div class="result-grid">
-
-                        <div class="result-stat">
-
-                            <div class="result-stat-label">
-                                COINS
-                            </div>
-
-                            <div
-                                class="result-stat-value"
-                                id="resultCoins"
-                            >
-                                0
-                            </div>
-
-                        </div>
-
-
-                        <div class="result-stat">
-
-                            <div class="result-stat-label">
-                                POSITION CLIMBED
-                            </div>
-
-                            <div
-                                class="result-stat-value"
-                                id="positionsClimbed"
-                            >
-                                0
-                            </div>
-
-                        </div>
-
-
-                        <div class="result-stat">
-
-                            <div class="result-stat-label">
-                                CORRECT
-                            </div>
-
-                            <div
-                                class="result-stat-value"
-                                id="correctAnswers"
-                            >
-                                0/10
-                            </div>
-
-                        </div>
-
-
-                        <div class="result-stat">
-
-                            <div class="result-stat-label">
-                                ACCURACY
-                            </div>
-
-                            <div
-                                class="result-stat-value"
-                                id="accuracy"
-                            >
-                                0%
-                            </div>
-
-                        </div>
-
-
-                        <div class="result-stat">
-
-                            <div class="result-stat-label">
-                                BEST STREAK
-                            </div>
-
-                            <div
-                                class="result-stat-value"
-                                id="bestStreak"
-                            >
-                                0
-                            </div>
-
-                        </div>
-
-
-                        <div class="result-stat">
-
-                            <div class="result-stat-label">
-                                SESSION XP
-                            </div>
-
-                            <div
-                                class="result-stat-value"
-                                id="totalXP"
-                            >
-                                0
-                            </div>
-
-                        </div>
-
-
-                        <div class="result-stat">
-
-                            <div class="result-stat-label">
-                                TOTAL COINS
-                            </div>
-
-                            <div
-                                class="result-stat-value"
-                                id="totalCoins"
-                            >
-                                0
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="result-buttons">
-
-                        <button
-                            class="result-button primary"
-                            id="restartBtn"
-                        >
-                            🔄 फेरि खेल्नुहोस्
-                        </button>
-
-
-                        <button
-                            class="result-button secondary"
-                            id="resultLeaderboardBtn"
-                        >
-                            🏆 Leaderboard
-                        </button>
-
-
-                        <button
-                            class="result-button secondary"
-                            id="homeBtn"
-                        >
-                            🏠 Home
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             LEADERBOARD SCREEN
-        ================================================== -->
-
-        <section
-            class="screen"
-            id="leaderboardScreen"
-        >
-
-            <div class="leaderboard-container">
-
-                <div class="leaderboard-header">
-
-                    <button
-                        class="back-button"
-                        id="leaderboardBackBtn"
-                    >
-                        ←
-                    </button>
-
-                    <div class="leaderboard-title">
-                        🏆 Leaderboard
-                    </div>
-
-                    <div style="width:38px;"></div>
-
-                </div>
-
-
-                <div class="leaderboard-tabs">
-
-                    <button
-                        class="leaderboard-tab active"
-                        id="globalLeaderboardBtn"
-                    >
-                        🌎 Global
-                    </button>
-
-
-                    <button
-                        class="leaderboard-tab"
-                        id="dailyLeaderboardBtn"
-                    >
-                        📅 Daily
-                    </button>
-
-                </div>
-
-
-                <div
-                    class="leaderboard-list"
-                    id="leaderboardList"
-                >
-
-                    <div class="empty-leaderboard">
-                        Loading...
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
+        🪙
+
+        <span id="coinAmount">
+            ...
+        </span>
 
     </div>
+
+</header>
+
+
+<section
+    class="screen active"
+    id="introScreen"
+>
+
+<div class="intro">
+
+<div class="hero-card">
+
+<div class="hero-content">
+
+<div class="hero-label">
+    Competitive Practice
+</div>
+
+<div class="hero-title">
+    Rank Climber
+</div>
+
+<div class="hero-text">
+    सही उत्तर दिएर आफ्नो LoksewaQuest rank माथि चढाउनुहोस्।
+    प्रत्येक सही उत्तरले तपाईंलाई अगाडि लैजान्छ।
+</div>
+
+
+<div class="rank-card">
+
+<div class="rank-card-top">
+
+<div>
+
+<div class="rank-caption">
+    CURRENT RANK
+</div>
+
+<div
+    class="rank-value"
+    id="currentRank"
+>
+    —
+</div>
+
+</div>
+
+<div
+    class="rank-change"
+    id="rankChangeText"
+>
+    Ready
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 </div>
 
 
-<!-- =========================================================
-     COUNTDOWN
-========================================================= -->
+<div class="stats-grid">
+
+<div class="stat-card">
+
+<div class="stat-icon">
+    🔥
+</div>
+
+<div
+    class="stat-value"
+    id="introStreak"
+>
+    0
+</div>
+
+<div class="stat-label">
+    STREAK
+</div>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-icon">
+    ⭐
+</div>
+
+<div
+    class="stat-value"
+    id="introXP"
+>
+    0
+</div>
+
+<div class="stat-label">
+    TOTAL XP
+</div>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-icon">
+    🪙
+</div>
+
+<div
+    class="stat-value"
+    id="introCoins"
+>
+    ...
+</div>
+
+<div class="stat-label">
+    COINS
+</div>
+
+</div>
+
+</div>
+
+
+<button
+    class="start-button"
+    id="startBtn"
+    disabled
+>
+    🚀 CLIMB START गर्नुहोस्
+</button>
+
+
+<button
+    class="secondary-button"
+    id="leaderboardBtn"
+>
+    🏆 Leaderboard हेर्नुहोस्
+</button>
+
+
+<div
+    class="game-error hidden"
+    id="gameError"
+></div>
+
+</div>
+
+</section>
+
+
+<section
+    class="screen"
+    id="gameScreen"
+>
+
+<div class="game-container">
+
+<div class="game-top">
+
+<button
+    class="exit-button"
+    id="exitGameBtn"
+>
+    ✕
+</button>
+
+
+<div class="game-rank">
+
+<div class="game-rank-label">
+    RANK
+</div>
+
+<div
+    class="game-rank-value"
+    id="gameRank"
+>
+    —
+</div>
+
+</div>
+
+
+<div class="game-progress-wrap">
+
+<div class="game-progress-text">
+
+<span>
+    Progress
+</span>
+
+<span id="questionNumber">
+    1/10
+</span>
+
+</div>
+
+<div class="progress-track">
+
+<div
+    class="progress-bar"
+    id="progressBar"
+></div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="question-card">
+
+<div class="question-meta">
+
+<div
+    class="topic-badge"
+    id="questionTopic"
+>
+    General
+</div>
+
+
+<div
+    class="timer-box"
+    id="timerBox"
+>
+
+    ⏱️
+
+    <span id="timer">
+        15
+    </span>
+
+</div>
+
+</div>
+
+
+<div
+    class="question-text"
+    id="questionText"
+>
+    प्रश्न loading...
+</div>
+
+
+<div
+    class="options"
+    id="answerOptions"
+></div>
+
+
+<div class="question-footer">
+
+<button
+    class="answer-button"
+    id="submitAnswerBtn"
+    disabled
+>
+    उत्तर Submit गर्नुहोस्
+</button>
+
+<div
+    class="streak-strip"
+    id="streakMessage"
+>
+    🔥 Streak सुरु गर्नुहोस्
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section
+    class="screen"
+    id="feedbackScreen"
+>
+
+<div class="feedback-container">
+
+<div class="feedback-card">
+
+<div
+    class="feedback-icon"
+    id="feedbackIcon"
+>
+    ✓
+</div>
+
+
+<div
+    class="feedback-title"
+    id="feedbackTitle"
+>
+    सही उत्तर!
+</div>
+
+
+<div
+    class="feedback-message"
+    id="feedbackMessage"
+>
+    राम्रो!
+</div>
+
+
+<div class="feedback-stats">
+
+<div class="feedback-stat">
+
+<div class="feedback-stat-label">
+    RANK MOVE
+</div>
+
+<div
+    class="feedback-stat-value"
+    id="rankMove"
+>
+    +0
+</div>
+
+</div>
+
+
+<div class="feedback-stat">
+
+<div class="feedback-stat-label">
+    RANK REWARD
+</div>
+
+<div
+    class="feedback-stat-value"
+    id="rankReward"
+>
+    +0
+</div>
+
+</div>
+
+
+<div class="feedback-stat">
+
+<div class="feedback-stat-label">
+    XP
+</div>
+
+<div
+    class="feedback-stat-value"
+    id="feedbackXP"
+>
+    +10
+</div>
+
+</div>
+
+
+<div class="feedback-stat">
+
+<div class="feedback-stat-label">
+    COINS
+</div>
+
+<div
+    class="feedback-stat-value"
+    id="feedbackCoins"
+>
+    +5
+</div>
+
+</div>
+
+
+<div class="feedback-stat">
+
+<div class="feedback-stat-label">
+    STREAK
+</div>
+
+<div
+    class="feedback-stat-value"
+    id="feedbackStreak"
+>
+    0
+</div>
+
+</div>
+
+
+<div class="feedback-stat">
+
+<div class="feedback-stat-label">
+    CORRECT ANSWER
+</div>
+
+<div
+    class="feedback-stat-value"
+    id="correctAnswer"
+>
+    —
+</div>
+
+</div>
+
+</div>
+
+
+<div class="explanation-box">
+
+<div class="explanation-title">
+    📘 स्पष्टीकरण
+</div>
+
+<div
+    class="explanation-text"
+    id="explanation"
+>
+    —
+</div>
+
+</div>
+
+
+<button
+    class="next-button"
+    id="nextQuestionBtn"
+>
+    अर्को प्रश्न →
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section
+    class="screen"
+    id="resultScreen"
+>
+
+<div class="result-container">
+
+<div class="result-card">
+
+<div class="result-icon">
+    🏆
+</div>
+
+<div class="result-title">
+    CLIMB COMPLETE
+</div>
+
+<div
+    class="result-message"
+    id="resultMessage"
+>
+    तपाईंको Rank Climber game सकियो।
+</div>
+
+
+<div class="result-rank">
+
+<div class="result-rank-label">
+    FINAL RANK
+</div>
+
+<div
+    class="result-rank-value"
+    id="finalRank"
+>
+    —
+</div>
+
+</div>
+
+
+<div class="result-grid">
+
+<div class="result-stat">
+
+<div class="result-stat-label">
+    COINS
+</div>
+
+<div
+    class="result-stat-value"
+    id="resultCoins"
+>
+    0
+</div>
+
+</div>
+
+
+<div class="result-stat">
+
+<div class="result-stat-label">
+    POSITION CLIMBED
+</div>
+
+<div
+    class="result-stat-value"
+    id="positionsClimbed"
+>
+    0
+</div>
+
+</div>
+
+
+<div class="result-stat">
+
+<div class="result-stat-label">
+    CORRECT
+</div>
+
+<div
+    class="result-stat-value"
+    id="correctAnswers"
+>
+    0/10
+</div>
+
+</div>
+
+
+<div class="result-stat">
+
+<div class="result-stat-label">
+    ACCURACY
+</div>
+
+<div
+    class="result-stat-value"
+    id="accuracy"
+>
+    0%
+</div>
+
+</div>
+
+
+<div class="result-stat">
+
+<div class="result-stat-label">
+    BEST STREAK
+</div>
+
+<div
+    class="result-stat-value"
+    id="bestStreak"
+>
+    0
+</div>
+
+</div>
+
+
+<div class="result-stat">
+
+<div class="result-stat-label">
+    SESSION XP
+</div>
+
+<div
+    class="result-stat-value"
+    id="totalXP"
+>
+    0
+</div>
+
+</div>
+
+
+<div class="result-stat">
+
+<div class="result-stat-label">
+    TOTAL COINS
+</div>
+
+<div
+    class="result-stat-value"
+    id="totalCoins"
+>
+    0
+</div>
+
+</div>
+
+</div>
+
+
+<div class="result-buttons">
+
+<button
+    class="result-button primary"
+    id="restartBtn"
+>
+    🔄 फेरि खेल्नुहोस्
+</button>
+
+
+<button
+    class="result-button secondary"
+    id="resultLeaderboardBtn"
+>
+    🏆 Leaderboard
+</button>
+
+
+<button
+    class="result-button secondary"
+    id="homeBtn"
+>
+    🏠 Home
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section
+    class="screen"
+    id="leaderboardScreen"
+>
+
+<div class="leaderboard-container">
+
+<div class="leaderboard-header">
+
+<button
+    class="back-button"
+    id="leaderboardBackBtn"
+>
+    ←
+</button>
+
+<div class="leaderboard-title">
+    🏆 Leaderboard
+</div>
+
+<div style="width:38px;"></div>
+
+</div>
+
+
+<div class="leaderboard-tabs">
+
+<button
+    class="leaderboard-tab active"
+    id="globalLeaderboardBtn"
+>
+    🌎 Global
+</button>
+
+
+<button
+    class="leaderboard-tab"
+    id="dailyLeaderboardBtn"
+>
+    📅 Daily
+</button>
+
+</div>
+
+
+<div
+    class="leaderboard-list"
+    id="leaderboardList"
+>
+
+<div class="empty-leaderboard">
+    Loading...
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+</div>
+
 
 <div
     class="countdown-overlay"
     id="countdown"
 >
 
-    <div
-        class="countdown-number"
-        id="countNumber"
-    >
-        3
-    </div>
+<div
+    class="countdown-number"
+    id="countNumber"
+>
+    3
+</div>
 
 </div>
 
-
-<!-- =========================================================
-     TOAST
-========================================================= -->
 
 <div
     class="toast"
@@ -2290,39 +2256,31 @@ button:disabled{
 
 
 <!-- =========================================================
-     JAVASCRIPT
+     PART 2 STARTS HERE
 ========================================================= -->
 
-<script type="module">
-
-/* =========================================================
-   IMPORTS
+<script type="module">/* =========================================================
+   1. IMPORTS
 ========================================================= */
 
 import {
     createClient
 } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
 
 import {
     getAuth,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-
 import {
     getFirestore,
     doc,
     getDoc,
     setDoc,
-    updateDoc,
-    collection,
-    addDoc,
     serverTimestamp,
     runTransaction,
     increment
@@ -2330,480 +2288,813 @@ import {
 
 
 /* =========================================================
-   FIREBASE CONFIG
+   2. FIREBASE CONFIG
 ========================================================= */
 
 const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyCkKCU1re5b9MtdAF1F4xI6rGxmxhGZak",
-
-    authDomain:
-        "loksewaquest-227b6.firebaseapp.com",
-
-    projectId:
-        "loksewaquest-227b6",
-
-    storageBucket:
-        "loksewaquest-227b6.firebasestorage.app",
-
-    messagingSenderId:
-        "779234903809",
-
-    appId:
-        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-
+    apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+    authDomain: "loksewaquest-227b6.firebaseapp.com",
+    projectId: "loksewaquest-227b6",
+    storageBucket: "loksewaquest-227b6.firebasestorage.app",
+    messagingSenderId: "779234903809",
+    appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
 };
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 
 /* =========================================================
-   SUPABASE CONFIG
+   3. SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
     "https://edyirdedkiarguvurpxq.supabase.co";
 
-
 const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJKb2F2aXhIiwicmVmIjoiZWR5aXJkZWRraWFyZ3V2dXJweHEiLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+const supabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 
 
 /* =========================================================
-   INITIALIZE
-========================================================= */
-
-const firebaseApp =
-    initializeApp(firebaseConfig);
-
-
-const auth =
-    getAuth(firebaseApp);
-
-
-const db =
-    getFirestore(firebaseApp);
-
-
-const supabase =
-    createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
-
-
-/* =========================================================
-   CONFIG
+   4. CONSTANTS
 ========================================================= */
 
 const TOTAL_QUESTIONS = 10;
-
 const QUESTION_TIME = 15;
 
-const DEFAULT_RANK = 999999;
+const DEFAULT_RANK = 1000;
+
+const EASY_RANK_GAIN = 3;
+const MEDIUM_RANK_GAIN = 5;
+const HARD_RANK_GAIN = 8;
+const EXPERT_RANK_GAIN = 12;
+
+const WRONG_RANK_LOSS = 3;
+
+const MAX_STREAK_BONUS = 5;
 
 
 /* =========================================================
-   DOM HELPERS
+   5. QUESTIONS
 ========================================================= */
 
-const $ = id =>
-    document.getElementById(id);
+const SAMPLE_QUESTIONS = [
 
+    {
+        question:
+            "नेपालको संविधान २०७२ कहिले जारी भएको हो?",
 
-function setText(
-    id,
-    value
-){
+        options: [
+            "२०७२ असोज ३",
+            "२०७२ भदौ ३",
+            "२०७३ असोज ३",
+            "२०७१ असोज ३"
+        ],
 
-    const element = $(id);
+        answer: 0,
 
-    if(element){
-        element.textContent =
-            value;
+        topic: "संविधान",
+
+        difficulty: "easy",
+
+        explanation:
+            "नेपालको संविधान २०७२ असोज ३ गते जारी भएको हो।"
+    },
+
+    {
+        question:
+            "नेपालको राजधानी कुन हो?",
+
+        options: [
+            "पोखरा",
+            "काठमाडौं",
+            "ललितपुर",
+            "भक्तपुर"
+        ],
+
+        answer: 1,
+
+        topic: "नेपाल परिचय",
+
+        difficulty: "easy",
+
+        explanation:
+            "नेपालको संघीय राजधानी काठमाडौं हो।"
+    },
+
+    {
+        question:
+            "नेपालमा कति वटा प्रदेश छन्?",
+
+        options: [
+            "५",
+            "६",
+            "७",
+            "८"
+        ],
+
+        answer: 2,
+
+        topic: "संघीयता",
+
+        difficulty: "easy",
+
+        explanation:
+            "नेपालमा ७ वटा प्रदेश रहेका छन्।"
+    },
+
+    {
+        question:
+            "नेपालको सबैभन्दा अग्लो हिमाल कुन हो?",
+
+        options: [
+            "कञ्चनजङ्घा",
+            "सगरमाथा",
+            "धौलागिरी",
+            "मनास्लु"
+        ],
+
+        answer: 1,
+
+        topic: "भूगोल",
+
+        difficulty: "easy",
+
+        explanation:
+            "सगरमाथा नेपालको मात्र होइन, विश्वकै सर्वोच्च हिमाल हो।"
+    },
+
+    {
+        question:
+            "नेपालको संविधानले राज्यशक्तिको प्रयोग कति तहबाट हुने व्यवस्था गरेको छ?",
+
+        options: [
+            "२ तह",
+            "३ तह",
+            "४ तह",
+            "५ तह"
+        ],
+
+        answer: 1,
+
+        topic: "संविधान",
+
+        difficulty: "medium",
+
+        explanation:
+            "संघ, प्रदेश र स्थानीय तह गरी तीन तहको राज्य संरचना छ।"
+    },
+
+    {
+        question:
+            "लोक सेवा आयोग नेपालको संविधानको कुन धारामा सम्बन्धित छ?",
+
+        options: [
+            "धारा २४०",
+            "धारा २४१",
+            "धारा २४२",
+            "धारा २४३"
+        ],
+
+        answer: 2,
+
+        topic: "लोक सेवा",
+
+        difficulty: "medium",
+
+        explanation:
+            "नेपालको संविधानको धारा २४२ मा लोक सेवा आयोगको व्यवस्था गरिएको छ।"
+    },
+
+    {
+        question:
+            "नेपालको राष्ट्रिय फूल कुन हो?",
+
+        options: [
+            "कमल",
+            "गुराँस",
+            "सुनाखरी",
+            "गोदावरी"
+        ],
+
+        answer: 1,
+
+        topic: "नेपाल परिचय",
+
+        difficulty: "easy",
+
+        explanation:
+            "लालीगुराँस नेपालको राष्ट्रिय फूल हो।"
+    },
+
+    {
+        question:
+            "नेपालको राष्ट्रिय जनावर कुन हो?",
+
+        options: [
+            "गाई",
+            "बाघ",
+            "गैंडा",
+            "हिमचितुवा"
+        ],
+
+        answer: 0,
+
+        topic: "नेपाल परिचय",
+
+        difficulty: "easy",
+
+        explanation:
+            "गाई नेपालको राष्ट्रिय जनावर हो।"
+    },
+
+    {
+        question:
+            "नेपालको राष्ट्रिय पक्षी कुन हो?",
+
+        options: [
+            "डाँफे",
+            "मुनाल",
+            "कालिज",
+            "सारस"
+        ],
+
+        answer: 0,
+
+        topic: "नेपाल परिचय",
+
+        difficulty: "easy",
+
+        explanation:
+            "डाँफे नेपालको राष्ट्रिय पक्षी हो।"
+    },
+
+    {
+        question:
+            "नेपालको वर्तमान संविधानमा मौलिक हक कुन भागमा व्यवस्था गरिएको छ?",
+
+        options: [
+            "भाग १",
+            "भाग २",
+            "भाग ३",
+            "भाग ४"
+        ],
+
+        answer: 2,
+
+        topic: "संविधान",
+
+        difficulty: "medium",
+
+        explanation:
+            "नेपालको संविधानको भाग ३ मा मौलिक हक तथा कर्तव्यको व्यवस्था गरिएको छ।"
+    },
+
+    {
+        question:
+            "नेपालको सरकारी कामकाजको मुख्य भाषा कुन हो?",
+
+        options: [
+            "मैथिली",
+            "नेपाली",
+            "अंग्रेजी",
+            "नेवारी"
+        ],
+
+        answer: 1,
+
+        topic: "सामान्य ज्ञान",
+
+        difficulty: "easy",
+
+        explanation:
+            "देवनागरी लिपिमा लेखिने नेपाली भाषा नेपालको सरकारी कामकाजको भाषा हो।"
+    },
+
+    {
+        question:
+            "नेपालको राष्ट्रिय खेल कुन हो?",
+
+        options: [
+            "फुटबल",
+            "क्रिकेट",
+            "भलिबल",
+            "बास्केटबल"
+        ],
+
+        answer: 2,
+
+        topic: "नेपाल परिचय",
+
+        difficulty: "easy",
+
+        explanation:
+            "भलिबल नेपालको राष्ट्रिय खेल हो।"
     }
 
-}
+];
 
 
 /* =========================================================
-   DOM
+   6. STATE
+========================================================= */
+
+let firebaseUser = null;
+let userId = null;
+let userName = "Aspirant";
+
+let questions = [];
+
+let currentQuestion = 0;
+
+let currentRank = DEFAULT_RANK;
+let startingRank = DEFAULT_RANK;
+let bestRank = DEFAULT_RANK;
+
+let totalXP = 0;
+let sessionXP = 0;
+
+let streak = 0;
+let bestStreak = 0;
+
+let correctAnswers = 0;
+
+let coins = 0;
+let earnedCoins = 0;
+
+let timer = QUESTION_TIME;
+let timerInterval = null;
+
+let selectedAnswer = null;
+let answered = false;
+
+let gameStarted = false;
+let gameFinished = false;
+
+let rewardSaved = false;
+
+let gameLoading = false;
+let savingAnswer = false;
+
+let sessionId = null;
+let gameId = null;
+
+let sessionStartTime = null;
+
+let feedbackTimeout = null;
+
+let currentLeaderboardType = "global";
+
+let currentQuestionReward = 0;
+let currentRankChange = 0;
+
+let authStateResolved = false;
+let authLoading = false;
+
+
+/* =========================================================
+   7. DOM
 ========================================================= */
 
 const loadingScreen =
-    $("loadingScreen");
+    document.getElementById("loadingScreen");
 
 const mainApp =
-    $("mainApp");
-
+    document.getElementById("mainApp");
 
 const introScreen =
-    $("introScreen");
+    document.getElementById("introScreen");
 
 const gameScreen =
-    $("gameScreen");
+    document.getElementById("gameScreen");
 
 const feedbackScreen =
-    $("feedbackScreen");
+    document.getElementById("feedbackScreen");
 
 const resultScreen =
-    $("resultScreen");
+    document.getElementById("resultScreen");
 
 const leaderboardScreen =
-    $("leaderboardScreen");
-
+    document.getElementById("leaderboardScreen");
 
 const startBtn =
-    $("startBtn");
+    document.getElementById("startBtn");
 
 const leaderboardBtn =
-    $("leaderboardBtn");
+    document.getElementById("leaderboardBtn");
 
 const exitGameBtn =
-    $("exitGameBtn");
-
+    document.getElementById("exitGameBtn");
 
 const submitAnswerBtn =
-    $("submitAnswerBtn");
+    document.getElementById("submitAnswerBtn");
 
 const nextQuestionBtn =
-    $("nextQuestionBtn");
-
-
-const homeBtn =
-    $("homeBtn");
+    document.getElementById("nextQuestionBtn");
 
 const restartBtn =
-    $("restartBtn");
+    document.getElementById("restartBtn");
 
 const resultLeaderboardBtn =
-    $("resultLeaderboardBtn");
+    document.getElementById("resultLeaderboardBtn");
 
+const homeBtn =
+    document.getElementById("homeBtn");
 
 const leaderboardBackBtn =
-    $("leaderboardBackBtn");
+    document.getElementById("leaderboardBackBtn");
 
 const globalLeaderboardBtn =
-    $("globalLeaderboardBtn");
+    document.getElementById("globalLeaderboardBtn");
 
 const dailyLeaderboardBtn =
-    $("dailyLeaderboardBtn");
-
-
-const answerOptions =
-    $("answerOptions");
-
+    document.getElementById("dailyLeaderboardBtn");
 
 const gameError =
-    $("gameError");
+    document.getElementById("gameError");
 
-
-const countdown =
-    $("countdown");
-
-const countNumber =
-    $("countNumber");
+const answerOptions =
+    document.getElementById("answerOptions");
 
 
 /* =========================================================
-   STATE
+   8. HELPERS
 ========================================================= */
 
-let firebaseUser =
-    null;
+function setText(id, value){
 
-let userId =
-    null;
+    const element =
+        document.getElementById(id);
 
-let userName =
-    "Aspirant";
-
-
-let questions =
-    [];
-
-let currentQuestion =
-    0;
-
-
-let currentRank =
-    DEFAULT_RANK;
-
-let startingRank =
-    DEFAULT_RANK;
-
-let bestRank =
-    DEFAULT_RANK;
-
-
-let totalXP =
-    0;
-
-let sessionXP =
-    0;
-
-
-let streak =
-    0;
-
-let bestStreak =
-    0;
-
-let correctAnswers =
-    0;
-
-
-let coins =
-    0;
-
-let earnedCoins =
-    0;
-
-
-let timer =
-    QUESTION_TIME;
-
-let timerInterval =
-    null;
-
-
-let selectedAnswer =
-    null;
-
-let answered =
-    false;
-
-let gameStarted =
-    false;
-
-let gameFinished =
-    false;
-
-let rewardSaved =
-    false;
-
-
-let gameLoading =
-    false;
-
-let savingAnswer =
-    false;
-
-
-let sessionId =
-    null;
-
-let gameId =
-    null;
-
-let sessionStartTime =
-    null;
-
-
-let feedbackTimeout =
-    null;
-
-
-let currentLeaderboardType =
-    "global";
-
-
-let currentQuestionReward =
-    0;
-
-let currentRankChange =
-    0;
-
-
-/* =========================================================
-   GAME ID
-========================================================= */
-
-function createGameId(){
-
-    if(
-        globalThis.crypto &&
-        typeof globalThis.crypto.randomUUID ===
-            "function"
-    ){
-
-        return globalThis.crypto.randomUUID();
-
+    if(element){
+        element.textContent =
+            value ?? "";
     }
 
-    return (
-        "rank_" +
-        Date.now() +
-        "_" +
-        Math.random()
-            .toString(36)
-            .slice(2)
-    );
-
 }
 
 
-/* =========================================================
-   SCREEN
-========================================================= */
+function showScreen(screen){
 
-function showScreen(
-    screen
-){
+    document
+        .querySelectorAll(".screen")
+        .forEach(item => {
 
-    [
-        introScreen,
-        gameScreen,
-        feedbackScreen,
-        resultScreen,
-        leaderboardScreen
-    ].forEach(
-        element => {
+            item.classList.remove("active");
 
-            element.classList.remove(
-                "active"
-            );
+        });
 
-        }
-    );
-
-
-    screen.classList.add(
-        "active"
-    );
+    if(screen){
+        screen.classList.add("active");
+    }
 
 }
 
-
-/* =========================================================
-   LOADING
-========================================================= */
 
 function hideLoading(){
 
-    loadingScreen.style.display =
-        "none";
+    if(loadingScreen){
+        loadingScreen.style.display = "none";
+    }
 
-    mainApp.style.display =
-        "block";
+    if(mainApp){
+        mainApp.style.display = "block";
+    }
 
 }
 
 
-/* =========================================================
-   ERROR
-========================================================= */
+function showError(message){
 
-function showError(
-    message
-){
+    if(!gameError){
+        return;
+    }
 
     gameError.textContent =
-        message;
+        message || "";
 
-    gameError.classList.remove(
-        "hidden"
-    );
+    gameError.classList.remove("hidden");
 
 }
 
 
 function hideError(){
 
-    gameError.classList.add(
-        "hidden"
-    );
+    if(gameError){
+        gameError.classList.add("hidden");
+        gameError.textContent = "";
+    }
 
 }
 
 
-/* =========================================================
-   TOAST
-========================================================= */
-
-let toastTimeout =
-    null;
-
-
-function showToast(
-    message
-){
+function showToast(message){
 
     const toast =
-        $("toast");
+        document.getElementById("toast");
+
+    if(!toast){
+        return;
+    }
 
     toast.textContent =
-        message;
+        message || "";
 
-    toast.classList.add(
-        "show"
-    );
+    toast.classList.add("show");
 
+    setTimeout(() => {
 
-    clearTimeout(
-        toastTimeout
-    );
+        toast.classList.remove("show");
 
-
-    toastTimeout =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            2200
-        );
+    }, 2200);
 
 }
 
 
 /* =========================================================
-   AUTH WAIT
+   9. UI UPDATE
 ========================================================= */
 
-function waitForFirebaseUser(){
+function updateCoinUI(){
 
-    return new Promise(
-        resolve => {
+    const balance =
+        Number(coins || 0)
+            .toLocaleString();
 
-            let finished =
-                false;
+    setText(
+        "coinAmount",
+        balance
+    );
 
-            const unsubscribe =
-                onAuthStateChanged(
-                    auth,
-                    user => {
+    setText(
+        "introCoins",
+        balance
+    );
 
-                        if(
-                            finished
-                        ){
+    /*
+     * resultCoins = current Firebase balance
+     * totalCoins = coins earned during this game
+     */
 
-                            return;
+    setText(
+        "resultCoins",
+        balance
+    );
 
-                        }
-
-                        finished =
-                            true;
-
-                        unsubscribe();
-
-                        resolve(
-                            user || null
-                        );
-
-                    }
-                );
-
-        }
+    setText(
+        "totalCoins",
+        Number(earnedCoins || 0)
+            .toLocaleString()
     );
 
 }
 
 
+function updateIntroUI(){
+
+    setText(
+        "currentRank",
+        currentRank
+    );
+
+    setText(
+        "introStreak",
+        streak
+    );
+
+    setText(
+        "introXP",
+        totalXP
+    );
+
+    updateCoinUI();
+
+    setText(
+        "rankChangeText",
+        `Best ${bestRank}`
+    );
+
+}
+
+
+function updateGameUI(){
+
+    setText(
+        "gameRank",
+        currentRank
+    );
+
+    setText(
+        "questionNumber",
+        `${currentQuestion + 1}/${TOTAL_QUESTIONS}`
+    );
+
+    const percentage =
+        ((currentQuestion) / TOTAL_QUESTIONS) * 100;
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+    if(progressBar){
+
+        progressBar.style.width =
+            `${percentage}%`;
+
+    }
+
+}
+
+
 /* =========================================================
-   LOAD PLAYER
+   10. RESET GAME
+========================================================= */
+
+function resetGameState(){
+
+    clearTimer();
+
+    currentQuestion = 0;
+
+    startingRank =
+        currentRank;
+
+    streak = 0;
+    bestStreak = 0;
+
+    correctAnswers = 0;
+
+    sessionXP = 0;
+    earnedCoins = 0;
+
+    timer = QUESTION_TIME;
+
+    selectedAnswer = null;
+    answered = false;
+
+    gameStarted = false;
+    gameFinished = false;
+
+    rewardSaved = false;
+
+    sessionId = null;
+    sessionStartTime = null;
+
+    currentQuestionReward = 0;
+    currentRankChange = 0;
+
+    gameId =
+        crypto.randomUUID();
+
+}
+
+
+/* =========================================================
+   11. FIREBASE AUTH
+   IMPORTANT:
+   ONE AUTH OBSERVER ONLY
+========================================================= */
+
+async function handleAuthState(user){
+
+    if(authLoading){
+        return;
+    }
+
+    authLoading = true;
+
+    try{
+
+        firebaseUser =
+            user || null;
+
+        if(!user){
+
+            userId = null;
+
+            if(!gameStarted){
+
+                startBtn.disabled = true;
+
+                setText(
+                    "coinAmount",
+                    "..."
+                );
+
+                setText(
+                    "introCoins",
+                    "..."
+                );
+
+                setText(
+                    "currentRank",
+                    "Login"
+                );
+
+                showScreen(
+                    introScreen
+                );
+
+                showError(
+                    "लगइन आवश्यक छ। पहिले LoksewaQuest मा Firebase login गर्नुहोस्।"
+                );
+
+            }
+
+            return;
+        }
+
+
+        /*
+         * Firebase has restored the signed-in user.
+         */
+
+        userId =
+            user.uid;
+
+        userName =
+            user.displayName ||
+            user.email?.split("@")[0] ||
+            "Aspirant";
+
+
+        /*
+         * Do not reload player/coins while
+         * an active game is running.
+         */
+
+        if(!gameStarted){
+
+            await loadPlayer();
+
+            await loadCoinsFromFirebase();
+
+            startBtn.disabled = false;
+
+            hideError();
+
+            showScreen(
+                introScreen
+            );
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "AUTH INITIALIZATION ERROR:",
+            error
+        );
+
+        startBtn.disabled = true;
+
+        showError(
+            "Rank Climber load हुन सकेन.\n\n" +
+            (
+                error?.message ||
+                "Unknown error"
+            )
+        );
+
+    }finally{
+
+        authStateResolved = true;
+
+        authLoading = false;
+
+        hideLoading();
+
+    }
+
+}
+
+
+/*
+ * THIS IS THE IMPORTANT FIX.
+ *
+ * No waitForFirebaseUser().
+ * No second auth listener.
+ *
+ * Firebase auth state controls the page.
+ */
+
+onAuthStateChanged(
+    auth,
+    user => {
+
+        handleAuthState(user);
+
+    }
+);
+
+
+/* =========================================================
+   12. LOAD PLAYER FROM SUPABASE
 ========================================================= */
 
 async function loadPlayer(){
@@ -2816,10 +3107,8 @@ async function loadPlayer(){
 
     }
 
-
     userId =
         firebaseUser.uid;
-
 
     userName =
         firebaseUser.displayName ||
@@ -2830,19 +3119,16 @@ async function loadPlayer(){
     const {
         data,
         error
-    } =
-        await supabase
-            .from(
-                "rank_climber_players"
-            )
-            .select(
-                "user_id,current_rank,best_rank,total_xp,current_streak,best_streak"
-            )
-            .eq(
-                "user_id",
-                userId
-            )
-            .maybeSingle();
+    } = await supabase
+        .from("rank_climber_players")
+        .select(
+            "user_id,current_rank,best_rank,total_xp,current_streak,best_streak"
+        )
+        .eq(
+            "user_id",
+            userId
+        )
+        .maybeSingle();
 
 
     if(error){
@@ -2902,39 +3188,48 @@ async function loadPlayer(){
             0;
 
 
-        await supabase
-            .from(
-                "rank_climber_players"
-            )
-            .upsert(
-                {
-                    user_id:
-                        userId,
+        const {
+            error: insertError
+        } = await supabase
+            .from("rank_climber_players")
+            .upsert({
 
-                    current_rank:
-                        currentRank,
+                user_id:
+                    userId,
 
-                    best_rank:
-                        bestRank,
+                display_name:
+                    userName,
 
-                    total_xp:
-                        totalXP,
+                current_rank:
+                    currentRank,
 
-                    current_streak:
-                        streak,
+                best_rank:
+                    bestRank,
 
-                    best_streak:
-                        bestStreak,
+                total_xp:
+                    totalXP,
 
-                    updated_at:
-                        new Date()
+                current_streak:
+                    streak,
+
+                best_streak:
+                    bestStreak,
+
+                updated_at:
+                    new Date()
                         .toISOString()
-                },
-                {
-                    onConflict:
-                        "user_id"
-                }
-            );
+
+            }, {
+                onConflict:
+                    "user_id"
+            });
+
+
+        if(insertError){
+
+            throw insertError;
+
+        }
 
     }
 
@@ -2945,7 +3240,7 @@ async function loadPlayer(){
 
 
 /* =========================================================
-   LOAD FIREBASE COINS
+   13. LOAD COINS FROM FIREBASE
 ========================================================= */
 
 async function loadCoinsFromFirebase(){
@@ -2957,7 +3252,6 @@ async function loadCoinsFromFirebase(){
         );
 
     }
-
 
     setText(
         "coinAmount",
@@ -2974,14 +3268,10 @@ async function loadCoinsFromFirebase(){
 
 
     const snapshot =
-        await getDoc(
-            userRef
-        );
+        await getDoc(userRef);
 
 
-    if(
-        !snapshot.exists()
-    ){
+    if(!snapshot.exists()){
 
         throw new Error(
             "Firebase user profile भेटिएन।"
@@ -3007,178 +3297,75 @@ async function loadCoinsFromFirebase(){
 
 
 /* =========================================================
-   COIN UI
-========================================================= */
-
-function updateCoinUI(){
-
-    const formatted =
-        Number(
-            coins || 0
-        ).toLocaleString();
-
-
-    setText(
-        "coinAmount",
-        formatted
-    );
-
-    setText(
-        "introCoins",
-        formatted
-    );
-
-    setText(
-        "resultCoins",
-        formatted
-    );
-
-    setText(
-        "totalCoins",
-        formatted
-    );
-
-}
-
-
-/* =========================================================
-   INTRO UI
-========================================================= */
-
-function updateIntroUI(){
-
-    setText(
-        "currentRank",
-        formatRank(
-            currentRank
-        )
-    );
-
-
-    setText(
-        "introStreak",
-        streak
-    );
-
-
-    setText(
-        "introXP",
-        Number(
-            totalXP
-        ).toLocaleString()
-    );
-
-
-    setText(
-        "introCoins",
-        Number(
-            coins
-        ).toLocaleString()
-    );
-
-
-    setText(
-        "gameRank",
-        formatRank(
-            currentRank
-        )
-    );
-
-}
-
-
-/* =========================================================
-   RANK FORMAT
-========================================================= */
-
-function formatRank(
-    rank
-){
-
-    const numericRank =
-        Number(rank);
-
-
-    if(
-        !Number.isFinite(
-            numericRank
-        )
-    ){
-
-        return "—";
-
-    }
-
-
-    if(
-        numericRank >=
-        DEFAULT_RANK
-    ){
-
-        return "Unranked";
-
-    }
-
-
-    return "#" +
-        numericRank.toLocaleString();
-
-}
-
-
-/* =========================================================
-   LOAD QUESTIONS
+   14. QUESTIONS
 ========================================================= */
 
 async function loadQuestions(){
 
-    const {
-        data,
-        error
-    } =
-        await supabase
-            .from(
-                "quizzes"
-            )
-            .select(
-                "id,topic,question,options,answer,explanation,difficulty"
-            )
-            .limit(
-                200
-            );
+    /*
+     * Try Supabase first.
+     */
+
+    try{
+
+        const {
+            data,
+            error
+        } = await supabase
+            .from("quiz_questions")
+            .select("*")
+            .limit(100);
 
 
-    if(error){
+        if(
+            !error &&
+            Array.isArray(data) &&
+            data.length >= TOTAL_QUESTIONS
+        ){
 
-        throw error;
+            const formatted =
+                data
+                    .map(normalizeQuestion)
+                    .filter(Boolean);
 
-    }
 
+            if(
+                formatted.length >=
+                TOTAL_QUESTIONS
+            ){
 
-    if(
-        !data ||
-        data.length <
-        TOTAL_QUESTIONS
-    ){
+                questions =
+                    shuffleArray(
+                        formatted
+                    ).slice(
+                        0,
+                        TOTAL_QUESTIONS
+                    );
 
-        throw new Error(
-            "पर्याप्त quiz questions भेटिएनन्।"
+                return;
+
+            }
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Supabase question load failed:",
+            error
         );
 
     }
 
 
-    const shuffled =
-        [...data];
-
-
-    shuffleArray(
-        shuffled
-    );
-
+    /*
+     * Fallback questions.
+     */
 
     questions =
-        shuffled.slice(
+        shuffleArray(
+            [...SAMPLE_QUESTIONS]
+        ).slice(
             0,
             TOTAL_QUESTIONS
         );
@@ -3186,17 +3373,165 @@ async function loadQuestions(){
 }
 
 
+function normalizeQuestion(row){
+
+    if(!row){
+        return null;
+    }
+
+
+    const question =
+        row.question ||
+        row.question_text ||
+        row.text;
+
+
+    if(!question){
+        return null;
+    }
+
+
+    let options =
+        row.options ||
+        row.answers;
+
+
+    if(
+        typeof options ===
+        "string"
+    ){
+
+        try{
+
+            options =
+                JSON.parse(options);
+
+        }catch{
+
+            options =
+                options
+                    .split("|")
+                    .map(
+                        item =>
+                            item.trim()
+                    );
+
+        }
+
+    }
+
+
+    if(
+        !Array.isArray(options) ||
+        options.length < 2
+    ){
+
+        return null;
+
+    }
+
+
+    let answer =
+        row.answer ??
+        row.correct_index ??
+        row.correct_answer;
+
+
+    if(
+        typeof answer ===
+        "string"
+    ){
+
+        const parsed =
+            Number(answer);
+
+        if(!Number.isNaN(parsed)){
+
+            answer = parsed;
+
+        }else{
+
+            const index =
+                options.findIndex(
+                    option =>
+                        String(option)
+                            .trim()
+                            .toLowerCase() ===
+                        answer
+                            .trim()
+                            .toLowerCase()
+                );
+
+            answer =
+                index >= 0
+                    ? index
+                    : 0;
+
+        }
+
+    }
+
+
+    answer =
+        Number(answer);
+
+
+    if(
+        Number.isNaN(answer) ||
+        answer < 0 ||
+        answer >= options.length
+    ){
+
+        answer = 0;
+
+    }
+
+
+    return {
+
+        question:
+            String(question),
+
+        options:
+            options.map(
+                option =>
+                    String(option)
+            ),
+
+        answer,
+
+        topic:
+            row.topic ||
+            row.category ||
+            "General",
+
+        difficulty:
+            (
+                row.difficulty ||
+                "medium"
+            ).toLowerCase(),
+
+        explanation:
+            row.explanation ||
+            row.explain ||
+            "यस प्रश्नको सही उत्तर माथि दिइएको छ।"
+
+    };
+
+}
+
+
 /* =========================================================
-   SHUFFLE
+   15. ARRAY HELPERS
 ========================================================= */
 
-function shuffleArray(
-    array
-){
+function shuffleArray(array){
+
+    const result =
+        [...array];
 
     for(
-        let i =
-            array.length - 1;
+        let i = result.length - 1;
         i > 0;
         i--
     ){
@@ -3207,506 +3542,36 @@ function shuffleArray(
                 (i + 1)
             );
 
-
         [
-            array[i],
-            array[j]
+            result[i],
+            result[j]
         ] =
         [
-            array[j],
-            array[i]
+            result[j],
+            result[i]
         ];
 
     }
 
-
-    return array;
-
-}
-
-
-/* =========================================================
-   PARSE OPTIONS
-========================================================= */
-
-function parseOptions(
-    value
-){
-
-    if(
-        Array.isArray(
-            value
-        )
-    ){
-
-        return value;
-
-    }
-
-
-    if(
-        typeof value ===
-        "string"
-    ){
-
-        try{
-
-            const parsed =
-                JSON.parse(
-                    value
-                );
-
-
-            if(
-                Array.isArray(
-                    parsed
-                )
-            ){
-
-                return parsed;
-
-            }
-
-        }catch(error){
-
-        }
-
-
-        return value
-            .split(/\r?\n/)
-            .map(
-                item =>
-                    item
-                        .replace(
-                            /^[A-Da-d][.)]\s*/,
-                            ""
-                        )
-                        .trim()
-            )
-            .filter(
-                Boolean
-            );
-
-    }
-
-
-    return [];
+    return result;
 
 }
 
 
 /* =========================================================
-   CORRECT INDEX
-========================================================= */
-
-function getCorrectIndex(
-    question,
-    options
-){
-
-    const answer =
-        question.answer;
-
-
-    if(
-        typeof answer ===
-        "number"
-    ){
-
-        if(
-            answer >= 0 &&
-            answer <
-                options.length
-        ){
-
-            return answer;
-
-        }
-
-    }
-
-
-    if(
-        typeof answer ===
-        "string"
-    ){
-
-        const normalized =
-            answer
-                .trim()
-                .toLowerCase();
-
-
-        if(
-            /^[a-d]$/.test(
-                normalized
-            )
-        ){
-
-            return (
-                normalized.charCodeAt(0) -
-                "a".charCodeAt(0)
-            );
-
-        }
-
-
-        if(
-            /^\d+$/.test(
-                normalized
-            )
-        ){
-
-            const number =
-                Number(
-                    normalized
-                );
-
-
-            if(
-                number >= 0 &&
-                number <
-                    options.length
-            ){
-
-                return number;
-
-            }
-
-
-            if(
-                number >= 1 &&
-                number <=
-                    options.length
-            ){
-
-                return number - 1;
-
-            }
-
-        }
-
-
-        const exact =
-            options.findIndex(
-                option =>
-                    String(option)
-                        .trim()
-                        .toLowerCase() ===
-                    normalized
-            );
-
-
-        if(
-            exact !== -1
-        ){
-
-            return exact;
-
-        }
-
-
-        const partial =
-            options.findIndex(
-                option =>
-                    normalized.includes(
-                        String(option)
-                            .trim()
-                            .toLowerCase()
-                    ) ||
-                    String(option)
-                        .trim()
-                        .toLowerCase()
-                        .includes(
-                            normalized
-                        )
-            );
-
-
-        if(
-            partial !== -1
-        ){
-
-            return partial;
-
-        }
-
-    }
-
-
-    if(
-        typeof question.correct_index ===
-        "number"
-    ){
-
-        return question.correct_index;
-
-    }
-
-
-    return 0;
-
-}
-
-
-/* =========================================================
-   DIFFICULTY
-========================================================= */
-
-function normalizeDifficulty(
-    difficulty
-){
-
-    return String(
-        difficulty ||
-        "medium"
-    )
-        .trim()
-        .toLowerCase();
-
-}
-
-
-/* =========================================================
-   RANK GAIN
-========================================================= */
-
-function calculateRankGain(
-    difficulty,
-    currentStreak
-){
-
-    const difficultyValue =
-        normalizeDifficulty(
-            difficulty
-        );
-
-
-    let base =
-        5;
-
-
-    if(
-        difficultyValue ===
-        "easy"
-    ){
-
-        base =
-            3;
-
-    }else if(
-        difficultyValue ===
-        "medium"
-    ){
-
-        base =
-            5;
-
-    }else if(
-        difficultyValue ===
-        "hard"
-    ){
-
-        base =
-            8;
-
-    }else if(
-        difficultyValue ===
-        "expert"
-    ){
-
-        base =
-            12;
-
-    }
-
-
-    const streakBonus =
-        Math.min(
-            5,
-            Math.max(
-                0,
-                currentStreak - 1
-            )
-        );
-
-
-    return base +
-        streakBonus;
-
-}
-
-
-/* =========================================================
-   RANK PENALTY
-========================================================= */
-
-function calculateRankPenalty(){
-
-    return 3;
-
-}
-
-
-/* =========================================================
-   RESET GAME
-========================================================= */
-
-function resetGameState(){
-
-    currentQuestion =
-        0;
-
-    startingRank =
-        currentRank;
-
-    streak =
-        0;
-
-    bestStreak =
-        0;
-
-    correctAnswers =
-        0;
-
-    sessionXP =
-        0;
-
-    earnedCoins =
-        0;
-
-    timer =
-        QUESTION_TIME;
-
-    selectedAnswer =
-        null;
-
-    answered =
-        false;
-
-    gameStarted =
-        false;
-
-    gameFinished =
-        false;
-
-    rewardSaved =
-        false;
-
-    sessionId =
-        null;
-
-    sessionStartTime =
-        null;
-
-    currentQuestionReward =
-        0;
-
-    currentRankChange =
-        0;
-
-    gameId =
-        createGameId();
-
-
-    clearTimer();
-
-
-    if(feedbackTimeout){
-
-        clearTimeout(
-            feedbackTimeout
-        );
-
-        feedbackTimeout =
-            null;
-
-    }
-
-
-    updateIntroUI();
-
-}
-
-
-/* =========================================================
-   CREATE SESSION
-========================================================= */
-
-async function createSession(){
-
-    sessionStartTime =
-        new Date()
-            .toISOString();
-
-
-    const {
-        data,
-        error
-    } =
-        await supabase
-            .from(
-                "rank_climber_sessions"
-            )
-            .insert(
-                {
-                    user_id:
-                        userId,
-
-                    session_id:
-                        gameId,
-
-                    starting_rank:
-                        startingRank,
-
-                    total_questions:
-                        TOTAL_QUESTIONS,
-
-                    started_at:
-                        sessionStartTime
-                }
-            )
-            .select(
-                "id"
-            )
-            .single();
-
-
-    if(error){
-
-        throw error;
-
-    }
-
-
-    sessionId =
-        data?.id ||
-        gameId;
-
-}
-
-
-/* =========================================================
-   START GAME
+   16. START GAME
 ========================================================= */
 
 async function startGame(){
 
-    if(
-        gameLoading
-    ){
-
+    if(gameLoading){
         return;
-
     }
 
-
-    if(
-        !firebaseUser
-    ){
+    if(!firebaseUser){
 
         showError(
-            "लगइन आवश्यक छ।"
+            "लगइन आवश्यक छ। पहिले LoksewaQuest मा Firebase login गर्नुहोस्।"
         );
 
         return;
@@ -3714,14 +3579,11 @@ async function startGame(){
     }
 
 
-    gameLoading =
-        true;
+    gameLoading = true;
+
+    startBtn.disabled = true;
 
     hideError();
-
-
-    startBtn.disabled =
-        true;
 
 
     try{
@@ -3730,20 +3592,47 @@ async function startGame(){
 
         await loadQuestions();
 
+        if(
+            !questions ||
+            questions.length < TOTAL_QUESTIONS
+        ){
+
+            throw new Error(
+                "पर्याप्त प्रश्न भेटिएन।"
+            );
+
+        }
+
+
         resetGameState();
+
+
+        startingRank =
+            currentRank;
+
+
+        sessionStartTime =
+            new Date();
+
 
         await createSession();
 
-        gameStarted =
-            true;
+
+        gameStarted = true;
 
         showScreen(
             gameScreen
         );
 
-        await runCountdown();
+
+        updateGameUI();
+
+
+        await showCountdown();
+
 
         renderQuestion();
+
 
     }catch(error){
 
@@ -3752,11 +3641,11 @@ async function startGame(){
             error
         );
 
+        gameStarted = false;
 
         showScreen(
             introScreen
         );
-
 
         showError(
             "Game सुरु हुन सकेन।\n\n" +
@@ -3768,11 +3657,10 @@ async function startGame(){
 
     }finally{
 
-        gameLoading =
-            false;
+        gameLoading = false;
 
         startBtn.disabled =
-            false;
+            !firebaseUser;
 
     }
 
@@ -3780,60 +3668,147 @@ async function startGame(){
 
 
 /* =========================================================
-   COUNTDOWN
+   17. COUNTDOWN
 ========================================================= */
 
-async function runCountdown(){
+function showCountdown(){
 
-    countdown.classList.add(
-        "show"
-    );
+    return new Promise(resolve => {
 
+        const overlay =
+            document.getElementById(
+                "countdown"
+            );
 
-    const numbers =
-        [
-            "3",
-            "2",
-            "1",
-            "GO!"
-        ];
+        const number =
+            document.getElementById(
+                "countNumber"
+            );
 
+        if(!overlay || !number){
 
-    for(
-        const number of numbers
-    ){
+            resolve();
 
-        countNumber.textContent =
-            number;
+            return;
 
-
-        countNumber.style.animation =
-            "none";
+        }
 
 
-        void countNumber.offsetWidth;
-
-
-        countNumber.style.animation =
-            "countdownPop .8s ease";
-
-
-        await delay(
-            800
+        overlay.classList.add(
+            "show"
         );
 
-    }
+
+        let count = 3;
+
+        number.textContent =
+            count;
 
 
-    countdown.classList.remove(
-        "show"
-    );
+        const interval =
+            setInterval(() => {
+
+                count--;
+
+                if(count <= 0){
+
+                    clearInterval(
+                        interval
+                    );
+
+                    overlay.classList.remove(
+                        "show"
+                    );
+
+                    resolve();
+
+                    return;
+
+                }
+
+                number.textContent =
+                    count;
+
+                number.style.animation =
+                    "none";
+
+                void number.offsetWidth;
+
+                number.style.animation =
+                    "countdownPop .8s ease";
+
+            }, 800);
+
+    });
 
 }
 
 
 /* =========================================================
-   RENDER QUESTION
+   18. CREATE SESSION
+========================================================= */
+
+async function createSession(){
+
+    if(!userId){
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("rank_climber_sessions")
+        .insert({
+
+            user_id:
+                userId,
+
+            game_id:
+                gameId,
+
+            starting_rank:
+                startingRank,
+
+            current_rank:
+                currentRank,
+
+            total_questions:
+                TOTAL_QUESTIONS,
+
+            status:
+                "active",
+
+            started_at:
+                new Date()
+                    .toISOString()
+
+        })
+        .select("id")
+        .single();
+
+
+    if(error){
+
+        console.error(
+            "SESSION CREATE ERROR:",
+            error
+        );
+
+        return;
+
+    }
+
+
+    sessionId =
+        data?.id ||
+        null;
+
+}
+
+
+/* =========================================================
+   19. RENDER QUESTION
 ========================================================= */
 
 function renderQuestion(){
@@ -3859,17 +3834,20 @@ function renderQuestion(){
         ];
 
 
-    selectedAnswer =
-        null;
+    selectedAnswer = null;
+    answered = false;
 
-    answered =
-        false;
 
-    currentQuestionReward =
-        0;
+    setText(
+        "questionText",
+        question.question
+    );
 
-    currentRankChange =
-        0;
+
+    setText(
+        "questionTopic",
+        question.topic
+    );
 
 
     setText(
@@ -3880,127 +3858,104 @@ function renderQuestion(){
 
     setText(
         "gameRank",
-        formatRank(
-            currentRank
-        )
-    );
-
-
-    setText(
-        "questionTopic",
-        question.topic ||
-        "General"
-    );
-
-
-    setText(
-        "questionText",
-        question.question ||
-        "प्रश्न उपलब्ध छैन।"
+        currentRank
     );
 
 
     setText(
         "streakMessage",
         streak > 0
-            ? `🔥 ${streak} streak`
+            ? `🔥 ${streak} प्रश्नको streak`
             : "🔥 Streak सुरु गर्नुहोस्"
     );
 
 
-    const percentage =
+    const progress =
         (
             currentQuestion /
             TOTAL_QUESTIONS
         ) * 100;
 
 
-    $("progressBar").style.width =
-        percentage + "%";
-
-
-    const options =
-        parseOptions(
-            question.options
+    const progressBar =
+        document.getElementById(
+            "progressBar"
         );
 
 
-    answerOptions.innerHTML =
-        "";
+    if(progressBar){
+
+        progressBar.style.width =
+            `${progress}%`;
+
+    }
 
 
-    options.forEach(
-        (
-            option,
-            index
-        ) => {
-
-            const button =
-                document.createElement(
-                    "button"
-                );
+    answerOptions.innerHTML = "";
 
 
-            button.type =
-                "button";
+    question.options
+        .forEach(
+            (option, index) => {
 
-
-            button.className =
-                "option";
-
-
-            button.dataset.index =
-                index;
-
-
-            const letter =
-                String.fromCharCode(
-                    65 + index
-                );
-
-
-            button.innerHTML = `
-
-                <span class="option-letter">
-                    ${letter}
-                </span>
-
-                <span class="option-text">
-                    ${escapeHTML(option)}
-                </span>
-
-            `;
-
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    selectAnswer(
-                        index
+                const button =
+                    document.createElement(
+                        "button"
                     );
 
-                }
-            );
+                button.className =
+                    "option";
 
 
-            answerOptions.appendChild(
-                button
-            );
+                button.type =
+                    "button";
 
-        }
-    );
+
+                button.dataset.index =
+                    index;
+
+
+                const letter =
+                    String.fromCharCode(
+                        65 + index
+                    );
+
+
+                button.innerHTML = `
+
+                    <span class="option-letter">
+                        ${letter}
+                    </span>
+
+                    <span class="option-text">
+                        ${escapeHTML(option)}
+                    </span>
+
+                `;
+
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        selectAnswer(
+                            index
+                        );
+
+                    }
+                );
+
+
+                answerOptions.appendChild(
+                    button
+                );
+
+            }
+        );
 
 
     submitAnswerBtn.disabled =
         true;
-
-
-    timer =
-        QUESTION_TIME;
-
-
-    updateTimer();
 
 
     startTimer();
@@ -4009,56 +3964,51 @@ function renderQuestion(){
 
 
 /* =========================================================
-   SELECT ANSWER
+   20. ESCAPE HTML
 ========================================================= */
 
-function selectAnswer(
-    index
-){
+function escapeHTML(value){
 
-    if(
-        answered ||
-        !gameStarted ||
-        gameFinished
-    ){
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
 
+}
+
+
+/* =========================================================
+   21. SELECT ANSWER
+========================================================= */
+
+function selectAnswer(index){
+
+    if(answered){
         return;
-
     }
 
 
     selectedAnswer =
-        index;
+        Number(index);
 
 
     document
         .querySelectorAll(
-            ".option"
+            "#answerOptions .option"
         )
         .forEach(
-            option => {
+            (button, buttonIndex) => {
 
-                option.classList.remove(
-                    "selected"
+                button.classList.toggle(
+                    "selected",
+                    buttonIndex ===
+                    selectedAnswer
                 );
 
             }
         );
-
-
-    const selected =
-        document.querySelector(
-            `.option[data-index="${index}"]`
-        );
-
-
-    if(selected){
-
-        selected.classList.add(
-            "selected"
-        );
-
-    }
 
 
     submitAnswerBtn.disabled =
@@ -4068,46 +4018,167 @@ function selectAnswer(
 
 
 /* =========================================================
-   SUBMIT ANSWER
+   22. TIMER
+========================================================= */
+
+function startTimer(){
+
+    clearTimer();
+
+
+    timer =
+        QUESTION_TIME;
+
+
+    updateTimerUI();
+
+
+    timerInterval =
+        setInterval(() => {
+
+            timer--;
+
+            updateTimerUI();
+
+
+            if(timer <= 0){
+
+                clearTimer();
+
+                handleTimeout();
+
+            }
+
+        }, 1000);
+
+}
+
+
+function updateTimerUI(){
+
+    setText(
+        "timer",
+        timer
+    );
+
+
+    const timerBox =
+        document.getElementById(
+            "timerBox"
+        );
+
+
+    if(!timerBox){
+        return;
+    }
+
+
+    timerBox.classList.remove(
+        "warning",
+        "danger"
+    );
+
+
+    if(timer <= 5){
+
+        timerBox.classList.add(
+            "danger"
+        );
+
+    }else if(timer <= 9){
+
+        timerBox.classList.add(
+            "warning"
+        );
+
+    }
+
+}
+
+
+function clearTimer(){
+
+    if(timerInterval){
+
+        clearInterval(
+            timerInterval
+        );
+
+        timerInterval = null;
+
+    }
+
+}
+
+
+/* =========================================================
+   23. TIMEOUT
+========================================================= */
+
+async function handleTimeout(){
+
+    if(answered){
+        return;
+    }
+
+
+    answered = true;
+
+
+    selectedAnswer = null;
+
+
+    await processAnswer(
+        null,
+        true
+    );
+
+}
+
+
+/* =========================================================
+   24. SUBMIT ANSWER
 ========================================================= */
 
 async function submitAnswer(){
 
-    if(
-        answered ||
-        selectedAnswer === null ||
-        gameFinished
-    ){
+    if(answered){
+        return;
+    }
+
+
+    if(selectedAnswer === null){
+
+        showToast(
+            "पहिले एउटा उत्तर छान्नुहोस्।"
+        );
 
         return;
 
     }
 
 
-    answered =
-        true;
-
-
     clearTimer();
 
-
-    submitAnswerBtn.disabled =
-        true;
+    answered = true;
 
 
-    document
-        .querySelectorAll(
-            ".option"
-        )
-        .forEach(
-            option => {
+    await processAnswer(
+        selectedAnswer,
+        false
+    );
 
-                option.disabled =
-                    true;
+}
 
-            }
-        );
 
+/* =========================================================
+   25. PROCESS ANSWER
+========================================================= */
+
+async function processAnswer(
+    selectedIndex,
+    timedOut
+){
 
     const question =
         questions[
@@ -4115,289 +4186,227 @@ async function submitAnswer(){
         ];
 
 
-    const options =
-        parseOptions(
-            question.options
-        );
-
-
     const correctIndex =
-        getCorrectIndex(
-            question,
-            options
+        Number(
+            question.answer
         );
 
 
     const isCorrect =
-        Number(
-            selectedAnswer
-        ) ===
-        Number(
-            correctIndex
-        );
+        !timedOut &&
+        Number(selectedIndex) ===
+        correctIndex;
+
+
+    currentRankChange = 0;
+    currentQuestionReward = 0;
 
 
     if(isCorrect){
 
-        await handleCorrect(
-            question,
-            correctIndex,
-            options
-        );
+        correctAnswers++;
+
+        streak++;
+
+
+        if(streak > bestStreak){
+
+            bestStreak =
+                streak;
+
+        }
+
+
+        const baseReward =
+            getRankReward(
+                question.difficulty
+            );
+
+
+        const streakBonus =
+            Math.min(
+                Math.max(
+                    streak - 1,
+                    0
+                ),
+                MAX_STREAK_BONUS
+            );
+
+
+        currentRankChange =
+            baseReward +
+            streakBonus;
+
+
+        currentQuestionReward =
+            baseReward +
+            streakBonus;
+
+
+        currentRank =
+            Math.max(
+                1,
+                currentRank -
+                currentRankChange
+            );
+
+
+        if(currentRank < bestRank){
+
+            bestRank =
+                currentRank;
+
+        }
+
+
+        const xp =
+            getXPReward(
+                question.difficulty
+            );
+
+
+        sessionXP += xp;
+
+        earnedCoins +=
+            getCoinReward(
+                question.difficulty
+            );
+
 
     }else{
 
-        await handleWrong(
-            question,
-            correctIndex,
-            options
-        );
+        streak = 0;
+
+
+        currentRankChange =
+            -WRONG_RANK_LOSS;
+
+
+        currentRank =
+            Math.min(
+                DEFAULT_RANK,
+                currentRank +
+                WRONG_RANK_LOSS
+            );
 
     }
-
-}
-
-
-/* =========================================================
-   CORRECT
-========================================================= */
-
-async function handleCorrect(
-    question,
-    correctIndex,
-    options
-){
-
-    correctAnswers++;
-
-    streak++;
-
-    bestStreak =
-        Math.max(
-            bestStreak,
-            streak
-        );
-
-
-    const rankGain =
-        calculateRankGain(
-            question.difficulty,
-            streak
-        );
-
-
-    currentRank =
-        Math.max(
-            1,
-            currentRank -
-            rankGain
-        );
-
-
-    currentRankChange =
-        rankGain;
-
-
-    currentQuestionReward =
-        rankGain;
-
-
-    sessionXP +=
-        10;
-
-
-    earnedCoins +=
-        5;
-
-
-    const selected =
-        document.querySelector(
-            `.option[data-index="${selectedAnswer}"]`
-        );
-
-
-    if(selected){
-
-        selected.classList.remove(
-            "selected"
-        );
-
-        selected.classList.add(
-            "correct"
-        );
-
-    }
-
-
-    playCorrectEffect();
-
-
-    updateGameUI();
 
 
     await saveAnswerRecord(
         question,
-        true,
-        selectedAnswer,
-        correctIndex,
-        rankGain
+        selectedIndex,
+        isCorrect,
+        timedOut
     );
 
 
-    showFeedback(
-        true,
+    showAnswerFeedback(
         question,
-        options,
-        correctIndex,
-        rankGain,
-        5
+        selectedIndex,
+        isCorrect,
+        timedOut
     );
 
 }
 
 
 /* =========================================================
-   WRONG
+   26. REWARDS
 ========================================================= */
 
-async function handleWrong(
+function getRankReward(difficulty){
+
+    switch(
+        String(difficulty)
+            .toLowerCase()
+    ){
+
+        case "expert":
+            return EXPERT_RANK_GAIN;
+
+        case "hard":
+            return HARD_RANK_GAIN;
+
+        case "medium":
+            return MEDIUM_RANK_GAIN;
+
+        default:
+            return EASY_RANK_GAIN;
+
+    }
+
+}
+
+
+function getXPReward(difficulty){
+
+    switch(
+        String(difficulty)
+            .toLowerCase()
+    ){
+
+        case "expert":
+            return 25;
+
+        case "hard":
+            return 18;
+
+        case "medium":
+            return 12;
+
+        default:
+            return 8;
+
+    }
+
+}
+
+
+function getCoinReward(difficulty){
+
+    switch(
+        String(difficulty)
+            .toLowerCase()
+    ){
+
+        case "expert":
+            return 8;
+
+        case "hard":
+            return 6;
+
+        case "medium":
+            return 4;
+
+        default:
+            return 3;
+
+    }
+
+}
+
+
+/* =========================================================
+   27. FEEDBACK
+========================================================= */
+
+function showAnswerFeedback(
     question,
-    correctIndex,
-    options
-){
-
-    streak =
-        0;
-
-
-    const penalty =
-        calculateRankPenalty();
-
-
-    currentRank +=
-        penalty;
-
-
-    currentRankChange =
-        -penalty;
-
-
-    currentQuestionReward =
-        -penalty;
-
-
-    const selected =
-        document.querySelector(
-            `.option[data-index="${selectedAnswer}"]`
-        );
-
-
-    if(selected){
-
-        selected.classList.remove(
-            "selected"
-        );
-
-        selected.classList.add(
-            "wrong"
-        );
-
-    }
-
-
-    const correct =
-        document.querySelector(
-            `.option[data-index="${correctIndex}"]`
-        );
-
-
-    if(correct){
-
-        correct.classList.add(
-            "correct"
-        );
-
-    }
-
-
-    playWrongEffect();
-
-
-    updateGameUI();
-
-
-    await saveAnswerRecord(
-        question,
-        false,
-        selectedAnswer,
-        correctIndex,
-        -penalty
-    );
-
-
-    showFeedback(
-        false,
-        question,
-        options,
-        correctIndex,
-        penalty,
-        0
-    );
-
-}
-
-
-/* =========================================================
-   UPDATE GAME UI
-========================================================= */
-
-function updateGameUI(){
-
-    setText(
-        "gameRank",
-        formatRank(
-            currentRank
-        )
-    );
-
-
-    setText(
-        "streakMessage",
-        streak > 0
-            ? `🔥 ${streak} streak`
-            : "Streak reset"
-    );
-
-
-    updateIntroUI();
-
-}
-
-
-/* =========================================================
-   FEEDBACK
-========================================================= */
-
-function showFeedback(
+    selectedIndex,
     isCorrect,
-    question,
-    options,
-    correctIndex,
-    rankAmount,
-    coinAmount
+    timedOut
 ){
 
-    showScreen(
-        feedbackScreen
-    );
+    const icon =
+        document.getElementById(
+            "feedbackIcon"
+        );
 
 
     if(isCorrect){
 
-        setText(
-            "feedbackIcon",
-            "✓"
-        );
+        icon.textContent =
+            "✓";
 
         setText(
             "feedbackTitle",
@@ -4406,64 +4415,64 @@ function showFeedback(
 
         setText(
             "feedbackMessage",
-            streak >= 3
-                ? `🔥 Excellent! ${streak} लगातार सही उत्तर।`
-                : "राम्रो! तपाईं Rank माथि चढ्दै हुनुहुन्छ।"
-        );
-
-        setText(
-            "rankMove",
-            `+${rankAmount}`
-        );
-
-        setText(
-            "rankReward",
-            `#${currentRank.toLocaleString()}`
+            `Excellent! Rank ${currentRank} तर्फ अगाडि बढ्नुभयो।`
         );
 
     }else{
 
-        setText(
-            "feedbackIcon",
-            "✕"
-        );
+        icon.textContent =
+            timedOut
+                ? "⏱"
+                : "✕";
+
 
         setText(
             "feedbackTitle",
-            "उत्तर गलत भयो"
+            timedOut
+                ? "समय सकियो!"
+                : "गलत उत्तर"
         );
+
 
         setText(
             "feedbackMessage",
-            `Rank मा ${rankAmount} position penalty भयो।`
-        );
-
-        setText(
-            "rankMove",
-            `-${rankAmount}`
-        );
-
-        setText(
-            "rankReward",
-            `#${currentRank.toLocaleString()}`
+            timedOut
+                ? "समयभित्र उत्तर दिन सकिएन।"
+                : "अर्को प्रश्नमा अझ राम्रो प्रयास गर्नुहोस्।"
         );
 
     }
 
 
     setText(
+        "rankMove",
+        currentRankChange > 0
+            ? `+${currentRankChange}`
+            : `${currentRankChange}`
+    );
+
+
+    setText(
+        "rankReward",
+        currentRankChange > 0
+            ? `Rank ↑ ${currentRankChange}`
+            : `Rank ↓ ${Math.abs(currentRankChange)}`
+    );
+
+
+    setText(
         "feedbackXP",
         isCorrect
-            ? "+10"
-            : "0"
+            ? `+${getXPReward(question.difficulty)}`
+            : "+0"
     );
 
 
     setText(
         "feedbackCoins",
-        coinAmount > 0
-            ? `+${coinAmount}`
-            : "0"
+        isCorrect
+            ? `+${getCoinReward(question.difficulty)}`
+            : "+0"
     );
 
 
@@ -4475,65 +4484,191 @@ function showFeedback(
 
     setText(
         "correctAnswer",
-        options[
-            correctIndex
-        ] ??
-        "—"
+        question.options[
+            question.answer
+        ]
     );
 
 
     setText(
         "explanation",
         question.explanation ||
-        "यस प्रश्नको स्पष्टीकरण उपलब्ध छैन।"
+        "स्पष्टीकरण उपलब्ध छैन।"
     );
 
 
-    if(feedbackTimeout){
+    document
+        .querySelectorAll(
+            "#answerOptions .option"
+        )
+        .forEach(
+            (button, index) => {
 
-        clearTimeout(
-            feedbackTimeout
+                button.disabled =
+                    true;
+
+
+                if(
+                    index ===
+                    question.answer
+                ){
+
+                    button.classList.add(
+                        "correct"
+                    );
+
+                }
+
+
+                if(
+                    selectedIndex !== null &&
+                    index ===
+                    selectedIndex &&
+                    selectedIndex !==
+                    question.answer
+                ){
+
+                    button.classList.add(
+                        "wrong"
+                    );
+
+                }
+
+            }
         );
 
-    }
 
-
-    feedbackTimeout =
-        setTimeout(
-            () => {
-
-                nextQuestion();
-
-            },
-            1800
-        );
+    showScreen(
+        feedbackScreen
+    );
 
 }
 
 
 /* =========================================================
-   NEXT QUESTION
+   28. SAVE ANSWER RECORD
+========================================================= */
+
+async function saveAnswerRecord(
+    question,
+    selectedIndex,
+    isCorrect,
+    timedOut
+){
+
+    if(
+        !userId ||
+        !sessionId
+    ){
+
+        return;
+
+    }
+
+
+    if(savingAnswer){
+        return;
+    }
+
+
+    savingAnswer = true;
+
+
+    try{
+
+        const {
+            error
+        } = await supabase
+            .from("rank_climber_answers")
+            .insert({
+
+                user_id:
+                    userId,
+
+                session_id:
+                    sessionId,
+
+                game_id:
+                    gameId,
+
+                question_number:
+                    currentQuestion + 1,
+
+                question_text:
+                    question.question,
+
+                topic:
+                    question.topic,
+
+                difficulty:
+                    question.difficulty,
+
+                selected_answer:
+                    selectedIndex,
+
+                correct_answer:
+                    question.answer,
+
+                is_correct:
+                    isCorrect,
+
+                timed_out:
+                    timedOut,
+
+                rank_change:
+                    currentRankChange,
+
+                xp_earned:
+                    isCorrect
+                        ? getXPReward(
+                            question.difficulty
+                        )
+                        : 0,
+
+                coins_earned:
+                    isCorrect
+                        ? getCoinReward(
+                            question.difficulty
+                        )
+                        : 0,
+
+                answered_at:
+                    new Date()
+                        .toISOString()
+
+            });
+
+
+        if(error){
+
+            console.error(
+                "ANSWER SAVE ERROR:",
+                error
+            );
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "ANSWER SAVE EXCEPTION:",
+            error
+        );
+
+    }finally{
+
+        savingAnswer = false;
+
+    }
+
+}
+
+
+/* =========================================================
+   29. NEXT QUESTION
 ========================================================= */
 
 function nextQuestion(){
-
-    if(
-        savingAnswer
-    ){
-
-        return;
-
-    }
-
-
-    if(
-        gameFinished
-    ){
-
-        return;
-
-    }
-
 
     currentQuestion++;
 
@@ -4561,634 +4696,13 @@ function nextQuestion(){
 
 
 /* =========================================================
-   TIMER
-========================================================= */
-
-function startTimer(){
-
-    clearTimer();
-
-
-    timer =
-        QUESTION_TIME;
-
-
-    updateTimer();
-
-
-    timerInterval =
-        setInterval(
-            () => {
-
-                if(
-                    answered ||
-                    gameFinished
-                ){
-
-                    clearTimer();
-
-                    return;
-
-                }
-
-
-                timer--;
-
-
-                updateTimer();
-
-
-                if(
-                    timer <= 0
-                ){
-
-                    clearTimer();
-
-                    handleTimeout();
-
-                }
-
-            },
-            1000
-        );
-
-}
-
-
-/* =========================================================
-   UPDATE TIMER
-========================================================= */
-
-function updateTimer(){
-
-    setText(
-        "timer",
-        timer
-    );
-
-
-    const timerBox =
-        $("timerBox");
-
-
-    timerBox.classList.remove(
-        "warning",
-        "danger"
-    );
-
-
-    if(
-        timer <= 8
-    ){
-
-        timerBox.classList.add(
-            "warning"
-        );
-
-    }
-
-
-    if(
-        timer <= 4
-    ){
-
-        timerBox.classList.remove(
-            "warning"
-        );
-
-        timerBox.classList.add(
-            "danger"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CLEAR TIMER
-========================================================= */
-
-function clearTimer(){
-
-    if(timerInterval){
-
-        clearInterval(
-            timerInterval
-        );
-
-        timerInterval =
-            null;
-
-    }
-
-}
-
-
-/* =========================================================
-   TIMEOUT
-========================================================= */
-
-async function handleTimeout(){
-
-    if(
-        answered ||
-        gameFinished
-    ){
-
-        return;
-
-    }
-
-
-    answered =
-        true;
-
-
-    const question =
-        questions[
-            currentQuestion
-        ];
-
-
-    const options =
-        parseOptions(
-            question.options
-        );
-
-
-    const correctIndex =
-        getCorrectIndex(
-            question,
-            options
-        );
-
-
-    document
-        .querySelectorAll(
-            ".option"
-        )
-        .forEach(
-            option => {
-
-                option.disabled =
-                    true;
-
-            }
-        );
-
-
-    const correct =
-        document.querySelector(
-            `.option[data-index="${correctIndex}"]`
-        );
-
-
-    if(correct){
-
-        correct.classList.add(
-            "correct"
-        );
-
-    }
-
-
-    streak =
-        0;
-
-
-    const penalty =
-        calculateRankPenalty();
-
-
-    currentRank +=
-        penalty;
-
-
-    currentRankChange =
-        -penalty;
-
-
-    playWrongEffect();
-
-
-    updateGameUI();
-
-
-    await saveAnswerRecord(
-        question,
-        false,
-        null,
-        correctIndex,
-        -penalty
-    );
-
-
-    showFeedback(
-        false,
-        question,
-        options,
-        correctIndex,
-        penalty,
-        0
-    );
-
-
-    setText(
-        "feedbackTitle",
-        "⏰ समय सकियो!"
-    );
-
-
-    setText(
-        "feedbackMessage",
-        `उत्तर नदिइएकोले ${penalty} rank penalty भयो।`
-    );
-
-}
-
-
-/* =========================================================
-   SAVE ANSWER RECORD
-========================================================= */
-
-async function saveAnswerRecord(
-    question,
-    isCorrect,
-    selectedIndex,
-    correctIndex,
-    rankChange
-){
-
-    savingAnswer =
-        true;
-
-
-    try{
-
-        if(!sessionId){
-
-            return;
-
-        }
-
-
-        const answerData = {
-
-            session_id:
-                sessionId,
-
-            user_id:
-                userId,
-
-            question_id:
-                question.id,
-
-            question_number:
-                currentQuestion + 1,
-
-            selected_answer:
-                selectedIndex,
-
-            correct_answer:
-                correctIndex,
-
-            is_correct:
-                isCorrect,
-
-            rank_change:
-                rankChange,
-
-            xp_earned:
-                isCorrect
-                    ? 10
-                    : 0,
-
-            coins_earned:
-                isCorrect
-                    ? 5
-                    : 0,
-
-            topic:
-                question.topic ||
-                null,
-
-            difficulty:
-                question.difficulty ||
-                null,
-
-            answered_at:
-                new Date()
-                    .toISOString()
-
-        };
-
-
-        const {
-            error
-        } =
-            await supabase
-                .from(
-                    "rank_climber_answers"
-                )
-                .insert(
-                    answerData
-                );
-
-
-        if(error){
-
-            console.error(
-                "ANSWER SAVE ERROR:",
-                error
-            );
-
-        }
-
-    }catch(error){
-
-        console.error(
-            "ANSWER RECORD ERROR:",
-            error
-        );
-
-    }finally{
-
-        savingAnswer =
-            false;
-
-    }
-
-}
-
-
-/* =========================================================
-   FINISH GAME
-========================================================= */
-
-async function finishGame(){
-
-    if(
-        gameFinished
-    ){
-
-        return;
-
-    }
-
-
-    gameFinished =
-        true;
-
-
-    gameStarted =
-        false;
-
-
-    clearTimer();
-
-
-    /*
-       Session completion bonuses.
-    */
-
-    sessionXP +=
-        bestStreak * 5;
-
-
-    if(
-        correctAnswers ===
-        TOTAL_QUESTIONS
-    ){
-
-        sessionXP +=
-            50;
-
-        earnedCoins +=
-            30;
-
-    }
-
-
-    earnedCoins +=
-        bestStreak * 2;
-
-
-    const accuracy =
-        TOTAL_QUESTIONS > 0
-            ? (
-                correctAnswers /
-                TOTAL_QUESTIONS
-            ) * 100
-            : 0;
-
-
-    /*
-       Save Firebase reward first.
-    */
-
-    let rewardResult;
-
-
-    try{
-
-        rewardResult =
-            await saveCoinRewardToFirebase();
-
-    }catch(error){
-
-        console.error(
-            "COIN REWARD ERROR:",
-            error
-        );
-
-
-        showScreen(
-            resultScreen
-        );
-
-
-        setText(
-            "resultMessage",
-            "Game पूरा भयो तर coin save हुन सकेन। कृपया result फेरि जाँच गर्नुहोस्।"
-        );
-
-
-        setText(
-            "totalXP",
-            sessionXP
-        );
-
-
-        setText(
-            "correctAnswers",
-            `${correctAnswers}/${TOTAL_QUESTIONS}`
-        );
-
-
-        setText(
-            "accuracy",
-            `${accuracy.toFixed(1)}%`
-        );
-
-
-        setText(
-            "bestStreak",
-            bestStreak
-        );
-
-
-        setText(
-            "finalRank",
-            formatRank(
-                currentRank
-            )
-        );
-
-
-        setText(
-            "positionsClimbed",
-            calculatePositionsClimbed()
-        );
-
-
-        return;
-
-    }
-
-
-    /*
-       Save Supabase session.
-    */
-
-    await saveFinalSession(
-        accuracy
-    );
-
-
-    /*
-       Update persistent player.
-    */
-
-    await updatePersistentPlayer();
-
-
-    /*
-       Save daily leaderboard.
-    */
-
-    await saveDailyLeaderboard(
-        accuracy
-    );
-
-
-    /*
-       Result UI.
-    */
-
-    showScreen(
-        resultScreen
-    );
-
-
-    if(
-        rewardResult.alreadySaved
-    ){
-
-        setText(
-            "resultMessage",
-            "यो game को coin reward पहिले नै save भइसकेको छ।"
-        );
-
-    }else{
-
-        setText(
-            "resultMessage",
-            `Game पूरा भयो! +${earnedCoins} coins तपाईंको Firebase balance मा थपियो।`
-        );
-
-    }
-
-
-    setText(
-        "resultCoins",
-        coins
-    );
-
-
-    setText(
-        "finalRank",
-        formatRank(
-            currentRank
-        )
-    );
-
-
-    setText(
-        "positionsClimbed",
-        calculatePositionsClimbed()
-    );
-
-
-    setText(
-        "correctAnswers",
-        `${correctAnswers}/${TOTAL_QUESTIONS}`
-    );
-
-
-    setText(
-        "accuracy",
-        `${accuracy.toFixed(1)}%`
-    );
-
-
-    setText(
-        "bestStreak",
-        bestStreak
-    );
-
-
-    setText(
-        "totalXP",
-        sessionXP
-    );
-
-
-    setText(
-        "totalCoins",
-        coins
-    );
-
-
-    updateCoinUI();
-
-}
-
-
-/* =========================================================
-   POSITION CLIMBED
-========================================================= */
-
-function calculatePositionsClimbed(){
-
-    return Math.max(
-        0,
-        startingRank -
-        currentRank
-    );
-
-}
-
-
-/* =========================================================
-   SAVE COIN REWARD
+   30. SAVE COIN REWARD
+   Firebase transaction + coin_history
 ========================================================= */
 
 async function saveCoinRewardToFirebase(){
 
-    if(
-        rewardSaved
-    ){
+    if(rewardSaved){
 
         return {
 
@@ -5203,9 +4717,7 @@ async function saveCoinRewardToFirebase(){
     }
 
 
-    if(
-        !firebaseUser
-    ){
+    if(!firebaseUser){
 
         throw new Error(
             "Firebase user भेटिएन।"
@@ -5214,9 +4726,7 @@ async function saveCoinRewardToFirebase(){
     }
 
 
-    if(
-        !gameId
-    ){
+    if(!gameId){
 
         throw new Error(
             "Game ID भेटिएन।"
@@ -5248,10 +4758,6 @@ async function saveCoinRewardToFirebase(){
             db,
             async transaction => {
 
-                /*
-                   All reads happen before writes.
-                */
-
                 const userSnap =
                     await transaction.get(
                         userRef
@@ -5264,13 +4770,7 @@ async function saveCoinRewardToFirebase(){
                     );
 
 
-                /*
-                   Duplicate protection.
-                */
-
-                if(
-                    historySnap.exists()
-                ){
+                if(historySnap.exists()){
 
                     return {
 
@@ -5293,9 +4793,7 @@ async function saveCoinRewardToFirebase(){
                 }
 
 
-                if(
-                    !userSnap.exists()
-                ){
+                if(!userSnap.exists()){
 
                     throw new Error(
                         "Firebase user profile भेटिएन।"
@@ -5421,8 +4919,7 @@ async function saveCoinRewardToFirebase(){
         );
 
 
-    rewardSaved =
-        true;
+    rewardSaved = true;
 
 
     coins =
@@ -5441,7 +4938,187 @@ async function saveCoinRewardToFirebase(){
 
 
 /* =========================================================
-   SAVE FINAL SESSION
+   31. FINISH GAME
+========================================================= */
+
+async function finishGame(){
+
+    if(gameFinished){
+        return;
+    }
+
+
+    gameFinished = true;
+    gameStarted = false;
+
+
+    clearTimer();
+
+
+    /*
+     * Completion bonuses
+     */
+
+    sessionXP +=
+        bestStreak * 5;
+
+
+    if(
+        correctAnswers ===
+        TOTAL_QUESTIONS
+    ){
+
+        sessionXP += 50;
+
+        earnedCoins += 30;
+
+    }
+
+
+    earnedCoins +=
+        bestStreak * 2;
+
+
+    const accuracy =
+        TOTAL_QUESTIONS > 0
+            ? (
+                correctAnswers /
+                TOTAL_QUESTIONS
+            ) * 100
+            : 0;
+
+
+    let coinSaveError =
+        null;
+
+
+    /*
+     * Save Firebase coin reward.
+     */
+
+    try{
+
+        await saveCoinRewardToFirebase();
+
+    }catch(error){
+
+        coinSaveError =
+            error;
+
+        console.error(
+            "COIN REWARD ERROR:",
+            error
+        );
+
+    }
+
+
+    /*
+     * Continue saving Supabase data even
+     * if Firebase coin reward fails.
+     */
+
+    await saveFinalSession(
+        accuracy
+    );
+
+
+    await updatePersistentPlayer();
+
+
+    await saveDailyLeaderboard(
+        accuracy
+    );
+
+
+    setText(
+        "finalRank",
+        currentRank
+    );
+
+
+    setText(
+        "positionsClimbed",
+        calculatePositionsClimbed()
+    );
+
+
+    setText(
+        "correctAnswers",
+        `${correctAnswers}/${TOTAL_QUESTIONS}`
+    );
+
+
+    setText(
+        "accuracy",
+        `${accuracy.toFixed(1)}%`
+    );
+
+
+    setText(
+        "bestStreak",
+        bestStreak
+    );
+
+
+    setText(
+        "totalXP",
+        sessionXP
+    );
+
+
+    setText(
+        "totalCoins",
+        Number(
+            earnedCoins
+        ).toLocaleString()
+    );
+
+
+    updateCoinUI();
+
+
+    if(coinSaveError){
+
+        setText(
+            "resultMessage",
+            "Game पूरा भयो। तर coin reward save गर्न समस्या भयो। कृपया फेरि जाँच गर्नुहोस्।"
+        );
+
+    }else{
+
+        setText(
+            "resultMessage",
+            `Game पूरा भयो! तपाईंले ${earnedCoins} coins र ${sessionXP} XP कमाउनुभयो।`
+        );
+
+    }
+
+
+    showScreen(
+        resultScreen
+    );
+
+}
+
+
+/* =========================================================
+   32. POSITIONS CLIMBED
+========================================================= */
+
+function calculatePositionsClimbed(){
+
+    return Math.max(
+        0,
+        Number(startingRank) -
+        Number(currentRank)
+    );
+
+}
+
+
+/* =========================================================
+   33. SAVE FINAL SESSION
 ========================================================= */
 
 async function saveFinalSession(
@@ -5449,7 +5126,8 @@ async function saveFinalSession(
 ){
 
     if(
-        !sessionId
+        !sessionId ||
+        !userId
     ){
 
         return;
@@ -5461,54 +5139,55 @@ async function saveFinalSession(
 
         const {
             error
-        } =
-            await supabase
-                .from(
-                    "rank_climber_sessions"
-                )
-                .update(
-                    {
+        } = await supabase
+            .from("rank_climber_sessions")
+            .update({
 
-                        ended_at:
-                            new Date()
-                                .toISOString(),
+                current_rank:
+                    currentRank,
 
-                        final_rank:
-                            currentRank,
+                final_rank:
+                    currentRank,
 
-                        correct_answers:
-                            correctAnswers,
+                correct_answers:
+                    correctAnswers,
 
-                        accuracy:
-                            accuracy,
+                total_questions:
+                    TOTAL_QUESTIONS,
 
-                        best_streak:
-                            bestStreak,
+                accuracy:
+                    accuracy,
 
-                        xp_earned:
-                            sessionXP,
+                best_streak:
+                    bestStreak,
 
-                        coins_earned:
-                            earnedCoins,
+                session_xp:
+                    sessionXP,
 
-                        positions_climbed:
-                            calculatePositionsClimbed(),
+                coins_earned:
+                    earnedCoins,
 
-                        completed:
-                            true
+                positions_climbed:
+                    calculatePositionsClimbed(),
 
-                    }
-                )
-                .eq(
-                    "id",
-                    sessionId
-                );
+                status:
+                    "completed",
+
+                finished_at:
+                    new Date()
+                        .toISOString()
+
+            })
+            .eq(
+                "id",
+                sessionId
+            );
 
 
         if(error){
 
             console.error(
-                "SESSION UPDATE ERROR:",
+                "FINAL SESSION ERROR:",
                 error
             );
 
@@ -5517,7 +5196,7 @@ async function saveFinalSession(
     }catch(error){
 
         console.error(
-            "SESSION SAVE ERROR:",
+            "FINAL SESSION EXCEPTION:",
             error
         );
 
@@ -5527,82 +5206,115 @@ async function saveFinalSession(
 
 
 /* =========================================================
-   UPDATE PERSISTENT PLAYER
+   34. UPDATE PERSISTENT PLAYER
 ========================================================= */
 
 async function updatePersistentPlayer(){
 
-    const newTotalXP =
-        totalXP +
-        sessionXP;
-
-
-    totalXP =
-        newTotalXP;
-
-
-    bestRank =
-        Math.min(
-            bestRank,
-            currentRank
-        );
+    if(!userId){
+        return;
+    }
 
 
     try{
 
         const {
+            data: existing,
+            error: fetchError
+        } = await supabase
+            .from("rank_climber_players")
+            .select(
+                "total_xp,best_rank"
+            )
+            .eq(
+                "user_id",
+                userId
+            )
+            .maybeSingle();
+
+
+        if(fetchError){
+
+            throw fetchError;
+
+        }
+
+
+        const oldXP =
+            Number(
+                existing?.total_xp ??
+                totalXP ??
+                0
+            );
+
+
+        const newTotalXP =
+            oldXP +
+            sessionXP;
+
+
+        totalXP =
+            newTotalXP;
+
+
+        bestRank =
+            Math.min(
+                Number(
+                    existing?.best_rank ??
+                    bestRank ??
+                    currentRank
+                ),
+                currentRank
+            );
+
+
+        const {
             error
-        } =
-            await supabase
-                .from(
-                    "rank_climber_players"
-                )
-                .upsert(
-                    {
+        } = await supabase
+            .from("rank_climber_players")
+            .upsert({
 
-                        user_id:
-                            userId,
+                user_id:
+                    userId,
 
-                        display_name:
-                            userName,
+                display_name:
+                    userName,
 
-                        current_rank:
-                            currentRank,
+                current_rank:
+                    currentRank,
 
-                        best_rank:
-                            bestRank,
+                best_rank:
+                    bestRank,
 
-                        total_xp:
-                            newTotalXP,
+                total_xp:
+                    newTotalXP,
 
-                        current_streak:
-                            streak,
+                current_streak:
+                    streak,
 
-                        best_streak:
-                            bestStreak,
+                best_streak:
+                    bestStreak,
 
-                        updated_at:
-                            new Date()
-                                .toISOString()
+                updated_at:
+                    new Date()
+                        .toISOString()
 
-                    },
-                    {
+            }, {
 
-                        onConflict:
-                            "user_id"
+                onConflict:
+                    "user_id"
 
-                    }
-                );
+            });
 
 
         if(error){
 
-            console.error(
-                "PLAYER UPDATE ERROR:",
-                error
-            );
+            throw error;
 
         }
+
+
+        updateIntroUI();
 
     }catch(error){
 
@@ -5617,150 +5329,189 @@ async function updatePersistentPlayer(){
 
 
 /* =========================================================
-   NEPAL DATE
+   35. DAILY LEADERBOARD
 ========================================================= */
 
 function getNepalDate(){
 
-    const parts =
-        new Intl.DateTimeFormat(
-            "en-CA",
-            {
+    return new Intl.DateTimeFormat(
+        "en-CA",
+        {
+            timeZone:
+                "Asia/Kathmandu",
 
-                timeZone:
-                    "Asia/Kathmandu",
+            year:
+                "numeric",
 
-                year:
-                    "numeric",
+            month:
+                "2-digit",
 
-                month:
-                    "2-digit",
-
-                day:
-                    "2-digit"
-
-            }
-        ).formatToParts(
-            new Date()
-        );
-
-
-    const values = {};
-
-
-    parts.forEach(
-        part => {
-
-            if(
-                part.type !==
-                "literal"
-            ){
-
-                values[
-                    part.type
-                ] =
-                    part.value;
-
-            }
-
+            day:
+                "2-digit"
         }
-    );
-
-
-    return (
-        values.year +
-        "-" +
-        values.month +
-        "-" +
-        values.day
+    ).format(
+        new Date()
     );
 
 }
 
 
-/* =========================================================
-   DAILY LEADERBOARD
-========================================================= */
-
 async function saveDailyLeaderboard(
     accuracy
 ){
 
-    const today =
-        getNepalDate();
-
-
-    const score =
-        (
-            correctAnswers *
-            100
-        ) +
-        (
-            bestStreak *
-            20
-        ) +
-        sessionXP;
+    if(!userId){
+        return;
+    }
 
 
     try{
 
+        const score =
+            (
+                correctAnswers *
+                100
+            ) +
+            (
+                bestStreak *
+                20
+            ) +
+            sessionXP;
+
+
+        const today =
+            getNepalDate();
+
+
         const {
-            error
-        } =
-            await supabase
-                .from(
-                    "rank_climber_daily"
-                )
-                .upsert(
-                    {
+            data: existing,
+            error: fetchError
+        } = await supabase
+            .from("rank_climber_daily")
+            .select(
+                "id,score,correct_answers,best_streak,session_xp"
+            )
+            .eq(
+                "user_id",
+                userId
+            )
+            .eq(
+                "date",
+                today
+            )
+            .maybeSingle();
 
-                        user_id:
-                            userId,
 
-                        date:
-                            today,
+        if(fetchError){
 
-                        display_name:
-                            userName,
+            throw fetchError;
 
-                        score:
-                            score,
+        }
 
-                        correct_answers:
-                            correctAnswers,
 
-                        accuracy:
-                            accuracy,
+        if(existing){
 
-                        best_streak:
-                            bestStreak,
+            if(
+                Number(existing.score || 0) >=
+                Number(score)
+            ){
 
-                        xp:
-                            sessionXP,
+                return;
 
-                        final_rank:
-                            currentRank,
+            }
 
-                        updated_at:
-                            new Date()
-                                .toISOString()
+            const {
+                error
+            } = await supabase
+                .from("rank_climber_daily")
+                .update({
 
-                    },
-                    {
+                    score:
+                        score,
 
-                        onConflict:
-                            "user_id,date"
+                    correct_answers:
+                        correctAnswers,
 
-                    }
+                    best_streak:
+                        bestStreak,
+
+                    session_xp:
+                        sessionXP,
+
+                    accuracy:
+                        accuracy,
+
+                    rank:
+                        currentRank,
+
+                    updated_at:
+                        new Date()
+                            .toISOString()
+
+                })
+                .eq(
+                    "id",
+                    existing.id
                 );
 
 
-        if(error){
+            if(error){
 
-            console.error(
-                "DAILY LEADERBOARD ERROR:",
+                throw error;
+
+            }
+
+        }else{
+
+            const {
                 error
-            );
+            } = await supabase
+                .from("rank_climber_daily")
+                .insert({
+
+                    user_id:
+                        userId,
+
+                    display_name:
+                        userName,
+
+                    date:
+                        today,
+
+                    score:
+                        score,
+
+                    correct_answers:
+                        correctAnswers,
+
+                    best_streak:
+                        bestStreak,
+
+                    session_xp:
+                        sessionXP,
+
+                    accuracy:
+                        accuracy,
+
+                    rank:
+                        currentRank,
+
+                    created_at:
+                        new Date()
+                            .toISOString(),
+
+                    updated_at:
+                        new Date()
+                            .toISOString()
+
+                });
+
+
+            if(error){
+
+                throw error;
+
+            }
 
         }
 
@@ -5777,7 +5528,7 @@ async function saveDailyLeaderboard(
 
 
 /* =========================================================
-   OPEN LEADERBOARD
+   36. LEADERBOARD
 ========================================================= */
 
 async function openLeaderboard(
@@ -5793,384 +5544,285 @@ async function openLeaderboard(
     );
 
 
-    globalLeaderboardBtn.classList.toggle(
-        "active",
-        type === "global"
-    );
+    globalLeaderboardBtn
+        .classList.toggle(
+            "active",
+            type === "global"
+        );
 
 
-    dailyLeaderboardBtn.classList.toggle(
-        "active",
-        type === "daily"
-    );
+    dailyLeaderboardBtn
+        .classList.toggle(
+            "active",
+            type === "daily"
+        );
 
 
-    await loadLeaderboard(
-        type
-    );
+    const list =
+        document.getElementById(
+            "leaderboardList"
+        );
+
+
+    list.innerHTML = `
+        <div class="empty-leaderboard">
+            Loading...
+        </div>
+    `;
+
+
+    if(type === "global"){
+
+        await loadGlobalLeaderboard();
+
+    }else{
+
+        await loadDailyLeaderboard();
+
+    }
 
 }
 
 
 /* =========================================================
-   LOAD LEADERBOARD
+   37. GLOBAL LEADERBOARD
 ========================================================= */
 
-async function loadLeaderboard(
+async function loadGlobalLeaderboard(){
+
+    const list =
+        document.getElementById(
+            "leaderboardList"
+        );
+
+
+    try{
+
+        const {
+            data,
+            error
+        } = await supabase
+            .from("rank_climber_players")
+            .select(
+                "user_id,display_name,current_rank,total_xp,best_rank"
+            )
+            .order(
+                "current_rank",
+                {
+                    ascending:
+                        true
+                }
+            )
+            .limit(50);
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        renderLeaderboard(
+            data || [],
+            "global"
+        );
+
+    }catch(error){
+
+        console.error(
+            "GLOBAL LEADERBOARD ERROR:",
+            error
+        );
+
+
+        list.innerHTML = `
+            <div class="empty-leaderboard">
+                Leaderboard load हुन सकेन।
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   38. DAILY LEADERBOARD
+========================================================= */
+
+async function loadDailyLeaderboard(){
+
+    const list =
+        document.getElementById(
+            "leaderboardList"
+        );
+
+
+    try{
+
+        const today =
+            getNepalDate();
+
+
+        const {
+            data,
+            error
+        } = await supabase
+            .from("rank_climber_daily")
+            .select(
+                "user_id,display_name,score,correct_answers,best_streak,accuracy,rank"
+            )
+            .eq(
+                "date",
+                today
+            )
+            .order(
+                "score",
+                {
+                    ascending:
+                        false
+                }
+            )
+            .limit(50);
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        renderLeaderboard(
+            data || [],
+            "daily"
+        );
+
+    }catch(error){
+
+        console.error(
+            "DAILY LEADERBOARD ERROR:",
+            error
+        );
+
+
+        list.innerHTML = `
+            <div class="empty-leaderboard">
+                Daily leaderboard load हुन सकेन।
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   39. RENDER LEADERBOARD
+========================================================= */
+
+function renderLeaderboard(
+    rows,
     type
 ){
 
     const list =
-        $("leaderboardList");
+        document.getElementById(
+            "leaderboardList"
+        );
 
 
-    list.innerHTML =
-        `
-        <div class="empty-leaderboard">
-            Loading...
-        </div>
+    if(
+        !rows ||
+        rows.length === 0
+    ){
+
+        list.innerHTML = `
+            <div class="empty-leaderboard">
+                अहिले leaderboard मा data छैन।
+            </div>
         `;
 
+        return;
 
-    try{
-
-        let response;
-
-
-        if(
-            type ===
-            "global"
-        ){
-
-            response =
-                await supabase
-                    .from(
-                        "rank_climber_players"
-                    )
-                    .select(
-                        "user_id,display_name,current_rank,best_rank,total_xp,best_streak"
-                    )
-                    .order(
-                        "current_rank",
-                        {
-                            ascending:
-                                true
-                        }
-                    )
-                    .limit(
-                        50
-                    );
-
-        }else{
-
-            const today =
-                getNepalDate();
+    }
 
 
-            response =
-                await supabase
-                    .from(
-                        "rank_climber_daily"
-                    )
-                    .select(
-                        "user_id,display_name,score,correct_answers,accuracy,best_streak,xp,final_rank"
-                    )
-                    .eq(
-                        "date",
-                        today
-                    )
-                    .order(
-                        "score",
-                        {
-                            ascending:
-                                false
-                        }
-                    )
-                    .limit(
-                        50
-                    );
-
-        }
+    list.innerHTML = "";
 
 
-        if(response.error){
+    rows.forEach(
+        (row, index) => {
 
-            throw response.error;
-
-        }
-
-
-        const data =
-            response.data ||
-            [];
+            const position =
+                index + 1;
 
 
-        if(
-            data.length ===
-            0
-        ){
-
-            list.innerHTML =
-                `
-                <div class="empty-leaderboard">
-                    अहिले leaderboard data छैन।
-                </div>
-                `;
-
-            return;
-
-        }
+            const name =
+                row.display_name ||
+                "Aspirant";
 
 
-        list.innerHTML =
-            "";
+            const sub =
+                type === "global"
+                    ? `Rank ${row.current_rank ?? "—"} • XP ${row.total_xp ?? 0}`
+                    : `Correct ${row.correct_answers ?? 0} • Streak ${row.best_streak ?? 0}`;
 
 
-        data.forEach(
-            (
-                player,
-                index
-            ) => {
-
-                const row =
-                    document.createElement(
-                        "div"
-                    );
+            const score =
+                type === "global"
+                    ? `#${row.current_rank ?? "—"}`
+                    : `${row.score ?? 0} pts`;
 
 
-                row.className =
-                    "leader-row";
-
-
-                const displayName =
-                    player.display_name ||
-                    (
-                        player.user_id ===
-                        userId
-                            ? userName
-                            : "Aspirant"
-                    );
-
-
-                let scoreText =
-                    "";
-
-
-                let subText =
-                    "";
-
-
-                if(
-                    type ===
-                    "global"
-                ){
-
-                    scoreText =
-                        formatRank(
-                            player.current_rank
-                        );
-
-
-                    subText =
-                        `${Number(player.total_xp || 0).toLocaleString()} XP`;
-
-                }else{
-
-                    scoreText =
-                        Number(
-                            player.score ||
-                            0
-                        ).toLocaleString();
-
-
-                    subText =
-                        `${Number(player.correct_answers || 0)}/${TOTAL_QUESTIONS} correct`;
-
-                }
-
-
-                row.innerHTML = `
-
-                    <div class="leader-position">
-                        ${getMedal(index)}
-                    </div>
-
-                    <div>
-
-                        <div class="leader-name">
-                            ${escapeHTML(displayName)}
-                        </div>
-
-                        <div class="leader-sub">
-                            ${escapeHTML(subText)}
-                        </div>
-
-                    </div>
-
-                    <div class="leader-score">
-                        ${escapeHTML(scoreText)}
-                    </div>
-
-                `;
-
-
-                list.appendChild(
-                    row
+            const element =
+                document.createElement(
+                    "div"
                 );
 
-            }
-        );
+
+            element.className =
+                "leader-row";
 
 
-    }catch(error){
+            element.innerHTML = `
 
-        console.error(
-            "LEADERBOARD ERROR:",
-            error
-        );
+                <div class="leader-position">
+                    ${position}
+                </div>
 
+                <div>
 
-        list.innerHTML =
-            `
-            <div class="empty-leaderboard">
-                Leaderboard load हुन सकेन।
-                <br><br>
-                ${escapeHTML(error?.message || "")}
-            </div>
+                    <div class="leader-name">
+                        ${escapeHTML(name)}
+                    </div>
+
+                    <div class="leader-sub">
+                        ${escapeHTML(sub)}
+                    </div>
+
+                </div>
+
+                <div class="leader-score">
+                    ${escapeHTML(String(score))}
+                </div>
+
             `;
 
-    }
 
-}
+            list.appendChild(
+                element
+            );
 
-
-/* =========================================================
-   MEDAL
-========================================================= */
-
-function getMedal(
-    index
-){
-
-    if(
-        index ===
-        0
-    ){
-
-        return "🥇";
-
-    }
-
-
-    if(
-        index ===
-        1
-    ){
-
-        return "🥈";
-
-    }
-
-
-    if(
-        index ===
-        2
-    ){
-
-        return "🥉";
-
-    }
-
-
-    return index + 1;
-
-}
-
-
-/* =========================================================
-   HOME
-========================================================= */
-
-async function goHome(){
-
-    clearTimer();
-
-
-    gameStarted =
-        false;
-
-
-    gameFinished =
-        false;
-
-
-    showScreen(
-        introScreen
+        }
     );
 
-
-    try{
-
-        await loadPlayer();
-
-        await loadCoinsFromFirebase();
-
-    }catch(error){
-
-        console.error(
-            "HOME REFRESH ERROR:",
-            error
-        );
-
-    }
-
 }
 
 
 /* =========================================================
-   RESTART
-========================================================= */
-
-async function restartGame(){
-
-    clearTimer();
-
-
-    gameStarted =
-        false;
-
-
-    gameFinished =
-        false;
-
-
-    showScreen(
-        introScreen
-    );
-
-
-    try{
-
-        await loadPlayer();
-
-        await loadCoinsFromFirebase();
-
-        await startGame();
-
-    }catch(error){
-
-        console.error(
-            "RESTART ERROR:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   EXIT GAME
+   40. EXIT GAME
 ========================================================= */
 
 async function exitGame(){
@@ -6180,37 +5832,31 @@ async function exitGame(){
         gameFinished
     ){
 
-        await goHome();
+        showScreen(
+            introScreen
+        );
 
         return;
 
     }
 
 
-    const shouldExit =
-        window.confirm(
-            "Game छोड्ने हो?\n\nयो game को earned reward मात्र save हुनेछ।"
+    const confirmed =
+        confirm(
+            "Game छोड्न चाहनुहुन्छ? हालसम्मको progress save हुनेछ।"
         );
 
 
-    if(
-        !shouldExit
-    ){
-
+    if(!confirmed){
         return;
-
     }
 
 
     clearTimer();
 
 
-    gameStarted =
-        false;
-
-
-    gameFinished =
-        true;
+    gameStarted = false;
+    gameFinished = true;
 
 
     const accuracy =
@@ -6222,365 +5868,110 @@ async function exitGame(){
             : 0;
 
 
-    /*
-       Save the coins earned so far.
-       We do not add completion bonuses
-       when the user exits early.
-    */
+    let coinSaveError =
+        null;
+
 
     try{
 
-        await saveExitCoinReward();
-
-
-        await saveFinalSessionForExit(
-            accuracy
-        );
-
-
-        await updatePersistentPlayer();
-
-
-        await saveDailyLeaderboard(
-            accuracy
-        );
-
-
-        showScreen(
-            resultScreen
-        );
-
-
-        setText(
-            "resultMessage",
-            `Game छोडियो। तपाईंले अहिलेसम्म कमाएको ${earnedCoins} coins सुरक्षित गरिएको छ।`
-        );
-
-
-        setText(
-            "resultCoins",
-            coins
-        );
-
-
-        setText(
-            "totalCoins",
-            coins
-        );
-
-
-        setText(
-            "finalRank",
-            formatRank(
-                currentRank
-            )
-        );
-
-
-        setText(
-            "positionsClimbed",
-            calculatePositionsClimbed()
-        );
-
-
-        setText(
-            "correctAnswers",
-            `${correctAnswers}/${TOTAL_QUESTIONS}`
-        );
-
-
-        setText(
-            "accuracy",
-            `${accuracy.toFixed(1)}%`
-        );
-
-
-        setText(
-            "bestStreak",
-            bestStreak
-        );
-
-
-        setText(
-            "totalXP",
-            sessionXP
-        );
-
+        await saveCoinRewardToFirebase();
 
     }catch(error){
 
+        coinSaveError =
+            error;
+
         console.error(
-            "EXIT ERROR:",
+            "EXIT COIN SAVE ERROR:",
             error
         );
 
-
-        showScreen(
-            introScreen
-        );
-
-
-        showError(
-            "Game exit reward save हुन सकेन।\n\n" +
-            (
-                error?.message ||
-                ""
-            )
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   EXIT COIN REWARD
-========================================================= */
-
-async function saveExitCoinReward(){
-
-    if(
-        rewardSaved
-    ){
-
-        return {
-
-            alreadySaved:
-                true,
-
-            balance:
-                coins
-
-        };
-
     }
 
 
-    if(
-        !firebaseUser ||
-        !gameId
-    ){
-
-        throw new Error(
-            "Firebase user/game ID भेटिएन।"
-        );
-
-    }
+    await saveExitSession(
+        accuracy
+    );
 
 
-    const userRef =
-        doc(
-            db,
-            "users",
-            firebaseUser.uid
-        );
+    await updatePersistentPlayer();
 
 
-    const historyRef =
-        doc(
-            db,
-            "users",
-            firebaseUser.uid,
-            "coin_history",
-            gameId
-        );
+    await saveDailyLeaderboard(
+        accuracy
+    );
 
 
-    const result =
-        await runTransaction(
-            db,
-            async transaction => {
-
-                const userSnap =
-                    await transaction.get(
-                        userRef
-                    );
+    setText(
+        "finalRank",
+        currentRank
+    );
 
 
-                const historySnap =
-                    await transaction.get(
-                        historyRef
-                    );
+    setText(
+        "positionsClimbed",
+        calculatePositionsClimbed()
+    );
 
 
-                if(
-                    historySnap.exists()
-                ){
-
-                    return {
-
-                        alreadySaved:
-                            true,
-
-                        balance:
-                            Number(
-                                userSnap.data()
-                                    ?.coins ??
-                                0
-                            )
-
-                    };
-
-                }
+    setText(
+        "correctAnswers",
+        `${correctAnswers}/${TOTAL_QUESTIONS}`
+    );
 
 
-                if(
-                    !userSnap.exists()
-                ){
-
-                    throw new Error(
-                        "Firebase user profile भेटिएन।"
-                    );
-
-                }
+    setText(
+        "accuracy",
+        `${accuracy.toFixed(1)}%`
+    );
 
 
-                const oldCoins =
-                    Number(
-                        userSnap.data()
-                            ?.coins ??
-                        0
-                    );
+    setText(
+        "bestStreak",
+        bestStreak
+    );
 
 
-                const reward =
-                    Math.max(
-                        0,
-                        Number(
-                            earnedCoins ||
-                            0
-                        )
-                    );
+    setText(
+        "totalXP",
+        sessionXP
+    );
 
 
-                const newBalance =
-                    oldCoins +
-                    reward;
-
-
-                transaction.update(
-                    userRef,
-                    {
-
-                        coins:
-                            increment(
-                                reward
-                            ),
-
-                        updatedAt:
-                            serverTimestamp()
-
-                    }
-                );
-
-
-                transaction.set(
-                    historyRef,
-                    {
-
-                        game_id:
-                            gameId,
-
-                        game:
-                            "rank_climber",
-
-                        source:
-                            "rank_climber",
-
-                        status:
-                            "quit",
-
-                        coins_won:
-                            reward,
-
-                        coins_before:
-                            oldCoins,
-
-                        coins_after:
-                            newBalance,
-
-                        questions:
-                            TOTAL_QUESTIONS,
-
-                        correct_answers:
-                            correctAnswers,
-
-                        accuracy:
-                            TOTAL_QUESTIONS > 0
-                                ? (
-                                    correctAnswers /
-                                    TOTAL_QUESTIONS
-                                ) * 100
-                                : 0,
-
-                        best_streak:
-                            bestStreak,
-
-                        starting_rank:
-                            startingRank,
-
-                        final_rank:
-                            currentRank,
-
-                        positions_climbed:
-                            calculatePositionsClimbed(),
-
-                        xp_earned:
-                            sessionXP,
-
-                        created_at:
-                            serverTimestamp(),
-
-                        timestamp:
-                            serverTimestamp()
-
-                    }
-                );
-
-
-                return {
-
-                    alreadySaved:
-                        false,
-
-                    balance:
-                        newBalance
-
-                };
-
-            }
-        );
-
-
-    rewardSaved =
-        true;
-
-
-    coins =
+    setText(
+        "totalCoins",
         Number(
-            result.balance ??
-            coins
-        );
+            earnedCoins
+        ).toLocaleString()
+    );
 
 
-    updateCoinUI();
+    setText(
+        "resultMessage",
+        coinSaveError
+            ? "Game exit भयो। Coin save गर्न समस्या आयो।"
+            : "Game exit भयो। हालसम्मको reward सुरक्षित गरिएको छ।"
+    );
 
 
-    return result;
+    showScreen(
+        resultScreen
+    );
 
 }
 
 
 /* =========================================================
-   SAVE EXIT SESSION
+   41. SAVE EXIT SESSION
 ========================================================= */
 
-async function saveFinalSessionForExit(
+async function saveExitSession(
     accuracy
 ){
 
     if(
-        !sessionId
+        !sessionId ||
+        !userId
     ){
 
         return;
@@ -6590,52 +5981,66 @@ async function saveFinalSessionForExit(
 
     try{
 
-        await supabase
-            .from(
-                "rank_climber_sessions"
-            )
-            .update(
-                {
+        const {
+            error
+        } = await supabase
+            .from("rank_climber_sessions")
+            .update({
 
-                    ended_at:
-                        new Date()
-                            .toISOString(),
+                current_rank:
+                    currentRank,
 
-                    final_rank:
-                        currentRank,
+                final_rank:
+                    currentRank,
 
-                    correct_answers:
-                        correctAnswers,
+                correct_answers:
+                    correctAnswers,
 
-                    accuracy:
-                        accuracy,
+                total_questions:
+                    currentQuestion,
 
-                    best_streak:
-                        bestStreak,
+                accuracy:
+                    accuracy,
 
-                    xp_earned:
-                        sessionXP,
+                best_streak:
+                    bestStreak,
 
-                    coins_earned:
-                        earnedCoins,
+                session_xp:
+                    sessionXP,
 
-                    positions_climbed:
-                        calculatePositionsClimbed(),
+                coins_earned:
+                    earnedCoins,
 
-                    completed:
-                        false
+                positions_climbed:
+                    calculatePositionsClimbed(),
 
-                }
-            )
+                status:
+                    "exited",
+
+                finished_at:
+                    new Date()
+                        .toISOString()
+
+            })
             .eq(
                 "id",
                 sessionId
             );
 
+
+        if(error){
+
+            console.error(
+                "EXIT SESSION ERROR:",
+                error
+            );
+
+        }
+
     }catch(error){
 
         console.error(
-            "EXIT SESSION ERROR:",
+            "EXIT SESSION EXCEPTION:",
             error
         );
 
@@ -6645,79 +6050,76 @@ async function saveFinalSessionForExit(
 
 
 /* =========================================================
-   EFFECTS
+   42. HOME
 ========================================================= */
 
-function playCorrectEffect(){
+function goHome(){
 
-    showToast(
-        "✅ सही उत्तर! +5 coins"
+    clearTimer();
+
+    gameStarted = false;
+
+    showScreen(
+        introScreen
     );
 
-}
-
-
-function playWrongEffect(){
-
-    showToast(
-        "❌ उत्तर गलत भयो"
-    );
-
-}
-
-
-/* =========================================================
-   DELAY
-========================================================= */
-
-function delay(
-    ms
-){
-
-    return new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                ms
-            )
-    );
+    updateIntroUI();
 
 }
 
 
 /* =========================================================
-   ESCAPE HTML
+   43. RESTART
 ========================================================= */
 
-function escapeHTML(
-    value
-){
+function restartGame(){
 
-    const div =
-        document.createElement(
-            "div"
+    if(!firebaseUser){
+
+        showError(
+            "लगइन आवश्यक छ।"
         );
 
+        return;
 
-    div.textContent =
-        String(
-            value ??
-            ""
-        );
+    }
 
 
-    return div.innerHTML;
+    showScreen(
+        introScreen
+    );
+
+
+    startGame();
 
 }
 
 
 /* =========================================================
-   EVENTS
+   44. EVENTS
 ========================================================= */
 
 startBtn.addEventListener(
     "click",
     startGame
+);
+
+
+leaderboardBtn.addEventListener(
+    "click",
+    () => {
+
+        openLeaderboard(
+            "global"
+        );
+
+    }
+);
+
+
+exitGameBtn.addEventListener(
+    "click",
+    exitGame
 );
 
 
@@ -6733,9 +6135,21 @@ nextQuestionBtn.addEventListener(
 );
 
 
-exitGameBtn.addEventListener(
+restartBtn.addEventListener(
     "click",
-    exitGame
+    restartGame
+);
+
+
+resultLeaderboardBtn.addEventListener(
+    "click",
+    () => {
+
+        openLeaderboard(
+            "global"
+        );
+
+    }
 );
 
 
@@ -6745,252 +6159,68 @@ homeBtn.addEventListener(
 );
 
 
-restartBtn.addEventListener(
-    "click",
-    restartGame
-);
-
-
-leaderboardBtn.addEventListener(
-    "click",
-    () =>
-        openLeaderboard(
-            "global"
-        )
-);
-
-
-resultLeaderboardBtn.addEventListener(
-    "click",
-    () =>
-        openLeaderboard(
-            "global"
-        )
-);
-
-
 leaderboardBackBtn.addEventListener(
     "click",
-    () =>
-        goHome()
-);
-
-
-globalLeaderboardBtn.addEventListener(
-    "click",
-    () =>
-        openLeaderboard(
-            "global"
-        )
-);
-
-
-dailyLeaderboardBtn.addEventListener(
-    "click",
-    () =>
-        openLeaderboard(
-            "daily"
-        )
-);
-
-
-/* =========================================================
-   AUTH INITIALIZATION
-========================================================= */
-
-async function initializeRankClimber(){
-
-    try{
-
-        const user =
-            await waitForFirebaseUser();
-
-
-        if(
-            !user
-        ){
-
-            hideLoading();
-
-
-            startBtn.disabled =
-                true;
-
-
-            showError(
-                "लगइन आवश्यक छ। पहिले LoksewaQuest मा Firebase login गर्नुहोस्।"
-            );
-
-
-            setText(
-                "currentRank",
-                "Login"
-            );
-
-
-            return;
-
-        }
-
-
-        firebaseUser =
-            user;
-
-
-        userId =
-            user.uid;
-
-
-        userName =
-            user.displayName ||
-            user.email?.split("@")[0] ||
-            "Aspirant";
-
-
-        await loadPlayer();
-
-
-        await loadCoinsFromFirebase();
-
-
-        hideLoading();
-
-
-        hideError();
-
-
-        startBtn.disabled =
-            false;
-
+    () => {
 
         showScreen(
             introScreen
         );
 
-
-    }catch(error){
-
-        console.error(
-            "INITIALIZATION ERROR:",
-            error
-        );
-
-
-        hideLoading();
-
-
-        startBtn.disabled =
-            true;
-
-
-        showError(
-            "Rank Climber load हुन सकेन।\n\n" +
-            (
-                error?.message ||
-                "Unknown error"
-            )
-        );
-
     }
-
-}
-
-
-/* =========================================================
-   START
-========================================================= */
-
-initializeRankClimber();
+);
 
 
-/* =========================================================
-   AUTH STATE MONITOR
-========================================================= */
+globalLeaderboardBtn.addEventListener(
+    "click",
+    () => {
 
-onAuthStateChanged(
-    auth,
-    async user => {
-
-        if(
-            user &&
-            (
-                !firebaseUser ||
-                firebaseUser.uid !==
-                user.uid
-            )
-        ){
-
-            firebaseUser =
-                user;
-
-            userId =
-                user.uid;
-
-            userName =
-                user.displayName ||
-                user.email?.split("@")[0] ||
-                "Aspirant";
-
-
-            try{
-
-                await loadPlayer();
-
-                await loadCoinsFromFirebase();
-
-                hideError();
-
-                startBtn.disabled =
-                    false;
-
-            }catch(error){
-
-                console.error(
-                    "AUTH REFRESH ERROR:",
-                    error
-                );
-
-                showError(
-                    error?.message ||
-                    "User data load हुन सकेन।"
-                );
-
-            }
-
-        }
-
-
-        if(
-            !user &&
-            firebaseUser
-        ){
-
-            firebaseUser =
-                null;
-
-            userId =
-                null;
-
-            startBtn.disabled =
-                true;
-
-            clearTimer();
-
-            showScreen(
-                introScreen
-            );
-
-            showError(
-                "Session समाप्त भयो। फेरि login गर्नुहोस्।"
-            );
-
-        }
+        openLeaderboard(
+            "global"
+        );
 
     }
 );
 
+
+dailyLeaderboardBtn.addEventListener(
+    "click",
+    () => {
+
+        openLeaderboard(
+            "daily"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   45. INITIAL UI
+========================================================= */
+
+setText(
+    "currentRank",
+    "..."
+);
+
+setText(
+    "coinAmount",
+    "..."
+);
+
+setText(
+    "introCoins",
+    "..."
+);
+
+
+/*
+ * Auth initialization is handled exclusively by
+ * onAuthStateChanged() above.
+ */
+
 </script>
 
 </body>
-
-      </html>
+    </html>
