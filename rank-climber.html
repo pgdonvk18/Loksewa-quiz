@@ -1,1148 +1,251 @@
 <!DOCTYPE html>
 <html lang="ne">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LoksewaQuest - Rank Climber</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
-
-<link rel="preconnect"
-      href="https://fonts.googleapis.com">
-
-<link rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-
-*{
-    box-sizing:border-box;
-}
-
-body{
-    margin:0;
-    font-family:'Poppins',sans-serif;
-    background:
-        radial-gradient(
-            circle at top,
-            #1e40af 0%,
-            #0f172a 55%
-        );
-    min-height:100vh;
-    color:white;
-}
-
-.app{
-    width:100%;
-    max-width:500px;
-    min-height:100vh;
-    margin:auto;
-    padding:16px;
-}
-
-.topbar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:20px;
-}
-
-.back-btn{
-    width:42px;
-    height:42px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.15);
-    background:rgba(255,255,255,.08);
-    color:white;
-    font-size:20px;
-    cursor:pointer;
-}
-
-.coins{
-    background:rgba(255,255,255,.10);
-    padding:8px 13px;
-    border-radius:20px;
-    font-size:14px;
-}
-
-.screen{
-    display:none;
-}
-
-.screen.active{
-    display:block;
-}
-
-.hero{
-    text-align:center;
-    padding:25px 0;
-}
-
-.trophy{
-    width:90px;
-    height:90px;
-    margin:auto;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:
-        linear-gradient(
-            145deg,
-            #facc15,
-            #f59e0b
-        );
-    font-size:46px;
-    box-shadow:
-        0 15px 40px rgba(250,204,21,.25);
-}
-
-.title{
-    margin-top:18px;
-    font-size:30px;
-    font-weight:800;
-}
-
-.subtitle{
-    color:#cbd5e1;
-    font-size:14px;
-    margin-top:5px;
-}
-
-.rank-box{
-    margin-top:25px;
-    padding:25px;
-    border-radius:24px;
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.10);
-}
-
-.rank-label{
-    color:#cbd5e1;
-    font-size:12px;
-}
-
-.rank-number{
-    font-size:55px;
-    font-weight:800;
-    line-height:1.1;
-    color:#facc15;
-}
-
-.rank-change{
-    color:#4ade80;
-    font-size:14px;
-}
-
-.info-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    margin-top:15px;
-}
-
-.info-card{
-    padding:15px 8px;
-    text-align:center;
-    border-radius:18px;
-    background:rgba(255,255,255,.07);
-    border:1px solid rgba(255,255,255,.08);
-}
-
-.info-icon{
-    font-size:20px;
-}
-
-.info-value{
-    font-size:15px;
-    font-weight:700;
-    margin-top:5px;
-}
-
-.info-label{
-    font-size:9px;
-    color:#94a3b8;
-}
-
-.primary-btn{
-    width:100%;
-    border:none;
-    padding:16px;
-    margin-top:20px;
-    border-radius:17px;
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #3b82f6
-        );
-    color:white;
-    font-size:16px;
-    font-weight:700;
-    cursor:pointer;
-    box-shadow:
-        0 10px 25px rgba(37,99,235,.30);
-    transition:.2s;
-}
-
-.primary-btn:active{
-    transform:scale(.97);
-}
-
-.primary-btn:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-}
-
-.secondary-btn{
-    width:100%;
-    border:1px solid rgba(255,255,255,.12);
-    padding:14px;
-    margin-top:10px;
-    border-radius:17px;
-    background:rgba(255,255,255,.07);
-    color:white;
-    font-weight:600;
-    cursor:pointer;
-}
-
-.game-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-
-.game-rank{
-    font-weight:700;
-    color:#facc15;
-}
-
-.question-count{
-    font-size:13px;
-    color:#cbd5e1;
-}
-
-.progress{
-    width:100%;
-    height:7px;
-    background:rgba(255,255,255,.12);
-    border-radius:10px;
-    overflow:hidden;
-    margin-top:15px;
-}
-
-.progress-bar{
-    height:100%;
-    width:0%;
-    background:
-        linear-gradient(
-            90deg,
-            #22c55e,
-            #84cc16
-        );
-    transition:width .3s;
-}
-
-.timer{
-    margin:22px auto 18px;
-    width:75px;
-    height:75px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(255,255,255,.08);
-    border:4px solid #3b82f6;
-    font-size:20px;
-    font-weight:800;
-}
-
-.timer.warning{
-    border-color:#f97316;
-    color:#fb923c;
-}
-
-.timer.danger{
-    border-color:#ef4444;
-    color:#f87171;
-}
-
-.question-card{
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:22px;
-    padding:20px;
-    margin-bottom:15px;
-}
-
-.question-topic{
-    font-size:11px;
-    color:#60a5fa;
-    font-weight:600;
-    margin-bottom:8px;
-}
-
-.question-text{
-    font-size:18px;
-    line-height:1.7;
-    font-weight:600;
-}
-
-.answer-option{
-    width:100%;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:15px;
-    margin-top:10px;
-    border-radius:16px;
-    border:1px solid rgba(255,255,255,.12);
-    background:rgba(255,255,255,.06);
-    color:white;
-    text-align:left;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.answer-option:hover{
-    background:rgba(255,255,255,.12);
-}
-
-.answer-option:disabled{
-    cursor:not-allowed;
-}
-
-.answer-option.correct{
-    background:rgba(34,197,94,.25);
-    border-color:#22c55e;
-}
-
-.answer-option.wrong{
-    background:rgba(239,68,68,.25);
-    border-color:#ef4444;
-}
-
-.option-letter{
-    width:34px;
-    height:34px;
-    min-width:34px;
-    border-radius:10px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(255,255,255,.10);
-    font-weight:700;
-}
-
-.streak{
-    text-align:center;
-    margin-top:15px;
-    color:#fb923c;
-    font-weight:700;
-}
-
-.feedback-icon{
-    font-size:65px;
-    text-align:center;
-}
-
-.feedback-title{
-    text-align:center;
-    font-size:28px;
-    font-weight:800;
-    margin-top:10px;
-}
-
-.feedback-message{
-    text-align:center;
-    color:#cbd5e1;
-    margin-top:5px;
-}
-
-.feedback-rank{
-    margin-top:20px;
-    padding:20px;
-    text-align:center;
-    border-radius:20px;
-    background:rgba(255,255,255,.08);
-}
-
-.rank-move{
-    font-size:28px;
-    font-weight:800;
-    color:#facc15;
-}
-
-.reward-row{
-    display:flex;
-    justify-content:space-around;
-    margin-top:15px;
-}
-
-.reward-item{
-    text-align:center;
-}
-
-.reward-value{
-    font-weight:800;
-}
-
-.reward-label{
-    font-size:11px;
-    color:#94a3b8;
-}
-
-.feedback-extra{
-    margin-top:18px;
-    padding:15px;
-    border-radius:15px;
-    background:rgba(255,255,255,.06);
-    font-size:13px;
-    line-height:1.6;
-}
-
-.explanation{
-    color:#cbd5e1;
-    margin-top:8px;
-}
-
-.result-hero{
-    text-align:center;
-    padding:25px 0;
-}
-
-.final-rank{
-    font-size:70px;
-    font-weight:800;
-    color:#facc15;
-}
-
-.result-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
-}
-
-.result-card{
-    padding:15px;
-    border-radius:18px;
-    background:rgba(255,255,255,.07);
-    text-align:center;
-}
-
-.result-value{
-    font-size:20px;
-    font-weight:800;
-}
-
-.result-label{
-    font-size:11px;
-    color:#94a3b8;
-}
-
-.countdown{
-    position:fixed;
-    inset:0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    background:rgba(2,6,23,.95);
-    z-index:100;
-}
-
-.countdown.active{
-    display:flex;
-}
-
-.count-number{
-    font-size:100px;
-    font-weight:800;
-    color:#facc15;
-}
-
-.leaderboard-row{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:14px;
-    margin-top:8px;
-    border-radius:16px;
-    background:rgba(255,255,255,.07);
-}
-
-.leaderboard-row.me{
-    border:1px solid rgba(250,204,21,.5);
-    background:rgba(250,204,21,.10);
-}
-
-.leaderboard-position{
-    width:35px;
-    font-weight:800;
-    color:#facc15;
-}
-
-.leaderboard-avatar{
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(59,130,246,.25);
-    overflow:hidden;
-}
-
-.leaderboard-avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.leaderboard-name{
-    flex:1;
-    font-weight:600;
-    font-size:14px;
-}
-
-.leaderboard-score{
-    font-weight:800;
-    color:#facc15;
-}
-
-.leaderboard-tabs{
-    display:flex;
-    gap:7px;
-    margin-bottom:15px;
-}
-
-.leaderboard-tab{
-    flex:1;
-    border:1px solid rgba(255,255,255,.12);
-    padding:12px;
-    border-radius:15px;
-    background:rgba(255,255,255,.07);
-    color:white;
-    font-weight:700;
-    cursor:pointer;
-}
-
-.leaderboard-tab.active{
-    background:#2563eb;
-    border-color:#3b82f6;
-}
-
-.loading{
-    text-align:center;
-    color:#94a3b8;
-    padding:30px 10px;
-}
-
-.error-box{
-    margin-top:15px;
-    padding:14px;
-    border-radius:14px;
-    background:rgba(239,68,68,.15);
-    border:1px solid rgba(239,68,68,.35);
-    color:#fca5a5;
-    font-size:13px;
-    line-height:1.6;
-}
-
-.hidden{
-    display:none !important;
-}
-
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Poppins',sans-serif;background:radial-gradient(circle at top,#1e40af 0%,#0f172a 55%);min-height:100vh;color:white;}
+.app{width:100%;max-width:500px;min-height:100vh;margin:auto;padding:16px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.back-btn{width:42px;height:42px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:white;font-size:20px;cursor:pointer;}
+.coins{background:rgba(255,255,255,.10);padding:8px 13px;border-radius:20px;font-size:14px;}
+.screen{display:none;}
+.screen.active{display:block;}
+.hero{text-align:center;padding:25px 0;}
+.trophy{width:90px;height:90px;margin:auto;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#facc15,#f59e0b);font-size:46px;box-shadow:0 15px 40px rgba(250,204,21,.25);}
+.title{margin-top:18px;font-size:30px;font-weight:800;}
+.subtitle{color:#cbd5e1;font-size:14px;margin-top:5px;}
+.rank-box{margin-top:25px;padding:25px;border-radius:24px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);}
+.rank-label{color:#cbd5e1;font-size:12px;}
+.rank-number{font-size:55px;font-weight:800;line-height:1.1;color:#facc15;}
+.rank-change{color:#4ade80;font-size:14px;}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px;}
+.info-card{padding:15px 8px;text-align:center;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);}
+.info-icon{font-size:20px;}
+.info-value{font-size:15px;font-weight:700;margin-top:5px;}
+.info-label{font-size:9px;color:#94a3b8;}
+.primary-btn{width:100%;border:none;padding:16px;margin-top:20px;border-radius:17px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 10px 25px rgba(37,99,235,.30);transition:.2s;}
+.primary-btn:active{transform:scale(.97);}
+.primary-btn:disabled{opacity:.6;cursor:not-allowed;}
+.secondary-btn{width:100%;border:1px solid rgba(255,255,255,.12);padding:14px;margin-top:10px;border-radius:17px;background:rgba(255,255,255,.07);color:white;font-weight:600;cursor:pointer;}
+.game-header{display:flex;align-items:center;justify-content:space-between;}
+.game-rank{font-weight:700;color:#facc15;}
+.question-count{font-size:13px;color:#cbd5e1;}
+.progress{width:100%;height:7px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden;margin-top:15px;}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#84cc16);transition:width .3s;}
+.timer{margin:22px auto 18px;width:75px;height:75px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);border:4px solid #3b82f6;font-size:20px;font-weight:800;}
+.timer.warning{border-color:#f97316;color:#fb923c;}
+.timer.danger{border-color:#ef4444;color:#f87171;}
+.question-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);border-radius:22px;padding:20px;margin-bottom:15px;}
+.question-topic{font-size:11px;color:#60a5fa;font-weight:600;margin-bottom:8px;}
+.question-text{font-size:18px;line-height:1.7;font-weight:600;}
+.answer-option{width:100%;display:flex;align-items:center;gap:12px;padding:15px;margin-top:10px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:white;text-align:left;cursor:pointer;transition:.2s;}
+.answer-option:hover{background:rgba(255,255,255,.12);}
+.answer-option:disabled{cursor:not-allowed;}
+.answer-option.correct{background:rgba(34,197,94,.25);border-color:#22c55e;}
+.answer-option.wrong{background:rgba(239,68,68,.25);border-color:#ef4444;}
+.option-letter{width:34px;height:34px;min-width:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.10);font-weight:700;}
+.streak{text-align:center;margin-top:15px;color:#fb923c;font-weight:700;}
+.feedback-icon{font-size:65px;text-align:center;}
+.feedback-title{text-align:center;font-size:28px;font-weight:800;margin-top:10px;}
+.feedback-message{text-align:center;color:#cbd5e1;margin-top:5px;}
+.feedback-rank{margin-top:20px;padding:20px;text-align:center;border-radius:20px;background:rgba(255,255,255,.08);}
+.rank-move{font-size:28px;font-weight:800;color:#facc15;}
+.reward-row{display:flex;justify-content:space-around;margin-top:15px;}
+.reward-item{text-align:center;}
+.reward-value{font-weight:800;}
+.reward-label{font-size:11px;color:#94a3b8;}
+.feedback-extra{margin-top:18px;padding:15px;border-radius:15px;background:rgba(255,255,255,.06);font-size:13px;line-height:1.6;}
+.explanation{color:#cbd5e1;margin-top:8px;}
+.result-hero{text-align:center;padding:25px 0;}
+.final-rank{font-size:70px;font-weight:800;color:#facc15;}
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.result-card{padding:15px;border-radius:18px;background:rgba(255,255,255,.07);text-align:center;}
+.result-value{font-size:20px;font-weight:800;}
+.result-label{font-size:11px;color:#94a3b8;}
+.countdown{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.95);z-index:100;}
+.countdown.active{display:flex;}
+.count-number{font-size:100px;font-weight:800;color:#facc15;}
+.leaderboard-row{display:flex;align-items:center;gap:12px;padding:14px;margin-top:8px;border-radius:16px;background:rgba(255,255,255,.07);}
+.leaderboard-row.me{border:1px solid rgba(250,204,21,.5);background:rgba(250,204,21,.10);}
+.leaderboard-position{width:35px;font-weight:800;color:#facc15;}
+.leaderboard-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(59,130,246,.25);overflow:hidden;}
+.leaderboard-avatar img{width:100%;height:100%;object-fit:cover;}
+.leaderboard-name{flex:1;font-weight:600;font-size:14px;}
+.leaderboard-score{font-weight:800;color:#facc15;}
+.leaderboard-tabs{display:flex;gap:7px;margin-bottom:15px;}
+.leaderboard-tab{flex:1;border:1px solid rgba(255,255,255,.12);padding:12px;border-radius:15px;background:rgba(255,255,255,.07);color:white;font-weight:700;cursor:pointer;}
+.leaderboard-tab.active{background:#2563eb;border-color:#3b82f6;}
+.loading{text-align:center;color:#94a3b8;padding:30px 10px;}
+.error-box{margin-top:15px;padding:14px;border-radius:14px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);color:#fca5a5;font-size:13px;line-height:1.6;}
+.hidden{display:none !important;}
 </style>
-
 </head>
-
 <body>
-
 <div class="app">
-
-<section id="introScreen"
-         class="screen active">
-
+<section id="introScreen" class="screen active">
     <div class="topbar">
-
-        <button class="back-btn"
-                id="backBtn">
-            ←
-        </button>
-
-        <div class="coins">
-
-            🪙
-            <span id="coinDisplay">
-                0
-            </span>
-
-        </div>
-
+        <button class="back-btn" id="backBtn">←</button>
+        <div class="coins">🪙 <span id="coinDisplay">0</span></div>
     </div>
-
     <div class="hero">
-
-        <div class="trophy">
-            🏆
-        </div>
-
-        <div class="title">
-            RANK CLIMBER
-        </div>
-
-        <div class="subtitle">
-            Climb your way to Rank #1
-        </div>
-
+        <div class="trophy">🏆</div>
+        <div class="title">RANK CLIMBER</div>
+        <div class="subtitle">Climb your way to Rank #1</div>
     </div>
-
     <div class="rank-box">
-
-        <div class="rank-label">
-            YOUR CURRENT RANK
-        </div>
-
-        <div class="rank-number"
-             id="currentRank">
-            ...
-        </div>
-
-        <div class="rank-change"
-             id="rankChangeText">
-            Loading your rank...
-        </div>
-
+        <div class="rank-label">YOUR CURRENT RANK</div>
+        <div class="rank-number" id="currentRank">...</div>
+        <div class="rank-change" id="rankChangeText">Loading your rank...</div>
     </div>
-
     <div class="info-grid">
-
         <div class="info-card">
-
-            <div class="info-icon">
-                🎯
-            </div>
-
-            <div class="info-value">
-                10
-            </div>
-
-            <div class="info-label">
-                QUESTIONS
-            </div>
-
+            <div class="info-icon">🎯</div>
+            <div class="info-value">10</div>
+            <div class="info-label">QUESTIONS</div>
         </div>
-
         <div class="info-card">
-
-            <div class="info-icon">
-                ⏱️
-            </div>
-
-            <div class="info-value">
-                15s
-            </div>
-
-            <div class="info-label">
-                EACH
-            </div>
-
+            <div class="info-icon">⏱️️</div>
+            <div class="info-value">15s</div>
+            <div class="info-label">EACH</div>
         </div>
-
         <div class="info-card">
-
-            <div class="info-icon">
-                🔥
-            </div>
-
-            <div class="info-value"
-                 id="introStreak">
-                0
-            </div>
-
-            <div class="info-label">
-                STREAK
-            </div>
-
+            <div class="info-icon">🔥</div>
+            <div class="info-value" id="introStreak">0</div>
+            <div class="info-label">STREAK</div>
         </div>
-
     </div>
-
-    <button class="primary-btn"
-            id="startBtn">
-        🚀 START CLIMB
-    </button>
-
-    <button class="secondary-btn"
-            id="leaderboardBtn">
-        🏆 View Leaderboard
-    </button>
-
-    <div id="gameError"
-         class="error-box hidden">
-    </div>
-
+    <button class="primary-btn" id="startBtn">🚀 START CLIMB</button>
+    <button class="secondary-btn" id="leaderboardBtn">🏆 View Leaderboard</button>
+    <div id="gameError" class="error-box hidden"></div>
 </section>
 
-
-<section id="gameScreen"
-         class="screen">
-
+<section id="gameScreen" class="screen">
     <div class="topbar">
-
-        <button class="back-btn"
-                id="exitGameBtn">
-            ×
-        </button>
-
-        <div class="game-rank">
-
-            Rank
-            <span id="gameRank">
-                #...
-            </span>
-
-        </div>
-
+        <button class="back-btn" id="exitGameBtn">×</button>
+        <div class="game-rank">Rank <span id="gameRank">#...</span></div>
     </div>
-
     <div class="game-header">
-
-        <div class="question-count">
-
-            Question
-            <span id="questionNumber">
-                1
-            </span>
-            / 10
-
-        </div>
-
-        <div class="question-count">
-
-            🔥
-            <span id="streakDisplay">
-                0
-            </span>
-
-        </div>
-
+        <div class="question-count">Question <span id="questionNumber">1</span>/ 10</div>
+        <div class="question-count">🔥 <span id="streakDisplay">0</span></div>
     </div>
-
     <div class="progress">
-
-        <div id="progressBar"
-             class="progress-bar">
-        </div>
-
+        <div id="progressBar" class="progress-bar"></div>
     </div>
-
-    <div id="timer"
-         class="timer">
-        15
-    </div>
-
+    <div id="timer" class="timer">15</div>
     <div class="question-card">
-
-        <div id="questionTopic"
-             class="question-topic">
-            General
-        </div>
-
-        <div id="questionText"
-             class="question-text">
-            प्रश्न लोड हुँदैछ...
-        </div>
-
+        <div id="questionTopic" class="question-topic">General</div>
+        <div id="questionText" class="question-text">प्रश्न लोड हुँदैछ...</div>
     </div>
-
-    <div id="answerOptions">
-    </div>
-
-    <div id="streakMessage"
-         class="streak">
-    </div>
-
+    <div id="answerOptions"></div>
+    <div id="streakMessage" class="streak"></div>
 </section>
 
-
-<section id="feedbackScreen"
-         class="screen">
-
+<section id="feedbackScreen" class="screen">
     <div class="topbar">
-
         <div></div>
-
-        <div class="game-rank">
-
-            Rank
-            <span id="feedbackRankTop">
-                #...
-            </span>
-
-        </div>
-
+        <div class="game-rank">Rank <span id="feedbackRankTop">#...</span></div>
     </div>
-
     <div style="padding-top:45px;">
-
-        <div id="feedbackIcon"
-             class="feedback-icon">
-            ✓
-        </div>
-
-        <div id="feedbackTitle"
-             class="feedback-title">
-            CORRECT!
-        </div>
-
-        <div id="feedbackMessage"
-             class="feedback-message">
-        </div>
-
+        <div id="feedbackIcon" class="feedback-icon">✓</div>
+        <div id="feedbackTitle" class="feedback-title">CORRECT!</div>
+        <div id="feedbackMessage" class="feedback-message"></div>
         <div class="feedback-rank">
-
-            <div id="rankMove"
-                 class="rank-move">
-                #... → #...
-            </div>
-
-            <div style="
-                color:#94a3b8;
-                font-size:13px;
-                margin-top:5px;
-            ">
-                Rank Movement
-            </div>
-
+            <div id="rankMove" class="rank-move">#... → #...</div>
+            <div style="color:#94a3b8;font-size:13px;margin-top:5px;">Rank Movement</div>
         </div>
-
         <div class="reward-row">
-
             <div class="reward-item">
-
-                <div id="rankReward"
-                     class="reward-value">
-                    +0
-                </div>
-
-                <div class="reward-label">
-                    RANK
-                </div>
-
+                <div id="rankReward" class="reward-value">+0</div>
+                <div class="reward-label">RANK</div>
             </div>
-
             <div class="reward-item">
-
-                <div id="feedbackXP"
-                     class="reward-value">
-                    +0 XP
-                </div>
-
-                <div class="reward-label">
-                    XP
-                </div>
-
+                <div id="feedbackXP" class="reward-value">+0 XP</div>
+                <div class="reward-label">XP</div>
             </div>
-
             <div class="reward-item">
-
-                <div id="feedbackCoins"
-                     class="reward-value">
-                    +0
-                </div>
-
-                <div class="reward-label">
-                    COINS
-                </div>
-
+                <div id="feedbackCoins" class="reward-value">+0</div>
+                <div class="reward-label">COINS</div>
             </div>
-
         </div>
-
-        <div id="feedbackStreak"
-             class="streak">
-        </div>
-
+        <div id="feedbackStreak" class="streak"></div>
         <div class="feedback-extra">
-
-            <div id="correctAnswer">
-            </div>
-
-            <div id="explanation"
-                 class="explanation">
-            </div>
-
+            <div id="correctAnswer"></div>
+            <div id="explanation" class="explanation"></div>
         </div>
-
-        <button class="primary-btn"
-                id="nextQuestionBtn">
-            NEXT QUESTION →
-        </button>
-
+        <button class="primary-btn" id="nextQuestionBtn">NEXT QUESTION →</button>
     </div>
-
 </section>
 
-
-<section id="resultScreen"
-         class="screen">
-
+<section id="resultScreen" class="screen">
     <div class="topbar">
-
-        <button class="back-btn"
-                id="homeBtn">
-            ←
-        </button>
-
-        <div>
-
-            🪙
-            <span id="resultCoins">
-                0
-            </span>
-
-        </div>
-
+        <button class="back-btn" id="homeBtn">←</button>
+        <div>🪙 <span id="resultCoins">0</span></div>
     </div>
-
     <div class="result-hero">
-
-        <div style="
-            font-size:20px;
-            font-weight:700;
-        ">
-
-            🏆
-            <span id="resultMessage">
-                CLIMB COMPLETE
-            </span>
-
-        </div>
-
-        <div id="finalRank"
-             class="final-rank">
-            #...
-        </div>
-
-        <div style="
-            color:#4ade80;
-            font-weight:600;
-        ">
-
-            <span id="positionsClimbed">
-                ↑ 0
-            </span>
-
-            positions
-
-        </div>
-
+        <div style="font-size:20px;font-weight:700;">🏆 <span id="resultMessage">CLIMB COMPLETE</span></div>
+        <div id="finalRank" class="final-rank">#...</div>
+        <div style="color:#4ade80;font-weight:600;"><span id="positionsClimbed">↑ 0</span> positions</div>
     </div>
-
     <div class="result-grid">
-
         <div class="result-card">
-
-            <div id="correctAnswers"
-                 class="result-value">
-                0/10
-            </div>
-
-            <div class="result-label">
-                CORRECT
-            </div>
-
+            <div id="correctAnswers" class="result-value">0/10</div>
+            <div class="result-label">CORRECT</div>
         </div>
-
         <div class="result-card">
-
-            <div id="accuracy"
-                 class="result-value">
-                0%
-            </div>
-
-            <div class="result-label">
-                ACCURACY
-            </div>
-
+            <div id="accuracy" class="result-value">0%</div>
+            <div class="result-label">ACCURACY</div>
         </div>
-
         <div class="result-card">
-
-            <div id="bestStreak"
-                 class="result-value">
-                0
-            </div>
-
-            <div class="result-label">
-                BEST STREAK
-            </div>
-
+            <div id="bestStreak" class="result-value">0</div>
+            <div class="result-label">BEST STREAK</div>
         </div>
-
         <div class="result-card">
-
-            <div class="result-value">
-
-                ⭐
-                <span id="totalXP">
-                    0
-                </span>
-
-            </div>
-
-            <div class="result-label">
-                XP EARNED
-            </div>
-
+            <div class="result-value">⭐ <span id="totalXP">0</span></div>
+            <div class="result-label">XP EARNED</div>
         </div>
-
     </div>
-
-    <div class="rank-box"
-         style="
-            margin-top:15px;
-            text-align:center;
-         ">
-
-        <div style="
-            font-size:13px;
-            color:#94a3b8;
-        ">
-            COINS EARNED
-        </div>
-
-        <div style="
-            font-size:30px;
-            font-weight:800;
-            color:#facc15;
-        ">
-
-            🪙 +
-            <span id="totalCoins">
-                0
-            </span>
-
-        </div>
-
+    <div class="rank-box" style="margin-top:15px;text-align:center;">
+        <div style="font-size:13px;color:#94a3b8;">COINS EARNED</div>
+        <div style="font-size:30px;font-weight:800;color:#facc15;">🪙 + <span id="totalCoins">0</span></div>
     </div>
-
-    <button class="primary-btn"
-            id="restartBtn">
-        🔥 CLIMB AGAIN
-    </button>
-
-    <button class="secondary-btn"
-            id="resultLeaderboardBtn">
-        🏆 VIEW LEADERBOARD
-    </button>
-
+    <button class="primary-btn" id="restartBtn">🔥 CLIMB AGAIN</button>
+    <button class="secondary-btn" id="resultLeaderboardBtn">🏆 VIEW LEADERBOARD</button>
 </section>
 
-
-<section id="leaderboardScreen"
-         class="screen">
-
+<section id="leaderboardScreen" class="screen">
     <div class="topbar">
-
-        <button class="back-btn"
-                id="leaderboardBackBtn">
-            ←
-        </button>
-
-        <div style="font-weight:700;">
-            🏆 Leaderboard
-        </div>
-
+        <button class="back-btn" id="leaderboardBackBtn">←</button>
+        <div style="font-weight:700;">🏆 Leaderboard</div>
         <div></div>
-
     </div>
-
     <div class="leaderboard-tabs">
-
-        <button id="globalLeaderboardBtn"
-                class="leaderboard-tab active">
-            GLOBAL
-        </button>
-
-        <button id="dailyLeaderboardBtn"
-                class="leaderboard-tab">
-            TODAY
-        </button>
-
+        <button id="globalLeaderboardBtn" class="leaderboard-tab active">GLOBAL</button>
+        <button id="dailyLeaderboardBtn" class="leaderboard-tab">TODAY</button>
     </div>
-
-    <div id="leaderboardList">
-    </div>
-
+    <div id="leaderboardList"></div>
 </section>
-
 </div>
 
-
-<div id="countdown"
-     class="countdown">
-
-    <div id="countNumber"
-         class="count-number">
-        3
-    </div>
-
+<div id="countdown" class="countdown">
+    <div id="countNumber" class="count-number">3</div>
 </div>
 
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-<script type="module">import {
-    createClient
-} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-import {
-    getAuth,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-import {
-    getFirestore,
-    doc,
-    getDoc,
-    runTransaction,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-
-/* =========================================================
-   SUPABASE
-========================================================= */
-
-const SUPABASE_URL =
-    "https://edyirdedkiarguvurpxq.supabase.co";
-
-const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
-
-const supabase =
-    createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
-
-
-/* =========================================================
-   FIREBASE
-========================================================= */
+const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const firebaseConfig = {
     apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -1153,4116 +256,712 @@ const firebaseConfig = {
     appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
 };
 
-const firebaseApp =
-    initializeApp(
-        firebaseConfig
-    );
-
-const auth =
-    getAuth(
-        firebaseApp
-    );
-
-const db =
-    getFirestore(
-        firebaseApp
-    );
-
-
-/* =========================================================
-   CONFIG
-========================================================= */
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 const TOTAL_QUESTIONS = 10;
-
 const QUESTION_TIME = 15;
-
 const DEFAULT_RANK = 999999;
 
+let firebaseUser = null;
+let userId = null;
+let questions = [];
+let currentQuestion = 0;
+let currentRank = DEFAULT_RANK;
+let startingRank = DEFAULT_RANK;
+let streak = 0;
+let bestStreak = 0;
+let correctAnswers = 0;
+let xp = 0;
+let coins = 0;
+let earnedCoins = 0;
+let timer = QUESTION_TIME;
+let timerInterval = null;
+let answered = false;
+let gameStarted = false;
+let gameLoading = false;
+let savingAnswer = false;
+let sessionId = null;
+let sessionStartTime = null;
+let feedbackTimeout = null;
+let currentLeaderboardType = "global";
+let authLoading = false;
+let authReady = false;
+let coinsSaving = false;
 
-/* =========================================================
-   STATE
-========================================================= */
-
-let firebaseUser =
-    null;
-
-let userId =
-    null;
-
-let questions =
-    [];
-
-let currentQuestion =
-    0;
-
-let currentRank =
-    DEFAULT_RANK;
-
-let startingRank =
-    DEFAULT_RANK;
-
-let streak =
-    0;
-
-let bestStreak =
-    0;
-
-let correctAnswers =
-    0;
-
-let xp =
-    0;
-
-let coins =
-    0;
-
-let earnedCoins =
-    0;
-
-let timer =
-    QUESTION_TIME;
-
-let timerInterval =
-    null;
-
-let answered =
-    false;
-
-let gameStarted =
-    false;
-
-let gameLoading =
-    false;
-
-let savingAnswer =
-    false;
-
-let sessionId =
-    null;
-
-let sessionStartTime =
-    null;
-
-let feedbackTimeout =
-    null;
-
-let currentLeaderboardType =
-    "global";
-
-let authLoading =
-    false;
-
-let authReady =
-    false;
-
-let coinsSaving =
-    false;
-
-
-/* =========================================================
-   DOM
-========================================================= */
-
-function $(id){
-
-    return document.getElementById(
-        id
-    );
-
-}
-
-
-function setText(
-    id,
-    value
-){
-
-    const element =
-        $(id);
-
-    if(element){
-
-        element.textContent =
-            value;
-
-    }
-
-}
-
-
-/* =========================================================
-   SCREEN
-========================================================= */
+function $(id){ return document.getElementById(id); }
+function setText(id, value){ const el = $(id); if(el) el.textContent = value; }
 
 function showScreen(id){
-
-    const screens = [
-
-        "introScreen",
-        "gameScreen",
-        "feedbackScreen",
-        "resultScreen",
-        "leaderboardScreen"
-
-    ];
-
-    screens.forEach(
-        screenId => {
-
-            const screen =
-                $(screenId);
-
-            if(screen){
-
-                screen.classList.remove(
-                    "active"
-                );
-
-                screen.classList.add(
-                    "hidden"
-                );
-
-            }
-
-        }
-    );
-
-    const target =
-        $(id);
-
-    if(target){
-
-        target.classList.remove(
-            "hidden"
-        );
-
-        target.classList.add(
-            "active"
-        );
-
-    }
-
+    ["introScreen","gameScreen","feedbackScreen","resultScreen","leaderboardScreen"].forEach(sId => {
+        const s = $(sId);
+        if(s){ s.classList.remove("active"); s.classList.add("hidden"); }
+    });
+    const target = $(id);
+    if(target){ target.classList.remove("hidden"); target.classList.add("active"); }
 }
 
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-function showGameError(
-    message
-){
-
-    console.error(
-        "Rank Climber:",
-        message
-    );
-
-    const box =
-        $("gameError");
-
-    if(box){
-
-        box.textContent =
-            message;
-
-        box.classList.remove(
-            "hidden"
-        );
-
-    }
-
+function showGameError(message){
+    console.error("Rank Climber:", message);
+    const box = $("gameError");
+    if(box){ box.textContent = message; box.classList.remove("hidden"); }
 }
-
 
 function hideGameError(){
-
-    const box =
-        $("gameError");
-
-    if(box){
-
-        box.classList.add(
-            "hidden"
-        );
-
-    }
-
+    const box = $("gameError");
+    if(box) box.classList.add("hidden");
 }
 
-
-/* =========================================================
-   SHUFFLE
-========================================================= */
-
-function shuffleArray(
-    array
-){
-
-    const arr =
-        [...array];
-
-    for(
-        let i = arr.length - 1;
-        i > 0;
-        i--
-    ){
-
-        const j =
-            Math.floor(
-                Math.random() *
-                (i + 1)
-            );
-
-        [
-            arr[i],
-            arr[j]
-        ] =
-        [
-            arr[j],
-            arr[i]
-        ];
-
+function shuffleArray(array){
+    const arr = [...array];
+    for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-
     return arr;
-
 }
 
-
-/* =========================================================
-   OPTIONS
-========================================================= */
-
-function parseOptions(
-    options
-){
-
-    if(
-        Array.isArray(options)
-    ){
-
-        return options;
-
-    }
-
-    if(
-        typeof options ===
-        "string"
-    ){
-
+function parseOptions(options){
+    if(Array.isArray(options)) return options;
+    if(typeof options === "string"){
         try{
-
-            const parsed =
-                JSON.parse(
-                    options
-                );
-
-            if(
-                Array.isArray(parsed)
-            ){
-
-                return parsed;
-
-            }
-
-        }catch(error){
-
-            console.warn(
-                "Options parse failed"
-            );
-
-        }
-
+            const parsed = JSON.parse(options);
+            if(Array.isArray(parsed)) return parsed;
+        }catch(e){}
     }
-
     return [];
-
 }
 
-
-/* =========================================================
-   CORRECT INDEX
-========================================================= */
-
-function findCorrectIndex(
-    answer,
-    options
-){
-
-    if(
-        answer === null ||
-        answer === undefined
-    ){
-
-        return -1;
-
+function findCorrectIndex(answer, options){
+    if(answer === null || answer === undefined) return -1;
+    const clean = String(answer).trim();
+    if(!clean) return -1;
+    if(/^\d+$/.test(clean)){
+        const num = Number(clean);
+        if(num >= 0 && num < options.length) return num;
+        if(num >= 1 && num <= options.length) return num - 1;
     }
-
-    const clean =
-        String(answer)
-            .trim();
-
-    if(!clean){
-
-        return -1;
-
+    if(/^[A-Za-z]$/.test(clean)){
+        const idx = clean.toUpperCase().charCodeAt(0) - 65;
+        if(idx >= 0 && idx < options.length) return idx;
     }
-
-
-    if(
-        /^\d+$/.test(clean)
-    ){
-
-        const number =
-            Number(clean);
-
-
-        if(
-            number >= 0 &&
-            number < options.length
-        ){
-
-            return number;
-
-        }
-
-
-        if(
-            number >= 1 &&
-            number <= options.length
-        ){
-
-            return number - 1;
-
-        }
-
-    }
-
-
-    if(
-        /^[A-Za-z]$/.test(clean)
-    ){
-
-        const index =
-            clean
-                .toUpperCase()
-                .charCodeAt(0) -
-            65;
-
-        if(
-            index >= 0 &&
-            index < options.length
-        ){
-
-            return index;
-
-        }
-
-    }
-
-
-    const lower =
-        clean.toLowerCase();
-
-
-    return options.findIndex(
-        option =>
-            String(option)
-                .trim()
-                .toLowerCase() ===
-            lower
-    );
-
+    const lower = clean.toLowerCase();
+    return options.findIndex(opt => String(opt).trim().toLowerCase() === lower);
 }
 
+function normalizeQuestion(row){
+    if(!row || !row.question) return null;
+    const originalOptions = parseOptions(row.options).map(o => String(o).trim()).filter(o => o.length > 0);
+    if(originalOptions.length < 2) return null;
+    const originalCorrectIndex = findCorrectIndex(row.answer, originalOptions);
+    if(originalCorrectIndex < 0 || originalCorrectIndex >= originalOptions.length) return null;
 
-/* =========================================================
-   NORMALIZE QUESTION
-========================================================= */
-
-function normalizeQuestion(
-    row
-){
-
-    if(
-        !row ||
-        !row.question
-    ){
-
-        return null;
-
-    }
-
-
-    const originalOptions =
-        parseOptions(
-            row.options
-        )
-        .map(
-            option =>
-                String(option).trim()
-        )
-        .filter(
-            option =>
-                option.length > 0
-        );
-
-
-    if(
-        originalOptions.length < 2
-    ){
-
-        return null;
-
-    }
-
-
-    const originalCorrectIndex =
-        findCorrectIndex(
-            row.answer,
-            originalOptions
-        );
-
-
-    if(
-        originalCorrectIndex < 0 ||
-        originalCorrectIndex >=
-        originalOptions.length
-    ){
-
-        return null;
-
-    }
-
-
-    /*
-       Create option objects first.
-       The correct answer stays attached
-       to its option while shuffling.
-    */
-
-    const optionObjects =
-        originalOptions.map(
-            (
-                option,
-                index
-            ) => ({
-
-                text:
-                    option,
-
-                isCorrect:
-                    index ===
-                    originalCorrectIndex
-
-            })
-        );
-
-
-    const shuffledOptions =
-        shuffleArray(
-            optionObjects
-        );
-
-
-    const correctIndex =
-        shuffledOptions.findIndex(
-            option =>
-                option.isCorrect
-        );
-
+    const optionObjects = originalOptions.map((opt, idx) => ({
+        text: opt,
+        isCorrect: idx === originalCorrectIndex
+    }));
+    const shuffledOptions = shuffleArray(optionObjects);
+    const correctIndex = shuffledOptions.findIndex(opt => opt.isCorrect);
 
     return {
-
-        id:
-            row.id,
-
-        topic:
-            row.topic ||
-            "General",
-
-        question:
-            String(
-                row.question
-            ).trim(),
-
-        options:
-            shuffledOptions.map(
-                option =>
-                    option.text
-            ),
-
-        correctIndex:
-            correctIndex,
-
-        correct:
-            shuffledOptions[
-                correctIndex
-            ].text,
-
-        difficulty:
-            row.difficulty ||
-            "medium",
-
-        explanation:
-            row.explanation ||
-            "यस प्रश्नको व्याख्या उपलब्ध छैन।"
-
+        id: row.id,
+        topic: row.topic || "General",
+        question: String(row.question).trim(),
+        options: shuffledOptions.map(opt => opt.text),
+        correctIndex: correctIndex,
+        correct: shuffledOptions[correctIndex].text,
+        difficulty: row.difficulty || "medium",
+        explanation: row.explanation || "यस प्रश्नको व्याख्या उपलब्ध छैन।"
     };
-
 }
 
-
-/* =========================================================
-   FIREBASE AUTH
-========================================================= */
-
-async function handleAuthState(
-    user
-){
-
-    if(authLoading){
-
-        return;
-
-    }
-
-    authLoading =
-        true;
-
+async function handleAuthState(user){
+    if(authLoading) return;
+    authLoading = true;
     try{
-
-        firebaseUser =
-            user || null;
-
-
+        firebaseUser = user || null;
         if(!user){
-
-            userId =
-                null;
-
-            coins =
-                0;
-
-            setText(
-                "currentRank",
-                "Login"
-            );
-
-            setText(
-                "coinDisplay",
-                "0"
-            );
-
-            setText(
-                "introStreak",
-                "0"
-            );
-
-            setText(
-                "rankChangeText",
-                "Login required"
-            );
-
-
-            const startButton =
-                $("startBtn");
-
-            if(startButton){
-
-                startButton.disabled =
-                    true;
-
-            }
-
-
+            userId = null;
+            coins = 0;
+            setText("currentRank", "Login");
+            setText("coinDisplay", "0");
+            setText("introStreak", "0");
+            setText("rankChangeText", "Login required");
+            const startBtn = $("startBtn");
+            if(startBtn) startBtn.disabled = true;
             if(!gameStarted){
-
-                showScreen(
-                    "introScreen"
-                );
-
-                showGameError(
-                    "लगइन आवश्यक छ। कृपया आफ्नो LoksewaQuest Google account बाट login गर्नुहोस्।"
-                );
-
+                showScreen("introScreen");
+                showGameError("लगइन आवश्यक छ। कृपया आफ्नो LoksewaQuest Google account बाट login गर्नुहोस्।");
             }
-
             return;
-
         }
-
-
-        userId =
-            user.uid;
-
-
-        console.log(
-            "Firebase user detected:",
-            user.uid
-        );
-
-
-        const loaded =
-            await loadPlayer();
-
-
-        if(!loaded){
-
-            return;
-
-        }
-
-
+        userId = user.uid;
+        const loaded = await loadPlayer();
+        if(!loaded) return;
         await loadCoinsFromFirebase();
-
-
         hideGameError();
-
-
-        const startButton =
-            $("startBtn");
-
-        if(startButton){
-
-            startButton.disabled =
-                false;
-
-        }
-
-
+        const startBtn = $("startBtn");
+        if(startBtn) startBtn.disabled = false;
         updateIntroUI();
-
-
-        console.log(
-            "Rank Climber ready:",
-            user.uid
-        );
-
-
     }catch(error){
-
-        console.error(
-            "AUTH INITIALIZATION ERROR:",
-            error
-        );
-
-
-        const startButton =
-            $("startBtn");
-
-        if(startButton){
-
-            startButton.disabled =
-                true;
-
-        }
-
-
-        showGameError(
-            "Rank Climber load हुन सकेन.\n\n" +
-            (
-                error?.message ||
-                "Unknown error"
-            )
-        );
-
-
+        console.error("AUTH INITIALIZATION ERROR:", error);
+        const startBtn = $("startBtn");
+        if(startBtn) startBtn.disabled = true;
+        showGameError("Rank Climber load हुन सकेन.\n\n" + (error?.message || "Unknown error"));
     }finally{
-
-        authReady =
-            true;
-
-        authLoading =
-            false;
-
+        authReady = true;
+        authLoading = false;
     }
-
 }
 
-
-onAuthStateChanged(
-    auth,
-    user => {
-
-        handleAuthState(
-            user
-        );
-
-    }
-);
-
-
-/* =========================================================
-   LOAD COINS FROM FIREBASE
-========================================================= */
+onAuthStateChanged(auth, user => handleAuthState(user));
 
 async function loadCoinsFromFirebase(){
-
     if(!firebaseUser){
-
-        coins =
-            0;
-
-        setText(
-            "coinDisplay",
-            "0"
-        );
-
+        coins = 0;
+        setText("coinDisplay", "0");
         return;
-
     }
-
-
     try{
-
-        setText(
-            "coinDisplay",
-            "..."
-        );
-
-
-        const userRef =
-            doc(
-                db,
-                "users",
-                firebaseUser.uid
-            );
-
-
-        const snapshot =
-            await getDoc(
-                userRef
-            );
-
-
-        if(
-            !snapshot.exists()
-        ){
-
-            console.warn(
-                "Firebase user profile not found:",
-                firebaseUser.uid
-            );
-
-            coins =
-                0;
-
-            setText(
-                "coinDisplay",
-                "0"
-            );
-
+        setText("coinDisplay", "...");
+        const userRef = doc(db, "users", firebaseUser.uid);
+        const snapshot = await getDoc(userRef);
+        if(!snapshot.exists()){
+            coins = 0;
+            setText("coinDisplay", "0");
             return;
-
         }
-
-
-        const data =
-            snapshot.data();
-
-
-        coins =
-            Number(
-                data.coins ?? 0
-            );
-
-
-        setText(
-            "coinDisplay",
-            coins.toLocaleString()
-        );
-
-
-        console.log(
-            "Firebase coins loaded:",
-            coins
-        );
-
-
-    }catch(error){
-
-        console.error(
-            "Coin fetch failed:",
-            error
-        );
-
-        coins =
-            0;
-
-        setText(
-            "coinDisplay",
-            "0"
-        );
-
+        const data = snapshot.data();
+        coins = Number(data.coins ?? 0);
+        setText("coinDisplay", coins.toLocaleString());
+    }catch(e){
+        coins = 0;
+        setText("coinDisplay", "0");
     }
-
 }
 
-
-/* =========================================================
-   SAVE EARNED COINS TO FIREBASE
-========================================================= */
-
-async function saveEarnedCoinsToFirebase(
-    amount
-){
-
-    if(
-        !firebaseUser ||
-        !userId
-    ){
-
-        console.warn(
-            "Cannot save coins: user not logged in."
-        );
-
-        return false;
-
-    }
-
-
-    const coinAmount =
-        Number(amount) || 0;
-
-
-    if(
-        coinAmount <= 0
-    ){
-
-        return true;
-
-    }
-
-
-    if(coinsSaving){
-
-        console.warn(
-            "Coin save already running."
-        );
-
-        return false;
-
-    }
-
-
-    coinsSaving =
-        true;
-
-
+async function saveEarnedCoinsToFirebase(amount){
+    if(!firebaseUser || !userId) return false;
+    const coinAmount = Number(amount) || 0;
+    if(coinAmount <= 0) return true;
+    if(coinsSaving) return false;
+    coinsSaving = true;
     try{
-
-        const userRef =
-            doc(
-                db,
-                "users",
-                firebaseUser.uid
-            );
-
-
-        const historyRef =
-            doc(
-                db,
-                "users",
-                firebaseUser.uid,
-                "coin_history",
-                `${Date.now()}_${Math.random()
-                    .toString(36)
-                    .slice(2,8)}`
-            );
-
-
-        let newBalance =
-            0;
-
-
-        await runTransaction(
-            db,
-            async transaction => {
-
-                const userSnapshot =
-                    await transaction.get(
-                        userRef
-                    );
-
-
-                let currentBalance =
-                    0;
-
-
-                if(
-                    userSnapshot.exists()
-                ){
-
-                    const userData =
-                        userSnapshot.data();
-
-
-                    currentBalance =
-                        Number(
-                            userData.coins ?? 0
-                        );
-
-                }
-
-
-                newBalance =
-                    currentBalance +
-                    coinAmount;
-
-
-                transaction.set(
-                    userRef,
-                    {
-
-                        coins:
-                            newBalance,
-
-                        updatedAt:
-                            serverTimestamp()
-
-                    },
-                    {
-                        merge:true
-                    }
-                );
-
-
-                transaction.set(
-                    historyRef,
-                    {
-
-                        type:
-                            "rank_climber",
-
-                        amount:
-                            coinAmount,
-
-                        balanceAfter:
-                            newBalance,
-
-                        sessionId:
-                            sessionId || null,
-
-                        userId:
-                            firebaseUser.uid,
-
-                        createdAt:
-                            serverTimestamp(),
-
-                        source:
-                            "Rank Climber"
-
-                    }
-                );
-
+        const userRef = doc(db, "users", firebaseUser.uid);
+        const historyRef = doc(db, "users", firebaseUser.uid, "coin_history", `${Date.now()}_${Math.random().toString(36).slice(2,8)}`);
+        let newBalance = 0;
+        await runTransaction(db, async transaction => {
+            const userSnapshot = await transaction.get(userRef);
+            let currentBalance = 0;
+            if(userSnapshot.exists()){
+                currentBalance = Number(userSnapshot.data().coins ?? 0);
             }
-        );
-
-
-        coins =
-            newBalance;
-
-
-        setText(
-            "coinDisplay",
-            coins.toLocaleString()
-        );
-
-
-        setText(
-            "resultCoins",
-            coins.toLocaleString()
-        );
-
-
-        console.log(
-            "Coins permanently saved:",
-            coinAmount,
-            "New balance:",
-            newBalance
-        );
-
-
+            newBalance = currentBalance + coinAmount;
+            transaction.set(userRef, { coins: newBalance, updatedAt: serverTimestamp() }, { merge: true });
+            transaction.set(historyRef, { type: "rank_climber", amount: coinAmount, balanceAfter: newBalance, sessionId: sessionId || null, userId: firebaseUser.uid, createdAt: serverTimestamp(), source: "Rank Climber" });
+        });
+        coins = newBalance;
+        setText("coinDisplay", coins.toLocaleString());
+        setText("resultCoins", coins.toLocaleString());
         return true;
-
-
     }catch(error){
-
-        console.error(
-            "Firebase coin save failed:",
-            error
-        );
-
-
-        showGameError(
-            "Coins save गर्न सकिएन। कृपया Firebase Firestore Rules जाँच गर्नुहोस्।"
-        );
-
-
+        showGameError("Coins save गर्न सकिएन। कृपया Firebase Firestore Rules जाँच गर्नुहोस्।");
         return false;
-
-
     }finally{
-
-        coinsSaving =
-            false;
-
+        coinsSaving = false;
     }
-
 }
-
-
-/* =========================================================
-   LOAD PLAYER
-========================================================= */
 
 async function loadPlayer(){
-
     if(!userId){
-
-        showGameError(
-            "लगइन आवश्यक छ। कृपया Google Login गरेर फेरि प्रयास गर्नुहोस्।"
-        );
-
+        showGameError("लगइन आवश्यक छ। कृपया Google Login गरेर फेरि प्रयास गर्नुहोस्।");
         return false;
-
     }
-
-
     try{
-
-        const {
-            data,
-            error
-        } =
-        await supabase
-            .from(
-                "rank_climber_players"
-            )
-            .select(`
-                user_id,
-                current_rank,
-                best_rank,
-                total_xp,
-                current_streak,
-                best_streak
-            `)
-            .eq(
-                "user_id",
-                userId
-            )
-            .maybeSingle();
-
-
-        if(error){
-
-            throw error;
-
-        }
-
-
+        const { data, error } = await supabase.from("rank_climber_players").select("user_id, current_rank, best_rank, total_xp, current_streak, best_streak").eq("user_id", userId).maybeSingle();
+        if(error) throw error;
         if(data){
-
-            currentRank =
-                Number(
-                    data.current_rank
-                ) || DEFAULT_RANK;
-
-
-            startingRank =
-                currentRank;
-
-
-            xp =
-                Number(
-                    data.total_xp
-                ) || 0;
-
-
-            streak =
-                Number(
-                    data.current_streak
-                ) || 0;
-
-
-            bestStreak =
-                Number(
-                    data.best_streak
-                ) || 0;
-
-
+            currentRank = Number(data.current_rank) || DEFAULT_RANK;
+            startingRank = currentRank;
+            xp = Number(data.total_xp) || 0;
+            streak = Number(data.current_streak) || 0;
+            bestStreak = Number(data.best_streak) || 0;
         }else{
-
-            currentRank =
-                DEFAULT_RANK;
-
-
-            startingRank =
-                DEFAULT_RANK;
-
-
-            const {
-                error:
-                insertError
-            } =
-            await supabase
-                .from(
-                    "rank_climber_players"
-                )
-                .insert({
-
-                    user_id:
-                        userId,
-
-                    current_rank:
-                        DEFAULT_RANK,
-
-                    best_rank:
-                        DEFAULT_RANK,
-
-                    total_xp:
-                        0,
-
-                    current_streak:
-                        0,
-
-                    best_streak:
-                        0
-
-                });
-
-
-            if(insertError){
-
-                console.warn(
-                    "Player creation:",
-                    insertError
-                );
-
-            }
-
+            currentRank = DEFAULT_RANK;
+            startingRank = DEFAULT_RANK;
+            await supabase.from("rank_climber_players").insert({ user_id: userId, current_rank: DEFAULT_RANK, best_rank: DEFAULT_RANK, total_xp: 0, current_streak: 0, best_streak: 0 });
         }
-
-
         updateIntroUI();
-
-
         return true;
-
-
     }catch(error){
-
-        console.error(
-            "Player load failed:",
-            error
-        );
-
-
-        showGameError(
-            "Player rank load गर्न सकिएन: " +
-            error.message
-        );
-
-
+        showGameError("Player rank load गर्न सकिएन: " + error.message);
         return false;
-
     }
-
 }
-
-
-/* =========================================================
-   UPDATE INTRO
-========================================================= */
 
 function updateIntroUI(){
-
-    setText(
-        "currentRank",
-        currentRank >= DEFAULT_RANK
-            ? "#—"
-            : `#${currentRank}`
-    );
-
-
-    setText(
-        "introStreak",
-        streak
-    );
-
-
-    setText(
-        "coinDisplay",
-        Number(
-            coins || 0
-        ).toLocaleString()
-    );
-
-
-    if(
-        currentRank >= DEFAULT_RANK
-    ){
-
-        setText(
-            "rankChangeText",
-            "Your rank is being initialized..."
-        );
-
-    }else{
-
-        setText(
-            "rankChangeText",
-            "Persistent rank"
-        );
-
-    }
-
+    setText("currentRank", currentRank >= DEFAULT_RANK ? "#—" : `#${currentRank}`);
+    setText("introStreak", streak);
+    setText("coinDisplay", Number(coins || 0).toLocaleString());
+    setText("rankChangeText", currentRank >= DEFAULT_RANK ? "Your rank is being initialized..." : "Persistent rank");
 }
-
-
-/* =========================================================
-   LOAD QUESTIONS
-========================================================= */
 
 async function loadQuestionsFromSupabase(){
-
-    if(gameLoading){
-
-        return false;
-
-    }
-
-
-    gameLoading =
-        true;
-
-
+    if(gameLoading) return false;
+    gameLoading = true;
     hideGameError();
-
-
-    const startButton =
-        $("startBtn");
-
-
-    if(startButton){
-
-        startButton.disabled =
-            true;
-
-        startButton.innerHTML =
-            "⏳ प्रश्नहरू लोड हुँदैछन्...";
-
-    }
-
-
+    const startBtn = $("startBtn");
+    if(startBtn){ startBtn.disabled = true; startBtn.innerHTML = "⏳ प्रश्नहरू लोड हुँदैछन्..."; }
     try{
-
-        const {
-            data,
-            error
-        } =
-        await supabase
-            .from("quizzes")
-            .select(`
-                id,
-                topic,
-                question,
-                options,
-                answer,
-                explanation,
-                difficulty
-            `);
-
-
-        if(error){
-
-            throw error;
-
-        }
-
-
-        if(
-            !data ||
-            data.length === 0
-        ){
-
-            throw new Error(
-                "Supabase मा कुनै प्रश्न भेटिएन।"
-            );
-
-        }
-
-
-        const normalized =
-            data
-                .map(
-                    normalizeQuestion
-                )
-                .filter(
-                    q => q !== null
-                );
-
-
-        if(
-            normalized.length <
-            TOTAL_QUESTIONS
-        ){
-
-            throw new Error(
-                `कम्तीमा ${TOTAL_QUESTIONS} वटा valid questions आवश्यक छ।`
-            );
-
-        }
-
-
-        questions =
-            shuffleArray(
-                normalized
-            ).slice(
-                0,
-                TOTAL_QUESTIONS
-            );
-
-
+        const { data, error } = await supabase.from("quizzes").select("id, topic, question, options, answer, explanation, difficulty");
+        if(error) throw error;
+        if(!data || data.length === 0) throw new Error("Supabase मा कुनै प्रश्न भेटिएन।");
+        const normalized = data.map(normalizeQuestion).filter(q => q !== null);
+        if(normalized.length < TOTAL_QUESTIONS) throw new Error(`कम्तीमा ${TOTAL_QUESTIONS} वटा valid questions आवश्यक छ।`);
+        questions = shuffleArray(normalized).slice(0, TOTAL_QUESTIONS);
         return true;
-
-
     }catch(error){
-
-        console.error(
-            error
-        );
-
-
-        showGameError(
-            error.message ||
-            "प्रश्नहरू लोड गर्न सकिएन।"
-        );
-
-
+        showGameError(error.message || "प्रश्नहरू लोड गर्न सकिएन।");
         return false;
-
-
     }finally{
-
-        gameLoading =
-            false;
-
-
-        if(startButton){
-
-            startButton.disabled =
-                false;
-
-            startButton.innerHTML =
-                "🚀 START CLIMB";
-
-        }
-
+        gameLoading = false;
+        if(startBtn){ startBtn.disabled = false; startBtn.innerHTML = "🚀 START CLIMB"; }
     }
-
 }
-
-
-/* =========================================================
-   RESET GAME
-========================================================= */
 
 function resetGameState(){
-
     stopTimer();
-
-
-    if(feedbackTimeout){
-
-        clearTimeout(
-            feedbackTimeout
-        );
-
-        feedbackTimeout =
-            null;
-
-    }
-
-
-    currentQuestion =
-        0;
-
-
-    startingRank =
-        currentRank;
-
-
-    streak =
-        0;
-
-
-    bestStreak =
-        0;
-
-
-    correctAnswers =
-        0;
-
-
-    earnedCoins =
-        0;
-
-
-    timer =
-        QUESTION_TIME;
-
-
-    answered =
-        false;
-
-
-    gameStarted =
-        false;
-
-
-    sessionId =
-        null;
-
-
-    sessionStartTime =
-        null;
-
-
+    if(feedbackTimeout){ clearTimeout(feedbackTimeout); feedbackTimeout = null; }
+    currentQuestion = 0;
+    startingRank = currentRank;
+    streak = 0;
+    bestStreak = 0;
+    correctAnswers = 0;
+    earnedCoins = 0;
+    timer = QUESTION_TIME;
+    answered = false;
+    gameStarted = false;
+    sessionId = null;
+    sessionStartTime = null;
     updateIntroUI();
-
 }
-
-
-/* =========================================================
-   CREATE GAME SESSION
-========================================================= */
 
 async function createGameSession(){
-
-    if(!userId){
-
-        throw new Error(
-            "Firebase user भेटिएन।"
-        );
-
-    }
-
-
-    sessionStartTime =
-        new Date();
-
-
-    const {
-        data,
-        error
-    } =
-    await supabase
-        .from(
-            "rank_climber_sessions"
-        )
-        .insert({
-
-            user_id:
-                userId,
-
-            starting_rank:
-                startingRank,
-
-            final_rank:
-                startingRank,
-
-            total_questions:
-                TOTAL_QUESTIONS,
-
-            correct_answers:
-                0,
-
-            accuracy:
-                0,
-
-            best_streak:
-                0,
-
-            xp_earned:
-                0,
-
-            coins_earned:
-                0
-
-        })
-        .select(
-            "id"
-        )
-        .single();
-
-
-    if(error){
-
-        throw error;
-
-    }
-
-
-    sessionId =
-        data.id;
-
+    if(!userId) throw new Error("Firebase user भेटिएन।");
+    sessionStartTime = new Date();
+    const { data, error } = await supabase.from("rank_climber_sessions").insert({
+        user_id: userId, starting_rank: startingRank, final_rank: startingRank, total_questions: TOTAL_QUESTIONS, correct_answers: 0, accuracy: 0, best_streak: 0, xp_earned: 0, coins_earned: 0
+    }).select("id").single();
+    if(error) throw error;
+    sessionId = data.id;
 }
-
-
-/* =========================================================
-   START GAME
-========================================================= */
 
 async function startGame(){
-
-    if(gameLoading){
-
-        return;
-
-    }
-
-
-    if(!userId){
-
-        showGameError(
-            "लगइन आवश्यक छ।"
-        );
-
-        return;
-
-    }
-
-
+    if(gameLoading) return;
+    if(!userId){ showGameError("लगइन आवश्यक छ।"); return; }
     resetGameState();
-
-
-    const loaded =
-        await loadQuestionsFromSupabase();
-
-
-    if(!loaded){
-
-        return;
-
-    }
-
-
-    try{
-
-        await createGameSession();
-
-    }catch(error){
-
-        console.error(
-            "Session creation:",
-            error
-        );
-
-
-        showGameError(
-            "Game session save गर्न सकिएन: " +
-            error.message
-        );
-
-
-        return;
-
-    }
-
-
-    gameStarted =
-        true;
-
-
-    currentQuestion =
-        0;
-
-
+    const loaded = await loadQuestionsFromSupabase();
+    if(!loaded) return;
+    try{ await createGameSession(); }catch(e){ showGameError("Game session save गर्न सकिएन: " + e.message); return; }
+    gameStarted = true;
+    currentQuestion = 0;
     showCountdown();
-
 }
-
-
-/* =========================================================
-   COUNTDOWN
-========================================================= */
 
 function showCountdown(){
-
-    const overlay =
-        $("countdown");
-
-
-    const number =
-        $("countNumber");
-
-
-    if(!overlay){
-
-        showScreen(
-            "gameScreen"
-        );
-
-        loadQuestion();
-
-        return;
-
-    }
-
-
-    overlay.classList.add(
-        "active"
-    );
-
-
-    let count =
-        3;
-
-
-    number.textContent =
-        count;
-
-
-    const interval =
-        setInterval(
-            () => {
-
-                count--;
-
-
-                if(count > 0){
-
-                    number.textContent =
-                        count;
-
-                }else{
-
-                    number.textContent =
-                        "GO!";
-
-                }
-
-
-                if(count <= 0){
-
-                    clearInterval(
-                        interval
-                    );
-
-
-                    setTimeout(
-                        () => {
-
-                            overlay.classList.remove(
-                                "active"
-                            );
-
-
-                            showScreen(
-                                "gameScreen"
-                            );
-
-
-                            loadQuestion();
-
-                        },
-                        500
-                    );
-
-                }
-
-            },
-            1000
-        );
-
+    const overlay = $("countdown");
+    const number = $("countNumber");
+    if(!overlay){ showScreen("gameScreen"); loadQuestion(); return; }
+    overlay.classList.add("active");
+    let count = 3;
+    number.textContent = count;
+    const interval = setInterval(() => {
+        count--;
+        if(count > 0) number.textContent = count;
+        else number.textContent = "GO!";
+        if(count <= 0){
+            clearInterval(interval);
+            setTimeout(() => { overlay.classList.remove("active"); showScreen("gameScreen"); loadQuestion(); }, 500);
+        }
+    }, 1000);
 }
-
-
-/* =========================================================
-   LOAD QUESTION
-========================================================= */
 
 function loadQuestion(){
-
-    if(
-        currentQuestion >=
-        questions.length
-    ){
-
-        finishGame();
-
-        return;
-
-    }
-
-
-    const q =
-        questions[
-            currentQuestion
-        ];
-
-
-    if(!q){
-
-        finishGame();
-
-        return;
-
-    }
-
-
-    answered =
-        false;
-
-
-    setText(
-        "questionNumber",
-        currentQuestion + 1
-    );
-
-
-    setText(
-        "gameRank",
-        `#${currentRank}`
-    );
-
-
-    setText(
-        "streakDisplay",
-        streak
-    );
-
-
-    setText(
-        "questionTopic",
-        q.topic
-    );
-
-
-    setText(
-        "questionText",
-        q.question
-    );
-
-
-    setText(
-        "streakMessage",
-        streak >= 2
-            ? `🔥 ${streak} answer streak!`
-            : ""
-    );
-
-
-    const progress =
-        (
-            currentQuestion /
-            TOTAL_QUESTIONS
-        ) * 100;
-
-
-    const progressBar =
-        $("progressBar");
-
-
-    if(progressBar){
-
-        progressBar.style.width =
-            `${progress}%`;
-
-    }
-
-
-    renderAnswerOptions(
-        q.options
-    );
-
-
+    if(currentQuestion >= questions.length){ finishGame(); return; }
+    const q = questions[currentQuestion];
+    if(!q){ finishGame(); return; }
+    answered = false;
+    setText("questionNumber", currentQuestion + 1);
+    setText("gameRank", `#${currentRank}`);
+    setText("streakDisplay", streak);
+    setText("questionTopic", q.topic);
+    setText("questionText", q.question);
+    setText("streakMessage", streak >= 2 ? `🔥 ${streak} answer streak!` : "");
+    const progress = (currentQuestion / TOTAL_QUESTIONS) * 100;
+    const progressBar = $("progressBar");
+    if(progressBar) progressBar.style.width = `${progress}%`;
+    renderAnswerOptions(q.options);
     startTimer();
-
 }
 
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHTML(
-    value
-){
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+function escapeHTML(str){
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
-
-/* =========================================================
-   RENDER OPTIONS
-========================================================= */
-
-function renderAnswerOptions(
-    options
-){
-
-    const container =
-        $("answerOptions");
-
-
-    if(!container){
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        "";
-
-
-    options.forEach(
-        (
-            option,
-            index
-        ) => {
-
-            const button =
-                document.createElement(
-                    "button"
-                );
-
-
-            button.type =
-                "button";
-
-
-            button.className =
-                "answer-option";
-
-
-            const letter =
-                String.fromCharCode(
-                    65 + index
-                );
-
-
-            button.innerHTML = `
-
-                <span class="option-letter">
-                    ${letter}
-                </span>
-
-                <span>
-                    ${escapeHTML(option)}
-                </span>
-
-            `;
-
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    selectAnswer(
-                        index
-                    );
-
-                }
-            );
-
-
-            container.appendChild(
-                button
-            );
-
-        }
-    );
-
+function renderAnswerOptions(options){
+    const container = $("answerOptions");
+    if(!container) return;
+    container.innerHTML = "";
+    options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "answer-option";
+        const letter = String.fromCharCode(65 + index);
+        button.innerHTML = `<span class="option-letter">${letter}</span><span>${escapeHTML(option)}</span>`;
+        button.addEventListener("click", () => selectAnswer(index));
+        container.appendChild(button);
+    });
 }
-
-
-/* =========================================================
-   TIMER
-========================================================= */
 
 function startTimer(){
-
     stopTimer();
-
-
-    timer =
-        QUESTION_TIME;
-
-
+    timer = QUESTION_TIME;
     updateTimerDisplay();
-
-
-    timerInterval =
-        setInterval(
-            () => {
-
-                timer--;
-
-
-                updateTimerDisplay();
-
-
-                if(timer <= 0){
-
-                    stopTimer();
-
-
-                    handleTimeout();
-
-                }
-
-            },
-            1000
-        );
-
+    timerInterval = setInterval(() => {
+        timer--;
+        updateTimerDisplay();
+        if(timer <= 0){ stopTimer(); handleTimeout(); }
+    }, 1000);
 }
-
 
 function updateTimerDisplay(){
-
-    const element =
-        $("timer");
-
-
-    setText(
-        "timer",
-        timer
-    );
-
-
-    if(element){
-
-        element.classList.remove(
-            "warning",
-            "danger"
-        );
-
-
-        if(timer <= 5){
-
-            element.classList.add(
-                "danger"
-            );
-
-        }else if(timer <= 8){
-
-            element.classList.add(
-                "warning"
-            );
-
-        }
-
+    const el = $("timer");
+    setText("timer", timer);
+    if(el){
+        el.classList.remove("warning", "danger");
+        if(timer <= 5) el.classList.add("danger");
+        else if(timer <= 8) el.classList.add("warning");
     }
-
 }
-
 
 function stopTimer(){
-
-    if(timerInterval){
-
-        clearInterval(
-            timerInterval
-        );
-
-
-        timerInterval =
-            null;
-
-    }
-
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
 }
 
-
-/* =========================================================
-   RANK CALCULATION
-========================================================= */
-
-function calculateRankGain(
-    difficulty,
-    currentStreak
-){
-
-    let gain =
-        5;
-
-
-    switch(
-        String(
-            difficulty
-        ).toLowerCase()
-    ){
-
-        case "easy":
-
-            gain =
-                3;
-
-            break;
-
-        case "medium":
-
-            gain =
-                5;
-
-            break;
-
-        case "hard":
-
-            gain =
-                8;
-
-            break;
-
-        case "expert":
-
-            gain =
-                12;
-
-            break;
-
+function calculateRankGain(difficulty, currentStreak){
+    let gain = 5;
+    switch(String(difficulty).toLowerCase()){
+        case "easy": gain = 3; break;
+        case "medium": gain = 5; break;
+        case "hard": gain = 8; break;
+        case "expert": gain = 12; break;
     }
-
-
-    const streakBonus =
-        currentStreak >= 2
-            ? Math.min(
-                currentStreak - 1,
-                5
-            )
-            : 0;
-
-
-    return {
-
-        base:
-            gain,
-
-        streakBonus:
-            streakBonus,
-
-        total:
-            gain +
-            streakBonus
-
-    };
-
+    const streakBonus = currentStreak >= 2 ? Math.min(currentStreak - 1, 5) : 0;
+    return { base: gain, streakBonus: streakBonus, total: gain + streakBonus };
 }
 
-
-/* =========================================================
-   SAVE ANSWER
-========================================================= */
-
-async function saveAnswerRecord({
-
-    question,
-    selectedIndex,
-    selectedAnswer,
-    isCorrect,
-    responseTime,
-    timedOut,
-    rankBefore,
-    rankAfter,
-    xpEarned,
-    coinsEarned
-
-}){
-
-    if(
-        !userId ||
-        !sessionId
-    ){
-
-        return;
-
-    }
-
-
+async function saveAnswerRecord({ question, selectedIndex, selectedAnswer, isCorrect, responseTime, timedOut, rankBefore, rankAfter, xpEarned, coinsEarned }){
+    if(!userId || !sessionId) return;
     try{
-
-        const {
-            error
-        } =
-        await supabase
-            .from(
-                "rank_climber_answers"
-            )
-            .insert({
-
-                session_id:
-                    sessionId,
-
-                user_id:
-                    userId,
-
-                question_id:
-                    question.id,
-
-                question_number:
-                    currentQuestion + 1,
-
-                selected_answer:
-                    selectedAnswer || null,
-
-                selected_index:
-                    selectedIndex,
-
-                correct_answer:
-                    question.correct,
-
-                correct_index:
-                    question.correctIndex,
-
-                is_correct:
-                    isCorrect,
-
-                timed_out:
-                    timedOut,
-
-                response_time:
-                    responseTime,
-
-                difficulty:
-                    question.difficulty,
-
-                rank_before:
-                    rankBefore,
-
-                rank_after:
-                    rankAfter,
-
-                xp_earned:
-                    xpEarned,
-
-                coins_earned:
-                    coinsEarned
-
-            });
-
-
-        if(error){
-
-            console.error(
-                "Answer save error:",
-                error
-            );
-
-        }
-
-
-    }catch(error){
-
-        console.error(
-            "Answer record failed:",
-            error
-        );
-
-    }
-
+        await supabase.from("rank_climber_answers").insert({
+            session_id: sessionId, user_id: userId, question_id: question.id, question_number: currentQuestion + 1, selected_answer: selectedAnswer || null, selected_index: selectedIndex, correct_answer: question.correct, correct_index: question.correctIndex, is_correct: isCorrect, timed_out: timedOut, response_time: responseTime, difficulty: question.difficulty, rank_before: rankBefore, rank_after: rankAfter, xp_earned: xpEarned, coins_earned: coinsEarned
+        });
+    }catch(e){}
 }
 
-
-/* =========================================================
-   SELECT ANSWER
-========================================================= */
-
-async function selectAnswer(
-    index
-){
-
-    if(
-        answered ||
-        savingAnswer
-    ){
-
-        return;
-
-    }
-
-
-    const q =
-        questions[
-            currentQuestion
-        ];
-
-
-    if(!q){
-
-        return;
-
-    }
-
-
-    answered =
-        true;
-
-
-    savingAnswer =
-        true;
-
-
+async function selectAnswer(index){
+    if(answered || savingAnswer) return;
+    const q = questions[currentQuestion];
+    if(!q) return;
+    answered = true;
+    savingAnswer = true;
     stopTimer();
+    const selectedAnswer = q.options[index];
+    const isCorrect = (index === q.correctIndex);
+    const responseTime = QUESTION_TIME - timer;
+    const rankBefore = currentRank;
+    markAnswerButtons(index, q.correctIndex);
+    if(isCorrect) handleCorrect(q);
+    else handleWrong(q, selectedAnswer);
+    const rankAfter = currentRank;
+    const gainedXP = isCorrect ? 10 : 0;
+    const gainedCoins = isCorrect ? 5 : 0;
+    await saveAnswerRecord({ question: q, selectedIndex: index, selectedAnswer: selectedAnswer, isCorrect: isCorrect, responseTime: responseTime, timedOut: false, rankBefore: rankBefore, rankAfter: rankAfter, xpEarned: gainedXP, coinsEarned: gainedCoins });
+    savingAnswer = false;
+}
 
-
-    const selectedAnswer =
-        q.options[index];
-
-
-    const isCorrect =
-        index ===
-        q.correctIndex;
-
-
-    const responseTime =
-        QUESTION_TIME -
-        timer;
-
-
-    const rankBefore =
-        currentRank;
-
-
-    markAnswerButtons(
-        index,
-        q.correctIndex
-    );
-
-
-    if(isCorrect){
-
-        handleCorrect(
-            q
-        );
-
-    }else{
-
-        handleWrong(
-            q,
-            selectedAnswer
-        );
-
-    }
-
-
-    const rankAfter =
-        currentRank;
-
-
-    const gainedXP =
-        isCorrect
-            ? 10
-            : 0;
-
-
-    const gainedCoins =
-        isCorrect
-            ? 5
-            : 0;
-
-
-    await saveAnswerRecord({
-
-        question:
-            q,
-
-        selectedIndex:
-            index,
-
-        selectedAnswer:
-            selectedAnswer,
-
-        isCorrect:
-            isCorrect,
-
-        responseTime:
-            responseTime,
-
-        timedOut:
-            false,
-
-        rankBefore:
-            rankBefore,
-
-        rankAfter:
-            rankAfter,
-
-        xpEarned:
-            gainedXP,
-
-        coinsEarned:
-            gainedCoins
-
+function markAnswerButtons(selectedIndex, correctIndex){
+    const buttons = document.querySelectorAll(".answer-option");
+    buttons.forEach((button, index) => {
+        button.disabled = true;
+        if(index === correctIndex) button.classList.add("correct");
+        if(index === selectedIndex && index !== correctIndex) button.classList.add("wrong");
     });
-
-
-    savingAnswer =
-        false;
-
 }
 
-
-/* =========================================================
-   MARK ANSWERS
-========================================================= */
-
-function markAnswerButtons(
-    selectedIndex,
-    correctIndex
-){
-
-    const buttons =
-        document.querySelectorAll(
-            ".answer-option"
-        );
-
-
-    buttons.forEach(
-        (
-            button,
-            index
-        ) => {
-
-            button.disabled =
-                true;
-
-
-            if(
-                index ===
-                correctIndex
-            ){
-
-                button.classList.add(
-                    "correct"
-                );
-
-            }
-
-
-            if(
-                index === selectedIndex &&
-                index !== correctIndex
-            ){
-
-                button.classList.add(
-                    "wrong"
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   CORRECT
-========================================================= */
-
-function handleCorrect(
-    q
-){
-
+function handleCorrect(q){
     correctAnswers++;
-
-
     streak++;
-
-
-    if(
-        streak >
-        bestStreak
-    ){
-
-        bestStreak =
-            streak;
-
-    }
-
-
-    const rankChange =
-        calculateRankGain(
-            q.difficulty,
-            streak
-        );
-
-
-    const oldRank =
-        currentRank;
-
-
-    currentRank =
-        Math.max(
-            1,
-            currentRank -
-            rankChange.total
-        );
-
-
-    xp +=
-        10;
-
-
-    earnedCoins +=
-        5;
-
-
-    showCorrectFeedback({
-
-        question:
-            q,
-
-        oldRank:
-            oldRank,
-
-        newRank:
-            currentRank,
-
-        rankGain:
-            rankChange.total,
-
-        streak:
-            streak,
-
-        xp:
-            10,
-
-        coins:
-            5
-
-    });
-
+    if(streak > bestStreak) bestStreak = streak;
+    const rankChange = calculateRankGain(q.difficulty, streak);
+    const oldRank = currentRank;
+    currentRank = Math.max(1, currentRank - rankChange.total);
+    xp += 10;
+    earnedCoins += 5;
+    showCorrectFeedback({ question: q, oldRank: oldRank, newRank: currentRank, rankGain: rankChange.total, streak: streak, xp: 10, coins: 5 });
 }
 
-
-/* =========================================================
-   WRONG
-========================================================= */
-
-function handleWrong(
-    q,
-    selectedAnswer
-){
-
-    const oldRank =
-        currentRank;
-
-
-    streak =
-        0;
-
-
-    const penalty =
-        3;
-
-
-    currentRank =
-        Math.min(
-            startingRank + 13,
-            currentRank + penalty
-        );
-
-
-    showWrongFeedback({
-
-        question:
-            q,
-
-        oldRank:
-            oldRank,
-
-        newRank:
-            currentRank,
-
-        penalty:
-            penalty,
-
-        selectedAnswer:
-            selectedAnswer
-
-    });
-
+function handleWrong(q, selectedAnswer){
+    const oldRank = currentRank;
+    streak = 0;
+    const penalty = 3;
+    currentRank = Math.min(startingRank + 13, currentRank + penalty);
+    showWrongFeedback({ question: q, oldRank: oldRank, newRank: currentRank, penalty: penalty, selectedAnswer: selectedAnswer });
 }
-
-
-/* =========================================================
-   TIMEOUT
-========================================================= */
 
 async function handleTimeout(){
-
-    if(answered){
-
-        return;
-
-    }
-
-
-    answered =
-        true;
-
-
+    if(answered) return;
+    answered = true;
     stopTimer();
-
-
-    const q =
-        questions[
-            currentQuestion
-        ];
-
-
-    if(!q){
-
-        finishGame();
-
-        return;
-
-    }
-
-
-    const oldRank =
-        currentRank;
-
-
-    streak =
-        0;
-
-
-    const penalty =
-        3;
-
-
-    currentRank =
-        Math.min(
-            startingRank + 13,
-            currentRank + penalty
-        );
-
-
-    markAnswerButtons(
-        -1,
-        q.correctIndex
-    );
-
-
-    await saveAnswerRecord({
-
-        question:
-            q,
-
-        selectedIndex:
-            -1,
-
-        selectedAnswer:
-            null,
-
-        isCorrect:
-            false,
-
-        responseTime:
-            QUESTION_TIME,
-
-        timedOut:
-            true,
-
-        rankBefore:
-            oldRank,
-
-        rankAfter:
-            currentRank,
-
-        xpEarned:
-            0,
-
-        coinsEarned:
-            0
-
-    });
-
-
-    showTimeoutFeedback({
-
-        question:
-            q,
-
-        oldRank:
-            oldRank,
-
-        newRank:
-            currentRank,
-
-        penalty:
-            penalty
-
-    });
-
+    const q = questions[currentQuestion];
+    if(!q){ finishGame(); return; }
+    const oldRank = currentRank;
+    streak = 0;
+    const penalty = 3;
+    currentRank = Math.min(startingRank + 13, currentRank + penalty);
+    markAnswerButtons(-1, q.correctIndex);
+    await saveAnswerRecord({ question: q, selectedIndex: -1, selectedAnswer: null, isCorrect: false, responseTime: QUESTION_TIME, timedOut: true, rankBefore: oldRank, rankAfter: currentRank, xpEarned: 0, coinsEarned: 0 });
+    showTimeoutFeedback({ question: q, oldRank: oldRank, newRank: currentRank, penalty: penalty });
 }
 
-
-/* =========================================================
-   CORRECT FEEDBACK
-========================================================= */
-
-function showCorrectFeedback(
-    data
-){
-
-    showScreen(
-        "feedbackScreen"
-    );
-
-
-    setText(
-        "feedbackIcon",
-        "✓"
-    );
-
-
-    setText(
-        "feedbackTitle",
-        "CORRECT!"
-    );
-
-
-    setText(
-        "feedbackMessage",
-        "सही उत्तर! राम्रो गरिरहनुभएको छ।"
-    );
-
-
-    setText(
-        "feedbackRankTop",
-        `#${data.newRank}`
-    );
-
-
-    setText(
-        "rankMove",
-        `#${data.oldRank} → #${data.newRank}`
-    );
-
-
-    setText(
-        "rankReward",
-        `+${data.rankGain}`
-    );
-
-
-    setText(
-        "feedbackXP",
-        `+${data.xp} XP`
-    );
-
-
-    setText(
-        "feedbackCoins",
-        `+${data.coins}`
-    );
-
-
-    setText(
-        "feedbackStreak",
-        `🔥 ${data.streak} streak`
-    );
-
-
-    setText(
-        "correctAnswer",
-        `सही उत्तर: ${data.question.correct}`
-    );
-
-
-    setText(
-        "explanation",
-        data.question.explanation
-    );
-
-
-    feedbackTimeout =
-        setTimeout(
-            nextQuestion,
-            1800
-        );
-
+function showCorrectFeedback(data){
+    showScreen("feedbackScreen");
+    setText("feedbackIcon", "✓");
+    setText("feedbackTitle", "CORRECT!");
+    setText("feedbackMessage", "सही उत्तर! राम्रो गरिरहनुभएको छ।");
+    setText("feedbackRankTop", `#${data.newRank}`);
+    setText("rankMove", `#${data.oldRank} → #${data.newRank}`);
+    setText("rankReward", `+${data.rankGain}`);
+    setText("feedbackXP", `+${data.xp} XP`);
+    setText("feedbackCoins", `+${data.coins}`);
+    setText("feedbackStreak", `🔥 ${data.streak} streak`);
+    setText("correctAnswer", `सही उत्तर: ${data.question.correct}`);
+    setText("explanation", data.question.explanation);
+    feedbackTimeout = setTimeout(nextQuestion, 1800);
 }
 
-
-/* =========================================================
-   WRONG FEEDBACK
-========================================================= */
-
-function showWrongFeedback(
-    data
-){
-
-    showScreen(
-        "feedbackScreen"
-    );
-
-
-    setText(
-        "feedbackIcon",
-        "✕"
-    );
-
-
-    setText(
-        "feedbackTitle",
-        "NOT QUITE"
-    );
-
-
-    setText(
-        "feedbackMessage",
-        "यसपटक सही भएन।"
-    );
-
-
-    setText(
-        "feedbackRankTop",
-        `#${data.newRank}`
-    );
-
-
-    setText(
-        "rankMove",
-        `#${data.oldRank} → #${data.newRank}`
-    );
-
-
-    setText(
-        "rankReward",
-        `-${data.penalty}`
-    );
-
-
-    setText(
-        "feedbackXP",
-        "+0 XP"
-    );
-
-
-    setText(
-        "feedbackCoins",
-        "+0"
-    );
-
-
-    setText(
-        "feedbackStreak",
-        "🔥 Streak reset"
-    );
-
-
-    setText(
-        "correctAnswer",
-        `सही उत्तर: ${data.question.correct}`
-    );
-
-
-    setText(
-        "explanation",
-        data.question.explanation
-    );
-
-
-    feedbackTimeout =
-        setTimeout(
-            nextQuestion,
-            2200
-        );
-
+function showWrongFeedback(data){
+    showScreen("feedbackScreen");
+    setText("feedbackIcon", "✕");
+    setText("feedbackTitle", "NOT QUITE");
+    setText("feedbackMessage", "यसपटक सही भएन।");
+    setText("feedbackRankTop", `#${data.newRank}`);
+    setText("rankMove", `#${data.oldRank} → #${data.newRank}`);
+    setText("rankReward", `-${data.penalty}`);
+    setText("feedbackXP", "+0 XP");
+    setText("feedbackCoins", "+0");
+    setText("feedbackStreak", "🔥 Streak reset");
+    setText("correctAnswer", `सही उत्तर: ${data.question.correct}`);
+    setText("explanation", data.question.explanation);
+    feedbackTimeout = setTimeout(nextQuestion, 2200);
 }
 
-
-/* =========================================================
-   TIMEOUT FEEDBACK
-========================================================= */
-
-function showTimeoutFeedback(
-    data
-){
-
-    showScreen(
-        "feedbackScreen"
-    );
-
-
-    setText(
-        "feedbackIcon",
-        "⏱"
-    );
-
-
-    setText(
-        "feedbackTitle",
-        "TIME'S UP!"
-    );
-
-
-    setText(
-        "feedbackMessage",
-        "समय सकियो!"
-    );
-
-
-    setText(
-        "feedbackRankTop",
-        `#${data.newRank}`
-    );
-
-
-    setText(
-        "rankMove",
-        `#${data.oldRank} → #${data.newRank}`
-    );
-
-
-    setText(
-        "rankReward",
-        `-${data.penalty}`
-    );
-
-
-    setText(
-        "feedbackXP",
-        "+0 XP"
-    );
-
-
-    setText(
-        "feedbackCoins",
-        "+0"
-    );
-
-
-    setText(
-        "feedbackStreak",
-        "🔥 Streak reset"
-    );
-
-
-    setText(
-        "correctAnswer",
-        `सही उत्तर: ${data.question.correct}`
-    );
-
-
-    setText(
-        "explanation",
-        data.question.explanation
-    );
-
-
-    feedbackTimeout =
-        setTimeout(
-            nextQuestion,
-            2200
-        );
-
+function showTimeoutFeedback(data){
+    showScreen("feedbackScreen");
+    setText("feedbackIcon", "⏱");
+    setText("feedbackTitle", "TIME'S UP!");
+    setText("feedbackMessage", "समय सकियो!");
+    setText("feedbackRankTop", `#${data.newRank}`);
+    setText("rankMove", `#${data.oldRank} → #${data.newRank}`);
+    setText("rankReward", `-${data.penalty}`);
+    setText("feedbackXP", "+0 XP");
+    setText("feedbackCoins", "+0");
+    setText("feedbackStreak", "🔥 Streak reset");
+    setText("correctAnswer", `सही उत्तर: ${data.question.correct}`);
+    setText("explanation", data.question.explanation);
+    feedbackTimeout = setTimeout(nextQuestion, 2200);
 }
-
-
-/* =========================================================
-   NEXT QUESTION
-========================================================= */
 
 function nextQuestion(){
-
-    if(feedbackTimeout){
-
-        clearTimeout(
-            feedbackTimeout
-        );
-
-        feedbackTimeout =
-            null;
-
-    }
-
-
+    if(feedbackTimeout){ clearTimeout(feedbackTimeout); feedbackTimeout = null; }
     currentQuestion++;
-
-
-    if(
-        currentQuestion >=
-        TOTAL_QUESTIONS
-    ){
-
-        finishGame();
-
-        return;
-
-    }
-
-
-    showScreen(
-        "gameScreen"
-    );
-
-
+    if(currentQuestion >= TOTAL_QUESTIONS){ finishGame(); return; }
+    showScreen("gameScreen");
     loadQuestion();
-
 }
-
-
-/* =========================================================
-   SAVE FINAL SESSION
-========================================================= */
 
 async function saveFinalSession(){
-
-    if(
-        !sessionId ||
-        !userId
-    ){
-
-        return;
-
-    }
-
-
-    const accuracy =
-        Math.round(
-            (
-                correctAnswers /
-                TOTAL_QUESTIONS
-            ) * 100
-        );
-
-
-    const positionsClimbed =
-        startingRank -
-        currentRank;
-
-
+    if(!sessionId || !userId) return;
+    const accuracy = Math.round((correctAnswers / TOTAL_QUESTIONS) * 100);
+    const positionsClimbed = startingRank - currentRank;
     try{
-
-        const {
-            error
-        } =
-        await supabase
-            .from(
-                "rank_climber_sessions"
-            )
-            .update({
-
-                final_rank:
-                    currentRank,
-
-                correct_answers:
-                    correctAnswers,
-
-                accuracy:
-                    accuracy,
-
-                best_streak:
-                    bestStreak,
-
-                xp_earned:
-                    xp,
-
-                coins_earned:
-                    earnedCoins,
-
-                positions_climbed:
-                    positionsClimbed,
-
-                completed:
-                    true,
-
-                completed_at:
-                    new Date().toISOString()
-
-            })
-            .eq(
-                "id",
-                sessionId
-            )
-            .eq(
-                "user_id",
-                userId
-            );
-
-
-        if(error){
-
-            console.error(
-                "Session update:",
-                error
-            );
-
-        }
-
-
-    }catch(error){
-
-        console.error(
-            "Final session save:",
-            error
-        );
-
-    }
-
+        await supabase.from("rank_climber_sessions").update({
+            final_rank: currentRank, correct_answers: correctAnswers, accuracy: accuracy, best_streak: bestStreak, xp_earned: xp, coins_earned: earnedCoins, positions_climbed: positionsClimbed, completed: true, completed_at: new Date().toISOString()
+        }).eq("id", sessionId).eq("user_id", userId);
+    }catch(e){}
 }
-
-
-/* =========================================================
-   UPDATE PLAYER
-========================================================= */
 
 async function updatePersistentPlayer(){
-
-    if(!userId){
-
-        return;
-
-    }
-
-
+    if(!userId) return;
     try{
-
-        const {
-            data:
-            existing,
-            error:
-            fetchError
-        } =
-        await supabase
-            .from(
-                "rank_climber_players"
-            )
-            .select(
-                "best_rank,total_xp,best_streak"
-            )
-            .eq(
-                "user_id",
-                userId
-            )
-            .maybeSingle();
-
-
-        if(fetchError){
-
-            throw fetchError;
-
-        }
-
-
-        const oldBest =
-            Number(
-                existing?.best_rank
-            ) || DEFAULT_RANK;
-
-
-        const oldXP =
-            Number(
-                existing?.total_xp
-            ) || 0;
-
-
-        const oldBestStreak =
-            Number(
-                existing?.best_streak
-            ) || 0;
-
-
-        const newBest =
-            Math.min(
-                oldBest,
-                currentRank
-            );
-
-
-        const {
-            error
-        } =
-        await supabase
-            .from(
-                "rank_climber_players"
-            )
-            .upsert({
-
-                user_id:
-                    userId,
-
-                current_rank:
-                    currentRank,
-
-                best_rank:
-                    newBest,
-
-                total_xp:
-                    oldXP + xp,
-
-                current_streak:
-                    streak,
-
-                best_streak:
-                    Math.max(
-                        oldBestStreak,
-                        bestStreak
-                    ),
-
-                updated_at:
-                    new Date().toISOString()
-
-            },{
-                onConflict:
-                    "user_id"
-            });
-
-
-        if(error){
-
-            throw error;
-
-        }
-
-
-    }catch(error){
-
-        console.error(
-            "Persistent player update:",
-            error
-        );
-
-    }
-
+        const { data: existing } = await supabase.from("rank_climber_players").select("best_rank,total_xp,best_streak").eq("user_id", userId).maybeSingle();
+        const oldBest = Number(existing?.best_rank) || DEFAULT_RANK;
+        const oldXP = Number(existing?.total_xp) || 0;
+        const oldBestStreak = Number(existing?.best_streak) || 0;
+        const newBest = Math.min(oldBest, currentRank);
+        await supabase.from("rank_climber_players").upsert({
+            user_id: userId, current_rank: currentRank, best_rank: newBest, total_xp: oldXP + xp, current_streak: streak, best_streak: Math.max(oldBestStreak, bestStreak), updated_at: new Date().toISOString()
+        }, { onConflict: "user_id" });
+    }catch(e){}
 }
-
-
-/* =========================================================
-   SAVE DAILY LEADERBOARD
-========================================================= */
 
 async function saveDailyLeaderboard(){
-
-    if(!userId){
-
-        return;
-
-    }
-
-
-    const today =
-        new Date()
-            .toISOString()
-            .slice(
-                0,
-                10
-            );
-
-
+    if(!userId) return;
+    const today = new Date().toISOString().slice(0, 10);
     try{
-
-        const {
-            data:
-            existing,
-            error:
-            fetchError
-        } =
-        await supabase
-            .from(
-                "rank_climber_daily"
-            )
-            .select(
-                "best_score,best_rank"
-            )
-            .eq(
-                "user_id",
-                userId
-            )
-            .eq(
-                "leaderboard_date",
-                today
-            )
-            .maybeSingle();
-
-
-        if(fetchError){
-
-            throw fetchError;
-
-        }
-
-
-        const score =
-            (
-                correctAnswers * 100
-            ) +
-            (
-                bestStreak * 20
-            ) +
-            xp;
-
-
-        const oldScore =
-            Number(
-                existing?.best_score
-            ) || 0;
-
-
-        const oldRank =
-            Number(
-                existing?.best_rank
-            ) || DEFAULT_RANK;
-
-
-        const {
-            error
-        } =
-        await supabase
-            .from(
-                "rank_climber_daily"
-            )
-            .upsert({
-
-                user_id:
-                    userId,
-
-                leaderboard_date:
-                    today,
-
-                best_score:
-                    Math.max(
-                        oldScore,
-                        score
-                    ),
-
-                best_rank:
-                    Math.min(
-                        oldRank,
-                        currentRank
-                    ),
-
-                updated_at:
-                    new Date().toISOString()
-
-            },{
-                onConflict:
-                    "user_id,leaderboard_date"
-            });
-
-
-        if(error){
-
-            throw error;
-
-        }
-
-
-    }catch(error){
-
-        console.error(
-            "Daily leaderboard:",
-            error
-        );
-
-    }
-
+        const { data: existing } = await supabase.from("rank_climber_daily").select("best_score,best_rank").eq("user_id", userId).eq("leaderboard_date", today).maybeSingle();
+        const score = (correctAnswers * 100) + (bestStreak * 20) + xp;
+        const oldScore = Number(existing?.best_score) || 0;
+        const oldRank = Number(existing?.best_rank) || DEFAULT_RANK;
+        await supabase.from("rank_climber_daily").upsert({
+            user_id: userId, leaderboard_date: today, best_score: Math.max(oldScore, score), best_rank: Math.min(oldRank, currentRank), updated_at: new Date().toISOString()
+        }, { onConflict: "user_id,leaderboard_date" });
+    }catch(e){}
 }
-
-
-/* =========================================================
-   FINISH GAME
-========================================================= */
 
 async function finishGame(){
-
     stopTimer();
-
-
-    gameStarted =
-        false;
-
-
-    xp +=
-        bestStreak * 5;
-
-
-    const perfect =
-        correctAnswers ===
-        TOTAL_QUESTIONS;
-
-
-    if(perfect){
-
-        xp +=
-            50;
-
-        earnedCoins +=
-            30;
-
-    }
-
-
-    earnedCoins +=
-        bestStreak * 2;
-
-
-    const positionsClimbed =
-        startingRank -
-        currentRank;
-
-
-    const accuracy =
-        Math.round(
-            (
-                correctAnswers /
-                TOTAL_QUESTIONS
-            ) * 100
-        );
-
+    gameStarted = false;
+    xp += bestStreak * 5;
+    const perfect = (correctAnswers === TOTAL_QUESTIONS);
+    if(perfect){ xp += 50; earnedCoins += 30; }
+    earnedCoins += bestStreak * 2;
+    const positionsClimbed = startingRank - currentRank;
+    const accuracy = Math.round((correctAnswers / TOTAL_QUESTIONS) * 100);
 
     await saveFinalSession();
-
-
     await updatePersistentPlayer();
-
-
     await saveDailyLeaderboard();
+    if(earnedCoins > 0) await saveEarnedCoinsToFirebase(earnedCoins);
 
+    showScreen("resultScreen");
+    setText("finalRank", `#${currentRank}`);
+    setText("positionsClimbed", positionsClimbed >= 0 ? `↑ ${positionsClimbed}` : `↓ ${Math.abs(positionsClimbed)}`);
+    setText("correctAnswers", `${correctAnswers}/${TOTAL_QUESTIONS}`);
+    setText("accuracy", `${accuracy}%`);
+    setText("bestStreak", bestStreak);
+    setText("totalXP", `+${xp}`);
+    setText("totalCoins", earnedCoins);
+    setText("resultCoins", Number(coins || 0).toLocaleString());
 
-    /*
-       IMPORTANT:
-       Save earned coins permanently to Firebase.
-    */
-
-    if(
-        earnedCoins > 0
-    ){
-
-        await saveEarnedCoinsToFirebase(
-            earnedCoins
-        );
-
-    }
-
-
-    showScreen(
-        "resultScreen"
-    );
-
-
-    setText(
-        "finalRank",
-        `#${currentRank}`
-    );
-
-
-    setText(
-        "positionsClimbed",
-        positionsClimbed >= 0
-            ? `↑ ${positionsClimbed}`
-            : `↓ ${Math.abs(
-                positionsClimbed
-            )}`
-    );
-
-
-    setText(
-        "correctAnswers",
-        `${correctAnswers}/${TOTAL_QUESTIONS}`
-    );
-
-
-    setText(
-        "accuracy",
-        `${accuracy}%`
-    );
-
-
-    setText(
-        "bestStreak",
-        bestStreak
-    );
-
-
-    setText(
-        "totalXP",
-        `+${xp}`
-    );
-
-
-    setText(
-        "totalCoins",
-        earnedCoins
-    );
-
-
-    setText(
-        "resultCoins",
-        Number(
-            coins || 0
-        ).toLocaleString()
-    );
-
-
-    if(perfect){
-
-        setText(
-            "resultMessage",
-            "🏆 PERFECT CLIMB!"
-        );
-
-    }else if(
-        currentRank === 1
-    ){
-
-        setText(
-            "resultMessage",
-            "👑 YOU ARE ON TOP!"
-        );
-
-    }else{
-
-        setText(
-            "resultMessage",
-            "CLIMB COMPLETE"
-        );
-
-    }
-
+    if(perfect) setText("resultMessage", "🏆 PERFECT CLIMB!");
+    else if(currentRank === 1) setText("resultMessage", "👑 YOU ARE ON TOP!");
+    else setText("resultMessage", "CLIMB COMPLETE");
 }
-
-
-/* =========================================================
-   LEADERBOARD
-========================================================= */
 
 async function showLeaderboard(){
-
     stopTimer();
-
-
-    showScreen(
-        "leaderboardScreen"
-    );
-
-
-    await loadLeaderboard(
-        "global"
-    );
-
+    showScreen("leaderboardScreen");
+    await loadLeaderboard("global");
 }
 
-
-async function loadLeaderboard(
-    type = "global"
-){
-
-    currentLeaderboardType =
-        type;
-
-
-    const list =
-        $("leaderboardList");
-
-
-    if(!list){
-
-        return;
-
-    }
-
-
-    list.innerHTML = `
-        <div class="loading">
-            ⏳ Leaderboard लोड हुँदैछ...
-        </div>
-    `;
-
-
-    $("globalLeaderboardBtn")
-        ?.classList.toggle(
-            "active",
-            type === "global"
-        );
-
-
-    $("dailyLeaderboardBtn")
-        ?.classList.toggle(
-            "active",
-            type === "daily"
-        );
-
-
+async function loadLeaderboard(type = "global"){
+    currentLeaderboardType = type;
+    const list = $("leaderboardList");
+    if(!list) return;
+    list.innerHTML = `<div class="loading">⏳ Leaderboard लोड हुँदैछ...</div>`;
+    $("globalLeaderboardBtn")?.classList.toggle("active", type === "global");
+    $("dailyLeaderboardBtn")?.classList.toggle("active", type === "daily");
     try{
-
-        if(
-            type ===
-            "global"
-        ){
-
-            await loadGlobalLeaderboard();
-
-        }else{
-
-            await loadDailyLeaderboard();
-
-        }
-
-
+        if(type === "global") await loadGlobalLeaderboard();
+        else await loadDailyLeaderboard();
     }catch(error){
-
-        console.error(
-            "Leaderboard:",
-            error
-        );
-
-
-        list.innerHTML = `
-            <div class="error-box">
-                Leaderboard load गर्न सकिएन।
-                <br>
-                ${escapeHTML(
-                    error.message
-                )}
-            </div>
-        `;
-
+        list.innerHTML = `<div class="error-box">Leaderboard load गर्न सकिएन。<br>${escapeHTML(error.message)}</div>`;
     }
-
 }
-
-
-/* =========================================================
-   GLOBAL LEADERBOARD
-========================================================= */
 
 async function loadGlobalLeaderboard(){
-
-    const list =
-        $("leaderboardList");
-
-
-    const {
-        data,
-        error
-    } =
-    await supabase
-        .from(
-            "rank_climber_players"
-        )
-        .select(`
-            user_id,
-            current_rank,
-            best_rank,
-            total_xp
-        `)
-        .order(
-            "current_rank",
-            {
-                ascending:true
-            }
-        )
-        .limit(50);
-
-
-    if(error){
-
-        throw error;
-
-    }
-
-
-    if(
-        !data ||
-        data.length === 0
-    ){
-
-        list.innerHTML = `
-            <div class="loading">
-                अहिले leaderboard खाली छ।
-            </div>
-        `;
-
-        return;
-
-    }
-
-
-    renderLeaderboard(
-        data.map(
-            (
-                player,
-                index
-            ) => ({
-
-                userId:
-                    player.user_id,
-
-                position:
-                    index + 1,
-
-                name:
-                    player.user_id === userId
-                        ? getUserDisplayName()
-                        : `Aspirant ${String(
-                            index + 1
-                        )}`,
-
-                avatar:
-                    "🎯",
-
-                score:
-                    player.current_rank,
-
-                rank:
-                    player.current_rank
-
-            })
-        )
-    );
-
+    const list = $("leaderboardList");
+    const { data, error } = await supabase.from("rank_climber_players").select("user_id, current_rank, best_rank, total_xp").order("current_rank", { ascending: true }).limit(50);
+    if(error) throw error;
+    if(!data || data.length === 0){ list.innerHTML = `<div class="loading">अहिले leaderboard खाली छ।</div>`; return; }
+    renderLeaderboard(data.map((player, index) => ({
+        userId: player.user_id, position: index + 1, name: player.user_id === userId ? getUserDisplayName() : `Aspirant ${String(index + 1)}`, avatar: "🎯", score: player.current_rank, rank: player.current_rank
+    })));
 }
-
-
-/* =========================================================
-   DAILY LEADERBOARD
-========================================================= */
 
 async function loadDailyLeaderboard(){
-
-    const list =
-        $("leaderboardList");
-
-
-    const today =
-        new Date()
-            .toISOString()
-            .slice(
-                0,
-                10
-            );
-
-
-    const {
-        data,
-        error
-    } =
-    await supabase
-        .from(
-            "rank_climber_daily"
-        )
-        .select(`
-            user_id,
-            best_score,
-            best_rank
-        `)
-        .eq(
-            "leaderboard_date",
-            today
-        )
-        .order(
-            "best_score",
-            {
-                ascending:false
-            }
-        )
-        .limit(50);
-
-
-    if(error){
-
-        throw error;
-
-    }
-
-
-    if(
-        !data ||
-        data.length === 0
-    ){
-
-        list.innerHTML = `
-            <div class="loading">
-                आजको leaderboard मा
-                अझै कोही छैन।
-            </div>
-        `;
-
-        return;
-
-    }
-
-
-    renderLeaderboard(
-        data.map(
-            (
-                player,
-                index
-            ) => ({
-
-                userId:
-                    player.user_id,
-
-                position:
-                    index + 1,
-
-                name:
-                    player.user_id === userId
-                        ? getUserDisplayName()
-                        : `Aspirant ${String(
-                            index + 1
-                        )}`,
-
-                avatar:
-                    "🔥",
-
-                score:
-                    player.best_score,
-
-                rank:
-                    player.best_rank
-
-            })
-        )
-    );
-
+    const list = $("leaderboardList");
+    const today = new Date().toISOString().slice(0, 10);
+    const { data, error } = await supabase.from("rank_climber_daily").select("user_id, best_score, best_rank").eq("leaderboard_date", today).order("best_score", { ascending: false }).limit(50);
+    if(error) throw error;
+    if(!data || data.length === 0){ list.innerHTML = `<div class="loading">आजको leaderboard मा अझै कोही छैन।</div>`; return; }
+    renderLeaderboard(data.map((player, index) => ({
+        userId: player.user_id, position: index + 1, name: player.user_id === userId ? getUserDisplayName() : `Aspirant ${String(index + 1)}`, avatar: "🔥", score: player.best_score, rank: player.best_rank
+    })));
 }
-
-
-/* =========================================================
-   DISPLAY NAME
-========================================================= */
 
 function getUserDisplayName(){
-
-    if(firebaseUser){
-
-        return (
-            firebaseUser.displayName ||
-            firebaseUser.email?.split("@")[0] ||
-            "You"
-        );
-
-    }
-
-
+    if(firebaseUser) return firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "You";
     return "You";
-
 }
 
-
-/* =========================================================
-   RENDER LEADERBOARD
-========================================================= */
-
-function renderLeaderboard(
-    players
-){
-
-    const list =
-        $("leaderboardList");
-
-
-    list.innerHTML =
-        "";
-
-
-    players.forEach(
-        player => {
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-
-            row.className =
-                "leaderboard-row" +
-                (
-                    player.userId === userId
-                        ? " me"
-                        : ""
-                );
-
-
-            const displayScore =
-                currentLeaderboardType ===
-                "global"
-                    ? `#${player.rank}`
-                    : player.score;
-
-
-            row.innerHTML = `
-
-                <div class="leaderboard-position">
-
-                    #${player.position}
-
-                </div>
-
-                <div class="leaderboard-avatar">
-
-                    ${player.avatar}
-
-                </div>
-
-                <div class="leaderboard-name">
-
-                    ${escapeHTML(
-                        player.name
-                    )}
-
-                    ${
-                        player.userId === userId
-                            ? " • You"
-                            : ""
-                    }
-
-                </div>
-
-                <div class="leaderboard-score">
-
-                    ${displayScore}
-
-                </div>
-
-            `;
-
-
-            list.appendChild(
-                row
-            );
-
-        }
-    );
-
+function renderLeaderboard(players){
+    const list = $("leaderboardList");
+    list.innerHTML = "";
+    players.forEach(player => {
+        const row = document.createElement("div");
+        row.className = "leaderboard-row" + (player.userId === userId ? " me" : "");
+        const displayScore = currentLeaderboardType === "global" ? `#${player.rank}` : player.score;
+        row.innerHTML = `
+            <div class="leaderboard-position">#${player.position}</div>
+            <div class="leaderboard-avatar">${player.avatar}</div>
+            <div class="leaderboard-name">${escapeHTML(player.name)}${player.userId === userId ? " • You" : ""}</div>
+            <div class="leaderboard-score">${displayScore}</div>
+        `;
+        list.appendChild(row);
+    });
 }
-
-
-/* =========================================================
-   RESTART
-========================================================= */
 
 async function restartGame(){
-
-    showScreen(
-        "introScreen"
-    );
-
-
+    showScreen("introScreen");
     await loadPlayer();
-
-
     await loadCoinsFromFirebase();
-
-
     await startGame();
-
 }
-
-
-/* =========================================================
-   HOME
-========================================================= */
 
 async function goHome(){
-
     stopTimer();
-
-
-    if(feedbackTimeout){
-
-        clearTimeout(
-            feedbackTimeout
-        );
-
-
-        feedbackTimeout =
-            null;
-
-    }
-
-
-    gameStarted =
-        false;
-
-
-    showScreen(
-        "introScreen"
-    );
-
-
+    if(feedbackTimeout){ clearTimeout(feedbackTimeout); feedbackTimeout = null; }
+    gameStarted = false;
+    showScreen("introScreen");
     await loadPlayer();
-
-
     await loadCoinsFromFirebase();
-
 }
-
-
-/* =========================================================
-   EXIT
-========================================================= */
 
 function confirmExit(){
-
-    if(!gameStarted){
-
-        goHome();
-
-        return;
-
-    }
-
-
-    const confirmed =
-        confirm(
-            "के तपाईं यो Rank Climber game छोड्न चाहनुहुन्छ?"
-        );
-
-
-    if(confirmed){
-
+    if(!gameStarted){ goHome(); return; }
+    if(confirm("के तपाईं यो Rank Climber game छोड्न चाहनुहुन्छ?")){
         stopTimer();
-
-
-        gameStarted =
-            false;
-
-
-        showScreen(
-            "introScreen"
-        );
-
-
+        gameStarted = false;
+        showScreen("introScreen");
         loadPlayer();
-
-
         loadCoinsFromFirebase();
-
     }
-
 }
 
-
-/* =========================================================
-   EVENTS
-========================================================= */
-
-$("startBtn")
-    ?.addEventListener(
-        "click",
-        startGame
-    );
-
-
-$("restartBtn")
-    ?.addEventListener(
-        "click",
-        restartGame
-    );
-
-
-$("homeBtn")
-    ?.addEventListener(
-        "click",
-        goHome
-    );
-
-
-$("leaderboardBtn")
-    ?.addEventListener(
-        "click",
-        showLeaderboard
-    );
-
-
-$("resultLeaderboardBtn")
-    ?.addEventListener(
-        "click",
-        showLeaderboard
-    );
-
-
-$("backBtn")
-    ?.addEventListener(
-        "click",
-        goHome
-    );
-
-
-$("exitGameBtn")
-    ?.addEventListener(
-        "click",
-        confirmExit
-    );
-
-
-$("leaderboardBackBtn")
-    ?.addEventListener(
-        "click",
-        goHome
-    );
-
-
-$("globalLeaderboardBtn")
-    ?.addEventListener(
-        "click",
-        () => {
-
-            loadLeaderboard(
-                "global"
-            );
-
-        }
-    );
-
-
-$("dailyLeaderboardBtn")
-    ?.addEventListener(
-        "click",
-        () => {
-
-            loadLeaderboard(
-                "daily"
-            );
-
-        }
-    );
-
-
-$("nextQuestionBtn")
-    ?.addEventListener(
-        "click",
-        nextQuestion
-    );
-
-
+$("startBtn")?.addEventListener("click", startGame);
+$("restartBtn")?.addEventListener("click", restartGame);
+$("homeBtn")?.addEventListener("click", goHome);
+$("leaderboardBtn")?.addEventListener("click", showLeaderboard);
+$("resultLeaderboardBtn")?.addEventListener("click", showLeaderboard);
+$("backBtn")?.addEventListener("click", goHome);
+$("exitGameBtn")?.addEventListener("click", confirmExit);
+$("leaderboardBackBtn")?.addEventListener("click", goHome);
+$("globalLeaderboardBtn")?.addEventListener("click", () => loadLeaderboard("global"));
+$("dailyLeaderboardBtn")?.addEventListener("click", () => loadLeaderboard("daily"));
+$("nextQuestionBtn")?.addEventListener("click", nextQuestion);
 </script>
-
 </body>
-
-      </html>
+</html>
