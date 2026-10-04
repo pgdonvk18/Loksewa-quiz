@@ -3,254 +3,920 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LoksewaQuest - Games & Challenges</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#0b1730">
+  <title>LoksewaQuest — Games</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Noto+Serif+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
+    :root {
+      --navy: #0b1730;
+      --navy-light: #152b54;
+      --blue: #2d63d7;
+      --blue-soft: #edf3ff;
+      --green: #087c60;
+      --orange: #c87412;
+      --purple: #7042c5;
+      --pink: #c73578;
+      --red: #c63d4c;
+      --teal: #087d78;
+
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #18243b;
+      --muted: #707b8e;
+      --line: #e4e7ec;
+
+      --sans: "Noto Sans Devanagari", sans-serif;
+      --serif: "Noto Serif Devanagari", serif;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-    body {
-      background-color: #f8fafc;
-      color: #0f172a;
-      margin: 0;
-      padding-bottom: 40px;
     }
 
-    .app-header {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      color: #ffffff;
-      padding: 18px 20px;
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 100% 0, rgba(45,99,215,.08), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      padding-bottom: 40px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    /* HEADER */
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 68px;
+      background: rgba(255,255,255,.93);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(20,30,50,.07);
+    }
+
+    .header-inner {
+      width: min(760px, 100%);
+      height: 68px;
+      margin: auto;
+      padding: 0 16px;
+
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+      gap: 12px;
     }
-    .app-header h1 {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-    }
-    .back-btn {
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      border: none;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
+
+    .back-button,
+    .header-action {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 14px;
-      transition: background 0.2s;
-    }
-    .back-btn:hover {
-      background: rgba(255, 255, 255, 0.25);
+
+      color: var(--text);
+      flex-shrink: 0;
+      transition: .2s;
     }
 
-    .main-wrapper {
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 20px 16px;
+    .back-button:active,
+    .header-action:active {
+      transform: scale(.94);
     }
 
-    .section-title-box {
-      margin-bottom: 18px;
+    .header-title {
+      flex: 1;
+      text-align: center;
+
+      font-family: var(--serif);
+      font-size: 19px;
+      font-weight: 700;
     }
-    .section-title-box h2 {
-      font-size: 17px;
-      font-weight: 800;
-      color: #1e293b;
-      margin-bottom: 4px;
+
+    /* MAIN */
+
+    .container {
+      width: min(760px, 100%);
+      margin: auto;
+      padding: 18px 16px 35px;
     }
-    .section-title-box p {
+
+    /* HERO */
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+
+      padding: 25px 22px;
+      min-height: 205px;
+
+      border-radius: 25px;
+
+      color: #fff;
+
+      background:
+        radial-gradient(
+          circle at 90% 15%,
+          rgba(119,158,255,.32),
+          transparent 30%
+        ),
+        linear-gradient(
+          135deg,
+          #09152e,
+          #142e5f 58%,
+          #2455b2
+        );
+
+      box-shadow:
+        0 18px 42px rgba(11,28,63,.13);
+    }
+
+    .hero-decoration {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      right: -75px;
+      top: -75px;
+
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 50%;
+    }
+
+    .hero-decoration::after {
+      content: "";
+      position: absolute;
+
+      width: 90px;
+      height: 90px;
+
+      left: -45px;
+      top: 85px;
+
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 50%;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      padding: 7px 10px;
+
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,.13);
+
+      background: rgba(255,255,255,.08);
+
+      color: #cbd9f5;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    .hero h1 {
+      margin-top: 15px;
+
+      font-family: var(--serif);
+      font-size: 30px;
+      line-height: 1.25;
+      font-weight: 700;
+      letter-spacing: -.4px;
+    }
+
+    .hero p {
+      max-width: 550px;
+      margin-top: 8px;
+
+      color: #c8d4e9;
       font-size: 12px;
-      color: #64748b;
+      line-height: 1.7;
+      font-weight: 500;
+    }
+
+    .hero-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      padding: 7px 10px;
+
+      border-radius: 9px;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.09);
+
+      color: #d9e3f5;
+      font-size: 10px;
       font-weight: 600;
     }
 
+    /* SECTION */
+
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+
+      margin: 25px 2px 12px;
+    }
+
+    .section-head h2 {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.25px;
+    }
+
+    .section-head p {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .game-count {
+      flex-shrink: 0;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* GAME CARDS */
+
+    .games {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
     .game-card {
-      background: #ffffff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      text-decoration: none;
-      color: inherit;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+      gap: 13px;
+
+      min-height: 101px;
+      padding: 15px;
+
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 19px;
+
+      box-shadow: 0 6px 20px rgba(17,30,54,.045);
+
+      transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        border-color .18s ease;
     }
+
     .game-card:hover {
-      background: #f8fafc;
-      border-color: #2563eb;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+      transform: translateY(-2px);
+      border-color: #cbd5e7;
+      box-shadow: 0 13px 30px rgba(17,30,54,.08);
+    }
+
+    .game-card:active {
+      transform: scale(.985);
     }
 
     .game-card-left {
+      min-width: 0;
+
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 13px;
     }
 
     .game-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 14px;
+      width: 55px;
+      height: 55px;
+      flex-shrink: 0;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
+
+      border-radius: 16px;
+
+      font-size: 19px;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.25),
+        0 6px 14px rgba(20,30,50,.08);
+    }
+
+    .icon-orange {
+      background: #fff3dc;
+      color: #c8760e;
+    }
+
+    .icon-purple {
+      background: #eee9ff;
+      color: #6840c3;
+    }
+
+    .icon-blue {
+      background: #eaf1ff;
+      color: #2b60cf;
+    }
+
+    .icon-pink {
+      background: #fce9f2;
+      color: #c22e70;
+    }
+
+    .icon-green {
+      background: #e6f6f0;
+      color: #08785d;
+    }
+
+    .game-info {
+      min-width: 0;
     }
 
     .game-info h3 {
-      font-size: 15px;
-      font-weight: 800;
-      margin: 0 0 4px 0;
-      color: #0f172a;
-    }
-    .game-info p {
-      font-size: 12px;
-      color: #64748b;
-      margin: 0;
+      font-family: var(--serif);
+      font-size: 16px;
       line-height: 1.4;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .game-info p {
+      margin-top: 3px;
+
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.55;
       font-weight: 500;
     }
 
     .badge {
-      display: inline-block;
-      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+
+      margin-top: 7px;
+      padding: 4px 8px;
+
+      border-radius: 7px;
+
+      font-size: 9px;
       font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 20px;
-      margin-top: 8px;
-    }
-    .badge-live {
-      background: #dcfce7;
-      color: #15803d;
-    }
-    .badge-new {
-      background: #e0e7ff;
-      color: #4f46e5;
-    }
-    .badge-soon {
-      background: #f1f5f9;
-      color: #64748b;
     }
 
-    .arrow-icon {
-      color: #cbd5e1;
-      font-size: 14px;
-      transition: transform 0.2s, color 0.2s;
+    .badge-live {
+      background: #e7f7ee;
+      color: #08784f;
     }
-    .game-card:hover .arrow-icon {
-      color: #2563eb;
-      transform: translateX(3px);
+
+    .badge-new {
+      background: #edf0ff;
+      color: #5841bd;
+    }
+
+    .badge-soon {
+      background: #f0f2f5;
+      color: #747d8d;
+    }
+
+    .arrow {
+      width: 31px;
+      height: 31px;
+      flex-shrink: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 10px;
+      background: #f4f5f7;
+
+      color: #8993a4;
+      font-size: 10px;
+
+      transition: .2s;
+    }
+
+    .game-card:hover .arrow {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    /* COMING SOON */
+
+    .coming-soon {
+      cursor: pointer;
+    }
+
+    .coming-soon::after {
+      content: "";
+      position: absolute;
+      width: 90px;
+      height: 90px;
+
+      right: -55px;
+      bottom: -55px;
+
+      border-radius: 50%;
+      background: #f7f8fa;
+    }
+
+    /* FOOTER NOTE */
+
+    .footer-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+
+      margin-top: 22px;
+
+      color: #8a93a2;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .footer-note i {
+      font-size: 9px;
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        padding: 13px 13px 30px;
+      }
+
+      .hero {
+        min-height: 210px;
+        padding: 22px 19px;
+        border-radius: 22px;
+      }
+
+      .hero h1 {
+        font-size: 27px;
+      }
+
+      .game-card {
+        min-height: 96px;
+        padding: 13px;
+      }
+
+      .game-icon {
+        width: 51px;
+        height: 51px;
+        border-radius: 14px;
+      }
+
+      .game-info h3 {
+        font-size: 15px;
+      }
+
+      .game-info p {
+        font-size: 10px;
+      }
+    }
+
+    @media (max-width: 370px) {
+      .hero h1 {
+        font-size: 24px;
+      }
+
+      .game-card-left {
+        gap: 10px;
+      }
+
+      .game-icon {
+        width: 47px;
+        height: 47px;
+      }
+
+      .game-info h3 {
+        font-size: 14px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition-duration: .01ms !important;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <header class="app-header">
-    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1>LoksewaQuest - खेल मैदान</h1>
-    <div style="width: 38px;"></div>
-  </header>
+<header class="header">
+  <div class="header-inner">
 
-  <main class="main-wrapper">
-    
-    <div class="section-title-box">
-      <h2>लोकसेवा चुनौतीहरू (Games & Battles)</h2>
-      <p>रमाइलो तरिकाले प्रतिस्पर्धा र अभ्यास गर्नुहोस्</p>
+    <a
+      href="dashboard.html"
+      class="back-button"
+      aria-label="ड्यासबोर्डमा फर्कनुहोस्"
+    >
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+
+    <div class="header-title">
+      खेल मैदान
     </div>
 
-    <!-- Speed Blitz (Speed Test) - Linked to speedgame.html -->
-    <a href="speedgame.html" class="game-card">
+    <button
+      class="header-action"
+      id="themeButton"
+      type="button"
+      aria-label="थिम परिवर्तन गर्नुहोस्"
+    >
+      <i class="fa-solid fa-moon"></i>
+    </button>
+
+  </div>
+</header>
+
+
+<main class="container">
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="hero-decoration"></div>
+
+    <div class="hero-content">
+
+      <div class="hero-label">
+        <i class="fa-solid fa-gamepad"></i>
+        LOKSEWAQUEST GAMES
+      </div>
+
+      <h1>
+        सिकाइलाई खेल बनाऔँ।
+      </h1>
+
+      <p>
+        अभ्यास मात्र होइन — गति, रणनीति र प्रतिस्पर्धासँगै
+        आफ्नो लोकसेवा तयारीलाई अझ रमाइलो बनाउनुहोस्।
+      </p>
+
+      <div class="hero-pills">
+
+        <span class="hero-pill">
+          <i class="fa-solid fa-bolt"></i>
+          Speed
+        </span>
+
+        <span class="hero-pill">
+          <i class="fa-solid fa-users"></i>
+          Multiplayer
+        </span>
+
+        <span class="hero-pill">
+          <i class="fa-solid fa-trophy"></i>
+          Ranking
+        </span>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SECTION -->
+
+  <div class="section-head">
+
+    <div>
+      <h2>आज के खेल्ने?</h2>
+
+      <p>
+        आफ्नो मनपर्ने challenge छान्नुहोस्
+      </p>
+    </div>
+
+    <span class="game-count">
+      ५ गेम
+    </span>
+
+  </div>
+
+
+  <!-- GAMES -->
+
+  <section class="games">
+
+    <!-- SPEED BLITZ -->
+
+    <a
+      href="speedgame.html"
+      class="game-card"
+    >
+
       <div class="game-card-left">
-        <div class="game-icon" style="background: #fef3c7; color: #d97706;">
+
+        <div class="game-icon icon-orange">
           <i class="fa-solid fa-bolt"></i>
         </div>
+
         <div class="game-info">
-          <h3>स्पीड ब्लिट्ज (Speed Blitz)</h3>
-          <p>१ मिनेटमा धेरैभन्दा धेरै प्रश्न मिलाएर लिडरबोर्डमा स्थान बनाउनुहोस्।</p>
-          <span class="badge badge-live">लोकप्रिय ⚡</span>
+
+          <h3>
+            स्पीड ब्लिट्ज
+          </h3>
+
+          <p>
+            १ मिनेटमा सकेसम्म धेरै प्रश्न हल गर्नुहोस्
+            र आफ्नो उच्च स्कोर बनाउनुहोस्।
+          </p>
+
+          <span class="badge badge-live">
+            <i class="fa-solid fa-fire"></i>
+            लोकप्रिय
+          </span>
+
         </div>
+
       </div>
-      <i class="fa-solid fa-chevron-right arrow-icon"></i>
+
+      <span class="arrow">
+        <i class="fa-solid fa-chevron-right"></i>
+      </span>
+
     </a>
 
-    <!-- Multiplayer Real Quiz Lobby Card -->
-    <a href="quizlobby.html" class="game-card">
+
+    <!-- MULTIPLAYER -->
+
+    <a
+      href="quizlobby.html"
+      class="game-card"
+    >
+
       <div class="game-card-left">
-        <div class="game-icon" style="background: #e0e7ff; color: #4f46e5;">
+
+        <div class="game-icon icon-purple">
           <i class="fa-solid fa-users-viewfinder"></i>
         </div>
+
         <div class="game-info">
-          <h3>मल्टिप्लेयर क्विज (MULTIPLAYER QUIZ)</h3>
-          <p>धेरै साथीहरूसँग एउटै कोठामा जोडिएर लाइभ मल्टिप्लेयर क्विज खेल्नुहोस्।</p>
-          <span class="badge badge-new">नयाँ फिचर 🔥</span>
+
+          <h3>
+            मल्टिप्लेयर क्विज
+          </h3>
+
+          <p>
+            एउटै कोठामा साथीहरूसँग जोडिएर
+            लाइभ क्विज battle खेल्नुहोस्।
+          </p>
+
+          <span class="badge badge-new">
+            <i class="fa-solid fa-sparkles"></i>
+            नयाँ
+          </span>
+
         </div>
+
       </div>
-      <i class="fa-solid fa-chevron-right arrow-icon"></i>
+
+      <span class="arrow">
+        <i class="fa-solid fa-chevron-right"></i>
+      </span>
+
     </a>
 
-    <!-- 1v1 Online Friends Quiz Battle -->
-    <a href="rank-climber.html" class="game-card">
+
+    <!-- RANK CLIMBER -->
+
+    <a
+      href="rank-climber.html"
+      class="game-card"
+    >
+
       <div class="game-card-left">
-        <div class="game-icon" style="background: #eff6ff; color: #2563eb;">
-          <i class="fa-solid fa-swords"></i>
+
+        <div class="game-icon icon-blue">
+          <i class="fa-solid fa-ranking-star"></i>
         </div>
+
         <div class="game-info">
-          <h3>Rank Climber </h3>
-          
-          <span class="badge badge-live">लाइभ उपलब्ध ⚡</span>
+
+          <h3>
+            Rank Climber
+          </h3>
+
+          <p>
+            लगातार प्रश्नहरू जित्दै आफ्नो rank
+            माथि लैजानुहोस्।
+          </p>
+
+          <span class="badge badge-live">
+            <i class="fa-solid fa-bolt"></i>
+            लाइभ उपलब्ध
+          </span>
+
         </div>
+
       </div>
-      <i class="fa-solid fa-chevron-right arrow-icon"></i>
+
+      <span class="arrow">
+        <i class="fa-solid fa-chevron-right"></i>
+      </span>
+
     </a>
 
-    <!-- Unique Idea 2: Loksewa Wordle / Guess the Term -->
-    <div class="game-card" onclick="alert('यो फिचर चाँडै आउँदैछ! 🚀')">
+
+    <!-- WORDLE -->
+
+    <div
+      class="game-card coming-soon"
+      onclick="showComingSoon('शब्द पहेली')"
+      role="button"
+      tabindex="0"
+      onkeydown="if(event.key==='Enter')showComingSoon('शब्द पहेली')"
+    >
+
       <div class="game-card-left">
-        <div class="game-icon" style="background: #fce7f3; color: #db2777;">
+
+        <div class="game-icon icon-pink">
           <i class="fa-solid fa-puzzle-piece"></i>
         </div>
+
         <div class="game-info">
-          <h3>शब्द पहेली (Loksewa Wordle)</h3>
-          <p>संकेतका आधारमा नेपालको भूगोल, इतिहास वा संविधानसँग सम्बन्धित शब्द अनुमान गर्नुहोस्।</p>
-          <span class="badge badge-soon">छिट्टै आउँदैछ</span>
+
+          <h3>
+            शब्द पहेली
+          </h3>
+
+          <p>
+            संकेतका आधारमा इतिहास, भूगोल र संविधानसँग
+            सम्बन्धित शब्द अनुमान गर्नुहोस्।
+          </p>
+
+          <span class="badge badge-soon">
+            छिट्टै आउँदैछ
+          </span>
+
         </div>
+
       </div>
-      <i class="fa-solid fa-chevron-right arrow-icon"></i>
+
+      <span class="arrow">
+        <i class="fa-solid fa-lock"></i>
+      </span>
+
     </div>
 
-    <!-- Unique Idea 3: Daily Mystery Case (Scenario Based) -->
-    <div class="game-card" onclick="alert('यो फिचर चाँडै आउँदैछ! 🚀')">
+
+    <!-- ADMINISTRATIVE CHALLENGE -->
+
+    <div
+      class="game-card coming-soon"
+      onclick="showComingSoon('प्रशासनिक निर्णय चुनौती')"
+      role="button"
+      tabindex="0"
+      onkeydown="if(event.key==='Enter')showComingSoon('प्रशासनिक निर्णय चुनौती')"
+    >
+
       <div class="game-card-left">
-        <div class="game-icon" style="background: #f0fdf4; color: #16a34a;">
+
+        <div class="game-icon icon-green">
           <i class="fa-solid fa-landmark"></i>
         </div>
+
         <div class="game-info">
-          <h3>प्रशासनिक निर्णय चुनौती</h3>
-          <p>एक अधिकृतको रूपमा वास्तविक प्रशासनिक समस्याको सही कानुनी र नैतिक समाधान छान्नुहोस्।</p>
-          <span class="badge badge-soon">छिट्टै आउँदैछ</span>
+
+          <h3>
+            प्रशासनिक निर्णय चुनौती
+          </h3>
+
+          <p>
+            वास्तविक प्रशासनिक परिस्थितिमा सही
+            कानुनी र नैतिक निर्णय छान्नुहोस्।
+          </p>
+
+          <span class="badge badge-soon">
+            छिट्टै आउँदैछ
+          </span>
+
         </div>
+
       </div>
-      <i class="fa-solid fa-chevron-right arrow-icon"></i>
+
+      <span class="arrow">
+        <i class="fa-solid fa-lock"></i>
+      </span>
+
     </div>
 
-  </main>
+  </section>
+
+
+  <div class="footer-note">
+    <i class="fa-solid fa-shield-halved"></i>
+    निष्पक्ष खेल • आफ्नो प्रगति • निरन्तर अभ्यास
+  </div>
+
+</main>
+
+
+<script>
+
+  /* -------------------------
+     COMING SOON
+  ------------------------- */
+
+  function showComingSoon(name) {
+
+    const message =
+      `${name} अहिले विकास हुँदैछ। 🚀\n\nछिट्टै उपलब्ध हुनेछ।`;
+
+    alert(message);
+
+  }
+
+
+  /* -------------------------
+     THEME COMPATIBILITY
+  ------------------------- */
+
+  const themeButton =
+    document.getElementById("themeButton");
+
+
+  function updateThemeIcon() {
+
+    const theme =
+      localStorage.getItem("loksewa_theme");
+
+    themeButton.innerHTML =
+      theme === "dark"
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+
+  }
+
+
+  themeButton.addEventListener(
+    "click",
+    function () {
+
+      const current =
+        localStorage.getItem("loksewa_theme");
+
+      localStorage.setItem(
+        "loksewa_theme",
+        current === "dark"
+          ? "light"
+          : "dark"
+      );
+
+      updateThemeIcon();
+
+    }
+  );
+
+
+  updateThemeIcon();
+
+</script>
 
 </body>
 </html>
