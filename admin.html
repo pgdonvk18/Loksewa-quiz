@@ -1,413 +1,1472 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
-  <script src="components.js"></script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LoksewaQuest - Advanced Admin Panel</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1730">
+  <meta name="description" content="LoksewaQuest Admin Dashboard">
+  <title>LoksewaQuest — Admin Hub</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600;700;800&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
+    :root {
+      --navy:#0b1730;
+      --navy-2:#10244a;
+      --blue:#2563eb;
+      --blue-2:#4f7ff0;
+      --blue-soft:#edf3ff;
+      --green:#059669;
+      --green-soft:#eafaf4;
+      --orange:#d97706;
+      --orange-soft:#fff6e7;
+      --red:#dc3d4d;
+      --red-soft:#fff0f2;
+      --purple:#7c3aed;
+      --purple-soft:#f3edff;
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#17233d;
+      --muted:#68758c;
+      --line:#e5e9f1;
+      --shadow:0 10px 30px rgba(15,31,61,.06);
+      --shadow-lg:0 20px 55px rgba(15,31,61,.13);
+      --radius:18px;
+      --font-head:'Bricolage Grotesque','Mukta',sans-serif;
+      --font-body:'Figtree','Mukta',sans-serif;
+    }
+
+    body.dark {
+      --bg:#09111f;
+      --card:#111c31;
+      --text:#edf2fb;
+      --muted:#9ba8bd;
+      --line:#24324c;
+      --blue-soft:#172a50;
+      --green-soft:#102d26;
+      --orange-soft:#302511;
+      --red-soft:#321a20;
+      --purple-soft:#281b43;
+      --shadow:0 10px 30px rgba(0,0,0,.18);
+      --shadow-lg:0 20px 55px rgba(0,0,0,.3);
+    }
+
     * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
     }
+
+    html {
+      scroll-behavior:smooth;
+    }
+
     body {
-      background-color: #f8fafc;
-      color: #1e293b;
-      padding-bottom: 50px;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 85% -10%,rgba(37,99,235,.10),transparent 30%),
+        var(--bg);
+      color:var(--text);
+      font-family:var(--font-body);
+      padding-bottom:40px;
+      -webkit-font-smoothing:antialiased;
     }
+
+    button,input,textarea,select {
+      font:inherit;
+    }
+
+    button {
+      cursor:pointer;
+    }
+
+    a {
+      color:inherit;
+      text-decoration:none;
+    }
+
+    :focus-visible {
+      outline:3px solid rgba(37,99,235,.28);
+      outline-offset:2px;
+    }
+
+    /* LOADING */
+
     #loadingScreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #0f172a;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      font-size: 16px;
-      gap: 15px;
+      position:fixed;
+      inset:0;
+      z-index:10000;
+      background:var(--navy);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:16px;
+      padding:30px;
+      text-align:center;
     }
+
+    .loading-logo {
+      width:62px;
+      height:62px;
+      border-radius:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      font-size:25px;
+      color:#9dbaff;
+      margin-bottom:3px;
+    }
+
     .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid rgba(255,255,255,0.3);
-      border-top: 4px solid #3b82f6;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+      width:30px;
+      height:30px;
+      border:3px solid rgba(255,255,255,.18);
+      border-top-color:#8eb0ff;
+      border-radius:50%;
+      animation:spin .8s linear infinite;
     }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .loading-title {
+      font-family:var(--font-head);
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .loading-sub {
+      font-size:12px;
+      color:#aab8d0;
+    }
+
+    @keyframes spin {
+      to { transform:rotate(360deg); }
+    }
+
+    /* HEADER */
 
     .admin-header {
-      background: linear-gradient(135deg, #0f2a4a 0%, #1e40af 100%);
-      color: white;
-      padding: 24px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-radius: 0 0 25px 25px;
-      margin-bottom: 20px;
+      position:relative;
+      overflow:hidden;
+      color:#fff;
+      background:
+        radial-gradient(circle at 90% 0%,rgba(116,151,255,.25),transparent 32%),
+        linear-gradient(135deg,#09152d 0%,#102a59 58%,#1e4aa3 100%);
+      padding:
+        calc(16px + env(safe-area-inset-top))
+        max(18px,calc((100vw - 980px)/2))
+        24px;
+      border-radius:0 0 30px 30px;
+      box-shadow:0 12px 35px rgba(9,23,48,.15);
     }
-    .admin-header h1 {
-      font-size: 17px;
-      font-weight: 700;
+
+    .header-glow {
+      position:absolute;
+      width:180px;
+      height:180px;
+      right:-60px;
+      bottom:-110px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 0 0 30px rgba(255,255,255,.02);
     }
-    .back-btn {
-      background: rgba(255,255,255,0.15);
-      border: none;
-      color: white;
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      text-decoration: none;
+
+    .header-inner {
+      position:relative;
+      z-index:1;
+      max-width:980px;
+      margin:auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
     }
+
+    .header-brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .back-btn,
+    .header-action {
+      width:42px;
+      height:42px;
+      border-radius:13px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.13);
+      flex-shrink:0;
+      transition:.2s;
+    }
+
+    .back-btn:hover,
+    .header-action:hover {
+      background:rgba(255,255,255,.17);
+    }
+
+    .brand-icon {
+      width:43px;
+      height:43px;
+      border-radius:14px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#9eb9ff;
+      font-size:17px;
+      flex-shrink:0;
+    }
+
+    .header-copy {
+      min-width:0;
+    }
+
+    .header-copy small {
+      display:block;
+      color:#9db1d3;
+      font-size:10px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:1.3px;
+      margin-bottom:2px;
+    }
+
+    .header-copy h1 {
+      font-family:var(--font-head);
+      font-size:21px;
+      line-height:1.1;
+      letter-spacing:-.4px;
+      white-space:nowrap;
+    }
+
+    .header-copy p {
+      color:#b9c7dd;
+      font-size:11px;
+      margin-top:4px;
+    }
+
+    /* LAYOUT */
 
     .container {
-      max-width: 650px;
-      margin: 0 auto;
-      padding: 0 20px;
+      width:min(980px,100%);
+      margin:0 auto;
+      padding:22px 18px 0;
     }
 
-    .admin-stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
+    /* ALERT */
+
+    #alertBox {
+      display:none;
+      position:sticky;
+      top:12px;
+      z-index:100;
+      padding:13px 15px;
+      border-radius:14px;
+      margin-bottom:16px;
+      font-size:13px;
+      font-weight:700;
+      box-shadow:var(--shadow);
+      border:1px solid transparent;
     }
+
+    .alert-success {
+      display:block!important;
+      background:var(--green-soft);
+      color:var(--green);
+      border-color:rgba(5,150,105,.15)!important;
+    }
+
+    .alert-error {
+      display:block!important;
+      background:var(--red-soft);
+      color:var(--red);
+      border-color:rgba(220,61,77,.15)!important;
+    }
+
+    /* WELCOME */
+
+    .welcome-card {
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      padding:22px;
+      margin-bottom:18px;
+      color:#fff;
+      border-radius:var(--radius);
+      background:
+        radial-gradient(circle at 100% 0%,rgba(119,153,255,.25),transparent 35%),
+        linear-gradient(135deg,#10244a,#1b418f);
+      box-shadow:var(--shadow);
+    }
+
+    .welcome-card::after {
+      content:"";
+      position:absolute;
+      width:150px;
+      height:150px;
+      right:-75px;
+      bottom:-85px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:50%;
+    }
+
+    .welcome-copy {
+      position:relative;
+      z-index:1;
+    }
+
+    .welcome-copy .eyebrow {
+      color:#a9c0ef;
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      margin-bottom:6px;
+    }
+
+    .welcome-copy h2 {
+      font-family:var(--font-head);
+      font-size:23px;
+      letter-spacing:-.5px;
+    }
+
+    .welcome-copy p {
+      color:#c3d0e8;
+      font-size:12px;
+      margin-top:5px;
+      line-height:1.5;
+    }
+
+    .admin-status {
+      position:relative;
+      z-index:1;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:9px 12px;
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.13);
+      border-radius:11px;
+      color:#fff;
+      font-size:11px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    .status-dot {
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:#55d99f;
+      box-shadow:0 0 0 4px rgba(85,217,159,.12);
+    }
+
+    /* STATS */
+
+    .section-heading {
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+      margin:24px 2px 11px;
+    }
+
+    .section-heading h2 {
+      font-family:var(--font-head);
+      font-size:17px;
+      letter-spacing:-.25px;
+    }
+
+    .section-heading p {
+      color:var(--muted);
+      font-size:11px;
+      margin-top:3px;
+    }
+
+    .refresh-btn {
+      height:34px;
+      padding:0 11px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:var(--card);
+      color:var(--muted);
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .refresh-btn:hover {
+      color:var(--blue);
+      border-color:rgba(37,99,235,.25);
+    }
+
+    .stats-grid {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+    }
+
     .stat-card {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 15px;
-      border: 1px solid #f1f5f9;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    }
-    .stat-card h4 {
-      font-size: 12px;
-      color: #64748b;
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
-    .stat-card span {
-      font-size: 20px;
-      font-weight: 800;
-      color: #1e293b;
+      position:relative;
+      overflow:hidden;
+      min-height:125px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:17px;
+      padding:16px;
+      box-shadow:var(--shadow);
     }
 
-    .form-card {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-      border: 1px solid #f1f5f9;
-      margin-bottom: 20px;
+    .stat-card::after {
+      content:"";
+      position:absolute;
+      width:65px;
+      height:65px;
+      right:-25px;
+      bottom:-28px;
+      border-radius:50%;
+      background:var(--blue-soft);
     }
-    .form-card h3 {
-      font-size: 15px;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+
+    .stat-icon {
+      width:37px;
+      height:37px;
+      border-radius:11px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:12px;
+      font-size:14px;
     }
+
+    .stat-icon.blue {
+      background:var(--blue-soft);
+      color:var(--blue);
+    }
+
+    .stat-icon.red {
+      background:var(--red-soft);
+      color:var(--red);
+    }
+
+    .stat-icon.green {
+      background:var(--green-soft);
+      color:var(--green);
+    }
+
+    .stat-icon.orange {
+      background:var(--orange-soft);
+      color:var(--orange);
+    }
+
+    .stat-card small {
+      display:block;
+      color:var(--muted);
+      font-size:10px;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+
+    .stat-card strong {
+      font-family:var(--font-head);
+      font-size:23px;
+      letter-spacing:-.5px;
+    }
+
+    .stat-card .stat-caption {
+      color:var(--muted);
+      font-size:9px;
+      margin-top:3px;
+    }
+
+    /* TOOL GRID */
+
+    .tool-grid {
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+
+    .tool-card {
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:19px;
+      box-shadow:var(--shadow);
+    }
+
+    .tool-card.wide {
+      grid-column:1/-1;
+    }
+
+    .tool-title {
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:17px;
+    }
+
+    .tool-icon {
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+      font-size:15px;
+    }
+
+    .tool-icon.red {
+      background:var(--red-soft);
+      color:var(--red);
+    }
+
+    .tool-icon.green {
+      background:var(--green-soft);
+      color:var(--green);
+    }
+
+    .tool-icon.orange {
+      background:var(--orange-soft);
+      color:var(--orange);
+    }
+
+    .tool-icon.blue {
+      background:var(--blue-soft);
+      color:var(--blue);
+    }
+
+    .tool-icon.purple {
+      background:var(--purple-soft);
+      color:var(--purple);
+    }
+
+    .tool-title h3 {
+      font-family:var(--font-head);
+      font-size:15px;
+      line-height:1.25;
+    }
+
+    .tool-title p {
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.45;
+      margin-top:4px;
+    }
+
+    /* FORMS */
+
     .form-group {
-      margin-bottom: 14px;
+      margin-bottom:13px;
     }
+
     .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: #475569;
-      margin-bottom: 6px;
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      margin-bottom:6px;
     }
+
     .form-control {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      font-size: 13px;
-      outline: none;
-      background: #f8fafc;
-      transition: border 0.2s;
+      width:100%;
+      min-height:45px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      outline:none;
+      padding:10px 13px;
+      background:var(--bg);
+      color:var(--text);
+      font-size:13px;
+      transition:.2s;
     }
+
     .form-control:focus {
-      border-color: #2563eb;
-      background: #fff;
+      border-color:var(--blue);
+      background:var(--card);
+      box-shadow:0 0 0 3px rgba(37,99,235,.08);
     }
+
     textarea.form-control {
-      resize: vertical;
-      min-height: 120px;
-      font-family: inherit;
-      font-size: 13px;
+      min-height:125px;
+      resize:vertical;
+      line-height:1.55;
+    }
+
+    select.form-control {
+      appearance:auto;
     }
 
     .submit-btn {
-      background: #2563eb;
-      color: white;
-      border: none;
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s;
+      width:100%;
+      min-height:46px;
+      border:0;
+      border-radius:12px;
+      color:#fff;
+      background:var(--blue);
+      font-size:13px;
+      font-weight:800;
+      transition:.2s;
     }
-    .submit-btn:active {
-      background: #1d4ed8;
+
+    .submit-btn:hover {
+      filter:brightness(.95);
     }
-    .submit-btn.btn-orange { background: #d97706; }
-    .submit-btn.btn-red { background: #dc2626; }
+
+    .submit-btn:disabled {
+      opacity:.6;
+      cursor:not-allowed;
+    }
+
+    .btn-orange {
+      background:var(--orange);
+    }
 
     .help-text {
-      font-size: 11px;
-      color: #64748b;
-      margin-top: 6px;
-      line-height: 1.4;
+      margin-top:7px;
+      color:var(--muted);
+      font-size:10px;
+      line-height:1.5;
     }
 
-    #alertBox {
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 15px;
-      display: none;
-    }
-    .alert-success { background: #d1fae5; color: #065f46; }
-    .alert-error { background: #fee2e2; color: #991b1b; }
+    /* REPORTED */
 
-    .q-item {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
+    .report-toolbar {
+      display:flex;
+      gap:8px;
+      margin-bottom:12px;
     }
-    .q-item:hover {
-      background: #f1f5f9;
-      border-color: #94a3b8;
+
+    .search-wrap {
+      position:relative;
+      flex:1;
     }
-    .options-container {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #e2e8f0;
-      display: none;
+
+    .search-wrap i {
+      position:absolute;
+      left:13px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--muted);
+      font-size:12px;
     }
-    .options-container.active {
-      display: block;
+
+    .search-wrap input {
+      width:100%;
+      height:40px;
+      padding:0 12px 0 35px;
+      border:1px solid var(--line);
+      border-radius:11px;
+      outline:none;
+      background:var(--bg);
+      color:var(--text);
+      font-size:12px;
     }
-    .opt-btn {
-      width: 100%;
-      text-align: left;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid #cbd5e1;
-      background: white;
-      margin-bottom: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      color: #1e293b;
-    }
-    .opt-btn.correct-ans {
-      background: #dcfce7;
-      border-color: #22c55e;
-      color: #166534;
-      font-weight: 800;
+
+    .filter-select {
+      height:40px;
+      border:1px solid var(--line);
+      border-radius:11px;
+      background:var(--bg);
+      color:var(--text);
+      padding:0 9px;
+      font-size:11px;
+      font-weight:700;
     }
 
     .reported-card {
-      background: #fff5f5;
-      border: 1px solid #fecaca;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
+      background:var(--red-soft);
+      border:1px solid rgba(220,61,77,.14);
+      border-radius:14px;
+      padding:14px;
+      margin-bottom:9px;
     }
 
-    /* MODAL STYLES */
+    .reported-question {
+      color:var(--text);
+      font-size:13px;
+      font-weight:800;
+      line-height:1.5;
+      margin-bottom:6px;
+    }
+
+    .reported-reason {
+      color:var(--red);
+      font-size:11px;
+      font-weight:700;
+      line-height:1.45;
+    }
+
+    .reported-footer {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-top:12px;
+      padding-top:10px;
+      border-top:1px solid rgba(220,61,77,.10);
+    }
+
+    .report-status {
+      color:var(--muted);
+      font-size:10px;
+    }
+
+    .report-actions {
+      display:flex;
+      gap:6px;
+    }
+
+    .mini-btn {
+      min-height:31px;
+      padding:0 9px;
+      border:0;
+      border-radius:8px;
+      color:#fff;
+      font-size:10px;
+      font-weight:800;
+    }
+
+    .mini-btn.edit {
+      background:var(--blue);
+    }
+
+    .mini-btn.delete {
+      background:var(--red);
+    }
+
+    .empty-state {
+      padding:30px 12px;
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .empty-state i {
+      display:block;
+      font-size:25px;
+      margin-bottom:9px;
+      opacity:.5;
+    }
+
+    /* QUESTIONS */
+
+    .question-list {
+      max-height:600px;
+      overflow-y:auto;
+      padding-right:2px;
+    }
+
+    .q-item {
+      background:var(--bg);
+      border:1px solid var(--line);
+      border-radius:13px;
+      padding:13px;
+      margin-bottom:8px;
+      cursor:pointer;
+      transition:.18s;
+    }
+
+    .q-item:hover {
+      border-color:rgba(37,99,235,.28);
+      transform:translateY(-1px);
+    }
+
+    .q-top {
+      display:flex;
+      align-items:flex-start;
+      gap:9px;
+    }
+
+    .q-number {
+      width:28px;
+      height:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:9px;
+      background:var(--blue-soft);
+      color:var(--blue);
+      font-size:10px;
+      font-weight:800;
+      flex-shrink:0;
+    }
+
+    .q-text {
+      flex:1;
+      color:var(--text);
+      font-size:12px;
+      font-weight:800;
+      line-height:1.5;
+    }
+
+    .q-answer {
+      margin:8px 0 0 37px;
+      color:var(--green);
+      font-size:10px;
+      font-weight:800;
+    }
+
+    .options-container {
+      display:none;
+      margin-top:12px;
+      padding-top:11px;
+      border-top:1px solid var(--line);
+    }
+
+    .options-container.active {
+      display:block;
+    }
+
+    .options-title {
+      color:var(--muted);
+      font-size:10px;
+      font-weight:800;
+      margin-bottom:7px;
+    }
+
+    .opt-btn {
+      width:100%;
+      min-height:38px;
+      padding:8px 10px;
+      margin-bottom:5px;
+      text-align:left;
+      border:1px solid var(--line);
+      border-radius:9px;
+      background:var(--card);
+      color:var(--text);
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .opt-btn.correct-ans {
+      background:var(--green-soft);
+      border-color:rgba(5,150,105,.3);
+      color:var(--green);
+    }
+
+    /* MODALS */
+
     .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(4px);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9999; opacity: 0; visibility: hidden;
-      transition: all 0.3s ease;
+      position:fixed;
+      inset:0;
+      z-index:9000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:rgba(5,13,29,.70);
+      backdrop-filter:blur(7px);
+      opacity:0;
+      visibility:hidden;
+      transition:.2s;
     }
-    .modal-overlay.active { opacity: 1; visibility: visible; }
+
+    .modal-overlay.active {
+      opacity:1;
+      visibility:visible;
+    }
+
     .modal-card {
-      background: #ffffff; width: 90%; max-width: 420px;
-      border-radius: 20px; padding: 22px; text-align: center;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-      transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      max-height: 90vh;
-      overflow-y: auto;
+      width:min(480px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:21px;
+      padding:21px;
+      box-shadow:var(--shadow-lg);
+      transform:translateY(10px) scale(.97);
+      transition:.22s;
     }
-    .modal-overlay.active .modal-card { transform: scale(1); }
+
+    .modal-overlay.active .modal-card {
+      transform:translateY(0) scale(1);
+    }
+
+    .modal-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:17px;
+    }
+
+    .modal-header h3 {
+      font-family:var(--font-head);
+      font-size:16px;
+    }
+
+    .modal-close {
+      width:34px;
+      height:34px;
+      border:0;
+      border-radius:9px;
+      background:var(--bg);
+      color:var(--muted);
+    }
+
+    .modal-actions {
+      display:flex;
+      gap:8px;
+      margin-top:15px;
+    }
+
+    .modal-action {
+      flex:1;
+      min-height:44px;
+      border:0;
+      border-radius:11px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .modal-action.primary {
+      background:var(--green);
+      color:#fff;
+    }
+
+    .modal-action.danger {
+      background:var(--red);
+      color:#fff;
+    }
+
+    .modal-action.secondary {
+      background:var(--bg);
+      color:var(--muted);
+      border:1px solid var(--line);
+    }
+
+    .danger-icon {
+      width:58px;
+      height:58px;
+      border-radius:17px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 auto 15px;
+      background:var(--red-soft);
+      color:var(--red);
+      font-size:22px;
+    }
+
+    .delete-modal {
+      text-align:center;
+    }
+
+    .delete-modal h3 {
+      font-family:var(--font-head);
+      font-size:18px;
+    }
+
+    .delete-modal p {
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+      margin:8px 0 19px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width:760px) {
+      .stats-grid {
+        grid-template-columns:1fr 1fr;
+      }
+
+      .tool-grid {
+        grid-template-columns:1fr;
+      }
+
+      .tool-card.wide {
+        grid-column:auto;
+      }
+    }
+
+    @media (max-width:500px) {
+      .admin-header {
+        padding-left:14px;
+        padding-right:14px;
+      }
+
+      .container {
+        padding-left:13px;
+        padding-right:13px;
+      }
+
+      .welcome-card {
+        align-items:flex-start;
+        flex-direction:column;
+        padding:18px;
+      }
+
+      .welcome-copy h2 {
+        font-size:20px;
+      }
+
+      .stats-grid {
+        gap:8px;
+      }
+
+      .stat-card {
+        min-height:112px;
+        padding:13px;
+      }
+
+      .stat-card strong {
+        font-size:20px;
+      }
+
+      .tool-card {
+        padding:15px;
+      }
+
+      .report-toolbar {
+        flex-direction:column;
+      }
+
+      .filter-select {
+        width:100%;
+      }
+
+      .reported-footer {
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .report-actions {
+        width:100%;
+      }
+
+      .mini-btn {
+        flex:1;
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      * {
+        animation-duration:.01ms!important;
+        transition-duration:.01ms!important;
+      }
+    }
   </style>
 </head>
-<body style="display: none;" id="adminBody">
 
+<body id="adminBody">
+
+  <!-- LOADING -->
   <div id="loadingScreen">
+    <div class="loading-logo">
+      <i class="fa-solid fa-shield-halved"></i>
+    </div>
     <div class="spinner"></div>
-    <span>एड्मिन अधिकार प्रमाणीकरण हुँदैछ...</span>
+    <div class="loading-title">Admin अधिकार प्रमाणीकरण हुँदैछ...</div>
+    <div class="loading-sub">LoksewaQuest सुरक्षित Admin Hub</div>
   </div>
 
-  <!-- EDIT REPORTED QUESTION MODAL -->
+  <!-- EDIT MODAL -->
   <div id="editReportedModal" class="modal-overlay">
-    <div class="modal-card" style="text-align: left;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-        <h3 style="font-size: 15px; font-weight: 800; color: #1e293b;">प्रश्न सम्पादन गर्नुहोस् (Edit Question)</h3>
-        <button onclick="closeEditModal()" style="background: none; border: none; font-size: 16px; cursor: pointer; color: #64748b;"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>प्रश्न सम्पादन गर्नुहोस्</h3>
+        <button class="modal-close" onclick="closeEditModal()" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
-      
+
       <input type="hidden" id="edit-q-id">
-      
+
       <div class="form-group">
-        <label>प्रश्न (Question):</label>
-        <textarea id="edit-q-text" class="form-control" style="min-height: 70px;"></textarea>
+        <label>प्रश्न</label>
+        <textarea id="edit-q-text" class="form-control"></textarea>
       </div>
 
       <div class="form-group">
-        <label>अप्सनहरू (Option 1, 2, 3, 4 - कमाले छुट्याएर):</label>
+        <label>Options — comma ले छुट्याउनुहोस्</label>
         <input type="text" id="edit-q-options" class="form-control">
       </div>
 
       <div class="form-group">
-        <label>सही उत्तर (Correct Answer):</label>
+        <label>सही उत्तर</label>
         <input type="text" id="edit-q-answer" class="form-control">
       </div>
 
       <div class="form-group">
-        <label>स्पष्टीकरण (Explanation):</label>
-        <textarea id="edit-q-explanation" class="form-control" style="min-height: 60px;"></textarea>
+        <label>Explanation</label>
+        <textarea id="edit-q-explanation" class="form-control"></textarea>
       </div>
 
-      <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <button onclick="saveEditedQuestion()" style="flex: 1; background: #059669; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px;">अपडेट गर्नुहोस् (Save)</button>
-        <button onclick="closeEditModal()" style="flex: 1; background: #e2e8f0; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px;">रद्द गर्नुहोस्</button>
+      <div class="modal-actions">
+        <button class="modal-action primary" onclick="saveEditedQuestion()">
+          <i class="fa-solid fa-check"></i> अपडेट गर्नुहोस्
+        </button>
+        <button class="modal-action secondary" onclick="closeEditModal()">
+          रद्द गर्नुहोस्
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- ⚡ CUSTOM DELETE CONFIRMATION MODAL -->
+  <!-- DELETE MODAL -->
   <div id="deleteConfirmModal" class="modal-overlay">
-    <div class="modal-card">
-      <div style="width: 55px; height: 55px; background: #fee2e2; color: #dc2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 15px auto;">
+    <div class="modal-card delete-modal">
+      <div class="danger-icon">
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
-      <h3 style="font-size: 17px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">प्रश्न पूर्ण रूपमा हटाउने?</h3>
-      <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin-bottom: 20px;">
-        यसो गर्दा यो रिपोर्ट मात्र होइन, मुख्य डाटाबेसबाट उक्त <b>प्रश्न नै सदाका लागि डिलिट</b> हुनेछ। यो कार्य फिर्ता गर्न सकिँदैन।
+
+      <h3>प्रश्न हटाउने?</h3>
+
+      <p>
+        यसले रिपोर्ट मात्र होइन, मुख्य quiz database बाट पनि
+        प्रश्न हटाउनेछ। यो कार्य फिर्ता गर्न सकिँदैन।
       </p>
-      
+
       <input type="hidden" id="del-report-id">
       <input type="hidden" id="del-question-id">
 
-      <div style="display: flex; gap: 10px;">
-        <button onclick="confirmDeleteQuestion()" style="flex: 1; background: #dc2626; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px;">हो, हटाउनुहोस्</button>
-        <button onclick="closeDeleteModal()" style="flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px;">रद्द गर्नुहोस्</button>
+      <div class="modal-actions">
+        <button class="modal-action danger" onclick="confirmDeleteQuestion()">
+          <i class="fa-solid fa-trash"></i> हो, हटाउनुहोस्
+        </button>
+        <button class="modal-action secondary" onclick="closeDeleteModal()">
+          रद्द गर्नुहोस्
+        </button>
       </div>
     </div>
   </div>
 
-  <div class="admin-header">
-    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1><i class="fa-solid fa-shield-halved" style="color: #fbbf24;"></i> Loksewa Admin Hub</h1>
-    <div style="width: 38px;"></div>
-  </div>
+  <!-- HEADER -->
+  <header class="admin-header">
+    <div class="header-glow"></div>
 
-  <div class="container">
+    <div class="header-inner">
+
+      <div class="header-brand">
+
+        <a href="dashboard.html" class="back-btn" aria-label="Back">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+
+        <div class="brand-icon">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <div class="header-copy">
+          <small>LoksewaQuest</small>
+          <h1>Admin Hub</h1>
+          <p>Manage your quiz platform</p>
+        </div>
+
+      </div>
+
+      <button class="header-action" id="themeBtn" aria-label="Toggle dark mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+
+    </div>
+  </header>
+
+  <main class="container">
+
     <div id="alertBox"></div>
 
-    <!-- लाइभ स्टाटिस्टिक्स कार्डहरू -->
-    <div class="admin-stats-grid">
+    <!-- WELCOME -->
+    <section class="welcome-card">
+      <div class="welcome-copy">
+        <div class="eyebrow">Control Center</div>
+        <h2>Good to see you, Admin 👋</h2>
+        <p>
+          Questions, reports, notifications र quiz content एउटै ठाउँबाट manage गर्नुहोस्।
+        </p>
+      </div>
+
+      <div class="admin-status">
+        <span class="status-dot"></span>
+        Admin Verified
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="section-heading">
+      <div>
+        <h2>Platform Overview</h2>
+        <p>तपाईंको quiz database को live स्थिति</p>
+      </div>
+
+      <button class="refresh-btn" id="refreshAllBtn">
+        <i class="fa-solid fa-rotate"></i> Refresh
+      </button>
+    </div>
+
+    <section class="stats-grid">
+
       <div class="stat-card">
-        <h4>कुल प्रश्नहरू (Quizzes)</h4>
-        <span id="totalQuizCount">लोड हुँदै...</span>
-      </div>
-      <div class="stat-card">
-        <h4>रिपोर्ट भएका प्रश्नहरू</h4>
-        <span id="totalReportCount" style="color: #dc2626;">0</span>
-      </div>
-    </div>
-
-    <!-- ⚡ १. प्रयोगकर्ताहरूले रिपोर्ट गरेका प्रश्नहरू हेर्ने सेक्सन -->
-    <div class="form-card" style="border-left: 4px solid #dc2626;">
-      <h3><i class="fa-solid fa-triangle-exclamation" style="color: #dc2626;"></i> रिपोर्ट गरिएका प्रश्नहरू (Reported Questions)</h3>
-      <div id="reported-questions-list">
-        <p style="text-align: center; color: #64748b; font-size: 13px;">लोड हुँदैछ...</p>
-      </div>
-    </div>
-
-    <!-- ⚡ २. सेट अनुसार प्रश्न हेरेर उत्तर सच्याउने (Question Correction Tool) -->
-    <div class="form-card" style="border-left: 4px solid #059669;">
-      <h3><i class="fa-solid fa-pen-to-square" style="color: #059669;"></i> सेट अनुसार प्रश्न हेर्ने र उत्तर सच्याउने</h3>
-      <div class="form-group">
-        <label>परीक्षण सेट छान्नुहोस्:</label>
-        <select id="admin-set-selector" class="form-control" onchange="loadAdminQuestionsBySet()">
-          <option value="">-- सेट छान्नुहोस् --</option>
-          <option value="Set-1">Set 1</option>
-          <option value="Set-2">Set 2</option>
-          <option value="Set-3">Set 3</option>
-        </select>
-      </div>
-
-      <div id="admin-questions-list" style="margin-top: 15px;">
-        <p style="text-align: center; color: #64748b; font-size: 13px;">कृपया माथिबाट सेट छान्नुहोस्।</p>
-      </div>
-    </div>
-
-    <!-- ⚡ ३. लाइभ मकी सूचना (Notification Ticker) पठाउने फर्म -->
-    <div class="form-card" style="border-left: 4px solid #d97706;">
-      <h3><i class="fa-solid fa-bullhorn" style="color: #d97706;"></i> लाइभ सूचना पट्टी (Ticker) अपडेट गर्नुहोस्</h3>
-      <form id="notificationForm">
-        <div class="form-group">
-          <label>होमपेजमा सरर चल्ने नयाँ सन्देश:</label>
-          <input type="text" id="notificationInput" class="form-control" placeholder="उदा: नयाँ सेटहरू अपलोड गरिएको छ, सबैले अभ्यास गर्नुहोला!" required>
+        <div class="stat-icon blue">
+          <i class="fa-solid fa-layer-group"></i>
         </div>
-        <button type="submit" class="submit-btn btn-orange" id="notifBtn">सूचना लाइभ गर्नुहोस्</button>
-      </form>
+        <small>कुल प्रश्नहरू</small>
+        <strong id="totalQuizCount">—</strong>
+        <div class="stat-caption">Quiz database</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon red">
+          <i class="fa-solid fa-flag"></i>
+        </div>
+        <small>Reported Questions</small>
+        <strong id="totalReportCount">—</strong>
+        <div class="stat-caption">Review आवश्यक</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <small>System Status</small>
+        <strong id="systemStatus">Live</strong>
+        <div class="stat-caption">Supabase connection</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <i class="fa-solid fa-clock"></i>
+        </div>
+        <small>Last Refresh</small>
+        <strong id="lastRefresh">Now</strong>
+        <div class="stat-caption">Live dashboard</div>
+      </div>
+
+    </section>
+
+    <!-- TOOLS -->
+    <div class="section-heading">
+      <div>
+        <h2>Admin Tools</h2>
+        <p>Frequently used management tools</p>
+      </div>
     </div>
 
-    <!-- ४. SQL Query मार्फत प्रश्न हाल्ने फर्म (Upsert Enabled) -->
-    <div class="form-card">
-      <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> SQL Query मार्फत प्रश्नहरू थप्नुहोस् (एक वा धेरै)</h3>
-      <form id="sqlForm">
-        <div class="form-group">
-          <label>तपाईंको INSERT INTO SQL Query हरू यहाँ राख्नुहोस्:</label>
-          <textarea id="sqlInput" class="form-control" placeholder="INSERT INTO public.quizzes (topic, question, options, answer, explanation) 
-VALUES 
-('Set-1', 'प्रश्न १?', '[\"अ\", \"ब\", \"स\", \"द\"]', 'अ', 'स्पष्टीकरण १'),
-('Set-1', 'प्रश्न २?', '[\"अ\", \"ब\", \"स\", \"द\"]', 'ब', 'स्पष्टीकरण २');" required></textarea>
-          <div class="help-text">
-            ⚡ <b>सुविधा:</b> यदि उही प्रश्न पहिले नै डाटाबेसमा छ भने यो स्वचालित रूपमा <b>Overwrite (Update)</b> हुनेछ!
+    <section class="tool-grid">
+
+      <!-- REPORTS -->
+      <div class="tool-card wide">
+
+        <div class="tool-title">
+          <div class="tool-icon red">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+
+          <div>
+            <h3>Reported Questions</h3>
+            <p>
+              प्रयोगकर्ताले गलत वा समस्या भएको भनेर report गरेका प्रश्नहरू review गर्नुहोस्।
+            </p>
           </div>
         </div>
-        <button type="submit" class="submit-btn" id="sqlSaveBtn">SQL डाटा सेभ गर्नुहोस्</button>
-      </form>
-    </div>
-  </div>
+
+        <div class="report-toolbar">
+
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+              type="search"
+              id="reportSearch"
+              placeholder="प्रश्न वा समस्या खोज्नुहोस्..."
+              autocomplete="off"
+            >
+          </div>
+
+          <select id="reportFilter" class="filter-select">
+            <option value="all">सबै</option>
+            <option value="pending">Pending</option>
+            <option value="resolved">Resolved</option>
+          </select>
+
+        </div>
+
+        <div id="reported-questions-list">
+          <div class="empty-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Reports लोड हुँदैछ...
+          </div>
+        </div>
+
+      </div>
+
+      <!-- QUESTION CORRECTION -->
+      <div class="tool-card wide">
+
+        <div class="tool-title">
+          <div class="tool-icon green">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </div>
+
+          <div>
+            <h3>Question Correction</h3>
+            <p>
+              Set चयन गरेर प्रश्नको सही उत्तर तुरुन्तै परिवर्तन गर्नुहोस्।
+            </p>
+          </div>
+        </div>
+
+        <div class="form-group">
+
+          <label>परीक्षण Set छान्नुहोस्</label>
+
+          <select
+            id="admin-set-selector"
+            class="form-control"
+            onchange="loadAdminQuestionsBySet()"
+          >
+            <option value="">-- Set छान्नुहोस् --</option>
+            <option value="Set-1">Set 1</option>
+            <option value="Set-2">Set 2</option>
+            <option value="Set-3">Set 3</option>
+          </select>
+
+        </div>
+
+        <div id="admin-questions-list" class="question-list">
+          <div class="empty-state">
+            <i class="fa-solid fa-list-check"></i>
+            माथिबाट एउटा Set छान्नुहोस्।
+          </div>
+        </div>
+
+      </div>
+
+      <!-- NOTIFICATION -->
+      <div class="tool-card">
+
+        <div class="tool-title">
+          <div class="tool-icon orange">
+            <i class="fa-solid fa-bullhorn"></i>
+          </div>
+
+          <div>
+            <h3>Live Notification</h3>
+            <p>
+              Dashboard मा देखिने ticker message update गर्नुहोस्।
+            </p>
+          </div>
+        </div>
+
+        <form id="notificationForm">
+
+          <div class="form-group">
+
+            <label>नयाँ सूचना</label>
+
+            <input
+              type="text"
+              id="notificationInput"
+              class="form-control"
+              maxlength="180"
+              placeholder="उदा: नयाँ सेटहरू अपलोड गरिएको छ!"
+              required
+            >
+
+          </div>
+
+          <button
+            type="submit"
+            class="submit-btn btn-orange"
+            id="notifBtn"
+          >
+            <i class="fa-solid fa-paper-plane"></i>
+            सूचना Live गर्नुहोस्
+          </button>
+
+        </form>
+
+      </div>
+
+      <!-- SQL IMPORT -->
+      <div class="tool-card">
+
+        <div class="tool-title">
+          <div class="tool-icon blue">
+            <i class="fa-solid fa-database"></i>
+          </div>
+
+          <div>
+            <h3>Bulk Question Import</h3>
+            <p>
+              धेरै प्रश्नहरू एकैपटक database मा add/update गर्नुहोस्।
+            </p>
+          </div>
+        </div>
+
+        <form id="sqlForm">
+
+          <div class="form-group">
+
+            <label>INSERT INTO SQL</label>
+
+            <textarea
+              id="sqlInput"
+              class="form-control"
+              placeholder="INSERT INTO public.quizzes (topic, question, options, answer, explanation)
+VALUES
+('Set-1', 'प्रश्न १?', '[&quot;अ&quot;, &quot;ब&quot;, &quot;स&quot;, &quot;द&quot;]', 'अ', 'स्पष्टीकरण');"
+              required
+            ></textarea>
+
+            <div class="help-text">
+              <i class="fa-solid fa-circle-info"></i>
+              एउटै question पहिले database मा भएमा
+              <b>upsert</b> मार्फत update हुनेछ।
+            </div>
+
+          </div>
+
+          <button
+            type="submit"
+            class="submit-btn"
+            id="sqlSaveBtn"
+          >
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            Questions Save गर्नुहोस्
+          </button>
+
+        </form>
+
+      </div>
+
+    </section>
+
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+
+    /* =========================
+       FIREBASE
+    ========================= */
 
     const firebaseConfig = {
       apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
@@ -421,356 +1480,1565 @@ VALUES
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    const SUPABASE_URL = "https://edyirdedkiarguvurpxq.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const adminEmails = ["pgprajwal11@gmail.com"];
+    /* =========================
+       SUPABASE
+    ========================= */
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user || !user.email || !adminEmails.includes(user.email.toLowerCase())) {
-        alert("तपाईंलाई यो प्यानल पहुँच गर्ने अनुमति छैन!");
-        window.location.href = "dashboard.html";
-        return;
+    const SUPABASE_URL =
+      "https://edyirdedkiarguvurpxq.supabase.co";
+
+    const SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiIsImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+    const supabase =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    /* =========================
+       ADMIN ACCESS
+    ========================= */
+
+    const adminEmails = [
+      "pgprajwal11@gmail.com"
+    ];
+
+
+    /* =========================
+       ELEMENTS
+    ========================= */
+
+    const loadingScreen =
+      document.getElementById("loadingScreen");
+
+    const adminBody =
+      document.getElementById("adminBody");
+
+    const alertBox =
+      document.getElementById("alertBox");
+
+
+    /* =========================
+       SAFE HTML
+    ========================= */
+
+    function escapeHTML(value) {
+
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =========================
+       ALERT
+    ========================= */
+
+    let alertTimer;
+
+    window.showAlert = function(message, type) {
+
+      clearTimeout(alertTimer);
+
+      alertBox.textContent = message;
+
+      alertBox.className =
+        type === "success"
+          ? "alert-success"
+          : "alert-error";
+
+      alertBox.style.display = "block";
+
+      alertTimer = setTimeout(() => {
+        alertBox.style.display = "none";
+      }, 5000);
+
+    };
+
+
+    /* =========================
+       AUTH
+    ========================= */
+
+    onAuthStateChanged(
+      auth,
+      async (user) => {
+
+        if (
+          !user ||
+          !user.email ||
+          !adminEmails.includes(
+            user.email.toLowerCase()
+          )
+        ) {
+
+          alert(
+            "तपाईंलाई यो Admin Panel पहुँच गर्ने अनुमति छैन!"
+          );
+
+          window.location.href =
+            "dashboard.html";
+
+          return;
+
+        }
+
+
+        loadingScreen.style.display =
+          "none";
+
+        adminBody.style.display =
+          "block";
+
+
+        await refreshDashboard();
+
       }
+    );
 
-      document.getElementById('loadingScreen').style.display = 'none';
-      document.getElementById('adminBody').style.display = 'block';
 
-      fetchDatabaseStats();
-      fetchReportedQuestions();
-    });
+    /* =========================
+       REFRESH DASHBOARD
+    ========================= */
+
+    async function refreshDashboard() {
+
+      await Promise.all([
+        fetchDatabaseStats(),
+        fetchReportedQuestions()
+      ]);
+
+      updateRefreshTime();
+
+    }
+
+
+    function updateRefreshTime() {
+
+      const el =
+        document.getElementById(
+          "lastRefresh"
+        );
+
+      if (!el) return;
+
+      el.textContent =
+        new Intl.DateTimeFormat(
+          "en-US",
+          {
+            hour:"numeric",
+            minute:"2-digit"
+          }
+        ).format(new Date());
+
+    }
+
+
+    /* =========================
+       DATABASE STATS
+    ========================= */
 
     async function fetchDatabaseStats() {
-      try {
-        const { count, error } = await supabase
-          .from('quizzes')
-          .select('*', { count: 'exact', head: true });
-        
-        if (!error) {
-          document.getElementById('totalQuizCount').textContent = count || 0;
-        }
 
-        const { count: reportCount, error: reportErr } = await supabase
-          .from('reported_questions')
-          .select('*', { count: 'exact', head: true });
+      try {
+
+        const {
+          count,
+          error
+        } = await supabase
+          .from("quizzes")
+          .select("*", {
+            count:"exact",
+            head:true
+          });
+
+
+        if (error) throw error;
+
+
+        document.getElementById(
+          "totalQuizCount"
+        ).textContent =
+          Number(count || 0).toLocaleString();
+
+
+        const {
+          count:reportCount,
+          error:reportErr
+        } = await supabase
+          .from("reported_questions")
+          .select("*", {
+            count:"exact",
+            head:true
+          });
+
 
         if (!reportErr) {
-          document.getElementById('totalReportCount').textContent = reportCount || 0;
+
+          document.getElementById(
+            "totalReportCount"
+          ).textContent =
+            Number(
+              reportCount || 0
+            ).toLocaleString();
+
         }
+
+
+        document.getElementById(
+          "systemStatus"
+        ).textContent =
+          "Live";
+
+
       } catch (err) {
-        console.error("Stats load error:", err);
+
+        console.error(
+          "Stats error:",
+          err
+        );
+
+        document.getElementById(
+          "systemStatus"
+        ).textContent =
+          "Error";
+
       }
+
     }
 
-    const alertBox = document.getElementById('alertBox');
-    window.showAlert = function(message, type) {
-      alertBox.textContent = message;
-      alertBox.className = type === 'success' ? 'alert-success' : 'alert-error';
-      alertBox.style.display = 'block';
-      setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
-    }
+
+    /* =========================
+       REPORTED QUESTIONS
+    ========================= */
+
+    let reportedQuestions = [];
+
 
     async function fetchReportedQuestions() {
-      const container = document.getElementById('reported-questions-list');
-      const { data, error } = await supabase
-        .from('reported_questions')
-        .select('*')
-        .order('id', { ascending: false });
+
+      const container =
+        document.getElementById(
+          "reported-questions-list"
+        );
+
+
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          Reports लोड हुँदैछ...
+        </div>
+      `;
+
+
+      const {
+        data,
+        error
+      } = await supabase
+        .from("reported_questions")
+        .select("*")
+        .order("id", {
+          ascending:false
+        });
+
 
       if (error) {
-        container.innerHTML = '<p style="color: #dc2626; text-align: center; font-size: 13px;">रिपोर्ट डेटा लोड गर्न सकिएन।</p>';
+
+        console.error(
+          "Reports error:",
+          error
+        );
+
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            Report data लोड गर्न सकिएन।
+          </div>
+        `;
+
         return;
+
       }
 
-      if (!data || data.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 13px;">हाल कुनै पनि प्रश्न रिपोर्ट गरिएको छैन।</p>';
+
+      reportedQuestions =
+        data || [];
+
+
+      renderReportedQuestions();
+
+    }
+
+
+    function renderReportedQuestions() {
+
+      const container =
+        document.getElementById(
+          "reported-questions-list"
+        );
+
+
+      const search =
+        (
+          document.getElementById(
+            "reportSearch"
+          )?.value || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+      const filter =
+        document.getElementById(
+          "reportFilter"
+        )?.value || "all";
+
+
+      const filtered =
+        reportedQuestions.filter(
+          item => {
+
+            const question =
+              String(
+                item.question_text || ""
+              ).toLowerCase();
+
+            const reason =
+              String(
+                item.reason || ""
+              ).toLowerCase();
+
+            const status =
+              String(
+                item.status || "Pending"
+              ).toLowerCase();
+
+
+            const matchesSearch =
+              !search ||
+              question.includes(search) ||
+              reason.includes(search);
+
+
+            const matchesFilter =
+              filter === "all" ||
+              status === filter;
+
+
+            return (
+              matchesSearch &&
+              matchesFilter
+            );
+
+          }
+        );
+
+
+      if (!filtered.length) {
+
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-regular fa-circle-check"></i>
+            ${
+              reportedQuestions.length
+                ? "तपाईंको filter अनुसार कुनै report भेटिएन।"
+                : "हाल कुनै प्रश्न report गरिएको छैन।"
+            }
+          </div>
+        `;
+
         return;
+
       }
 
-      container.innerHTML = '';
-      data.forEach(item => {
-        container.innerHTML += `
-          <div class="reported-card">
-            <p style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">प्रश्न: ${item.question_text || 'N/A'}</p>
-            <p style="font-size: 12px; color: #dc2626; font-weight: 600; margin-bottom: 8px;">समस्या: ${item.reason}</p>
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
-              <span style="color: #64748b;">स्थिति: <b>${item.status || 'Pending'}</b></span>
-              <div style="display: flex; gap: 6px;">
-                ${item.question_id ? `<button onclick="openEditModal(${item.question_id})" style="background: #2563eb; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;"><i class="fa-solid fa-pen-to-square"></i> सम्पादन</button>` : ''}
-                <button onclick="openDeleteModal('${item.id}', '${item.question_id || ''}')" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;"><i class="fa-solid fa-trash"></i> हटाउने</button>
+
+      container.innerHTML =
+        filtered.map(
+          item => {
+
+            const question =
+              escapeHTML(
+                item.question_text ||
+                "N/A"
+              );
+
+            const reason =
+              escapeHTML(
+                item.reason ||
+                "No reason"
+              );
+
+            const status =
+              escapeHTML(
+                item.status ||
+                "Pending"
+              );
+
+
+            const questionId =
+              item.question_id || "";
+
+
+            return `
+
+              <div
+                class="reported-card"
+                data-search="${question} ${reason}"
+              >
+
+                <div class="reported-question">
+                  ${question}
+                </div>
+
+                <div class="reported-reason">
+                  <i class="fa-solid fa-flag"></i>
+                  ${reason}
+                </div>
+
+                <div class="reported-footer">
+
+                  <span class="report-status">
+                    Status:
+                    <b>${status}</b>
+                  </span>
+
+                  <div class="report-actions">
+
+                    ${
+                      questionId
+                      ?
+                      `
+                        <button
+                          class="mini-btn edit"
+                          onclick="openEditModal('${escapeHTML(questionId)}')"
+                        >
+                          <i class="fa-solid fa-pen"></i>
+                          Edit
+                        </button>
+                      `
+                      :
+                      ""
+                    }
+
+                    <button
+                      class="mini-btn delete"
+                      onclick="openDeleteModal(
+                        '${escapeHTML(item.id)}',
+                        '${escapeHTML(questionId)}'
+                      )"
+                    >
+                      <i class="fa-solid fa-trash"></i>
+                      Delete
+                    </button>
+
+                  </div>
+
+                </div>
+
               </div>
-            </div>
-          </div>
-        `;
-      });
-    }
 
-    window.openEditModal = async function(questionId) {
-      const { data, error } = await supabase
-        .from('quizzes')
-        .select('*')
-        .eq('id', questionId)
-        .single();
-
-      if (error || !data) {
-        showAlert('मुख्य क्विज डाटाबेसमा यो प्रश्न फेला परेन!', 'error');
-        return;
-      }
-
-      document.getElementById('edit-q-id').value = data.id;
-      document.getElementById('edit-q-text').value = data.question;
-      document.getElementById('edit-q-options').value = Array.isArray(data.options) ? data.options.join(', ') : data.options;
-      document.getElementById('edit-q-answer').value = data.answer;
-      document.getElementById('edit-q-explanation').value = data.explanation || '';
-
-      document.getElementById('editReportedModal').classList.add('active');
-    }
-
-    window.closeEditModal = function() {
-      document.getElementById('editReportedModal').classList.remove('active');
-    }
-
-    window.saveEditedQuestion = async function() {
-      const qId = document.getElementById('edit-q-id').value;
-      const newQuestion = document.getElementById('edit-q-text').value.trim();
-      const rawOptions = document.getElementById('edit-q-options').value;
-      const newAnswer = document.getElementById('edit-q-answer').value.trim();
-      const newExplanation = document.getElementById('edit-q-explanation').value.trim();
-
-      const newOptionsArray = rawOptions.split(',').map(opt => opt.trim());
-
-      if (!newQuestion || newOptionsArray.length === 0 || !newAnswer) {
-        alert('कृपया सबै आवश्यक फिल्डहरू सही तरिकाले भर्नुहोस्!');
-        return;
-      }
-
-      const { error } = await supabase
-        .from('quizzes')
-        .update({
-          question: newQuestion,
-          options: newOptionsArray,
-          answer: newAnswer,
-          explanation: newExplanation
-        })
-        .eq('id', qId);
-
-      if (error) {
-        showAlert('अपडेट गर्न असफल भयो: ' + error.message, 'error');
-      } else {
-        await supabase
-          .from('reported_questions')
-          .delete()
-          .eq('question_id', qId);
-
-        showAlert('प्रश्न सफलतापूर्वक अपडेट भयो र रिपोर्ट सूचीबाट हटाइयो! 🎉', 'success');
-        closeEditModal();
-        fetchReportedQuestions();
-        fetchDatabaseStats();
-      }
-    }
-
-    window.openDeleteModal = function(reportId, questionId) {
-      document.getElementById('del-report-id').value = reportId;
-      document.getElementById('del-question-id').value = questionId;
-      document.getElementById('deleteConfirmModal').classList.add('active');
-    }
-
-    window.closeDeleteModal = function() {
-      document.getElementById('deleteConfirmModal').classList.remove('active');
-    }
-
-    window.confirmDeleteQuestion = async function() {
-      const reportId = document.getElementById('del-report-id').value;
-      const questionId = document.getElementById('del-question-id').value;
-
-      closeDeleteModal();
-
-      try {
-        if (questionId && questionId !== 'null' && questionId !== '') {
-          const { error: quizErr } = await supabase
-            .from('quizzes')
-            .delete()
-            .eq('id', questionId);
-
-          if (quizErr) throw quizErr;
-        }
-
-        const { error: reportErr } = await supabase
-          .from('reported_questions')
-          .delete()
-          .eq('id', reportId);
-
-        if (reportErr) throw reportErr;
-
-        showAlert('प्रश्न र यसको रिपोर्ट डाटाबेसबाट सफलतापूर्वक हटाइयो! 🗑️', 'success');
-        fetchReportedQuestions();
-        fetchDatabaseStats();
-      } catch (err) {
-        showAlert('हटाउन असफल भयो: ' + err.message, 'error');
-      }
-    }
-
-    window.loadAdminQuestionsBySet = async function() {
-      const selectedSet = document.getElementById('admin-set-selector').value;
-      const listContainer = document.getElementById('admin-questions-list');
-      
-      if (!selectedSet) {
-        listContainer.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 13px;">कृपया सेट छान्नुहोस्।</p>';
-        return;
-      }
-
-      listContainer.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 13px;">प्रश्नहरू लोड हुँदैछ...</p>';
-
-      const { data, error } = await supabase
-        .from('quizzes')
-        .select('*')
-        .ilike('topic', selectedSet);
-
-      if (error || !data || data.length === 0) {
-        listContainer.innerHTML = '<p style="text-align: center; color: #64748b; font-size: 13px;">यो सेटमा कुनै प्रश्न भेटिएन।</p>';
-        return;
-      }
-
-      listContainer.innerHTML = '';
-      data.forEach((q, index) => {
-        let optionsHTML = '';
-        if (q.options && Array.isArray(q.options)) {
-          q.options.forEach(opt => {
-            const isCorrect = (opt.trim() === q.answer.trim());
-            optionsHTML += `
-              <button type="button" class="opt-btn ${isCorrect ? 'correct-ans' : ''}" onclick="updateCorrectAnswer('${q.id}', '${encodeURIComponent(opt)}', '${selectedSet}')">
-                ${opt} ${isCorrect ? ' ⭐ (हालको सही उत्तर)' : ''}
-              </button>
             `;
-          });
-        }
 
-        listContainer.innerHTML += `
-          <div class="q-item" onclick="toggleAdminOptions('${q.id}')">
-            <p style="font-size: 13px; font-weight: 700; color: #1e293b;">Q${index + 1}: ${q.question}</p>
-            <p style="font-size: 11px; color: #059669; margin-top: 4px; font-weight: 600;">सही उत्तर: ${q.answer}</p>
-            <div id="admin-opt-box-${q.id}" class="options-container" onclick="event.stopPropagation()">
-              <p style="font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px;">नयाँ सही उत्तर छान्नुहोस्:</p>
-              ${optionsHTML}
-            </div>
-          </div>
-        `;
-      });
+          }
+        ).join("");
+
     }
 
-    window.toggleAdminOptions = function(qId) {
-      const box = document.getElementById(`admin-opt-box-${qId}`);
-      if (box) box.classList.toggle('active');
-    }
 
-    window.updateCorrectAnswer = async function(qId, encodedOpt, currentSet) {
-      const selectedOption = decodeURIComponent(encodedOpt);
-      if (!confirm(`के तपाईं यो प्रश्नको सही उत्तर "${selectedOption}" राख्न चाहनुहुन्छ?`)) return;
+    document
+      .getElementById("reportSearch")
+      .addEventListener(
+        "input",
+        renderReportedQuestions
+      );
 
-      const { error } = await supabase.from('quizzes').update({ answer: selectedOption }).eq('id', qId);
-      if (error) {
-        showAlert('अपडेट गर्न असफल भयो: ' + error.message, 'error');
-      } else {
-        showAlert('सफलतापूर्वक नयाँ सही उत्तर अपडेट गरियो! 🎉', 'success');
-        document.getElementById('admin-set-selector').value = currentSet;
-        loadAdminQuestionsBySet();
-      }
-    }
 
-    document.getElementById('notificationForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const notifBtn = document.getElementById('notifBtn');
-      notifBtn.disabled = true;
-      notifBtn.textContent = "सेभ हुँदैछ...";
+    document
+      .getElementById("reportFilter")
+      .addEventListener(
+        "change",
+        renderReportedQuestions
+      );
 
-      const messageText = document.getElementById('notificationInput').value.trim();
-      try {
-        const { error } = await supabase.from('notifications').insert([{ message: messageText }]);
-        if (error) throw error;
-        showAlert("सूचना सफलतापूर्वक लाइभ गरिदियो!", "success");
-        document.getElementById('notificationForm').reset();
-      } catch (err) {
-        showAlert("त्रुटि: " + err.message, "error");
-      } finally {
-        notifBtn.disabled = false;
-        notifBtn.textContent = "सूचना लाइभ गर्नुहोस्";
-      }
-    });
 
-    document.getElementById('sqlForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const sqlText = document.getElementById('sqlInput').value.trim();
-      const sqlSaveBtn = document.getElementById('sqlSaveBtn');
-      
-      if (!sqlText) {
-        showAlert("कृपया SQL Query लेख्नुहोस्!", "error");
-        return;
-      }
+    /* =========================
+       EDIT QUESTION
+    ========================= */
 
-      sqlSaveBtn.disabled = true;
-      sqlSaveBtn.textContent = "डेटा सेभ हुँदैछ...";
+    window.openEditModal =
+      async function(questionId) {
 
-      try {
-        const valuesMatch = sqlText.match(/VALUES\s*([\s\S]*);?/i);
-        if (!valuesMatch) {
-          throw new Error("मान्य INSERT INTO ... VALUES ढाँचा फेला परेन।");
+        const {
+          data,
+          error
+        } = await supabase
+          .from("quizzes")
+          .select("*")
+          .eq("id", questionId)
+          .single();
+
+
+        if (
+          error ||
+          !data
+        ) {
+
+          showAlert(
+            "मुख्य quiz database मा प्रश्न भेटिएन!",
+            "error"
+          );
+
+          return;
+
         }
 
-        let valuesString = valuesMatch[1].trim();
-        if (valuesString.endsWith(';')) {
-          valuesString = valuesString.slice(0, -1);
+
+        document.getElementById(
+          "edit-q-id"
+        ).value =
+          data.id;
+
+
+        document.getElementById(
+          "edit-q-text"
+        ).value =
+          data.question || "";
+
+
+        document.getElementById(
+          "edit-q-options"
+        ).value =
+          Array.isArray(data.options)
+            ? data.options.join(", ")
+            : data.options || "";
+
+
+        document.getElementById(
+          "edit-q-answer"
+        ).value =
+          data.answer || "";
+
+
+        document.getElementById(
+          "edit-q-explanation"
+        ).value =
+          data.explanation || "";
+
+
+        document
+          .getElementById(
+            "editReportedModal"
+          )
+          .classList.add("active");
+
+      };
+
+
+    window.closeEditModal =
+      function() {
+
+        document
+          .getElementById(
+            "editReportedModal"
+          )
+          .classList.remove("active");
+
+      };
+
+
+    window.saveEditedQuestion =
+      async function() {
+
+        const qId =
+          document.getElementById(
+            "edit-q-id"
+          ).value;
+
+
+        const newQuestion =
+          document.getElementById(
+            "edit-q-text"
+          ).value.trim();
+
+
+        const rawOptions =
+          document.getElementById(
+            "edit-q-options"
+          ).value;
+
+
+        const newAnswer =
+          document.getElementById(
+            "edit-q-answer"
+          ).value.trim();
+
+
+        const newExplanation =
+          document.getElementById(
+            "edit-q-explanation"
+          ).value.trim();
+
+
+        const newOptionsArray =
+          rawOptions
+            .split(",")
+            .map(
+              opt => opt.trim()
+            )
+            .filter(Boolean);
+
+
+        if (
+          !qId ||
+          !newQuestion ||
+          newOptionsArray.length < 2 ||
+          !newAnswer
+        ) {
+
+          showAlert(
+            "कृपया सबै आवश्यक fields सही रूपमा भर्नुहोस्।",
+            "error"
+          );
+
+          return;
+
         }
 
-        const regex = /\(\s*'([^']+)'\s*,\s*'([^']+)'\s*,\s*'(\[.*?\])'\s*,\s*'([^']+)'\s*,\s*'([^']+)'\s*\)/gs;
-        
-        let match;
-        const rowsToInsert = [];
 
-        while ((match = regex.exec(valuesString)) !== null) {
-          const topic = match[1];
-          const question = match[2];
-          let optionsStr = match[3];
-          const answer = match[4];
-          const explanation = match[5];
+        const {
+          error
+        } = await supabase
+          .from("quizzes")
+          .update({
+            question:newQuestion,
+            options:newOptionsArray,
+            answer:newAnswer,
+            explanation:newExplanation
+          })
+          .eq("id", qId);
 
-          let optionsArray;
-          try {
-            optionsArray = JSON.parse(optionsStr.replace(/\\"/g, '"'));
-          } catch (err) {
-            optionsArray = optionsStr.replace(/[\[\]]/g, '').split(',').map(o => o.trim().replace(/^["']|["']$/g, ''));
+
+        if (error) {
+
+          showAlert(
+            "अपडेट गर्न असफल भयो: " +
+            error.message,
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        await supabase
+          .from("reported_questions")
+          .delete()
+          .eq(
+            "question_id",
+            qId
+          );
+
+
+        showAlert(
+          "प्रश्न सफलतापूर्वक अपडेट भयो! 🎉",
+          "success"
+        );
+
+
+        closeEditModal();
+
+        await refreshDashboard();
+
+      };
+
+
+    /* =========================
+       DELETE QUESTION
+    ========================= */
+
+    window.openDeleteModal =
+      function(
+        reportId,
+        questionId
+      ) {
+
+        document.getElementById(
+          "del-report-id"
+        ).value =
+          reportId;
+
+
+        document.getElementById(
+          "del-question-id"
+        ).value =
+          questionId;
+
+
+        document
+          .getElementById(
+            "deleteConfirmModal"
+          )
+          .classList.add(
+            "active"
+          );
+
+      };
+
+
+    window.closeDeleteModal =
+      function() {
+
+        document
+          .getElementById(
+            "deleteConfirmModal"
+          )
+          .classList.remove(
+            "active"
+          );
+
+      };
+
+
+    window.confirmDeleteQuestion =
+      async function() {
+
+        const reportId =
+          document.getElementById(
+            "del-report-id"
+          ).value;
+
+
+        const questionId =
+          document.getElementById(
+            "del-question-id"
+          ).value;
+
+
+        closeDeleteModal();
+
+
+        try {
+
+          if (
+            questionId &&
+            questionId !== "null"
+          ) {
+
+            const {
+              error:quizErr
+            } = await supabase
+              .from("quizzes")
+              .delete()
+              .eq(
+                "id",
+                questionId
+              );
+
+
+            if (quizErr) {
+              throw quizErr;
+            }
+
           }
 
-          rowsToInsert.push({
-            topic: topic,
-            question: question,
-            options: optionsArray,
-            answer: answer,
-            explanation: explanation
-          });
+
+          const {
+            error:reportErr
+          } = await supabase
+            .from("reported_questions")
+            .delete()
+            .eq(
+              "id",
+              reportId
+            );
+
+
+          if (reportErr) {
+            throw reportErr;
+          }
+
+
+          showAlert(
+            "प्रश्न र report सफलतापूर्वक हटाइयो।",
+            "success"
+          );
+
+
+          await refreshDashboard();
+
+
+        } catch (err) {
+
+          showAlert(
+            "हटाउन असफल भयो: " +
+            err.message,
+            "error"
+          );
+
         }
 
-        if (rowsToInsert.length === 0) {
-          throw new Error("कुनै पनि वैध डेटा फेला परेन। कृपया SQL को ढाँचा (Format) मिलाउनुहोला।");
+      };
+
+
+    /* =========================
+       QUESTIONS BY SET
+    ========================= */
+
+    window.loadAdminQuestionsBySet =
+      async function() {
+
+        const selectedSet =
+          document.getElementById(
+            "admin-set-selector"
+          ).value;
+
+
+        const listContainer =
+          document.getElementById(
+            "admin-questions-list"
+          );
+
+
+        if (!selectedSet) {
+
+          listContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fa-solid fa-list-check"></i>
+              माथिबाट एउटा Set छान्नुहोस्।
+            </div>
+          `;
+
+          return;
+
         }
 
-        // यहाँ rowsToList को ठाउँमा सही rowsToInsert राखिएको छ
-        const { error } = await supabase
-          .from('quizzes')
-          .upsert(rowsToInsert, { onConflict: 'question' });
 
-        if (error) throw error;
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            प्रश्नहरू लोड हुँदैछ...
+          </div>
+        `;
 
-        showAlert(`सफलतापूर्वक ${rowsToInsert.length} वटा प्रश्नहरू सेभ/ओभरराइट भए! 🎉`, "success");
-        document.getElementById('sqlForm').reset();
-        fetchDatabaseStats();
-      } catch (err) {
-        showAlert("त्रुटि: " + err.message, "error");
-      } finally {
-        sqlSaveBtn.disabled = false;
-        sqlSaveBtn.textContent = "SQL डाटा सेभ गर्नुहोस्";
+
+        const {
+          data,
+          error
+        } = await supabase
+          .from("quizzes")
+          .select("*")
+          .ilike(
+            "topic",
+            selectedSet
+          );
+
+
+        if (
+          error ||
+          !data ||
+          !data.length
+        ) {
+
+          listContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fa-regular fa-folder-open"></i>
+              यो Set मा कुनै प्रश्न भेटिएन।
+            </div>
+          `;
+
+          return;
+
+        }
+
+
+        listContainer.innerHTML =
+          data.map(
+            (q,index) => {
+
+              let optionsHTML = "";
+
+
+              if (
+                q.options &&
+                Array.isArray(q.options)
+              ) {
+
+                optionsHTML =
+                  q.options.map(
+                    opt => {
+
+                      const isCorrect =
+                        String(opt).trim() ===
+                        String(q.answer || "").trim();
+
+
+                      return `
+
+                        <button
+                          type="button"
+                          class="opt-btn ${
+                            isCorrect
+                              ? "correct-ans"
+                              : ""
+                          }"
+                          onclick="updateCorrectAnswer(
+                            '${escapeHTML(q.id)}',
+                            '${encodeURIComponent(opt)}',
+                            '${escapeHTML(selectedSet)}'
+                          )"
+                        >
+
+                          ${escapeHTML(opt)}
+
+                          ${
+                            isCorrect
+                              ? " ⭐ Current Answer"
+                              : ""
+                          }
+
+                        </button>
+
+                      `;
+
+                    }
+                  ).join("");
+
+              }
+
+
+              return `
+
+                <div
+                  class="q-item"
+                  onclick="toggleAdminOptions('${escapeHTML(q.id)}')"
+                >
+
+                  <div class="q-top">
+
+                    <div class="q-number">
+                      ${index + 1}
+                    </div>
+
+                    <div class="q-text">
+                      ${escapeHTML(q.question)}
+                    </div>
+
+                  </div>
+
+                  <div class="q-answer">
+                    <i class="fa-solid fa-check"></i>
+                    सही उत्तर:
+                    ${escapeHTML(q.answer)}
+                  </div>
+
+                  <div
+                    id="admin-opt-box-${escapeHTML(q.id)}"
+                    class="options-container"
+                    onclick="event.stopPropagation()"
+                  >
+
+                    <div class="options-title">
+                      नयाँ सही उत्तर छान्नुहोस्
+                    </div>
+
+                    ${optionsHTML}
+
+                  </div>
+
+                </div>
+
+              `;
+
+            }
+          ).join("");
+
+      };
+
+
+    window.toggleAdminOptions =
+      function(qId) {
+
+        const box =
+          document.getElementById(
+            `admin-opt-box-${qId}`
+          );
+
+
+        if (box) {
+          box.classList.toggle(
+            "active"
+          );
+        }
+
+      };
+
+
+    window.updateCorrectAnswer =
+      async function(
+        qId,
+        encodedOpt,
+        currentSet
+      ) {
+
+        const selectedOption =
+          decodeURIComponent(
+            encodedOpt
+          );
+
+
+        if (
+          !confirm(
+            `के तपाईं "${selectedOption}" लाई सही उत्तर बनाउन चाहनुहुन्छ?`
+          )
+        ) {
+
+          return;
+
+        }
+
+
+        const {
+          error
+        } = await supabase
+          .from("quizzes")
+          .update({
+            answer:selectedOption
+          })
+          .eq("id",qId);
+
+
+        if (error) {
+
+          showAlert(
+            "उत्तर अपडेट गर्न असफल भयो: " +
+            error.message,
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        showAlert(
+          "नयाँ सही उत्तर सफलतापूर्वक अपडेट भयो! 🎉",
+          "success"
+        );
+
+
+        document.getElementById(
+          "admin-set-selector"
+        ).value =
+          currentSet;
+
+
+        await loadAdminQuestionsBySet();
+
+      };
+
+
+    /* =========================
+       NOTIFICATION
+    ========================= */
+
+    document
+      .getElementById(
+        "notificationForm"
+      )
+      .addEventListener(
+        "submit",
+        async event => {
+
+          event.preventDefault();
+
+
+          const button =
+            document.getElementById(
+              "notifBtn"
+            );
+
+
+          const input =
+            document.getElementById(
+              "notificationInput"
+            );
+
+
+          const message =
+            input.value.trim();
+
+
+          if (!message) {
+
+            showAlert(
+              "कृपया सूचना लेख्नुहोस्।",
+              "error"
+            );
+
+            return;
+
+          }
+
+
+          button.disabled = true;
+
+          button.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Publishing...';
+
+
+          try {
+
+            const {
+              error
+            } = await supabase
+              .from("notifications")
+              .insert([
+                {
+                  message
+                }
+              ]);
+
+
+            if (error) {
+              throw error;
+            }
+
+
+            showAlert(
+              "सूचना सफलतापूर्वक Live गरियो! 📢",
+              "success"
+            );
+
+
+            input.value = "";
+
+
+          } catch (err) {
+
+            showAlert(
+              "सूचना publish गर्न असफल भयो: " +
+              err.message,
+              "error"
+            );
+
+
+          } finally {
+
+            button.disabled = false;
+
+            button.innerHTML =
+              '<i class="fa-solid fa-paper-plane"></i> सूचना Live गर्नुहोस्';
+
+          }
+
+        }
+      );
+
+
+    /* =========================
+       SQL IMPORT
+    ========================= */
+
+    document
+      .getElementById(
+        "sqlForm"
+      )
+      .addEventListener(
+        "submit",
+        async event => {
+
+          event.preventDefault();
+
+
+          const sqlText =
+            document.getElementById(
+              "sqlInput"
+            ).value.trim();
+
+
+          const saveButton =
+            document.getElementById(
+              "sqlSaveBtn"
+            );
+
+
+          if (!sqlText) {
+
+            showAlert(
+              "कृपया SQL Query लेख्नुहोस्!",
+              "error"
+            );
+
+            return;
+
+          }
+
+
+          saveButton.disabled =
+            true;
+
+
+          saveButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Import हुँदैछ...';
+
+
+          try {
+
+            const valuesMatch =
+              sqlText.match(
+                /VALUES\s*([\s\S]*);?/i
+              );
+
+
+            if (!valuesMatch) {
+
+              throw new Error(
+                "मान्य INSERT INTO ... VALUES format भेटिएन।"
+              );
+
+            }
+
+
+            let valuesString =
+              valuesMatch[1].trim();
+
+
+            if (
+              valuesString.endsWith(";")
+            ) {
+
+              valuesString =
+                valuesString.slice(
+                  0,
+                  -1
+                );
+
+            }
+
+
+            const regex =
+              /\(\s*'([^']*)'\s*,\s*'([^']*)'\s*,\s*'(\[.*?\])'\s*,\s*'([^']*)'\s*,\s*'([^']*)'\s*\)/gs;
+
+
+            let match;
+
+            const rowsToInsert =
+              [];
+
+
+            while (
+              (match =
+                regex.exec(
+                  valuesString
+                )) !== null
+            ) {
+
+              const topic =
+                match[1];
+
+              const question =
+                match[2];
+
+              const optionsStr =
+                match[3];
+
+              const answer =
+                match[4];
+
+              const explanation =
+                match[5];
+
+
+              let optionsArray;
+
+
+              try {
+
+                optionsArray =
+                  JSON.parse(
+                    optionsStr
+                      .replace(
+                        /\\"/g,
+                        '"'
+                      )
+                  );
+
+              } catch {
+
+                optionsArray =
+                  optionsStr
+                    .replace(
+                      /[\[\]]/g,
+                      ""
+                    )
+                    .split(",")
+                    .map(
+                      option =>
+                        option
+                          .trim()
+                          .replace(
+                            /^["']|["']$/g,
+                            ""
+                          )
+                    );
+
+              }
+
+
+              rowsToInsert.push({
+                topic,
+                question,
+                options:
+                  optionsArray,
+                answer,
+                explanation
+              });
+
+            }
+
+
+            if (
+              !rowsToInsert.length
+            ) {
+
+              throw new Error(
+                "कुनै वैध प्रश्न data भेटिएन।"
+              );
+
+            }
+
+
+            const {
+              error
+            } = await supabase
+              .from("quizzes")
+              .upsert(
+                rowsToInsert,
+                {
+                  onConflict:"question"
+                }
+              );
+
+
+            if (error) {
+              throw error;
+            }
+
+
+            showAlert(
+              `${rowsToInsert.length} वटा प्रश्न सफलतापूर्वक save/update भए! 🎉`,
+              "success"
+            );
+
+
+            document
+              .getElementById(
+                "sqlForm"
+              )
+              .reset();
+
+
+            await fetchDatabaseStats();
+
+
+          } catch (err) {
+
+            showAlert(
+              "Import error: " +
+              err.message,
+              "error"
+            );
+
+
+          } finally {
+
+            saveButton.disabled =
+              false;
+
+            saveButton.innerHTML =
+              '<i class="fa-solid fa-cloud-arrow-up"></i> Questions Save गर्नुहोस्';
+
+          }
+
+        }
+      );
+
+
+    /* =========================
+       REFRESH
+    ========================= */
+
+    document
+      .getElementById(
+        "refreshAllBtn"
+      )
+      .addEventListener(
+        "click",
+        async () => {
+
+          const button =
+            document.getElementById(
+              "refreshAllBtn"
+            );
+
+
+          button.disabled =
+            true;
+
+
+          button.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+
+          try {
+
+            await refreshDashboard();
+
+            showAlert(
+              "Dashboard सफलतापूर्वक refresh भयो।",
+              "success"
+            );
+
+          } finally {
+
+            button.disabled =
+              false;
+
+            button.innerHTML =
+              '<i class="fa-solid fa-rotate"></i> Refresh';
+
+          }
+
+        }
+      );
+
+
+    /* =========================
+       DARK MODE
+    ========================= */
+
+    const themeBtn =
+      document.getElementById(
+        "themeBtn"
+      );
+
+
+    function updateThemeIcon() {
+
+      const dark =
+        document.body.classList.contains(
+          "dark"
+        );
+
+
+      themeBtn.innerHTML =
+        dark
+          ? '<i class="fa-solid fa-sun"></i>'
+          : '<i class="fa-solid fa-moon"></i>';
+
+    }
+
+
+    if (
+      localStorage.getItem(
+        "loksewa_admin_theme"
+      ) === "dark"
+    ) {
+
+      document.body.classList.add(
+        "dark"
+      );
+
+    }
+
+
+    updateThemeIcon();
+
+
+    themeBtn.addEventListener(
+      "click",
+      () => {
+
+        document.body.classList.toggle(
+          "dark"
+        );
+
+
+        localStorage.setItem(
+          "loksewa_admin_theme",
+          document.body.classList.contains(
+            "dark"
+          )
+            ? "dark"
+            : "light"
+        );
+
+
+        updateThemeIcon();
+
       }
-    });
+    );
+
+
+    /* =========================
+       MODAL ESCAPE / BACKDROP
+    ========================= */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key !== "Escape"
+        ) {
+          return;
+        }
+
+
+        closeEditModal();
+        closeDeleteModal();
+
+      }
+    );
+
+
+    document
+      .querySelectorAll(
+        ".modal-overlay"
+      )
+      .forEach(
+        overlay => {
+
+          overlay.addEventListener(
+            "click",
+            event => {
+
+              if (
+                event.target ===
+                overlay
+              ) {
+
+                overlay.classList.remove(
+                  "active"
+                );
+
+              }
+
+            }
+          );
+
+        }
+      );
+
   </script>
+
 </body>
 </html>
