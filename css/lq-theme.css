@@ -1,0 +1,148 @@
+/* ==========================================================
+   LoksewaQuest shared design system  (css/lq-theme.css)
+   Tokens + reusable components. Link from every redesigned page:
+   <link rel="stylesheet" href="css/lq-theme.css">
+   Dark mode: works with BOTH  body.dark  and  html[data-theme="dark"].
+   ========================================================== */
+
+:root {
+  /* brand */
+  --ink: #0F1F3D;          /* header / dark surfaces */
+  --ridge: #1B3460;
+  --blue: #2554B8;         /* primary action, progress, links */
+  --blue-d: #1B418F;       /* pressed */
+  --blue-bg: #E8EEFA;      /* tinted surfaces, selected */
+  /* surfaces */
+  --paper: #F4F6FA;
+  --card: #FFFFFF;
+  --line: #E1E6EF;
+  --text: #15213A;
+  --muted: #5B6A82;
+  /* semantic */
+  --ok: #1E7F5C;   --ok-bg: #E3F4EC;
+  --bad: #C8323F;  --bad-bg: #FBE7E9;
+  --warn: #B26A00; --warn-bg: #FCEFD6;
+  --live: #D93A4C;
+  /* gold: coins, rank, achievements ONLY */
+  --gold: #D6A233; --gold-bg: #FBF1D9; --gold-ink: #7A5A10;
+  /* type */
+  --head: 'Bricolage Grotesque', 'Mukta', sans-serif;
+  --body: 'Figtree', 'Mukta', sans-serif;
+  --serif: 'Source Serif 4', 'Noto Serif Devanagari', serif;   /* quiz questions */
+  /* shape + depth */
+  --r-sm: 10px; --r-md: 12px; --r-lg: 16px;
+  --shadow: 0 1px 2px rgba(15,31,61,.05), 0 8px 24px rgba(15,31,61,.06);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+:root[data-theme="dark"], body.dark {
+  --ridge: #18305A;
+  --blue: #6E97EA; --blue-d: #8DB0F4; --blue-bg: #1B2B4D;
+  --paper: #0B1322; --card: #14203A; --line: #25345A;
+  --text: #E8EDF6; --muted: #9AA8C0;
+  --ok: #4FC08D;  --ok-bg: #12332A;
+  --bad: #F08A97; --bad-bg: #3A1B22;
+  --warn: #E7B15B; --warn-bg: #3A2B12;
+  --gold-bg: #3A2F14; --gold-ink: #F0CB74;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+.lq-page {
+  margin: 0; background: var(--paper); color: var(--text);
+  font-family: var(--body); -webkit-font-smoothing: antialiased;
+  padding-bottom: calc(84px + var(--safe-bottom));   /* room for bottom nav */
+  overflow-x: hidden;
+}
+.lq-page :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.lq-wrap { max-width: 640px; margin: 0 auto; padding: 20px 18px 0; }
+.lq-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- hero header (navy + ridge line) ---------- */
+.lq-hero { background: var(--ink); color: #fff; padding-top: var(--safe-top); }
+.lq-hero-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px 4px; max-width: 640px; margin: 0 auto; }
+.lq-hero-bar h1 { font-family: var(--head); font-size: 20px; font-weight: 700; letter-spacing: -.3px; margin: 0; }
+.lq-hero-body { padding: 14px 20px 0; max-width: 640px; margin: 0 auto; }
+.lq-hero-body h2 { font-family: var(--head); font-size: 24px; line-height: 1.25; letter-spacing: -.4px; margin: 0; }
+.lq-hero-body p { font-size: 14px; color: #AEBDD8; margin: 6px 0 0; line-height: 1.55; }
+.lq-ridge { display: block; width: 100%; height: 52px; margin-bottom: -1px; }
+.lq-icon-btn {
+  width: 44px; height: 44px; border-radius: var(--r-md); display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: #fff; font-size: 16px; cursor: pointer; text-decoration: none;
+}
+.lq-icon-btn:active { background: rgba(255,255,255,.2); }
+
+/* ---------- buttons ---------- */
+.lq-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+  min-height: 48px; padding: 0 18px; border: 1.5px solid transparent; border-radius: var(--r-md);
+  font: 700 15px/1 var(--body); text-decoration: none; cursor: pointer;
+  background: var(--blue); color: #fff; transition: transform .12s, background .15s;
+}
+.lq-btn:active { transform: scale(.98); background: var(--blue-d); }
+.lq-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.lq-btn.secondary { background: var(--card); color: var(--text); border-color: var(--line); }
+.lq-btn.secondary:active { background: var(--paper); }
+.lq-btn.ghost { background: transparent; color: var(--blue); }
+.lq-btn.danger { background: transparent; color: var(--bad); border-color: var(--bad); }
+.lq-btn.auto { width: auto; }
+.lq-btn.sm { min-height: 40px; font-size: 13.5px; padding: 0 14px; }
+
+/* ---------- surfaces ---------- */
+.lq-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 16px; box-shadow: var(--shadow); }
+.lq-card.flat { box-shadow: none; }
+.lq-section-title { font-family: var(--head); font-size: 19px; font-weight: 700; letter-spacing: -.3px; margin: 0 0 12px; color: var(--text); }
+.lq-row { display: flex; align-items: center; gap: 14px; padding: 14px 2px; border-bottom: 1px solid var(--line); color: var(--text); text-decoration: none; }
+.lq-row:last-child { border-bottom: 0; }
+.lq-row:active { background: var(--blue-bg); }
+.lq-row-icon { width: 42px; height: 42px; border-radius: var(--r-md); background: var(--blue-bg); color: var(--blue); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.lq-row h4 { font: 700 16px/1.25 var(--head); margin: 0; }
+.lq-row p { font-size: 13px; color: var(--muted); margin: 3px 0 0; line-height: 1.45; }
+
+/* ---------- forms ---------- */
+.lq-field { margin-bottom: 18px; }
+.lq-field label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 7px; }
+.lq-input {
+  width: 100%; min-height: 48px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: var(--r-md);
+  background: var(--paper); color: var(--text); font: 500 15px var(--body); outline: none; transition: border-color .15s, background .15s;
+}
+.lq-input:focus { border-color: var(--blue); background: var(--card); box-shadow: 0 0 0 3px var(--blue-bg); }
+.lq-input.invalid { border-color: var(--bad); }
+.lq-hint { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+.lq-hint.error { color: var(--bad); font-weight: 600; }
+
+/* ---------- small pieces ---------- */
+.lq-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: var(--blue-bg); color: var(--blue); }
+.lq-chip.coin { background: var(--gold-bg); color: var(--gold-ink); }
+.lq-chip.coin i { color: var(--gold); }
+.lq-chip.ok { background: var(--ok-bg); color: var(--ok); }
+.lq-chip.bad { background: var(--bad-bg); color: var(--bad); }
+.lq-progress { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.lq-progress > span { display: block; height: 100%; width: 0; background: var(--blue); border-radius: inherit; transition: width .35s ease; }
+
+/* ---------- states: loading / empty / error ---------- */
+.lq-skeleton { background: linear-gradient(90deg, var(--line) 25%, var(--paper) 50%, var(--line) 75%); background-size: 200% 100%; animation: lq-shimmer 1.3s infinite; border-radius: var(--r-sm); min-height: 16px; }
+@keyframes lq-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.lq-state { text-align: center; padding: 36px 20px; color: var(--muted); }
+.lq-state i { font-size: 28px; color: var(--blue); margin-bottom: 12px; display: block; }
+.lq-state h4 { font: 700 16px var(--head); color: var(--text); margin: 0 0 6px; }
+.lq-state p { font-size: 13.5px; line-height: 1.55; margin: 0 0 16px; }
+
+/* ---------- popup / modal ---------- */
+.lq-overlay { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(8,15,30,.62); opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; }
+.lq-overlay.active { opacity: 1; visibility: visible; }
+.lq-modal { width: 100%; max-width: 360px; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 18px; padding: 26px 22px 22px; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,.3); transform: translateY(10px) scale(.97); transition: transform .22s ease; }
+.lq-overlay.active .lq-modal { transform: none; }
+.lq-modal-icon { width: 56px; height: 56px; margin: 0 auto 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.lq-modal-icon.success { background: var(--ok-bg); color: var(--ok); }
+.lq-modal-icon.error { background: var(--bad-bg); color: var(--bad); }
+.lq-modal-icon.warning { background: var(--warn-bg); color: var(--warn); }
+.lq-modal h3 { font: 700 18px var(--head); margin: 0 0 6px; }
+.lq-modal p { font-size: 13.5px; color: var(--muted); line-height: 1.55; margin: 0 0 20px; }
+.lq-modal-actions { display: flex; gap: 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lq-page *, .lq-overlay, .lq-modal { animation: none !important; transition: none !important; }
+}
