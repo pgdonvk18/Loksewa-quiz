@@ -1,247 +1,216 @@
-<!DOCTYPE html>  
-<html lang="ne">  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
-  <title id="page-title">LoksewaQuest - Quiz Lobby</title>  
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
-  <style>  
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }  
-    body { background-color: #f8fafc; color: #0f172a; margin: 0; padding-bottom: 40px; overflow-x: hidden; }  
-    
-    /* Website Standard Header */
-    .app-header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #ffffff; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }  
-    .app-header h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }  
-    .back-btn { background: rgba(255, 255, 255, 0.15); color: #ffffff; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; font-size: 14px; transition: background 0.2s; }  
-    .back-btn:hover { background: rgba(255, 255, 255, 0.25); }  
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f2a4a">
+<title id="page-title">LoksewaQuest - Quiz Lobby</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ===== Design tokens (shared with quizgame.html) ===== */
+:root{--navy:#0f2a4a;--blue:#2563eb;--blue-d:#1d4ed8;--blue-l:#e8effd;--gold:#f5b301;--gold-l:#fff6d6;--ok:#15803d;--bad:#dc2626;--bg:#f4f6fa;--card:#fff;--text:#0f2a4a;--mute:#64748b;--line:#e2e8f0;--r:12px;--font:'Plus Jakarta Sans','Noto Sans Devanagari',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;line-height:1.5;overflow-x:hidden}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0;background:none;color:inherit;font-weight:600}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.hdr{background:var(--navy);color:#fff;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top));display:flex;align-items:center;gap:10px}
+.back{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.12)}
+.back:hover{background:rgba(255,255,255,.2)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+.flag{width:22px;height:26px;background:var(--gold);clip-path:polygon(0 0,100% 38%,45% 42%,100% 100%,0 100%)}
+.logo small{display:block;font-size:10px;font-weight:500;opacity:.7;line-height:1.1}
+main{max-width:520px;margin:0 auto;padding:18px 14px calc(32px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+.intro h1{font-size:22px;font-weight:700;line-height:1.3}
+.intro p{font-size:13px;color:var(--mute);margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;animation:in .25s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card h2{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.card h2 i{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:13px;background:var(--blue-l);color:var(--blue)}
+.card.join h2 i{background:var(--gold-l);color:#92620a}
+.lbl{display:block;font-size:13px;font-weight:600;margin-bottom:8px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.seg button{min-height:52px;border:1.5px solid var(--line);border-radius:10px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;line-height:1.2;transition:border-color .15s,background .15s}
+.seg button small{font-size:11px;font-weight:500;color:var(--mute)}
+.seg button:hover{border-color:#94a3b8}
+.seg button[aria-checked=true]{border-color:var(--blue);background:var(--blue-l);box-shadow:inset 0 0 0 1px var(--blue)}
+.rrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.rrow b{background:var(--blue);color:#fff;border-radius:99px;padding:2px 12px;font-size:13px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;height:28px;background:transparent;-webkit-appearance:none;appearance:none;margin-bottom:2px}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:9px;background:linear-gradient(to right,var(--blue) var(--p,40%),var(--line) var(--p,40%))}
+input[type=range]::-moz-range-track{height:6px;border-radius:9px;background:var(--line)}
+input[type=range]::-moz-range-progress{height:6px;border-radius:9px;background:var(--blue)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid var(--blue);margin-top:-10px;box-shadow:0 1px 4px rgba(15,42,74,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--blue)}
+.ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--mute);margin-bottom:16px}
+.btn{width:100%;min-height:48px;border-radius:10px;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s}
+.btn:active:not(:disabled){transform:scale(.98)}
+.btn.p{background:var(--blue);color:#fff}.btn.p:hover:not(:disabled){background:var(--blue-d)}
+.btn.n{background:var(--navy);color:#fff}.btn.n:hover:not(:disabled){background:#173a63}
+.btn:disabled{opacity:.55}
+.sp{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:s .7s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+.or{display:flex;align-items:center;gap:12px;color:var(--mute);font-size:12px;font-weight:600}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.code{width:100%;min-height:56px;border:1.5px solid #cbd5e1;border-radius:10px;text-align:center;font-size:24px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--text);outline:none;margin-bottom:12px;background:#fff}
+.code::placeholder{letter-spacing:.05em;font-size:14px;font-weight:500;color:#94a3b8}
+.code:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.hint{font-size:12px;color:var(--mute);text-align:center;margin-top:-4px}
+.ov{position:fixed;inset:0;background:rgba(15,42,74,.55);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s;padding:16px}
+.ov.on{opacity:1;pointer-events:auto}
+.modal{background:#fff;width:100%;max-width:340px;border-radius:16px;padding:22px;text-align:center;transform:scale(.95);transition:transform .2s}.ov.on .modal{transform:none}
+.modal .mi{font-size:40px}.modal h3{font-size:17px;margin:6px 0 4px}.modal p{font-size:13px;color:var(--mute);margin-bottom:16px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <a href="games.html" class="back" aria-label="पछाडि जानुहोस्"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i></a>
+  <div class="logo"><span class="flag" aria-hidden="true"></span><div>LoksewaQuest<small>प्रतिस्पर्धा गरौँ। सिकौँ। जितौँ।</small></div></div>
+</header>
 
-    .main-wrapper { max-width: 500px; margin: 0 auto; padding: 20px 16px; width: 100%; }  
-    
-    .header-intro { text-align: center; margin-bottom: 20px; }
-    .header-intro h2 { font-size: 18px; font-weight: 800; color: #1e293b; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .header-intro p { font-size: 12px; color: #64748b; margin-top: 4px; font-weight: 600; }
+<main>
+  <div class="intro"><h1>लाइभ प्रतिस्पर्धा</h1><p>साथीहरूसँग रियल-टाइम क्विज खेल्नुहोस्</p></div>
 
-    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 22px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); }  
-    .card h3 { font-size: 14px; font-weight: 800; margin-bottom: 14px; color: #1e40af; display: flex; align-items: center; gap: 8px; }
+  <section class="card" aria-labelledby="hCreate">
+    <h2 id="hCreate"><i class="fa-solid fa-plus" aria-hidden="true"></i> नयाँ रुम बनाउनुहोस्</h2>
+    <span class="lbl" id="lPlayers">खेलाडी संख्या</span>
+    <div class="seg" role="radiogroup" aria-labelledby="lPlayers" id="maxPlayersGroup">
+      <button type="button" role="radio" aria-checked="false" data-v="2">२ जना<small>1v1</small></button>
+      <button type="button" role="radio" aria-checked="false" data-v="3">३ जना<small>&nbsp;</small></button>
+      <button type="button" role="radio" aria-checked="true" data-v="4">४ जना<small>&nbsp;</small></button>
+    </div>
+    <div class="rrow"><label class="lbl" for="totalRoundsRange" style="margin:0">राउन्ड संख्या</label><b id="selectedRoundsVal">५ राउन्ड</b></div>
+    <input type="range" id="totalRoundsRange" min="1" max="10" value="5" step="1">
+    <div class="ticks" aria-hidden="true"><span>१</span><span>५</span><span>१०</span></div>
+    <button class="btn p" id="createRoomBtn" disabled><i class="fa-solid fa-plus" aria-hidden="true"></i> रुम सिर्जना गर्नुहोस्</button>
+  </section>
 
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
-    .form-control { width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 14px; font-weight: 600; color: #0f172a; outline: none; transition: border 0.2s, background 0.2s; background: #f8fafc; }  
-    .form-control:focus { border-color: #2563eb; background: #ffffff; }
+  <div class="or">अथवा</div>
 
-    /* Attractive Sliding Range Selector */
-    .slider-container { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 14px; margin-bottom: 16px; }  
-    .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }  
-    .slider-label { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.3px; }  
-    .slider-value-badge { background: #2563eb; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; }  
-    
-    input[type=range] { width: 100%; height: 8px; background: #cbd5e1; border-radius: 4px; outline: none; -webkit-appearance: none; }  
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #2563eb; cursor: pointer; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4); transition: transform 0.1s; }  
-    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+  <section class="card join" aria-labelledby="hJoin">
+    <h2 id="hJoin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> रुममा जोडिनुहोस्</h2>
+    <label class="lbl" for="roomCodeInput">रुम कोड</label>
+    <input type="text" id="roomCodeInput" class="code" placeholder="उदा: ABCD12" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="8" inputmode="text" enterkeyhint="go">
+    <button class="btn n" id="joinRoomBtn" disabled><i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true"></i> रुममा छिर्नुहोस्</button>
+  </section>
+  <p class="hint" id="authHint">लगइन जाँच गर्दै...</p>
+</main>
 
-    .btn-success { background: #16a34a; color: white; width: 100%; padding: 14px 24px; border: none; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); transition: transform 0.1s, background 0.2s; }  
-    .btn-success:hover { background: #15803d; }
-    .btn-success:active { transform: scale(0.98); }
-    
-    .divider { text-align: center; margin: 16px 0; font-size: 11px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; position: relative; }
-    .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 35%; height: 1px; background: #e2e8f0; }
-    .divider::before { left: 0; }
-    .divider::after { right: 0; }
-  </style>  
-</head>  
-<body>  
+<div class="ov" id="ov"><div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="mT" aria-describedby="mD">
+  <div class="mi" id="mI" aria-hidden="true">⚠️</div><h3 id="mT"></h3><p id="mD"></p><button class="btn p" id="mB">हुन्छ (OK)</button></div></div>
 
-  <header class="app-header">  
-    <a href="games.html" class="back-btn" title="पछाडि जानुहोस्"><i class="fa-solid fa-arrow-left"></i></a>  
-    <h1>LoksewaQuest - 1v1 Battle</h1>  
-    <div style="width: 38px;"></div>  
-  </header>  
+<script src="components.js"></script>
 
-  <main class="main-wrapper">  
-    <div class="header-intro">  
-      <h2><i class="fa-solid fa-gamepad" style="color: #2563eb;"></i> लाइभ प्रतिस्पर्धा</h2>  
-      <p>आफ्ना साथीहरूसँग रियल-टाइम क्विज लडाइँ खेल्नुहोस्</p>  
-    </div>  
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    <!-- Create Room Card -->
-    <div class="card">  
-      <h3><i class="fa-solid fa-circle-plus" style="color: #16a34a;"></i> नयाँ रुम बनाउनुहोस् (Create Room)</h3>  
-      
-      <div class="form-group">  
-        <label>खेलाडी संख्या (Max Players)</label>  
-        <select id="maxPlayersInput" class="form-control">  
-          <option value="2">२ जना (1v1)</option>  
-          <option value="3">३ जना</option>  
-          <option value="4" selected>४ जना</option>  
-        </select>  
-      </div>  
+const firebaseConfig = {
+  apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+  authDomain: "loksewaquest-227b6.firebaseapp.com",
+  projectId: "loksewaquest-227b6",
+  storageBucket: "loksewaquest-227b6.firebasestorage.app",
+  messagingSenderId: "779234903809",
+  appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-      <div class="slider-container">  
-        <div class="slider-header">  
-          <span class="slider-label">जम्मा प्रश्न/राउन्ड</span>  
-          <span id="selectedRoundsVal" class="slider-value-badge">5 राउन्ड</span>  
-        </div>  
-        <input type="range" id="totalRoundsRange" min="1" max="10" value="5" step="1">  
-        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-top: 6px; font-weight: 700;">  
-          <span>1</span>  
-          <span>5</span>  
-          <span>10</span>  
-        </div>  
-      </div>  
+const $ = id => document.getElementById(id);
+const NP = n => String(n).replace(/\d/g, d => '०१२३४५६७८९'[d]);
+let currentUser = null, currentUserName = "Aspirant", maxPlayers = 4, busy = false;
 
-      <button class="btn-success" id="createRoomBtn"><i class="fa-solid fa-plus"></i> रुम सिर्जना गर्नुहोस् 🚀</button>  
-    </div>  
+/* ---- modal (replaces alert / showSuccessPopup) ---- */
+let lastFocus = null;
+function showModal(title, desc, icon = '⚠️') {
+  $('mT').textContent = title; $('mD').textContent = desc; $('mI').textContent = icon;
+  lastFocus = document.activeElement; $('ov').classList.add('on'); $('mB').focus();
+}
+function closeModal() { $('ov').classList.remove('on'); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+$('mB').onclick = closeModal;
+addEventListener('keydown', e => { if (e.key === 'Escape' && $('ov').classList.contains('on')) closeModal(); });
 
-    <div class="divider">अथवा</div>  
+/* ---- controls ---- */
+const range = $('totalRoundsRange');
+function paintRange() {
+  $('selectedRoundsVal').textContent = `${NP(range.value)} राउन्ड`;
+  range.style.setProperty('--p', ((range.value - 1) / 9 * 100) + '%');
+}
+range.addEventListener('input', paintRange); paintRange();
+$('maxPlayersGroup').addEventListener('click', e => {
+  const b = e.target.closest('button[data-v]'); if (!b) return;
+  maxPlayers = parseInt(b.dataset.v);
+  document.querySelectorAll('#maxPlayersGroup button').forEach(x => x.setAttribute('aria-checked', x === b));
+});
+$('roomCodeInput').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
+$('roomCodeInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('joinRoomBtn').click(); });
 
-    <!-- Join Room Card -->
-    <div class="card">  
-      <h3><i class="fa-solid fa-right-to-bracket" style="color: #2563eb;"></i> रुममा जोइन हुनुहोस् (Join Room)</h3>  
-      <div class="form-group">  
-        <label>रुम कोड (Room Code)</label>  
-        <input type="text" id="roomCodeInput" class="form-control" placeholder="उदा: ABCD12" autocomplete="off" style="text-transform: uppercase;">  
-      </div>  
-      <button class="btn-success" id="joinRoomBtn" style="background: #2563eb; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);"><i class="fa-solid fa-arrow-right-to-bracket"></i> रुममा छिर्नुहोस् 🎮</button>  
-    </div>  
-  </main>  
+function setBusy(btn, on, label) {
+  busy = on;
+  [$('createRoomBtn'), $('joinRoomBtn')].forEach(b => b.disabled = on || !currentUser);
+  if (on) { btn.dataset.html = btn.innerHTML; btn.innerHTML = `<span class="sp" aria-hidden="true"></span> ${label}`; }
+  else if (btn.dataset.html) btn.innerHTML = btn.dataset.html;
+}
 
-  <script src="components.js"></script>  
+/* ---- auth ---- */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { location.href = "login.html"; return; }
+  currentUser = user;
+  currentUserName = user.displayName || (user.email ? user.email.split('@')[0] : "Aspirant");
+  try {
+    const snap = await getDoc(doc(db, "users", user.uid));
+    if (snap.exists() && snap.data().name) currentUserName = snap.data().name;
+  } catch (e) { console.log(e); }
+  $('createRoomBtn').disabled = busy; $('joinRoomBtn').disabled = busy;
+  $('authHint').textContent = `${currentUserName} को रूपमा लगइन`;
+});
 
-  <script type="module">  
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
-    import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
+function generateRoomCode() { return Math.random().toString(36).substring(2, 8).toUpperCase().padEnd(6, 'X'); }
 
-    const firebaseConfig = {  
-      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",  
-      authDomain: "loksewaquest-227b6.firebaseapp.com",  
-      projectId: "loksewaquest-227b6",  
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",  
-      messagingSenderId: "779234903809",  
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"  
-    };  
+/* ---- create room ---- */
+$('createRoomBtn').addEventListener('click', async () => {
+  if (!currentUser || busy) return;
+  const btn = $('createRoomBtn'); setBusy(btn, true, 'रुम बनाउँदैछ...');
+  try {
+    let roomId = generateRoomCode();
+    for (let i = 0; i < 5 && (await getDoc(doc(db, "quiz_rooms", roomId))).exists(); i++) roomId = generateRoomCode(); // avoid code collisions
+    await setDoc(doc(db, "quiz_rooms", roomId), {
+      roomId, hostId: currentUser.uid, status: "waiting",
+      settings: { maxPlayers, totalRounds: parseInt(range.value) },
+      players: [{ uid: currentUser.uid, name: currentUserName, score: 0 }],
+      currentRound: 1, currentTurnIndex: 0, createdAt: new Date()
+    });
+    location.href = `quizgame.html?room=${roomId}`;
+  } catch (err) {
+    setBusy(btn, false);
+    showModal('रुम बनाउन सकिएन', 'इन्टरनेट जाँच गरी फेरि प्रयास गर्नुहोस्। (' + err.message + ')', '❌');
+  }
+});
 
-    const app = initializeApp(firebaseConfig);  
-    const auth = getAuth(app);  
-    const db = getFirestore(app);  
-
-    let currentUser = null;  
-    let currentUserName = "Aspirant";  
-
-    const roundsRange = document.getElementById('totalRoundsRange');  
-    const roundsValDisplay = document.getElementById('selectedRoundsVal');  
-    roundsRange.addEventListener('input', (e) => {  
-      roundsValDisplay.innerText = `${e.target.value} राउन्ड`;  
-    });  
-
-    onAuthStateChanged(auth, async (user) => {  
-      if (user) {  
-        currentUser = user;  
-        currentUserName = user.displayName || user.email.split('@')[0];  
-        try {  
-          const userSnap = await getDoc(doc(db, "users", user.uid));  
-          if (userSnap.exists() && userSnap.data().name) {  
-            currentUserName = userSnap.data().name;  
-          }  
-        } catch (e) { console.log(e); }  
-      } else {  
-        window.location.href = "login.html";  
-      }  
-    });  
-
-    function generateRoomCode() {  
-      return Math.random().toString(36).substring(2, 8).toUpperCase();  
-    }  
-
-    document.getElementById('createRoomBtn').addEventListener('click', async () => {  
-      if (!currentUser) return;  
-      const roomId = generateRoomCode();  
-      const maxPlayers = parseInt(document.getElementById('maxPlayersInput').value);  
-      const totalRounds = parseInt(roundsRange.value);  
-
-      const roomData = {  
-        roomId: roomId,  
-        hostId: currentUser.uid,  
-        status: "waiting",  
-        settings: {   
-          maxPlayers: maxPlayers,   
-          totalRounds: totalRounds   
-        },  
-        players: [  
-          { uid: currentUser.uid, name: currentUserName, score: 0 }  
-        ],  
-        currentRound: 1,  
-        currentTurnIndex: 0,  
-        createdAt: new Date()  
-      };  
-
-      try {  
-        await setDoc(doc(db, "quiz_rooms", roomId), roomData);  
-        window.location.href = `quizgame.html?room=${roomId}`;  
-      } catch (err) {  
-        if (typeof showSuccessPopup === 'function') {  
-          showSuccessPopup("रुम बनाउन सकिएन: " + err.message, null, 'error', 'त्रुटि! ❌');  
-        } else {  
-          alert("रुम बनाउन सकिएन: " + err.message);  
-        }  
-      }  
-    });  
-
-    document.getElementById('joinRoomBtn').addEventListener('click', async () => {  
-      if (!currentUser) return;  
-      const roomCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();  
-        
-      if (!roomCode) {  
-        if (typeof showSuccessPopup === 'function') {  
-          showSuccessPopup("कृपया रुम कोड राख्नुहोस्!", null, 'warning', 'ध्यान दिनुहोस् ⚠️');  
-        } else {  
-          alert("कृपया रुम कोड राख्नुहोस्!");  
-        }  
-        return;  
-      }  
-
-      const roomRef = doc(db, "quiz_rooms", roomCode);  
-      const roomSnap = await getDoc(roomRef);  
-
-      if (!roomSnap.exists()) {  
-        if (typeof showSuccessPopup === 'function') {  
-          showSuccessPopup("यो कोड भएको रुम फेला परेन!", null, 'error', 'फेला परेन ❌');  
-        } else {  
-          alert("यो कोड भएको रुम फेला परेन!");  
-        }  
-        return;  
-      }  
-
-      const roomData = roomSnap.data();  
-      if (roomData.status !== "waiting") {  
-        if (typeof showSuccessPopup === 'function') {  
-          showSuccessPopup("यो गेम अलरेडी सुरु भइसकेको छ!", null, 'warning', 'सूचना ⚠️');  
-        } else {  
-          alert("यो गेम अलरेडी सुरु भइसकेको छ!");  
-        }  
-        return;  
-      }  
-
-      if (roomData.players.length >= roomData.settings.maxPlayers) {  
-        if (typeof showSuccessPopup === 'function') {  
-          showSuccessPopup("यो रुम भरिइसकेको छ (Full)!", null, 'warning', 'रुम भरियो ⚠️');  
-        } else {  
-          alert("यो रुम भरिइसकेको छ (Full)!");  
-        }  
-        return;  
-      }  
-
-      const alreadyJoined = roomData.players.some(p => p.uid === currentUser.uid);  
-      if (!alreadyJoined) {  
-        await updateDoc(roomRef, {  
-          players: arrayUnion({ uid: currentUser.uid, name: currentUserName, score: 0 })  
-        });  
-      }  
-
-      window.location.href = `quizgame.html?room=${roomCode}`;  
-    });  
-  </script>  
-
-</body>  
-</html>  
+/* ---- join room ---- */
+$('joinRoomBtn').addEventListener('click', async () => {
+  if (!currentUser || busy) return;
+  const code = $('roomCodeInput').value.trim().toUpperCase();
+  if (!code) { showModal('रुम कोड चाहिन्छ', 'कृपया साथीले दिएको रुम कोड राख्नुहोस्।'); $('roomCodeInput').focus(); return; }
+  const btn = $('joinRoomBtn'); setBusy(btn, true, 'जोडिँदैछ...');
+  try {
+    const ref = doc(db, "quiz_rooms", code), snap = await getDoc(ref);
+    if (!snap.exists()) { setBusy(btn, false); showModal('रुम फेला परेन', 'यो कोड भएको रुम फेला परेन। कोड जाँचेर फेरि प्रयास गर्नुहोस्।', '🔍'); return; }
+    const data = snap.data(), joined = data.players.some(p => p.uid === currentUser.uid);
+    if (!joined) {
+      if (data.status !== "waiting") { setBusy(btn, false); showModal('खेल सुरु भइसकेको छ', 'यो खेल अहिले नै सुरु भइसकेको छ। नयाँ खेलाडी थप्न मिल्दैन।'); return; }
+      if (data.players.length >= data.settings.maxPlayers) { setBusy(btn, false); showModal('रुम भरियो', 'यो रुममा अब थप खेलाडीको ठाउँ छैन।', '🚪'); return; }
+      await updateDoc(ref, { players: arrayUnion({ uid: currentUser.uid, name: currentUserName, score: 0 }) });
+    }
+    location.href = `quizgame.html?room=${code}`;
+  } catch (err) {
+    setBusy(btn, false);
+    showModal('जोडिन सकिएन', 'इन्टरनेट जाँच गरी फेरि प्रयास गर्नुहोस्। (' + err.message + ')', '❌');
+  }
+});
+</script>
+</body>
+</html>
