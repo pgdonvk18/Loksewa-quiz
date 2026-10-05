@@ -1,3501 +1,5860 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 
-<meta name="theme-color" content="#0b1730">
-<meta name="description" content="LoksewaQuest Study Hub — topic based notes and questions.">
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"
+>
+
+<meta name="theme-color" content="#08152f">
+
+<meta
+  name="description"
+  content="LoksewaQuest Study Hub — Topic based notes, questions and practice."
+>
 
 <title>LoksewaQuest — Study Hub</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600;700;800&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600;700;800&family=Mukta:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+>
 
 <link rel="stylesheet" href="css/lq-theme.css">
 
 <style>
 
-:root{
---navy:#0b1730;
---navy2:#102a59;
---blue:#2563eb;
---blue2:#4f7ff0;
---soft:#eef4ff;
---green:#059669;
---greenSoft:#eafaf4;
---amber:#d97706;
---red:#dc3d4d;
---bg:#f5f7fb;
---card:#fff;
---text:#17233d;
---muted:#68758c;
---line:#e5e9f1;
---shadow:0 10px 30px rgba(15,31,61,.06);
---radius:20px;
+/* =========================================================
+   LOKSEWAQUEST STUDY HUB
+   Premium Reading UI
+   ========================================================= */
 
---head:'Bricolage Grotesque','Mukta',sans-serif;
---body:'Figtree','Mukta',sans-serif;
+:root{
+
+  --navy:#07152f;
+  --navy2:#0d2552;
+  --blue:#2563eb;
+  --blue2:#4f7ff0;
+
+  --green:#059669;
+  --green-bg:#eafaf4;
+
+  --amber:#d97706;
+  --amber-bg:#fff7e8;
+
+  --red:#dc3d4d;
+
+  --bg:#f4f7fb;
+  --card:#ffffff;
+
+  --text:#14213b;
+  --text2:#293752;
+  --muted:#718096;
+
+  --line:#e4e9f1;
+  --line2:#eef1f5;
+
+  --soft:#eef4ff;
+
+  --shadow:
+    0 12px 35px rgba(15,31,61,.055);
+
+  --shadow-hover:
+    0 18px 45px rgba(15,31,61,.09);
+
+  --radius:20px;
+
+  --head:
+    'Bricolage Grotesque',
+    'Mukta',
+    sans-serif;
+
+  --body:
+    'Figtree',
+    'Mukta',
+    sans-serif;
 }
 
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
 *{
-box-sizing:border-box;
+  box-sizing:border-box;
 }
 
 html{
-scroll-behavior:auto;
--webkit-text-size-adjust:100%;
+  margin:0;
+  padding:0;
+  scroll-behavior:smooth;
+  -webkit-text-size-adjust:100%;
 }
 
 body{
-margin:0;
-background:
-radial-gradient(circle at 85% -10%,rgba(37,99,235,.10),transparent 30%),
-var(--bg);
-color:var(--text);
-font-family:var(--body);
-padding-bottom:70px;
-overflow-x:hidden;
--webkit-overflow-scrolling:touch;
+
+  margin:0;
+
+  background:
+    radial-gradient(
+      circle at 90% -10%,
+      rgba(37,99,235,.10),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at -10% 30%,
+      rgba(79,127,240,.045),
+      transparent 25%
+    ),
+    var(--bg);
+
+  color:var(--text);
+
+  font-family:var(--body);
+
+  overflow-x:hidden;
+
+  /*
+    IMPORTANT:
+    Only BODY should scroll.
+    No nested page scroll container.
+  */
+
+  overflow-y:auto;
+
+  min-height:100vh;
+
+  padding-bottom:
+    calc(40px + env(safe-area-inset-bottom));
+}
+
+body,
+button,
+input,
+select,
+textarea{
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
 }
 
 button,
 input,
 select,
 textarea{
-font:inherit;
+  font:inherit;
 }
 
 button{
-cursor:pointer;
--webkit-tap-highlight-color:transparent;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
 }
 
 a{
-text-decoration:none;
-color:inherit;
+  text-decoration:none;
+  color:inherit;
+}
+
+img,
+video,
+iframe{
+  max-width:100%;
 }
 
 .hidden{
-display:none!important;
+  display:none!important;
 }
 
-/* =========================
+
+/* =========================================================
    HERO
-========================= */
+   ========================================================= */
 
 .hero{
-color:#fff;
-background:
-linear-gradient(
-135deg,
-#09152d,
-#102a59 58%,
-#1e4aa3
-);
 
-border-radius:0 0 30px 30px;
+  position:relative;
 
-padding:
-calc(18px + env(safe-area-inset-top))
-max(16px,calc((100vw - 1180px)/2))
-26px;
+  color:#fff;
 
-box-shadow:0 12px 30px rgba(9,23,48,.12);
+  background:
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(77,135,255,.28),
+      transparent 28%
+    ),
+    linear-gradient(
+      135deg,
+      #07142e 0%,
+      #0b2250 55%,
+      #174596 100%
+    );
 
-position:relative;
-overflow:hidden;
+  border-radius:
+    0 0 30px 30px;
+
+  box-shadow:
+    0 15px 40px rgba(7,21,47,.14);
+
+  overflow:hidden;
+
+  padding:
+    calc(20px + env(safe-area-inset-top))
+    max(16px,calc((100vw - 1200px)/2))
+    28px;
 }
 
-.hero:after{
-content:"";
-position:absolute;
-width:260px;
-height:260px;
-border:1px solid rgba(255,255,255,.08);
-border-radius:50%;
-right:-110px;
-bottom:-150px;
-pointer-events:none;
+.hero::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:320px;
+  height:320px;
+
+  right:-130px;
+  top:-190px;
+
+  border-radius:50%;
+
+  border:1px solid rgba(255,255,255,.08);
+
+  box-shadow:
+    0 0 0 35px rgba(255,255,255,.015),
+    0 0 0 70px rgba(255,255,255,.012);
+
+  pointer-events:none;
 }
 
 .hero-inner{
-max-width:1180px;
-margin:auto;
-position:relative;
-z-index:1;
+
+  max-width:1200px;
+
+  margin:auto;
+
+  position:relative;
+
+  z-index:2;
 }
 
 .topline{
-display:flex;
-align-items:center;
-gap:12px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:13px;
 }
 
 .back{
-width:42px;
-height:42px;
-border:1px solid rgba(255,255,255,.14);
-background:rgba(255,255,255,.08);
-color:#fff;
-border-radius:13px;
-display:grid;
-place-items:center;
-flex:none;
+
+  width:43px;
+  height:43px;
+
+  display:grid;
+  place-items:center;
+
+  flex:none;
+
+  border-radius:14px;
+
+  color:#fff;
+
+  background:rgba(255,255,255,.085);
+
+  border:1px solid rgba(255,255,255,.14);
+
+  transition:
+    background .2s ease,
+    transform .2s ease;
+}
+
+.back:hover{
+
+  background:rgba(255,255,255,.15);
+
+  transform:translateX(-2px);
 }
 
 .eyebrow{
-font-size:10px;
-letter-spacing:1.5px;
-text-transform:uppercase;
-color:#a9bbdb;
-font-weight:800;
+
+  font-size:10px;
+
+  letter-spacing:1.8px;
+
+  text-transform:uppercase;
+
+  color:#aebfdf;
+
+  font-weight:800;
 }
 
 .hero h1{
-font:800 30px/1.05 var(--head);
-margin:5px 0;
+
+  margin:4px 0 4px;
+
+  font:
+    800 31px/1.05
+    var(--head);
+
+  letter-spacing:-.5px;
 }
 
 .hero p{
-margin:0;
-color:#c2cee3;
-font-size:14px;
+
+  margin:0;
+
+  color:#c3cee3;
+
+  font-size:14px;
+
+  line-height:1.5;
 }
 
+
+/* =========================================================
+   HERO CONTROLS
+   ========================================================= */
+
 .hero-tools{
-margin-top:20px;
-display:grid;
-grid-template-columns:1fr 1fr 1.5fr;
-gap:10px;
+
+  margin-top:21px;
+
+  display:grid;
+
+  grid-template-columns:
+    minmax(150px,1fr)
+    minmax(150px,1fr)
+    minmax(260px,1.7fr);
+
+  gap:10px;
 }
 
 .selectbox,
 .search{
-height:48px;
-border-radius:14px;
-border:1px solid rgba(255,255,255,.15);
-background:rgba(255,255,255,.1);
-color:#fff;
-padding:0 14px;
-outline:none;
+
+  min-width:0;
+
+  height:50px;
+
+  border-radius:15px;
+
+  border:
+    1px solid rgba(255,255,255,.14);
+
+  background:
+    rgba(255,255,255,.085);
+
+  color:#fff;
+
+  outline:none;
+
+  transition:
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
+}
+
+.selectbox{
+
+  padding:
+    0 13px;
+
+  appearance:auto;
+}
+
+.selectbox:focus,
+.search:focus-within{
+
+  border-color:
+    rgba(255,255,255,.38);
+
+  background:
+    rgba(255,255,255,.12);
+
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.07);
 }
 
 .selectbox option{
-color:#17233d;
-background:#fff;
+
+  color:var(--text);
+
+  background:#fff;
 }
 
 .search{
-display:flex;
-align-items:center;
-gap:10px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  padding:0 14px;
+}
+
+.search i{
+
+  color:#b9c7df;
+
+  flex:none;
 }
 
 .search input{
-border:0;
-outline:0;
-background:transparent;
-color:#fff;
-width:100%;
-min-width:0;
+
+  width:100%;
+
+  min-width:0;
+
+  border:0;
+
+  outline:0;
+
+  background:transparent;
+
+  color:#fff;
 }
 
 .search input::placeholder{
-color:#c3cde0;
+
+  color:#bdc9de;
 }
 
-/* =========================
+
+/* =========================================================
    MAIN
-========================= */
+   ========================================================= */
 
 .app{
-max-width:1180px;
-margin:auto;
-padding:0 16px;
+
+  width:100%;
+
+  max-width:1200px;
+
+  margin:auto;
+
+  padding:
+    0 16px;
 }
 
 .content{
-padding-top:18px;
+
+  padding-top:20px;
 }
 
-/* =========================
+
+/* =========================================================
    STATS
-========================= */
+   ========================================================= */
 
 .stats{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:12px;
-}
 
-.stat,
-.panel{
-background:var(--card);
-border:1px solid var(--line);
-border-radius:var(--radius);
-box-shadow:var(--shadow);
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:12px;
 }
 
 .stat{
-padding:16px;
+
+  min-width:0;
+
+  background:var(--card);
+
+  border:
+    1px solid var(--line);
+
+  border-radius:18px;
+
+  padding:16px;
+
+  box-shadow:var(--shadow);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.stat:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:var(--shadow-hover);
+}
+
+.stat-label{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:8px;
 }
 
 .stat small{
-color:var(--muted);
-font-weight:700;
+
+  color:var(--muted);
+
+  font-weight:700;
+
+  font-size:12px;
+}
+
+.stat-icon{
+
+  width:32px;
+  height:32px;
+
+  border-radius:10px;
+
+  display:grid;
+  place-items:center;
+
+  background:var(--soft);
+
+  color:var(--blue);
+
+  font-size:12px;
 }
 
 .stat strong{
-display:block;
-font:800 25px var(--head);
-margin-top:5px;
+
+  display:block;
+
+  margin-top:7px;
+
+  font:
+    800 25px/1
+    var(--head);
+
+  letter-spacing:-.3px;
 }
 
 .progress{
-height:8px;
-background:#edf0f5;
-border-radius:20px;
-overflow:hidden;
-margin-top:10px;
+
+  width:100%;
+
+  height:7px;
+
+  background:#edf1f6;
+
+  border-radius:99px;
+
+  overflow:hidden;
+
+  margin-top:11px;
 }
 
 .progress i{
-display:block;
-height:100%;
-background:linear-gradient(90deg,var(--blue),#6b8ef3);
-border-radius:inherit;
-width:0;
-transition:width .35s ease;
+
+  display:block;
+
+  height:100%;
+
+  width:0;
+
+  border-radius:inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--blue),
+      #7395f3
+    );
+
+  transition:
+    width .45s ease;
 }
 
-/* =========================
-   LAYOUT
-========================= */
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
 
 .layout{
-display:grid;
-grid-template-columns:330px 1fr;
-gap:16px;
-margin-top:16px;
-align-items:start;
+
+  display:grid;
+
+  grid-template-columns:
+    330px
+    minmax(0,1fr);
+
+  gap:16px;
+
+  margin-top:16px;
+
+  align-items:start;
+}
+
+
+/*
+  Desktop:
+  sidebar follows page but stays visible.
+  It DOES NOT have its own scroll.
+*/
+
+.layout > aside{
+
+  position:sticky;
+
+  top:16px;
+
+  align-self:start;
 }
 
 .panel{
-overflow:hidden;
-min-width:0;
+
+  min-width:0;
+
+  background:var(--card);
+
+  border:
+    1px solid var(--line);
+
+  border-radius:20px;
+
+  box-shadow:var(--shadow);
+
+  overflow:hidden;
 }
 
+
+/* =========================================================
+   PANEL HEADER
+   ========================================================= */
+
 .panel-head{
-padding:17px 18px;
-border-bottom:1px solid var(--line);
-display:flex;
-justify-content:space-between;
-gap:10px;
-align-items:center;
+
+  padding:17px 18px;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  gap:12px;
+
+  border-bottom:
+    1px solid var(--line2);
+
+  background:
+    linear-gradient(
+      180deg,
+      #fff,
+      #fcfdff
+    );
 }
 
 .panel-head h2,
 .panel-head h3{
-margin:0;
-font:800 17px var(--head);
+
+  margin:0;
+
+  font:
+    800 17px/1.2
+    var(--head);
 }
 
 .panel-head p{
-margin:4px 0 0;
-color:var(--muted);
-font-size:12px;
+
+  margin:4px 0 0;
+
+  color:var(--muted);
+
+  font-size:11px;
+
+  line-height:1.5;
 }
 
-/* =========================
-   SYLLABUS
-========================= */
 
-.syllabus{
-max-height:calc(100vh - 220px);
-overflow-y:auto;
-overflow-x:hidden;
-padding:10px;
-
--webkit-overflow-scrolling:touch;
-overscroll-behavior:contain;
-scrollbar-width:thin;
-}
-
-.section-row{
-border:1px solid var(--line);
-border-radius:15px;
-margin-bottom:9px;
-overflow:hidden;
-background:#fff;
-}
-
-.section-btn,
-.topic-btn{
-width:100%;
-border:0;
-background:transparent;
-text-align:left;
-padding:13px;
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.section-btn{
-font-weight:800;
-color:var(--text);
-}
-
-.section-btn i:last-child{
-margin-left:auto;
-color:#9aa6ba;
-font-size:11px;
-}
-
-.topic-list{
-padding:0 8px 8px;
-}
-
-.topic-btn{
-border-radius:11px;
-color:#56647b;
-font-size:13px;
-}
-
-.topic-btn:hover,
-.topic-btn.active{
-background:var(--soft);
-color:var(--blue);
-}
-
-.topic-btn .dot{
-width:8px;
-height:8px;
-border:2px solid #b7c1d2;
-border-radius:50%;
-flex:none;
-}
-
-.topic-btn.done .dot{
-border-color:var(--green);
-background:var(--green);
-}
-
-.topic-btn.done{
-color:var(--green);
-}
-
-/* =========================
-   EMPTY
-========================= */
-
-.empty{
-padding:38px 20px;
-text-align:center;
-color:var(--muted);
-}
-
-.empty i{
-font-size:30px;
-color:#b8c2d2;
-margin-bottom:10px;
-}
-
-.empty h3{
-color:var(--text);
-margin:8px 0;
-}
-
-/* =========================
-   READER
-========================= */
-
-.reader{
-padding:22px;
-min-width:0;
-}
-
-.reader-top{
-display:flex;
-justify-content:space-between;
-gap:15px;
-align-items:flex-start;
-}
-
-.crumb{
-font-size:12px;
-color:var(--muted);
-margin-bottom:8px;
-}
-
-.reader h2{
-font:800 28px/1.15 var(--head);
-margin:0 0 8px;
-overflow-wrap:anywhere;
-}
-
-.reader-sub{
-color:var(--muted);
-line-height:1.7;
-overflow-wrap:anywhere;
-}
-
-.actions{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-}
+/* =========================================================
+   BUTTONS
+   ========================================================= */
 
 .btn{
-border:1px solid var(--line);
-background:#fff;
-color:var(--text);
-border-radius:12px;
-padding:10px 13px;
-font-weight:800;
-font-size:12px;
-min-height:40px;
+
+  min-height:40px;
+
+  border:
+    1px solid var(--line);
+
+  background:#fff;
+
+  color:var(--text);
+
+  border-radius:12px;
+
+  padding:
+    9px 13px;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  display:inline-flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:7px;
+
+  transition:
+    transform .15s ease,
+    border-color .15s ease,
+    background .15s ease,
+    box-shadow .15s ease;
+}
+
+.btn:hover{
+
+  border-color:#d2d9e4;
+
+  box-shadow:
+    0 5px 15px rgba(15,31,61,.06);
+}
+
+.btn:active{
+
+  transform:scale(.97);
 }
 
 .btn.primary{
-background:var(--blue);
-border-color:var(--blue);
-color:#fff;
+
+  background:var(--blue);
+
+  border-color:var(--blue);
+
+  color:#fff;
+
+  box-shadow:
+    0 7px 18px rgba(37,99,235,.18);
 }
 
 .btn.success{
-background:var(--green);
-border-color:var(--green);
-color:#fff;
+
+  background:var(--green);
+
+  border-color:var(--green);
+
+  color:#fff;
 }
 
 .btn.bookmarked{
-background:#fff4d8;
-border-color:#f0c56a;
-color:#9a6500;
+
+  background:#fff5da;
+
+  border-color:#f2c86d;
+
+  color:#976000;
 }
 
-/* =========================
+
+/* =========================================================
+   SYLLABUS
+   IMPORTANT:
+   NO OVERFLOW SCROLL HERE
+   ========================================================= */
+
+.syllabus{
+
+  padding:10px;
+
+  /*
+    DO NOT add:
+    max-height
+    overflow-y:auto
+    overscroll-behavior
+    -webkit-overflow-scrolling
+  */
+
+  overflow:visible;
+}
+
+.section-row{
+
+  margin-bottom:9px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:#fff;
+
+  overflow:hidden;
+}
+
+.section-row:last-child{
+
+  margin-bottom:0;
+}
+
+.section-btn{
+
+  width:100%;
+
+  border:0;
+
+  background:#fff;
+
+  color:var(--text);
+
+  text-align:left;
+
+  padding:13px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  font-weight:800;
+
+  transition:
+    background .2s ease;
+}
+
+.section-btn:hover{
+
+  background:#f8faff;
+}
+
+.section-btn .folder{
+
+  width:31px;
+  height:31px;
+
+  border-radius:9px;
+
+  display:grid;
+  place-items:center;
+
+  background:#eef4ff;
+
+  color:var(--blue);
+
+  flex:none;
+
+  font-size:12px;
+}
+
+.section-btn .section-name{
+
+  min-width:0;
+
+  flex:1;
+
+  line-height:1.45;
+
+  overflow-wrap:anywhere;
+}
+
+.section-btn .chevron{
+
+  color:#a0aabe;
+
+  font-size:10px;
+
+  transition:
+    transform .2s ease;
+}
+
+.section-btn.collapsed .chevron{
+
+  transform:rotate(-90deg);
+}
+
+.topic-list{
+
+  padding:
+    0 8px 8px;
+}
+
+.topic-btn{
+
+  width:100%;
+
+  border:0;
+
+  background:transparent;
+
+  color:#59677e;
+
+  text-align:left;
+
+  padding:11px;
+
+  border-radius:11px;
+
+  display:flex;
+
+  align-items:flex-start;
+
+  gap:9px;
+
+  font-size:13px;
+
+  line-height:1.45;
+
+  transition:
+    background .15s ease,
+    color .15s ease,
+    transform .15s ease;
+}
+
+.topic-btn:hover{
+
+  background:#f3f6fc;
+
+  color:var(--blue);
+}
+
+.topic-btn.active{
+
+  background:
+    linear-gradient(
+      90deg,
+      #eef4ff,
+      #f5f8ff
+    );
+
+  color:var(--blue);
+
+  font-weight:800;
+}
+
+.topic-btn .dot{
+
+  width:8px;
+  height:8px;
+
+  border-radius:50%;
+
+  border:
+    2px solid #bdc6d4;
+
+  flex:none;
+
+  margin-top:5px;
+}
+
+.topic-btn.done .dot{
+
+  border-color:var(--green);
+
+  background:var(--green);
+
+  box-shadow:
+    0 0 0 3px rgba(5,150,105,.08);
+}
+
+.topic-btn.done{
+
+  color:#168464;
+}
+
+
+/* =========================================================
+   EMPTY
+   ========================================================= */
+
+.empty{
+
+  padding:45px 20px;
+
+  text-align:center;
+
+  color:var(--muted);
+}
+
+.empty i{
+
+  display:block;
+
+  font-size:30px;
+
+  color:#b9c3d1;
+
+  margin-bottom:12px;
+}
+
+.empty h3{
+
+  margin:8px 0 7px;
+
+  color:var(--text);
+
+  font:
+    800 18px
+    var(--head);
+}
+
+.empty p{
+
+  max-width:430px;
+
+  margin:0 auto;
+
+  line-height:1.7;
+
+  font-size:13px;
+}
+
+
+/* =========================================================
+   READER
+   ========================================================= */
+
+.reader{
+
+  padding:24px;
+}
+
+.reader-top{
+
+  display:flex;
+
+  align-items:flex-start;
+
+  justify-content:space-between;
+
+  gap:20px;
+}
+
+.reader-title-area{
+
+  min-width:0;
+
+  flex:1;
+}
+
+.crumb{
+
+  margin-bottom:9px;
+
+  color:#8290a5;
+
+  font-size:11px;
+
+  font-weight:700;
+}
+
+.reader h2{
+
+  margin:0 0 8px;
+
+  color:var(--text);
+
+  font:
+    800 29px/1.16
+    var(--head);
+
+  letter-spacing:-.4px;
+
+  overflow-wrap:anywhere;
+}
+
+.reader-sub{
+
+  color:var(--muted);
+
+  font-size:14px;
+
+  line-height:1.7;
+
+  overflow-wrap:anywhere;
+}
+
+.actions{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:8px;
+
+  flex:none;
+}
+
+
+/* =========================================================
    META
-========================= */
+   ========================================================= */
 
 .reading-meta{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-margin:15px 0;
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:7px;
+
+  margin:
+    16px 0 20px;
 }
 
 .pill{
-background:#f4f6fa;
-border:1px solid var(--line);
-padding:7px 10px;
-border-radius:999px;
-font-size:11px;
-font-weight:800;
-color:#66748b;
+
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:6px;
+
+  padding:
+    7px 10px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:999px;
+
+  background:#f7f9fc;
+
+  color:#68768b;
+
+  font-size:10px;
+
+  font-weight:800;
 }
 
-/* =========================
-   NOTES
-========================= */
+
+/* =========================================================
+   READING AREA
+   ========================================================= */
 
 .notes{
-font-size:16px;
-line-height:1.9;
-color:#293752;
 
-overflow-wrap:anywhere;
-word-break:normal;
-white-space:normal;
+  color:var(--text2);
+
+  font-size:16px;
+
+  line-height:1.9;
+
+  overflow-wrap:anywhere;
+
+  word-break:normal;
 }
 
 .notes p{
-margin:0 0 16px;
+
+  margin:
+    0 0 17px;
 }
 
 .notes h1,
 .notes h2,
 .notes h3,
 .notes h4{
-font-family:var(--head);
-line-height:1.3;
-color:var(--text);
-margin:22px 0 10px;
+
+  color:var(--text);
+
+  font-family:var(--head);
+
+  line-height:1.3;
+
+  margin:
+    25px 0 11px;
 }
 
 .notes h1{
-font-size:25px;
+  font-size:26px;
 }
 
 .notes h2{
-font-size:22px;
+  font-size:23px;
 }
 
 .notes h3{
-font-size:19px;
+  font-size:19px;
 }
 
-.notes ul{
-margin:10px 0 18px;
-padding-left:24px;
+.notes h4{
+  font-size:17px;
+}
+
+.notes ul,
+.notes ol{
+
+  margin:
+    10px 0 19px;
+
+  padding-left:24px;
 }
 
 .notes li{
-margin:7px 0;
-padding-left:3px;
+
+  margin:
+    7px 0;
+
+  padding-left:3px;
 }
 
 .notes strong{
-font-weight:800;
+
+  font-weight:800;
+
+  color:#17243d;
 }
 
-.notes br{
-line-height:1.9;
+.notes blockquote{
+
+  margin:
+    18px 0;
+
+  padding:
+    14px 16px;
+
+  border-left:
+    4px solid var(--blue);
+
+  border-radius:0 12px 12px 0;
+
+  background:#f5f8ff;
+
+  color:#44536b;
 }
 
-.notes .note-bullet{
-display:flex;
-gap:9px;
-margin:8px 0;
-}
 
-.notes .note-bullet::before{
-content:"•";
-font-weight:900;
-color:var(--blue);
-flex:none;
-}
-
-/* =========================
-   IMPORTANT
-========================= */
+/* =========================================================
+   IMPORTANT BOX
+   ========================================================= */
 
 .important{
-margin-top:18px;
-background:var(--greenSoft);
-border:1px solid #cdeee0;
-border-radius:16px;
-padding:16px;
+
+  margin-top:22px;
+
+  padding:17px;
+
+  border:
+    1px solid #cdeee0;
+
+  border-radius:17px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f0fcf7,
+      #eafaf4
+    );
 }
 
 .important h3{
-margin:0 0 8px;
-font:800 15px var(--head);
-color:#087b59;
+
+  margin:
+    0 0 9px;
+
+  color:#087b59;
+
+  font:
+    800 15px
+    var(--head);
 }
 
 .important ul{
-margin:0;
-padding-left:20px;
-line-height:1.75;
+
+  margin:0;
+
+  padding-left:20px;
+
+  color:#315b4d;
+
+  line-height:1.75;
 }
 
 .important li{
-margin:5px 0;
+
+  margin:5px 0;
 }
 
-/* =========================
-   QUESTIONS
-========================= */
+
+/* =========================================================
+   QUESTIONS HEADER
+   ========================================================= */
 
 .qa-head{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-margin:24px 0 10px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:12px;
+
+  margin:
+    30px 0 12px;
+
+  padding-top:22px;
+
+  border-top:
+    1px solid var(--line2);
+}
+
+.qa-title{
+
+  min-width:0;
 }
 
 .qa-head h3{
-margin:0;
-font:800 19px var(--head);
+
+  margin:0;
+
+  font:
+    800 20px
+    var(--head);
+}
+
+.qa-head p{
+
+  margin:4px 0 0;
+
+  color:var(--muted);
+
+  font-size:11px;
 }
 
 .filters{
-display:flex;
-gap:7px;
-flex-wrap:wrap;
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:6px;
 }
 
 .filter{
-border:1px solid var(--line);
-background:#fff;
-padding:8px 10px;
-border-radius:10px;
-font-size:11px;
-font-weight:800;
+
+  border:
+    1px solid var(--line);
+
+  background:#fff;
+
+  color:#66748a;
+
+  padding:
+    8px 10px;
+
+  border-radius:10px;
+
+  font-size:10px;
+
+  font-weight:800;
+
+  transition:
+    background .15s ease,
+    color .15s ease,
+    border-color .15s ease;
 }
 
+.filter.active,
+.filter:hover{
+
+  background:var(--soft);
+
+  border-color:#d7e3ff;
+
+  color:var(--blue);
+}
+
+
+/* =========================================================
+   QUESTION CARDS
+   ========================================================= */
+
 .question{
-border:1px solid var(--line);
-border-radius:16px;
-padding:16px;
-margin:10px 0;
-background:#fff;
-overflow:hidden;
+
+  margin:
+    10px 0;
+
+  padding:17px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:17px;
+
+  background:#fff;
+
+  overflow:hidden;
+
+  /*
+    Helps browser render long question lists smoothly.
+  */
+
+  content-visibility:auto;
+
+  contain-intrinsic-size:180px;
+
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.question:hover{
+
+  border-color:#dbe2ec;
+
+  box-shadow:
+    0 8px 24px rgba(15,31,61,.045);
 }
 
 .qtop{
-display:flex;
-gap:8px;
-align-items:center;
-flex-wrap:wrap;
+
+  display:flex;
+
+  align-items:center;
+
+  flex-wrap:wrap;
+
+  gap:6px;
 }
 
 .badge{
-font-size:10px;
-font-weight:800;
-border-radius:999px;
-padding:5px 8px;
-background:#eef4ff;
-color:#315db9;
+
+  display:inline-flex;
+
+  align-items:center;
+
+  padding:
+    5px 8px;
+
+  border-radius:999px;
+
+  background:#eef4ff;
+
+  color:#315db9;
+
+  font-size:9px;
+
+  font-weight:800;
+
+  text-transform:uppercase;
 }
 
 .badge.imp{
-background:#fff3dc;
-color:#a36600;
+
+  background:var(--amber-bg);
+
+  color:#a36600;
 }
 
 .question h4{
-margin:10px 0;
-font-size:15px;
-line-height:1.7;
-overflow-wrap:anywhere;
+
+  margin:
+    11px 0;
+
+  color:#1b2942;
+
+  font-size:15px;
+
+  line-height:1.75;
+
+  overflow-wrap:anywhere;
 }
 
 .options{
-display:grid;
-gap:7px;
-margin:10px 0;
+
+  display:grid;
+
+  gap:7px;
+
+  margin:
+    11px 0;
 }
 
 .option{
-padding:10px 12px;
-border:1px solid var(--line);
-border-radius:10px;
-background:#fafbfc;
-line-height:1.6;
-overflow-wrap:anywhere;
+
+  padding:
+    11px 12px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:11px;
+
+  background:#fafbfc;
+
+  color:#425169;
+
+  line-height:1.6;
+
+  overflow-wrap:anywhere;
+}
+
+.option b{
+
+  color:var(--blue);
+
+  margin-right:3px;
 }
 
 .answer{
-margin-top:12px;
-padding:13px;
-background:#f6f8fb;
-border-radius:12px;
-line-height:1.8;
-overflow-wrap:anywhere;
+
+  margin-top:12px;
+
+  padding:14px;
+
+  border:
+    1px solid #e6eaf0;
+
+  border-radius:13px;
+
+  background:#f7f9fc;
+
+  color:#3e4c63;
+
+  line-height:1.8;
+
+  overflow-wrap:anywhere;
 }
 
 .answer strong{
-display:block;
-margin-bottom:4px;
+
+  display:block;
+
+  margin-bottom:5px;
+
+  color:#1a2942;
 }
 
 .question-actions{
-display:flex;
-justify-content:space-between;
-gap:8px;
-align-items:center;
-margin-top:12px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:10px;
+
+  margin-top:12px;
 }
 
 .text-btn{
-border:0;
-background:transparent;
-color:var(--blue);
-font-weight:800;
-font-size:12px;
-padding:7px 4px;
+
+  border:0;
+
+  background:transparent;
+
+  color:var(--blue);
+
+  font-size:11px;
+
+  font-weight:800;
+
+  padding:7px 3px;
 }
+
+.text-btn:hover{
+
+  color:#174dc2;
+}
+
+
+/* =========================================================
+   BOTTOM TOPICS
+   ========================================================= */
 
 .bottom-topics{
-display:flex;
-justify-content:space-between;
-gap:10px;
-margin-top:18px;
-padding-top:18px;
-border-top:1px solid var(--line);
-}
 
-/* =========================
-   SKELETON
-========================= */
+  display:grid;
 
-.skeleton{
-height:13px;
-border-radius:7px;
-background:#eef1f5;
-animation:none;
-}
+  grid-template-columns:1fr 1fr;
 
-.skelbox{
-padding:16px;
-}
+  gap:10px;
 
-/* =========================
-   TOAST
-========================= */
+  margin-top:24px;
 
-.toast{
-position:fixed;
-left:50%;
-bottom:75px;
-transform:translateX(-50%);
-background:#17233d;
-color:#fff;
-padding:11px 15px;
-border-radius:12px;
-font-size:12px;
-font-weight:700;
-opacity:0;
-pointer-events:none;
-transition:opacity .2s ease;
-z-index:9999;
-max-width:90vw;
-text-align:center;
-}
+  padding-top:20px;
 
-.toast.show{
-opacity:1;
-}
-
-/* =========================
-   MODAL
-========================= */
-
-.modal{
-position:fixed;
-inset:0;
-background:rgba(7,16,33,.55);
-display:none;
-align-items:flex-end;
-justify-content:center;
-z-index:1000;
-}
-
-.modal.open{
-display:flex;
-}
-
-.modal-card{
-background:#fff;
-width:min(640px,100%);
-max-height:85vh;
-overflow-y:auto;
-overflow-x:hidden;
-border-radius:22px 22px 0 0;
-padding:20px;
-
--webkit-overflow-scrolling:touch;
-}
-
-.modal-head{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.modal-head h3{
-margin:0;
-font:800 18px var(--head);
-}
-
-.close{
-border:0;
-background:#f1f3f7;
-width:38px;
-height:38px;
-border-radius:11px;
-}
-
-/* =========================
-   PRACTICE
-========================= */
-
-.practice-q{
-font-size:18px;
-font-weight:800;
-line-height:1.6;
-margin:18px 0;
-overflow-wrap:anywhere;
-}
-
-.practice-options{
-display:grid;
-gap:9px;
-}
-
-.practice-options button{
-text-align:left;
-padding:13px;
-border:1px solid var(--line);
-background:#fff;
-border-radius:12px;
-line-height:1.5;
-}
-
-.practice-options button.correct{
-border-color:#53b88d;
-background:#eafaf4;
-}
-
-.practice-options button.wrong{
-border-color:#e47783;
-background:#fff0f2;
-}
-
-.notice{
-padding:14px;
-border-radius:13px;
-background:#fff6e7;
-color:#8b5a06;
-font-size:12px;
-margin-bottom:14px;
-}
-
-.error{
-background:#fff0f2;
-color:#a32b39;
-}
-
-/* =========================
-   OFFLINE
-========================= */
-
-.offline{
-position:fixed;
-top:0;
-left:0;
-right:0;
-background:#a32b39;
-color:#fff;
-text-align:center;
-padding:8px;
-z-index:2000;
-font-size:12px;
-font-weight:700;
-display:none;
-}
-
-/* =========================
-   TABLET
-========================= */
-
-@media(max-width:850px){
-
-.hero-tools{
-grid-template-columns:1fr 1fr;
-}
-
-.hero-tools .search{
-grid-column:1/-1;
-}
-
-.stats{
-grid-template-columns:repeat(2,1fr);
-}
-
-.layout{
-grid-template-columns:1fr;
-}
-
-/*
-IMPORTANT:
-Mobile मा syllabus लाई nested scroll नदिने।
-यसले page scrolling stuck हुने समस्या हटाउँछ।
-*/
-
-.syllabus{
-max-height:none;
-overflow:visible;
-padding:10px;
-}
-
-.reader{
-padding:17px;
-}
-
-.reader-top{
-display:block;
-}
-
-.actions{
-margin-top:14px;
-}
-
-.reader h2{
-font-size:24px;
-}
-
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:520px){
-
-body{
-padding-bottom:50px;
-}
-
-.hero{
-border-radius:0 0 24px 24px;
-padding-left:14px;
-padding-right:14px;
-}
-
-.hero h1{
-font-size:25px;
-}
-
-.hero-tools{
-grid-template-columns:1fr;
-}
-
-.hero-tools .search{
-grid-column:auto;
-}
-
-.stats{
-gap:8px;
-}
-
-.stat{
-padding:13px;
-}
-
-.stat strong{
-font-size:21px;
-}
-
-.app{
-padding-left:10px;
-padding-right:10px;
-}
-
-.reader{
-padding:14px;
-}
-
-.reader h2{
-font-size:23px;
-}
-
-.notes{
-font-size:16px;
-line-height:1.85;
-}
-
-.qa-head{
-display:block;
-}
-
-.filters{
-margin-top:10px;
-}
-
-.question{
-padding:13px;
+  border-top:
+    1px solid var(--line);
 }
 
 .bottom-topics .btn{
-flex:1;
+
+  width:100%;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.skeleton{
+
+  height:13px;
+
+  border-radius:8px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #edf1f6 25%,
+      #f7f9fb 50%,
+      #edf1f6 75%
+    );
+
+  background-size:200% 100%;
+
+  animation:
+    skeletonMove 1.4s infinite;
+}
+
+@keyframes skeletonMove{
+
+  0%{
+    background-position:200% 0;
+  }
+
+  100%{
+    background-position:-200% 0;
+  }
+}
+
+.skelbox{
+
+  padding:18px;
+}
+
+
+/* =========================================================
+   PRACTICE MODAL
+   ========================================================= */
+
+.modal{
+
+  position:fixed;
+
+  inset:0;
+
+  display:none;
+
+  align-items:flex-end;
+
+  justify-content:center;
+
+  background:
+    rgba(5,13,29,.60);
+
+  backdrop-filter:
+    blur(5px);
+
+  -webkit-backdrop-filter:
+    blur(5px);
+
+  z-index:5000;
+}
+
+.modal.open{
+
+  display:flex;
 }
 
 .modal-card{
-max-height:90vh;
-padding:16px;
+
+  width:
+    min(680px,100%);
+
+  max-height:
+    min(88vh,760px);
+
+  overflow-y:auto;
+
+  overflow-x:hidden;
+
+  background:#fff;
+
+  border-radius:
+    25px 25px 0 0;
+
+  padding:21px;
+
+  box-shadow:
+    0 -15px 60px rgba(0,0,0,.16);
+
+  /*
+    Modal itself can scroll,
+    main page does not get nested scrolling.
+  */
+
+  overscroll-behavior:contain;
+
+  -webkit-overflow-scrolling:touch;
 }
 
+.modal-head{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:10px;
+
+  position:sticky;
+
+  top:-21px;
+
+  z-index:3;
+
+  margin:
+    -21px -21px 0;
+
+  padding:
+    16px 21px;
+
+  background:
+    rgba(255,255,255,.95);
+
+  backdrop-filter:
+    blur(10px);
+
+  border-bottom:
+    1px solid var(--line2);
 }
 
-/* =========================
-   EXTRA MOBILE SAFETY
-========================= */
+.modal-head h3{
 
-@media(max-width:380px){
+  margin:0;
 
-.hero h1{
-font-size:23px;
+  font:
+    800 18px
+    var(--head);
 }
 
-.stat small{
-font-size:11px;
+.close{
+
+  width:38px;
+  height:38px;
+
+  border:0;
+
+  background:#f1f3f7;
+
+  border-radius:11px;
+
+  color:#526076;
 }
 
-.stat strong{
-font-size:19px;
+
+/* =========================================================
+   PRACTICE
+   ========================================================= */
+
+.practice-q{
+
+  margin:
+    18px 0;
+
+  color:var(--text);
+
+  font:
+    800 19px/1.65
+    var(--head);
+
+  overflow-wrap:anywhere;
 }
 
-.reader{
-padding:12px;
+.practice-options{
+
+  display:grid;
+
+  gap:9px;
 }
 
-.notes{
-font-size:15px;
+.practice-options button{
+
+  width:100%;
+
+  text-align:left;
+
+  padding:13px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:13px;
+
+  background:#fff;
+
+  color:#34445d;
+
+  line-height:1.55;
+
+  transition:
+    transform .15s ease,
+    background .15s ease,
+    border-color .15s ease;
 }
 
+.practice-options button:active{
+
+  transform:scale(.985);
 }
 
-/* Prevent accidental horizontal overflow */
+.practice-options button.correct{
 
-img,
-video,
-iframe,
-table{
-max-width:100%;
+  border-color:#53b88d;
+
+  background:#eafaf4;
+
+  color:#087b59;
 }
 
-pre,
-code{
-max-width:100%;
-overflow-x:auto;
+.practice-options button.wrong{
+
+  border-color:#e47783;
+
+  background:#fff0f2;
+
+  color:#a32b39;
+}
+
+.notice{
+
+  padding:13px;
+
+  border-radius:13px;
+
+  background:#fff6e7;
+
+  color:#8b5a06;
+
+  font-size:12px;
+
+  line-height:1.6;
+}
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+.toast{
+
+  position:fixed;
+
+  left:50%;
+
+  bottom:
+    calc(20px + env(safe-area-inset-bottom));
+
+  transform:
+    translate(-50%,20px);
+
+  max-width:
+    min(92vw,450px);
+
+  padding:
+    11px 15px;
+
+  border-radius:13px;
+
+  background:#17233d;
+
+  color:#fff;
+
+  text-align:center;
+
+  font-size:12px;
+
+  font-weight:700;
+
+  opacity:0;
+
+  pointer-events:none;
+
+  z-index:9000;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.16);
+
+  transition:
+    opacity .2s ease,
+    transform .2s ease;
+}
+
+.toast.show{
+
+  opacity:1;
+
+  transform:
+    translate(-50%,0);
+}
+
+
+/* =========================================================
+   OFFLINE
+   ========================================================= */
+
+.offline{
+
+  position:fixed;
+
+  top:0;
+  left:0;
+  right:0;
+
+  z-index:10000;
+
+  display:none;
+
+  padding:8px 12px;
+
+  background:#a32b39;
+
+  color:#fff;
+
+  text-align:center;
+
+  font-size:11px;
+
+  font-weight:800;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media(max-width:950px){
+
+  .hero-tools{
+
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .hero-tools .search{
+
+    grid-column:
+      1/-1;
+  }
+
+  .stats{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+  }
+
+  .layout{
+
+    grid-template-columns:
+      280px minmax(0,1fr);
+  }
+
+  .reader{
+
+    padding:20px;
+  }
+
+  .reader-top{
+
+    display:block;
+  }
+
+  .reader .actions{
+
+    margin-top:14px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:700px){
+
+  /*
+    CRITICAL:
+    Remove sticky sidebar on mobile.
+    Everything becomes one continuous page.
+  */
+
+  .layout > aside{
+
+    position:static;
+  }
+
+  .layout{
+
+    display:block;
+
+    margin-top:13px;
+  }
+
+  .layout > section{
+
+    margin-top:13px;
+  }
+
+  .hero{
+
+    border-radius:
+      0 0 24px 24px;
+
+    padding-left:14px;
+
+    padding-right:14px;
+  }
+
+  .hero h1{
+
+    font-size:26px;
+  }
+
+  .hero-tools{
+
+    grid-template-columns:1fr;
+
+    gap:8px;
+  }
+
+  .hero-tools .search{
+
+    grid-column:auto;
+  }
+
+  .stats{
+
+    gap:8px;
+  }
+
+  .stat{
+
+    padding:13px;
+  }
+
+  .stat strong{
+
+    font-size:21px;
+  }
+
+  .stat-icon{
+
+    width:29px;
+    height:29px;
+  }
+
+  .app{
+
+    padding-left:10px;
+
+    padding-right:10px;
+  }
+
+  .content{
+
+    padding-top:13px;
+  }
+
+  .panel{
+
+    border-radius:18px;
+  }
+
+  .panel-head{
+
+    padding:
+      15px;
+  }
+
+  .reader{
+
+    padding:16px;
+  }
+
+  .reader h2{
+
+    font-size:24px;
+  }
+
+  .reader-sub{
+
+    font-size:13px;
+  }
+
+  .notes{
+
+    font-size:16px;
+
+    line-height:1.86;
+  }
+
+  .qa-head{
+
+    display:block;
+
+    margin-top:26px;
+  }
+
+  .filters{
+
+    margin-top:11px;
+  }
+
+  .question{
+
+    padding:14px;
+
+    border-radius:15px;
+  }
+
+  .question h4{
+
+    font-size:14px;
+
+    line-height:1.72;
+  }
+
+  .bottom-topics{
+
+    grid-template-columns:
+      1fr 1fr;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media(max-width:420px){
+
+  .hero h1{
+
+    font-size:24px;
+  }
+
+  .hero p{
+
+    font-size:12px;
+  }
+
+  .stats{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+  }
+
+  .stat small{
+
+    font-size:10px;
+  }
+
+  .stat strong{
+
+    font-size:19px;
+  }
+
+  .reader{
+
+    padding:14px;
+  }
+
+  .reader h2{
+
+    font-size:22px;
+  }
+
+  .notes{
+
+    font-size:15.5px;
+  }
+
+  .actions .btn{
+
+    flex:1;
+  }
+
+  .question-actions{
+
+    align-items:flex-start;
+  }
+
+  .modal-card{
+
+    max-height:92vh;
+
+    padding:16px;
+  }
+
+  .modal-head{
+
+    top:-16px;
+
+    margin:
+      -16px -16px 0;
+
+    padding:
+      14px 16px;
+  }
+}
+
+
+/* =========================================================
+   EXTRA SMALL
+   ========================================================= */
+
+@media(max-width:350px){
+
+  .hero h1{
+
+    font-size:22px;
+  }
+
+  .reader h2{
+
+    font-size:20px;
+  }
+
+  .notes{
+
+    font-size:15px;
+  }
+
+  .stat{
+
+    padding:11px;
+  }
+
+  .stat strong{
+
+    font-size:18px;
+  }
+}
+
+
+/* =========================================================
+   REDUCE MOTION
+   ========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+
+    scroll-behavior:auto!important;
+
+    animation-duration:.001ms!important;
+
+    transition-duration:.001ms!important;
+  }
 }
 
 </style>
 </head>
 
+
 <body>
 
-<div class="offline" id="offline">
-You are offline. Previously loaded study material may still be available.
+
+<!-- =======================================================
+     OFFLINE
+======================================================= -->
+
+<div
+  class="offline"
+  id="offline"
+>
+  You are offline. Previously loaded study material may still be available.
 </div>
+
+
+<!-- =======================================================
+     HERO
+======================================================= -->
 
 <header class="hero">
 
-<div class="hero-inner">
+  <div class="hero-inner">
 
-<div class="topline">
+    <div class="topline">
 
-<a class="back" href="dashboard.html">
-<i class="fa-solid fa-arrow-left"></i>
-</a>
+      <a
+        class="back"
+        href="dashboard.html"
+        aria-label="Back to dashboard"
+      >
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
 
-<div>
+      <div>
 
-<div class="eyebrow">
-LoksewaQuest
-</div>
+        <div class="eyebrow">
+          LOKSEWAQUEST
+        </div>
 
-<h1>
-Study Hub
-</h1>
+        <h1>
+          Study Hub
+        </h1>
 
-<p>
-Master your Loksewa syllabus topic by topic.
-</p>
+        <p>
+          Learn smarter. Prepare better. One topic at a time.
+        </p>
 
-</div>
+      </div>
 
-</div>
+    </div>
 
-<div class="hero-tools">
 
-<select id="examSelect" class="selectbox" aria-label="Exam">
-<option value="">
-Loading exams…
-</option>
-</select>
+    <div class="hero-tools">
 
-<select id="paperSelect" class="selectbox" aria-label="Paper">
-<option value="">
-Select paper
-</option>
-</select>
+      <select
+        id="examSelect"
+        class="selectbox"
+        aria-label="Exam"
+      >
+        <option value="">
+          Loading exams…
+        </option>
+      </select>
 
-<label class="search">
 
-<i class="fa-solid fa-magnifying-glass"></i>
+      <select
+        id="paperSelect"
+        class="selectbox"
+        aria-label="Paper"
+      >
+        <option value="">
+          Select paper
+        </option>
+      </select>
 
-<input
-id="searchInput"
-type="search"
-placeholder="Search topics, questions, answers…"
-autocomplete="off">
 
-</label>
+      <label class="search">
 
-</div>
+        <i class="fa-solid fa-magnifying-glass"></i>
 
-</div>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search topics, questions, answers…"
+          autocomplete="off"
+        >
+
+      </label>
+
+    </div>
+
+  </div>
 
 </header>
 
+
+<!-- =======================================================
+     MAIN
+======================================================= -->
+
 <main class="app content">
 
-<section class="stats">
 
-<div class="stat">
+  <!-- =====================================================
+       STATS
+  ====================================================== -->
 
-<small>
-Overall Progress
-</small>
-
-<strong id="progressText">
-0%
-</strong>
-
-<div class="progress">
-<i id="progressBar"></i>
-</div>
-
-</div>
-
-<div class="stat">
-
-<small>
-Topics Completed
-</small>
-
-<strong id="topicCount">
-0 / 0
-</strong>
-
-</div>
-
-<div class="stat">
-
-<small>
-Questions Practiced
-</small>
-
-<strong id="questionCount">
-0
-</strong>
-
-</div>
-
-<div class="stat">
-
-<small>
-Bookmarked
-</small>
-
-<strong id="bookmarkCount">
-0
-</strong>
-
-</div>
-
-</section>
+  <section class="stats">
 
 
-<div class="layout">
+    <div class="stat">
 
-<aside class="panel">
+      <div class="stat-label">
 
-<div class="panel-head">
+        <small>
+          Overall Progress
+        </small>
 
-<div>
+        <span class="stat-icon">
+          <i class="fa-solid fa-chart-line"></i>
+        </span>
 
-<h2>
-Syllabus
-</h2>
+      </div>
 
-<p id="syllabusHint">
-Choose an exam and paper.
-</p>
+      <strong id="progressText">
+        0%
+      </strong>
 
-</div>
+      <div class="progress">
+        <i id="progressBar"></i>
+      </div>
 
-<button class="btn" id="filterBtn">
-<i class="fa-solid fa-sliders"></i>
-</button>
-
-</div>
-
-<div id="syllabus" class="syllabus">
-
-<div class="skelbox">
-
-<div class="skeleton" style="width:70%"></div>
-
-<br>
-
-<div class="skeleton" style="width:90%"></div>
-
-<br>
-
-<div class="skeleton" style="width:55%"></div>
-
-</div>
-
-</div>
-
-</aside>
+    </div>
 
 
-<section class="panel" id="readerPanel">
+    <div class="stat">
 
-<div class="empty">
+      <div class="stat-label">
 
-<i class="fa-solid fa-book-open"></i>
+        <small>
+          Topics Completed
+        </small>
 
-<h3>
-Choose a topic to start
-</h3>
+        <span class="stat-icon">
+          <i class="fa-solid fa-list-check"></i>
+        </span>
 
-<p>
-Your notes, important points and questions will appear here.
-</p>
+      </div>
 
-</div>
+      <strong id="topicCount">
+        0 / 0
+      </strong>
 
-</section>
+    </div>
 
-</div>
+
+    <div class="stat">
+
+      <div class="stat-label">
+
+        <small>
+          Questions Practiced
+        </small>
+
+        <span class="stat-icon">
+          <i class="fa-solid fa-bolt"></i>
+        </span>
+
+      </div>
+
+      <strong id="questionCount">
+        0
+      </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+
+        <small>
+          Bookmarked
+        </small>
+
+        <span class="stat-icon">
+          <i class="fa-solid fa-bookmark"></i>
+        </span>
+
+      </div>
+
+      <strong id="bookmarkCount">
+        0
+      </strong>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       LAYOUT
+  ====================================================== -->
+
+  <div class="layout">
+
+
+    <!-- ===================================================
+         SYLLABUS
+    ==================================================== -->
+
+    <aside class="panel">
+
+      <div class="panel-head">
+
+        <div>
+
+          <h2>
+            Syllabus
+          </h2>
+
+          <p id="syllabusHint">
+            Choose an exam and paper.
+          </p>
+
+        </div>
+
+        <button
+          class="btn"
+          id="filterBtn"
+          type="button"
+          aria-label="Syllabus options"
+        >
+          <i class="fa-solid fa-sliders"></i>
+        </button>
+
+      </div>
+
+
+      <div
+        id="syllabus"
+        class="syllabus"
+      >
+
+        <div class="skelbox">
+
+          <div
+            class="skeleton"
+            style="width:70%"
+          ></div>
+
+          <br>
+
+          <div
+            class="skeleton"
+            style="width:90%"
+          ></div>
+
+          <br>
+
+          <div
+            class="skeleton"
+            style="width:55%"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+
+    <!-- ===================================================
+         READER
+    ==================================================== -->
+
+    <section
+      class="panel"
+      id="readerPanel"
+    >
+
+      <div class="empty">
+
+        <i class="fa-solid fa-book-open-reader"></i>
+
+        <h3>
+          Choose a topic to start
+        </h3>
+
+        <p>
+          Your notes, important points and questions will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+  </div>
 
 </main>
 
 
-<div id="toast" class="toast"></div>
+<!-- =======================================================
+     TOAST
+======================================================= -->
+
+<div
+  id="toast"
+  class="toast"
+  role="status"
+  aria-live="polite"
+></div>
 
 
-<div id="practiceModal" class="modal">
+<!-- =======================================================
+     PRACTICE MODAL
+======================================================= -->
 
-<div class="modal-card">
+<div
+  id="practiceModal"
+  class="modal"
+>
 
-<div class="modal-head">
+  <div class="modal-card">
 
-<h3>
-Practice Questions
-</h3>
+    <div class="modal-head">
 
-<button class="close" id="closePractice">
-<i class="fa-solid fa-xmark"></i>
-</button>
+      <h3>
+        Practice Questions
+      </h3>
+
+      <button
+        class="close"
+        id="closePractice"
+        type="button"
+        aria-label="Close"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+    </div>
+
+    <div id="practiceBody"></div>
+
+  </div>
 
 </div>
 
-<div id="practiceBody"></div>
 
-</div>
-
-</div>
-
+<!-- =======================================================
+     SUPABASE
+======================================================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="components.js"></script>
 
 
+<!-- =======================================================
+     FIREBASE + APP
+======================================================= -->
+
 <script type="module">
 
 import {
-initializeApp
+  initializeApp
 }
 from
 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 
+
 import {
-getAuth,
-onAuthStateChanged
+  getAuth,
+  onAuthStateChanged
 }
 from
 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
 
-const firebaseConfig={
-apiKey:'AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak',
-authDomain:'loksewaquest-227b6.firebaseapp.com',
-projectId:'loksewaquest-227b6',
-storageBucket:'loksewaquest-227b6.firebasestorage.app',
-messagingSenderId:'779234903809',
-appId:'1:779234903809:web:dd0dd0ffb742e1c218bd00'
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+const firebaseConfig = {
+
+  apiKey:
+    'AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak',
+
+  authDomain:
+    'loksewaquest-227b6.firebaseapp.com',
+
+  projectId:
+    'loksewaquest-227b6',
+
+  storageBucket:
+    'loksewaquest-227b6.firebasestorage.app',
+
+  messagingSenderId:
+    '779234903809',
+
+  appId:
+    '1:779234903809:web:dd0dd0ffb742e1c218bd00'
 };
 
 
-const firebaseApp=initializeApp(firebaseConfig);
-const auth=getAuth(firebaseApp);
+const firebaseApp =
+  initializeApp(firebaseConfig);
 
 
-const SUPABASE_URL=
-'https://edyirdedkiarguvurpxq.supabase.co';
-
-const SUPABASE_KEY=
-'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+const auth =
+  getAuth(firebaseApp);
 
 
-const sb=
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  'https://edyirdedkiarguvurpxq.supabase.co';
 
 
-const $=id=>document.getElementById(id);
+const SUPABASE_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
 
 
-const esc=v=>
-String(v??'')
-.replace(/[&<>"']/g,m=>({
-'&':'&amp;',
-'<':'&lt;',
-'>':'&gt;',
-'"':'&quot;',
-"'":'&#039;'
-}[m]));
+const sb =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-let user=null;
 
-let exams=[];
-let papers=[];
-let sections=[];
-let topics=[];
+/* =========================================================
+   HELPERS
+========================================================= */
 
-let currentTopic=null;
-let currentQuestions=[];
-
-let bookmarks=new Set();
-let progress=new Map();
-
-let searchTimer=null;
+const $ =
+  id => document.getElementById(id);
 
 
-/* =========================
+const esc =
+  value =>
+    String(value ?? '')
+      .replace(
+        /[&<>"']/g,
+        char => ({
+          '&':'&amp;',
+          '<':'&lt;',
+          '>':'&gt;',
+          '"':'&quot;',
+          "'":'&#039;'
+        }[char])
+      );
+
+
+function safeHtml(value){
+
+  if(value === null || value === undefined){
+    return '';
+  }
+
+  return String(value)
+    .replace(
+      /<script[\s\S]*?<\/script>/gi,
+      ''
+    )
+    .replace(
+      /javascript:/gi,
+      ''
+    )
+    .replace(
+      /\son[a-z]+\s*=\s*(['"]).*?\1/gi,
+      ''
+    );
+}
+
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let user = null;
+
+let exams = [];
+
+let papers = [];
+
+let sections = [];
+
+let topics = [];
+
+let currentTopic = null;
+
+let currentQuestions = [];
+
+let bookmarks = new Set();
+
+let progress = new Map();
+
+let searchTimer = null;
+
+let currentFilter = 'all';
+
+let openSections =
+  new Set();
+
+let searchRequestId = 0;
+
+
+
+/* =========================================================
    TOAST
-========================= */
+========================================================= */
 
 function toast(message){
 
-$('toast').textContent=message;
+  const element =
+    $('toast');
 
-$('toast').classList.add('show');
+  element.textContent =
+    message;
 
-clearTimeout(window.__toastTimer);
+  element.classList.add('show');
 
-window.__toastTimer=
-setTimeout(()=>{
-$('toast').classList.remove('show');
-},2400);
+  clearTimeout(
+    window.__toastTimer
+  );
 
+  window.__toastTimer =
+    setTimeout(
+      () => {
+        element.classList.remove('show');
+      },
+      2400
+    );
 }
 
 
-/* =========================
+
+/* =========================================================
    ERROR
-========================= */
+========================================================= */
 
 function err(message,error){
 
-console.error('[Study Hub]',message,error);
+  console.error(
+    '[LoksewaQuest Study Hub]',
+    error
+  );
 
-toast(message);
-
+  toast(message);
 }
 
 
-/* =========================
-   FORMAT NOTES
-========================= */
 
-/*
-This is the important fix.
-
-Database मा यस्तो data भए:
-
-अभिलेख भनेको...
-• आवश्यक अभिलेख खोजेको समयमा उपलब्ध गराउन।
-• समय बचत गर्न।
-• अभिलेख सुरक्षित राख्न।
-
-अब यो automatically proper paragraphs/list मा देखिन्छ।
-*/
+/* =========================================================
+   NOTES FORMATTER
+========================================================= */
 
 function formatNotes(raw){
 
-if(raw===null || raw===undefined || raw===''){
-return '<div class="empty">Study material coming soon.</div>';
+  if(
+    raw === null ||
+    raw === undefined ||
+    String(raw).trim() === ''
+  ){
+
+    return `
+      <div class="empty">
+        <i class="fa-solid fa-file-circle-question"></i>
+
+        <h3>
+          Study material coming soon
+        </h3>
+
+        <p>
+          Notes for this topic have not been added yet.
+        </p>
+      </div>
+    `;
+  }
+
+
+  let text =
+    String(raw)
+      .replace(/\r\n/g,'\n')
+      .replace(/\r/g,'\n');
+
+
+  /*
+    Existing HTML.
+    Keep basic content but remove obvious dangerous scripts.
+  */
+
+  if(
+    /<\s*(p|div|h1|h2|h3|h4|ul|ol|li|br|blockquote)\b/i
+      .test(text)
+  ){
+
+    return safeHtml(text);
+  }
+
+
+  const lines =
+    text
+      .split(/\n+/)
+      .map(line => line.trim())
+      .filter(Boolean);
+
+
+  let html = '';
+
+  let bullets = [];
+
+
+  function flushBullets(){
+
+    if(!bullets.length){
+      return;
+    }
+
+    html += '<ul>';
+
+    bullets.forEach(item => {
+
+      html +=
+        `<li>${esc(item)}</li>`;
+
+    });
+
+    html += '</ul>';
+
+    bullets = [];
+  }
+
+
+  for(
+    const line of lines
+  ){
+
+    /*
+      Bullet
+    */
+
+    if(
+      /^•\s*/.test(line)
+    ){
+
+      bullets.push(
+        line
+          .replace(/^•\s*/,'')
+          .trim()
+      );
+
+      continue;
+    }
+
+
+    /*
+      Dash bullet
+    */
+
+    if(
+      /^[-–—]\s+/.test(line)
+    ){
+
+      bullets.push(
+        line
+          .replace(/^[-–—]\s+/,'')
+          .trim()
+      );
+
+      continue;
+    }
+
+
+    /*
+      Numbered item
+    */
+
+    if(
+      /^\d+[.)]\s+/.test(line)
+    ){
+
+      flushBullets();
+
+      html +=
+        `<p><strong>${esc(line)}</strong></p>`;
+
+      continue;
+    }
+
+
+    /*
+      Heading
+    */
+
+    if(
+      line.length < 100 &&
+      (
+        line.endsWith(':') ||
+        /^(परिचय|महत्व|आवश्यकता|कार्य|प्रकार|विशेषता|निष्कर्ष|उद्देश्य|फाइदा|लाभ)/i
+          .test(line)
+      )
+    ){
+
+      flushBullets();
+
+      html +=
+        `<h3>${esc(
+          line.replace(/:$/,'')
+        )}</h3>`;
+
+      continue;
+    }
+
+
+    /*
+      Normal paragraph
+    */
+
+    flushBullets();
+
+    html +=
+      `<p>${esc(line)}</p>`;
+  }
+
+
+  flushBullets();
+
+
+  return html;
 }
 
-let text=String(raw);
 
-/*
-If existing HTML exists,
-keep basic formatting but normalize it.
-*/
 
-if(/<\s*(p|div|h1|h2|h3|h4|ul|ol|li|br)\b/i.test(text)){
+/* =========================================================
+   LOADING UI
+========================================================= */
 
-return text
-.replace(/<script[\s\S]*?<\/script>/gi,'')
-.replace(/on\w+\s*=\s*(['"]).*?\1/gi,'')
-.replace(/javascript:/gi,'');
+function syllabusLoading(){
+
+  $('syllabus').innerHTML = `
+
+    <div class="skelbox">
+
+      <div
+        class="skeleton"
+        style="width:72%;height:14px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:94%;height:14px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:64%;height:14px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:82%;height:14px"
+      ></div>
+
+    </div>
+  `;
 }
 
 
-/*
-Plain text formatter
-*/
 
-text=text
-.replace(/\r\n/g,'\n')
-.replace(/\r/g,'\n');
-
-
-const lines=text
-.split(/\n+/)
-.map(x=>x.trim())
-.filter(Boolean);
-
-
-let html='';
-let bulletBuffer=[];
-
-
-function flushBullets(){
-
-if(!bulletBuffer.length){
-return;
-}
-
-html+='<ul>';
-
-bulletBuffer.forEach(item=>{
-html+=`<li>${esc(item)}</li>`;
-});
-
-html+='</ul>';
-
-bulletBuffer=[];
-
-}
-
-
-for(const line of lines){
-
-/*
-Handle bullet character
-*/
-
-if(/^•\s*/.test(line)){
-
-bulletBuffer.push(
-line.replace(/^•\s*/,'').trim()
-);
-
-continue;
-
-}
-
-
-/*
-Handle dash bullet
-*/
-
-if(/^[-–—]\s+/.test(line)){
-
-bulletBuffer.push(
-line.replace(/^[-–—]\s+/,'').trim()
-);
-
-continue;
-
-}
-
-
-/*
-Numbered list
-*/
-
-if(/^\d+[.)]\s+/.test(line)){
-
-flushBullets();
-
-html+=`<p><strong>${esc(line)}</strong></p>`;
-
-continue;
-
-}
-
-
-/*
-Heading-like lines
-*/
-
-if(
-line.length<90 &&
-(
-line.endsWith(':') ||
-/^(परिचय|महत्व|आवश्यकता|कार्य|प्रकार|विशेषता|निष्कर्ष)/.test(line)
-)
-){
-
-flushBullets();
-
-html+=`<h3>${esc(line.replace(/:$/,''))}</h3>`;
-
-continue;
-
-}
-
-
-/*
-Normal paragraph
-*/
-
-flushBullets();
-
-html+=`<p>${esc(line)}</p>`;
-
-}
-
-flushBullets();
-
-return html;
-
-}
-
-
-/* =========================
+/* =========================================================
    LOAD EXAMS
-========================= */
+========================================================= */
 
 async function loadExams(){
 
-const {
-data,
-error
-}=await sb
-.from('study_exams')
-.select('*')
-.eq('is_active',true)
-.order('display_order');
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from('study_exams')
+      .select('*')
+      .eq('is_active',true)
+      .order('display_order');
 
 
-if(error) throw error;
-
-exams=data||[];
-
-
-$('examSelect').innerHTML=
-
-exams.length
-
-?exams.map(x=>
-`<option value="${esc(x.id)}">
-${esc(x.name)}
-</option>`
-).join('')
-
-:'<option value="">Study material coming soon</option>';
+  if(error){
+    throw error;
+  }
 
 
-if(exams[0]){
+  exams =
+    data || [];
 
-await loadPapers(exams[0].id);
 
+  $('examSelect').innerHTML =
+    exams.length
+
+      ? exams
+          .map(
+            exam => `
+              <option value="${esc(exam.id)}">
+                ${esc(exam.name)}
+              </option>
+            `
+          )
+          .join('')
+
+      : `
+          <option value="">
+            No exams available
+          </option>
+        `;
+
+
+  if(exams[0]){
+
+    await loadPapers(
+      exams[0].id
+    );
+
+  }else{
+
+    renderEmptySyllabus();
+  }
 }
 
-}
 
 
-/* =========================
+/* =========================================================
    LOAD PAPERS
-========================= */
+========================================================= */
 
 async function loadPapers(examId){
 
-if(!examId){
+  if(!examId){
 
-$('paperSelect').innerHTML=
-'<option value="">Select paper</option>';
+    $('paperSelect').innerHTML =
+      '<option value="">Select paper</option>';
 
-renderEmptySyllabus();
+    renderEmptySyllabus();
 
-return;
+    return;
+  }
 
+
+  $('paperSelect').innerHTML =
+    '<option value="">Loading…</option>';
+
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from('study_papers')
+      .select('*')
+      .eq('exam_id',examId)
+      .eq('is_active',true)
+      .order('display_order');
+
+
+  if(error){
+    throw error;
+  }
+
+
+  papers =
+    data || [];
+
+
+  $('paperSelect').innerHTML =
+    papers.length
+
+      ? papers
+          .map(
+            paper => `
+              <option value="${esc(paper.id)}">
+                ${esc(paper.name)}
+              </option>
+            `
+          )
+          .join('')
+
+      : `
+          <option value="">
+            No papers available
+          </option>
+        `;
+
+
+  if(papers[0]){
+
+    await loadSyllabus(
+      papers[0].id
+    );
+
+  }else{
+
+    renderEmptySyllabus();
+  }
 }
 
 
-$('paperSelect').innerHTML=
-'<option value="">Loading…</option>';
 
-
-const {
-data,
-error
-}=await sb
-.from('study_papers')
-.select('*')
-.eq('exam_id',examId)
-.eq('is_active',true)
-.order('display_order');
-
-
-if(error) throw error;
-
-papers=data||[];
-
-
-$('paperSelect').innerHTML=
-
-papers.length
-
-?papers.map(x=>
-`<option value="${esc(x.id)}">
-${esc(x.name)}
-</option>`
-).join('')
-
-:'<option value="">No papers yet</option>';
-
-
-if(papers[0]){
-
-await loadSyllabus(papers[0].id);
-
-}else{
-
-renderEmptySyllabus();
-
-}
-
-}
-
-
-/* =========================
+/* =========================================================
    LOAD SYLLABUS
-========================= */
+========================================================= */
 
 async function loadSyllabus(paperId){
 
-if(!paperId){
+  if(!paperId){
 
-renderEmptySyllabus();
+    renderEmptySyllabus();
 
-return;
+    return;
+  }
 
+
+  syllabusLoading();
+
+
+  currentTopic = null;
+
+  currentQuestions = [];
+
+  openSections =
+    new Set();
+
+
+  const sectionResult =
+    await sb
+      .from('study_sections')
+      .select('*')
+      .eq('paper_id',paperId)
+      .eq('is_active',true)
+      .order('display_order');
+
+
+  if(sectionResult.error){
+
+    throw sectionResult.error;
+  }
+
+
+  sections =
+    sectionResult.data || [];
+
+
+  /*
+    IMPORTANT PERFORMANCE FIX:
+    Instead of downloading every published topic
+    from the entire database, only load topics belonging
+    to the current paper's sections.
+  */
+
+  if(!sections.length){
+
+    topics = [];
+
+    renderEmptySyllabus();
+
+    updateStats();
+
+    return;
+  }
+
+
+  const sectionIds =
+    sections.map(
+      section => section.id
+    );
+
+
+  const topicResult =
+    await sb
+      .from('study_topics')
+      .select('*')
+      .in('section_id',sectionIds)
+      .eq('is_published',true)
+      .order('display_order');
+
+
+  if(topicResult.error){
+
+    throw topicResult.error;
+  }
+
+
+  topics =
+    topicResult.data || [];
+
+
+  /*
+    Open first section by default.
+  */
+
+  if(sections[0]){
+
+    openSections.add(
+      sections[0].id
+    );
+  }
+
+
+  renderSyllabus();
+
+  await refreshUserState();
 }
 
 
-$('syllabus').innerHTML=`
 
-<div class="skelbox">
-
-<div class="skeleton" style="width:70%"></div>
-
-<br>
-
-<div class="skeleton" style="width:90%"></div>
-
-<br>
-
-<div class="skeleton" style="width:55%"></div>
-
-</div>
-`;
-
-
-const [
-sectionResult,
-topicResult
-]=await Promise.all([
-
-sb
-.from('study_sections')
-.select('*')
-.eq('paper_id',paperId)
-.eq('is_active',true)
-.order('display_order'),
-
-sb
-.from('study_topics')
-.select('*')
-.eq('is_published',true)
-.order('display_order')
-
-]);
-
-
-if(sectionResult.error) throw sectionResult.error;
-
-if(topicResult.error) throw topicResult.error;
-
-
-sections=sectionResult.data||[];
-
-topics=(topicResult.data||[])
-.filter(topic=>
-sections.some(section=>
-section.id===topic.section_id
-)
-);
-
-
-currentTopic=null;
-currentQuestions=[];
-
-renderSyllabus();
-
-await refreshUserState();
-
-}
-
-
-/* =========================
+/* =========================================================
    EMPTY SYLLABUS
-========================= */
+========================================================= */
 
 function renderEmptySyllabus(){
 
-sections=[];
-topics=[];
+  sections = [];
 
-$('syllabus').innerHTML=`
+  topics = [];
 
-<div class="empty">
+  $('syllabusHint').textContent =
+    'No published material';
 
-<i class="fa-solid fa-layer-group"></i>
 
-<p>
-Administrators haven’t published material for this paper yet.
-</p>
+  $('syllabus').innerHTML = `
 
-</div>
-`;
+    <div class="empty">
 
-$('syllabusHint').textContent=
-'No published material';
+      <i class="fa-solid fa-layer-group"></i>
 
+      <h3>
+        No material yet
+      </h3>
+
+      <p>
+        Administrators haven't published study material
+        for this paper yet.
+      </p>
+
+    </div>
+  `;
+
+
+  updateStats();
 }
 
 
-/* =========================
+
+/* =========================================================
    RENDER SYLLABUS
-========================= */
+========================================================= */
 
 function renderSyllabus(){
 
-if(!sections.length){
+  if(!sections.length){
 
-renderEmptySyllabus();
+    renderEmptySyllabus();
 
-return;
+    return;
+  }
 
+
+  $('syllabusHint').textContent =
+    `${sections.length} sections • ${topics.length} topics`;
+
+
+  $('syllabus').innerHTML =
+    sections
+      .map(
+        section => {
+
+          const sectionTopics =
+            topics.filter(
+              topic =>
+                topic.section_id ===
+                section.id
+            );
+
+
+          const isOpen =
+            openSections.has(
+              section.id
+            );
+
+
+          return `
+
+            <div class="section-row">
+
+              <button
+                type="button"
+                class="section-btn ${
+                  isOpen ? '' : 'collapsed'
+                }"
+                data-section="${esc(section.id)}"
+              >
+
+                <span class="folder">
+
+                  <i class="fa-solid fa-folder"></i>
+
+                </span>
+
+                <span class="section-name">
+
+                  ${esc(section.name)}
+
+                </span>
+
+                <i
+                  class="fa-solid fa-chevron-down chevron"
+                ></i>
+
+              </button>
+
+
+              <div
+                class="topic-list ${
+                  isOpen ? '' : 'hidden'
+                }"
+                id="sec-${esc(section.id)}"
+              >
+
+                ${
+                  sectionTopics.length
+
+                    ?
+
+                    sectionTopics
+                      .map(
+                        topic => `
+
+                          <button
+                            type="button"
+                            class="topic-btn ${
+                              progress.get(topic.id)?.completed
+                                ? 'done'
+                                : ''
+                            } ${
+                              currentTopic?.id === topic.id
+                                ? 'active'
+                                : ''
+                            }"
+                            data-topic="${esc(topic.id)}"
+                          >
+
+                            <span class="dot"></span>
+
+                            <span>
+                              ${esc(topic.title)}
+                            </span>
+
+                          </button>
+                        `
+                      )
+                      .join('')
+
+                    :
+
+                    `
+                      <div
+                        class="empty"
+                        style="padding:14px"
+                      >
+                        No topics published yet.
+                      </div>
+                    `
+                }
+
+              </div>
+
+            </div>
+          `;
+        }
+      )
+      .join('');
+
+
+  /*
+    Section events
+  */
+
+  document
+    .querySelectorAll('[data-section]')
+    .forEach(
+      button => {
+
+        button.onclick = () => {
+
+          const id =
+            button.dataset.section;
+
+
+          if(
+            openSections.has(id)
+          ){
+
+            openSections.delete(id);
+
+          }else{
+
+            openSections.add(id);
+          }
+
+
+          renderSyllabus();
+        };
+      }
+    );
+
+
+  /*
+    Topic events
+  */
+
+  document
+    .querySelectorAll('[data-topic]')
+    .forEach(
+      button => {
+
+        button.onclick = () => {
+
+          openTopic(
+            button.dataset.topic
+          );
+
+        };
+      }
+    );
 }
 
 
-$('syllabusHint').textContent=
-`${sections.length} sections • ${topics.length} topics`;
 
-
-$('syllabus').innerHTML=
-
-sections.map((section,index)=>{
-
-const sectionTopics=
-topics.filter(topic=>
-topic.section_id===section.id
-);
-
-
-return `
-
-<div class="section-row">
-
-<button
-class="section-btn"
-data-section="${esc(section.id)}">
-
-<i class="fa-solid fa-folder-open"></i>
-
-<span>
-${esc(section.name)}
-</span>
-
-<i class="fa-solid fa-chevron-down"></i>
-
-</button>
-
-
-<div
-class="topic-list"
-id="sec-${esc(section.id)}">
-
-${
-sectionTopics.length
-
-?
-
-sectionTopics.map(topic=>`
-
-<button
-class="topic-btn ${
-progress.get(topic.id)?.completed
-?'done'
-:''
-}"
-data-topic="${esc(topic.id)}">
-
-<span class="dot"></span>
-
-<span>
-${esc(topic.title)}
-</span>
-
-</button>
-
-`).join('')
-
-:
-
-'<div class="empty" style="padding:15px">No topics published yet.</div>'
-
-}
-
-</div>
-
-</div>
-
-`;
-
-}).join('');
-
-
-document
-.querySelectorAll('[data-section]')
-.forEach(button=>{
-
-button.onclick=()=>{
-
-const list=
-button.nextElementSibling;
-
-if(list){
-
-list.classList.toggle('hidden');
-
-}
-
-};
-
-});
-
-
-document
-.querySelectorAll('[data-topic]')
-.forEach(button=>{
-
-button.onclick=()=>{
-
-openTopic(button.dataset.topic);
-
-};
-
-});
-
-}
-
-
-/* =========================
+/* =========================================================
    USER STATE
-========================= */
+========================================================= */
 
 async function refreshUserState(){
 
-if(!user){
+  if(!user){
 
-progress=new Map();
+    progress =
+      new Map();
 
-bookmarks=new Set();
+    bookmarks =
+      new Set();
 
-updateStats();
+    updateStats();
 
-renderSyllabus();
+    renderSyllabus();
 
-return;
+    return;
+  }
 
+
+  const [
+    progressResult,
+    bookmarkResult
+  ] =
+    await Promise.all([
+
+      sb
+        .from('study_progress')
+        .select('*')
+        .eq(
+          'user_uid',
+          user.uid
+        ),
+
+      sb
+        .from('study_bookmarks')
+        .select('*')
+        .eq(
+          'user_uid',
+          user.uid
+        )
+
+    ]);
+
+
+  if(progressResult.error){
+
+    console.warn(
+      progressResult.error
+    );
+  }
+
+
+  if(bookmarkResult.error){
+
+    console.warn(
+      bookmarkResult.error
+    );
+  }
+
+
+  progress =
+    new Map(
+      (progressResult.data || [])
+        .map(
+          item => [
+            item.topic_id,
+            item
+          ]
+        )
+    );
+
+
+  bookmarks =
+    new Set(
+      (bookmarkResult.data || [])
+        .map(
+          item =>
+            `${item.content_type}:${item.content_id}`
+        )
+    );
+
+
+  updateStats();
+
+  renderSyllabus();
 }
 
 
-const [
-progressResult,
-bookmarkResult
-]=await Promise.all([
 
-sb
-.from('study_progress')
-.select('*')
-.eq('user_uid',user.uid),
-
-sb
-.from('study_bookmarks')
-.select('*')
-.eq('user_uid',user.uid)
-
-]);
-
-
-if(progressResult.error){
-
-console.warn(progressResult.error);
-
-}
-
-if(bookmarkResult.error){
-
-console.warn(bookmarkResult.error);
-
-}
-
-
-progress=new Map(
-(progressResult.data||[])
-.map(x=>[x.topic_id,x])
-);
-
-
-bookmarks=new Set(
-(bookmarkResult.data||[])
-.map(x=>`${x.content_type}:${x.content_id}`)
-);
-
-
-updateStats();
-
-renderSyllabus();
-
-}
-
-
-/* =========================
+/* =========================================================
    STATS
-========================= */
+========================================================= */
 
 function updateStats(){
 
-const total=topics.length;
-
-const done=
-topics.filter(topic=>
-progress.get(topic.id)?.completed
-).length;
+  const total =
+    topics.length;
 
 
-const percentage=
-total
-?Math.round(done/total*100)
-:0;
+  const done =
+    topics.filter(
+      topic =>
+        progress.get(topic.id)?.completed
+    ).length;
 
 
-$('progressText').textContent=
-percentage+'%';
+  const percentage =
+    total
+      ? Math.round(
+          done / total * 100
+        )
+      : 0;
 
-$('progressBar').style.width=
-percentage+'%';
 
-$('topicCount').textContent=
-`${done} / ${total}`;
+  $('progressText').textContent =
+    `${percentage}%`;
 
-$('bookmarkCount').textContent=
-String(bookmarks.size);
 
+  $('progressBar').style.width =
+    `${percentage}%`;
+
+
+  $('topicCount').textContent =
+    `${done} / ${total}`;
+
+
+  $('bookmarkCount').textContent =
+    String(
+      bookmarks.size
+    );
 }
 
 
-/* =========================
+
+/* =========================================================
    OPEN TOPIC
-========================= */
+========================================================= */
 
 async function openTopic(id){
 
-currentTopic=
-topics.find(topic=>
-topic.id===id
-);
+  const topic =
+    topics.find(
+      item =>
+        item.id === id
+    );
 
 
-if(!currentTopic){
+  if(!topic){
+    return;
+  }
 
-return;
 
+  currentTopic =
+    topic;
+
+
+  /*
+    Automatically open its section.
+  */
+
+  if(topic.section_id){
+
+    openSections.add(
+      topic.section_id
+    );
+  }
+
+
+  renderSyllabus();
+
+
+  /*
+    Keep scroll position stable.
+    Do not force jump to top.
+  */
+
+
+  $('readerPanel').innerHTML = `
+
+    <div class="skelbox">
+
+      <div
+        class="skeleton"
+        style="width:32%"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:75%;height:27px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:92%;height:15px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:87%;height:15px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:95%;height:120px"
+      ></div>
+
+    </div>
+  `;
+
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from('study_questions')
+      .select('*')
+      .eq(
+        'topic_id',
+        id
+      )
+      .eq(
+        'is_published',
+        true
+      )
+      .order(
+        'created_at'
+      );
+
+
+  if(error){
+
+    err(
+      'Unable to load questions.',
+      error
+    );
+
+    currentQuestions = [];
+
+  }else{
+
+    currentQuestions =
+      data || [];
+  }
+
+
+  renderTopic();
 }
 
 
-document
-.querySelectorAll('.topic-btn')
-.forEach(button=>{
 
-button.classList.toggle(
-'active',
-button.dataset.topic===id
-);
-
-});
-
-
-$('readerPanel').innerHTML=`
-
-<div class="skelbox">
-
-<div class="skeleton" style="width:35%"></div>
-
-<br>
-
-<div
-class="skeleton"
-style="width:80%;height:25px">
-</div>
-
-<br>
-
-<div
-class="skeleton"
-style="width:95%;height:120px">
-</div>
-
-</div>
-`;
-
-
-const {
-data,
-error
-}=await sb
-.from('study_questions')
-.select('*')
-.eq('topic_id',id)
-.eq('is_published',true)
-.order('created_at');
-
-
-if(error){
-
-err(
-'Unable to load questions.',
-error
-);
-
-currentQuestions=[];
-
-}else{
-
-currentQuestions=data||[];
-
-}
-
-
-renderTopic();
-
-}
-
-
-/* =========================
+/* =========================================================
    RENDER TOPIC
-========================= */
+========================================================= */
 
 function renderTopic(){
 
-const topic=currentTopic;
+  if(!currentTopic){
+    return;
+  }
 
-const questions=currentQuestions;
 
-const completed=
-progress.get(topic.id)?.completed;
+  const topic =
+    currentTopic;
 
-const marked=
-bookmarks.has(`topic:${topic.id}`);
 
+  const questions =
+    currentQuestions;
 
-const important=
-Array.isArray(topic.important_points)
 
-?topic.important_points
+  const completed =
+    progress.get(topic.id)?.completed;
 
-:(topic.important_points
-?String(topic.important_points)
-.split('\n')
-.filter(Boolean)
-:[]);
 
+  const marked =
+    bookmarks.has(
+      `topic:${topic.id}`
+    );
 
-$('readerPanel').innerHTML=`
 
-<article class="reader">
+  const important =
+    Array.isArray(
+      topic.important_points
+    )
 
-<div class="crumb">
-Study Hub / ${esc(topic.title)}
-</div>
+      ? topic.important_points
 
+      : (
+          topic.important_points
+            ? String(
+                topic.important_points
+              )
+              .split('\n')
+              .map(x => x.trim())
+              .filter(Boolean)
+            : []
+        );
 
-<div class="reader-top">
 
-<div>
+  $('readerPanel').innerHTML = `
 
-<h2>
-${esc(topic.title)}
-</h2>
+    <article class="reader">
 
-<div class="reader-sub">
-${esc(topic.description||'')}
-</div>
 
-</div>
+      <div class="crumb">
 
+        Study Hub
 
-<div class="actions">
+        <i
+          class="fa-solid fa-chevron-right"
+          style="font-size:8px;margin:0 4px"
+        ></i>
 
-<button
-class="btn ${marked?'bookmarked':''}"
-id="topicBookmark">
+        ${esc(topic.title)}
 
-<i class="fa-${marked?'solid':'regular'} fa-bookmark"></i>
+      </div>
 
-Bookmark
 
-</button>
+      <div class="reader-top">
 
 
-<button
-class="btn ${completed?'success':''}"
-id="completeBtn">
+        <div class="reader-title-area">
 
-<i class="fa-solid fa-check"></i>
+          <h2>
+            ${esc(topic.title)}
+          </h2>
 
-${completed?'Completed':'Mark as Completed'}
+          ${
+            topic.description
 
-</button>
+              ?
 
-</div>
+              `<div class="reader-sub">
+                ${esc(topic.description)}
+              </div>`
 
-</div>
+              :
 
+              ''
+          }
 
-<div class="reading-meta">
+        </div>
 
-<span class="pill">
 
-<i class="fa-regular fa-clock"></i>
+        <div class="actions">
 
-${esc(topic.reading_minutes||5)}
-min read
+          <button
+            type="button"
+            class="btn ${
+              marked
+                ? 'bookmarked'
+                : ''
+            }"
+            id="topicBookmark"
+          >
 
-</span>
+            <i
+              class="fa-${
+                marked
+                  ? 'solid'
+                  : 'regular'
+              } fa-bookmark"
+            ></i>
 
+            ${
+              marked
+                ? 'Saved'
+                : 'Bookmark'
+            }
 
-<span class="pill">
+          </button>
 
-${questions.length}
-questions
 
-</span>
+          <button
+            type="button"
+            class="btn ${
+              completed
+                ? 'success'
+                : ''
+            }"
+            id="completeBtn"
+          >
 
+            <i class="fa-solid fa-check"></i>
 
-<span class="pill">
+            ${
+              completed
+                ? 'Completed'
+                : 'Mark Completed'
+            }
 
-${esc(topic.difficulty||'General')}
+          </button>
 
-</span>
+        </div>
 
-</div>
+      </div>
 
 
-<div class="notes">
+      <div class="reading-meta">
 
-${formatNotes(topic.notes)}
+        <span class="pill">
 
-</div>
+          <i class="fa-regular fa-clock"></i>
 
+          ${esc(
+            topic.reading_minutes || 5
+          )}
 
-${
-important.length
+          min read
 
-?
+        </span>
 
-`
 
-<div class="important">
+        <span class="pill">
 
-<h3>
+          <i class="fa-regular fa-circle-question"></i>
 
-<i class="fa-solid fa-star"></i>
+          ${questions.length}
 
-Important Points
+          questions
 
-</h3>
+        </span>
 
-<ul>
 
-${important.map(point=>
-`<li>${esc(point)}</li>`
-).join('')}
+        <span class="pill">
 
-</ul>
+          <i class="fa-solid fa-signal"></i>
 
-</div>
+          ${esc(
+            topic.difficulty ||
+            'General'
+          )}
 
-`
+        </span>
 
-:''
+      </div>
+
+
+      <div class="notes">
+
+        ${formatNotes(topic.notes)}
+
+      </div>
+
+
+      ${
+        important.length
+
+          ?
+
+          `
+
+            <div class="important">
+
+              <h3>
+
+                <i class="fa-solid fa-star"></i>
+
+                Important Points
+
+              </h3>
+
+              <ul>
+
+                ${
+                  important
+                    .map(
+                      point =>
+                        `<li>${esc(point)}</li>`
+                    )
+                    .join('')
+                }
+
+              </ul>
+
+            </div>
+
+          `
+
+          :
+
+          ''
+      }
+
+
+      <div class="qa-head">
+
+        <div class="qa-title">
+
+          <h3>
+            Questions & Answers
+          </h3>
+
+          <p>
+            Practice questions from this topic
+          </p>
+
+        </div>
+
+
+        <div class="filters">
+
+          <button
+            type="button"
+            class="filter ${
+              currentFilter === 'all'
+                ? 'active'
+                : ''
+            }"
+            data-qfilter="all"
+          >
+            All
+          </button>
+
+          <button
+            type="button"
+            class="filter ${
+              currentFilter === 'important'
+                ? 'active'
+                : ''
+            }"
+            data-qfilter="important"
+          >
+            Important
+          </button>
+
+          <button
+            type="button"
+            class="filter ${
+              currentFilter === 'mcq'
+                ? 'active'
+                : ''
+            }"
+            data-qfilter="mcq"
+          >
+            MCQ
+          </button>
+
+          <button
+            type="button"
+            class="filter ${
+              currentFilter === 'short'
+                ? 'active'
+                : ''
+            }"
+            data-qfilter="short"
+          >
+            Short
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div id="questions"></div>
+
+
+      <div
+        class="actions"
+        style="margin-top:17px"
+      >
+
+        <button
+          type="button"
+          class="btn primary"
+          id="practiceBtn"
+        >
+
+          <i class="fa-solid fa-bolt"></i>
+
+          Practice Questions
+
+        </button>
+
+      </div>
+
+
+      <div class="bottom-topics">
+
+        <button
+          type="button"
+          class="btn"
+          id="prevTopic"
+        >
+
+          <i class="fa-solid fa-arrow-left"></i>
+
+          Previous
+
+        </button>
+
+
+        <button
+          type="button"
+          class="btn"
+          id="nextTopic"
+        >
+
+          Next Topic
+
+          <i class="fa-solid fa-arrow-right"></i>
+
+        </button>
+
+      </div>
+
+    </article>
+  `;
+
+
+  $('topicBookmark').onclick =
+    () =>
+      toggleBookmark(
+        'topic',
+        topic.id
+      );
+
+
+  $('completeBtn').onclick =
+    () =>
+      toggleComplete(
+        topic.id
+      );
+
+
+  $('practiceBtn').onclick =
+    openPractice;
+
+
+  renderQuestions(
+    getFilteredQuestions()
+  );
+
+
+  document
+    .querySelectorAll('[data-qfilter]')
+    .forEach(
+      button => {
+
+        button.onclick = () => {
+
+          currentFilter =
+            button.dataset.qfilter;
+
+
+          renderTopic();
+        };
+      }
+    );
+
+
+  $('prevTopic').onclick =
+    () =>
+      moveTopic(-1);
+
+
+  $('nextTopic').onclick =
+    () =>
+      moveTopic(1);
 }
 
 
-<div class="qa-head">
 
-<h3>
-Questions & Answers
-</h3>
+/* =========================================================
+   QUESTION FILTER
+========================================================= */
 
+function getFilteredQuestions(){
 
-<div class="filters">
+  switch(currentFilter){
 
-<button
-class="filter"
-data-qfilter="all">
-All
-</button>
+    case 'important':
 
-<button
-class="filter"
-data-qfilter="important">
-Important
-</button>
-
-<button
-class="filter"
-data-qfilter="mcq">
-MCQ
-</button>
-
-<button
-class="filter"
-data-qfilter="short">
-Short
-</button>
-
-</div>
-
-</div>
+      return currentQuestions.filter(
+        question =>
+          question.is_important
+      );
 
 
-<div id="questions"></div>
+    case 'mcq':
+
+      return currentQuestions.filter(
+        question =>
+          question.question_type ===
+          'mcq'
+      );
 
 
-<div
-class="actions"
-style="margin-top:16px">
+    case 'short':
 
-<button
-class="btn primary"
-id="practiceBtn">
-
-<i class="fa-solid fa-bolt"></i>
-
-Practice Questions
-
-</button>
-
-</div>
+      return currentQuestions.filter(
+        question =>
+          question.question_type ===
+          'short'
+      );
 
 
-<div class="bottom-topics">
+    default:
 
-<button
-class="btn"
-id="prevTopic">
-
-<i class="fa-solid fa-arrow-left"></i>
-
-Previous
-
-</button>
-
-
-<button
-class="btn"
-id="nextTopic">
-
-Next Topic
-
-<i class="fa-solid fa-arrow-right"></i>
-
-</button>
-
-</div>
-
-</article>
-`;
-
-
-$('topicBookmark').onclick=
-()=>toggleBookmark('topic',topic.id);
-
-
-$('completeBtn').onclick=
-()=>toggleComplete(topic.id);
-
-
-$('practiceBtn').onclick=
-()=>openPractice();
-
-
-renderQuestions(questions);
-
-
-document
-.querySelectorAll('[data-qfilter]')
-.forEach(button=>{
-
-button.onclick=()=>{
-
-const filter=
-button.dataset.qfilter;
-
-
-if(filter==='all'){
-
-renderQuestions(questions);
-
-return;
-
+      return currentQuestions;
+  }
 }
 
 
-if(filter==='important'){
 
-renderQuestions(
-questions.filter(x=>x.is_important)
-);
+/* =========================================================
+   QUESTION OPTIONS
+========================================================= */
 
-return;
+function parseOptions(value){
 
+  if(Array.isArray(value)){
+
+    return value;
+  }
+
+
+  if(typeof value === 'string'){
+
+    try{
+
+      const parsed =
+        JSON.parse(value);
+
+
+      if(Array.isArray(parsed)){
+
+        return parsed;
+      }
+
+    }catch{}
+
+
+    return value
+      .split(',')
+      .map(
+        item =>
+          item.trim()
+      )
+      .filter(Boolean);
+  }
+
+
+  return [];
 }
 
 
-if(filter==='mcq'){
 
-renderQuestions(
-questions.filter(x=>
-x.question_type==='mcq'
-)
-);
-
-return;
-
-}
-
-
-if(filter==='short'){
-
-renderQuestions(
-questions.filter(x=>
-x.question_type==='short'
-)
-);
-
-}
-
-};
-
-});
-
-
-$('prevTopic').onclick=
-()=>moveTopic(-1);
-
-$('nextTopic').onclick=
-()=>moveTopic(1);
-
-}
-
-
-/* =========================
+/* =========================================================
    RENDER QUESTIONS
-========================= */
+========================================================= */
 
-function renderQuestions(questions){
+function renderQuestions(
+  questions
+){
 
-const box=$('questions');
+  const box =
+    $('questions');
 
-if(!box){
 
-return;
+  if(!box){
+    return;
+  }
 
+
+  if(!questions.length){
+
+    box.innerHTML = `
+
+      <div class="empty">
+
+        <i class="fa-regular fa-circle-question"></i>
+
+        <h3>
+          No questions found
+        </h3>
+
+        <p>
+          No questions are available for this filter.
+        </p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  box.innerHTML =
+    questions
+      .map(
+        (question,index) => {
+
+          const options =
+            parseOptions(
+              question.options
+            );
+
+
+          const saved =
+            bookmarks.has(
+              `question:${question.id}`
+            );
+
+
+          return `
+
+            <div
+              class="question"
+              data-qid="${esc(question.id)}"
+            >
+
+
+              <div class="qtop">
+
+                <span class="badge">
+
+                  ${esc(
+                    question.question_type ||
+                    'short'
+                  )}
+
+                </span>
+
+
+                <span class="badge">
+
+                  ${esc(
+                    question.difficulty ||
+                    'Medium'
+                  )}
+
+                </span>
+
+
+                ${
+                  question.marks
+
+                    ?
+
+                    `<span class="badge">
+                      ${esc(question.marks)}
+                      marks
+                    </span>`
+
+                    :
+
+                    ''
+                }
+
+
+                ${
+                  question.is_important
+
+                    ?
+
+                    `<span class="badge imp">
+                      <i class="fa-solid fa-star"></i>
+                      &nbsp;Important
+                    </span>`
+
+                    :
+
+                    ''
+                }
+
+              </div>
+
+
+              <h4>
+
+                Q${index+1}.
+
+                ${esc(
+                  question.question
+                )}
+
+              </h4>
+
+
+              ${
+                question.question_type === 'mcq'
+                &&
+                options.length
+
+                  ?
+
+                  `
+
+                    <div class="options">
+
+                      ${
+                        options
+                          .map(
+                            (option,i) => `
+
+                              <div class="option">
+
+                                <b>
+                                  ${String.fromCharCode(65+i)}.
+                                </b>
+
+                                ${esc(option)}
+
+                              </div>
+
+                            `
+                          )
+                          .join('')
+                      }
+
+                    </div>
+
+                  `
+
+                  :
+
+                  ''
+              }
+
+
+              <div class="question-actions">
+
+                <button
+                  type="button"
+                  class="text-btn reveal"
+                >
+
+                  <i class="fa-regular fa-eye"></i>
+
+                  Show Answer
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="text-btn bookmark-q"
+                >
+
+                  <i
+                    class="fa-${
+                      saved
+                        ? 'solid'
+                        : 'regular'
+                    } fa-bookmark"
+                  ></i>
+
+                  ${
+                    saved
+                      ? 'Saved'
+                      : 'Save'
+                  }
+
+                </button>
+
+              </div>
+
+
+              <div class="answer hidden">
+
+                <strong>
+                  Answer
+                </strong>
+
+                ${safeHtml(
+                  question.answer ||
+                  'No answer added yet.'
+                )}
+
+
+                ${
+                  question.explanation
+
+                    ?
+
+                    `
+
+                      <br><br>
+
+                      <strong>
+                        Explanation
+                      </strong>
+
+                      ${safeHtml(
+                        question.explanation
+                      )}
+
+                    `
+
+                    :
+
+                    ''
+                }
+
+              </div>
+
+            </div>
+          `;
+        }
+      )
+      .join('');
+
+
+  /*
+    Reveal buttons
+  */
+
+  box
+    .querySelectorAll('.reveal')
+    .forEach(
+      button => {
+
+        button.onclick = () => {
+
+          const answer =
+            button
+              .closest('.question')
+              .querySelector('.answer');
+
+
+          const hidden =
+            answer.classList.toggle(
+              'hidden'
+            );
+
+
+          button.innerHTML =
+            hidden
+
+              ?
+
+              `
+                <i class="fa-regular fa-eye"></i>
+                Show Answer
+              `
+
+              :
+
+              `
+                <i class="fa-regular fa-eye-slash"></i>
+                Hide Answer
+              `;
+        };
+      }
+    );
+
+
+  /*
+    Bookmark buttons
+  */
+
+  box
+    .querySelectorAll('.bookmark-q')
+    .forEach(
+      button => {
+
+        button.onclick = () => {
+
+          const question =
+            button.closest(
+              '.question'
+            );
+
+
+          if(!question){
+            return;
+          }
+
+
+          toggleBookmark(
+            'question',
+            question.dataset.qid
+          );
+        };
+      }
+    );
 }
 
 
-if(!questions.length){
 
-box.innerHTML=`
-
-<div class="empty">
-
-No questions have been added to this topic yet.
-
-</div>
-
-`;
-
-return;
-
-}
-
-
-box.innerHTML=
-
-questions.map((question,index)=>{
-
-let options=
-question.options||[];
-
-
-if(typeof options==='string'){
-
-try{
-
-options=JSON.parse(options);
-
-}catch{
-
-options=
-options
-.split(',')
-.map(x=>x.trim());
-
-}
-
-}
-
-
-return `
-
-<div
-class="question"
-data-qid="${esc(question.id)}">
-
-
-<div class="qtop">
-
-<span class="badge">
-
-${esc(question.question_type||'short')}
-
-</span>
-
-
-<span class="badge">
-
-${esc(question.difficulty||'Medium')}
-
-</span>
-
-
-${
-question.marks
-?
-
-`<span class="badge">
-${esc(question.marks)} marks
-</span>`
-
-:''
-
-}
-
-
-${
-question.is_important
-
-?
-
-`<span class="badge imp">
-Important
-</span>`
-
-:''
-
-}
-
-</div>
-
-
-<h4>
-
-Q${index+1}.
-${esc(question.question)}
-
-</h4>
-
-
-${
-question.question_type==='mcq' &&
-options.length
-
-?
-
-`
-
-<div class="options">
-
-${options.map((option,i)=>`
-
-<div class="option">
-
-<b>
-${String.fromCharCode(65+i)}.
-</b>
-
-${esc(option)}
-
-</div>
-
-`).join('')}
-
-</div>
-
-`
-
-:''
-
-}
-
-
-<div class="question-actions">
-
-<button class="text-btn reveal">
-
-Show Answer
-
-</button>
-
-
-<button class="text-btn bookmark-q">
-
-<i class="fa-${
-bookmarks.has(`question:${question.id}`)
-?'solid'
-:'regular'
-} fa-bookmark"></i>
-
-${
-bookmarks.has(`question:${question.id}`)
-?'Saved'
-:'Save'
-}
-
-</button>
-
-</div>
-
-
-<div class="answer hidden">
-
-<strong>
-Answer
-</strong>
-
-${question.answer||'No answer added yet.'}
-
-
-${
-question.explanation
-
-?
-
-`
-
-<br><br>
-
-<strong>
-Explanation
-</strong>
-
-${question.explanation}
-
-`
-
-:''
-
-}
-
-</div>
-
-
-</div>
-
-`;
-
-}).join('');
-
-
-box
-.querySelectorAll('.reveal')
-.forEach(button=>{
-
-button.onclick=()=>{
-
-const answer=
-button.parentElement.nextElementSibling;
-
-answer.classList.toggle('hidden');
-
-button.textContent=
-answer.classList.contains('hidden')
-?'Show Answer'
-:'Hide Answer';
-
-};
-
-});
-
-
-box
-.querySelectorAll('.bookmark-q')
-.forEach(button=>{
-
-button.onclick=()=>{
-
-toggleBookmark(
-'question',
-button.closest('.question').dataset.qid
-);
-
-};
-
-});
-
-}
-
-
-/* =========================
+/* =========================================================
    BOOKMARK
-========================= */
+========================================================= */
 
-async function toggleBookmark(type,id){
+async function toggleBookmark(
+  type,
+  id
+){
 
-if(!user){
+  if(!user){
 
-toast(
-'Please log in to save bookmarks.'
-);
+    toast(
+      'Please log in to save bookmarks.'
+    );
 
-return;
+    return;
+  }
 
+
+  const key =
+    `${type}:${id}`;
+
+
+  try{
+
+    if(bookmarks.has(key)){
+
+      const {
+        error
+      } =
+        await sb
+          .from('study_bookmarks')
+          .delete()
+          .eq(
+            'user_uid',
+            user.uid
+          )
+          .eq(
+            'content_type',
+            type
+          )
+          .eq(
+            'content_id',
+            id
+          );
+
+
+      if(error){
+        throw error;
+      }
+
+
+      bookmarks.delete(key);
+
+      toast(
+        'Bookmark removed'
+      );
+
+    }else{
+
+      const {
+        error
+      } =
+        await sb
+          .from('study_bookmarks')
+          .insert({
+
+            user_uid:
+              user.uid,
+
+            content_type:
+              type,
+
+            content_id:
+              id
+
+          });
+
+
+      if(error){
+        throw error;
+      }
+
+
+      bookmarks.add(key);
+
+      toast(
+        'Bookmarked'
+      );
+    }
+
+
+    updateStats();
+
+    renderSyllabus();
+
+    renderTopic();
+
+  }catch(error){
+
+    err(
+      'Bookmark could not be saved.',
+      error
+    );
+  }
 }
 
 
-const key=
-`${type}:${id}`;
 
-
-try{
-
-
-if(bookmarks.has(key)){
-
-const {error}=
-await sb
-.from('study_bookmarks')
-.delete()
-.eq('user_uid',user.uid)
-.eq('content_type',type)
-.eq('content_id',id);
-
-
-if(error) throw error;
-
-
-bookmarks.delete(key);
-
-toast('Bookmark removed');
-
-
-}else{
-
-
-const {error}=
-await sb
-.from('study_bookmarks')
-.insert({
-
-user_uid:user.uid,
-
-content_type:type,
-
-content_id:id
-
-});
-
-
-if(error) throw error;
-
-
-bookmarks.add(key);
-
-toast('Bookmarked');
-
-}
-
-
-updateStats();
-
-renderTopic();
-
-
-}catch(error){
-
-err(
-'Bookmark could not be saved.',
-error
-);
-
-}
-
-}
-
-
-/* =========================
-   COMPLETE
-========================= */
+/* =========================================================
+   COMPLETE TOPIC
+========================================================= */
 
 async function toggleComplete(id){
 
-if(!user){
+  if(!user){
 
-toast(
-'Please log in to save progress.'
-);
+    toast(
+      'Please log in to save progress.'
+    );
 
-return;
+    return;
+  }
 
+
+  const existing =
+    progress.get(id);
+
+
+  try{
+
+    if(existing?.completed){
+
+      const {
+        error
+      } =
+        await sb
+          .from('study_progress')
+          .update({
+
+            completed:
+              false,
+
+            completed_at:
+              null
+
+          })
+          .eq(
+            'user_uid',
+            user.uid
+          )
+          .eq(
+            'topic_id',
+            id
+          );
+
+
+      if(error){
+        throw error;
+      }
+
+
+      progress.set(
+        id,
+        {
+          ...existing,
+          completed:false
+        }
+      );
+
+
+      toast(
+        'Marked as incomplete'
+      );
+
+    }else{
+
+      const {
+        error
+      } =
+        await sb
+          .from('study_progress')
+          .upsert({
+
+            user_uid:
+              user.uid,
+
+            topic_id:
+              id,
+
+            completed:
+              true,
+
+            completed_at:
+              new Date()
+                .toISOString()
+
+          },{
+            onConflict:
+              'user_uid,topic_id'
+          });
+
+
+      if(error){
+        throw error;
+      }
+
+
+      progress.set(
+        id,
+        {
+
+          user_uid:
+            user.uid,
+
+          topic_id:
+            id,
+
+          completed:
+            true
+
+        }
+      );
+
+
+      toast(
+        'Topic completed ✓'
+      );
+    }
+
+
+    updateStats();
+
+    renderSyllabus();
+
+    renderTopic();
+
+  }catch(error){
+
+    err(
+      'Progress could not be saved.',
+      error
+    );
+  }
 }
 
 
-const existing=
-progress.get(id);
 
-
-try{
-
-
-if(existing?.completed){
-
-const {error}=
-await sb
-.from('study_progress')
-.update({
-
-completed:false,
-
-completed_at:null
-
-})
-.eq('user_uid',user.uid)
-.eq('topic_id',id);
-
-
-if(error) throw error;
-
-
-progress.set(id,{
-...existing,
-completed:false
-});
-
-
-}else{
-
-
-const {error}=
-await sb
-.from('study_progress')
-.upsert({
-
-user_uid:user.uid,
-
-topic_id:id,
-
-completed:true,
-
-completed_at:
-new Date().toISOString()
-
-},{
-onConflict:'user_uid,topic_id'
-});
-
-
-if(error) throw error;
-
-
-progress.set(id,{
-
-user_uid:user.uid,
-
-topic_id:id,
-
-completed:true
-
-});
-
-}
-
-
-toast('Progress saved');
-
-updateStats();
-
-renderSyllabus();
-
-renderTopic();
-
-
-}catch(error){
-
-err(
-'Progress could not be saved.',
-error
-);
-
-}
-
-}
-
-
-/* =========================
+/* =========================================================
    MOVE TOPIC
-========================= */
+========================================================= */
 
 function moveTopic(delta){
 
-const index=
-topics.findIndex(
-topic=>
-topic.id===currentTopic?.id
-);
+  if(!currentTopic){
+    return;
+  }
 
 
-const next=
-topics[index+delta];
+  const index =
+    topics.findIndex(
+      topic =>
+        topic.id ===
+        currentTopic.id
+    );
 
 
-if(next){
+  const next =
+    topics[index + delta];
 
-openTopic(next.id);
 
+  if(next){
+
+    openTopic(
+      next.id
+    );
+
+
+    /*
+      On mobile, move reader into view.
+    */
+
+    if(
+      window.innerWidth <= 700
+    ){
+
+      requestAnimationFrame(
+        () => {
+
+          $('readerPanel')
+            ?.scrollIntoView({
+              behavior:'smooth',
+              block:'start'
+            });
+
+        }
+      );
+    }
+  }
 }
 
-}
 
 
-/* =========================
+/* =========================================================
    PRACTICE
-========================= */
+========================================================= */
 
 function openPractice(){
 
-const questions=
-[...currentQuestions]
-.sort(()=>Math.random()-.5);
+  const questions =
+    [...currentQuestions]
+      .sort(
+        () =>
+          Math.random() - .5
+      );
 
 
-if(!questions.length){
+  if(!questions.length){
 
-toast(
-'No questions available.'
+    toast(
+      'No questions available.'
+    );
+
+    return;
+  }
+
+
+  let index = 0;
+
+  let score = 0;
+
+  let answered = false;
+
+
+  const render = () => {
+
+    const question =
+      questions[index];
+
+
+    answered = false;
+
+
+    const options =
+      parseOptions(
+        question.options
+      );
+
+
+    $('practiceBody').innerHTML = `
+
+      <div class="pill">
+
+        Question
+        ${index+1}
+        of
+        ${questions.length}
+
+      </div>
+
+
+      <div class="practice-q">
+
+        ${esc(
+          question.question
+        )}
+
+      </div>
+
+
+      ${
+        question.question_type === 'mcq'
+        &&
+        options.length
+
+          ?
+
+          `
+
+            <div class="practice-options">
+
+              ${
+                options
+                  .map(
+                    (option,i) => `
+
+                      <button
+                        type="button"
+                        data-i="${i}"
+                      >
+
+                        <b>
+                          ${String.fromCharCode(65+i)}.
+                        </b>
+
+                        ${esc(option)}
+
+                      </button>
+                    `
+                  )
+                  .join('')
+              }
+
+            </div>
+
+          `
+
+          :
+
+          `
+
+            <button
+              type="button"
+              class="btn primary"
+              id="showPracticeAnswer"
+            >
+
+              Show Answer
+
+            </button>
+
+          `
+      }
+
+
+      <div
+        id="practiceFeedback"
+        style="margin-top:12px"
+      ></div>
+
+    `;
+
+
+    if(
+      question.question_type ===
+      'mcq'
+      &&
+      options.length
+    ){
+
+      $('practiceBody')
+        .querySelectorAll('[data-i]')
+        .forEach(
+          button => {
+
+            button.onclick =
+              () => {
+
+                if(answered){
+                  return;
+                }
+
+
+                answered = true;
+
+
+                const selected =
+                  Number(
+                    button.dataset.i
+                  );
+
+
+                const correct =
+                  String(
+                    question.correct_option ??
+                    ''
+                  )
+                  .trim()
+                  .toUpperCase();
+
+
+                const letter =
+                  String.fromCharCode(
+                    65 + selected
+                  );
+
+
+                const answerText =
+                  String(
+                    question.answer ||
+                    ''
+                  )
+                  .trim();
+
+
+                const isCorrect =
+                  correct === letter
+                  ||
+                  correct ===
+                    String(selected)
+                  ||
+                  answerText ===
+                    String(
+                      options[selected]
+                    ).trim();
+
+
+                /*
+                  Highlight selected
+                */
+
+                button.classList.add(
+                  isCorrect
+                    ? 'correct'
+                    : 'wrong'
+                );
+
+
+                if(isCorrect){
+
+                  score++;
+                }
+
+
+                $('practiceFeedback')
+                  .innerHTML = `
+
+                    <div class="answer">
+
+                      <strong>
+
+                        ${
+                          isCorrect
+                            ? '✓ Correct'
+                            : '✗ Incorrect'
+                        }
+
+                      </strong>
+
+                      ${safeHtml(
+                        question.explanation ||
+                        question.answer ||
+                        ''
+                      )}
+
+                      <br>
+
+                      <button
+                        type="button"
+                        class="btn primary"
+                        id="nextPractice"
+                        style="margin-top:10px"
+                      >
+
+                        ${
+                          index + 1 <
+                          questions.length
+
+                            ? 'Next Question'
+                            : 'Finish'
+                        }
+
+                      </button>
+
+                    </div>
+                  `;
+
+
+                /*
+                  Show correct answer if wrong
+                */
+
+                if(!isCorrect){
+
+                  const correctIndex =
+                    options.findIndex(
+                      option =>
+                        String(option)
+                          .trim()
+                          === answerText
+                    );
+
+
+                  if(correctIndex >= 0){
+
+                    const correctButton =
+                      $('practiceBody')
+                        .querySelector(
+                          `[data-i="${correctIndex}"]`
+                        );
+
+
+                    correctButton
+                      ?.classList
+                      .add('correct');
+                  }
+                }
+
+
+                $('nextPractice')
+                  .onclick = () => {
+
+                    index++;
+
+
+                    if(
+                      index <
+                      questions.length
+                    ){
+
+                      render();
+
+                    }else{
+
+                      finishPractice();
+                    }
+                  };
+
+              };
+          }
+        );
+
+    }else{
+
+      $('showPracticeAnswer')
+        .onclick = () => {
+
+          $('practiceFeedback')
+            .innerHTML = `
+
+              <div class="answer">
+
+                <strong>
+                  Answer
+                </strong>
+
+                ${safeHtml(
+                  question.answer ||
+                  'Not available'
+                )}
+
+
+                ${
+                  question.explanation
+
+                    ?
+
+                    `
+
+                      <br><br>
+
+                      <strong>
+                        Explanation
+                      </strong>
+
+                      ${safeHtml(
+                        question.explanation
+                      )}
+
+                    `
+
+                    :
+
+                    ''
+                }
+
+
+                <br>
+
+                <button
+                  type="button"
+                  class="btn primary"
+                  id="nextPractice"
+                  style="margin-top:10px"
+                >
+
+                  ${
+                    index + 1 <
+                    questions.length
+
+                      ? 'Next Question'
+                      : 'Finish'
+                  }
+
+                </button>
+
+              </div>
+            `;
+
+
+          $('nextPractice')
+            .onclick = () => {
+
+              index++;
+
+
+              if(
+                index <
+                questions.length
+              ){
+
+                render();
+
+              }else{
+
+                finishPractice();
+              }
+            };
+        };
+    }
+  };
+
+
+  const finishPractice = () => {
+
+    $('practiceBody').innerHTML = `
+
+      <div class="empty">
+
+        <i class="fa-solid fa-trophy"></i>
+
+        <h3>
+          Practice Complete
+        </h3>
+
+        <p>
+
+          You scored
+
+          <strong>
+            ${score}
+            /
+            ${questions.length}
+          </strong>
+
+        </p>
+
+        <div
+          class="progress"
+          style="max-width:300px;margin:15px auto"
+        >
+
+          <i
+            style="
+              width:${Math.round(
+                score /
+                questions.length *
+                100
+              )}%;
+            "
+          ></i>
+
+        </div>
+
+        <button
+          type="button"
+          class="btn primary"
+          onclick="
+            document
+              .getElementById('practiceModal')
+              .classList.remove('open')
+          "
+        >
+
+          Done
+
+        </button>
+
+      </div>
+    `;
+  };
+
+
+  $('practiceModal')
+    .classList.add('open');
+
+
+  render();
+}
+
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+$('closePractice').onclick =
+  () => {
+
+    $('practiceModal')
+      .classList
+      .remove('open');
+
+  };
+
+
+$('practiceModal').onclick =
+  event => {
+
+    if(
+      event.target.id ===
+      'practiceModal'
+    ){
+
+      $('practiceModal')
+        .classList
+        .remove('open');
+    }
+  };
+
+
+/*
+  ESC closes modal
+*/
+
+document.addEventListener(
+  'keydown',
+  event => {
+
+    if(
+      event.key === 'Escape'
+    ){
+
+      $('practiceModal')
+        .classList
+        .remove('open');
+    }
+  }
 );
 
-return;
 
-}
 
+/* =========================================================
+   EXAM SELECT
+========================================================= */
 
-let index=0;
+$('examSelect').onchange =
+  async () => {
 
-let score=0;
+    try{
 
+      await loadPapers(
+        $('examSelect').value
+      );
 
-const render=()=>{
+    }catch(error){
 
-const question=
-questions[index];
+      err(
+        'Unable to load papers.',
+        error
+      );
+    }
+  };
 
 
-let options=
-question.options||[];
 
+/* =========================================================
+   PAPER SELECT
+========================================================= */
 
-if(typeof options==='string'){
+$('paperSelect').onchange =
+  async () => {
 
-try{
+    try{
 
-options=JSON.parse(options);
+      await loadSyllabus(
+        $('paperSelect').value
+      );
 
-}catch{
+    }catch(error){
 
-options=
-options.split(',');
+      err(
+        'Unable to load syllabus.',
+        error
+      );
+    }
+  };
 
-}
 
-}
 
-
-$('practiceBody').innerHTML=`
-
-<div class="pill">
-
-Question
-${index+1}
-of
-${questions.length}
-
-</div>
-
-
-<div class="practice-q">
-
-${esc(question.question)}
-
-</div>
-
-
-${
-question.question_type==='mcq' &&
-options.length
-
-?
-
-`
-
-<div class="practice-options">
-
-${options.map((option,i)=>`
-
-<button data-i="${i}">
-
-${String.fromCharCode(65+i)}.
-
-${esc(option)}
-
-</button>
-
-`).join('')}
-
-</div>
-
-`
-
-:
-
-`
-
-<button
-class="btn primary"
-id="showPracticeAnswer">
-
-Show Answer
-
-</button>
-
-`
-
-}
-
-
-<div
-id="practiceFeedback"
-style="margin-top:12px">
-</div>
-
-`;
-
-
-if(question.question_type==='mcq'){
-
-$('practiceBody')
-.querySelectorAll('[data-i]')
-.forEach(button=>{
-
-button.onclick=()=>{
-
-const selected=
-Number(button.dataset.i);
-
-
-const correct=
-String(
-question.correct_option??''
-)
-.toUpperCase();
-
-
-const letter=
-String.fromCharCode(65+selected);
-
-
-const isCorrect=
-correct===letter ||
-correct===String(selected) ||
-String(question.answer||'')
-.trim()===String(options[selected])
-.trim();
-
-
-button.classList.add(
-isCorrect
-?'correct'
-:'wrong'
-);
-
-
-if(isCorrect){
-
-score++;
-
-}
-
-
-$('practiceFeedback').innerHTML=`
-
-<div class="answer">
-
-<strong>
-
-${isCorrect
-?'✓ Correct'
-:'✗ Incorrect'}
-
-</strong>
-
-${question.explanation||
-question.answer||
-''}
-
-
-<br>
-
-
-<button
-class="btn primary"
-id="nextPractice"
-style="margin-top:10px">
-
-${
-index+1<questions.length
-?'Next Question'
-:'Finish'
-}
-
-</button>
-
-</div>
-
-`;
-
-
-$('nextPractice').onclick=()=>{
-
-index++;
-
-
-if(index<questions.length){
-
-render();
-
-}else{
-
-$('practiceBody').innerHTML=`
-
-<div class="empty">
-
-<i class="fa-solid fa-trophy"></i>
-
-<h3>
-Practice complete
-</h3>
-
-<p>
-You scored
-${score}
-/
-${questions.length}.
-</p>
-
-</div>
-
-`;
-
-
-$('questionCount').textContent=
-String(
-Number(
-$('questionCount').textContent||0
-)+score
-);
-
-}
-
-};
-
-};
-
-});
-
-}else{
-
-$('showPracticeAnswer').onclick=()=>{
-
-$('practiceFeedback').innerHTML=`
-
-<div class="answer">
-
-<strong>
-Answer
-</strong>
-
-${question.answer||'Not available'}
-
-
-${
-question.explanation
-
-?
-
-`
-
-<br><br>
-
-<strong>
-Explanation
-</strong>
-
-${question.explanation}
-
-`
-
-:''
-
-}
-
-</div>
-
-`;
-
-};
-
-}
-
-};
-
-
-$('practiceModal')
-.classList.add('open');
-
-
-render();
-
-}
-
-
-/* =========================
-   MODAL CLOSE
-========================= */
-
-$('closePractice').onclick=()=>{
-
-$('practiceModal')
-.classList.remove('open');
-
-};
-
-
-$('practiceModal').onclick=e=>{
-
-if(e.target.id==='practiceModal'){
-
-$('practiceModal')
-.classList.remove('open');
-
-}
-
-};
-
-
-/* =========================
-   SELECT EVENTS
-========================= */
-
-$('examSelect').onchange=()=>{
-
-loadPapers(
-$('examSelect').value
-)
-.catch(error=>
-err(
-'Unable to load papers.',
-error
-)
-);
-
-};
-
-
-$('paperSelect').onchange=()=>{
-
-loadSyllabus(
-$('paperSelect').value
-)
-.catch(error=>
-err(
-'Unable to load syllabus.',
-error
-)
-);
-
-};
-
-
-/* =========================
+/* =========================================================
    SEARCH
-========================= */
+========================================================= */
 
-$('searchInput').oninput=()=>{
+$('searchInput').oninput =
+  () => {
 
-clearTimeout(searchTimer);
+    clearTimeout(
+      searchTimer
+    );
 
-searchTimer=
-setTimeout(search,350);
 
-};
+    searchTimer =
+      setTimeout(
+        search,
+        300
+      );
+  };
+
 
 
 async function search(){
 
-const term=
-$('searchInput')
-.value
-.trim();
+  const term =
+    $('searchInput')
+      .value
+      .trim();
 
 
-if(!term){
+  if(!term){
 
-renderSyllabus();
+    renderSyllabus();
 
-return;
+    return;
+  }
 
+
+  const requestId =
+    ++searchRequestId;
+
+
+  const lowerTerm =
+    term.toLowerCase();
+
+
+  /*
+    First search currently loaded topics locally.
+  */
+
+  const topicHits =
+    topics.filter(
+      topic => {
+
+        const haystack =
+          `
+            ${topic.title || ''}
+            ${topic.description || ''}
+            ${topic.notes || ''}
+          `
+          .toLowerCase();
+
+
+        return haystack.includes(
+          lowerTerm
+        );
+      }
+    );
+
+
+  /*
+    Search questions.
+  */
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from('study_questions')
+      .select(
+        'id,topic_id,question,answer,question_type,is_published'
+      )
+      .eq(
+        'is_published',
+        true
+      )
+      .or(
+        `question.ilike.%${term.replace(/[,%()]/g,' ')}%,answer.ilike.%${term.replace(/[,%()]/g,' ')}%`
+      )
+      .limit(40);
+
+
+  /*
+    Ignore outdated search response.
+  */
+
+  if(
+    requestId !==
+    searchRequestId
+  ){
+
+    return;
+  }
+
+
+  if(error){
+
+    err(
+      'Search failed.',
+      error
+    );
+
+    return;
+  }
+
+
+  const hits =
+    data || [];
+
+
+  const questionTopicIds =
+    new Set(
+      hits.map(
+        item =>
+          item.topic_id
+      )
+    );
+
+
+  const combined =
+    topics.filter(
+      topic =>
+        questionTopicIds.has(
+          topic.id
+        )
+        ||
+        topicHits.some(
+          item =>
+            item.id === topic.id
+        )
+    );
+
+
+  $('syllabus').innerHTML = `
+
+    <div
+      class="panel-head"
+      style="
+        border:0;
+        padding:12px 8px;
+      "
+    >
+
+      <div>
+
+        <h3>
+          Search Results
+        </h3>
+
+        <p>
+          ${combined.length}
+          topics •
+          ${hits.length}
+          questions
+        </p>
+
+      </div>
+
+    </div>
+
+
+    ${
+      combined.length
+
+        ?
+
+        combined
+          .map(
+            topic => `
+
+              <button
+                type="button"
+                class="topic-btn ${
+                  progress.get(topic.id)?.completed
+                    ? 'done'
+                    : ''
+                }"
+                data-search-topic="${esc(topic.id)}"
+              >
+
+                <span class="dot"></span>
+
+                <span>
+                  ${esc(topic.title)}
+                </span>
+
+              </button>
+            `
+          )
+          .join('')
+
+        :
+
+        `
+
+          <div class="empty">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <h3>
+              Nothing found
+            </h3>
+
+            <p>
+              Try another topic or question keyword.
+            </p>
+
+          </div>
+        `
+    }
+  `;
+
+
+  document
+    .querySelectorAll(
+      '[data-search-topic]'
+    )
+    .forEach(
+      button => {
+
+        button.onclick =
+          () => {
+
+            openTopic(
+              button.dataset.searchTopic
+            );
+          };
+      }
+    );
 }
 
 
-const safeTerm=
-term
-.replace(/,/g,' ')
-.replace(/[()]/g,' ');
 
-
-const {
-
-data,
-error
-
-}=await sb
-.from('study_questions')
-.select(
-'id,topic_id,question,answer,question_type,is_published'
-)
-.eq('is_published',true)
-.or(
-`question.ilike.%${safeTerm}%,answer.ilike.%${safeTerm}%`
-)
-.limit(40);
-
-
-if(error){
-
-err(
-'Search failed.',
-error
-);
-
-return;
-
-}
-
-
-const hits=data||[];
-
-
-const ids=
-new Set(
-hits.map(x=>x.topic_id)
-);
-
-
-const lowerTerm=
-term.toLowerCase();
-
-
-const topicHits=
-topics.filter(topic=>
-
-ids.has(topic.id) ||
-
-`${topic.title}
-${topic.description||''}
-${topic.notes||''}`
-.toLowerCase()
-.includes(lowerTerm)
-
-);
-
-
-$('syllabus').innerHTML=`
-
-<div
-class="panel-head"
-style="border:0">
-
-<div>
-
-<h3>
-Search results
-</h3>
-
-<p>
-${topicHits.length}
-topics •
-${hits.length}
-questions
-</p>
-
-</div>
-
-</div>
-
-
-${
-topicHits.map(topic=>`
-
-<button
-class="topic-btn"
-style="width:100%"
-data-topic="${esc(topic.id)}">
-
-<span class="dot"></span>
-
-${esc(topic.title)}
-
-</button>
-
-`).join('')
-
-||`
-
-<div class="empty">
-
-No study material found.
-
-</div>
-
-`
-
-}
-`;
-
-
-document
-.querySelectorAll('[data-topic]')
-.forEach(button=>{
-
-button.onclick=()=>{
-
-openTopic(
-button.dataset.topic
-);
-
-};
-
-});
-
-}
-
-
-/* =========================
-   NETWORK
-========================= */
+/* =========================================================
+   OFFLINE
+========================================================= */
 
 window.addEventListener(
-'online',
-()=>{
+  'online',
+  () => {
 
-$('offline').style.display='none';
+    $('offline')
+      .style
+      .display = 'none';
 
-}
+    toast(
+      'Back online'
+    );
+  }
 );
 
 
 window.addEventListener(
-'offline',
-()=>{
+  'offline',
+  () => {
 
-$('offline').style.display='block';
+    $('offline')
+      .style
+      .display = 'block';
 
-}
+  }
 );
 
 
-/* =========================
+
+/* =========================================================
+   FILTER BUTTON
+========================================================= */
+
+$('filterBtn').onclick =
+  () => {
+
+    /*
+      Small utility:
+      collapse/expand all sections.
+    */
+
+    const allOpen =
+      sections.length &&
+      sections.every(
+        section =>
+          openSections.has(
+            section.id
+          )
+      );
+
+
+    if(allOpen){
+
+      openSections.clear();
+
+    }else{
+
+      sections.forEach(
+        section =>
+          openSections.add(
+            section.id
+          )
+      );
+    }
+
+
+    renderSyllabus();
+  };
+
+
+
+/* =========================================================
    AUTH
-========================= */
+========================================================= */
 
 onAuthStateChanged(
-auth,
-async currentUser=>{
+  auth,
+  async currentUser => {
 
-user=currentUser;
-
-
-try{
-
-await loadExams();
-
-}catch(error){
-
-console.error(error);
+    user =
+      currentUser;
 
 
-$('syllabus').innerHTML=`
+    try{
 
-<div class="empty">
+      await loadExams();
 
-<i class="fa-solid fa-triangle-exclamation"></i>
+    }catch(error){
 
-<h3>
-Unable to load study material.
-</h3>
+      console.error(
+        error
+      );
 
-<p>
-Check your connection and try again.
-</p>
 
-<button
-class="btn primary"
-onclick="location.reload()">
+      $('syllabus').innerHTML = `
 
-Try Again
+        <div class="empty">
 
-</button>
+          <i class="fa-solid fa-triangle-exclamation"></i>
 
-</div>
+          <h3>
+            Unable to load study material
+          </h3>
 
-`;
+          <p>
+            Check your connection and try again.
+          </p>
 
-}
+          <button
+            type="button"
+            class="btn primary"
+            style="margin-top:14px"
+            onclick="location.reload()"
+          >
 
-});
+            <i class="fa-solid fa-rotate-right"></i>
+
+            Try Again
+
+          </button>
+
+        </div>
+      `;
+    }
+
+  }
+);
 
 </script>
 
 </body>
-</html>
+   </html>
