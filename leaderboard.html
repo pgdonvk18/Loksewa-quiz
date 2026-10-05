@@ -2,249 +2,1516 @@
 <html lang="ne">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f2a4a">
-<title>LoksewaQuest - Leaderboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c1932">
+<title>LoksewaQuest — Leaderboard</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Noto+Serif+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
-/* ===== Tokens ===== */
-:root{--navy:#0f2a4a;--blue:#2563eb;--blue-d:#1d4ed8;--blue-l:#e8effd;--gold:#f5b301;--gold-d:#92620a;--gold-l:#fff6d6;--bg:#f4f6fa;--card:#fff;--text:#0f2a4a;--mute:#64748b;--line:#e2e8f0;--r:14px;--font:'Plus Jakarta Sans','Noto Sans Devanagari',system-ui,sans-serif}
-*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
-body{background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;line-height:1.5;padding-bottom:calc(120px + env(safe-area-inset-bottom));overflow-x:hidden}
-button{cursor:pointer;border:0;background:none;color:inherit;font-weight:600}
-:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-/* ===== Header ===== */
-.hero{background:var(--navy);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 70px;position:relative}
-.hero::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:28px 28px;-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent)}
-.bar{position:relative;max-width:640px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
-.bar h1{font-size:16px;font-weight:600}
-.back{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.12);color:#fff}.back:hover{background:rgba(255,255,255,.2)}
-.seg{position:relative;max-width:640px;margin:12px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:12px;background:rgba(255,255,255,.1)}
-.seg button{min-height:44px;border-radius:9px;font-size:13px;color:#cbd5e1;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,color .15s}
-.seg button[aria-selected=true]{background:#fff;color:var(--navy)}
-.seg button[data-category=coins][aria-selected=true] i{color:var(--gold-d)}
-.tabs{position:relative;max-width:640px;margin:10px auto 0;display:flex;gap:8px}
-.tabs button{flex:1;min-height:40px;border-radius:99px;font-size:13px;color:#cbd5e1;border:1px solid rgba(255,255,255,.2)}
-.tabs button[aria-selected=true]{background:var(--blue);border-color:var(--blue);color:#fff}
-.tabs.hide{display:none}
-/* ===== Body ===== */
-.wrap{max-width:640px;margin:-44px auto 0;padding:0 14px;position:relative}
-.podium{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin-bottom:14px}
-.pc{flex:1;max-width:190px;min-width:0;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 8px 12px;animation:in .35s ease-out both}
-.pc.first{padding-top:20px;padding-bottom:18px;border-color:#f3d36b;background:var(--gold-l)}
-.pc .rk{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:12px;font-weight:700;background:#e6ebf3;color:var(--navy);margin-bottom:6px}
-.pc.first .rk{background:var(--gold)}.pc.third .rk{background:#f1dcc6;color:#7c4a1e}
-.pc .crown{display:block;color:var(--gold-d);font-size:15px;margin-bottom:2px}
-.av{width:48px;height:48px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;font-weight:700;font-size:18px;background:var(--navy);color:#fff}
-.pc.first .av{width:58px;height:58px;font-size:22px;background:var(--gold);color:var(--navy)}
-.pc .nm{font-size:13px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pc .sc{font-size:17px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}.pc .sc small{font-size:11px;font-weight:500;color:var(--mute)}
-.pc.first .sc{color:var(--gold-d)}
-.list{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);animation:in .3s ease-out both}
-.row:last-child{border-bottom:0}
-.row .r{width:34px;text-align:center;font-size:13px;font-weight:700;color:var(--mute);font-variant-numeric:tabular-nums}
-.row .av{width:38px;height:38px;margin:0;font-size:15px;flex-shrink:0}
-.row .in{flex:1;min-width:0}.row .nm{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.row .sub{font-size:11px;color:var(--mute)}
-.row .sc{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}.row .sc small{font-size:11px;font-weight:500;color:var(--mute)}
-.row.me,.mebar{background:var(--blue-l)}
-.you{display:inline-block;margin-left:6px;padding:0 8px;border-radius:99px;font-size:10px;font-weight:700;background:var(--blue);color:#fff;vertical-align:middle}
-.nb{display:inline-flex;align-items:center;gap:6px;max-width:100%}
-.sb{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--gold);color:var(--navy);font-size:9px;font-weight:800;flex-shrink:0}
-.mebar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:8px 14px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #c9d8f7;box-shadow:0 -6px 18px rgba(15,42,74,.08)}
-.mebar .row{max-width:640px;margin:0 auto;border:0;padding:6px 0;background:none}
-.state{text-align:center;padding:36px 16px;color:var(--mute);font-size:14px}
-.state .ic{font-size:32px;margin-bottom:8px}.state button{margin-top:12px;min-height:44px;padding:0 20px;border-radius:10px;background:var(--blue);color:#fff}
-.spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--blue);border-radius:50%;margin:0 auto 10px;animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
-@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-@media(max-width:360px){.pc .nm{font-size:12px}.pc .sc{font-size:15px}.av{width:42px;height:42px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+:root{
+  --navy:#0c1932;
+  --navy2:#142b55;
+  --blue:#2d63d7;
+  --blue-soft:#edf3ff;
+  --gold:#d99a00;
+  --gold-soft:#fff7df;
+  --bg:#f6f7f9;
+  --card:#fff;
+  --text:#18243b;
+  --muted:#718096;
+  --line:#e5e8ed;
+  --green:#08785e;
+  --sans:"Noto Sans Devanagari",sans-serif;
+  --serif:"Noto Serif Devanagari",serif;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  min-height:100vh;
+  min-height:100dvh;
+  background:
+    radial-gradient(circle at 100% 0,rgba(45,99,215,.09),transparent 28%),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  padding-bottom:105px;
+  -webkit-font-smoothing:antialiased;
+}
+
+button{
+  font:inherit;
+  border:0;
+  cursor:pointer;
+}
+
+button:focus-visible{
+  outline:3px solid #8db1ff;
+  outline-offset:2px;
+}
+
+/* HEADER */
+
+.hero{
+  position:relative;
+  overflow:hidden;
+  color:#fff;
+  background:
+    radial-gradient(circle at 90% 5%,rgba(99,145,255,.3),transparent 27%),
+    linear-gradient(135deg,#09152d,#142c58 65%,#214da1);
+  padding:12px 15px 65px;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  width:230px;
+  height:230px;
+  right:-130px;
+  top:-125px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:50%;
+}
+
+.bar{
+  position:relative;
+  z-index:2;
+  width:min(700px,100%);
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.back{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  color:#fff;
+  background:rgba(255,255,255,.1);
+}
+
+.back:active{
+  transform:scale(.94);
+}
+
+.bar h1{
+  font-family:var(--serif);
+  font-size:20px;
+  font-weight:700;
+}
+
+/* CATEGORY */
+
+.segment{
+  position:relative;
+  z-index:2;
+  width:min(700px,100%);
+  margin:13px auto 0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px;
+  padding:4px;
+  border-radius:14px;
+  background:rgba(255,255,255,.1);
+}
+
+.segment button{
+  min-height:43px;
+  border-radius:10px;
+  background:transparent;
+  color:#cbd6e9;
+  font-size:12px;
+  font-weight:700;
+  transition:.2s;
+}
+
+.segment button.active{
+  color:var(--navy);
+  background:#fff;
+}
+
+/* PERIOD */
+
+.periods{
+  position:relative;
+  z-index:2;
+  width:min(700px,100%);
+  margin:9px auto 0;
+  display:flex;
+  gap:7px;
+}
+
+.periods button{
+  flex:1;
+  min-height:38px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.15);
+  background:transparent;
+  color:#cbd6e9;
+  font-size:11px;
+  font-weight:700;
+}
+
+.periods button.active{
+  background:rgba(255,255,255,.13);
+  color:#fff;
+  border-color:rgba(255,255,255,.28);
+}
+
+/* MAIN */
+
+.wrap{
+  position:relative;
+  width:min(700px,100%);
+  margin:-39px auto 0;
+  padding:0 14px;
+  z-index:5;
+}
+
+/* PODIUM */
+
+.podium{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:8px;
+  margin-bottom:13px;
+}
+
+.podium-card{
+  flex:1;
+  min-width:0;
+  text-align:center;
+  padding:13px 7px;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:#fff;
+  box-shadow:0 8px 25px rgba(20,32,55,.06);
+}
+
+.podium-card.first{
+  padding-top:18px;
+  padding-bottom:17px;
+  background:var(--gold-soft);
+  border-color:#efd47a;
+}
+
+.rank{
+  display:grid;
+  place-items:center;
+  width:25px;
+  height:25px;
+  margin:0 auto 7px;
+  border-radius:50%;
+  background:#e9edf3;
+  color:#536176;
+  font-size:11px;
+  font-weight:800;
+}
+
+.first .rank{
+  background:#e2a600;
+  color:#fff;
+}
+
+.crown{
+  color:#b67b00;
+  font-size:13px;
+  margin-bottom:3px;
+}
+
+.avatar{
+  width:46px;
+  height:46px;
+  margin:0 auto 7px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:var(--navy);
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+}
+
+.first .avatar{
+  width:56px;
+  height:56px;
+  background:#dfa000;
+  color:#fff;
+  font-size:20px;
+}
+
+.name{
+  font-size:12px;
+  font-weight:700;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.score{
+  margin-top:3px;
+  font-size:16px;
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+
+.first .score{
+  color:#a66f00;
+}
+
+.score small{
+  color:var(--muted);
+  font-size:9px;
+  font-weight:600;
+}
+
+/* LIST */
+
+.list{
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:#fff;
+  box-shadow:0 7px 25px rgba(20,32,55,.04);
+}
+
+.row{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-height:68px;
+  padding:11px 13px;
+  border-bottom:1px solid var(--line);
+}
+
+.row:last-child{
+  border-bottom:0;
+}
+
+.row.me{
+  background:var(--blue-soft);
+}
+
+.position{
+  width:32px;
+  flex-shrink:0;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+}
+
+.row .avatar{
+  width:38px;
+  height:38px;
+  margin:0;
+  flex-shrink:0;
+  font-size:14px;
+}
+
+.info{
+  flex:1;
+  min-width:0;
+}
+
+.row-name{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  min-width:0;
+  font-size:13px;
+  font-weight:700;
+}
+
+.row-name-text{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.you{
+  flex-shrink:0;
+  padding:2px 7px;
+  border-radius:20px;
+  background:var(--blue);
+  color:#fff;
+  font-size:8px;
+  font-weight:800;
+}
+
+.sub{
+  margin-top:1px;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.row-score{
+  flex-shrink:0;
+  text-align:right;
+  font-size:14px;
+  font-weight:800;
+}
+
+.row-score small{
+  color:var(--muted);
+  font-size:9px;
+  font-weight:600;
+}
+
+/* STATES */
+
+.state{
+  padding:42px 16px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.7;
+}
+
+.state-icon{
+  margin-bottom:8px;
+  font-size:29px;
+  opacity:.65;
+}
+
+.spinner{
+  width:29px;
+  height:29px;
+  margin:0 auto 10px;
+  border:3px solid #e4e8ee;
+  border-top-color:var(--blue);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+.retry{
+  margin-top:11px;
+  padding:9px 16px;
+  border-radius:10px;
+  background:var(--blue);
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* CURRENT USER */
+
+.my-position{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:50;
+  padding:8px 14px calc(8px + env(safe-area-inset-bottom));
+  background:rgba(246,247,249,.94);
+  backdrop-filter:blur(14px);
+  border-top:1px solid #dce3ee;
+}
+
+.my-inner{
+  width:min(700px,100%);
+  margin:auto;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:9px 12px;
+  border:1px solid #cbd9f4;
+  border-radius:14px;
+  background:#edf3ff;
+}
+
+.my-rank{
+  width:32px;
+  text-align:center;
+  color:var(--blue);
+  font-size:13px;
+  font-weight:800;
+}
+
+.my-inner .avatar{
+  width:37px;
+  height:37px;
+  margin:0;
+  background:var(--blue);
+  font-size:14px;
+}
+
+.my-info{
+  flex:1;
+  min-width:0;
+}
+
+.my-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:12px;
+  font-weight:800;
+}
+
+.my-label{
+  color:#70809a;
+  font-size:9px;
+}
+
+.my-score{
+  color:var(--blue);
+  font-size:14px;
+  font-weight:800;
+}
+
+@media(max-width:380px){
+  .hero{padding-left:12px;padding-right:12px}
+  .wrap{padding-left:11px;padding-right:11px}
+  .name{font-size:11px}
+  .row-name{font-size:12px}
+}
 </style>
 </head>
+
 <body>
 
 <header class="hero">
+
   <div class="bar">
-    <button class="back" id="backBtn" aria-label="पछाडि जानुहोस्"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
+
+    <button class="back" id="backBtn" aria-label="पछाडि">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
     <h1>लिडरबोर्ड</h1>
-    <div style="width:44px" aria-hidden="true"></div>
+
+    <div style="width:42px"></div>
+
   </div>
-  <div class="seg" role="tablist" aria-label="लिडरबोर्ड प्रकार">
-    <button role="tab" aria-selected="true" data-category="questions"><i class="fa-solid fa-trophy" aria-hidden="true"></i>अंक</button>
-    <button role="tab" aria-selected="false" data-category="coins"><i class="fa-solid fa-coins" aria-hidden="true"></i>कोइन</button>
+
+
+  <div class="segment">
+
+    <button
+      class="active"
+      data-category="questions"
+      type="button"
+    >
+      <i class="fa-solid fa-trophy"></i>
+      अंक
+    </button>
+
+    <button
+      data-category="coins"
+      type="button"
+    >
+      <i class="fa-solid fa-coins"></i>
+      कोइन
+    </button>
+
   </div>
-  <div class="tabs" id="timeFilterTabs" role="tablist" aria-label="समयावधि">
-    <button role="tab" aria-selected="true" data-period="daily">दैनिक</button>
-    <button role="tab" aria-selected="false" data-period="weekly">साताको</button>
-    <button role="tab" aria-selected="false" data-period="monthly">मासिक</button>
+
+
+  <div class="periods" id="periods">
+
+    <button
+      class="active"
+      data-period="daily"
+      type="button"
+    >
+      दैनिक
+    </button>
+
+    <button
+      data-period="weekly"
+      type="button"
+    >
+      साप्ताहिक
+    </button>
+
+    <button
+      data-period="monthly"
+      type="button"
+    >
+      मासिक
+    </button>
+
   </div>
+
 </header>
 
+
 <main class="wrap">
-  <div class="podium" id="podiumSection"></div>
-  <div class="list" id="leaderboardList" aria-live="polite"><div class="state"><div class="spin"></div>डाटा लोड हुँदैछ...</div></div>
+
+  <section
+    class="podium"
+    id="podium"
+  ></section>
+
+  <section
+    class="list"
+    id="leaderboard"
+    aria-live="polite"
+  >
+    <div class="state">
+      <div class="spinner"></div>
+      लिडरबोर्ड लोड हुँदैछ...
+    </div>
+  </section>
+
 </main>
-<div class="mebar" id="currentUserCard" style="display:none"></div>
+
+
+<div
+  class="my-position"
+  id="myPosition"
+  style="display:none"
+></div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, getDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
-  authDomain: "loksewaquest-227b6.firebaseapp.com",
-  projectId: "loksewaquest-227b6",
-  storageBucket: "loksewaquest-227b6.firebasestorage.app",
-  messagingSenderId: "779234903809",
-  appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+/*
+  IMPORTANT FIX
 
-const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
-const SUPABASE_ANON_KEY = '__SUPABASE_KEY__';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  The old leaderboard was querying:
 
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const LIMIT = 100;
+      v_exam_leaderboard_summary
 
-let currentCategory = "questions", currentPeriod = "daily";
-let currentUid = null, currentUserName = null;
-let usersFirestoreCache = {};   // lowercase name -> badge data (loaded in the background)
-let lastRender = null;          // so the list can re-render once badges arrive
-let requestId = 0;              // FIX: ignore out-of-order responses when tabs are switched quickly
+  with daily_score / weekly_score / monthly_score.
 
-/* ---------- Name + store badge (user text is always escaped) ---------- */
-function nameWithBadge(userName, userData) {
-  const name = esc(userName || "Aspirant");
-  const purchased = userData?.purchasedBadges || userData?.inventory || [];
-  const key = userData?.equippedBadge || (Array.isArray(purchased) && purchased.length ? purchased[purchased.length - 1] : null);
-  if (!key) return `<span class="nb"><span>${name}</span></span>`;
-  let b = `<i class="fa-solid fa-crown" aria-hidden="true"></i>`;
-  if (key.includes("aspirant")) b = "A"; else if (key.includes("pro")) b = "P"; else if (key.includes("master")) b = "M";
-  return `<span class="nb"><span class="sb" title="Store Badge">${b}</span><span>${name}</span></span>`;
+  But the actual quiz pages in this project save question
+  results into:
+
+      exam_leaderboard
+
+  with:
+
+      username
+      set_name
+      score
+      correct_count
+      wrong_count
+      skipped_count
+      total_questions
+      created_at
+
+  Therefore the old query could return nothing even though
+  quiz results existed.
+
+  This version reads the real exam_leaderboard table and
+  calculates daily / weekly / monthly totals in the browser.
+*/
+
+
+const SUPABASE_URL =
+  "https://edyirdedkiarguvurpxq.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+
+const supabase =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+const leaderboardEl =
+  document.getElementById("leaderboard");
+
+const podiumEl =
+  document.getElementById("podium");
+
+const periodsEl =
+  document.getElementById("periods");
+
+const myPositionEl =
+  document.getElementById("myPosition");
+
+
+let category = "questions";
+let period = "daily";
+let requestNumber = 0;
+
+
+/* --------------------------------
+   HELPERS
+-------------------------------- */
+
+function esc(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
 }
 
-/* ---------- Ranking with ties (1,1,3) ---------- */
-function withRanks(arr, key) {
-  let prev = null, rank = 0;
-  return arr.map((u, i) => { const v = Number(u[key]) || 0; if (v !== prev) { rank = i + 1; prev = v; } return { ...u, _rank: rank, _score: v }; });
-}
-const isMe = u => (currentUid && u.uid === currentUid) || (!u.uid && currentUserName && String(u.display_name || "").trim().toLowerCase() === currentUserName.toLowerCase());
-const initial = n => (String(n || "L").trim().charAt(0) || "L").toUpperCase();
-const fmt = n => Number(n).toLocaleString();
-const dataFor = u => usersFirestoreCache[String(u.display_name || "").trim().toLowerCase()] || u;
 
-/* ---------- Rendering ---------- */
-function state(icon, msg, retry) {
-  $("podiumSection").innerHTML = ""; $("currentUserCard").style.display = "none";
-  $("leaderboardList").innerHTML = `<div class="state"><div class="ic" aria-hidden="true">${icon}</div>${esc(msg)}${retry ? '<br><button type="button" id="retryBtn">फेरि प्रयास गर्नुहोस्</button>' : ''}</div>`;
-  if (retry) $("retryBtn").onclick = loadCurrent;
-}
-function render(rows, key, unit) {
-  lastRender = { rows, key, unit };
-  const ranked = withRanks(rows, key);
-  const top = ranked.slice(0, 3);
-  const order = [top[1] && ["second", top[1]], top[0] && ["first", top[0]], top[2] && ["third", top[2]]].filter(Boolean);
-  $("podiumSection").innerHTML = order.map(([cls, u]) => `
-    <div class="pc ${cls}"><span class="rk">${u._rank}</span>${cls === "first" ? '<i class="fa-solid fa-crown crown" aria-hidden="true"></i>' : ''}
-      <div class="av" aria-hidden="true">${esc(initial(u.display_name))}</div>
-      <div class="nm">${nameWithBadge(u.display_name, dataFor(u))}</div>
-      <div class="sc">${fmt(u._score)} <small>${unit}</small></div></div>`).join("");
-  const rest = ranked.slice(3);
-  $("leaderboardList").innerHTML = rest.length ? rest.map(u => `
-    <div class="row${isMe(u) ? " me" : ""}"><div class="r">#${u._rank}</div><div class="av" aria-hidden="true">${esc(initial(u.display_name))}</div>
-      <div class="in"><div class="nm">${nameWithBadge(u.display_name, dataFor(u))}${isMe(u) ? '<span class="you">तपाईं</span>' : ''}</div><div class="sub">Loksewa Aspirant</div></div>
-      <div class="sc">${fmt(u._score)} <small>${unit}</small></div></div>`).join("")
-    : `<div class="state">अन्य सहभागीहरू छैनन्</div>`;
+function initial(name){
 
-  const mine = ranked.find(isMe);
-  const bar = $("currentUserCard");
-  if (mine) {
-    bar.style.display = "block";
-    bar.innerHTML = `<div class="row"><div class="r" style="color:var(--blue-d);font-size:15px">#${mine._rank}</div><div class="av" style="background:var(--blue)" aria-hidden="true">${esc(initial(mine.display_name))}</div>
-      <div class="in"><div class="nm">${nameWithBadge(mine.display_name, dataFor(mine))}<span class="you">तपाईं</span></div><div class="sub">तपाईंको स्थान</div></div>
-      <div class="sc" style="color:var(--blue-d)">${fmt(mine._score)} <small>${unit}</small></div></div>`;
-  } else bar.style.display = "none";
+  const clean =
+    String(name || "L").trim();
+
+  return esc(
+    clean.charAt(0).toUpperCase()
+  );
+
 }
 
-/* ---------- Data ---------- */
-async function fetchLeaderboardData(period) {
-  const id = ++requestId;
-  $("leaderboardList").innerHTML = `<div class="state"><div class="spin"></div>डाटा लोड हुँदैछ...</div>`; $("podiumSection").innerHTML = ""; $("currentUserCard").style.display = "none";
-  const col = period === 'weekly' ? 'weekly_score' : period === 'monthly' ? 'monthly_score' : 'daily_score';
-  let res;
-  try {
-    res = await supabaseClient.from('v_exam_leaderboard_summary').select(`display_name, ${col}`).gt(col, 0).order(col, { ascending: false }).limit(LIMIT);
-  } catch (e) { res = { error: e }; }
-  if (id !== requestId) return;
-  if (res.error) { console.error(res.error); return state("⚠️", "डाटा लोड गर्न असफल भयो।", true); }
-  const rows = (res.data || []).filter(r => r.display_name && Number(r[col]) > 0);
-  if (!rows.length) return state("📭", "यो समयावधिमा अहिलेसम्म कुनै डाटा उपलब्ध छैन।");
-  render(rows, col, "अंक");
+
+function number(value){
+
+  return Number(value || 0)
+    .toLocaleString("en-US");
+
 }
 
-async function fetchCoinsLeaderboard() {
-  const id = ++requestId;
-  $("leaderboardList").innerHTML = `<div class="state"><div class="spin"></div>कोइन डाटा लोड हुँदैछ...</div>`; $("podiumSection").innerHTML = ""; $("currentUserCard").style.display = "none";
-  try {
-    // FIX: ask Firestore for the top 100 only instead of downloading every user.
-    const snap = await getDocs(query(collection(db, "users"), orderBy("coins", "desc"), limit(LIMIT)));
-    if (id !== requestId) return;
-    const rows = [];
-    snap.forEach(d => {
-      const u = d.data(), coins = Number(u.coins || 0);
-      if (coins > 0) rows.push({ ...u, uid: d.id, display_name: u.name || (u.email ? u.email.split('@')[0] : "Aspirant"), coins });
+
+function startOfDay(){
+
+  const d = new Date();
+
+  d.setHours(0,0,0,0);
+
+  return d;
+
+}
+
+
+function startOfWeek(){
+
+  const d = startOfDay();
+
+  const day = d.getDay();
+
+  const difference =
+    day === 0 ? 6 : day - 1;
+
+  d.setDate(
+    d.getDate() - difference
+  );
+
+  return d;
+
+}
+
+
+function startOfMonth(){
+
+  const d = startOfDay();
+
+  d.setDate(1);
+
+  return d;
+
+}
+
+
+function periodStart(){
+
+  if(period === "weekly")
+    return startOfWeek();
+
+  if(period === "monthly")
+    return startOfMonth();
+
+  return startOfDay();
+
+}
+
+
+/*
+  Supabase timestamps can be ISO strings,
+  timestamps, or Date-compatible values.
+*/
+function validDate(value){
+
+  if(!value)
+    return null;
+
+  const d =
+    new Date(value);
+
+  return isNaN(d.getTime())
+    ? null
+    : d;
+
+}
+
+
+/* --------------------------------
+   UI STATE
+-------------------------------- */
+
+function loading(){
+
+  podiumEl.innerHTML = "";
+
+  myPositionEl.style.display = "none";
+
+  leaderboardEl.innerHTML = `
+    <div class="state">
+      <div class="spinner"></div>
+      लिडरबोर्ड लोड हुँदैछ...
+    </div>
+  `;
+
+}
+
+
+function errorState(message){
+
+  podiumEl.innerHTML = "";
+
+  myPositionEl.style.display = "none";
+
+  leaderboardEl.innerHTML = `
+    <div class="state">
+
+      <div class="state-icon">
+        ⚠️
+      </div>
+
+      ${esc(message)}
+
+      <br>
+
+      <button
+        class="retry"
+        id="retry"
+        type="button"
+      >
+        फेरि प्रयास गर्नुहोस्
+      </button>
+
+    </div>
+  `;
+
+  document
+    .getElementById("retry")
+    .onclick = loadLeaderboard;
+
+}
+
+
+function emptyState(){
+
+  podiumEl.innerHTML = "";
+
+  myPositionEl.style.display = "none";
+
+  leaderboardEl.innerHTML = `
+    <div class="state">
+
+      <div class="state-icon">
+        🏆
+      </div>
+
+      यो समयावधिका लागि
+      अहिलेसम्म कुनै leaderboard record छैन।
+
+    </div>
+  `;
+
+}
+
+
+/* --------------------------------
+   GET QUESTION LEADERBOARD
+-------------------------------- */
+
+async function getQuestionLeaderboard(){
+
+  /*
+    Do NOT use the broken view.
+
+    We fetch actual records from exam_leaderboard.
+  */
+
+  const { data, error } =
+    await supabase
+      .from("exam_leaderboard")
+      .select(`
+        username,
+        score,
+        correct_count,
+        wrong_count,
+        skipped_count,
+        total_questions,
+        created_at
+      `)
+      .order("created_at",{
+        ascending:false
+      })
+      .limit(1000);
+
+
+  if(error)
+    throw error;
+
+
+  const beginning =
+    periodStart().getTime();
+
+
+  /*
+    Aggregate all attempts belonging to the
+    same username.
+
+    This makes the leaderboard work even when
+    different quiz sets have separate rows.
+  */
+
+  const users = new Map();
+
+
+  (data || []).forEach(row=>{
+
+    const date =
+      validDate(row.created_at);
+
+    if(!date)
+      return;
+
+    if(
+      date.getTime() <
+      beginning
+    )
+      return;
+
+
+    const username =
+      String(
+        row.username ||
+        "Loksewa Aspirant"
+      ).trim();
+
+
+    if(!username)
+      return;
+
+
+    const key =
+      username.toLowerCase();
+
+
+    if(!users.has(key)){
+
+      users.set(key,{
+        display_name:username,
+        score:0,
+        correct:0,
+        wrong:0,
+        skipped:0,
+        attempts:0
+      });
+
+    }
+
+
+    const user =
+      users.get(key);
+
+
+    user.score +=
+      Number(row.score || 0);
+
+    user.correct +=
+      Number(row.correct_count || 0);
+
+    user.wrong +=
+      Number(row.wrong_count || 0);
+
+    user.skipped +=
+      Number(row.skipped_count || 0);
+
+    user.attempts += 1;
+
+  });
+
+
+  return Array.from(
+    users.values()
+  )
+  .filter(user => user.score > 0)
+  .sort((a,b)=>{
+
+    if(b.score !== a.score)
+      return b.score - a.score;
+
+    if(b.correct !== a.correct)
+      return b.correct - a.correct;
+
+    return a.wrong - b.wrong;
+
+  })
+  .slice(0,100);
+
+}
+
+
+/* --------------------------------
+   COINS
+-------------------------------- */
+
+async function getCoinsLeaderboard(){
+
+  /*
+    Coins remain in Firebase because the project
+    stores user coin balances there.
+  */
+
+  try{
+
+    const {
+      initializeApp
+    } =
+      await import(
+        "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"
+      );
+
+    const {
+      getFirestore,
+      collection,
+      getDocs,
+      query,
+      orderBy,
+      limit
+    } =
+      await import(
+        "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
+      );
+
+
+    const firebaseConfig = {
+
+      apiKey:
+        "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+
+      authDomain:
+        "loksewaquest-227b6.firebaseapp.com",
+
+      projectId:
+        "loksewaquest-227b6",
+
+      storageBucket:
+        "loksewaquest-227b6.firebasestorage.app",
+
+      messagingSenderId:
+        "779234903809",
+
+      appId:
+        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+
+    };
+
+
+    const firebase =
+      initializeApp(
+        firebaseConfig,
+        "leaderboardCoins"
+      );
+
+
+    const db =
+      getFirestore(firebase);
+
+
+    const snapshot =
+      await getDocs(
+        query(
+          collection(db,"users"),
+          orderBy("coins","desc"),
+          limit(100)
+        )
+      );
+
+
+    const rows=[];
+
+
+    snapshot.forEach(doc=>{
+
+      const u =
+        doc.data();
+
+
+      const coins =
+        Number(u.coins || 0);
+
+
+      if(coins <= 0)
+        return;
+
+
+      rows.push({
+
+        display_name:
+          u.name ||
+          (
+            u.email
+              ? u.email.split("@")[0]
+              : "Aspirant"
+          ),
+
+        score:coins,
+        correct:0,
+        wrong:0,
+        skipped:0,
+        attempts:0
+
+      });
+
     });
-    if (!rows.length) return state("📭", "अहिलेसम्म कोइन भएको कुनै प्रयोगकर्ता छैन।");
-    render(rows, 'coins', "कोइन");
-  } catch (err) {
-    if (id !== requestId) return;
-    console.error("Firebase fetch error:", err); state("⚠️", "कोइन डाटा लोड गर्न असफल भयो।", true);
+
+
+    return rows;
+
+  }catch(error){
+
+    console.error(
+      "Coins leaderboard error:",
+      error
+    );
+
+    throw error;
+
   }
+
 }
 
-const loadCurrent = () => currentCategory === 'coins' ? fetchCoinsLeaderboard() : fetchLeaderboardData(currentPeriod);
 
-/* ---------- Controls ---------- */
-function setSelected(nodes, active) { nodes.forEach(b => b.setAttribute("aria-selected", b === active)); }
-document.querySelectorAll(".seg button").forEach(btn => btn.addEventListener("click", () => {
-  currentCategory = btn.dataset.category;
-  setSelected(document.querySelectorAll(".seg button"), btn);
-  $("timeFilterTabs").classList.toggle("hide", currentCategory === 'coins');
-  loadCurrent();
-}));
-document.querySelectorAll("#timeFilterTabs button").forEach(btn => btn.addEventListener("click", () => {
-  if (currentCategory === 'coins') return;
-  setSelected(document.querySelectorAll("#timeFilterTabs button"), btn);
-  currentPeriod = btn.dataset.period; fetchLeaderboardData(currentPeriod);
-}));
-$("backBtn").addEventListener("click", () => { history.length > 1 ? history.back() : (location.href = "dashboard.html"); });
+/* --------------------------------
+   RENDER
+-------------------------------- */
 
-/* ---------- Startup ---------- */
-// FIX: the app signs in with Firebase, so identify the user from Firebase (the old code asked
-// Supabase Auth, which is always empty, so the "your rank" card never appeared).
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    currentUid = user.uid;
-    currentUserName = user.displayName || (user.email ? user.email.split('@')[0] : null);
-    try { const s = await getDoc(doc(db, "users", user.uid)); if (s.exists() && s.data().name) currentUserName = s.data().name; } catch (e) { console.error(e); }
+function render(rows){
+
+  if(!rows.length){
+
+    emptyState();
+
+    return;
+
   }
-  loadCurrent();
-  // Badge lookup by name is loaded in the background; the list re-renders when it arrives.
-  getDocs(collection(db, "users")).then(snap => {
-    snap.forEach(d => { const u = d.data(), k = (u.name || "").trim().toLowerCase(); if (k) usersFirestoreCache[k] = { purchasedBadges: u.purchasedBadges, inventory: u.inventory, equippedBadge: u.equippedBadge }; });
-    if (lastRender) render(lastRender.rows, lastRender.key, lastRender.unit);
-  }).catch(e => console.error("Badge cache error:", e));
-});
+
+
+  const top =
+    rows.slice(0,3);
+
+
+  /*
+    Visual order:
+    2nd — 1st — 3rd
+  */
+
+  const visual = [
+
+    top[1]
+      ? {
+          item:top[1],
+          rank:2,
+          cls:""
+        }
+      : null,
+
+    top[0]
+      ? {
+          item:top[0],
+          rank:1,
+          cls:"first"
+        }
+      : null,
+
+    top[2]
+      ? {
+          item:top[2],
+          rank:3,
+          cls:""
+        }
+      : null
+
+  ].filter(Boolean);
+
+
+  podiumEl.innerHTML =
+    visual.map(item=>`
+
+      <div class="podium-card ${item.cls}">
+
+        <div class="rank">
+          ${item.rank}
+        </div>
+
+        ${
+          item.rank === 1
+            ? `<div class="crown">
+                 <i class="fa-solid fa-crown"></i>
+               </div>`
+            : ""
+        }
+
+        <div class="avatar">
+          ${initial(item.item.display_name)}
+        </div>
+
+        <div class="name">
+          ${esc(item.item.display_name)}
+        </div>
+
+        <div class="score">
+          ${number(item.item.score)}
+          <small>
+            ${category==="coins" ? "कोइन" : "अंक"}
+          </small>
+        </div>
+
+      </div>
+
+    `).join("");
+
+
+  const rest =
+    rows.slice(3);
+
+
+  leaderboardEl.innerHTML =
+    rest.length
+
+      ? rest.map((item,index)=>{
+
+          const rank =
+            index + 4;
+
+          return `
+
+            <div class="row">
+
+              <div class="position">
+                #${rank}
+              </div>
+
+              <div class="avatar">
+                ${initial(item.display_name)}
+              </div>
+
+              <div class="info">
+
+                <div class="row-name">
+
+                  <span class="row-name-text">
+                    ${esc(item.display_name)}
+                  </span>
+
+                </div>
+
+                <div class="sub">
+
+                  ${
+                    category === "coins"
+                      ? "LoksewaQuest"
+                      : `${number(item.correct)} सही उत्तर`
+                  }
+
+                </div>
+
+              </div>
+
+              <div class="row-score">
+
+                ${number(item.score)}
+
+                <small>
+                  ${category==="coins" ? "कोइन" : "अंक"}
+                </small>
+
+              </div>
+
+            </div>
+
+          `;
+
+        }).join("")
+
+      : `
+        <div class="state">
+          शीर्ष ३ पछि अरू सहभागी छैनन्।
+        </div>
+      `;
+
+
+  /*
+    Current user's name can be read from localStorage
+    when the project already stores it there.
+
+    We deliberately support several existing naming
+    conventions used by the project.
+  */
+
+  const currentName =
+    localStorage.getItem("candidateName") ||
+    localStorage.getItem("userName") ||
+    localStorage.getItem("displayName") ||
+    localStorage.getItem("username");
+
+
+  if(!currentName)
+    return;
+
+
+  const index =
+    rows.findIndex(
+      x =>
+        String(x.display_name)
+          .trim()
+          .toLowerCase() ===
+        String(currentName)
+          .trim()
+          .toLowerCase()
+    );
+
+
+  if(index === -1)
+    return;
+
+
+  const me =
+    rows[index];
+
+
+  myPositionEl.style.display =
+    "block";
+
+
+  myPositionEl.innerHTML = `
+
+    <div class="my-inner">
+
+      <div class="my-rank">
+        #${index + 1}
+      </div>
+
+      <div class="avatar">
+        ${initial(me.display_name)}
+      </div>
+
+      <div class="my-info">
+
+        <div class="my-name">
+          ${esc(me.display_name)}
+        </div>
+
+        <div class="my-label">
+          तपाईंको स्थान
+        </div>
+
+      </div>
+
+      <div class="my-score">
+
+        ${number(me.score)}
+        <small>
+          ${category==="coins" ? "कोइन" : "अंक"}
+        </small>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* --------------------------------
+   LOAD
+-------------------------------- */
+
+async function loadLeaderboard(){
+
+  const id =
+    ++requestNumber;
+
+
+  loading();
+
+
+  try{
+
+    const rows =
+      category === "coins"
+
+        ? await getCoinsLeaderboard()
+
+        : await getQuestionLeaderboard();
+
+
+    /*
+      If the user switched tabs while the
+      request was running, don't overwrite the
+      newer screen.
+    */
+
+    if(id !== requestNumber)
+      return;
+
+
+    render(rows);
+
+  }catch(error){
+
+    if(id !== requestNumber)
+      return;
+
+
+    console.error(
+      "Leaderboard error:",
+      error
+    );
+
+
+    errorState(
+      category === "coins"
+        ? "कोइन leaderboard लोड गर्न सकिएन।"
+        : "प्रश्न leaderboard लोड गर्न सकिएन।"
+    );
+
+  }
+
+}
+
+
+/* --------------------------------
+   CATEGORY BUTTONS
+-------------------------------- */
+
+document
+  .querySelectorAll(".segment button")
+  .forEach(button=>{
+
+    button.addEventListener(
+      "click",
+      ()=>{
+
+        document
+          .querySelectorAll(
+            ".segment button"
+          )
+          .forEach(x=>
+            x.classList.remove("active")
+          );
+
+
+        button.classList.add("active");
+
+
+        category =
+          button.dataset.category;
+
+
+        periodsEl.style.display =
+          category === "coins"
+            ? "none"
+            : "flex";
+
+
+        loadLeaderboard();
+
+      }
+    );
+
+  });
+
+
+/* --------------------------------
+   PERIOD BUTTONS
+-------------------------------- */
+
+document
+  .querySelectorAll(".periods button")
+  .forEach(button=>{
+
+    button.addEventListener(
+      "click",
+      ()=>{
+
+        document
+          .querySelectorAll(
+            ".periods button"
+          )
+          .forEach(x=>
+            x.classList.remove("active")
+          );
+
+
+        button.classList.add("active");
+
+
+        period =
+          button.dataset.period;
+
+
+        loadLeaderboard();
+
+      }
+    );
+
+  });
+
+
+/* --------------------------------
+   BACK
+-------------------------------- */
+
+document
+  .getElementById("backBtn")
+  .addEventListener(
+    "click",
+    ()=>{
+
+      if(
+        window.history.length > 1
+      ){
+
+        window.history.back();
+
+      }else{
+
+        window.location.href =
+          "dashboard.html";
+
+      }
+
+    }
+  );
+
+
+/* --------------------------------
+   START
+-------------------------------- */
+
+loadLeaderboard();
+
 </script>
+
 </body>
-</html>
+  </html>
