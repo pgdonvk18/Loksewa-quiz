@@ -8,11 +8,11 @@
   content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
 >
 
-<meta name="theme-color" content="#081a3a">
+<meta name="theme-color" content="#0b1730">
 
 <meta
   name="description"
-  content="LoksewaQuest Study Hub — topic based notes, syllabus and questions."
+  content="LoksewaQuest Study Hub — topic based notes and questions."
 >
 
 <title>LoksewaQuest — Study Hub</title>
@@ -35,18 +35,18 @@
 <style>
 
 /* =========================================================
-   LOKSEWAQUEST STUDY HUB
-   Complete redesigned + nested syllabus version
+   ROOT
 ========================================================= */
 
 :root{
-  --navy:#081a3a;
-  --navy2:#102d61;
-  --navy3:#194895;
+  --navy:#09152d;
+  --navy2:#102a59;
 
   --blue:#2563eb;
   --blue2:#4f7ff0;
-  --blueSoft:#eef4ff;
+
+  --soft:#eef4ff;
+  --soft2:#f7f9fd;
 
   --green:#059669;
   --greenSoft:#eafaf4;
@@ -57,20 +57,20 @@
   --red:#dc3d4d;
   --redSoft:#fff0f2;
 
-  --bg:#f5f7fb;
+  --bg:#f4f7fb;
   --card:#ffffff;
 
   --text:#17233d;
   --muted:#68758c;
-  --muted2:#8995a9;
+  --muted2:#8a96aa;
 
   --line:#e5e9f1;
 
   --shadow:
-    0 10px 35px rgba(15,31,61,.06);
+    0 10px 30px rgba(15,31,61,.055);
 
   --shadow2:
-    0 16px 45px rgba(15,31,61,.10);
+    0 18px 45px rgba(15,31,61,.08);
 
   --radius:20px;
 
@@ -95,14 +95,12 @@
 }
 
 html{
-  scroll-behavior:smooth;
+  scroll-behavior:auto;
   -webkit-text-size-adjust:100%;
 }
 
 body{
   margin:0;
-
-  min-height:100vh;
 
   background:
     radial-gradient(
@@ -110,28 +108,25 @@ body{
       rgba(37,99,235,.10),
       transparent 30%
     ),
-    linear-gradient(
-      180deg,
-      #f7f9fc 0%,
-      #f4f6fa 100%
-    );
+    var(--bg);
 
   color:var(--text);
 
   font-family:var(--body);
 
+  padding-bottom:60px;
+
   overflow-x:hidden;
 
   /*
-   IMPORTANT:
-   Do NOT create a nested body/aside scrolling system.
-   The browser owns the main page scroll.
+    IMPORTANT:
+    Do not create nested page scrolling.
   */
-  overflow-y:auto;
+  min-height:100%;
+}
 
-  -webkit-overflow-scrolling:touch;
-
-  padding-bottom:70px;
+body.modal-open{
+  overflow:hidden;
 }
 
 button,
@@ -143,7 +138,10 @@ textarea{
 
 button{
   cursor:pointer;
+
   -webkit-tap-highlight-color:transparent;
+
+  touch-action:manipulation;
 }
 
 a{
@@ -151,13 +149,10 @@ a{
   color:inherit;
 }
 
-.hidden{
-  display:none!important;
-}
-
 img,
 video,
-iframe{
+iframe,
+table{
   max-width:100%;
 }
 
@@ -167,227 +162,257 @@ code{
   overflow-x:auto;
 }
 
+.hidden{
+  display:none!important;
+}
+
 
 /* =========================================================
    HERO
 ========================================================= */
 
 .hero{
-  position:relative;
 
   color:#fff;
 
   background:
     radial-gradient(
-      circle at 100% 0%,
-      rgba(79,127,240,.25),
-      transparent 32%
+      circle at 90% 10%,
+      rgba(255,255,255,.10),
+      transparent 28%
     ),
+
     linear-gradient(
       135deg,
-      #07152f 0%,
-      #102a59 58%,
-      #1c4b9f 100%
+      #09152d 0%,
+      #102a59 55%,
+      #1e4aa3 100%
     );
 
   border-radius:0 0 30px 30px;
 
   padding:
     calc(18px + env(safe-area-inset-top))
-    max(16px,calc((100vw - 1200px)/2))
+    max(16px,calc((100vw - 1180px)/2))
     28px;
 
   box-shadow:
-    0 14px 35px rgba(9,23,48,.14);
+    0 12px 30px rgba(9,23,48,.12);
+
+  position:relative;
 
   overflow:hidden;
 }
 
-.hero:before{
+.hero::before{
+
   content:"";
 
   position:absolute;
 
-  width:330px;
-  height:330px;
+  width:280px;
+  height:280px;
 
-  right:-160px;
+  right:-150px;
   top:-170px;
 
-  border-radius:50%;
-
   border:1px solid rgba(255,255,255,.08);
+
+  border-radius:50%;
 }
 
-.hero:after{
+.hero::after{
+
   content:"";
 
   position:absolute;
 
-  width:220px;
-  height:220px;
+  width:170px;
+  height:170px;
 
-  right:-110px;
-  bottom:-150px;
+  left:-100px;
+  bottom:-120px;
+
+  border:1px solid rgba(255,255,255,.06);
 
   border-radius:50%;
-
-  border:1px solid rgba(255,255,255,.07);
 }
 
 .hero-inner{
-  position:relative;
-  z-index:2;
 
-  max-width:1200px;
+  max-width:1180px;
+
   margin:auto;
+
+  position:relative;
+
+  z-index:2;
 }
 
 .topline{
+
   display:flex;
+
   align-items:center;
-  gap:13px;
+
+  gap:12px;
 }
 
 .back{
+
   width:44px;
   height:44px;
 
+  border:
+    1px solid rgba(255,255,255,.15);
+
+  background:
+    rgba(255,255,255,.08);
+
+  color:#fff;
+
+  border-radius:14px;
+
   display:grid;
+
   place-items:center;
 
   flex:none;
 
-  border-radius:14px;
-
-  border:1px solid rgba(255,255,255,.15);
-
-  background:rgba(255,255,255,.08);
-
-  color:#fff;
-
   transition:
-    transform .18s ease,
-    background .18s ease;
+    background .2s ease,
+    transform .2s ease;
 }
 
 .back:hover{
-  transform:translateY(-2px);
-  background:rgba(255,255,255,.14);
+
+  background:
+    rgba(255,255,255,.15);
+
+  transform:translateX(-2px);
 }
 
 .eyebrow{
-  color:#a9bbdb;
 
   font-size:10px;
 
-  letter-spacing:1.7px;
+  letter-spacing:1.6px;
 
   text-transform:uppercase;
+
+  color:#a9bbdb;
 
   font-weight:800;
 }
 
 .hero h1{
-  margin:5px 0;
 
   font:
-    800 30px/1.05
-    var(--head);
+    800 31px/1.05 var(--head);
 
-  letter-spacing:-.5px;
+  margin:5px 0;
 }
 
 .hero p{
+
   margin:0;
 
-  color:#c4d0e5;
+  color:#c2cee3;
 
   font-size:14px;
+
+  line-height:1.5;
 }
 
 
 /* =========================================================
-   HERO CONTROLS
+   HERO TOOLS
 ========================================================= */
 
 .hero-tools{
-  margin-top:21px;
+
+  margin-top:20px;
 
   display:grid;
 
   grid-template-columns:
-    minmax(170px,1fr)
-    minmax(170px,1fr)
-    minmax(250px,1.6fr);
+    1fr
+    1fr
+    1.6fr;
 
   gap:10px;
 }
 
 .selectbox,
 .search{
-  height:49px;
 
-  border-radius:14px;
+  height:48px;
 
   border:
-    1px solid
-    rgba(255,255,255,.15);
+    1px solid rgba(255,255,255,.15);
 
   background:
-    rgba(255,255,255,.10);
+    rgba(255,255,255,.09);
 
   color:#fff;
 
-  outline:none;
+  border-radius:14px;
 
-  transition:
-    border-color .18s ease,
-    background .18s ease;
+  outline:none;
 }
 
 .selectbox{
-  padding:0 13px;
-}
 
-.selectbox:focus,
-.search:focus-within{
-  border-color:rgba(255,255,255,.4);
-  background:rgba(255,255,255,.14);
+  padding:
+    0 14px;
+
+  width:100%;
 }
 
 .selectbox option{
+
   color:var(--text);
+
   background:#fff;
 }
 
 .search{
+
   display:flex;
+
   align-items:center;
 
   gap:10px;
 
-  padding:0 14px;
+  padding:
+    0 14px;
 }
 
 .search i{
-  color:#cbd7ec;
+
+  color:#c6d1e5;
+
+  flex:none;
 }
 
 .search input{
-  width:100%;
-  min-width:0;
 
   border:0;
+
   outline:0;
 
   background:transparent;
 
   color:#fff;
+
+  width:100%;
+
+  min-width:0;
 }
 
 .search input::placeholder{
-  color:#c2cee2;
+
+  color:#c3cde0;
 }
 
 
@@ -396,8 +421,8 @@ code{
 ========================================================= */
 
 .app{
-  width:100%;
-  max-width:1200px;
+
+  max-width:1180px;
 
   margin:auto;
 
@@ -406,6 +431,7 @@ code{
 }
 
 .content{
+
   padding-top:18px;
 }
 
@@ -415,6 +441,7 @@ code{
 ========================================================= */
 
 .stats{
+
   display:grid;
 
   grid-template-columns:
@@ -423,63 +450,61 @@ code{
   gap:12px;
 }
 
-.stat,
-.panel{
+.stat{
+
   background:var(--card);
 
   border:
-    1px solid
-    var(--line);
+    1px solid var(--line);
 
   border-radius:var(--radius);
 
   box-shadow:var(--shadow);
-}
 
-.stat{
-  padding:17px;
+  padding:16px;
+
+  min-width:0;
 }
 
 .stat small{
-  display:block;
 
   color:var(--muted);
 
-  font-size:12px;
-
   font-weight:700;
+
+  font-size:12px;
 }
 
 .stat strong{
+
   display:block;
+
+  font:
+    800 25px var(--head);
 
   margin-top:5px;
 
-  font:
-    800 25px
-    var(--head);
+  white-space:nowrap;
 }
 
 .progress{
-  height:8px;
 
-  margin-top:11px;
+  height:8px;
 
   background:#edf0f5;
 
   border-radius:20px;
 
   overflow:hidden;
+
+  margin-top:10px;
 }
 
 .progress i{
+
   display:block;
 
   height:100%;
-
-  width:0;
-
-  border-radius:inherit;
 
   background:
     linear-gradient(
@@ -487,6 +512,10 @@ code{
       var(--blue),
       #6b8ef3
     );
+
+  border-radius:inherit;
+
+  width:0;
 
   transition:
     width .35s ease;
@@ -498,10 +527,11 @@ code{
 ========================================================= */
 
 .layout{
+
   display:grid;
 
   grid-template-columns:
-    335px
+    340px
     minmax(0,1fr);
 
   gap:16px;
@@ -512,9 +542,19 @@ code{
 }
 
 .panel{
-  min-width:0;
+
+  background:var(--card);
+
+  border:
+    1px solid var(--line);
+
+  border-radius:var(--radius);
+
+  box-shadow:var(--shadow);
 
   overflow:hidden;
+
+  min-width:0;
 }
 
 
@@ -523,31 +563,32 @@ code{
 ========================================================= */
 
 .panel-head{
+
   padding:17px 18px;
 
   border-bottom:
-    1px solid
-    var(--line);
+    1px solid var(--line);
 
   display:flex;
 
   justify-content:space-between;
 
-  align-items:center;
-
   gap:10px;
+
+  align-items:center;
 }
 
 .panel-head h2,
 .panel-head h3{
+
   margin:0;
 
   font:
-    800 17px
-    var(--head);
+    800 17px var(--head);
 }
 
 .panel-head p{
+
   margin:4px 0 0;
 
   color:var(--muted);
@@ -557,69 +598,66 @@ code{
 
 
 /* =========================================================
-   SYLLABUS
+   SYLLABUS TREE
 ========================================================= */
 
 /*
-IMPORTANT FIX:
+  IMPORTANT:
 
-There is NO max-height.
-There is NO overflow-y:auto.
+  No max-height.
+  No overflow:auto.
+  No nested scroll.
 
-The whole page scrolls naturally.
+  The whole page handles scrolling.
 
-This prevents:
-- mobile scroll lock
-- nested scroll conflict
-- touch scrolling getting stuck
-- Chrome Android scroll fighting
+  This is the main fix for the previous
+  mobile scrolling stuck problem.
 */
 
 .syllabus{
+
   padding:10px;
+
+  width:100%;
+
+  overflow:visible;
 }
 
 
-/* Section */
+/* =========================================================
+   SECTION
+========================================================= */
 
 .section-row{
-  margin-bottom:9px;
 
   border:
-    1px solid
-    var(--line);
+    1px solid var(--line);
 
   border-radius:16px;
+
+  margin-bottom:9px;
 
   overflow:hidden;
 
   background:#fff;
-
-  transition:
-    border-color .18s ease,
-    box-shadow .18s ease;
-}
-
-.section-row.open{
-  border-color:#d7e2f8;
-
-  box-shadow:
-    0 7px 22px
-    rgba(37,99,235,.055);
 }
 
 .section-btn{
+
   width:100%;
 
   border:0;
 
-  background:#fff;
-
-  color:var(--text);
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #fbfcfe
+    );
 
   text-align:left;
 
-  padding:14px;
+  padding:14px 13px;
 
   display:flex;
 
@@ -627,117 +665,265 @@ This prevents:
 
   gap:10px;
 
+  color:var(--text);
+
   font-weight:800;
+
+  min-height:50px;
+}
+
+.section-btn:hover{
+
+  background:#f8faff;
+}
+
+.section-btn .section-icon{
+
+  width:30px;
+  height:30px;
+
+  border-radius:10px;
+
+  background:var(--soft);
+
+  color:var(--blue);
+
+  display:grid;
+
+  place-items:center;
+
+  flex:none;
+}
+
+.section-btn .section-name{
+
+  min-width:0;
 
   line-height:1.45;
 }
 
-.section-btn .section-icon{
-  width:31px;
-  height:31px;
+.section-btn .section-count{
 
-  display:grid;
-  place-items:center;
+  margin-left:auto;
 
-  flex:none;
+  font-size:10px;
 
-  border-radius:10px;
+  color:var(--muted2);
 
-  background:var(--blueSoft);
+  background:#f2f4f8;
 
-  color:var(--blue);
+  padding:5px 7px;
 
-  font-size:12px;
+  border-radius:999px;
+
+  white-space:nowrap;
 }
 
-.section-btn .section-title{
-  min-width:0;
-  flex:1;
+.section-btn .section-chevron{
 
-  overflow-wrap:anywhere;
-}
-
-.section-btn .chevron{
-  flex:none;
+  width:20px;
 
   color:#9aa6ba;
 
   font-size:11px;
 
   transition:
-    transform .22s ease;
+    transform .2s ease;
 }
 
-.section-row.open
-.section-btn
-.chevron{
-  transform:rotate(180deg);
+.section-row.collapsed
+.section-chevron{
+
+  transform:rotate(-90deg);
 }
 
 
 /* =========================================================
-   NESTED TOPIC TREE
+   TREE LIST
 ========================================================= */
 
-.topic-tree{
+.section-content{
+
   padding:
-    0 8px 10px;
-}
-
-.topic-node{
-  position:relative;
-}
-
-.topic-node + .topic-node{
-  margin-top:2px;
+    2px
+    8px
+    10px;
 }
 
 
 /*
-Nested indentation.
-
-Each level gets a little more indentation.
+  Generic topic tree
 */
 
-.topic-children{
-  margin-left:16px;
+.topic-tree{
 
-  padding-left:10px;
+  position:relative;
 
-  border-left:
-    1px solid
-    #e8edf5;
+  width:100%;
 }
 
 
-/* Topic button */
+/* =========================================================
+   TOPIC NODE
+========================================================= */
 
-.topic-btn{
+.topic-node{
+
+  position:relative;
+
   width:100%;
+}
 
-  min-height:42px;
 
-  border:0;
+/*
+  Topic row
+*/
 
-  background:transparent;
-
-  color:#56647b;
-
-  text-align:left;
-
-  border-radius:11px;
-
-  padding:9px 10px;
+.topic-row{
 
   display:flex;
 
   align-items:center;
 
-  gap:8px;
+  gap:5px;
+
+  width:100%;
+
+  min-height:42px;
+
+  margin:1px 0;
+
+  border-radius:11px;
+}
+
+
+/* indentation levels */
+
+.topic-node[data-level="0"]{
+  --indent:0px;
+}
+
+.topic-node[data-level="1"]{
+  --indent:22px;
+}
+
+.topic-node[data-level="2"]{
+  --indent:44px;
+}
+
+.topic-node[data-level="3"]{
+  --indent:66px;
+}
+
+.topic-node[data-level="4"]{
+  --indent:88px;
+}
+
+.topic-node[data-level="5"]{
+  --indent:110px;
+}
+
+.topic-node[data-level="6"]{
+  --indent:132px;
+}
+
+.topic-node[data-level="7"]{
+  --indent:154px;
+}
+
+.topic-node[data-level="8"]{
+  --indent:176px;
+}
+
+
+/*
+  If deeper than 8,
+  JS still gives dynamic indentation
+  through inline style.
+*/
+
+.topic-toggle{
+
+  width:28px;
+  height:34px;
+
+  border:0;
+
+  background:transparent;
+
+  color:#9aa6ba;
+
+  display:grid;
+
+  place-items:center;
+
+  flex:none;
+
+  border-radius:8px;
+}
+
+.topic-toggle:hover{
+
+  background:#f1f4f9;
+
+  color:var(--blue);
+}
+
+.topic-toggle.empty{
+
+  cursor:default;
+
+  opacity:0;
+}
+
+.topic-toggle i{
+
+  font-size:9px;
+
+  transition:
+    transform .2s ease;
+}
+
+.topic-node.collapsed >
+.topic-row
+.topic-toggle i{
+
+  transform:rotate(-90deg);
+}
+
+
+/*
+  Actual topic button
+*/
+
+.topic-btn{
+
+  flex:1;
+
+  min-width:0;
+
+  border:0;
+
+  background:transparent;
+
+  text-align:left;
+
+  padding:
+    9px 8px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:9px;
+
+  color:#56647b;
 
   font-size:13px;
 
-  line-height:1.45;
+  line-height:1.4;
+
+  border-radius:10px;
 
   transition:
     background .16s ease,
@@ -745,11 +931,20 @@ Each level gets a little more indentation.
 }
 
 .topic-btn:hover{
-  background:#f7f9fd;
+
+  background:#f5f8ff;
+
+  color:var(--blue);
 }
 
 .topic-btn.active{
-  background:var(--blueSoft);
+
+  background:
+    linear-gradient(
+      90deg,
+      #eef4ff,
+      #f8faff
+    );
 
   color:var(--blue);
 
@@ -757,115 +952,121 @@ Each level gets a little more indentation.
 }
 
 .topic-btn.done{
+
   color:var(--green);
 }
 
-.topic-btn .topic-dot{
+.topic-btn.active.done{
+
+  color:#087b59;
+}
+
+
+/*
+  Dot
+*/
+
+.topic-dot{
+
   width:8px;
   height:8px;
 
   border:
-    2px solid
-    #b7c1d2;
+    2px solid #b7c1d2;
 
   border-radius:50%;
 
   flex:none;
+
+  transition:
+    all .2s ease;
 }
 
 .topic-btn.done .topic-dot{
+
   border-color:var(--green);
+
   background:var(--green);
+
+  box-shadow:
+    0 0 0 3px rgba(5,150,105,.10);
 }
 
-.topic-btn .topic-label{
-  flex:1;
+
+/*
+  Topic title
+*/
+
+.topic-title{
+
   min-width:0;
 
   overflow-wrap:anywhere;
 }
 
-.topic-btn .topic-expand{
-  width:25px;
-  height:25px;
+.topic-number{
 
-  border:0;
+  color:#9aa6ba;
 
-  background:#f2f5f9;
+  font-size:10px;
 
-  color:#738198;
+  font-weight:800;
 
-  border-radius:7px;
-
-  display:grid;
-  place-items:center;
-
-  flex:none;
-
-  font-size:9px;
-}
-
-.topic-btn.active
-.topic-expand{
-  background:#dce8ff;
-  color:var(--blue);
+  margin-right:3px;
 }
 
 
-/* Children collapsed by default */
+/*
+  Child list
+*/
 
-.children-collapsed{
+.children{
+
+  margin-left:22px;
+
+  padding-left:8px;
+
+  border-left:
+    1px solid #e5e9f1;
+}
+
+.children.hidden{
+
   display:none;
-}
-
-.children-open{
-  display:block;
-}
-
-
-/* Child level visual */
-
-.topic-node.level-1 > .topic-btn{
-  font-size:12.5px;
-}
-
-.topic-node.level-2 > .topic-btn{
-  font-size:12px;
-}
-
-.topic-node.level-3 > .topic-btn{
-  font-size:11.8px;
 }
 
 
 /* =========================================================
-   TREE SUMMARY
+   SEARCH TREE
 ========================================================= */
 
-.tree-summary{
-  display:flex;
+.search-results{
 
-  align-items:center;
+  padding:10px;
+}
 
-  gap:8px;
+.search-result-info{
 
-  margin:3px 3px 10px;
+  padding:
+    6px 8px
+    12px;
+}
 
-  padding:9px 10px;
+.search-result-info strong{
 
-  border-radius:12px;
+  font:
+    800 15px var(--head);
+}
 
-  background:#f7f9fc;
+.search-result-info span{
+
+  display:block;
 
   color:var(--muted);
 
   font-size:11px;
 
-  font-weight:700;
-}
-
-.tree-summary i{
-  color:var(--blue);
+  margin-top:3px;
 }
 
 
@@ -874,7 +1075,8 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .empty{
-  padding:42px 20px;
+
+  padding:38px 20px;
 
   text-align:center;
 
@@ -882,26 +1084,23 @@ Each level gets a little more indentation.
 }
 
 .empty i{
-  display:block;
 
-  margin-bottom:11px;
-
-  font-size:31px;
+  font-size:30px;
 
   color:#b8c2d2;
+
+  margin-bottom:10px;
 }
 
 .empty h3{
-  margin:8px 0;
 
   color:var(--text);
 
-  font:
-    800 18px
-    var(--head);
+  margin:8px 0;
 }
 
 .empty p{
+
   line-height:1.7;
 }
 
@@ -911,50 +1110,55 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .reader{
-  padding:23px;
+
+  padding:22px;
 
   min-width:0;
 }
 
 .reader-top{
+
   display:flex;
 
   justify-content:space-between;
 
-  align-items:flex-start;
+  gap:15px;
 
-  gap:18px;
+  align-items:flex-start;
 }
 
 .crumb{
-  margin-bottom:8px;
+
+  font-size:12px;
 
   color:var(--muted);
 
-  font-size:12px;
+  margin-bottom:8px;
+
+  line-height:1.6;
 }
 
 .reader h2{
-  margin:0 0 8px;
 
   font:
-    800 29px/1.15
-    var(--head);
+    800 28px/1.15 var(--head);
 
-  letter-spacing:-.4px;
+  margin:0 0 8px;
 
   overflow-wrap:anywhere;
 }
 
 .reader-sub{
+
   color:var(--muted);
 
-  line-height:1.75;
+  line-height:1.7;
 
   overflow-wrap:anywhere;
 }
 
 .actions{
+
   display:flex;
 
   gap:8px;
@@ -962,17 +1166,10 @@ Each level gets a little more indentation.
   flex-wrap:wrap;
 }
 
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
 .btn{
-  min-height:40px;
 
   border:
-    1px solid
-    var(--line);
+    1px solid var(--line);
 
   background:#fff;
 
@@ -980,27 +1177,34 @@ Each level gets a little more indentation.
 
   border-radius:12px;
 
-  padding:9px 13px;
-
-  font-size:12px;
+  padding:
+    10px 13px;
 
   font-weight:800;
 
+  font-size:12px;
+
+  min-height:40px;
+
   transition:
-    transform .16s ease,
-    box-shadow .16s ease,
-    background .16s ease;
+    transform .15s ease,
+    box-shadow .15s ease,
+    background .15s ease;
 }
 
 .btn:hover{
-  transform:translateY(-1px);
 
   box-shadow:
-    0 5px 15px
-    rgba(15,31,61,.08);
+    0 5px 15px rgba(15,31,61,.07);
+}
+
+.btn:active{
+
+  transform:scale(.98);
 }
 
 .btn.primary{
+
   background:var(--blue);
 
   border-color:var(--blue);
@@ -1009,6 +1213,7 @@ Each level gets a little more indentation.
 }
 
 .btn.success{
+
   background:var(--green);
 
   border-color:var(--green);
@@ -1017,6 +1222,7 @@ Each level gets a little more indentation.
 }
 
 .btn.bookmarked{
+
   background:#fff4d8;
 
   border-color:#f0c56a;
@@ -1030,29 +1236,25 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .reading-meta{
+
   display:flex;
 
   gap:8px;
 
   flex-wrap:wrap;
 
-  margin:15px 0 18px;
+  margin:15px 0;
 }
 
 .pill{
-  display:inline-flex;
-
-  align-items:center;
-
-  gap:5px;
 
   background:#f4f6fa;
 
   border:
-    1px solid
-    var(--line);
+    1px solid var(--line);
 
-  padding:7px 10px;
+  padding:
+    7px 10px;
 
   border-radius:999px;
 
@@ -1069,6 +1271,7 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .notes{
+
   font-size:16px;
 
   line-height:1.9;
@@ -1083,6 +1286,7 @@ Each level gets a little more indentation.
 }
 
 .notes p{
+
   margin:0 0 16px;
 }
 
@@ -1090,6 +1294,7 @@ Each level gets a little more indentation.
 .notes h2,
 .notes h3,
 .notes h4{
+
   font-family:var(--head);
 
   line-height:1.3;
@@ -1100,31 +1305,44 @@ Each level gets a little more indentation.
 }
 
 .notes h1{
+
   font-size:25px;
 }
 
 .notes h2{
+
   font-size:22px;
 }
 
 .notes h3{
+
   font-size:19px;
 }
 
 .notes ul,
 .notes ol{
-  margin:10px 0 18px;
 
-  padding-left:25px;
+  margin:
+    10px 0 18px;
+
+  padding-left:24px;
 }
 
 .notes li{
+
   margin:7px 0;
+
   padding-left:3px;
 }
 
 .notes strong{
+
   font-weight:800;
+}
+
+.notes br{
+
+  line-height:1.9;
 }
 
 
@@ -1133,13 +1351,13 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .important{
+
   margin-top:20px;
 
   background:var(--greenSoft);
 
   border:
-    1px solid
-    #cdeee0;
+    1px solid #cdeee0;
 
   border-radius:16px;
 
@@ -1147,16 +1365,17 @@ Each level gets a little more indentation.
 }
 
 .important h3{
+
   margin:0 0 8px;
 
   font:
-    800 15px
-    var(--head);
+    800 15px var(--head);
 
   color:#087b59;
 }
 
 .important ul{
+
   margin:0;
 
   padding-left:20px;
@@ -1165,6 +1384,7 @@ Each level gets a little more indentation.
 }
 
 .important li{
+
   margin:5px 0;
 }
 
@@ -1174,6 +1394,7 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .qa-head{
+
   display:flex;
 
   justify-content:space-between;
@@ -1182,18 +1403,19 @@ Each level gets a little more indentation.
 
   gap:10px;
 
-  margin:27px 0 10px;
+  margin:28px 0 10px;
 }
 
 .qa-head h3{
+
   margin:0;
 
   font:
-    800 19px
-    var(--head);
+    800 19px var(--head);
 }
 
 .filters{
+
   display:flex;
 
   gap:7px;
@@ -1202,40 +1424,42 @@ Each level gets a little more indentation.
 }
 
 .filter{
+
   border:
-    1px solid
-    var(--line);
+    1px solid var(--line);
 
   background:#fff;
 
-  color:var(--text);
-
-  padding:8px 10px;
+  padding:
+    8px 10px;
 
   border-radius:10px;
 
   font-size:11px;
 
   font-weight:800;
+
+  color:var(--text);
 }
 
 .filter.active{
-  background:var(--blueSoft);
 
-  border-color:#cbdcff;
+  background:var(--soft);
 
   color:var(--blue);
+
+  border-color:#cddcff;
 }
 
 
 /* =========================================================
-   QUESTION CARD
+   QUESTION
 ========================================================= */
 
 .question{
+
   border:
-    1px solid
-    var(--line);
+    1px solid var(--line);
 
   border-radius:16px;
 
@@ -1249,6 +1473,7 @@ Each level gets a little more indentation.
 }
 
 .qtop{
+
   display:flex;
 
   gap:7px;
@@ -1259,13 +1484,15 @@ Each level gets a little more indentation.
 }
 
 .badge{
+
   font-size:10px;
 
   font-weight:800;
 
   border-radius:999px;
 
-  padding:5px 8px;
+  padding:
+    5px 8px;
 
   background:#eef4ff;
 
@@ -1273,11 +1500,14 @@ Each level gets a little more indentation.
 }
 
 .badge.imp{
+
   background:#fff3dc;
+
   color:#a36600;
 }
 
 .question h4{
+
   margin:10px 0;
 
   font-size:15px;
@@ -1288,6 +1518,7 @@ Each level gets a little more indentation.
 }
 
 .options{
+
   display:grid;
 
   gap:7px;
@@ -1296,11 +1527,12 @@ Each level gets a little more indentation.
 }
 
 .option{
-  padding:10px 12px;
+
+  padding:
+    10px 12px;
 
   border:
-    1px solid
-    var(--line);
+    1px solid var(--line);
 
   border-radius:10px;
 
@@ -1312,6 +1544,7 @@ Each level gets a little more indentation.
 }
 
 .answer{
+
   margin-top:12px;
 
   padding:13px;
@@ -1326,24 +1559,27 @@ Each level gets a little more indentation.
 }
 
 .answer strong{
+
   display:block;
 
   margin-bottom:4px;
 }
 
 .question-actions{
+
   display:flex;
 
   justify-content:space-between;
 
-  align-items:center;
-
   gap:8px;
+
+  align-items:center;
 
   margin-top:12px;
 }
 
 .text-btn{
+
   border:0;
 
   background:transparent;
@@ -1359,23 +1595,23 @@ Each level gets a little more indentation.
 
 
 /* =========================================================
-   BOTTOM NAV
+   BOTTOM TOPICS
 ========================================================= */
 
 .bottom-topics{
+
   display:flex;
 
   justify-content:space-between;
 
   gap:10px;
 
-  margin-top:22px;
+  margin-top:20px;
 
   padding-top:18px;
 
   border-top:
-    1px solid
-    var(--line);
+    1px solid var(--line);
 }
 
 
@@ -1384,6 +1620,7 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .skeleton{
+
   height:13px;
 
   border-radius:7px;
@@ -1392,6 +1629,7 @@ Each level gets a little more indentation.
 }
 
 .skelbox{
+
   padding:18px;
 }
 
@@ -1401,22 +1639,23 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .toast{
+
   position:fixed;
 
   left:50%;
 
   bottom:
-    calc(18px + env(safe-area-inset-bottom));
+    calc(20px + env(safe-area-inset-bottom));
 
   transform:
-    translateX(-50%)
-    translateY(10px);
+    translate(-50%,20px);
 
   background:#17233d;
 
   color:#fff;
 
-  padding:11px 15px;
+  padding:
+    11px 15px;
 
   border-radius:12px;
 
@@ -1440,11 +1679,11 @@ Each level gets a little more indentation.
 }
 
 .toast.show{
+
   opacity:1;
 
   transform:
-    translateX(-50%)
-    translateY(0);
+    translate(-50%,0);
 }
 
 
@@ -1453,11 +1692,13 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .modal{
+
   position:fixed;
 
   inset:0;
 
-  background:rgba(7,16,33,.58);
+  background:
+    rgba(7,16,33,.58);
 
   display:none;
 
@@ -1465,25 +1706,31 @@ Each level gets a little more indentation.
 
   justify-content:center;
 
-  z-index:1000;
+  z-index:10000;
+
+  padding:0;
 }
 
 .modal.open{
+
   display:flex;
 }
 
 .modal-card{
+
   background:#fff;
 
-  width:min(640px,100%);
+  width:
+    min(640px,100%);
 
-  max-height:88vh;
+  max-height:90vh;
 
   overflow-y:auto;
 
   overflow-x:hidden;
 
-  border-radius:23px 23px 0 0;
+  border-radius:
+    22px 22px 0 0;
 
   padding:20px;
 
@@ -1493,29 +1740,32 @@ Each level gets a little more indentation.
 }
 
 .modal-head{
+
   display:flex;
 
   justify-content:space-between;
 
   align-items:center;
+
+  gap:10px;
 }
 
 .modal-head h3{
+
   margin:0;
 
   font:
-    800 18px
-    var(--head);
+    800 18px var(--head);
 }
 
 .close{
+
   border:0;
 
   background:#f1f3f7;
 
-  color:var(--text);
-
   width:38px;
+
   height:38px;
 
   border-radius:11px;
@@ -1527,6 +1777,7 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .practice-q{
+
   font-size:18px;
 
   font-weight:800;
@@ -1539,19 +1790,20 @@ Each level gets a little more indentation.
 }
 
 .practice-options{
+
   display:grid;
 
   gap:9px;
 }
 
 .practice-options button{
+
   text-align:left;
 
   padding:13px;
 
   border:
-    1px solid
-    var(--line);
+    1px solid var(--line);
 
   background:#fff;
 
@@ -1561,16 +1813,21 @@ Each level gets a little more indentation.
 }
 
 .practice-options button.correct{
+
   border-color:#53b88d;
+
   background:#eafaf4;
 }
 
 .practice-options button.wrong{
+
   border-color:#e47783;
+
   background:#fff0f2;
 }
 
 .notice{
+
   padding:14px;
 
   border-radius:13px;
@@ -1585,7 +1842,9 @@ Each level gets a little more indentation.
 }
 
 .error{
+
   background:#fff0f2;
+
   color:#a32b39;
 }
 
@@ -1595,10 +1854,13 @@ Each level gets a little more indentation.
 ========================================================= */
 
 .offline{
+
   position:fixed;
 
   top:0;
+
   left:0;
+
   right:0;
 
   background:#a32b39;
@@ -1609,7 +1871,7 @@ Each level gets a little more indentation.
 
   padding:8px;
 
-  z-index:2000;
+  z-index:20000;
 
   font-size:12px;
 
@@ -1626,43 +1888,66 @@ Each level gets a little more indentation.
 @media(max-width:900px){
 
   .hero-tools{
-    grid-template-columns:1fr 1fr;
+
+    grid-template-columns:
+      1fr
+      1fr;
   }
 
   .hero-tools .search{
-    grid-column:1/-1;
+
+    grid-column:
+      1 / -1;
   }
 
   .stats{
-    grid-template-columns:repeat(2,1fr);
+
+    grid-template-columns:
+      repeat(2,1fr);
   }
 
   .layout{
-    grid-template-columns:1fr;
+
+    grid-template-columns:
+      1fr;
   }
 
   /*
-    Still NO nested scrolling.
-    Sidebar simply becomes a normal block.
+    IMPORTANT:
+    Syllabus does NOT get its own scroll.
+    Browser/page scroll remains responsible.
   */
 
   .syllabus{
+
     max-height:none;
+
     overflow:visible;
+
+    -webkit-overflow-scrolling:auto;
+
+    overscroll-behavior:auto;
   }
 
   .reader{
+
     padding:18px;
   }
 
   .reader-top{
+
     display:block;
   }
 
   .actions{
+
     margin-top:14px;
   }
 
+  .reader h2{
+
+    font-size:25px;
+  }
 }
 
 
@@ -1670,95 +1955,167 @@ Each level gets a little more indentation.
    MOBILE
 ========================================================= */
 
-@media(max-width:560px){
+@media(max-width:600px){
 
   body{
-    padding-bottom:50px;
+
+    padding-bottom:
+      calc(35px + env(safe-area-inset-bottom));
   }
 
   .hero{
-    border-radius:0 0 24px 24px;
+
+    border-radius:
+      0 0 24px 24px;
 
     padding-left:14px;
+
     padding-right:14px;
   }
 
   .hero h1{
+
     font-size:25px;
   }
 
+  .hero p{
+
+    font-size:13px;
+  }
+
   .hero-tools{
+
     grid-template-columns:1fr;
   }
 
   .hero-tools .search{
+
     grid-column:auto;
   }
 
+  .app{
+
+    padding-left:10px;
+
+    padding-right:10px;
+  }
+
   .stats{
+
     gap:8px;
   }
 
   .stat{
+
     padding:13px;
   }
 
+  .stat small{
+
+    font-size:11px;
+  }
+
   .stat strong{
+
     font-size:21px;
   }
 
-  .app{
-    padding-left:10px;
-    padding-right:10px;
+  .layout{
+
+    gap:12px;
   }
 
   .panel{
+
     border-radius:17px;
   }
 
   .panel-head{
-    padding:15px;
+
+    padding:
+      14px;
+  }
+
+  .syllabus{
+
+    padding:7px;
+  }
+
+  .section-row{
+
+    border-radius:14px;
+  }
+
+  .section-btn{
+
+    padding:
+      12px 10px;
+  }
+
+  .section-btn .section-count{
+
+    display:none;
+  }
+
+  .children{
+
+    margin-left:14px;
+
+    padding-left:6px;
+  }
+
+  .topic-btn{
+
+    font-size:13px;
+
+    padding:
+      9px 6px;
   }
 
   .reader{
+
     padding:14px;
   }
 
   .reader h2{
+
     font-size:23px;
   }
 
   .notes{
+
     font-size:16px;
+
     line-height:1.85;
   }
 
   .qa-head{
+
     display:block;
   }
 
   .filters{
+
     margin-top:10px;
   }
 
   .question{
+
     padding:13px;
   }
 
   .bottom-topics .btn{
+
     flex:1;
   }
 
   .modal-card{
-    max-height:92vh;
+
+    max-height:
+      calc(92vh - env(safe-area-inset-top));
+
     padding:16px;
   }
-
-  .topic-children{
-    margin-left:11px;
-    padding-left:7px;
-  }
-
 }
 
 
@@ -1769,23 +2126,29 @@ Each level gets a little more indentation.
 @media(max-width:380px){
 
   .hero h1{
+
     font-size:23px;
   }
 
-  .stat small{
-    font-size:11px;
-  }
-
   .stat strong{
+
     font-size:19px;
   }
 
   .reader{
+
     padding:12px;
   }
 
   .notes{
+
     font-size:15px;
+  }
+
+  .section-btn .section-icon{
+
+    width:27px;
+    height:27px;
   }
 
 }
@@ -1800,12 +2163,15 @@ Each level gets a little more indentation.
   *,
   *::before,
   *::after{
+
+    animation-duration:.01ms!important;
+
+    animation-iteration-count:1!important;
+
+    transition-duration:.01ms!important;
+
     scroll-behavior:auto!important;
-
-    transition:none!important;
-    animation:none!important;
   }
-
 }
 
 </style>
@@ -1814,22 +2180,21 @@ Each level gets a little more indentation.
 
 <body>
 
-<!-- =====================================================
+<!-- =======================================================
      OFFLINE
-===================================================== -->
+======================================================= -->
 
 <div
   class="offline"
   id="offline"
 >
-  You are offline. Previously loaded study material may still
-  be available.
+  You are offline. Previously loaded study material may still be available.
 </div>
 
 
-<!-- =====================================================
+<!-- =======================================================
      HERO
-===================================================== -->
+======================================================= -->
 
 <header class="hero">
 
@@ -1840,7 +2205,7 @@ Each level gets a little more indentation.
       <a
         class="back"
         href="dashboard.html"
-        aria-label="Back to dashboard"
+        aria-label="Back"
       >
         <i class="fa-solid fa-arrow-left"></i>
       </a>
@@ -1871,11 +2236,9 @@ Each level gets a little more indentation.
         class="selectbox"
         aria-label="Exam"
       >
-
         <option value="">
           Loading exams…
         </option>
-
       </select>
 
 
@@ -1884,11 +2247,9 @@ Each level gets a little more indentation.
         class="selectbox"
         aria-label="Paper"
       >
-
         <option value="">
           Select paper
         </option>
-
       </select>
 
 
@@ -1912,16 +2273,16 @@ Each level gets a little more indentation.
 </header>
 
 
-<!-- =====================================================
+<!-- =======================================================
      MAIN
-===================================================== -->
+======================================================= -->
 
 <main class="app content">
 
 
-  <!-- ===================================================
+  <!-- =====================================================
        STATS
-  ==================================================== -->
+  ====================================================== -->
 
   <section class="stats">
 
@@ -1983,16 +2344,16 @@ Each level gets a little more indentation.
   </section>
 
 
-  <!-- ===================================================
+  <!-- =====================================================
        LAYOUT
-  ==================================================== -->
+  ====================================================== -->
 
   <div class="layout">
 
 
-    <!-- =================================================
+    <!-- ===================================================
          SYLLABUS
-    ================================================== -->
+    ==================================================== -->
 
     <aside class="panel">
 
@@ -2012,13 +2373,11 @@ Each level gets a little more indentation.
 
         <button
           class="btn"
-          id="expandAllBtn"
+          id="filterBtn"
           type="button"
-          title="Expand / Collapse"
+          title="Syllabus"
         >
-
-          <i class="fa-solid fa-list-tree"></i>
-
+          <i class="fa-solid fa-layer-group"></i>
         </button>
 
       </div>
@@ -2057,9 +2416,9 @@ Each level gets a little more indentation.
     </aside>
 
 
-    <!-- =================================================
+    <!-- ===================================================
          READER
-    ================================================== -->
+    ==================================================== -->
 
     <section
       class="panel"
@@ -2088,9 +2447,9 @@ Each level gets a little more indentation.
 </main>
 
 
-<!-- =====================================================
+<!-- =======================================================
      TOAST
-===================================================== -->
+======================================================= -->
 
 <div
   id="toast"
@@ -2098,9 +2457,9 @@ Each level gets a little more indentation.
 ></div>
 
 
-<!-- =====================================================
+<!-- =======================================================
      PRACTICE MODAL
-===================================================== -->
+======================================================= -->
 
 <div
   id="practiceModal"
@@ -2119,15 +2478,11 @@ Each level gets a little more indentation.
         class="close"
         id="closePractice"
         type="button"
-        aria-label="Close"
       >
-
         <i class="fa-solid fa-xmark"></i>
-
       </button>
 
     </div>
-
 
     <div id="practiceBody"></div>
 
@@ -2136,27 +2491,26 @@ Each level gets a little more indentation.
 </div>
 
 
-<!-- =====================================================
+<!-- =======================================================
      SUPABASE
-===================================================== -->
+======================================================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="components.js"></script>
 
 
-<!-- =====================================================
-     FIREBASE + APP
-===================================================== -->
-
 <script type="module">
+
+/* =========================================================
+   FIREBASE AUTH
+========================================================= */
 
 import {
   initializeApp
 }
 from
 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-
 
 import {
   getAuth,
@@ -2165,10 +2519,6 @@ import {
 from
 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
-
-/* =======================================================
-   FIREBASE
-======================================================= */
 
 const firebaseConfig = {
 
@@ -2196,21 +2546,19 @@ const firebaseConfig = {
 const firebaseApp =
   initializeApp(firebaseConfig);
 
-
 const auth =
   getAuth(firebaseApp);
 
 
-/* =======================================================
+/* =========================================================
    SUPABASE
-======================================================= */
+========================================================= */
 
 const SUPABASE_URL =
   'https://edyirdedkiarguvurpxq.supabase.co';
 
-
 const SUPABASE_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmxlIiwicmVmIjoiZWR5aXJkZWRraWFyZ3V2dXJweHEiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4OTAxODY2MiwiZXhwIjoyMTA0NTk0NjYyfQ.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlZHlyZWRraWFyZ3V2dXJweHEiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4OTAxODY2MiwiZXhwIjoyMTA0NTk0NjYyfQ.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
 
 
 const sb =
@@ -2220,76 +2568,152 @@ const sb =
   );
 
 
-/* =======================================================
+/* =========================================================
    HELPERS
-======================================================= */
+========================================================= */
 
 const $ =
-  id =>
-    document.getElementById(id);
+  id => document.getElementById(id);
 
 
 const esc =
-  value =>
-    String(value ?? '')
+  value => {
+
+    return String(value ?? '')
       .replace(/[&<>"']/g, char => ({
+
         '&':'&amp;',
         '<':'&lt;',
         '>':'&gt;',
         '"':'&quot;',
         "'":'&#039;'
+
       }[char]));
 
+  };
+
+
+/*
+  Safe HTML for answers/explanations that may contain
+  basic formatting from admin panel.
+*/
+
+function safeHTML(value){
+
+  if(
+    value === null ||
+    value === undefined ||
+    value === ''
+  ){
+
+    return '';
+
+  }
+
+  const html =
+    String(value);
+
+  /*
+    Remove dangerous elements.
+  */
+
+  return html
+
+    .replace(
+      /<script[\s\S]*?<\/script>/gi,
+      ''
+    )
+
+    .replace(
+      /<iframe[\s\S]*?<\/iframe>/gi,
+      ''
+    )
+
+    .replace(
+      /<object[\s\S]*?<\/object>/gi,
+      ''
+    )
+
+    .replace(
+      /<embed[\s\S]*?>/gi,
+      ''
+    )
+
+    .replace(
+      /on\w+\s*=\s*(['"]).*?\1/gi,
+      ''
+    )
+
+    .replace(
+      /javascript:/gi,
+      ''
+    );
+
+}
+
+
+/* =========================================================
+   STATE
+========================================================= */
 
 let user = null;
 
 let exams = [];
+
 let papers = [];
+
 let sections = [];
+
 let topics = [];
 
 let currentTopic = null;
+
 let currentQuestions = [];
 
 let bookmarks = new Set();
+
 let progress = new Map();
 
 let searchTimer = null;
 
-let syllabusRequestId = 0;
-let paperRequestId = 0;
 
-
-/* =======================================================
+/* =========================================================
    TOAST
-======================================================= */
+========================================================= */
 
 function toast(message){
 
-  $('toast').textContent = message;
+  $('toast').textContent =
+    message;
 
-  $('toast').classList.add('show');
+  $('toast')
+    .classList
+    .add('show');
 
-  clearTimeout(window.__toastTimer);
+  clearTimeout(
+    window.__toastTimer
+  );
 
   window.__toastTimer =
     setTimeout(() => {
 
-      $('toast').classList.remove('show');
+      $('toast')
+        .classList
+        .remove('show');
 
     },2400);
 
 }
 
 
-/* =======================================================
+/* =========================================================
    ERROR
-======================================================= */
+========================================================= */
 
 function err(message,error){
 
   console.error(
-    '[LoksewaQuest Study Hub]',
+    '[Study Hub]',
     message,
     error
   );
@@ -2299,23 +2723,28 @@ function err(message,error){
 }
 
 
-/* =======================================================
-   FORMAT NOTES
-======================================================= */
+/* =========================================================
+   NOTES FORMATTER
+========================================================= */
 
 function formatNotes(raw){
 
   if(
     raw === null ||
     raw === undefined ||
-    String(raw).trim() === ''
+    raw === ''
   ){
 
     return `
       <div class="empty">
         <i class="fa-regular fa-file-lines"></i>
+
+        <h3>
+          Study material coming soon
+        </h3>
+
         <p>
-          Study material coming soon.
+          Notes have not been added to this topic yet.
         </p>
       </div>
     `;
@@ -2328,37 +2757,22 @@ function formatNotes(raw){
 
 
   /*
-   Existing HTML from admin:
-   allow common formatting only.
+    Existing HTML:
+    preserve basic admin formatting.
   */
 
   if(
-    /<\s*(p|div|h1|h2|h3|h4|ul|ol|li|br|strong|b|em|i)\b/i
+    /<\s*(p|div|h1|h2|h3|h4|ul|ol|li|br|strong|b|em)\b/i
       .test(text)
   ){
 
-    return text
-
-      .replace(
-        /<script[\s\S]*?<\/script>/gi,
-        ''
-      )
-
-      .replace(
-        /on\w+\s*=\s*(['"]).*?\1/gi,
-        ''
-      )
-
-      .replace(
-        /javascript:/gi,
-        ''
-      );
+    return safeHTML(text);
 
   }
 
 
   /*
-   Plain text.
+    Plain text.
   */
 
   text =
@@ -2381,20 +2795,26 @@ function formatNotes(raw){
 
   function flushBullets(){
 
-    if(!bulletBuffer.length){
+    if(
+      !bulletBuffer.length
+    ){
+
       return;
+
     }
 
 
     html += '<ul>';
 
 
-    bulletBuffer.forEach(item => {
+    bulletBuffer.forEach(
+      item => {
 
-      html +=
-        `<li>${esc(item)}</li>`;
+        html +=
+          `<li>${esc(item)}</li>`;
 
-    });
+      }
+    );
 
 
     html += '</ul>';
@@ -2405,12 +2825,17 @@ function formatNotes(raw){
   }
 
 
-  for(const line of lines){
+  for(
+    const line of lines
+  ){
 
+    /*
+      Bullet
+    */
 
-    /* Bullet */
-
-    if(/^•\s*/.test(line)){
+    if(
+      /^•\s*/.test(line)
+    ){
 
       bulletBuffer.push(
         line
@@ -2423,9 +2848,13 @@ function formatNotes(raw){
     }
 
 
-    /* Dash */
+    /*
+      Dash bullet
+    */
 
-    if(/^[-–—]\s+/.test(line)){
+    if(
+      /^[-–—]\s+/.test(line)
+    ){
 
       bulletBuffer.push(
         line
@@ -2438,7 +2867,9 @@ function formatNotes(raw){
     }
 
 
-    /* Numbered item */
+    /*
+      Numbered point
+    */
 
     if(
       /^\d+[.)]\s+/.test(line)
@@ -2455,11 +2886,11 @@ function formatNotes(raw){
 
 
     /*
-     Heading-like text
+      Heading-like line
     */
 
     if(
-      line.length < 90 &&
+      line.length < 100 &&
       (
         line.endsWith(':') ||
         /^(परिचय|महत्व|आवश्यकता|कार्य|प्रकार|विशेषता|उद्देश्य|निष्कर्ष)/
@@ -2479,7 +2910,9 @@ function formatNotes(raw){
     }
 
 
-    /* Paragraph */
+    /*
+      Normal paragraph
+    */
 
     flushBullets();
 
@@ -2497,21 +2930,47 @@ function formatNotes(raw){
 }
 
 
-/* =======================================================
+/* =========================================================
+   GET CHILDREN
+========================================================= */
+
+function getChildren(parentId){
+
+  return topics
+    .filter(
+      topic =>
+        String(topic.parent_id || '') ===
+        String(parentId || '')
+    )
+    .sort(
+      (a,b) =>
+        Number(a.display_order || 0) -
+        Number(b.display_order || 0)
+    );
+
+}
+
+
+/* =========================================================
    GET ROOT TOPICS
-======================================================= */
+========================================================= */
 
 function getRootTopics(sectionId){
 
   return topics
 
-    .filter(topic =>
-      topic.section_id === sectionId &&
-      (
-        topic.parent_id === null ||
-        topic.parent_id === undefined
-      )
-    )
+    .filter(topic => {
+
+      return (
+        topic.section_id === sectionId &&
+        (
+          topic.parent_id === null ||
+          topic.parent_id === undefined ||
+          topic.parent_id === ''
+        )
+      );
+
+    })
 
     .sort(
       (a,b) =>
@@ -2522,598 +2981,119 @@ function getRootTopics(sectionId){
 }
 
 
-/* =======================================================
-   GET CHILDREN
-======================================================= */
+/* =========================================================
+   COUNT DESCENDANTS
+========================================================= */
 
-function getChildren(parentId){
+function countDescendants(topicId){
 
-  return topics
-
-    .filter(topic =>
-      String(topic.parent_id || '') ===
-      String(parentId)
-    )
-
-    .sort(
-      (a,b) =>
-        Number(a.display_order || 0) -
-        Number(b.display_order || 0)
-    );
-
-}
-
-
-/* =======================================================
-   RENDER TOPIC NODE
-======================================================= */
-
-function renderTopicNode(
-  topic,
-  level = 0
-){
+  let count = 0;
 
   const children =
-    getChildren(topic.id);
+    getChildren(topicId);
 
 
-  const completed =
-    Boolean(
-      progress.get(topic.id)?.completed
-    );
+  for(
+    const child of children
+  ){
 
+    count++;
 
-  const active =
-    currentTopic?.id === topic.id;
+    count +=
+      countDescendants(
+        child.id
+      );
 
-
-  const hasChildren =
-    children.length > 0;
-
-
-  const nodeId =
-    `topic-node-${topic.id}`;
-
-
-  return `
-
-    <div
-      class="topic-node level-${Math.min(level,3)}"
-      id="${esc(nodeId)}"
-      data-node="${esc(topic.id)}"
-    >
-
-      <button
-        type="button"
-        class="
-          topic-btn
-          ${completed ? 'done' : ''}
-          ${active ? 'active' : ''}
-        "
-        data-topic="${esc(topic.id)}"
-      >
-
-        <span class="topic-dot"></span>
-
-        <span class="topic-label">
-          ${esc(topic.title)}
-        </span>
-
-        ${
-          hasChildren
-
-          ?
-
-          `
-            <span
-              class="topic-expand"
-              data-expand-topic="${esc(topic.id)}"
-              aria-label="Expand subtopics"
-            >
-              <i class="fa-solid fa-chevron-down"></i>
-            </span>
-          `
-
-          :
-
-          ''
-        }
-
-      </button>
-
-
-      ${
-        hasChildren
-
-        ?
-
-        `
-          <div
-            class="
-              topic-children
-              children-collapsed
-            "
-            data-children-of="${esc(topic.id)}"
-          >
-
-            ${children
-              .map(child =>
-                renderTopicNode(
-                  child,
-                  level + 1
-                )
-              )
-              .join('')}
-
-          </div>
-        `
-
-        :
-
-        ''
-      }
-
-    </div>
-
-  `;
-
-}
-
-
-/* =======================================================
-   OPEN PARENTS OF CURRENT TOPIC
-======================================================= */
-
-function openParentsOfTopic(topicId){
-
-  let topic =
-    topics.find(
-      x => x.id === topicId
-    );
-
-
-  if(!topic){
-    return;
   }
 
 
-  let safety = 0;
+  return count;
+
+}
 
 
-  while(
-    topic?.parent_id &&
-    safety < 20
+/* =========================================================
+   GET ALL TOPICS IN DISPLAY ORDER
+========================================================= */
+
+function getOrderedTopics(){
+
+  const output = [];
+
+
+  function walk(
+    list
   ){
 
-    const childBox =
-      document.querySelector(
-        `[data-children-of="${topic.parent_id}"]`
-      );
+    for(
+      const topic of list
+    ){
+
+      output.push(topic);
 
 
-    if(childBox){
-
-      childBox.classList.remove(
-        'children-collapsed'
-      );
-
-      childBox.classList.add(
-        'children-open'
-      );
+      const children =
+        getChildren(topic.id);
 
 
-      const parentNode =
-        childBox.closest('.topic-node');
+      if(
+        children.length
+      ){
 
+        walk(children);
 
-      if(parentNode){
-        parentNode.classList.add('open');
       }
 
     }
 
-
-    topic =
-      topics.find(
-        x => x.id === topic.parent_id
-      );
-
-
-    safety++;
-
-  }
-
-}
-
-
-/* =======================================================
-   RENDER SYLLABUS
-======================================================= */
-
-function renderSyllabus(){
-
-  if(!sections.length){
-
-    renderEmptySyllabus();
-
-    return;
-
   }
 
 
-  $('syllabusHint').textContent =
-    `${sections.length} sections • ${topics.length} topics`;
+  for(
+    const section of sections
+  ){
 
-
-  let html = '';
-
-
-  sections.forEach((section,index) => {
-
-    const sectionTopics =
-      getRootTopics(section.id);
-
-
-    const totalInSection =
-      topics.filter(
-        topic =>
-          topic.section_id === section.id
-      ).length;
-
-
-    html += `
-
-      <div
-        class="section-row"
-        data-section-row="${esc(section.id)}"
-      >
-
-        <button
-          type="button"
-          class="section-btn"
-          data-section="${esc(section.id)}"
-        >
-
-          <span class="section-icon">
-            <i class="fa-solid fa-folder"></i>
-          </span>
-
-          <span class="section-title">
-            ${esc(section.name)}
-          </span>
-
-          <span class="chevron">
-            <i class="fa-solid fa-chevron-down"></i>
-          </span>
-
-        </button>
-
-
-        <div class="topic-tree">
-
-          <div class="tree-summary">
-
-            <i class="fa-solid fa-layer-group"></i>
-
-            <span>
-              ${totalInSection}
-              ${totalInSection === 1 ? 'topic' : 'topics'}
-            </span>
-
-          </div>
-
-
-          ${
-            sectionTopics.length
-
-            ?
-
-            sectionTopics
-              .map(topic =>
-                renderTopicNode(topic,0)
-              )
-              .join('')
-
-            :
-
-            `
-              <div
-                class="empty"
-                style="padding:15px"
-              >
-                No topics published yet.
-              </div>
-            `
-          }
-
-        </div>
-
-      </div>
-
-    `;
-
-  });
-
-
-  $('syllabus').innerHTML = html;
-
-
-  attachSyllabusEvents();
-
-
-  /*
-   Keep current topic visible in tree.
-  */
-
-  if(currentTopic){
-
-    openParentsOfTopic(
-      currentTopic.id
+    walk(
+      getRootTopics(section.id)
     );
 
   }
 
-}
-
-
-/* =======================================================
-   SYLLABUS EVENTS
-======================================================= */
-
-function attachSyllabusEvents(){
 
   /*
-   Section open / close
+    Safety fallback for orphaned topics.
   */
 
-  document
-    .querySelectorAll('[data-section]')
-    .forEach(button => {
-
-      button.onclick = event => {
-
-        /*
-         Ignore if user somehow clicks
-         a nested button.
-        */
-
-        if(
-          event.target.closest(
-            '[data-topic]'
-          )
-        ){
-          return;
-        }
+  const included =
+    new Set(
+      output.map(x => x.id)
+    );
 
 
-        const row =
-          button.closest('.section-row');
+  topics
+    .filter(
+      topic =>
+        !included.has(topic.id)
+    )
+    .sort(
+      (a,b) =>
+        Number(a.display_order || 0) -
+        Number(b.display_order || 0)
+    )
+    .forEach(
+      topic =>
+        output.push(topic)
+    );
 
 
-        if(!row){
-          return;
-        }
-
-
-        const tree =
-          row.querySelector('.topic-tree');
-
-
-        if(!tree){
-          return;
-        }
-
-
-        const isOpen =
-          row.classList.toggle('open');
-
-
-        tree.classList.toggle(
-          'hidden',
-          !isOpen
-        );
-
-      };
-
-    });
-
-
-  /*
-   Topic open
-  */
-
-  document
-    .querySelectorAll('[data-topic]')
-    .forEach(button => {
-
-      button.onclick = event => {
-
-        /*
-         If clicking the small expand
-         button, don't open reader.
-        */
-
-        if(
-          event.target.closest(
-            '[data-expand-topic]'
-          )
-        ){
-
-          return;
-
-        }
-
-
-        openTopic(
-          button.dataset.topic
-        );
-
-      };
-
-    });
-
-
-  /*
-   Expand/collapse individual topic.
-  */
-
-  document
-    .querySelectorAll('[data-expand-topic]')
-    .forEach(button => {
-
-      button.onclick = event => {
-
-        event.stopPropagation();
-
-
-        const id =
-          button.dataset.expandTopic;
-
-
-        const children =
-          document.querySelector(
-            `[data-children-of="${id}"]`
-          );
-
-
-        if(!children){
-          return;
-        }
-
-
-        const open =
-          children.classList.toggle(
-            'children-open'
-          );
-
-
-        children.classList.toggle(
-          'children-collapsed',
-          !open
-        );
-
-
-        const icon =
-          button.querySelector('i');
-
-
-        if(icon){
-
-          icon.className =
-            open
-              ? 'fa-solid fa-chevron-up'
-              : 'fa-solid fa-chevron-down';
-
-        }
-
-      };
-
-    });
+  return output;
 
 }
 
 
-/* =======================================================
-   EMPTY SYLLABUS
-======================================================= */
-
-function renderEmptySyllabus(){
-
-  sections = [];
-  topics = [];
-
-
-  $('syllabus').innerHTML = `
-
-    <div class="empty">
-
-      <i class="fa-solid fa-layer-group"></i>
-
-      <h3>
-        No syllabus yet
-      </h3>
-
-      <p>
-        Administrators haven't published
-        material for this paper yet.
-      </p>
-
-    </div>
-
-  `;
-
-
-  $('syllabusHint').textContent =
-    'No published material';
-
-}
-
-
-/* =======================================================
-   EXPAND ALL
-======================================================= */
-
-let allExpanded = false;
-
-
-function toggleExpandAll(){
-
-  allExpanded =
-    !allExpanded;
-
-
-  document
-    .querySelectorAll(
-      '[data-children-of]'
-    )
-    .forEach(box => {
-
-      box.classList.toggle(
-        'children-open',
-        allExpanded
-      );
-
-      box.classList.toggle(
-        'children-collapsed',
-        !allExpanded
-      );
-
-    });
-
-
-  document
-    .querySelectorAll(
-      '.section-row'
-    )
-    .forEach(row => {
-
-      row.classList.toggle(
-        'open',
-        allExpanded
-      );
-
-    });
-
-
-  document
-    .querySelectorAll(
-      '[data-expand-topic] i'
-    )
-    .forEach(icon => {
-
-      icon.className =
-        allExpanded
-          ? 'fa-solid fa-chevron-up'
-          : 'fa-solid fa-chevron-down';
-
-    });
-
-}
-
-
-/* =======================================================
+/* =========================================================
    LOAD EXAMS
-======================================================= */
+========================================================= */
 
 async function loadExams(){
 
@@ -3138,7 +3118,9 @@ async function loadExams(){
 
 
   if(error){
+
     throw error;
+
   }
 
 
@@ -3153,15 +3135,13 @@ async function loadExams(){
       ?
 
       exams
-        .map(exam => `
-
-          <option
-            value="${esc(exam.id)}"
-          >
-            ${esc(exam.name)}
-          </option>
-
-        `)
+        .map(
+          exam => `
+            <option value="${esc(exam.id)}">
+              ${esc(exam.name)}
+            </option>
+          `
+        )
         .join('')
 
       :
@@ -3173,7 +3153,9 @@ async function loadExams(){
       `;
 
 
-  if(exams[0]){
+  if(
+    exams[0]
+  ){
 
     await loadPapers(
       exams[0].id
@@ -3184,15 +3166,13 @@ async function loadExams(){
 }
 
 
-/* =======================================================
+/* =========================================================
    LOAD PAPERS
-======================================================= */
+========================================================= */
 
-async function loadPapers(examId){
-
-  const requestId =
-    ++paperRequestId;
-
+async function loadPapers(
+  examId
+){
 
   if(!examId){
 
@@ -3235,13 +3215,10 @@ async function loadPapers(examId){
       );
 
 
-  if(requestId !== paperRequestId){
-    return;
-  }
-
-
   if(error){
+
     throw error;
+
   }
 
 
@@ -3256,15 +3233,13 @@ async function loadPapers(examId){
       ?
 
       papers
-        .map(paper => `
-
-          <option
-            value="${esc(paper.id)}"
-          >
-            ${esc(paper.name)}
-          </option>
-
-        `)
+        .map(
+          paper => `
+            <option value="${esc(paper.id)}">
+              ${esc(paper.name)}
+            </option>
+          `
+        )
         .join('')
 
       :
@@ -3276,7 +3251,9 @@ async function loadPapers(examId){
       `;
 
 
-  if(papers[0]){
+  if(
+    papers[0]
+  ){
 
     await loadSyllabus(
       papers[0].id
@@ -3291,15 +3268,13 @@ async function loadPapers(examId){
 }
 
 
-/* =======================================================
+/* =========================================================
    LOAD SYLLABUS
-======================================================= */
+========================================================= */
 
-async function loadSyllabus(paperId){
-
-  const requestId =
-    ++syllabusRequestId;
-
+async function loadSyllabus(
+  paperId
+){
 
   if(!paperId){
 
@@ -3333,82 +3308,46 @@ async function loadSyllabus(paperId){
         style="width:55%"
       ></div>
 
-      <br>
-
-      <div
-        class="skeleton"
-        style="width:80%"
-      ></div>
-
     </div>
 
   `;
 
 
   /*
-   Sections + ALL topics.
+    Load sections and topics together.
 
-   parent_id is handled locally
-   by renderTopicNode().
+    Topics are loaded globally for the selected paper
+    through section IDs.
   */
 
-  const [
-    sectionResult,
-    topicResult
-  ] =
-    await Promise.all([
+  const sectionResult =
+    await sb
 
-      sb
+      .from('study_sections')
 
-        .from('study_sections')
+      .select('*')
 
-        .select('*')
+      .eq(
+        'paper_id',
+        paperId
+      )
 
-        .eq(
-          'paper_id',
-          paperId
-        )
+      .eq(
+        'is_active',
+        true
+      )
 
-        .eq(
-          'is_active',
-          true
-        )
-
-        .order(
-          'display_order'
-        ),
+      .order(
+        'display_order'
+      );
 
 
-      sb
+  if(
+    sectionResult.error
+  ){
 
-        .from('study_topics')
-
-        .select('*')
-
-        .eq(
-          'is_published',
-          true
-        )
-
-        .order(
-          'display_order'
-        )
-
-    ]);
-
-
-  if(requestId !== syllabusRequestId){
-    return;
-  }
-
-
-  if(sectionResult.error){
     throw sectionResult.error;
-  }
 
-
-  if(topicResult.error){
-    throw topicResult.error;
   }
 
 
@@ -3416,33 +3355,68 @@ async function loadSyllabus(paperId){
     sectionResult.data || [];
 
 
-  /*
-   Only topics belonging to the
-   selected paper's sections.
-  */
+  if(
+    !sections.length
+  ){
+
+    topics = [];
+
+    currentTopic = null;
+
+    currentQuestions = [];
+
+    renderEmptySyllabus();
+
+    return;
+
+  }
+
 
   const sectionIds =
-    new Set(
-      sections.map(
-        section => section.id
-      )
+    sections.map(
+      section =>
+        section.id
     );
 
 
-  topics =
-    (topicResult.data || [])
-      .filter(topic =>
-        sectionIds.has(
-          topic.section_id
-        )
+  const topicResult =
+    await sb
+
+      .from('study_topics')
+
+      .select('*')
+
+      .in(
+        'section_id',
+        sectionIds
+      )
+
+      .eq(
+        'is_published',
+        true
+      )
+
+      .order(
+        'display_order'
       );
 
 
+  if(
+    topicResult.error
+  ){
+
+    throw topicResult.error;
+
+  }
+
+
+  topics =
+    topicResult.data || [];
+
+
   currentTopic = null;
+
   currentQuestions = [];
-
-
-  allExpanded = false;
 
 
   renderSyllabus();
@@ -3453,9 +3427,582 @@ async function loadSyllabus(paperId){
 }
 
 
-/* =======================================================
+/* =========================================================
+   EMPTY SYLLABUS
+========================================================= */
+
+function renderEmptySyllabus(){
+
+  sections = [];
+
+  topics = [];
+
+  currentTopic = null;
+
+  currentQuestions = [];
+
+
+  $('syllabusHint').textContent =
+    'No published material';
+
+
+  $('syllabus').innerHTML = `
+
+    <div class="empty">
+
+      <i class="fa-solid fa-layer-group"></i>
+
+      <h3>
+        No syllabus yet
+      </h3>
+
+      <p>
+        Administrators haven’t published material
+        for this paper yet.
+      </p>
+
+    </div>
+
+  `;
+
+
+  $('readerPanel').innerHTML = `
+
+    <div class="empty">
+
+      <i class="fa-solid fa-book-open"></i>
+
+      <h3>
+        Study material coming soon
+      </h3>
+
+      <p>
+        Choose another paper or wait for
+        new material to be published.
+      </p>
+
+    </div>
+
+  `;
+
+
+  updateStats();
+
+}
+
+
+/* =========================================================
+   CREATE TOPIC TREE
+========================================================= */
+
+function createTopicTree(
+  topicList,
+  level = 0
+){
+
+  return topicList
+    .map(topic => {
+
+      const children =
+        getChildren(
+          topic.id
+        );
+
+
+      const hasChildren =
+        children.length > 0;
+
+
+      const completed =
+        progress.get(
+          topic.id
+        )?.completed;
+
+
+      const active =
+        currentTopic?.id ===
+        topic.id;
+
+
+      const indent =
+        level * 22;
+
+
+      const descendantCount =
+        hasChildren
+          ? countDescendants(topic.id)
+          : 0;
+
+
+      return `
+
+        <div
+          class="topic-node ${active ? 'active-node' : ''}"
+          data-level="${level}"
+          data-topic-node="${esc(topic.id)}"
+        >
+
+          <div
+            class="topic-row"
+            style="padding-left:${indent}px"
+          >
+
+            ${
+              hasChildren
+
+              ?
+
+              `
+                <button
+                  type="button"
+                  class="topic-toggle"
+                  data-toggle-topic="${esc(topic.id)}"
+                  aria-label="Expand or collapse"
+                >
+                  <i class="fa-solid fa-chevron-down"></i>
+                </button>
+              `
+
+              :
+
+              `
+                <span
+                  class="topic-toggle empty"
+                >
+                  <i class="fa-solid fa-chevron-down"></i>
+                </span>
+              `
+            }
+
+
+            <button
+              type="button"
+              class="topic-btn
+                ${completed ? 'done' : ''}
+                ${active ? 'active' : ''}
+              "
+              data-topic="${esc(topic.id)}"
+            >
+
+              <span class="topic-dot"></span>
+
+              <span class="topic-title">
+
+                ${esc(topic.title)}
+
+              </span>
+
+            </button>
+
+          </div>
+
+
+          ${
+            hasChildren
+
+            ?
+
+            `
+              <div
+                class="children"
+                data-children="${esc(topic.id)}"
+              >
+
+                ${createTopicTree(
+                  children,
+                  level + 1
+                )}
+
+              </div>
+            `
+
+            :
+
+            ''
+          }
+
+        </div>
+
+      `;
+
+    })
+    .join('');
+
+}
+
+
+/* =========================================================
+   RENDER SYLLABUS
+========================================================= */
+
+function renderSyllabus(){
+
+  if(
+    !sections.length
+  ){
+
+    renderEmptySyllabus();
+
+    return;
+
+  }
+
+
+  const totalTopics =
+    topics.length;
+
+
+  $('syllabusHint').textContent =
+    `${sections.length} sections • ${totalTopics} topics`;
+
+
+  $('syllabus').innerHTML =
+
+    sections
+      .map(
+        (section,index) => {
+
+          const sectionTopics =
+            getRootTopics(
+              section.id
+            );
+
+
+          const sectionTopicCount =
+            topics.filter(
+              topic =>
+                topic.section_id ===
+                section.id
+            ).length;
+
+
+          return `
+
+            <div
+              class="section-row"
+              data-section-row="${esc(section.id)}"
+            >
+
+              <button
+                type="button"
+                class="section-btn"
+                data-section="${esc(section.id)}"
+              >
+
+                <span class="section-icon">
+
+                  <i class="fa-solid fa-folder-open"></i>
+
+                </span>
+
+
+                <span class="section-name">
+
+                  ${esc(section.name)}
+
+                </span>
+
+
+                <span class="section-count">
+
+                  ${sectionTopicCount}
+
+                </span>
+
+
+                <span class="section-chevron">
+
+                  <i class="fa-solid fa-chevron-down"></i>
+
+                </span>
+
+              </button>
+
+
+              <div
+                class="section-content"
+                data-section-content="${esc(section.id)}"
+              >
+
+                ${
+                  sectionTopics.length
+
+                  ?
+
+                  `
+                    <div class="topic-tree">
+
+                      ${createTopicTree(
+                        sectionTopics,
+                        0
+                      )}
+
+                    </div>
+                  `
+
+                  :
+
+                  `
+                    <div
+                      class="empty"
+                      style="padding:18px 10px"
+                    >
+                      No topics published yet.
+                    </div>
+                  `
+                }
+
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      )
+      .join('');
+
+
+  bindSyllabusEvents();
+
+}
+
+
+/* =========================================================
+   BIND SYLLABUS EVENTS
+========================================================= */
+
+function bindSyllabusEvents(){
+
+  /*
+    Section collapse
+  */
+
+  document
+    .querySelectorAll('[data-section]')
+    .forEach(
+      button => {
+
+        button.onclick = () => {
+
+          const sectionId =
+            button.dataset.section;
+
+
+          const row =
+            button.closest(
+              '.section-row'
+            );
+
+
+          const content =
+            row?.querySelector(
+              `[data-section-content="${CSS.escape(sectionId)}"]`
+            );
+
+
+          if(!row || !content){
+
+            return;
+
+          }
+
+
+          row.classList.toggle(
+            'collapsed'
+          );
+
+
+          content.classList.toggle(
+            'hidden'
+          );
+
+        };
+
+      }
+    );
+
+
+  /*
+    Topic expand/collapse
+  */
+
+  document
+    .querySelectorAll('[data-toggle-topic]')
+    .forEach(
+      button => {
+
+        button.onclick = event => {
+
+          event.stopPropagation();
+
+
+          const topicId =
+            button.dataset.toggleTopic;
+
+
+          const node =
+            document.querySelector(
+              `[data-topic-node="${CSS.escape(topicId)}"]`
+            );
+
+
+          const children =
+            node?.querySelector(
+              `:scope > [data-children="${CSS.escape(topicId)}"]`
+            );
+
+
+          if(!node || !children){
+
+            return;
+
+          }
+
+
+          node.classList.toggle(
+            'collapsed'
+          );
+
+
+          children.classList.toggle(
+            'hidden'
+          );
+
+        };
+
+      }
+    );
+
+
+  /*
+    Topic open
+  */
+
+  document
+    .querySelectorAll('[data-topic]')
+    .forEach(
+      button => {
+
+        button.onclick = () => {
+
+          openTopic(
+            button.dataset.topic
+          );
+
+        };
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   EXPAND PARENT CHAIN
+========================================================= */
+
+function expandTopicParents(
+  topicId
+){
+
+  let topic =
+    topics.find(
+      x => x.id === topicId
+    );
+
+
+  const visited =
+    new Set();
+
+
+  while(
+    topic &&
+    topic.parent_id &&
+    !visited.has(topic.parent_id)
+  ){
+
+    visited.add(
+      topic.parent_id
+    );
+
+
+    const parentId =
+      topic.parent_id;
+
+
+    const parentNode =
+      document.querySelector(
+        `[data-topic-node="${CSS.escape(parentId)}"]`
+      );
+
+
+    if(parentNode){
+
+      parentNode.classList.remove(
+        'collapsed'
+      );
+
+
+      const childContainer =
+        parentNode.querySelector(
+          `:scope > [data-children="${CSS.escape(parentId)}"]`
+        );
+
+
+      if(childContainer){
+
+        childContainer.classList.remove(
+          'hidden'
+        );
+
+      }
+
+    }
+
+
+    topic =
+      topics.find(
+        x => x.id === parentId
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   HIGHLIGHT ACTIVE TOPIC
+========================================================= */
+
+function highlightActiveTopic(){
+
+  document
+    .querySelectorAll('[data-topic]')
+    .forEach(
+      button => {
+
+        button.classList.toggle(
+          'active',
+          button.dataset.topic ===
+          currentTopic?.id
+        );
+
+      }
+    );
+
+
+  /*
+    ScrollIntoView is intentionally NOT used.
+    This avoids mobile page jumping/stuck behaviour.
+  */
+
+}
+
+
+/* =========================================================
    USER STATE
-======================================================= */
+========================================================= */
 
 async function refreshUserState(){
 
@@ -3493,7 +4040,6 @@ async function refreshUserState(){
           user.uid
         ),
 
-
       sb
 
         .from('study_bookmarks')
@@ -3508,20 +4054,22 @@ async function refreshUserState(){
     ]);
 
 
-  if(progressResult.error){
+  if(
+    progressResult.error
+  ){
 
     console.warn(
-      'Progress:',
       progressResult.error
     );
 
   }
 
 
-  if(bookmarkResult.error){
+  if(
+    bookmarkResult.error
+  ){
 
     console.warn(
-      'Bookmarks:',
       bookmarkResult.error
     );
 
@@ -3530,38 +4078,37 @@ async function refreshUserState(){
 
   progress =
     new Map(
-
       (progressResult.data || [])
-        .map(row => [
-          row.topic_id,
-          row
-        ])
-
+        .map(
+          item =>
+            [
+              item.topic_id,
+              item
+            ]
+        )
     );
 
 
   bookmarks =
     new Set(
-
       (bookmarkResult.data || [])
-        .map(row =>
-          `${row.content_type}:${row.content_id}`
+        .map(
+          item =>
+            `${item.content_type}:${item.content_id}`
         )
-
     );
 
 
   updateStats();
-
 
   renderSyllabus();
 
 }
 
 
-/* =======================================================
+/* =========================================================
    STATS
-======================================================= */
+========================================================= */
 
 function updateStats(){
 
@@ -3572,24 +4119,32 @@ function updateStats(){
   const done =
     topics.filter(
       topic =>
-        progress.get(topic.id)?.completed
+        progress.get(
+          topic.id
+        )?.completed
     ).length;
 
 
   const percentage =
     total
-      ? Math.round(
-          done / total * 100
-        )
-      : 0;
+
+      ?
+
+      Math.round(
+        done / total * 100
+      )
+
+      :
+
+      0;
 
 
   $('progressText').textContent =
-    percentage + '%';
+    `${percentage}%`;
 
 
   $('progressBar').style.width =
-    percentage + '%';
+    `${percentage}%`;
 
 
   $('topicCount').textContent =
@@ -3604,21 +4159,25 @@ function updateStats(){
 }
 
 
-/* =======================================================
+/* =========================================================
    OPEN TOPIC
-======================================================= */
+========================================================= */
 
-async function openTopic(id){
+async function openTopic(
+  id
+){
 
   const topic =
     topics.find(
-      topic =>
-        topic.id === id
+      item =>
+        item.id === id
     );
 
 
   if(!topic){
+
     return;
+
   }
 
 
@@ -3626,24 +4185,41 @@ async function openTopic(id){
     topic;
 
 
+  highlightActiveTopic();
+
+  expandTopicParents(id);
+
+
   /*
-   Update active item without
-   rebuilding entire tree immediately.
+    Find section and keep it open.
   */
 
-  document
-    .querySelectorAll('.topic-btn')
-    .forEach(button => {
+  const sectionRow =
+    document.querySelector(
+      `[data-section-row="${CSS.escape(topic.section_id)}"]`
+    );
 
-      button.classList.toggle(
-        'active',
-        button.dataset.topic === id
+
+  if(sectionRow){
+
+    sectionRow.classList.remove(
+      'collapsed'
+    );
+
+    const content =
+      sectionRow.querySelector(
+        `[data-section-content="${CSS.escape(topic.section_id)}"]`
       );
 
-    });
+    if(content){
 
+      content.classList.remove(
+        'hidden'
+      );
 
-  openParentsOfTopic(id);
+    }
+
+  }
 
 
   $('readerPanel').innerHTML = `
@@ -3716,26 +4292,14 @@ async function openTopic(id){
   }
 
 
-  /*
-   User might have clicked another
-   topic while the request was loading.
-  */
-
-  if(
-    currentTopic?.id !== id
-  ){
-    return;
-  }
-
-
   renderTopic();
 
 }
 
 
-/* =======================================================
+/* =========================================================
    RENDER TOPIC
-======================================================= */
+========================================================= */
 
 function renderTopic(){
 
@@ -3744,7 +4308,9 @@ function renderTopic(){
 
 
   if(!topic){
+
     return;
+
   }
 
 
@@ -3753,9 +4319,9 @@ function renderTopic(){
 
 
   const completed =
-    Boolean(
-      progress.get(topic.id)?.completed
-    );
+    progress.get(
+      topic.id
+    )?.completed;
 
 
   const marked =
@@ -3764,38 +4330,75 @@ function renderTopic(){
     );
 
 
-  const important =
+  let important =
+    [];
+
+
+  if(
     Array.isArray(
       topic.important_points
     )
+  ){
 
-      ?
+    important =
+      topic.important_points;
 
-      topic.important_points
+  }
 
-      :
+  else if(
+    topic.important_points
+  ){
 
-      (
-        topic.important_points
+    try{
 
-          ?
+      const parsed =
+        JSON.parse(
+          topic.important_points
+        );
 
+
+      if(
+        Array.isArray(parsed)
+      ){
+
+        important = parsed;
+
+      }else{
+
+        important =
           String(
             topic.important_points
           )
-            .split('\n')
-            .filter(Boolean)
+          .split('\n')
+          .filter(Boolean);
 
-          :
+      }
 
-          []
-      );
+    }catch{
+
+      important =
+        String(
+          topic.important_points
+        )
+        .split('\n')
+        .filter(Boolean);
+
+    }
+
+  }
+
+
+  /*
+    Breadcrumb
+  */
+
+  const breadcrumb =
+    getBreadcrumb(topic);
 
 
   $('readerPanel').innerHTML = `
 
     <article class="reader">
-
 
       <div class="crumb">
 
@@ -3803,20 +4406,18 @@ function renderTopic(){
 
         /
 
-        ${esc(topic.title)}
+        ${breadcrumb}
 
       </div>
 
 
       <div class="reader-top">
 
-
         <div>
 
           <h2>
             ${esc(topic.title)}
           </h2>
-
 
           ${
             topic.description
@@ -3892,8 +4493,6 @@ function renderTopic(){
 
         <span class="pill">
 
-          <i class="fa-regular fa-circle-question"></i>
-
           ${questions.length}
 
           questions
@@ -3902,8 +4501,6 @@ function renderTopic(){
 
 
         <span class="pill">
-
-          <i class="fa-solid fa-signal"></i>
 
           ${esc(
             topic.difficulty || 'General'
@@ -3937,12 +4534,12 @@ function renderTopic(){
 
               </h3>
 
-
               <ul>
 
                 ${important
-                  .map(point =>
-                    `<li>${esc(point)}</li>`
+                  .map(
+                    point =>
+                      `<li>${esc(point)}</li>`
                   )
                   .join('')}
 
@@ -3974,7 +4571,6 @@ function renderTopic(){
             All
           </button>
 
-
           <button
             class="filter"
             data-qfilter="important"
@@ -3983,7 +4579,6 @@ function renderTopic(){
             Important
           </button>
 
-
           <button
             class="filter"
             data-qfilter="mcq"
@@ -3991,7 +4586,6 @@ function renderTopic(){
           >
             MCQ
           </button>
-
 
           <button
             class="filter"
@@ -4058,7 +4652,6 @@ function renderTopic(){
 
       </div>
 
-
     </article>
 
   `;
@@ -4090,85 +4683,98 @@ function renderTopic(){
 
 
   document
-    .querySelectorAll('[data-qfilter]')
-    .forEach(button => {
+    .querySelectorAll(
+      '[data-qfilter]'
+    )
+    .forEach(
+      button => {
 
-      button.onclick = () => {
+        button.onclick = () => {
 
-        const filter =
-          button.dataset.qfilter;
-
-
-        document
-          .querySelectorAll(
-            '[data-qfilter]'
-          )
-          .forEach(btn =>
-            btn.classList.remove(
-              'active'
+          document
+            .querySelectorAll(
+              '[data-qfilter]'
             )
+            .forEach(
+              b =>
+                b.classList.remove(
+                  'active'
+                )
+            );
+
+
+          button.classList.add(
+            'active'
           );
 
 
-        button.classList.add(
-          'active'
-        );
+          const filter =
+            button.dataset.qfilter;
 
 
-        if(filter === 'all'){
+          if(
+            filter === 'all'
+          ){
 
-          renderQuestions(
-            questions
-          );
+            renderQuestions(
+              questions
+            );
 
-          return;
+            return;
 
-        }
-
-
-        if(filter === 'important'){
-
-          renderQuestions(
-            questions.filter(
-              x => x.is_important
-            )
-          );
-
-          return;
-
-        }
+          }
 
 
-        if(filter === 'mcq'){
+          if(
+            filter === 'important'
+          ){
 
-          renderQuestions(
-            questions.filter(
-              x =>
-                x.question_type ===
-                'mcq'
-            )
-          );
+            renderQuestions(
+              questions.filter(
+                q => q.is_important
+              )
+            );
 
-          return;
+            return;
 
-        }
+          }
 
 
-        if(filter === 'short'){
+          if(
+            filter === 'mcq'
+          ){
 
-          renderQuestions(
-            questions.filter(
-              x =>
-                x.question_type ===
-                'short'
-            )
-          );
+            renderQuestions(
+              questions.filter(
+                q =>
+                  q.question_type ===
+                  'mcq'
+              )
+            );
 
-        }
+            return;
 
-      };
+          }
 
-    });
+
+          if(
+            filter === 'short'
+          ){
+
+            renderQuestions(
+              questions.filter(
+                q =>
+                  q.question_type ===
+                  'short'
+              )
+            );
+
+          }
+
+        };
+
+      }
+    );
 
 
   $('prevTopic').onclick =
@@ -4183,48 +4789,71 @@ function renderTopic(){
 }
 
 
-/* =======================================================
-   OPTIONS NORMALIZER
-======================================================= */
+/* =========================================================
+   BREADCRUMB
+========================================================= */
 
-function normalizeOptions(options){
+function getBreadcrumb(
+  topic
+){
 
-  if(Array.isArray(options)){
-    return options;
-  }
+  const parts = [];
+
+  let current =
+    topic;
+
+  const visited =
+    new Set();
 
 
-  if(typeof options === 'string'){
+  while(
+    current &&
+    !visited.has(current.id)
+  ){
 
-    try{
+    visited.add(
+      current.id
+    );
 
-      const parsed =
-        JSON.parse(options);
 
-      if(Array.isArray(parsed)){
-        return parsed;
-      }
+    parts.unshift(
+      current.title
+    );
 
-    }catch{
 
-      return options
-        .split(',')
-        .map(x => x.trim())
-        .filter(Boolean);
+    if(
+      !current.parent_id
+    ){
+
+      break;
 
     }
 
+
+    current =
+      topics.find(
+        x =>
+          x.id ===
+          current.parent_id
+      );
+
   }
 
 
-  return [];
+  return parts
+    .map(
+      x => esc(x)
+    )
+    .join(
+      ' / '
+    );
 
 }
 
 
-/* =======================================================
+/* =========================================================
    RENDER QUESTIONS
-======================================================= */
+========================================================= */
 
 function renderQuestions(
   questions
@@ -4235,11 +4864,15 @@ function renderQuestions(
 
 
   if(!box){
+
     return;
+
   }
 
 
-  if(!questions.length){
+  if(
+    !questions.length
+  ){
 
     box.innerHTML = `
 
@@ -4248,8 +4881,7 @@ function renderQuestions(
         <i class="fa-regular fa-circle-question"></i>
 
         <p>
-          No questions have been added
-          to this topic yet.
+          No questions have been added to this topic yet.
         </p>
 
       </div>
@@ -4267,16 +4899,43 @@ function renderQuestions(
       .map(
         (question,index) => {
 
-          const options =
-            normalizeOptions(
-              question.options
-            );
+          let options =
+            question.options || [];
 
 
-          const saved =
-            bookmarks.has(
-              `question:${question.id}`
-            );
+          if(
+            typeof options ===
+            'string'
+          ){
+
+            try{
+
+              options =
+                JSON.parse(
+                  options
+                );
+
+            }catch{
+
+              options =
+                options
+                  .split(',')
+                  .map(
+                    x => x.trim()
+                  );
+
+            }
+
+          }
+
+
+          if(
+            !Array.isArray(options)
+          ){
+
+            options = [];
+
+          }
 
 
           return `
@@ -4286,22 +4945,25 @@ function renderQuestions(
               data-qid="${esc(question.id)}"
             >
 
-
               <div class="qtop">
 
                 <span class="badge">
+
                   ${esc(
                     question.question_type ||
                     'short'
                   )}
+
                 </span>
 
 
                 <span class="badge">
+
                   ${esc(
                     question.difficulty ||
                     'Medium'
                   )}
+
                 </span>
 
 
@@ -4312,8 +4974,13 @@ function renderQuestions(
 
                     `
                       <span class="badge">
-                        ${esc(question.marks)}
+
+                        ${esc(
+                          question.marks
+                        )}
+
                         marks
+
                       </span>
                     `
 
@@ -4369,9 +5036,7 @@ function renderQuestions(
                             <div class="option">
 
                               <b>
-                                ${String.fromCharCode(
-                                  65+i
-                                )}.
+                                ${String.fromCharCode(65+i)}.
                               </b>
 
                               ${esc(option)}
@@ -4406,11 +5071,21 @@ function renderQuestions(
                   type="button"
                 >
 
-                  <i
-                    class="fa-${saved ? 'solid' : 'regular'} fa-bookmark"
-                  ></i>
+                  <i class="fa-${
+                    bookmarks.has(
+                      `question:${question.id}`
+                    )
+                      ? 'solid'
+                      : 'regular'
+                  } fa-bookmark"></i>
 
-                  ${saved ? 'Saved' : 'Save'}
+                  ${
+                    bookmarks.has(
+                      `question:${question.id}`
+                    )
+                      ? 'Saved'
+                      : 'Save'
+                  }
 
                 </button>
 
@@ -4424,11 +5099,10 @@ function renderQuestions(
                 </strong>
 
                 ${
-                  question.answer
-                    ? formatAnswer(
-                        question.answer
-                      )
-                    : 'No answer added yet.'
+                  safeHTML(
+                    question.answer ||
+                    'No answer added yet.'
+                  )
                 }
 
 
@@ -4444,7 +5118,7 @@ function renderQuestions(
                         Explanation
                       </strong>
 
-                      ${formatAnswer(
+                      ${safeHTML(
                         question.explanation
                       )}
                     `
@@ -4456,7 +5130,6 @@ function renderQuestions(
 
               </div>
 
-
             </div>
 
           `;
@@ -4467,121 +5140,82 @@ function renderQuestions(
 
 
   /*
-   Reveal answers
+    Reveal answer
   */
 
   box
     .querySelectorAll('.reveal')
-    .forEach(button => {
+    .forEach(
+      button => {
 
-      button.onclick = () => {
+        button.onclick = () => {
 
-        const answer =
-          button
-            .parentElement
-            .nextElementSibling;
-
-
-        if(!answer){
-          return;
-        }
+          const answer =
+            button
+              .parentElement
+              .nextElementSibling;
 
 
-        const hidden =
+          if(!answer){
+
+            return;
+
+          }
+
+
           answer.classList.toggle(
             'hidden'
           );
 
 
-        button.textContent =
-          hidden
-            ? 'Show Answer'
-            : 'Hide Answer';
+          button.textContent =
+            answer.classList.contains(
+              'hidden'
+            )
 
-      };
+              ?
 
-    });
+              'Show Answer'
+
+              :
+
+              'Hide Answer';
+
+        };
+
+      }
+    );
 
 
   /*
-   Bookmark question
+    Bookmark question
   */
 
   box
     .querySelectorAll('.bookmark-q')
-    .forEach(button => {
+    .forEach(
+      button => {
 
-      button.onclick = () => {
+        button.onclick = () => {
 
-        const question =
-          button.closest(
-            '.question'
+          toggleBookmark(
+            'question',
+            button
+              .closest('.question')
+              .dataset.qid
           );
 
+        };
 
-        if(!question){
-          return;
-        }
-
-
-        toggleBookmark(
-          'question',
-          question.dataset.qid
-        );
-
-      };
-
-    });
+      }
+    );
 
 }
 
 
-/* =======================================================
-   ANSWER FORMATTER
-======================================================= */
-
-function formatAnswer(value){
-
-  const text =
-    String(value ?? '');
-
-
-  /*
-   If admin entered HTML,
-   retain it.
-  */
-
-  if(
-    /<\s*(p|div|br|strong|b|em|i|ul|ol|li|h3|h4)\b/i
-      .test(text)
-  ){
-
-    return text
-      .replace(
-        /<script[\s\S]*?<\/script>/gi,
-        ''
-      )
-      .replace(
-        /on\w+\s*=\s*(['"]).*?\1/gi,
-        ''
-      )
-      .replace(
-        /javascript:/gi,
-        ''
-      );
-
-  }
-
-
-  return esc(text)
-    .replace(/\n/g,'<br>');
-
-}
-
-
-/* =======================================================
+/* =========================================================
    BOOKMARK
-======================================================= */
+========================================================= */
 
 async function toggleBookmark(
   type,
@@ -4635,7 +5269,9 @@ async function toggleBookmark(
 
 
       if(error){
+
         throw error;
+
       }
 
 
@@ -4648,7 +5284,9 @@ async function toggleBookmark(
         'Bookmark removed'
       );
 
-    }else{
+    }
+
+    else{
 
       const {
         error
@@ -4672,7 +5310,9 @@ async function toggleBookmark(
 
 
       if(error){
+
         throw error;
+
       }
 
 
@@ -4690,25 +5330,7 @@ async function toggleBookmark(
 
     updateStats();
 
-
-    /*
-     Only refresh reader if it is open.
-    */
-
-    if(currentTopic){
-
-      renderTopic();
-
-    }
-
-
-    /*
-     Update syllabus completed colors
-     without changing scroll position.
-    */
-
-    refreshTopicVisuals();
-
+    renderTopic();
 
   }catch(error){
 
@@ -4722,43 +5344,9 @@ async function toggleBookmark(
 }
 
 
-/* =======================================================
-   REFRESH TOPIC VISUALS
-======================================================= */
-
-function refreshTopicVisuals(){
-
-  document
-    .querySelectorAll('[data-topic]')
-    .forEach(button => {
-
-      const id =
-        button.dataset.topic;
-
-
-      const completed =
-        progress.get(id)?.completed;
-
-
-      button.classList.toggle(
-        'done',
-        Boolean(completed)
-      );
-
-
-      button.classList.toggle(
-        'active',
-        currentTopic?.id === id
-      );
-
-    });
-
-}
-
-
-/* =======================================================
+/* =========================================================
    COMPLETE
-======================================================= */
+========================================================= */
 
 async function toggleComplete(
   id
@@ -4781,7 +5369,9 @@ async function toggleComplete(
 
   try{
 
-    if(existing?.completed){
+    if(
+      existing?.completed
+    ){
 
       const {
         error
@@ -4792,9 +5382,11 @@ async function toggleComplete(
 
           .update({
 
-            completed:false,
+            completed:
+              false,
 
-            completed_at:null
+            completed_at:
+              null
 
           })
 
@@ -4810,7 +5402,9 @@ async function toggleComplete(
 
 
       if(error){
+
         throw error;
+
       }
 
 
@@ -4827,7 +5421,9 @@ async function toggleComplete(
         'Marked as incomplete'
       );
 
-    }else{
+    }
+
+    else{
 
       const {
         error
@@ -4846,7 +5442,8 @@ async function toggleComplete(
               topic_id:
                 id,
 
-              completed:true,
+              completed:
+                true,
 
               completed_at:
                 new Date()
@@ -4863,7 +5460,9 @@ async function toggleComplete(
 
 
       if(error){
+
         throw error;
+
       }
 
 
@@ -4877,11 +5476,8 @@ async function toggleComplete(
           topic_id:
             id,
 
-          completed:true,
-
-          completed_at:
-            new Date()
-              .toISOString()
+          completed:
+            true
 
         }
       );
@@ -4896,7 +5492,7 @@ async function toggleComplete(
 
     updateStats();
 
-    refreshTopicVisuals();
+    renderSyllabus();
 
     renderTopic();
 
@@ -4913,50 +5509,39 @@ async function toggleComplete(
 }
 
 
-/* =======================================================
+/* =========================================================
    MOVE TOPIC
-======================================================= */
+========================================================= */
 
-/*
-Important:
+function moveTopic(
+  delta
+){
 
-Navigation uses the actual database
-display_order, including nested topics.
-
-So:
-
-1.1
-1.1.1
-1.1.2
-1.1.3
-1.2
-...
-
-can be navigated sequentially.
-*/
-
-function moveTopic(delta){
-
-  if(!currentTopic){
-    return;
-  }
+  const ordered =
+    getOrderedTopics();
 
 
   const index =
-    topics.findIndex(
+    ordered.findIndex(
       topic =>
         topic.id ===
-        currentTopic.id
+        currentTopic?.id
     );
 
 
-  if(index < 0){
+  if(
+    index < 0
+  ){
+
     return;
+
   }
 
 
   const next =
-    topics[index + delta];
+    ordered[
+      index + delta
+    ];
 
 
   if(next){
@@ -4965,35 +5550,14 @@ function moveTopic(delta){
       next.id
     );
 
-    /*
-     Smoothly move reader to top
-     without creating nested scrolling.
-    */
-
-    setTimeout(() => {
-
-      window.scrollTo({
-        top:
-          document.querySelector(
-            '.reader'
-          )?.getBoundingClientRect().top +
-          window.scrollY -
-          20,
-
-        behavior:'smooth'
-
-      });
-
-    },50);
-
   }
 
 }
 
 
-/* =======================================================
+/* =========================================================
    PRACTICE
-======================================================= */
+========================================================= */
 
 function openPractice(){
 
@@ -5005,7 +5569,9 @@ function openPractice(){
       );
 
 
-  if(!questions.length){
+  if(
+    !questions.length
+  ){
 
     toast(
       'No questions available.'
@@ -5027,10 +5593,44 @@ function openPractice(){
       questions[index];
 
 
-    const options =
-      normalizeOptions(
-        question.options
-      );
+    let options =
+      question.options || [];
+
+
+    if(
+      typeof options ===
+      'string'
+    ){
+
+      try{
+
+        options =
+          JSON.parse(
+            options
+          );
+
+      }catch{
+
+        options =
+          options
+            .split(',')
+            .map(
+              x =>
+                x.trim()
+            );
+
+      }
+
+    }
+
+
+    if(
+      !Array.isArray(options)
+    ){
+
+      options = [];
+
+    }
 
 
     $('practiceBody').innerHTML = `
@@ -5038,11 +5638,8 @@ function openPractice(){
       <div class="pill">
 
         Question
-
         ${index + 1}
-
         of
-
         ${questions.length}
 
       </div>
@@ -5075,9 +5672,7 @@ function openPractice(){
                       data-i="${i}"
                     >
 
-                      ${String.fromCharCode(
-                        65+i
-                      )}.
+                      ${String.fromCharCode(65+i)}.
 
                       ${esc(option)}
 
@@ -5098,7 +5693,9 @@ function openPractice(){
               id="showPracticeAnswer"
               type="button"
             >
+
               Show Answer
+
             </button>
           `
       }
@@ -5112,212 +5709,179 @@ function openPractice(){
     `;
 
 
+    /*
+      MCQ
+    */
+
     if(
-      question.question_type === 'mcq'
+      question.question_type ===
+      'mcq'
     ){
 
       $('practiceBody')
         .querySelectorAll(
           '[data-i]'
         )
-        .forEach(button => {
+        .forEach(
+          button => {
 
-          button.onclick = () => {
+            button.onclick = () => {
 
-            /*
-             Prevent double scoring.
-            */
+              /*
+                Prevent multiple clicks.
+              */
 
-            if(
-              button.parentElement
-                .dataset
-                .answered === 'true'
-            ){
-              return;
-            }
-
-
-            button.parentElement
-              .dataset
-              .answered = 'true';
+              $('practiceBody')
+                .querySelectorAll(
+                  '[data-i]'
+                )
+                .forEach(
+                  b =>
+                    b.disabled = true
+                );
 
 
-            const selected =
-              Number(
-                button.dataset.i
-              );
+              const selected =
+                Number(
+                  button.dataset.i
+                );
 
 
-            const correct =
-              String(
-                question.correct_option ??
-                ''
-              )
+              const correct =
+                String(
+                  question.correct_option ??
+                  ''
+                )
                 .trim()
                 .toUpperCase();
 
 
-            const letter =
-              String.fromCharCode(
-                65 + selected
+              const letter =
+                String.fromCharCode(
+                  65 + selected
+                );
+
+
+              const selectedText =
+                String(
+                  options[selected] ??
+                  ''
+                )
+                .trim();
+
+
+              const answerText =
+                String(
+                  question.answer ??
+                  ''
+                )
+                .trim();
+
+
+              const isCorrect =
+                correct === letter ||
+
+                correct ===
+                  String(selected) ||
+
+                answerText ===
+                  selectedText;
+
+
+              button.classList.add(
+                isCorrect
+                  ? 'correct'
+                  : 'wrong'
               );
 
 
-            const answerText =
-              String(
-                question.answer || ''
-              )
-                .trim();
+              if(isCorrect){
+
+                score++;
+
+              }
 
 
-            const selectedText =
-              String(
-                options[selected] || ''
-              )
-                .trim();
+              $('practiceFeedback')
+                .innerHTML = `
 
+                  <div class="answer">
 
-            const isCorrect =
-              correct === letter ||
+                    <strong>
 
-              correct ===
-                String(selected) ||
+                      ${
+                        isCorrect
+                          ? '✓ Correct'
+                          : '✗ Incorrect'
+                      }
 
-              answerText ===
-                selectedText;
-
-
-            button.classList.add(
-              isCorrect
-                ? 'correct'
-                : 'wrong'
-            );
-
-
-            if(isCorrect){
-              score++;
-            }
-
-
-            $('practiceFeedback')
-              .innerHTML = `
-
-                <div class="answer">
-
-                  <strong>
+                    </strong>
 
                     ${
-                      isCorrect
-                        ? '✓ Correct'
-                        : '✗ Incorrect'
+                      safeHTML(
+                        question.explanation ||
+                        question.answer ||
+                        ''
+                      )
                     }
 
-                  </strong>
+
+                    <br>
 
 
-                  ${
-                    question.explanation
-                      ? formatAnswer(
-                          question.explanation
-                        )
-                      : formatAnswer(
-                          question.answer ||
-                          ''
-                        )
+                    <button
+                      class="btn primary"
+                      id="nextPractice"
+                      type="button"
+                      style="margin-top:10px"
+                    >
+
+                      ${
+                        index + 1 <
+                        questions.length
+
+                          ? 'Next Question'
+                          : 'Finish'
+                      }
+
+                    </button>
+
+                  </div>
+
+                `;
+
+
+              $('nextPractice').onclick =
+                () => {
+
+                  index++;
+
+
+                  if(
+                    index <
+                    questions.length
+                  ){
+
+                    render();
+
                   }
 
+                  else{
 
-                  <br>
+                    showPracticeResult();
 
+                  }
 
-                  <button
-                    class="btn primary"
-                    id="nextPractice"
-                    style="margin-top:10px"
-                    type="button"
-                  >
+                };
 
-                    ${
-                      index + 1 <
-                      questions.length
+            };
 
-                        ? 'Next Question'
-                        : 'Finish'
-                    }
+          }
+        );
 
-                  </button>
+    }
 
-                </div>
-
-              `;
-
-
-            $('nextPractice').onclick =
-              () => {
-
-                index++;
-
-
-                if(
-                  index <
-                  questions.length
-                ){
-
-                  render();
-
-                }else{
-
-                  $('practiceBody')
-                    .innerHTML = `
-
-                      <div class="empty">
-
-                        <i class="fa-solid fa-trophy"></i>
-
-                        <h3>
-                          Practice complete
-                        </h3>
-
-                        <p>
-
-                          You scored
-
-                          ${score}
-
-                          /
-
-                          ${questions.length}.
-
-                        </p>
-
-                      </div>
-
-                    `;
-
-
-                  const current =
-                    Number(
-                      $('questionCount')
-                        .textContent ||
-                      0
-                    );
-
-
-                  $('questionCount')
-                    .textContent =
-                      String(
-                        current + score
-                      );
-
-                }
-
-              };
-
-          };
-
-        });
-
-    }else{
+    else{
 
       $('showPracticeAnswer').onclick =
         () => {
@@ -5332,7 +5896,7 @@ function openPractice(){
                 </strong>
 
                 ${
-                  formatAnswer(
+                  safeHTML(
                     question.answer ||
                     'Not available'
                   )
@@ -5351,9 +5915,11 @@ function openPractice(){
                         Explanation
                       </strong>
 
-                      ${formatAnswer(
-                        question.explanation
-                      )}
+                      ${
+                        safeHTML(
+                          question.explanation
+                        )
+                      }
                     `
 
                     :
@@ -5372,12 +5938,82 @@ function openPractice(){
   };
 
 
+  function showPracticeResult(){
+
+    $('practiceBody').innerHTML = `
+
+      <div class="empty">
+
+        <i class="fa-solid fa-trophy"></i>
+
+        <h3>
+          Practice complete
+        </h3>
+
+        <p>
+
+          You scored
+
+          <strong>
+            ${score}
+          </strong>
+
+          /
+
+          ${questions.length}.
+
+        </p>
+
+        <button
+          class="btn primary"
+          id="closePracticeResult"
+          type="button"
+        >
+
+          Done
+
+        </button>
+
+      </div>
+
+    `;
+
+
+    /*
+      Update local counter only.
+    */
+
+    const current =
+      Number(
+        $('questionCount')
+          .textContent || 0
+      );
+
+
+    $('questionCount').textContent =
+      String(
+        current + score
+      );
+
+
+    $('closePracticeResult').onclick =
+      () => {
+
+        closePractice();
+
+      };
+
+  }
+
+
   $('practiceModal')
-    .classList.add('open');
+    .classList
+    .add('open');
 
 
-  document.body.style.overflow =
-    'hidden';
+  document.body.classList.add(
+    'modal-open'
+  );
 
 
   render();
@@ -5385,28 +6021,27 @@ function openPractice(){
 }
 
 
-/* =======================================================
-   MODAL CLOSE
-======================================================= */
+/* =========================================================
+   CLOSE PRACTICE
+========================================================= */
 
 function closePractice(){
 
   $('practiceModal')
-    .classList.remove('open');
+    .classList
+    .remove('open');
 
 
-  /*
-   Restore page scrolling.
-  */
-
-  document.body.style.overflow =
-    '';
+  document.body.classList.remove(
+    'modal-open'
+  );
 
 }
 
 
 $('closePractice').onclick =
-  closePractice;
+  () =>
+    closePractice();
 
 
 $('practiceModal').onclick =
@@ -5425,18 +6060,15 @@ $('practiceModal').onclick =
 
 
 /*
- Android back button / browser back
- while modal open.
+  ESC key
 */
 
-window.addEventListener(
+document.addEventListener(
   'keydown',
   event => {
 
     if(
-      event.key === 'Escape' &&
-      $('practiceModal')
-        .classList.contains('open')
+      event.key === 'Escape'
     ){
 
       closePractice();
@@ -5447,23 +6079,27 @@ window.addEventListener(
 );
 
 
-/* =======================================================
+/* =========================================================
    SELECT EVENTS
-======================================================= */
+========================================================= */
 
 $('examSelect').onchange =
   () => {
 
+    $('searchInput').value =
+      '';
+
+
     loadPapers(
       $('examSelect').value
     )
-      .catch(
-        error =>
-          err(
-            'Unable to load papers.',
-            error
-          )
-      );
+    .catch(
+      error =>
+        err(
+          'Unable to load papers.',
+          error
+        )
+    );
 
   };
 
@@ -5471,31 +6107,27 @@ $('examSelect').onchange =
 $('paperSelect').onchange =
   () => {
 
+    $('searchInput').value =
+      '';
+
+
     loadSyllabus(
       $('paperSelect').value
     )
-      .catch(
-        error =>
-          err(
-            'Unable to load syllabus.',
-            error
-          )
-      );
+    .catch(
+      error =>
+        err(
+          'Unable to load syllabus.',
+          error
+        )
+    );
 
   };
 
 
-/* =======================================================
-   EXPAND BUTTON
-======================================================= */
-
-$('expandAllBtn').onclick =
-  toggleExpandAll;
-
-
-/* =======================================================
+/* =========================================================
    SEARCH
-======================================================= */
+========================================================= */
 
 $('searchInput').oninput =
   () => {
@@ -5531,15 +6163,44 @@ async function search(){
   }
 
 
+  const lowerTerm =
+    term.toLowerCase();
+
+
+  /*
+    Local topic search first.
+  */
+
+  const topicHits =
+    topics.filter(
+      topic => {
+
+        const text =
+          `
+            ${topic.title || ''}
+            ${topic.description || ''}
+            ${topic.notes || ''}
+          `
+          .toLowerCase();
+
+
+        return text.includes(
+          lowerTerm
+        );
+
+      }
+    );
+
+
+  /*
+    Question search.
+  */
+
   const safeTerm =
     term
       .replace(/,/g,' ')
       .replace(/[()]/g,' ');
 
-
-  /*
-   Search questions.
-  */
 
   const {
     data,
@@ -5581,148 +6242,156 @@ async function search(){
     data || [];
 
 
-  const ids =
+  const questionTopicIds =
     new Set(
       hits.map(
-        x => x.topic_id
+        x =>
+          x.topic_id
       )
     );
 
 
-  const lowerTerm =
-    term.toLowerCase();
-
-
-  const topicHits =
+  const combined =
     topics.filter(
       topic =>
-
-        ids.has(
+        topicHits.some(
+          x =>
+            x.id === topic.id
+        )
+        ||
+        questionTopicIds.has(
           topic.id
         )
-
-        ||
-
-        `
-          ${topic.title}
-          ${topic.description || ''}
-          ${topic.notes || ''}
-        `
-          .toLowerCase()
-          .includes(
-            lowerTerm
-          )
     );
 
 
-  /*
-   Search results are intentionally flat.
-   This makes results easier to read.
-  */
-
   $('syllabus').innerHTML = `
 
-    <div
-      class="tree-summary"
-      style="margin:4px 4px 12px"
-    >
+    <div class="search-results">
 
-      <i class="fa-solid fa-magnifying-glass"></i>
+      <div class="search-result-info">
 
-      <span>
+        <strong>
+          Search Results
+        </strong>
 
-        ${topicHits.length}
-        topics
+        <span>
 
-        •
+          ${combined.length}
+          topics •
 
-        ${hits.length}
-        questions
+          ${hits.length}
+          questions
 
-      </span>
+        </span>
+
+      </div>
+
+
+      ${
+        combined.length
+
+          ?
+
+          combined
+            .map(
+              topic => {
+
+                const hasChildren =
+                  getChildren(
+                    topic.id
+                  ).length > 0;
+
+
+                const done =
+                  progress.get(
+                    topic.id
+                  )?.completed;
+
+
+                return `
+
+                  <div class="topic-row">
+
+                    <span
+                      class="topic-toggle empty"
+                    >
+                      <i class="fa-solid fa-circle"></i>
+                    </span>
+
+
+                    <button
+                      type="button"
+                      class="topic-btn ${done ? 'done' : ''}"
+                      data-topic="${esc(topic.id)}"
+                    >
+
+                      <span class="topic-dot"></span>
+
+                      <span class="topic-title">
+
+                        ${esc(
+                          topic.title
+                        )}
+
+                      </span>
+
+                    </button>
+
+                  </div>
+
+                `;
+
+              }
+            )
+            .join('')
+
+          :
+
+          `
+            <div class="empty">
+
+              <i class="fa-solid fa-magnifying-glass"></i>
+
+              <h3>
+                No study material found
+              </h3>
+
+              <p>
+                Try another keyword.
+              </p>
+
+            </div>
+          `
+      }
 
     </div>
 
-
-    ${
-      topicHits.length
-
-        ?
-
-        topicHits
-          .map(topic => `
-
-            <button
-              type="button"
-              class="
-                topic-btn
-                ${progress.get(topic.id)?.completed ? 'done' : ''}
-              "
-              data-topic="${esc(topic.id)}"
-            >
-
-              <span class="topic-dot"></span>
-
-              <span class="topic-label">
-
-                ${esc(topic.title)}
-
-              </span>
-
-            </button>
-
-          `)
-          .join('')
-
-        :
-
-        `
-          <div class="empty">
-
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-            <h3>
-              No results found
-            </h3>
-
-            <p>
-              Try another topic,
-              question or keyword.
-            </p>
-
-          </div>
-        `
-    }
-
   `;
 
-
-  /*
-   Attach search result events.
-  */
 
   document
     .querySelectorAll(
       '[data-topic]'
     )
-    .forEach(button => {
+    .forEach(
+      button => {
 
-      button.onclick = () => {
+        button.onclick =
+          () =>
+            openTopic(
+              button.dataset.topic
+            );
 
-        openTopic(
-          button.dataset.topic
-        );
-
-      };
-
-    });
+      }
+    );
 
 }
 
 
-/* =======================================================
+/* =========================================================
    NETWORK
-======================================================= */
+========================================================= */
 
 window.addEventListener(
   'online',
@@ -5747,10 +6416,12 @@ window.addEventListener(
 
 
 /*
- Show immediately if already offline.
+  Initial offline state
 */
 
-if(!navigator.onLine){
+if(
+  !navigator.onLine
+){
 
   $('offline').style.display =
     'block';
@@ -5758,9 +6429,9 @@ if(!navigator.onLine){
 }
 
 
-/* =======================================================
+/* =========================================================
    AUTH
-======================================================= */
+========================================================= */
 
 onAuthStateChanged(
   auth,
@@ -5777,7 +6448,6 @@ onAuthStateChanged(
     }catch(error){
 
       console.error(
-        '[Study Hub]',
         error
       );
 
@@ -5789,12 +6459,11 @@ onAuthStateChanged(
           <i class="fa-solid fa-triangle-exclamation"></i>
 
           <h3>
-            Unable to load study material
+            Unable to load study material.
           </h3>
 
           <p>
-            Check your connection
-            and try again.
+            Check your connection and try again.
           </p>
 
           <button
@@ -5802,8 +6471,6 @@ onAuthStateChanged(
             id="retryBtn"
             type="button"
           >
-
-            <i class="fa-solid fa-rotate-right"></i>
 
             Try Again
 
@@ -5815,11 +6482,8 @@ onAuthStateChanged(
 
 
       $('retryBtn').onclick =
-        () => {
-
+        () =>
           location.reload();
-
-        };
 
     }
 
