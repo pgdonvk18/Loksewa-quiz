@@ -1,599 +1,3200 @@
-<!DOCTYPE html>  
-<html lang="ne">  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
-  <title>LoksewaQuest - Speed Blitz Challenge</title>  
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
-  <style>  
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }  
-    body { background-color: #f8fafc; color: #0f172a; margin: 0; padding-bottom: 40px; overflow-x: hidden; }  
-    
-    .app-header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #ffffff; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }  
-    .app-header h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }  
-    .back-btn { background: rgba(255, 255, 255, 0.15); color: #ffffff; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; font-size: 14px; transition: background 0.2s; }  
-    .back-btn:hover { background: rgba(255, 255, 255, 0.25); }  
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    .main-wrapper { max-width: 500px; margin: 0 auto; padding: 20px 16px; width: 100%; }  
+  <title>LoksewaQuest - Speed Blitz</title>
 
-    .game-hud { display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px 20px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-    .hud-box { text-align: center; }
-    .hud-title { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-    .hud-value { font-size: 20px; font-weight: 800; color: #1e3a8a; margin-top: 2px; }
-    .hud-value.time-warning { color: #dc2626; animation: pulse 0.8s infinite alternate; }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    @keyframes pulse {
-      from { transform: scale(1); }
-      to { transform: scale(1.08); }
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600;700;800&family=Mukta:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root{
+      --navy:#10213f;
+      --navy2:#18345f;
+      --blue:#2563eb;
+      --blue2:#3b82f6;
+      --crimson:#c6283d;
+      --gold:#d6a233;
+
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --soft:#f1f5f9;
+      --line:#e2e8f0;
+
+      --text:#16233a;
+      --muted:#64748b;
+
+      --green:#16845b;
+      --green-bg:#e7f7ef;
+
+      --red:#c6283d;
+      --red-bg:#fce9ed;
+
+      --orange:#c45b1b;
+      --orange-bg:#fff0e3;
+
+      --shadow:
+        0 2px 4px rgba(16,33,63,.04),
+        0 12px 30px rgba(16,33,63,.08);
+
+      --radius:20px;
     }
 
-    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 22px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); }  
-    .question-text { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
 
-    .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-    .option-btn { width: 100%; text-align: left; background: #f8fafc; border: 1.5px solid #cbd5e1; padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; color: #334155; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: space-between; }
-    .option-btn:hover { background: #eff6ff; border-color: #2563eb; color: #1e40af; }
-    .option-btn.correct { background: #dcfce7 !important; border-color: #16a34a !important; color: #15803d !important; }
-    .option-btn.wrong { background: #fee2e2 !important; border-color: #dc2626 !important; color: #b91c1c !important; }
+    html{
+      scroll-behavior:smooth;
+    }
 
-    .skip-btn { background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1; width: 100%; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .skip-btn:hover { background: #e2e8f0; color: #1e293b; }
+    body{
+      font-family:'Figtree','Mukta',sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%,rgba(37,99,235,.08),transparent 30%),
+        radial-gradient(circle at 90% 15%,rgba(198,40,61,.06),transparent 25%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      padding-bottom:35px;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
 
-    .screen-center { text-align: center; padding: 20px 10px; }
-    .screen-center h2 { font-size: 20px; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
-    .screen-center p { font-size: 12px; color: #64748b; margin-bottom: 16px; font-weight: 600; line-height: 1.4; }
-    
-    .btn-primary { background: #2563eb; color: white; width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); transition: background 0.2s; }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+    button{
+      font-family:inherit;
+    }
 
-    .leaderboard-section { margin-top: 15px; border-top: 2px dashed #e2e8f0; padding-top: 14px; text-align: left; }
-    .lb-tabs { display: flex; gap: 6px; margin-bottom: 12px; background: #f1f5f9; padding: 4px; border-radius: 12px; }
-    .lb-tab { flex: 1; padding: 7px; font-size: 11px; font-weight: 700; border: none; background: transparent; color: #64748b; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: center; }
-    .lb-tab.active { background: #ffffff; color: #2563eb; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    button:focus-visible,
+    a:focus-visible{
+      outline:3px solid rgba(37,99,235,.3);
+      outline-offset:3px;
+    }
 
-    .leaderboard-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid #f1f5f9; }
-    .leaderboard-item:last-child { border-bottom: none; }
-    .user-info { display: flex; align-items: center; gap: 8px; }
-    .rank-badge { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #64748b; background: #f1f5f9; }
-    .rank-1 { background: #fef08a; color: #854d0e; }
-    .rank-2 { background: #e2e8f0; color: #334155; }
-    .rank-3 { background: #fed7aa; color: #9a3412; }
-    .username { font-size: 12px; font-weight: 700; color: #1e293b; text-align: left; }
-    .set-name { font-size: 9px; font-weight: 600; color: #64748b; }
-    .score-badge { background: #eff6ff; color: #2563eb; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid #dbeafe; }
+    .hidden{
+      display:none !important;
+    }
 
-    .reward-banner { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 10px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; justify-content: center; }
+    /* HEADER */
 
-    /* Custom Review Modal Popup */
-    .custom-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
-    .modal-content { background: #ffffff; width: 100%; max-width: 450px; border-radius: 20px; padding: 20px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
-    .modal-header h3 { font-size: 16px; font-weight: 800; color: #1e293b; }
-    .close-modal { background: none; border: none; font-size: 18px; color: #64748b; cursor: pointer; }
-    .review-list { overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px; }
-    .review-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; }
-    .review-q { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
-    .review-ans { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
-    .ans-user { color: #dc2626; }
-    .ans-user.correct-mark { color: #16a34a; }
-    .ans-right { color: #16a34a; }
+    .hero{
+      background:
+        radial-gradient(circle at 20% 0%,rgba(255,255,255,.13),transparent 30%),
+        linear-gradient(135deg,var(--navy),var(--navy2));
+      color:#fff;
+      position:relative;
+      overflow:hidden;
+    }
 
-    .hidden { display: none !important; }
-  </style>  
-</head>  
-<body>  
+    .hero::after{
+      content:"";
+      position:absolute;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.08);
+      right:-60px;
+      top:-80px;
+    }
 
-  <header class="app-header">  
-    <a href="games.html" class="back-btn" title="पछाडि जानुहोस्"><i class="fa-solid fa-arrow-left"></i></a>  
-    <h1>Speed Blitz (1 Min)</h1>  
-    <div style="width: 38px;"></div>  
-  </header>  
+    .app-header{
+      max-width:760px;
+      margin:auto;
+      padding:15px 18px;
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      position:relative;
+      z-index:2;
+    }
 
-  <main class="main-wrapper">  
+    .back-btn{
+      width:40px;
+      height:40px;
+      border-radius:13px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      text-decoration:none;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.15);
+      transition:.2s;
+      flex-shrink:0;
+    }
 
-    <!-- 1. Start Screen -->
-    <div id="startScreen" class="card screen-center">
-      <div style="font-size: 40px; color: #2563eb; margin-bottom: 10px;"><i class="fa-solid fa-bolt"></i></div>
-      <h2>गति परीक्षण (Speed Blitz)</h2>
-      <p>१ मिनेटमा धेरै भन्दा धेरै प्रश्न मिलाउनुहोस्! (५ वटा गल्ती भएमा खेल समाप्त हुनेछ)</p>
-      <button class="btn-primary" id="startBtn" style="margin-bottom: 15px;"><i class="fa-solid fa-play"></i> खेल सुरु गर्नुहोस् 🚀</button>
+    .back-btn:active{
+      transform:scale(.94);
+      background:rgba(255,255,255,.18);
+    }
+
+    .header-title{
+      text-align:center;
+      flex:1;
+    }
+
+    .header-title h1{
+      font-family:'Bricolage Grotesque','Mukta',sans-serif;
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.2px;
+    }
+
+    .header-title p{
+      font-size:10px;
+      color:rgba(255,255,255,.65);
+      margin-top:2px;
+      font-weight:600;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+    }
+
+    .header-spacer{
+      width:40px;
+      flex-shrink:0;
+    }
+
+    .hero-edge{
+      height:7px;
+      background:
+        linear-gradient(135deg,var(--bg) 50%,transparent 0) 0 0/18px 9px,
+        linear-gradient(225deg,var(--bg) 50%,transparent 0) 0 0/18px 9px,
+        var(--crimson);
+    }
+
+    /* MAIN */
+
+    .main-wrapper{
+      width:100%;
+      max-width:560px;
+      margin:0 auto;
+      padding:18px 15px;
+    }
+
+    /* CARD */
+
+    .card{
+      background:rgba(255,255,255,.96);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+      margin-bottom:16px;
+    }
+
+    /* START SCREEN */
+
+    .start-hero{
+      text-align:center;
+      padding:27px 20px 21px;
+    }
+
+    .speed-icon{
+      width:78px;
+      height:78px;
+      border-radius:24px;
+      margin:0 auto 16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:34px;
+      color:#fff;
+      background:
+        linear-gradient(135deg,var(--crimson),#e05262);
+      box-shadow:
+        0 12px 28px rgba(198,40,61,.22);
+      transform:rotate(-3deg);
+    }
+
+    .speed-icon i{
+      transform:rotate(3deg);
+    }
+
+    .start-hero h2{
+      font-family:'Bricolage Grotesque','Mukta',sans-serif;
+      font-size:25px;
+      line-height:1.2;
+      font-weight:800;
+      letter-spacing:-.5px;
+      margin-bottom:8px;
+    }
+
+    .start-hero .subtitle{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+      max-width:390px;
+      margin:0 auto 18px;
+      font-weight:500;
+    }
+
+    .rules-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      margin:18px 0;
+    }
+
+    .rule-box{
+      background:var(--soft);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:11px 5px;
+      text-align:center;
+    }
+
+    .rule-box i{
+      color:var(--blue);
+      font-size:15px;
+      margin-bottom:5px;
+    }
+
+    .rule-box strong{
+      display:block;
+      font-size:14px;
+      font-weight:800;
+    }
+
+    .rule-box span{
+      display:block;
+      color:var(--muted);
+      font-size:9px;
+      margin-top:2px;
+      font-weight:600;
+    }
+
+    /* BUTTONS */
+
+    .btn-primary{
+      width:100%;
+      border:none;
+      border-radius:14px;
+      padding:14px 16px;
+      color:#fff;
+      background:
+        linear-gradient(135deg,var(--blue),var(--blue2));
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      box-shadow:0 8px 18px rgba(37,99,235,.18);
+      transition:transform .15s,box-shadow .2s;
+    }
+
+    .btn-primary:active{
+      transform:scale(.98);
+      box-shadow:0 4px 10px rgba(37,99,235,.14);
+    }
+
+    .btn-primary:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .btn-secondary{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:13px 16px;
+      background:var(--soft);
+      color:var(--text);
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    /* LEADERBOARD */
+
+    .leaderboard-section{
+      border-top:1px dashed var(--line);
+      margin-top:20px;
+      padding-top:18px;
+    }
+
+    .lb-heading{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
+    }
+
+    .lb-heading h3{
+      font-family:'Bricolage Grotesque','Mukta',sans-serif;
+      font-size:15px;
+      font-weight:800;
+    }
+
+    .lb-heading i{
+      color:var(--gold);
+      margin-right:5px;
+    }
+
+    .lb-tabs{
+      display:flex;
+      gap:5px;
+      padding:4px;
+      background:var(--soft);
+      border-radius:12px;
+      margin-bottom:12px;
+    }
+
+    .lb-tab{
+      flex:1;
+      border:0;
+      background:transparent;
+      color:var(--muted);
+      padding:8px;
+      border-radius:9px;
+      font-size:11px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .lb-tab.active{
+      background:#fff;
+      color:var(--blue);
+      box-shadow:0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .leaderboard-list{
+      max-height:260px;
+      overflow-y:auto;
+    }
+
+    .leaderboard-item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 4px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .leaderboard-item:last-child{
+      border-bottom:0;
+    }
+
+    .user-info{
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:9px;
+    }
+
+    .rank-badge{
+      width:29px;
+      height:29px;
+      flex-shrink:0;
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--soft);
+      color:var(--muted);
+      font-size:11px;
+      font-weight:900;
+    }
+
+    .rank-1{
+      background:#fff2b9;
+      color:#866000;
+    }
+
+    .rank-2{
+      background:#e7ecf2;
+      color:#425064;
+    }
+
+    .rank-3{
+      background:#f3d2b5;
+      color:#8a4b18;
+    }
+
+    .username{
+      font-size:12px;
+      font-weight:800;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:210px;
+    }
+
+    .set-name{
+      color:var(--muted);
+      font-size:9px;
+      margin-top:2px;
+    }
+
+    .score-badge{
+      white-space:nowrap;
+      color:var(--blue);
+      background:#edf4ff;
+      border:1px solid #d7e6ff;
+      padding:5px 8px;
+      border-radius:8px;
+      font-size:10px;
+      font-weight:900;
+    }
+
+    .empty-lb{
+      text-align:center;
+      color:var(--muted);
+      padding:18px 5px;
+      font-size:12px;
+      font-weight:600;
+    }
+
+    /* HUD */
+
+    .game-hud{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:7px;
+      margin-bottom:13px;
+    }
+
+    .hud-box{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:15px;
+      padding:11px 5px;
+      text-align:center;
+      box-shadow:0 5px 18px rgba(16,33,63,.05);
+    }
+
+    .hud-title{
+      color:var(--muted);
+      font-size:9px;
+      font-weight:800;
+      letter-spacing:.3px;
+    }
+
+    .hud-value{
+      color:var(--navy);
+      font-family:'Bricolage Grotesque','Mukta',sans-serif;
+      font-size:21px;
+      font-weight:800;
+      margin-top:3px;
+    }
+
+    .time-warning{
+      color:var(--red) !important;
+      animation:timerPulse .65s infinite alternate;
+    }
+
+    @keyframes timerPulse{
+      from{transform:scale(1)}
+      to{transform:scale(1.08)}
+    }
+
+    .progress-wrap{
+      height:5px;
+      background:var(--line);
+      border-radius:10px;
+      overflow:hidden;
+      margin-bottom:14px;
+    }
+
+    .progress-bar{
+      width:100%;
+      height:100%;
+      background:linear-gradient(90deg,var(--blue),var(--crimson));
+      transform-origin:left;
+      transition:width 1s linear;
+    }
+
+    /* QUESTION */
+
+    .question-card{
+      padding:21px 18px;
+    }
+
+    .question-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin-bottom:13px;
+    }
+
+    .question-label{
+      color:var(--blue);
+      background:#edf4ff;
+      border:1px solid #d7e6ff;
+      padding:5px 9px;
+      border-radius:8px;
+      font-size:10px;
+      font-weight:900;
+    }
+
+    .question-points{
+      color:var(--gold);
+      font-size:10px;
+      font-weight:800;
+    }
+
+    .question-text{
+      font-family:'Mukta','Figtree',sans-serif;
+      font-size:19px;
+      line-height:1.55;
+      font-weight:700;
+      margin-bottom:18px;
+    }
+
+    .options-list{
+      display:flex;
+      flex-direction:column;
+      gap:9px;
+      margin-bottom:13px;
+    }
+
+    .option-btn{
+      width:100%;
+      text-align:left;
+      border:1.5px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      border-radius:14px;
+      padding:12px;
+      min-height:52px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:13px;
+      font-weight:700;
+      line-height:1.4;
+      cursor:pointer;
+      transition:.15s;
+    }
+
+    .option-letter{
+      width:30px;
+      height:30px;
+      flex-shrink:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:9px;
+      background:var(--soft);
+      color:var(--navy2);
+      font-size:11px;
+      font-weight:900;
+    }
+
+    .option-btn:active{
+      transform:scale(.985);
+    }
+
+    .option-btn.correct{
+      background:var(--green-bg) !important;
+      border-color:var(--green) !important;
+      color:var(--green) !important;
+    }
+
+    .option-btn.correct .option-letter{
+      background:var(--green);
+      color:#fff;
+    }
+
+    .option-btn.wrong{
+      background:var(--red-bg) !important;
+      border-color:var(--red) !important;
+      color:var(--red) !important;
+    }
+
+    .option-btn.wrong .option-letter{
+      background:var(--red);
+      color:#fff;
+    }
+
+    .skip-btn{
+      width:100%;
+      border:1px solid var(--line);
+      background:var(--soft);
+      color:var(--muted);
+      border-radius:12px;
+      padding:11px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    /* GAME OVER */
+
+    .result-card{
+      text-align:center;
+      padding:25px 20px;
+    }
+
+    .result-icon{
+      width:76px;
+      height:76px;
+      border-radius:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 auto 13px;
+      color:#fff;
+      background:linear-gradient(135deg,var(--gold),#e5b94e);
+      font-size:31px;
+      box-shadow:0 12px 28px rgba(214,162,51,.22);
+    }
+
+    .result-card h2{
+      font-family:'Bricolage Grotesque','Mukta',sans-serif;
+      font-size:22px;
+      font-weight:800;
+      margin-bottom:4px;
+    }
+
+    .result-subtitle{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:600;
+    }
+
+    .final-score{
+      font-family:'Bricolage Grotesque','Mukta',sans-serif;
+      font-size:48px;
+      font-weight:900;
+      color:var(--blue);
+      line-height:1;
+      margin:7px 0 15px;
+    }
+
+    .result-stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:7px;
+      margin-bottom:16px;
+    }
+
+    .result-stat{
+      background:var(--soft);
+      border:1px solid var(--line);
+      border-radius:13px;
+      padding:10px 4px;
+    }
+
+    .result-stat strong{
+      display:block;
+      font-size:17px;
+      font-weight:900;
+    }
+
+    .result-stat span{
+      display:block;
+      color:var(--muted);
+      font-size:9px;
+      font-weight:700;
+      margin-top:2px;
+    }
+
+    .coin-result{
+      background:linear-gradient(135deg,#fff9df,#fff3c3);
+      border:1px solid #ead18a;
+      color:#795b0b;
+      border-radius:14px;
+      padding:12px;
+      margin-bottom:15px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .coin-result.error{
+      background:var(--red-bg);
+      border-color:#efb5be;
+      color:var(--red);
+    }
+
+    /* MODAL */
+
+    .custom-modal{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      background:rgba(9,18,34,.68);
+      backdrop-filter:blur(6px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:14px;
+    }
+
+    .modal-content{
+      width:100%;
+      max-width:470px;
+      max-height:86vh;
+      background:#fff;
+      border-radius:22px;
+      padding:18px;
+      box-shadow:0 25px 70px rgba(0,0,0,.25);
+      display:flex;
+      flex-direction:column;
+    }
+
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--line);
+      padding-bottom:11px;
+      margin-bottom:12px;
+    }
+
+    .modal-header h3{
+      font-size:15px;
+      font-weight:900;
+    }
+
+    .close-modal{
+      width:32px;
+      height:32px;
+      border:0;
+      border-radius:10px;
+      background:var(--soft);
+      color:var(--muted);
+      cursor:pointer;
+    }
+
+    .review-list{
+      overflow-y:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      padding-right:2px;
+    }
+
+    .review-item{
+      background:var(--soft);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .review-q{
+      font-family:'Mukta','Figtree',sans-serif;
+      font-size:14px;
+      font-weight:800;
+      line-height:1.5;
+      margin-bottom:7px;
+    }
+
+    .review-ans{
+      font-size:11px;
+      font-weight:700;
+      line-height:1.5;
+    }
+
+    .ans-user{
+      color:var(--red);
+    }
+
+    .ans-user.correct-mark{
+      color:var(--green);
+    }
+
+    .ans-right{
+      color:var(--green);
+      margin-top:3px;
+    }
+
+    /* TOAST */
+
+    #toast{
+      position:fixed;
+      left:50%;
+      bottom:22px;
+      transform:translate(-50%,20px);
+      background:var(--navy);
+      color:#fff;
+      padding:11px 15px;
+      border-radius:12px;
+      font-size:12px;
+      font-weight:800;
+      opacity:0;
+      pointer-events:none;
+      z-index:10000;
+      transition:.25s;
+      box-shadow:0 12px 30px rgba(0,0,0,.2);
+      max-width:90%;
+      text-align:center;
+    }
+
+    #toast.show{
+      opacity:1;
+      transform:translate(-50%,0);
+    }
+
+    @media(max-width:380px){
+      .main-wrapper{
+        padding:14px 11px;
+      }
+
+      .card{
+        padding:16px;
+      }
+
+      .question-text{
+        font-size:17px;
+      }
+
+      .start-hero h2{
+        font-size:22px;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      *,
+      *::before,
+      *::after{
+        scroll-behavior:auto !important;
+        animation:none !important;
+        transition:none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hero">
+    <header class="app-header">
+
+      <a href="games.html"
+         class="back-btn"
+         aria-label="पछाडि">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+
+      <div class="header-title">
+        <h1>Speed Blitz</h1>
+        <p>1 Minute Challenge</p>
+      </div>
+
+      <div class="header-spacer"></div>
+
+    </header>
+
+    <div class="hero-edge"></div>
+  </div>
+
+
+  <main class="main-wrapper">
+
+    <!-- START -->
+
+    <section id="startScreen" class="card start-hero">
+
+      <div class="speed-icon">
+        <i class="fa-solid fa-bolt"></i>
+      </div>
+
+      <h2>गति परीक्षण</h2>
+
+      <p class="subtitle">
+        १ मिनेटमा सकेसम्म धेरै प्रश्नको सही उत्तर दिनुहोस्।
+        ५ वटा गल्ती पुगेपछि खेल तुरुन्त समाप्त हुनेछ।
+      </p>
+
+      <div class="rules-grid">
+
+        <div class="rule-box">
+          <i class="fa-solid fa-clock"></i>
+          <strong>60s</strong>
+          <span>समय</span>
+        </div>
+
+        <div class="rule-box">
+          <i class="fa-solid fa-heart-crack"></i>
+          <strong>5</strong>
+          <span>गल्ती सीमा</span>
+        </div>
+
+        <div class="rule-box">
+          <i class="fa-solid fa-coins"></i>
+          <strong>+1</strong>
+          <span>सही उत्तर</span>
+        </div>
+
+      </div>
+
+      <button id="startBtn" class="btn-primary">
+        <i class="fa-solid fa-play"></i>
+        खेल सुरु गर्नुहोस्
+      </button>
 
       <div class="leaderboard-section">
-        <div class="lb-tabs">
-          <button class="lb-tab active" id="startDailyTab" onclick="switchMainLeaderboard('daily')">दैनिक (Daily)</button>
-          <button class="lb-tab" id="startOverallTab" onclick="switchMainLeaderboard('overall')">समग्र (Overall)</button>
-        </div>
-        <div id="mainLeaderboardContainer">
-          <div style="text-align: center; font-size: 12px; color: #64748b; padding: 10px;">लिडरबोर्ड लोड हुँदैछ...</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- 2. Playing Screen -->
-    <div id="gameScreen" class="hidden">
+        <div class="lb-heading">
+          <h3>
+            <i class="fa-solid fa-trophy"></i>
+            लिडरबोर्ड
+          </h3>
+        </div>
+
+        <div class="lb-tabs">
+
+          <button
+            class="lb-tab active"
+            id="startDailyTab"
+            onclick="switchMainLeaderboard('daily')">
+            दैनिक
+          </button>
+
+          <button
+            class="lb-tab"
+            id="startOverallTab"
+            onclick="switchMainLeaderboard('overall')">
+            समग्र
+          </button>
+
+        </div>
+
+        <div id="mainLeaderboardContainer"
+             class="leaderboard-list">
+
+          <div class="empty-lb">
+            लिडरबोर्ड लोड हुँदैछ...
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- GAME -->
+
+    <section id="gameScreen" class="hidden">
+
       <div class="game-hud">
+
         <div class="hud-box">
           <div class="hud-title">समय बाँकी</div>
           <div id="timerVal" class="hud-value">60s</div>
         </div>
+
         <div class="hud-box">
-          <div class="hud-title">गल्ती (Mistakes)</div>
-          <div id="mistakeVal" class="hud-value" style="color: #dc2626;">0/5</div>
+          <div class="hud-title">गल्ती</div>
+          <div id="mistakeVal"
+               class="hud-value"
+               style="color:var(--red);">
+            0/5
+          </div>
         </div>
+
         <div class="hud-box">
-          <div class="hud-title">सही स्कोर</div>
+          <div class="hud-title">स्कोर</div>
           <div id="scoreVal" class="hud-value">0</div>
         </div>
+
       </div>
 
-      <div class="card">
-        <div id="questionText" class="question-text">प्रश्नहरू लोड हुँदैछन्...</div>
-        <div class="options-list" id="optionsList"></div>
-        <button class="skip-btn" id="skipBtn" onclick="handleSkipQuestion()"><i class="fa-solid fa-forward"></i> स्किप गर्नुहोस् (Skip)</button>
-      </div>
-    </div>
-
-    <!-- 3. Game Over Screen -->
-    <div id="gameOverScreen" class="card screen-center hidden" style="text-align: left;">
-      <div style="text-align: center; margin-bottom: 16px;">
-        <div style="font-size: 38px; color: #16a34a; margin-bottom: 8px;"><i class="fa-solid fa-trophy"></i></div>
-        <h2 id="gameOverTitle">समय समाप्त भयो! ⏰</h2>
-        <p style="margin-bottom: 4px;">तपाईंको कुल सही स्कोर:</p>
-        <div id="finalScoreDisplay" style="font-size: 28px; font-weight: 800; color: #2563eb;">0</div>
-      </div>
-
-      <div id="rewardMsgBox" class="hidden reward-banner">
-        <i class="fa-solid fa-coins" style="color: #ca8a04; font-size: 16px;"></i> तपाईं दैनिक लिडरबोर्डको शीर्ष ३ मा हुनुहुन्छ! रातको १२ बजे कोइन जम्मा हुनेछ।
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
-        <button class="btn-primary" onclick="openReviewPopup()"><i class="fa-solid fa-list-check"></i> उत्तरहरू हेर्नुहोस् (Review Answers)</button>
-        <div style="display: flex; gap: 10px;">
-          <button class="btn-primary" onclick="window.location.reload()"><i class="fa-solid fa-rotate-right"></i> फेरि खेल्नुहोस्</button>
-          <button class="btn-primary" onclick="window.location.href='games.html'" style="background: #64748b;"><i class="fa-solid fa-house"></i> मेनु</button>
+      <div class="progress-wrap">
+        <div id="timeProgress"
+             class="progress-bar">
         </div>
       </div>
+
+
+      <div class="card question-card">
+
+        <div class="question-top">
+
+          <span class="question-label">
+            SPEED QUESTION
+          </span>
+
+          <span class="question-points">
+            <i class="fa-solid fa-coins"></i>
+            +1 Coin
+          </span>
+
+        </div>
+
+        <div id="questionText"
+             class="question-text">
+          प्रश्नहरू लोड हुँदैछन्...
+        </div>
+
+        <div id="optionsList"
+             class="options-list">
+        </div>
+
+        <button
+          id="skipBtn"
+          class="skip-btn"
+          onclick="handleSkipQuestion()">
+
+          <i class="fa-solid fa-forward"></i>
+          प्रश्न स्किप गर्नुहोस्
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- RESULT -->
+
+    <section id="gameOverScreen"
+             class="card result-card hidden">
+
+      <div class="result-icon">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+
+      <h2 id="gameOverTitle">
+        समय समाप्त भयो!
+      </h2>
+
+      <p class="result-subtitle">
+        तपाईंको कुल सही स्कोर
+      </p>
+
+      <div id="finalScoreDisplay"
+           class="final-score">
+        0
+      </div>
+
+
+      <div class="result-stats">
+
+        <div class="result-stat">
+          <strong id="resultCorrect">0</strong>
+          <span>सही</span>
+        </div>
+
+        <div class="result-stat">
+          <strong id="resultWrong">0</strong>
+          <span>गलत</span>
+        </div>
+
+        <div class="result-stat">
+          <strong id="resultSkipped">0</strong>
+          <span>स्किप</span>
+        </div>
+
+      </div>
+
+
+      <div id="coinResultBox"
+           class="coin-result">
+
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        कोइन अपडेट हुँदैछ...
+
+      </div>
+
+
+      <div style="
+        display:flex;
+        flex-direction:column;
+        gap:9px;
+        margin-bottom:17px;
+      ">
+
+        <button
+          class="btn-primary"
+          onclick="openReviewPopup()">
+
+          <i class="fa-solid fa-list-check"></i>
+          उत्तरहरू हेर्नुहोस्
+
+        </button>
+
+        <button
+          class="btn-secondary"
+          onclick="window.location.reload()">
+
+          <i class="fa-solid fa-rotate-right"></i>
+          फेरि खेल्नुहोस्
+
+        </button>
+
+        <button
+          class="btn-secondary"
+          onclick="window.location.href='games.html'">
+
+          <i class="fa-solid fa-house"></i>
+          गेम मेनु
+
+        </button>
+
+      </div>
+
 
       <div class="leaderboard-section">
+
+        <div class="lb-heading">
+          <h3>
+            <i class="fa-solid fa-trophy"></i>
+            तपाईंको रैंक
+          </h3>
+        </div>
+
         <div class="lb-tabs">
-          <button class="lb-tab active" id="endDailyTab" onclick="switchEndLeaderboard('daily')">दैनिक (Daily)</button>
-          <button class="lb-tab" id="endOverallTab" onclick="switchEndLeaderboard('overall')">समग्र (Overall)</button>
+
+          <button
+            class="lb-tab active"
+            id="endDailyTab"
+            onclick="switchEndLeaderboard('daily')">
+            दैनिक
+          </button>
+
+          <button
+            class="lb-tab"
+            id="endOverallTab"
+            onclick="switchEndLeaderboard('overall')">
+            समग्र
+          </button>
+
         </div>
-        <div id="endLeaderboardContainer">
-          <div style="text-align: center; font-size: 12px; color: #64748b; padding: 10px;">लिडरबोर्ड लोड हुँदैछ...</div>
+
+        <div id="endLeaderboardContainer"
+             class="leaderboard-list">
+
+          <div class="empty-lb">
+            लिडरबोर्ड लोड हुँदैछ...
+          </div>
+
         </div>
+
       </div>
-    </div>
 
-  </main>  
+    </section>
 
-  <!-- Review Popup Modal -->
-  <div id="reviewModal" class="custom-modal hidden">
+  </main>
+
+
+  <!-- REVIEW MODAL -->
+
+  <div id="reviewModal"
+       class="custom-modal hidden">
+
     <div class="modal-content">
+
       <div class="modal-header">
-        <h3>तपाईंको खेलको समीक्षा (Review)</h3>
-        <button class="close-modal" onclick="closeReviewPopup()"><i class="fa-solid fa-xmark"></i></button>
+
+        <h3>
+          <i class="fa-solid fa-clipboard-check"></i>
+          खेल समीक्षा
+        </h3>
+
+        <button
+          class="close-modal"
+          onclick="closeReviewPopup()"
+          aria-label="Close">
+
+          <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
       </div>
-      <div class="review-list" id="reviewListContainer"></div>
+
+      <div id="reviewListContainer"
+           class="review-list">
+      </div>
+
     </div>
+
   </div>
 
+
+  <div id="toast"></div>
+
+
+  <!-- SUPABASE -->
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <script type="module">  
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";  
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";  
-    import { getFirestore, doc as fsDoc, getDoc as fsGetDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";  
-    
-    const firebaseConfig = {  
-      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",  
-      authDomain: "loksewaquest-227b6.firebaseapp.com",  
-      projectId: "loksewaquest-227b6",  
-      storageBucket: "loksewaquest-227b6.firebasestorage.app",  
-      messagingSenderId: "779234903809",  
-      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"  
-    };  
 
-    const app = initializeApp(firebaseConfig);  
-    const auth = getAuth(app);  
-    const db = getFirestore(app);  
 
-    const SUPABASE_URL = 'https://edyirdedkiarguvurpxq.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
-    
-    let supabaseClient = null;
-    try {
-      if (typeof supabase !== 'undefined') {
-        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      }
-    } catch (e) { console.log("Supabase Init Error:", e); }
+  <!-- FIREBASE + GAME -->
 
-    let currentUser = null;
-    let currentUserId = null;
-    let currentUserName = "Aspirant";
-    let allQuestions = [];
-    let usedQuestionIndices = new Set();
-    let score = 0;
-    let skippedCount = 0;
-    let wrongCount = 0;
-    let timeLeft = 60;
-    let timerInterval = null;
-    let gameActive = false;
-    let mainLbType = 'daily';
-    let endLbType = 'daily';
-    const GAME_SET_NAME = 'Speed Blitz (1 Min)';
+  <script type="module">
 
-    let gameSessionHistory = [];
-    let currentQuestionData = null;
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        currentUserId = user.uid;
-        currentUserName = user.displayName || "Aspirant";
-        try {
-          const userSnap = await fsGetDoc(fsDoc(db, "users", user.uid));
-          if (userSnap.exists() && userSnap.data().name) {
-            currentUserName = userSnap.data().name;
-          }
-        } catch (e) { console.log(e); }
-      } else {
-        window.location.href = "login.html";
-      }
-    });
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    async function fetchSupabaseQuestions() {
-      if (allQuestions.length > 0) return true;
-      if (!supabaseClient) return false;
+    import {
+      getFirestore,
+      doc as fsDoc,
+      getDoc as fsGetDoc,
+      updateDoc,
+      increment,
+      collection,
+      writeBatch,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-      try {
-        const { data, error } = await supabaseClient.from('quizzes').select('*');
-        if (error) throw error;
-        if (data && Array.isArray(data) && data.length > 0) {
-          allQuestions = data;
-          allQuestions.sort(() => Math.random() - 0.5);
-          return true;
-        }
-        return false;
-      } catch (err) {
-        console.error("Error fetching questions: ", err);
-        return false;
-      }
-    }
 
-    fetchSupabaseQuestions();
-    fetchAndShowLeaderboard('main', 'daily');
+    /* =====================================================
+       FIREBASE
+    ===================================================== */
 
-    document.getElementById('startBtn').addEventListener('click', async () => {
-      const startBtn = document.getElementById('startBtn');
-      startBtn.disabled = true;
-      startBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> लोड हुँदैछ...`;
+    const firebaseConfig = {
 
-      if (allQuestions.length === 0) {
-        const success = await fetchSupabaseQuestions();
-        if (!success || allQuestions.length === 0) {
-          alert("Supabase को 'quizzes' टेबलमा प्रश्नहरू फेला परेनन्!");
-          startBtn.disabled = false;
-          startBtn.innerHTML = `<i class="fa-solid fa-play"></i> खेल सुरु गर्नुहोस् 🚀`;
-          return;
-        }
-      }
+      apiKey:
+        "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
 
-      document.getElementById('startScreen').classList.add('hidden');
-      document.getElementById('gameScreen').classList.remove('hidden');
+      authDomain:
+        "loksewaquest-227b6.firebaseapp.com",
 
-      gameActive = true;
-      score = 0;
-      skippedCount = 0;
-      wrongCount = 0;
-      timeLeft = 60;
-      usedQuestionIndices.clear();
-      gameSessionHistory = [];
+      projectId:
+        "loksewaquest-227b6",
 
-      document.getElementById('scoreVal').innerText = '0';
-      document.getElementById('mistakeVal').innerText = '0/5';
+      storageBucket:
+        "loksewaquest-227b6.firebasestorage.app",
 
-      startTimer();
-      loadNextQuestion();
-    });
+      messagingSenderId:
+        "779234903809",
 
-    function startTimer() {
-      const timerDisplay = document.getElementById('timerVal');
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        timerDisplay.innerText = `${timeLeft}s`;
+      appId:
+        "1:779234903809:web:dd0dd0ffb742e1c218bd00"
 
-        if (timeLeft <= 10) timerDisplay.classList.add('time-warning');
-
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          endGame("समय समाप्त भयो! ⏰");
-        }
-      }, 1000);
-    }
-
-    function loadNextQuestion() {
-      if (!gameActive) return;
-      if (usedQuestionIndices.size >= allQuestions.length) usedQuestionIndices.clear();
-
-      let randomIndex;
-      do {
-        randomIndex = Math.floor(Math.random() * allQuestions.length);
-      } while (usedQuestionIndices.has(randomIndex));
-
-      usedQuestionIndices.add(randomIndex);
-      const q = allQuestions[randomIndex];
-
-      let optsArray = [];
-      if (Array.isArray(q.options)) {
-        optsArray = [...q.options];
-      } else if (typeof q.options === 'object' && q.options !== null) {
-        optsArray = Object.values(q.options);
-      } else if (typeof q.options === 'string') {
-        try { optsArray = JSON.parse(q.options); } catch (e) { optsArray = []; }
-      }
-
-      const correctAns = String(q.answer || '').trim();
-
-      // अप्सनहरूलाई अनियमित (Shuffle) पार्ने Fisher-Yates एल्गोरिदम
-      for (let i = optsArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [optsArray[i], optsArray[j]] = [optsArray[j], optsArray[i]];
-      }
-
-      currentQuestionData = {
-        question: q.question || "प्रश्न उपलब्ध छैन",
-        options: optsArray,
-        answer: correctAns,
-        userAnswer: null,
-        status: 'unanswered'
-      };
-
-      document.getElementById('questionText').innerText = currentQuestionData.question;
-      const optionsContainer = document.getElementById('optionsList');
-      optionsContainer.innerHTML = '';
-
-      optsArray.forEach((optText) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerText = optText;
-        
-        const isCorrect = (String(optText).trim().toLowerCase() === correctAns.toLowerCase());
-
-        btn.onclick = () => handleAnswerClick(isCorrect, optText, btn);
-        optionsContainer.appendChild(btn);
-      });
-    }
-
-    function handleAnswerClick(isCorrect, optText, selectedBtn) {
-      if (!gameActive) return;
-
-      const allBtns = document.querySelectorAll('.option-btn');
-      allBtns.forEach(b => b.disabled = true);
-
-      currentQuestionData.userAnswer = optText;
-
-      if (isCorrect) {
-        selectedBtn.classList.add('correct');
-        score++;
-        currentQuestionData.status = 'correct';
-        document.getElementById('scoreVal').innerText = score;
-      } else {
-        selectedBtn.classList.add('wrong');
-        wrongCount++;
-        currentQuestionData.status = 'wrong';
-        document.getElementById('mistakeVal').innerText = `${wrongCount}/5`;
-
-        // यदि ५ वटा गल्ती पुग्यो भने खेल तुरुन्तै बन्द गर्ने
-        if (wrongCount >= 5) {
-          gameActive = false;
-          clearInterval(timerInterval);
-          setTimeout(() => {
-            endGame("धेरै गल्तीहरू भएका कारण खेल समाप्त भयो! ❌");
-          }, 400);
-          return;
-        }
-      }
-
-      gameSessionHistory.push(currentQuestionData);
-
-      setTimeout(() => {
-        if (gameActive) loadNextQuestion();
-      }, 400);
-    }
-
-    window.handleSkipQuestion = function() {
-      if (!gameActive) return;
-      skippedCount++;
-      currentQuestionData.userAnswer = 'स्किप गरिएको (Skipped)';
-      currentQuestionData.status = 'skipped';
-      gameSessionHistory.push(currentQuestionData);
-      loadNextQuestion();
     };
 
-    async function endGame(reasonTitle) {
-      gameActive = false;
-      if (timerInterval) clearInterval(timerInterval);
 
-      document.getElementById('gameScreen').classList.add('hidden');
-      document.getElementById('gameOverScreen').classList.remove('hidden');
-      document.getElementById('gameOverTitle').innerText = reasonTitle;
-      document.getElementById('finalScoreDisplay').innerText = score;
+    const app =
+      initializeApp(firebaseConfig);
 
-      if (supabaseClient && currentUserName) {
-        try {
-          const { data: existingData, error: fetchErr } = await supabaseClient
-            .from('exam_leaderboard')
-            .select('id, score')
-            .eq('username', currentUserName)
-            .eq('set_name', GAME_SET_NAME)
-            .maybeSingle();
+    const auth =
+      getAuth(app);
 
-          if (fetchErr) console.error(fetchErr);
+    const db =
+      getFirestore(app);
 
-          if (existingData) {
-            if (score > existingData.score) {
-              await supabaseClient
-                .from('exam_leaderboard')
-                .update({ 
-                  score: score, 
-                  correct_count: score, 
-                  wrong_count: wrongCount, 
-                  skipped_count: skippedCount, 
-                  total_questions: score + wrongCount + skippedCount,
-                  created_at: new Date()
-                })
-                .eq('id', existingData.id);
-            }
-          } else {
-            await supabaseClient
-              .from('exam_leaderboard')
-              .insert([
-                { 
-                  username: currentUserName, 
-                  set_name: GAME_SET_NAME, 
-                  score: score, 
-                  correct_count: score, 
-                  wrong_count: wrongCount, 
-                  skipped_count: skippedCount, 
-                  total_questions: score + wrongCount + skippedCount,
-                  created_at: new Date()
-                }
-              ]);
-          }
-        } catch (err) {
-          console.error("Supabase Save/Update Error: ", err);
-        }
+
+    /* =====================================================
+       SUPABASE
+    ===================================================== */
+
+    const SUPABASE_URL =
+      "https://edyirdedkiarguvurpxq.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+
+    let supabaseClient = null;
+
+    try {
+
+      if (typeof supabase !== "undefined") {
+
+        supabaseClient =
+          supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+          );
+
       }
 
-      fetchAndShowLeaderboard('end', endLbType);
+    } catch(error) {
+
+      console.error(
+        "Supabase initialization error:",
+        error
+      );
+
     }
 
-    window.openReviewPopup = function() {
-      const container = document.getElementById('reviewListContainer');
-      container.innerHTML = '';
 
-      if (gameSessionHistory.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: #64748b; font-size: 13px; padding: 20px;">कुनै प्रश्नको इतिहास छैन।</div>`;
-      } else {
-        gameSessionHistory.forEach((item, idx) => {
-          let userAnsClass = 'ans-user';
-          if (item.status === 'correct') userAnsClass = 'ans-user correct-mark';
+    /* =====================================================
+       STATE
+    ===================================================== */
 
-          container.innerHTML += `
-            <div class="review-item">
-              <div class="review-q">प्र. ${idx + 1}: ${item.question}</div>
-              <div class="review-ans ${userAnsClass}">तपाईंको उत्तर: ${item.userAnswer}</div>
-              <div class="review-ans ans-right">सही उत्तर: ${item.answer}</div>
-            </div>
-          `;
-        });
-      }
-      
-      document.getElementById('reviewModal').classList.remove('hidden');
+    let currentUser = null;
+
+    let currentUserId = null;
+
+    let currentUserName = "Aspirant";
+
+    let allQuestions = [];
+
+    let usedQuestionIndices =
+      new Set();
+
+    let score = 0;
+
+    let skippedCount = 0;
+
+    let wrongCount = 0;
+
+    let timeLeft = 60;
+
+    let timerInterval = null;
+
+    let gameActive = false;
+
+    let rewardSaved = false;
+
+    let mainLbType = "daily";
+
+    let endLbType = "daily";
+
+    const GAME_SET_NAME =
+      "Speed Blitz (1 Min)";
+
+    let gameSessionHistory = [];
+
+    let currentQuestionData = null;
+
+
+    /* =====================================================
+       TOAST
+    ===================================================== */
+
+    function showToast(message){
+
+      const toast =
+        document.getElementById("toast");
+
+      toast.textContent =
+        message;
+
+      toast.classList.add("show");
+
+      setTimeout(() => {
+
+        toast.classList.remove("show");
+
+      },3000);
+
     }
 
-    window.closeReviewPopup = function() {
-      document.getElementById('reviewModal').classList.add('hidden');
-    }
 
-    window.switchMainLeaderboard = function(type) {
-      mainLbType = type;
-      if (type === 'daily') {
-        document.getElementById('startDailyTab').classList.add('active');
-        document.getElementById('startOverallTab').classList.remove('active');
-      } else {
-        document.getElementById('startOverallTab').classList.add('active');
-        document.getElementById('startDailyTab').classList.remove('active');
-      }
-      fetchAndShowLeaderboard('main', type);
-    }
+    /* =====================================================
+       AUTH
+    ===================================================== */
 
-    window.switchEndLeaderboard = function(type) {
-      endLbType = type;
-      if (type === 'daily') {
-        document.getElementById('endDailyTab').classList.add('active');
-        document.getElementById('endOverallTab').classList.remove('active');
-      } else {
-        document.getElementById('endOverallTab').classList.add('active');
-        document.getElementById('endDailyTab').classList.remove('active');
-      }
-      fetchAndShowLeaderboard('end', type);
-    }
+    onAuthStateChanged(
+      auth,
+      async(user) => {
 
-    async function fetchAndShowLeaderboard(targetScreen, type) {
-      const containerId = targetScreen === 'main' ? 'mainLeaderboardContainer' : 'endLeaderboardContainer';
-      const container = document.getElementById(containerId);
-      
-      if (!supabaseClient) {
-        container.innerHTML = `<div style="text-align: center; font-size: 12px; color: #64748b; padding: 10px;">Supabase जडान भएको छैन।</div>`;
-        return;
-      }
+        if(!user){
 
-      try {
-        let query = supabaseClient
-          .from('exam_leaderboard')
-          .select('username, set_name, score, created_at')
-          .eq('set_name', GAME_SET_NAME)
-          .order('score', { ascending: false });
+          window.location.href =
+            "login.html";
 
-        if (type === 'daily') {
-          const nowNpt = new Date(new Date().getTime() + (5.75 * 60 * 60 * 1000));
-          const todayStr = nowNpt.toISOString().split('T')[0];
-          query = query.gte('created_at', todayStr + 'T00:00:00');
-        }
-
-        const { data, error } = await query.limit(10);
-
-        if (error) throw error;
-
-        if (!data || data.length === 0) {
-          container.innerHTML = `<div style="text-align: center; font-size: 12px; color: #64748b; padding: 12px;">कुनै डाटा फेला परेन।</div>`;
           return;
         }
 
-        let html = '';
-        let userInTop3 = false;
+        currentUser =
+          user;
 
-        data.forEach((item, index) => {
-          const rank = index + 1;
-          let rankClass = '';
-          if (rank === 1) rankClass = 'rank-1';
-          else if (rank === 2) rankClass = 'rank-2';
-          else if (rank === 3) rankClass = 'rank-3';
+        currentUserId =
+          user.uid;
 
-          if (type === 'daily' && rank <= 3 && item.username === currentUserName) {
-            userInTop3 = true;
+        currentUserName =
+          user.displayName ||
+          "Aspirant";
+
+        try{
+
+          const userSnap =
+            await fsGetDoc(
+              fsDoc(
+                db,
+                "users",
+                user.uid
+              )
+            );
+
+          if(userSnap.exists()){
+
+            const data =
+              userSnap.data();
+
+            if(data.name){
+
+              currentUserName =
+                data.name;
+
+            }else if(data.username){
+
+              currentUserName =
+                data.username;
+
+            }
+
           }
 
-          html += `
-            <div class="leaderboard-item">
-              <div class="user-info">
-                <div class="rank-badge ${rankClass}">${rank}</div>
-                <div>
-                  <div class="username">${item.username || 'अज्ञात'}</div>
-                  <div class="set-name">${item.set_name}</div>
-                </div>
-              </div>
-              <div class="score-badge">${item.score} अङ्क</div>
-            </div>
-          `;
-        });
+        }catch(error){
 
-        container.innerHTML = html;
+          console.error(
+            "User profile error:",
+            error
+          );
 
-        if (targetScreen === 'end' && type === 'daily' && userInTop3) {
-          document.getElementById('rewardMsgBox').classList.remove('hidden');
         }
 
-      } catch (err) {
-        console.error('Leaderboard Fetch Error: ', err);
-        container.innerHTML = `<div style="text-align: center; font-size: 12px; color: #dc2626; padding: 10px;">लिडरबोर्ड लोड असफल भयो।</div>`;
       }
-    }
-  </script>  
+    );
 
-</body>  
-</html>  
+
+    /* =====================================================
+       FETCH QUESTIONS
+    ===================================================== */
+
+    async function fetchSupabaseQuestions(){
+
+      if(allQuestions.length > 0){
+
+        return true;
+
+      }
+
+      if(!supabaseClient){
+
+        return false;
+
+      }
+
+      try{
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("quizzes")
+            .select("*");
+
+        if(error){
+
+          throw error;
+
+        }
+
+        if(
+          Array.isArray(data) &&
+          data.length > 0
+        ){
+
+          allQuestions =
+            [...data];
+
+          return true;
+
+        }
+
+        return false;
+
+      }catch(error){
+
+        console.error(
+          "Question fetch error:",
+          error
+        );
+
+        return false;
+
+      }
+
+    }
+
+
+    /* =====================================================
+       STARTUP
+    ===================================================== */
+
+    fetchSupabaseQuestions();
+
+    fetchAndShowLeaderboard(
+      "main",
+      "daily"
+    );
+
+
+    /* =====================================================
+       START GAME
+    ===================================================== */
+
+    document
+      .getElementById("startBtn")
+      .addEventListener(
+        "click",
+        async() => {
+
+          const startBtn =
+            document.getElementById(
+              "startBtn"
+            );
+
+          startBtn.disabled =
+            true;
+
+          startBtn.innerHTML =
+            `<i class="fa-solid fa-spinner fa-spin"></i>
+             प्रश्नहरू लोड हुँदैछन्...`;
+
+          if(
+            allQuestions.length === 0
+          ){
+
+            const success =
+              await fetchSupabaseQuestions();
+
+            if(
+              !success ||
+              allQuestions.length === 0
+            ){
+
+              showToast(
+                "प्रश्नहरू भेटिएनन्।"
+              );
+
+              startBtn.disabled =
+                false;
+
+              startBtn.innerHTML =
+                `<i class="fa-solid fa-play"></i>
+                 खेल सुरु गर्नुहोस्`;
+
+              return;
+
+            }
+
+          }
+
+
+          document
+            .getElementById(
+              "startScreen"
+            )
+            .classList
+            .add("hidden");
+
+
+          document
+            .getElementById(
+              "gameScreen"
+            )
+            .classList
+            .remove("hidden");
+
+
+          gameActive =
+            true;
+
+          rewardSaved =
+            false;
+
+          score =
+            0;
+
+          skippedCount =
+            0;
+
+          wrongCount =
+            0;
+
+          timeLeft =
+            60;
+
+          usedQuestionIndices.clear();
+
+          gameSessionHistory =
+            [];
+
+          currentQuestionData =
+            null;
+
+
+          document
+            .getElementById(
+              "scoreVal"
+            )
+            .innerText =
+              "0";
+
+
+          document
+            .getElementById(
+              "mistakeVal"
+            )
+            .innerText =
+              "0/5";
+
+
+          document
+            .getElementById(
+              "timerVal"
+            )
+            .innerText =
+              "60s";
+
+
+          document
+            .getElementById(
+              "timerVal"
+            )
+            .classList
+            .remove(
+              "time-warning"
+            );
+
+
+          document
+            .getElementById(
+              "timeProgress"
+            )
+            .style.width =
+              "100%";
+
+
+          startTimer();
+
+          loadNextQuestion();
+
+        }
+      );
+
+
+    /* =====================================================
+       TIMER
+    ===================================================== */
+
+    function startTimer(){
+
+      if(timerInterval){
+
+        clearInterval(
+          timerInterval
+        );
+
+      }
+
+      timerInterval =
+        setInterval(
+          () => {
+
+            if(!gameActive){
+
+              clearInterval(
+                timerInterval
+              );
+
+              return;
+
+            }
+
+            timeLeft--;
+
+            const timer =
+              document.getElementById(
+                "timerVal"
+              );
+
+            timer.innerText =
+              `${Math.max(
+                0,
+                timeLeft
+              )}s`;
+
+
+            document
+              .getElementById(
+                "timeProgress"
+              )
+              .style.width =
+                `${Math.max(
+                  0,
+                  (timeLeft / 60) * 100
+                )}%`;
+
+
+            if(timeLeft <= 10){
+
+              timer.classList.add(
+                "time-warning"
+              );
+
+            }
+
+
+            if(timeLeft <= 0){
+
+              clearInterval(
+                timerInterval
+              );
+
+              endGame(
+                "समय समाप्त भयो! ⏰"
+              );
+
+            }
+
+          },
+          1000
+        );
+
+    }
+
+
+    /* =====================================================
+       RANDOM QUESTION
+    ===================================================== */
+
+    function loadNextQuestion(){
+
+      if(!gameActive){
+
+        return;
+
+      }
+
+
+      if(
+        usedQuestionIndices.size >=
+        allQuestions.length
+      ){
+
+        usedQuestionIndices.clear();
+
+      }
+
+
+      let randomIndex;
+
+
+      do{
+
+        randomIndex =
+          Math.floor(
+            Math.random() *
+            allQuestions.length
+          );
+
+      }while(
+        usedQuestionIndices.has(
+          randomIndex
+        )
+      );
+
+
+      usedQuestionIndices.add(
+        randomIndex
+      );
+
+
+      const q =
+        allQuestions[randomIndex];
+
+
+      let options = [];
+
+
+      if(
+        Array.isArray(q.options)
+      ){
+
+        options =
+          [...q.options];
+
+      }else if(
+        typeof q.options === "object" &&
+        q.options !== null
+      ){
+
+        options =
+          Object.values(
+            q.options
+          );
+
+      }else if(
+        typeof q.options === "string"
+      ){
+
+        try{
+
+          options =
+            JSON.parse(
+              q.options
+            );
+
+        }catch(error){
+
+          options = [];
+
+        }
+
+      }
+
+
+      const correctAnswer =
+        String(
+          q.answer || ""
+        ).trim();
+
+
+      /* Fisher-Yates */
+
+      for(
+        let i = options.length - 1;
+        i > 0;
+        i--
+      ){
+
+        const j =
+          Math.floor(
+            Math.random() * (i + 1)
+          );
+
+        [
+          options[i],
+          options[j]
+        ] =
+        [
+          options[j],
+          options[i]
+        ];
+
+      }
+
+
+      currentQuestionData = {
+
+        id:
+          q.id || null,
+
+        question:
+          q.question ||
+          "प्रश्न उपलब्ध छैन",
+
+        options:
+          options,
+
+        answer:
+          correctAnswer,
+
+        userAnswer:
+          null,
+
+        status:
+          "unanswered"
+
+      };
+
+
+      document
+        .getElementById(
+          "questionText"
+        )
+        .innerText =
+          currentQuestionData.question;
+
+
+      const optionsContainer =
+        document.getElementById(
+          "optionsList"
+        );
+
+      optionsContainer.innerHTML =
+        "";
+
+
+      const letters =
+        ["A","B","C","D"];
+
+
+      options.forEach(
+        (option,index) => {
+
+          const btn =
+            document.createElement(
+              "button"
+            );
+
+          btn.className =
+            "option-btn";
+
+
+          const letter =
+            document.createElement(
+              "span"
+            );
+
+          letter.className =
+            "option-letter";
+
+          letter.innerText =
+            letters[index] ||
+            String(index + 1);
+
+
+          const text =
+            document.createElement(
+              "span"
+            );
+
+          text.innerText =
+            option;
+
+
+          btn.appendChild(
+            letter
+          );
+
+          btn.appendChild(
+            text
+          );
+
+
+          const isCorrect =
+            String(option)
+              .trim()
+              .toLowerCase() ===
+            correctAnswer
+              .trim()
+              .toLowerCase();
+
+
+          btn.onclick =
+            () => {
+
+              handleAnswerClick(
+                isCorrect,
+                option,
+                btn
+              );
+
+            };
+
+
+          optionsContainer
+            .appendChild(btn);
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       ANSWER
+    ===================================================== */
+
+    function handleAnswerClick(
+      isCorrect,
+      selectedAnswer,
+      selectedButton
+    ){
+
+      if(!gameActive){
+
+        return;
+
+      }
+
+
+      const buttons =
+        document.querySelectorAll(
+          ".option-btn"
+        );
+
+
+      buttons.forEach(
+        button => {
+
+          button.disabled =
+            true;
+
+        }
+      );
+
+
+      currentQuestionData.userAnswer =
+        selectedAnswer;
+
+
+      if(isCorrect){
+
+        selectedButton
+          .classList
+          .add("correct");
+
+
+        score++;
+
+
+        currentQuestionData.status =
+          "correct";
+
+
+        document
+          .getElementById(
+            "scoreVal"
+          )
+          .innerText =
+            score;
+
+
+      }else{
+
+        selectedButton
+          .classList
+          .add("wrong");
+
+
+        wrongCount++;
+
+
+        currentQuestionData.status =
+          "wrong";
+
+
+        document
+          .getElementById(
+            "mistakeVal"
+          )
+          .innerText =
+            `${wrongCount}/5`;
+
+
+        /* Show correct answer */
+
+        buttons.forEach(
+          button => {
+
+            const answerText =
+              button
+                .querySelector("span:last-child")
+                ?.innerText
+                ?.trim();
+
+            if(
+              answerText &&
+              answerText.toLowerCase() ===
+              currentQuestionData.answer
+                .trim()
+                .toLowerCase()
+            ){
+
+              button.classList.add(
+                "correct"
+              );
+
+            }
+
+          }
+        );
+
+
+        if(wrongCount >= 5){
+
+          gameActive =
+            false;
+
+          clearInterval(
+            timerInterval
+          );
+
+
+          gameSessionHistory.push(
+            currentQuestionData
+          );
+
+
+          setTimeout(
+            () => {
+
+              endGame(
+                "धेरै गल्ती भएकाले खेल समाप्त भयो! ❌"
+              );
+
+            },
+            500
+          );
+
+
+          return;
+
+        }
+
+      }
+
+
+      gameSessionHistory.push(
+        currentQuestionData
+      );
+
+
+      setTimeout(
+        () => {
+
+          if(gameActive){
+
+            loadNextQuestion();
+
+          }
+
+        },
+        350
+      );
+
+    }
+
+
+    /* =====================================================
+       SKIP
+    ===================================================== */
+
+    window.handleSkipQuestion =
+      function(){
+
+        if(!gameActive){
+
+          return;
+
+        }
+
+
+        if(!currentQuestionData){
+
+          return;
+
+        }
+
+
+        skippedCount++;
+
+
+        currentQuestionData.userAnswer =
+          "स्किप गरिएको";
+
+
+        currentQuestionData.status =
+          "skipped";
+
+
+        gameSessionHistory.push(
+          currentQuestionData
+        );
+
+
+        loadNextQuestion();
+
+      };
+
+
+    /* =====================================================
+       SAVE COINS + HISTORY
+       ATOMIC FIRESTORE BATCH
+    ===================================================== */
+
+    async function saveCoinsAndHistory(){
+
+      if(!currentUserId){
+
+        throw new Error(
+          "User login छैन।"
+        );
+
+      }
+
+
+      if(score <= 0){
+
+        return {
+          saved:true,
+          coins:0
+        };
+
+      }
+
+
+      if(rewardSaved){
+
+        return {
+          saved:true,
+          coins:score
+        };
+
+      }
+
+
+      const userRef =
+        fsDoc(
+          db,
+          "users",
+          currentUserId
+        );
+
+
+      const userSnap =
+        await fsGetDoc(
+          userRef
+        );
+
+
+      if(!userSnap.exists()){
+
+        throw new Error(
+          "User profile Firestore मा भेटिएन।"
+        );
+
+      }
+
+
+      const coinAmount =
+        Number(score);
+
+
+      /*
+       * One batch:
+       *
+       * 1. users/{uid}.coins += score
+       * 2. users/{uid}/coin_history/{autoId}
+       *
+       * Both succeed together or fail together.
+       */
+
+      const batch =
+        writeBatch(db);
+
+
+      batch.update(
+        userRef,
+        {
+          coins:
+            increment(
+              coinAmount
+            )
+        }
+      );
+
+
+      const historyRef =
+        fsDoc(
+          collection(
+            db,
+            "users",
+            currentUserId,
+            "coin_history"
+          )
+        );
+
+
+      batch.set(
+        historyRef,
+        {
+
+          amount:
+            coinAmount,
+
+          type:
+            "earned_speed_game",
+
+          source:
+            "Speed Blitz",
+
+          source_game:
+            GAME_SET_NAME,
+
+          description:
+            `Speed Blitz मा ${coinAmount} सही उत्तर`,
+
+          score:
+            score,
+
+          correct_count:
+            score,
+
+          wrong_count:
+            wrongCount,
+
+          skipped_count:
+            skippedCount,
+
+          total_questions:
+            score +
+            wrongCount +
+            skippedCount,
+
+          user_uid:
+            currentUserId,
+
+          username:
+            currentUserName,
+
+          created_at:
+            serverTimestamp()
+
+        }
+      );
+
+
+      await batch.commit();
+
+
+      rewardSaved =
+        true;
+
+
+      return {
+        saved:true,
+        coins:coinAmount
+      };
+
+    }
+
+
+    /* =====================================================
+       END GAME
+    ===================================================== */
+
+    async function endGame(reasonTitle){
+
+      if(
+        document
+          .getElementById(
+            "gameOverScreen"
+          )
+          .classList
+          .contains("hidden") === false
+      ){
+
+        return;
+
+      }
+
+
+      gameActive =
+        false;
+
+
+      if(timerInterval){
+
+        clearInterval(
+          timerInterval
+        );
+
+      }
+
+
+      document
+        .getElementById(
+          "gameScreen"
+        )
+        .classList
+        .add("hidden");
+
+
+      document
+        .getElementById(
+          "gameOverScreen"
+        )
+        .classList
+        .remove("hidden");
+
+
+      document
+        .getElementById(
+          "gameOverTitle"
+        )
+        .innerText =
+          reasonTitle;
+
+
+      document
+        .getElementById(
+          "finalScoreDisplay"
+        )
+        .innerText =
+          score;
+
+
+      document
+        .getElementById(
+          "resultCorrect"
+        )
+        .innerText =
+          score;
+
+
+      document
+        .getElementById(
+          "resultWrong"
+        )
+        .innerText =
+          wrongCount;
+
+
+      document
+        .getElementById(
+          "resultSkipped"
+        )
+        .innerText =
+          skippedCount;
+
+
+      const coinBox =
+        document.getElementById(
+          "coinResultBox"
+        );
+
+
+      coinBox.classList.remove(
+        "error"
+      );
+
+
+      coinBox.innerHTML =
+        `<i class="fa-solid fa-spinner fa-spin"></i>
+         कोइन र इतिहास सुरक्षित हुँदैछ...`;
+
+
+      /*
+       * SAVE COINS + HISTORY
+       */
+
+      if(score > 0){
+
+        try{
+
+          const result =
+            await saveCoinsAndHistory();
+
+
+          if(result.saved){
+
+            coinBox.innerHTML =
+              `<i class="fa-solid fa-circle-check"></i>
+               +${result.coins} Coins सफलतापूर्वक प्राप्त भयो!`;
+
+          }
+
+        }catch(error){
+
+          console.error(
+            "Coin/History save error:",
+            error
+          );
+
+
+          coinBox.classList.add(
+            "error"
+          );
+
+
+          coinBox.innerHTML =
+            `<i class="fa-solid fa-triangle-exclamation"></i>
+             कोइन र इतिहास अपडेट हुन सकेन। फेरि प्रयास गर्नुहोस्।`;
+
+        }
+
+      }else{
+
+        coinBox.innerHTML =
+          `<i class="fa-solid fa-circle-info"></i>
+           यस खेलमा सही उत्तर नभएकाले कोइन प्राप्त भएन।`;
+
+      }
+
+
+      /* SAVE LEADERBOARD */
+
+      await saveLeaderboard();
+
+
+      /* REFRESH LEADERBOARD */
+
+      await fetchAndShowLeaderboard(
+        "end",
+        endLbType
+      );
+
+    }
+
+
+    /* =====================================================
+       LEADERBOARD SAVE
+       UID + SET NAME
+    ===================================================== */
+
+    async function saveLeaderboard(){
+
+      if(
+        !supabaseClient ||
+        !currentUserId
+      ){
+
+        return;
+
+      }
+
+
+      try{
+
+        const {
+          data:existing,
+          error:fetchError
+        } =
+          await supabaseClient
+            .from(
+              "exam_leaderboard"
+            )
+            .select(
+              "*"
+            )
+            .eq(
+              "user_uid",
+              currentUserId
+            )
+            .eq(
+              "set_name",
+              GAME_SET_NAME
+            )
+            .limit(1);
+
+
+        if(fetchError){
+
+          console.error(
+            "Leaderboard lookup:",
+            fetchError
+          );
+
+          return;
+
+        }
+
+
+        const totalQuestions =
+          score +
+          wrongCount +
+          skippedCount;
+
+
+        if(
+          existing &&
+          existing.length > 0
+        ){
+
+          const old =
+            existing[0];
+
+
+          await supabaseClient
+            .from(
+              "exam_leaderboard"
+            )
+            .update({
+
+              username:
+                currentUserName,
+
+              score:
+                Math.max(
+                  score,
+                  Number(
+                    old.score || 0
+                  )
+                ),
+
+              correct_count:
+                Number(
+                  old.correct_count || 0
+                ) + score,
+
+              wrong_count:
+                Number(
+                  old.wrong_count || 0
+                ) + wrongCount,
+
+              skipped_count:
+                Number(
+                  old.skipped_count || 0
+                ) + skippedCount,
+
+              total_questions:
+                Number(
+                  old.total_questions || 0
+                ) + totalQuestions,
+
+              created_at:
+                new Date().toISOString(),
+
+              user_uid:
+                currentUserId
+
+            })
+            .eq(
+              "id",
+              old.id
+            );
+
+
+        }else{
+
+          await supabaseClient
+            .from(
+              "exam_leaderboard"
+            )
+            .insert([{
+
+              username:
+                currentUserName,
+
+              set_name:
+                GAME_SET_NAME,
+
+              score:
+                score,
+
+              correct_count:
+                score,
+
+              wrong_count:
+                wrongCount,
+
+              skipped_count:
+                skippedCount,
+
+              total_questions:
+                totalQuestions,
+
+              user_uid:
+                currentUserId,
+
+              created_at:
+                new Date().toISOString()
+
+            }]);
+
+        }
+
+      }catch(error){
+
+        console.error(
+          "Leaderboard save error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    /* =====================================================
+       REVIEW
+    ===================================================== */
+
+    window.openReviewPopup =
+      function(){
+
+        const container =
+          document.getElementById(
+            "reviewListContainer"
+          );
+
+
+        container.innerHTML =
+          "";
+
+
+        if(
+          gameSessionHistory.length === 0
+        ){
+
+          container.innerHTML =
+            `<div class="empty-lb">
+              कुनै प्रश्नको इतिहास छैन।
+            </div>`;
+
+        }else{
+
+          gameSessionHistory.forEach(
+            (item,index) => {
+
+              let userClass =
+                "ans-user";
+
+
+              if(
+                item.status ===
+                "correct"
+              ){
+
+                userClass =
+                  "ans-user correct-mark";
+
+              }
+
+
+              const itemDiv =
+                document.createElement(
+                  "div"
+                );
+
+
+              itemDiv.className =
+                "review-item";
+
+
+              const question =
+                document.createElement(
+                  "div"
+                );
+
+
+              question.className =
+                "review-q";
+
+              question.innerText =
+                `प्र. ${index + 1}: ${item.question}`;
+
+
+              const userAnswer =
+                document.createElement(
+                  "div"
+                );
+
+
+              userAnswer.className =
+                `review-ans ${userClass}`;
+
+              userAnswer.innerText =
+                `तपाईंको उत्तर: ${
+                  item.userAnswer ||
+                  "छोडिएको"
+                }`;
+
+
+              const correctAnswer =
+                document.createElement(
+                  "div"
+                );
+
+
+              correctAnswer.className =
+                "review-ans ans-right";
+
+              correctAnswer.innerText =
+                `सही उत्तर: ${item.answer}`;
+
+
+              itemDiv.appendChild(
+                question
+              );
+
+              itemDiv.appendChild(
+                userAnswer
+              );
+
+              itemDiv.appendChild(
+                correctAnswer
+              );
+
+
+              container.appendChild(
+                itemDiv
+              );
+
+            }
+          );
+
+        }
+
+
+        document
+          .getElementById(
+            "reviewModal"
+          )
+          .classList
+          .remove("hidden");
+
+      };
+
+
+    window.closeReviewPopup =
+      function(){
+
+        document
+          .getElementById(
+            "reviewModal"
+          )
+          .classList
+          .add("hidden");
+
+      };
+
+
+    /* =====================================================
+       LEADERBOARD TAB
+    ===================================================== */
+
+    window.switchMainLeaderboard =
+      function(type){
+
+        mainLbType =
+          type;
+
+
+        document
+          .getElementById(
+            "startDailyTab"
+          )
+          .classList
+          .toggle(
+            "active",
+            type === "daily"
+          );
+
+
+        document
+          .getElementById(
+            "startOverallTab"
+          )
+          .classList
+          .toggle(
+            "active",
+            type === "overall"
+          );
+
+
+        fetchAndShowLeaderboard(
+          "main",
+          type
+        );
+
+      };
+
+
+    window.switchEndLeaderboard =
+      function(type){
+
+        endLbType =
+          type;
+
+
+        document
+          .getElementById(
+            "endDailyTab"
+          )
+          .classList
+          .toggle(
+            "active",
+            type === "daily"
+          );
+
+
+        document
+          .getElementById(
+            "endOverallTab"
+          )
+          .classList
+          .toggle(
+            "active",
+            type === "overall"
+          );
+
+
+        fetchAndShowLeaderboard(
+          "end",
+          type
+        );
+
+      };
+
+
+    /* =====================================================
+       LEADERBOARD FETCH
+    ===================================================== */
+
+    async function fetchAndShowLeaderboard(
+      targetScreen,
+      type
+    ){
+
+      const container =
+        document.getElementById(
+          targetScreen === "main"
+            ? "mainLeaderboardContainer"
+            : "endLeaderboardContainer"
+        );
+
+
+      if(!supabaseClient){
+
+        container.innerHTML =
+          `<div class="empty-lb">
+            Supabase जडान भएको छैन।
+          </div>`;
+
+        return;
+
+      }
+
+
+      try{
+
+        let query =
+          supabaseClient
+            .from(
+              "exam_leaderboard"
+            )
+            .select(
+              "username,set_name,score,created_at,user_uid"
+            )
+            .eq(
+              "set_name",
+              GAME_SET_NAME
+            )
+            .order(
+              "score",
+              {
+                ascending:false
+              }
+            );
+
+
+        /*
+         * Daily filter.
+         *
+         * Nepal timezone UTC+5:45
+         */
+
+        if(type === "daily"){
+
+          const now =
+            new Date();
+
+          const npt =
+            new Date(
+              now.getTime() +
+              (5.75 * 60 * 60 * 1000)
+            );
+
+
+          const today =
+            npt
+              .toISOString()
+              .split("T")[0];
+
+
+          query =
+            query.gte(
+              "created_at",
+              `${today}T00:00:00`
+            );
+
+        }
+
+
+        const {
+          data,
+          error
+        } =
+          await query.limit(10);
+
+
+        if(error){
+
+          throw error;
+
+        }
+
+
+        if(
+          !data ||
+          data.length === 0
+        ){
+
+          container.innerHTML =
+            `<div class="empty-lb">
+              कुनै डाटा फेला परेन।
+            </div>`;
+
+          return;
+
+        }
+
+
+        let html =
+          "";
+
+
+        let userInTop3 =
+          false;
+
+
+        data.forEach(
+          (item,index) => {
+
+            const rank =
+              index + 1;
+
+
+            let rankClass =
+              "";
+
+
+            if(rank === 1){
+
+              rankClass =
+                "rank-1";
+
+            }else if(rank === 2){
+
+              rankClass =
+                "rank-2";
+
+            }else if(rank === 3){
+
+              rankClass =
+                "rank-3";
+
+            }
+
+
+            if(
+              type === "daily" &&
+              rank <= 3 &&
+              item.user_uid ===
+              currentUserId
+            ){
+
+              userInTop3 =
+                true;
+
+            }
+
+
+            html += `
+
+              <div class="leaderboard-item">
+
+                <div class="user-info">
+
+                  <div
+                    class="rank-badge ${rankClass}">
+                    ${rank}
+                  </div>
+
+                  <div>
+
+                    <div class="username">
+                      ${escapeHTML(
+                        item.username ||
+                        "अज्ञात"
+                      )}
+                    </div>
+
+                    <div class="set-name">
+                      Speed Blitz
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div class="score-badge">
+                  ${Number(
+                    item.score || 0
+                  )} अङ्क
+                </div>
+
+              </div>
+
+            `;
+
+          }
+        );
+
+
+        container.innerHTML =
+          html;
+
+
+        if(
+          targetScreen === "end" &&
+          type === "daily" &&
+          userInTop3
+        ){
+
+          showToast(
+            "🎉 बधाई! तपाईं दैनिक Top 3 मा हुनुहुन्छ!"
+          );
+
+        }
+
+      }catch(error){
+
+        console.error(
+          "Leaderboard error:",
+          error
+        );
+
+
+        container.innerHTML =
+          `<div class="empty-lb"
+             style="color:var(--red);">
+             लिडरबोर्ड लोड असफल भयो।
+           </div>`;
+
+      }
+
+    }
+
+
+    /* =====================================================
+       HTML ESCAPE
+    ===================================================== */
+
+    function escapeHTML(value){
+
+      return String(value)
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+  </script>
+
+</body>
+  </html>
