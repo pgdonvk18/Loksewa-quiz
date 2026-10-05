@@ -392,7 +392,22 @@ window.saveNameUpdate = async function () {
   if (!currentUserId) return;
   try {
     if (auth.currentUser) await updateProfile(auth.currentUser, { displayName: newName });
+
+    // Firebase UID is the permanent identity. The display name is only a label.
+    // Keep the same user linked in Supabase even when the name changes.
     await updateDoc(doc(db, "users", currentUserId), { name: newName });
+
+    // Update this user's existing leaderboard rows by UID, never by username.
+    // This prevents changing the name from creating a second leaderboard identity.
+    const { error: leaderboardNameError } = await supabase
+      .from("exam_leaderboard")
+      .update({ username: newName })
+      .eq("user_uid", currentUserId);
+
+    if (leaderboardNameError) {
+      console.warn("Leaderboard name sync failed:", leaderboardNameError);
+    }
+
     $("userNameInput").disabled = true; $("saveNameBtn").style.display = "none"; $("editNameBtn").style.display = "grid";
     showToast("Edited successfully");
   } catch (error) { console.error("Error updating name:", error); showToast("नाम अपडेट गर्न सकिएन।"); }
@@ -430,6 +445,18 @@ $("pwBtn").addEventListener("click", async () => {
   catch (err) { console.error(err); showToast("रिसेट इमेल पठाउन सकिएन।"); }
 });
 $("logoutBtn").addEventListener("click", () => { signOut(auth).then(() => { window.location.href = "login.html"; }); });
-</script><script src="components.js"></script>
+</script>
+
+<!-- Global components: bottom navigation + shared UI -->
+<script src="components.js"></script>
+<script>
+  // components.js defines loadBottomNav(), but does not automatically call it.
+  // Explicitly initialize the profile tab so navigation is always visible/clickable.
+  document.addEventListener("DOMContentLoaded", function () {
+    if (typeof loadBottomNav === "function") {
+      loadBottomNav("profile");
+    }
+  });
+</script>
 </body>
 </html>
