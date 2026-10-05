@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
+
 <meta charset="UTF-8">
 
 <meta
   name="viewport"
-  content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+  content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"
 >
 
-<meta name="theme-color" content="#0b1730">
+<meta name="theme-color" content="#08152f">
 
 <meta
   name="description"
-  content="LoksewaQuest Study Hub — topic based notes and questions."
+  content="LoksewaQuest Study Hub — Topic based notes, questions and practice."
 >
 
 <title>LoksewaQuest — Study Hub</title>
@@ -35,42 +36,42 @@
 <style>
 
 /* =========================================================
-   ROOT
-========================================================= */
+   LOKSEWAQUEST STUDY HUB
+   Premium Reading UI
+   ========================================================= */
 
 :root{
-  --navy:#09152d;
-  --navy2:#102a59;
 
+  --navy:#07152f;
+  --navy2:#0d2552;
   --blue:#2563eb;
   --blue2:#4f7ff0;
 
-  --soft:#eef4ff;
-  --soft2:#f7f9fd;
-
   --green:#059669;
-  --greenSoft:#eafaf4;
+  --green-bg:#eafaf4;
 
   --amber:#d97706;
-  --amberSoft:#fff6e5;
+  --amber-bg:#fff7e8;
 
   --red:#dc3d4d;
-  --redSoft:#fff0f2;
 
   --bg:#f4f7fb;
   --card:#ffffff;
 
-  --text:#17233d;
-  --muted:#68758c;
-  --muted2:#8a96aa;
+  --text:#14213b;
+  --text2:#293752;
+  --muted:#718096;
 
-  --line:#e5e9f1;
+  --line:#e4e9f1;
+  --line2:#eef1f5;
+
+  --soft:#eef4ff;
 
   --shadow:
-    0 10px 30px rgba(15,31,61,.055);
+    0 12px 35px rgba(15,31,61,.055);
 
-  --shadow2:
-    0 18px 45px rgba(15,31,61,.08);
+  --shadow-hover:
+    0 18px 45px rgba(15,31,61,.09);
 
   --radius:20px;
 
@@ -88,25 +89,33 @@
 
 /* =========================================================
    RESET
-========================================================= */
+   ========================================================= */
 
 *{
   box-sizing:border-box;
 }
 
 html{
-  scroll-behavior:auto;
+  margin:0;
+  padding:0;
+  scroll-behavior:smooth;
   -webkit-text-size-adjust:100%;
 }
 
 body{
+
   margin:0;
 
   background:
     radial-gradient(
-      circle at 85% -10%,
+      circle at 90% -10%,
       rgba(37,99,235,.10),
-      transparent 30%
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at -10% 30%,
+      rgba(79,127,240,.045),
+      transparent 25%
     ),
     var(--bg);
 
@@ -114,19 +123,29 @@ body{
 
   font-family:var(--body);
 
-  padding-bottom:60px;
-
   overflow-x:hidden;
 
   /*
     IMPORTANT:
-    Do not create nested page scrolling.
+    Only BODY should scroll.
+    No nested page scroll container.
   */
-  min-height:100%;
+
+  overflow-y:auto;
+
+  min-height:100vh;
+
+  padding-bottom:
+    calc(40px + env(safe-area-inset-bottom));
 }
 
-body.modal-open{
-  overflow:hidden;
+body,
+button,
+input,
+select,
+textarea{
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
 }
 
 button,
@@ -138,10 +157,7 @@ textarea{
 
 button{
   cursor:pointer;
-
   -webkit-tap-highlight-color:transparent;
-
-  touch-action:manipulation;
 }
 
 a{
@@ -151,15 +167,8 @@ a{
 
 img,
 video,
-iframe,
-table{
+iframe{
   max-width:100%;
-}
-
-pre,
-code{
-  max-width:100%;
-  overflow-x:auto;
 }
 
 .hidden{
@@ -169,39 +178,39 @@ code{
 
 /* =========================================================
    HERO
-========================================================= */
+   ========================================================= */
 
 .hero{
+
+  position:relative;
 
   color:#fff;
 
   background:
     radial-gradient(
-      circle at 90% 10%,
-      rgba(255,255,255,.10),
+      circle at 85% 15%,
+      rgba(77,135,255,.28),
       transparent 28%
     ),
-
     linear-gradient(
       135deg,
-      #09152d 0%,
-      #102a59 55%,
-      #1e4aa3 100%
+      #07142e 0%,
+      #0b2250 55%,
+      #174596 100%
     );
 
-  border-radius:0 0 30px 30px;
-
-  padding:
-    calc(18px + env(safe-area-inset-top))
-    max(16px,calc((100vw - 1180px)/2))
-    28px;
+  border-radius:
+    0 0 30px 30px;
 
   box-shadow:
-    0 12px 30px rgba(9,23,48,.12);
-
-  position:relative;
+    0 15px 40px rgba(7,21,47,.14);
 
   overflow:hidden;
+
+  padding:
+    calc(20px + env(safe-area-inset-top))
+    max(16px,calc((100vw - 1200px)/2))
+    28px;
 }
 
 .hero::before{
@@ -210,37 +219,26 @@ code{
 
   position:absolute;
 
-  width:280px;
-  height:280px;
+  width:320px;
+  height:320px;
 
-  right:-150px;
-  top:-170px;
+  right:-130px;
+  top:-190px;
+
+  border-radius:50%;
 
   border:1px solid rgba(255,255,255,.08);
 
-  border-radius:50%;
-}
+  box-shadow:
+    0 0 0 35px rgba(255,255,255,.015),
+    0 0 0 70px rgba(255,255,255,.012);
 
-.hero::after{
-
-  content:"";
-
-  position:absolute;
-
-  width:170px;
-  height:170px;
-
-  left:-100px;
-  bottom:-120px;
-
-  border:1px solid rgba(255,255,255,.06);
-
-  border-radius:50%;
+  pointer-events:none;
 }
 
 .hero-inner{
 
-  max-width:1180px;
+  max-width:1200px;
 
   margin:auto;
 
@@ -255,29 +253,26 @@ code{
 
   align-items:center;
 
-  gap:12px;
+  gap:13px;
 }
 
 .back{
 
-  width:44px;
-  height:44px;
-
-  border:
-    1px solid rgba(255,255,255,.15);
-
-  background:
-    rgba(255,255,255,.08);
-
-  color:#fff;
-
-  border-radius:14px;
+  width:43px;
+  height:43px;
 
   display:grid;
-
   place-items:center;
 
   flex:none;
+
+  border-radius:14px;
+
+  color:#fff;
+
+  background:rgba(255,255,255,.085);
+
+  border:1px solid rgba(255,255,255,.14);
 
   transition:
     background .2s ease,
@@ -286,8 +281,7 @@ code{
 
 .back:hover{
 
-  background:
-    rgba(255,255,255,.15);
+  background:rgba(255,255,255,.15);
 
   transform:translateX(-2px);
 }
@@ -296,28 +290,31 @@ code{
 
   font-size:10px;
 
-  letter-spacing:1.6px;
+  letter-spacing:1.8px;
 
   text-transform:uppercase;
 
-  color:#a9bbdb;
+  color:#aebfdf;
 
   font-weight:800;
 }
 
 .hero h1{
 
-  font:
-    800 31px/1.05 var(--head);
+  margin:4px 0 4px;
 
-  margin:5px 0;
+  font:
+    800 31px/1.05
+    var(--head);
+
+  letter-spacing:-.5px;
 }
 
 .hero p{
 
   margin:0;
 
-  color:#c2cee3;
+  color:#c3cee3;
 
   font-size:14px;
 
@@ -326,19 +323,19 @@ code{
 
 
 /* =========================================================
-   HERO TOOLS
-========================================================= */
+   HERO CONTROLS
+   ========================================================= */
 
 .hero-tools{
 
-  margin-top:20px;
+  margin-top:21px;
 
   display:grid;
 
   grid-template-columns:
-    1fr
-    1fr
-    1.6fr;
+    minmax(150px,1fr)
+    minmax(150px,1fr)
+    minmax(260px,1.7fr);
 
   gap:10px;
 }
@@ -346,27 +343,47 @@ code{
 .selectbox,
 .search{
 
-  height:48px;
+  min-width:0;
+
+  height:50px;
+
+  border-radius:15px;
 
   border:
-    1px solid rgba(255,255,255,.15);
+    1px solid rgba(255,255,255,.14);
 
   background:
-    rgba(255,255,255,.09);
+    rgba(255,255,255,.085);
 
   color:#fff;
 
-  border-radius:14px;
-
   outline:none;
+
+  transition:
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
 }
 
 .selectbox{
 
   padding:
-    0 14px;
+    0 13px;
 
-  width:100%;
+  appearance:auto;
+}
+
+.selectbox:focus,
+.search:focus-within{
+
+  border-color:
+    rgba(255,255,255,.38);
+
+  background:
+    rgba(255,255,255,.12);
+
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.07);
 }
 
 .selectbox option{
@@ -384,18 +401,21 @@ code{
 
   gap:10px;
 
-  padding:
-    0 14px;
+  padding:0 14px;
 }
 
 .search i{
 
-  color:#c6d1e5;
+  color:#b9c7df;
 
   flex:none;
 }
 
 .search input{
+
+  width:100%;
+
+  min-width:0;
 
   border:0;
 
@@ -404,25 +424,23 @@ code{
   background:transparent;
 
   color:#fff;
-
-  width:100%;
-
-  min-width:0;
 }
 
 .search input::placeholder{
 
-  color:#c3cde0;
+  color:#bdc9de;
 }
 
 
 /* =========================================================
    MAIN
-========================================================= */
+   ========================================================= */
 
 .app{
 
-  max-width:1180px;
+  width:100%;
+
+  max-width:1200px;
 
   margin:auto;
 
@@ -432,38 +450,60 @@ code{
 
 .content{
 
-  padding-top:18px;
+  padding-top:20px;
 }
 
 
 /* =========================================================
    STATS
-========================================================= */
+   ========================================================= */
 
 .stats{
 
   display:grid;
 
   grid-template-columns:
-    repeat(4,1fr);
+    repeat(4,minmax(0,1fr));
 
   gap:12px;
 }
 
 .stat{
 
+  min-width:0;
+
   background:var(--card);
 
   border:
     1px solid var(--line);
 
-  border-radius:var(--radius);
-
-  box-shadow:var(--shadow);
+  border-radius:18px;
 
   padding:16px;
 
-  min-width:0;
+  box-shadow:var(--shadow);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.stat:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:var(--shadow-hover);
+}
+
+.stat-label{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:8px;
 }
 
 .stat small{
@@ -475,29 +515,49 @@ code{
   font-size:12px;
 }
 
+.stat-icon{
+
+  width:32px;
+  height:32px;
+
+  border-radius:10px;
+
+  display:grid;
+  place-items:center;
+
+  background:var(--soft);
+
+  color:var(--blue);
+
+  font-size:12px;
+}
+
 .stat strong{
 
   display:block;
 
+  margin-top:7px;
+
   font:
-    800 25px var(--head);
+    800 25px/1
+    var(--head);
 
-  margin-top:5px;
-
-  white-space:nowrap;
+  letter-spacing:-.3px;
 }
 
 .progress{
 
-  height:8px;
+  width:100%;
 
-  background:#edf0f5;
+  height:7px;
 
-  border-radius:20px;
+  background:#edf1f6;
+
+  border-radius:99px;
 
   overflow:hidden;
 
-  margin-top:10px;
+  margin-top:11px;
 }
 
 .progress i{
@@ -506,32 +566,32 @@ code{
 
   height:100%;
 
+  width:0;
+
+  border-radius:inherit;
+
   background:
     linear-gradient(
       90deg,
       var(--blue),
-      #6b8ef3
+      #7395f3
     );
 
-  border-radius:inherit;
-
-  width:0;
-
   transition:
-    width .35s ease;
+    width .45s ease;
 }
 
 
 /* =========================================================
    MAIN LAYOUT
-========================================================= */
+   ========================================================= */
 
 .layout{
 
   display:grid;
 
   grid-template-columns:
-    340px
+    330px
     minmax(0,1fr);
 
   gap:16px;
@@ -541,41 +601,64 @@ code{
   align-items:start;
 }
 
+
+/*
+  Desktop:
+  sidebar follows page but stays visible.
+  It DOES NOT have its own scroll.
+*/
+
+.layout > aside{
+
+  position:sticky;
+
+  top:16px;
+
+  align-self:start;
+}
+
 .panel{
+
+  min-width:0;
 
   background:var(--card);
 
   border:
     1px solid var(--line);
 
-  border-radius:var(--radius);
+  border-radius:20px;
 
   box-shadow:var(--shadow);
 
   overflow:hidden;
-
-  min-width:0;
 }
 
 
 /* =========================================================
-   PANEL HEAD
-========================================================= */
+   PANEL HEADER
+   ========================================================= */
 
 .panel-head{
 
   padding:17px 18px;
 
-  border-bottom:
-    1px solid var(--line);
-
   display:flex;
 
   justify-content:space-between;
 
-  gap:10px;
-
   align-items:center;
+
+  gap:12px;
+
+  border-bottom:
+    1px solid var(--line2);
+
+  background:
+    linear-gradient(
+      180deg,
+      #fff,
+      #fcfdff
+    );
 }
 
 .panel-head h2,
@@ -584,7 +667,8 @@ code{
   margin:0;
 
   font:
-    800 17px var(--head);
+    800 17px/1.2
+    var(--head);
 }
 
 .panel-head p{
@@ -593,580 +677,19 @@ code{
 
   color:var(--muted);
 
-  font-size:12px;
-}
-
-
-/* =========================================================
-   SYLLABUS TREE
-========================================================= */
-
-/*
-  IMPORTANT:
-
-  No max-height.
-  No overflow:auto.
-  No nested scroll.
-
-  The whole page handles scrolling.
-
-  This is the main fix for the previous
-  mobile scrolling stuck problem.
-*/
-
-.syllabus{
-
-  padding:10px;
-
-  width:100%;
-
-  overflow:visible;
-}
-
-
-/* =========================================================
-   SECTION
-========================================================= */
-
-.section-row{
-
-  border:
-    1px solid var(--line);
-
-  border-radius:16px;
-
-  margin-bottom:9px;
-
-  overflow:hidden;
-
-  background:#fff;
-}
-
-.section-btn{
-
-  width:100%;
-
-  border:0;
-
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff,
-      #fbfcfe
-    );
-
-  text-align:left;
-
-  padding:14px 13px;
-
-  display:flex;
-
-  align-items:center;
-
-  gap:10px;
-
-  color:var(--text);
-
-  font-weight:800;
-
-  min-height:50px;
-}
-
-.section-btn:hover{
-
-  background:#f8faff;
-}
-
-.section-btn .section-icon{
-
-  width:30px;
-  height:30px;
-
-  border-radius:10px;
-
-  background:var(--soft);
-
-  color:var(--blue);
-
-  display:grid;
-
-  place-items:center;
-
-  flex:none;
-}
-
-.section-btn .section-name{
-
-  min-width:0;
-
-  line-height:1.45;
-}
-
-.section-btn .section-count{
-
-  margin-left:auto;
-
-  font-size:10px;
-
-  color:var(--muted2);
-
-  background:#f2f4f8;
-
-  padding:5px 7px;
-
-  border-radius:999px;
-
-  white-space:nowrap;
-}
-
-.section-btn .section-chevron{
-
-  width:20px;
-
-  color:#9aa6ba;
-
   font-size:11px;
 
-  transition:
-    transform .2s ease;
-}
-
-.section-row.collapsed
-.section-chevron{
-
-  transform:rotate(-90deg);
+  line-height:1.5;
 }
 
 
 /* =========================================================
-   TREE LIST
-========================================================= */
-
-.section-content{
-
-  padding:
-    2px
-    8px
-    10px;
-}
-
-
-/*
-  Generic topic tree
-*/
-
-.topic-tree{
-
-  position:relative;
-
-  width:100%;
-}
-
-
-/* =========================================================
-   TOPIC NODE
-========================================================= */
-
-.topic-node{
-
-  position:relative;
-
-  width:100%;
-}
-
-
-/*
-  Topic row
-*/
-
-.topic-row{
-
-  display:flex;
-
-  align-items:center;
-
-  gap:5px;
-
-  width:100%;
-
-  min-height:42px;
-
-  margin:1px 0;
-
-  border-radius:11px;
-}
-
-
-/* indentation levels */
-
-.topic-node[data-level="0"]{
-  --indent:0px;
-}
-
-.topic-node[data-level="1"]{
-  --indent:22px;
-}
-
-.topic-node[data-level="2"]{
-  --indent:44px;
-}
-
-.topic-node[data-level="3"]{
-  --indent:66px;
-}
-
-.topic-node[data-level="4"]{
-  --indent:88px;
-}
-
-.topic-node[data-level="5"]{
-  --indent:110px;
-}
-
-.topic-node[data-level="6"]{
-  --indent:132px;
-}
-
-.topic-node[data-level="7"]{
-  --indent:154px;
-}
-
-.topic-node[data-level="8"]{
-  --indent:176px;
-}
-
-
-/*
-  If deeper than 8,
-  JS still gives dynamic indentation
-  through inline style.
-*/
-
-.topic-toggle{
-
-  width:28px;
-  height:34px;
-
-  border:0;
-
-  background:transparent;
-
-  color:#9aa6ba;
-
-  display:grid;
-
-  place-items:center;
-
-  flex:none;
-
-  border-radius:8px;
-}
-
-.topic-toggle:hover{
-
-  background:#f1f4f9;
-
-  color:var(--blue);
-}
-
-.topic-toggle.empty{
-
-  cursor:default;
-
-  opacity:0;
-}
-
-.topic-toggle i{
-
-  font-size:9px;
-
-  transition:
-    transform .2s ease;
-}
-
-.topic-node.collapsed >
-.topic-row
-.topic-toggle i{
-
-  transform:rotate(-90deg);
-}
-
-
-/*
-  Actual topic button
-*/
-
-.topic-btn{
-
-  flex:1;
-
-  min-width:0;
-
-  border:0;
-
-  background:transparent;
-
-  text-align:left;
-
-  padding:
-    9px 8px;
-
-  display:flex;
-
-  align-items:center;
-
-  gap:9px;
-
-  color:#56647b;
-
-  font-size:13px;
-
-  line-height:1.4;
-
-  border-radius:10px;
-
-  transition:
-    background .16s ease,
-    color .16s ease;
-}
-
-.topic-btn:hover{
-
-  background:#f5f8ff;
-
-  color:var(--blue);
-}
-
-.topic-btn.active{
-
-  background:
-    linear-gradient(
-      90deg,
-      #eef4ff,
-      #f8faff
-    );
-
-  color:var(--blue);
-
-  font-weight:800;
-}
-
-.topic-btn.done{
-
-  color:var(--green);
-}
-
-.topic-btn.active.done{
-
-  color:#087b59;
-}
-
-
-/*
-  Dot
-*/
-
-.topic-dot{
-
-  width:8px;
-  height:8px;
-
-  border:
-    2px solid #b7c1d2;
-
-  border-radius:50%;
-
-  flex:none;
-
-  transition:
-    all .2s ease;
-}
-
-.topic-btn.done .topic-dot{
-
-  border-color:var(--green);
-
-  background:var(--green);
-
-  box-shadow:
-    0 0 0 3px rgba(5,150,105,.10);
-}
-
-
-/*
-  Topic title
-*/
-
-.topic-title{
-
-  min-width:0;
-
-  overflow-wrap:anywhere;
-}
-
-.topic-number{
-
-  color:#9aa6ba;
-
-  font-size:10px;
-
-  font-weight:800;
-
-  margin-right:3px;
-}
-
-
-/*
-  Child list
-*/
-
-.children{
-
-  margin-left:22px;
-
-  padding-left:8px;
-
-  border-left:
-    1px solid #e5e9f1;
-}
-
-.children.hidden{
-
-  display:none;
-}
-
-
-/* =========================================================
-   SEARCH TREE
-========================================================= */
-
-.search-results{
-
-  padding:10px;
-}
-
-.search-result-info{
-
-  padding:
-    6px 8px
-    12px;
-}
-
-.search-result-info strong{
-
-  font:
-    800 15px var(--head);
-}
-
-.search-result-info span{
-
-  display:block;
-
-  color:var(--muted);
-
-  font-size:11px;
-
-  margin-top:3px;
-}
-
-
-/* =========================================================
-   EMPTY
-========================================================= */
-
-.empty{
-
-  padding:38px 20px;
-
-  text-align:center;
-
-  color:var(--muted);
-}
-
-.empty i{
-
-  font-size:30px;
-
-  color:#b8c2d2;
-
-  margin-bottom:10px;
-}
-
-.empty h3{
-
-  color:var(--text);
-
-  margin:8px 0;
-}
-
-.empty p{
-
-  line-height:1.7;
-}
-
-
-/* =========================================================
-   READER
-========================================================= */
-
-.reader{
-
-  padding:22px;
-
-  min-width:0;
-}
-
-.reader-top{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  gap:15px;
-
-  align-items:flex-start;
-}
-
-.crumb{
-
-  font-size:12px;
-
-  color:var(--muted);
-
-  margin-bottom:8px;
-
-  line-height:1.6;
-}
-
-.reader h2{
-
-  font:
-    800 28px/1.15 var(--head);
-
-  margin:0 0 8px;
-
-  overflow-wrap:anywhere;
-}
-
-.reader-sub{
-
-  color:var(--muted);
-
-  line-height:1.7;
-
-  overflow-wrap:anywhere;
-}
-
-.actions{
-
-  display:flex;
-
-  gap:8px;
-
-  flex-wrap:wrap;
-}
+   BUTTONS
+   ========================================================= */
 
 .btn{
+
+  min-height:40px;
 
   border:
     1px solid var(--line);
@@ -1178,29 +701,38 @@ code{
   border-radius:12px;
 
   padding:
-    10px 13px;
-
-  font-weight:800;
+    9px 13px;
 
   font-size:12px;
 
-  min-height:40px;
+  font-weight:800;
+
+  display:inline-flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:7px;
 
   transition:
     transform .15s ease,
-    box-shadow .15s ease,
-    background .15s ease;
+    border-color .15s ease,
+    background .15s ease,
+    box-shadow .15s ease;
 }
 
 .btn:hover{
 
+  border-color:#d2d9e4;
+
   box-shadow:
-    0 5px 15px rgba(15,31,61,.07);
+    0 5px 15px rgba(15,31,61,.06);
 }
 
 .btn:active{
 
-  transform:scale(.98);
+  transform:scale(.97);
 }
 
 .btn.primary{
@@ -1210,6 +742,9 @@ code{
   border-color:var(--blue);
 
   color:#fff;
+
+  box-shadow:
+    0 7px 18px rgba(37,99,235,.18);
 }
 
 .btn.success{
@@ -1223,71 +758,406 @@ code{
 
 .btn.bookmarked{
 
-  background:#fff4d8;
+  background:#fff5da;
 
-  border-color:#f0c56a;
+  border-color:#f2c86d;
 
-  color:#9a6500;
+  color:#976000;
+}
+
+
+/* =========================================================
+   SYLLABUS
+   IMPORTANT:
+   NO OVERFLOW SCROLL HERE
+   ========================================================= */
+
+.syllabus{
+
+  padding:10px;
+
+  /*
+    DO NOT add:
+    max-height
+    overflow-y:auto
+    overscroll-behavior
+    -webkit-overflow-scrolling
+  */
+
+  overflow:visible;
+}
+
+.section-row{
+
+  margin-bottom:9px;
+
+  border:
+    1px solid var(--line);
+
+  border-radius:15px;
+
+  background:#fff;
+
+  overflow:hidden;
+}
+
+.section-row:last-child{
+
+  margin-bottom:0;
+}
+
+.section-btn{
+
+  width:100%;
+
+  border:0;
+
+  background:#fff;
+
+  color:var(--text);
+
+  text-align:left;
+
+  padding:13px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  font-weight:800;
+
+  transition:
+    background .2s ease;
+}
+
+.section-btn:hover{
+
+  background:#f8faff;
+}
+
+.section-btn .folder{
+
+  width:31px;
+  height:31px;
+
+  border-radius:9px;
+
+  display:grid;
+  place-items:center;
+
+  background:#eef4ff;
+
+  color:var(--blue);
+
+  flex:none;
+
+  font-size:12px;
+}
+
+.section-btn .section-name{
+
+  min-width:0;
+
+  flex:1;
+
+  line-height:1.45;
+
+  overflow-wrap:anywhere;
+}
+
+.section-btn .chevron{
+
+  color:#a0aabe;
+
+  font-size:10px;
+
+  transition:
+    transform .2s ease;
+}
+
+.section-btn.collapsed .chevron{
+
+  transform:rotate(-90deg);
+}
+
+.topic-list{
+
+  padding:
+    0 8px 8px;
+}
+
+.topic-btn{
+
+  width:100%;
+
+  border:0;
+
+  background:transparent;
+
+  color:#59677e;
+
+  text-align:left;
+
+  padding:11px;
+
+  border-radius:11px;
+
+  display:flex;
+
+  align-items:flex-start;
+
+  gap:9px;
+
+  font-size:13px;
+
+  line-height:1.45;
+
+  transition:
+    background .15s ease,
+    color .15s ease,
+    transform .15s ease;
+}
+
+.topic-btn:hover{
+
+  background:#f3f6fc;
+
+  color:var(--blue);
+}
+
+.topic-btn.active{
+
+  background:
+    linear-gradient(
+      90deg,
+      #eef4ff,
+      #f5f8ff
+    );
+
+  color:var(--blue);
+
+  font-weight:800;
+}
+
+.topic-btn .dot{
+
+  width:8px;
+  height:8px;
+
+  border-radius:50%;
+
+  border:
+    2px solid #bdc6d4;
+
+  flex:none;
+
+  margin-top:5px;
+}
+
+.topic-btn.done .dot{
+
+  border-color:var(--green);
+
+  background:var(--green);
+
+  box-shadow:
+    0 0 0 3px rgba(5,150,105,.08);
+}
+
+.topic-btn.done{
+
+  color:#168464;
+}
+
+
+/* =========================================================
+   EMPTY
+   ========================================================= */
+
+.empty{
+
+  padding:45px 20px;
+
+  text-align:center;
+
+  color:var(--muted);
+}
+
+.empty i{
+
+  display:block;
+
+  font-size:30px;
+
+  color:#b9c3d1;
+
+  margin-bottom:12px;
+}
+
+.empty h3{
+
+  margin:8px 0 7px;
+
+  color:var(--text);
+
+  font:
+    800 18px
+    var(--head);
+}
+
+.empty p{
+
+  max-width:430px;
+
+  margin:0 auto;
+
+  line-height:1.7;
+
+  font-size:13px;
+}
+
+
+/* =========================================================
+   READER
+   ========================================================= */
+
+.reader{
+
+  padding:24px;
+}
+
+.reader-top{
+
+  display:flex;
+
+  align-items:flex-start;
+
+  justify-content:space-between;
+
+  gap:20px;
+}
+
+.reader-title-area{
+
+  min-width:0;
+
+  flex:1;
+}
+
+.crumb{
+
+  margin-bottom:9px;
+
+  color:#8290a5;
+
+  font-size:11px;
+
+  font-weight:700;
+}
+
+.reader h2{
+
+  margin:0 0 8px;
+
+  color:var(--text);
+
+  font:
+    800 29px/1.16
+    var(--head);
+
+  letter-spacing:-.4px;
+
+  overflow-wrap:anywhere;
+}
+
+.reader-sub{
+
+  color:var(--muted);
+
+  font-size:14px;
+
+  line-height:1.7;
+
+  overflow-wrap:anywhere;
+}
+
+.actions{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:8px;
+
+  flex:none;
 }
 
 
 /* =========================================================
    META
-========================================================= */
+   ========================================================= */
 
 .reading-meta{
 
   display:flex;
 
-  gap:8px;
-
   flex-wrap:wrap;
 
-  margin:15px 0;
+  gap:7px;
+
+  margin:
+    16px 0 20px;
 }
 
 .pill{
 
-  background:#f4f6fa;
+  display:inline-flex;
 
-  border:
-    1px solid var(--line);
+  align-items:center;
+
+  gap:6px;
 
   padding:
     7px 10px;
 
+  border:
+    1px solid var(--line);
+
   border-radius:999px;
 
-  font-size:11px;
+  background:#f7f9fc;
+
+  color:#68768b;
+
+  font-size:10px;
 
   font-weight:800;
-
-  color:#66748b;
 }
 
 
 /* =========================================================
-   NOTES
-========================================================= */
+   READING AREA
+   ========================================================= */
 
 .notes{
+
+  color:var(--text2);
 
   font-size:16px;
 
   line-height:1.9;
 
-  color:#293752;
-
   overflow-wrap:anywhere;
 
   word-break:normal;
-
-  white-space:normal;
 }
 
 .notes p{
 
-  margin:0 0 16px;
+  margin:
+    0 0 17px;
 }
 
 .notes h1,
@@ -1295,42 +1165,45 @@ code{
 .notes h3,
 .notes h4{
 
+  color:var(--text);
+
   font-family:var(--head);
 
   line-height:1.3;
 
-  color:var(--text);
-
-  margin:24px 0 10px;
+  margin:
+    25px 0 11px;
 }
 
 .notes h1{
-
-  font-size:25px;
+  font-size:26px;
 }
 
 .notes h2{
-
-  font-size:22px;
+  font-size:23px;
 }
 
 .notes h3{
-
   font-size:19px;
+}
+
+.notes h4{
+  font-size:17px;
 }
 
 .notes ul,
 .notes ol{
 
   margin:
-    10px 0 18px;
+    10px 0 19px;
 
   padding-left:24px;
 }
 
 .notes li{
 
-  margin:7px 0;
+  margin:
+    7px 0;
 
   padding-left:3px;
 }
@@ -1338,40 +1211,62 @@ code{
 .notes strong{
 
   font-weight:800;
+
+  color:#17243d;
 }
 
-.notes br{
+.notes blockquote{
 
-  line-height:1.9;
+  margin:
+    18px 0;
+
+  padding:
+    14px 16px;
+
+  border-left:
+    4px solid var(--blue);
+
+  border-radius:0 12px 12px 0;
+
+  background:#f5f8ff;
+
+  color:#44536b;
 }
 
 
 /* =========================================================
-   IMPORTANT
-========================================================= */
+   IMPORTANT BOX
+   ========================================================= */
 
 .important{
 
-  margin-top:20px;
+  margin-top:22px;
 
-  background:var(--greenSoft);
+  padding:17px;
 
   border:
     1px solid #cdeee0;
 
-  border-radius:16px;
+  border-radius:17px;
 
-  padding:16px;
+  background:
+    linear-gradient(
+      135deg,
+      #f0fcf7,
+      #eafaf4
+    );
 }
 
 .important h3{
 
-  margin:0 0 8px;
-
-  font:
-    800 15px var(--head);
+  margin:
+    0 0 9px;
 
   color:#087b59;
+
+  font:
+    800 15px
+    var(--head);
 }
 
 .important ul{
@@ -1379,6 +1274,8 @@ code{
   margin:0;
 
   padding-left:20px;
+
+  color:#315b4d;
 
   line-height:1.75;
 }
@@ -1390,20 +1287,31 @@ code{
 
 
 /* =========================================================
-   QUESTIONS
-========================================================= */
+   QUESTIONS HEADER
+   ========================================================= */
 
 .qa-head{
 
   display:flex;
 
-  justify-content:space-between;
-
   align-items:center;
 
-  gap:10px;
+  justify-content:space-between;
 
-  margin:28px 0 10px;
+  gap:12px;
+
+  margin:
+    30px 0 12px;
+
+  padding-top:22px;
+
+  border-top:
+    1px solid var(--line2);
+}
+
+.qa-title{
+
+  min-width:0;
 }
 
 .qa-head h3{
@@ -1411,16 +1319,26 @@ code{
   margin:0;
 
   font:
-    800 19px var(--head);
+    800 20px
+    var(--head);
+}
+
+.qa-head p{
+
+  margin:4px 0 0;
+
+  color:var(--muted);
+
+  font-size:11px;
 }
 
 .filters{
 
   display:flex;
 
-  gap:7px;
-
   flex-wrap:wrap;
+
+  gap:6px;
 }
 
 .filter{
@@ -1430,89 +1348,125 @@ code{
 
   background:#fff;
 
+  color:#66748a;
+
   padding:
     8px 10px;
 
   border-radius:10px;
 
-  font-size:11px;
+  font-size:10px;
 
   font-weight:800;
 
-  color:var(--text);
+  transition:
+    background .15s ease,
+    color .15s ease,
+    border-color .15s ease;
 }
 
-.filter.active{
+.filter.active,
+.filter:hover{
 
   background:var(--soft);
 
-  color:var(--blue);
+  border-color:#d7e3ff;
 
-  border-color:#cddcff;
+  color:var(--blue);
 }
 
 
 /* =========================================================
-   QUESTION
-========================================================= */
+   QUESTION CARDS
+   ========================================================= */
 
 .question{
+
+  margin:
+    10px 0;
+
+  padding:17px;
 
   border:
     1px solid var(--line);
 
-  border-radius:16px;
-
-  padding:16px;
-
-  margin:10px 0;
+  border-radius:17px;
 
   background:#fff;
 
   overflow:hidden;
+
+  /*
+    Helps browser render long question lists smoothly.
+  */
+
+  content-visibility:auto;
+
+  contain-intrinsic-size:180px;
+
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.question:hover{
+
+  border-color:#dbe2ec;
+
+  box-shadow:
+    0 8px 24px rgba(15,31,61,.045);
 }
 
 .qtop{
 
   display:flex;
 
-  gap:7px;
-
   align-items:center;
 
   flex-wrap:wrap;
+
+  gap:6px;
 }
 
 .badge{
 
-  font-size:10px;
+  display:inline-flex;
 
-  font-weight:800;
-
-  border-radius:999px;
+  align-items:center;
 
   padding:
     5px 8px;
 
+  border-radius:999px;
+
   background:#eef4ff;
 
   color:#315db9;
+
+  font-size:9px;
+
+  font-weight:800;
+
+  text-transform:uppercase;
 }
 
 .badge.imp{
 
-  background:#fff3dc;
+  background:var(--amber-bg);
 
   color:#a36600;
 }
 
 .question h4{
 
-  margin:10px 0;
+  margin:
+    11px 0;
+
+  color:#1b2942;
 
   font-size:15px;
 
-  line-height:1.7;
+  line-height:1.75;
 
   overflow-wrap:anywhere;
 }
@@ -1523,35 +1477,50 @@ code{
 
   gap:7px;
 
-  margin:10px 0;
+  margin:
+    11px 0;
 }
 
 .option{
 
   padding:
-    10px 12px;
+    11px 12px;
 
   border:
     1px solid var(--line);
 
-  border-radius:10px;
+  border-radius:11px;
 
   background:#fafbfc;
+
+  color:#425169;
 
   line-height:1.6;
 
   overflow-wrap:anywhere;
 }
 
+.option b{
+
+  color:var(--blue);
+
+  margin-right:3px;
+}
+
 .answer{
 
   margin-top:12px;
 
-  padding:13px;
+  padding:14px;
 
-  background:#f6f8fb;
+  border:
+    1px solid #e6eaf0;
 
-  border-radius:12px;
+  border-radius:13px;
+
+  background:#f7f9fc;
+
+  color:#3e4c63;
 
   line-height:1.8;
 
@@ -1562,18 +1531,20 @@ code{
 
   display:block;
 
-  margin-bottom:4px;
+  margin-bottom:5px;
+
+  color:#1a2942;
 }
 
 .question-actions{
 
   display:flex;
 
+  align-items:center;
+
   justify-content:space-between;
 
-  gap:8px;
-
-  align-items:center;
+  gap:10px;
 
   margin-top:12px;
 }
@@ -1586,46 +1557,78 @@ code{
 
   color:var(--blue);
 
+  font-size:11px;
+
   font-weight:800;
 
-  font-size:12px;
+  padding:7px 3px;
+}
 
-  padding:7px 4px;
+.text-btn:hover{
+
+  color:#174dc2;
 }
 
 
 /* =========================================================
    BOTTOM TOPICS
-========================================================= */
+   ========================================================= */
 
 .bottom-topics{
 
-  display:flex;
+  display:grid;
 
-  justify-content:space-between;
+  grid-template-columns:1fr 1fr;
 
   gap:10px;
 
-  margin-top:20px;
+  margin-top:24px;
 
-  padding-top:18px;
+  padding-top:20px;
 
   border-top:
     1px solid var(--line);
 }
 
+.bottom-topics .btn{
+
+  width:100%;
+}
+
 
 /* =========================================================
-   SKELETON
-========================================================= */
+   LOADING
+   ========================================================= */
 
 .skeleton{
 
   height:13px;
 
-  border-radius:7px;
+  border-radius:8px;
 
-  background:#eef1f5;
+  background:
+    linear-gradient(
+      90deg,
+      #edf1f6 25%,
+      #f7f9fb 50%,
+      #edf1f6 75%
+    );
+
+  background-size:200% 100%;
+
+  animation:
+    skeletonMove 1.4s infinite;
+}
+
+@keyframes skeletonMove{
+
+  0%{
+    background-position:200% 0;
+  }
+
+  100%{
+    background-position:-200% 0;
+  }
 }
 
 .skelbox{
@@ -1635,61 +1638,8 @@ code{
 
 
 /* =========================================================
-   TOAST
-========================================================= */
-
-.toast{
-
-  position:fixed;
-
-  left:50%;
-
-  bottom:
-    calc(20px + env(safe-area-inset-bottom));
-
-  transform:
-    translate(-50%,20px);
-
-  background:#17233d;
-
-  color:#fff;
-
-  padding:
-    11px 15px;
-
-  border-radius:12px;
-
-  font-size:12px;
-
-  font-weight:700;
-
-  opacity:0;
-
-  pointer-events:none;
-
-  transition:
-    opacity .2s ease,
-    transform .2s ease;
-
-  z-index:9999;
-
-  max-width:90vw;
-
-  text-align:center;
-}
-
-.toast.show{
-
-  opacity:1;
-
-  transform:
-    translate(-50%,0);
-}
-
-
-/* =========================================================
-   MODAL
-========================================================= */
+   PRACTICE MODAL
+   ========================================================= */
 
 .modal{
 
@@ -1697,18 +1647,22 @@ code{
 
   inset:0;
 
-  background:
-    rgba(7,16,33,.58);
-
   display:none;
 
   align-items:flex-end;
 
   justify-content:center;
 
-  z-index:10000;
+  background:
+    rgba(5,13,29,.60);
 
-  padding:0;
+  backdrop-filter:
+    blur(5px);
+
+  -webkit-backdrop-filter:
+    blur(5px);
+
+  z-index:5000;
 }
 
 .modal.open{
@@ -1718,36 +1672,66 @@ code{
 
 .modal-card{
 
-  background:#fff;
-
   width:
-    min(640px,100%);
+    min(680px,100%);
 
-  max-height:90vh;
+  max-height:
+    min(88vh,760px);
 
   overflow-y:auto;
 
   overflow-x:hidden;
 
+  background:#fff;
+
   border-radius:
-    22px 22px 0 0;
+    25px 25px 0 0;
 
-  padding:20px;
+  padding:21px;
 
-  -webkit-overflow-scrolling:touch;
+  box-shadow:
+    0 -15px 60px rgba(0,0,0,.16);
+
+  /*
+    Modal itself can scroll,
+    main page does not get nested scrolling.
+  */
 
   overscroll-behavior:contain;
+
+  -webkit-overflow-scrolling:touch;
 }
 
 .modal-head{
 
   display:flex;
 
-  justify-content:space-between;
-
   align-items:center;
 
+  justify-content:space-between;
+
   gap:10px;
+
+  position:sticky;
+
+  top:-21px;
+
+  z-index:3;
+
+  margin:
+    -21px -21px 0;
+
+  padding:
+    16px 21px;
+
+  background:
+    rgba(255,255,255,.95);
+
+  backdrop-filter:
+    blur(10px);
+
+  border-bottom:
+    1px solid var(--line2);
 }
 
 .modal-head h3{
@@ -1755,36 +1739,39 @@ code{
   margin:0;
 
   font:
-    800 18px var(--head);
+    800 18px
+    var(--head);
 }
 
 .close{
+
+  width:38px;
+  height:38px;
 
   border:0;
 
   background:#f1f3f7;
 
-  width:38px;
-
-  height:38px;
-
   border-radius:11px;
+
+  color:#526076;
 }
 
 
 /* =========================================================
    PRACTICE
-========================================================= */
+   ========================================================= */
 
 .practice-q{
 
-  font-size:18px;
+  margin:
+    18px 0;
 
-  font-weight:800;
+  color:var(--text);
 
-  line-height:1.6;
-
-  margin:18px 0;
+  font:
+    800 19px/1.65
+    var(--head);
 
   overflow-wrap:anywhere;
 }
@@ -1798,6 +1785,8 @@ code{
 
 .practice-options button{
 
+  width:100%;
+
   text-align:left;
 
   padding:13px;
@@ -1805,11 +1794,23 @@ code{
   border:
     1px solid var(--line);
 
+  border-radius:13px;
+
   background:#fff;
 
-  border-radius:12px;
+  color:#34445d;
 
-  line-height:1.5;
+  line-height:1.55;
+
+  transition:
+    transform .15s ease,
+    background .15s ease,
+    border-color .15s ease;
+}
+
+.practice-options button:active{
+
+  transform:scale(.985);
 }
 
 .practice-options button.correct{
@@ -1817,6 +1818,8 @@ code{
   border-color:#53b88d;
 
   background:#eafaf4;
+
+  color:#087b59;
 }
 
 .practice-options button.wrong{
@@ -1824,11 +1827,13 @@ code{
   border-color:#e47783;
 
   background:#fff0f2;
+
+  color:#a32b39;
 }
 
 .notice{
 
-  padding:14px;
+  padding:13px;
 
   border-radius:13px;
 
@@ -1838,30 +1843,84 @@ code{
 
   font-size:12px;
 
-  margin-bottom:14px;
+  line-height:1.6;
 }
 
-.error{
 
-  background:#fff0f2;
+/* =========================================================
+   TOAST
+   ========================================================= */
 
-  color:#a32b39;
+.toast{
+
+  position:fixed;
+
+  left:50%;
+
+  bottom:
+    calc(20px + env(safe-area-inset-bottom));
+
+  transform:
+    translate(-50%,20px);
+
+  max-width:
+    min(92vw,450px);
+
+  padding:
+    11px 15px;
+
+  border-radius:13px;
+
+  background:#17233d;
+
+  color:#fff;
+
+  text-align:center;
+
+  font-size:12px;
+
+  font-weight:700;
+
+  opacity:0;
+
+  pointer-events:none;
+
+  z-index:9000;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.16);
+
+  transition:
+    opacity .2s ease,
+    transform .2s ease;
+}
+
+.toast.show{
+
+  opacity:1;
+
+  transform:
+    translate(-50%,0);
 }
 
 
 /* =========================================================
    OFFLINE
-========================================================= */
+   ========================================================= */
 
 .offline{
 
   position:fixed;
 
   top:0;
-
   left:0;
-
   right:0;
+
+  z-index:10000;
+
+  display:none;
+
+  padding:8px 12px;
 
   background:#a32b39;
 
@@ -1869,69 +1928,45 @@ code{
 
   text-align:center;
 
-  padding:8px;
+  font-size:11px;
 
-  z-index:20000;
-
-  font-size:12px;
-
-  font-weight:700;
-
-  display:none;
+  font-weight:800;
 }
 
 
 /* =========================================================
    TABLET
-========================================================= */
+   ========================================================= */
 
-@media(max-width:900px){
+@media(max-width:950px){
 
   .hero-tools{
 
     grid-template-columns:
-      1fr
-      1fr;
+      1fr 1fr;
   }
 
   .hero-tools .search{
 
     grid-column:
-      1 / -1;
+      1/-1;
   }
 
   .stats{
 
     grid-template-columns:
-      repeat(2,1fr);
+      repeat(2,minmax(0,1fr));
   }
 
   .layout{
 
     grid-template-columns:
-      1fr;
-  }
-
-  /*
-    IMPORTANT:
-    Syllabus does NOT get its own scroll.
-    Browser/page scroll remains responsible.
-  */
-
-  .syllabus{
-
-    max-height:none;
-
-    overflow:visible;
-
-    -webkit-overflow-scrolling:auto;
-
-    overscroll-behavior:auto;
+      280px minmax(0,1fr);
   }
 
   .reader{
 
-    padding:18px;
+    padding:20px;
   }
 
   .reader-top{
@@ -1939,28 +1974,40 @@ code{
     display:block;
   }
 
-  .actions{
+  .reader .actions{
 
     margin-top:14px;
-  }
-
-  .reader h2{
-
-    font-size:25px;
   }
 }
 
 
 /* =========================================================
    MOBILE
-========================================================= */
+   ========================================================= */
 
-@media(max-width:600px){
+@media(max-width:700px){
 
-  body{
+  /*
+    CRITICAL:
+    Remove sticky sidebar on mobile.
+    Everything becomes one continuous page.
+  */
 
-    padding-bottom:
-      calc(35px + env(safe-area-inset-bottom));
+  .layout > aside{
+
+    position:static;
+  }
+
+  .layout{
+
+    display:block;
+
+    margin-top:13px;
+  }
+
+  .layout > section{
+
+    margin-top:13px;
   }
 
   .hero{
@@ -1975,29 +2022,19 @@ code{
 
   .hero h1{
 
-    font-size:25px;
-  }
-
-  .hero p{
-
-    font-size:13px;
+    font-size:26px;
   }
 
   .hero-tools{
 
     grid-template-columns:1fr;
+
+    gap:8px;
   }
 
   .hero-tools .search{
 
     grid-column:auto;
-  }
-
-  .app{
-
-    padding-left:10px;
-
-    padding-right:10px;
   }
 
   .stats{
@@ -2010,124 +2047,121 @@ code{
     padding:13px;
   }
 
-  .stat small{
-
-    font-size:11px;
-  }
-
   .stat strong{
 
     font-size:21px;
   }
 
-  .layout{
+  .stat-icon{
 
-    gap:12px;
+    width:29px;
+    height:29px;
+  }
+
+  .app{
+
+    padding-left:10px;
+
+    padding-right:10px;
+  }
+
+  .content{
+
+    padding-top:13px;
   }
 
   .panel{
 
-    border-radius:17px;
+    border-radius:18px;
   }
 
   .panel-head{
 
     padding:
-      14px;
-  }
-
-  .syllabus{
-
-    padding:7px;
-  }
-
-  .section-row{
-
-    border-radius:14px;
-  }
-
-  .section-btn{
-
-    padding:
-      12px 10px;
-  }
-
-  .section-btn .section-count{
-
-    display:none;
-  }
-
-  .children{
-
-    margin-left:14px;
-
-    padding-left:6px;
-  }
-
-  .topic-btn{
-
-    font-size:13px;
-
-    padding:
-      9px 6px;
+      15px;
   }
 
   .reader{
 
-    padding:14px;
+    padding:16px;
   }
 
   .reader h2{
 
-    font-size:23px;
+    font-size:24px;
+  }
+
+  .reader-sub{
+
+    font-size:13px;
   }
 
   .notes{
 
     font-size:16px;
 
-    line-height:1.85;
+    line-height:1.86;
   }
 
   .qa-head{
 
     display:block;
+
+    margin-top:26px;
   }
 
   .filters{
 
-    margin-top:10px;
+    margin-top:11px;
   }
 
   .question{
 
-    padding:13px;
+    padding:14px;
+
+    border-radius:15px;
   }
 
-  .bottom-topics .btn{
+  .question h4{
 
-    flex:1;
+    font-size:14px;
+
+    line-height:1.72;
   }
 
-  .modal-card{
+  .bottom-topics{
 
-    max-height:
-      calc(92vh - env(safe-area-inset-top));
-
-    padding:16px;
+    grid-template-columns:
+      1fr 1fr;
   }
 }
 
 
 /* =========================================================
    SMALL MOBILE
-========================================================= */
+   ========================================================= */
 
-@media(max-width:380px){
+@media(max-width:420px){
 
   .hero h1{
 
-    font-size:23px;
+    font-size:24px;
+  }
+
+  .hero p{
+
+    font-size:12px;
+  }
+
+  .stats{
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+  }
+
+  .stat small{
+
+    font-size:10px;
   }
 
   .stat strong{
@@ -2137,7 +2171,63 @@ code{
 
   .reader{
 
-    padding:12px;
+    padding:14px;
+  }
+
+  .reader h2{
+
+    font-size:22px;
+  }
+
+  .notes{
+
+    font-size:15.5px;
+  }
+
+  .actions .btn{
+
+    flex:1;
+  }
+
+  .question-actions{
+
+    align-items:flex-start;
+  }
+
+  .modal-card{
+
+    max-height:92vh;
+
+    padding:16px;
+  }
+
+  .modal-head{
+
+    top:-16px;
+
+    margin:
+      -16px -16px 0;
+
+    padding:
+      14px 16px;
+  }
+}
+
+
+/* =========================================================
+   EXTRA SMALL
+   ========================================================= */
+
+@media(max-width:350px){
+
+  .hero h1{
+
+    font-size:22px;
+  }
+
+  .reader h2{
+
+    font-size:20px;
   }
 
   .notes{
@@ -2145,18 +2235,21 @@ code{
     font-size:15px;
   }
 
-  .section-btn .section-icon{
+  .stat{
 
-    width:27px;
-    height:27px;
+    padding:11px;
   }
 
+  .stat strong{
+
+    font-size:18px;
+  }
 }
 
 
 /* =========================================================
-   REDUCED MOTION
-========================================================= */
+   REDUCE MOTION
+   ========================================================= */
 
 @media(prefers-reduced-motion:reduce){
 
@@ -2164,13 +2257,11 @@ code{
   *::before,
   *::after{
 
-    animation-duration:.01ms!important;
-
-    animation-iteration-count:1!important;
-
-    transition-duration:.01ms!important;
-
     scroll-behavior:auto!important;
+
+    animation-duration:.001ms!important;
+
+    transition-duration:.001ms!important;
   }
 }
 
@@ -2179,6 +2270,7 @@ code{
 
 
 <body>
+
 
 <!-- =======================================================
      OFFLINE
@@ -2205,7 +2297,7 @@ code{
       <a
         class="back"
         href="dashboard.html"
-        aria-label="Back"
+        aria-label="Back to dashboard"
       >
         <i class="fa-solid fa-arrow-left"></i>
       </a>
@@ -2213,7 +2305,7 @@ code{
       <div>
 
         <div class="eyebrow">
-          LoksewaQuest
+          LOKSEWAQUEST
         </div>
 
         <h1>
@@ -2221,7 +2313,7 @@ code{
         </h1>
 
         <p>
-          Master your Loksewa syllabus topic by topic.
+          Learn smarter. Prepare better. One topic at a time.
         </p>
 
       </div>
@@ -2286,11 +2378,20 @@ code{
 
   <section class="stats">
 
+
     <div class="stat">
 
-      <small>
-        Overall Progress
-      </small>
+      <div class="stat-label">
+
+        <small>
+          Overall Progress
+        </small>
+
+        <span class="stat-icon">
+          <i class="fa-solid fa-chart-line"></i>
+        </span>
+
+      </div>
 
       <strong id="progressText">
         0%
@@ -2305,9 +2406,17 @@ code{
 
     <div class="stat">
 
-      <small>
-        Topics Completed
-      </small>
+      <div class="stat-label">
+
+        <small>
+          Topics Completed
+        </small>
+
+        <span class="stat-icon">
+          <i class="fa-solid fa-list-check"></i>
+        </span>
+
+      </div>
 
       <strong id="topicCount">
         0 / 0
@@ -2318,9 +2427,17 @@ code{
 
     <div class="stat">
 
-      <small>
-        Questions Practiced
-      </small>
+      <div class="stat-label">
+
+        <small>
+          Questions Practiced
+        </small>
+
+        <span class="stat-icon">
+          <i class="fa-solid fa-bolt"></i>
+        </span>
+
+      </div>
 
       <strong id="questionCount">
         0
@@ -2331,9 +2448,17 @@ code{
 
     <div class="stat">
 
-      <small>
-        Bookmarked
-      </small>
+      <div class="stat-label">
+
+        <small>
+          Bookmarked
+        </small>
+
+        <span class="stat-icon">
+          <i class="fa-solid fa-bookmark"></i>
+        </span>
+
+      </div>
 
       <strong id="bookmarkCount">
         0
@@ -2375,9 +2500,9 @@ code{
           class="btn"
           id="filterBtn"
           type="button"
-          title="Syllabus"
+          aria-label="Syllabus options"
         >
-          <i class="fa-solid fa-layer-group"></i>
+          <i class="fa-solid fa-sliders"></i>
         </button>
 
       </div>
@@ -2427,15 +2552,14 @@ code{
 
       <div class="empty">
 
-        <i class="fa-solid fa-book-open"></i>
+        <i class="fa-solid fa-book-open-reader"></i>
 
         <h3>
           Choose a topic to start
         </h3>
 
         <p>
-          Your notes, important points and questions
-          will appear here.
+          Your notes, important points and questions will appear here.
         </p>
 
       </div>
@@ -2454,6 +2578,8 @@ code{
 <div
   id="toast"
   class="toast"
+  role="status"
+  aria-live="polite"
 ></div>
 
 
@@ -2478,6 +2604,7 @@ code{
         class="close"
         id="closePractice"
         type="button"
+        aria-label="Close"
       >
         <i class="fa-solid fa-xmark"></i>
       </button>
@@ -2500,17 +2627,18 @@ code{
 <script src="components.js"></script>
 
 
-<script type="module">
+<!-- =======================================================
+     FIREBASE + APP
+======================================================= -->
 
-/* =========================================================
-   FIREBASE AUTH
-========================================================= */
+<script type="module">
 
 import {
   initializeApp
 }
 from
 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+
 
 import {
   getAuth,
@@ -2519,6 +2647,11 @@ import {
 from
 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
+
+
+/* =========================================================
+   FIREBASE
+========================================================= */
 
 const firebaseConfig = {
 
@@ -2539,15 +2672,16 @@ const firebaseConfig = {
 
   appId:
     '1:779234903809:web:dd0dd0ffb742e1c218bd00'
-
 };
 
 
 const firebaseApp =
   initializeApp(firebaseConfig);
 
+
 const auth =
   getAuth(firebaseApp);
+
 
 
 /* =========================================================
@@ -2556,6 +2690,7 @@ const auth =
 
 const SUPABASE_URL =
   'https://edyirdedkiarguvurpxq.supabase.co';
+
 
 const SUPABASE_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY';
@@ -2568,6 +2703,7 @@ const sb =
   );
 
 
+
 /* =========================================================
    HELPERS
 ========================================================= */
@@ -2577,79 +2713,41 @@ const $ =
 
 
 const esc =
-  value => {
-
-    return String(value ?? '')
-      .replace(/[&<>"']/g, char => ({
-
-        '&':'&amp;',
-        '<':'&lt;',
-        '>':'&gt;',
-        '"':'&quot;',
-        "'":'&#039;'
-
-      }[char]));
-
-  };
+  value =>
+    String(value ?? '')
+      .replace(
+        /[&<>"']/g,
+        char => ({
+          '&':'&amp;',
+          '<':'&lt;',
+          '>':'&gt;',
+          '"':'&quot;',
+          "'":'&#039;'
+        }[char])
+      );
 
 
-/*
-  Safe HTML for answers/explanations that may contain
-  basic formatting from admin panel.
-*/
+function safeHtml(value){
 
-function safeHTML(value){
-
-  if(
-    value === null ||
-    value === undefined ||
-    value === ''
-  ){
-
+  if(value === null || value === undefined){
     return '';
-
   }
 
-  const html =
-    String(value);
-
-  /*
-    Remove dangerous elements.
-  */
-
-  return html
-
+  return String(value)
     .replace(
       /<script[\s\S]*?<\/script>/gi,
       ''
     )
-
-    .replace(
-      /<iframe[\s\S]*?<\/iframe>/gi,
-      ''
-    )
-
-    .replace(
-      /<object[\s\S]*?<\/object>/gi,
-      ''
-    )
-
-    .replace(
-      /<embed[\s\S]*?>/gi,
-      ''
-    )
-
-    .replace(
-      /on\w+\s*=\s*(['"]).*?\1/gi,
-      ''
-    )
-
     .replace(
       /javascript:/gi,
       ''
+    )
+    .replace(
+      /\son[a-z]+\s*=\s*(['"]).*?\1/gi,
+      ''
     );
-
 }
+
 
 
 /* =========================================================
@@ -2676,6 +2774,14 @@ let progress = new Map();
 
 let searchTimer = null;
 
+let currentFilter = 'all';
+
+let openSections =
+  new Set();
+
+let searchRequestId = 0;
+
+
 
 /* =========================================================
    TOAST
@@ -2683,27 +2789,27 @@ let searchTimer = null;
 
 function toast(message){
 
-  $('toast').textContent =
+  const element =
+    $('toast');
+
+  element.textContent =
     message;
 
-  $('toast')
-    .classList
-    .add('show');
+  element.classList.add('show');
 
   clearTimeout(
     window.__toastTimer
   );
 
   window.__toastTimer =
-    setTimeout(() => {
-
-      $('toast')
-        .classList
-        .remove('show');
-
-    },2400);
-
+    setTimeout(
+      () => {
+        element.classList.remove('show');
+      },
+      2400
+    );
 }
+
 
 
 /* =========================================================
@@ -2713,14 +2819,13 @@ function toast(message){
 function err(message,error){
 
   console.error(
-    '[Study Hub]',
-    message,
+    '[LoksewaQuest Study Hub]',
     error
   );
 
   toast(message);
-
 }
+
 
 
 /* =========================================================
@@ -2732,96 +2837,75 @@ function formatNotes(raw){
   if(
     raw === null ||
     raw === undefined ||
-    raw === ''
+    String(raw).trim() === ''
   ){
 
     return `
       <div class="empty">
-        <i class="fa-regular fa-file-lines"></i>
+        <i class="fa-solid fa-file-circle-question"></i>
 
         <h3>
           Study material coming soon
         </h3>
 
         <p>
-          Notes have not been added to this topic yet.
+          Notes for this topic have not been added yet.
         </p>
       </div>
     `;
-
   }
 
 
   let text =
-    String(raw);
+    String(raw)
+      .replace(/\r\n/g,'\n')
+      .replace(/\r/g,'\n');
 
 
   /*
-    Existing HTML:
-    preserve basic admin formatting.
+    Existing HTML.
+    Keep basic content but remove obvious dangerous scripts.
   */
 
   if(
-    /<\s*(p|div|h1|h2|h3|h4|ul|ol|li|br|strong|b|em)\b/i
+    /<\s*(p|div|h1|h2|h3|h4|ul|ol|li|br|blockquote)\b/i
       .test(text)
   ){
 
-    return safeHTML(text);
-
+    return safeHtml(text);
   }
-
-
-  /*
-    Plain text.
-  */
-
-  text =
-    text
-      .replace(/\r\n/g,'\n')
-      .replace(/\r/g,'\n');
 
 
   const lines =
     text
       .split(/\n+/)
-      .map(x => x.trim())
+      .map(line => line.trim())
       .filter(Boolean);
 
 
   let html = '';
 
-  let bulletBuffer = [];
+  let bullets = [];
 
 
   function flushBullets(){
 
-    if(
-      !bulletBuffer.length
-    ){
-
+    if(!bullets.length){
       return;
-
     }
-
 
     html += '<ul>';
 
+    bullets.forEach(item => {
 
-    bulletBuffer.forEach(
-      item => {
+      html +=
+        `<li>${esc(item)}</li>`;
 
-        html +=
-          `<li>${esc(item)}</li>`;
-
-      }
-    );
-
+    });
 
     html += '</ul>';
 
-
-    bulletBuffer = [];
-
+    bullets = [];
   }
 
 
@@ -2837,14 +2921,13 @@ function formatNotes(raw){
       /^•\s*/.test(line)
     ){
 
-      bulletBuffer.push(
+      bullets.push(
         line
           .replace(/^•\s*/,'')
           .trim()
       );
 
       continue;
-
     }
 
 
@@ -2856,19 +2939,18 @@ function formatNotes(raw){
       /^[-–—]\s+/.test(line)
     ){
 
-      bulletBuffer.push(
+      bullets.push(
         line
           .replace(/^[-–—]\s+/,'')
           .trim()
       );
 
       continue;
-
     }
 
 
     /*
-      Numbered point
+      Numbered item
     */
 
     if(
@@ -2881,19 +2963,18 @@ function formatNotes(raw){
         `<p><strong>${esc(line)}</strong></p>`;
 
       continue;
-
     }
 
 
     /*
-      Heading-like line
+      Heading
     */
 
     if(
       line.length < 100 &&
       (
         line.endsWith(':') ||
-        /^(परिचय|महत्व|आवश्यकता|कार्य|प्रकार|विशेषता|उद्देश्य|निष्कर्ष)/
+        /^(परिचय|महत्व|आवश्यकता|कार्य|प्रकार|विशेषता|निष्कर्ष|उद्देश्य|फाइदा|लाभ)/i
           .test(line)
       )
     ){
@@ -2906,7 +2987,6 @@ function formatNotes(raw){
         )}</h3>`;
 
       continue;
-
     }
 
 
@@ -2918,7 +2998,6 @@ function formatNotes(raw){
 
     html +=
       `<p>${esc(line)}</p>`;
-
   }
 
 
@@ -2926,169 +3005,50 @@ function formatNotes(raw){
 
 
   return html;
-
 }
+
 
 
 /* =========================================================
-   GET CHILDREN
+   LOADING UI
 ========================================================= */
 
-function getChildren(parentId){
+function syllabusLoading(){
 
-  return topics
-    .filter(
-      topic =>
-        String(topic.parent_id || '') ===
-        String(parentId || '')
-    )
-    .sort(
-      (a,b) =>
-        Number(a.display_order || 0) -
-        Number(b.display_order || 0)
-    );
+  $('syllabus').innerHTML = `
 
+    <div class="skelbox">
+
+      <div
+        class="skeleton"
+        style="width:72%;height:14px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:94%;height:14px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:64%;height:14px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:82%;height:14px"
+      ></div>
+
+    </div>
+  `;
 }
 
-
-/* =========================================================
-   GET ROOT TOPICS
-========================================================= */
-
-function getRootTopics(sectionId){
-
-  return topics
-
-    .filter(topic => {
-
-      return (
-        topic.section_id === sectionId &&
-        (
-          topic.parent_id === null ||
-          topic.parent_id === undefined ||
-          topic.parent_id === ''
-        )
-      );
-
-    })
-
-    .sort(
-      (a,b) =>
-        Number(a.display_order || 0) -
-        Number(b.display_order || 0)
-    );
-
-}
-
-
-/* =========================================================
-   COUNT DESCENDANTS
-========================================================= */
-
-function countDescendants(topicId){
-
-  let count = 0;
-
-  const children =
-    getChildren(topicId);
-
-
-  for(
-    const child of children
-  ){
-
-    count++;
-
-    count +=
-      countDescendants(
-        child.id
-      );
-
-  }
-
-
-  return count;
-
-}
-
-
-/* =========================================================
-   GET ALL TOPICS IN DISPLAY ORDER
-========================================================= */
-
-function getOrderedTopics(){
-
-  const output = [];
-
-
-  function walk(
-    list
-  ){
-
-    for(
-      const topic of list
-    ){
-
-      output.push(topic);
-
-
-      const children =
-        getChildren(topic.id);
-
-
-      if(
-        children.length
-      ){
-
-        walk(children);
-
-      }
-
-    }
-
-  }
-
-
-  for(
-    const section of sections
-  ){
-
-    walk(
-      getRootTopics(section.id)
-    );
-
-  }
-
-
-  /*
-    Safety fallback for orphaned topics.
-  */
-
-  const included =
-    new Set(
-      output.map(x => x.id)
-    );
-
-
-  topics
-    .filter(
-      topic =>
-        !included.has(topic.id)
-    )
-    .sort(
-      (a,b) =>
-        Number(a.display_order || 0) -
-        Number(b.display_order || 0)
-    )
-    .forEach(
-      topic =>
-        output.push(topic)
-    );
-
-
-  return output;
-
-}
 
 
 /* =========================================================
@@ -3102,25 +3062,14 @@ async function loadExams(){
     error
   } =
     await sb
-
       .from('study_exams')
-
       .select('*')
-
-      .eq(
-        'is_active',
-        true
-      )
-
-      .order(
-        'display_order'
-      );
+      .eq('is_active',true)
+      .order('display_order');
 
 
   if(error){
-
     throw error;
-
   }
 
 
@@ -3129,50 +3078,44 @@ async function loadExams(){
 
 
   $('examSelect').innerHTML =
-
     exams.length
 
-      ?
+      ? exams
+          .map(
+            exam => `
+              <option value="${esc(exam.id)}">
+                ${esc(exam.name)}
+              </option>
+            `
+          )
+          .join('')
 
-      exams
-        .map(
-          exam => `
-            <option value="${esc(exam.id)}">
-              ${esc(exam.name)}
-            </option>
-          `
-        )
-        .join('')
-
-      :
-
-      `
-        <option value="">
-          Study material coming soon
-        </option>
-      `;
+      : `
+          <option value="">
+            No exams available
+          </option>
+        `;
 
 
-  if(
-    exams[0]
-  ){
+  if(exams[0]){
 
     await loadPapers(
       exams[0].id
     );
 
-  }
+  }else{
 
+    renderEmptySyllabus();
+  }
 }
+
 
 
 /* =========================================================
    LOAD PAPERS
 ========================================================= */
 
-async function loadPapers(
-  examId
-){
+async function loadPapers(examId){
 
   if(!examId){
 
@@ -3182,7 +3125,6 @@ async function loadPapers(
     renderEmptySyllabus();
 
     return;
-
   }
 
 
@@ -3195,30 +3137,15 @@ async function loadPapers(
     error
   } =
     await sb
-
       .from('study_papers')
-
       .select('*')
-
-      .eq(
-        'exam_id',
-        examId
-      )
-
-      .eq(
-        'is_active',
-        true
-      )
-
-      .order(
-        'display_order'
-      );
+      .eq('exam_id',examId)
+      .eq('is_active',true)
+      .order('display_order');
 
 
   if(error){
-
     throw error;
-
   }
 
 
@@ -3227,33 +3154,26 @@ async function loadPapers(
 
 
   $('paperSelect').innerHTML =
-
     papers.length
 
-      ?
+      ? papers
+          .map(
+            paper => `
+              <option value="${esc(paper.id)}">
+                ${esc(paper.name)}
+              </option>
+            `
+          )
+          .join('')
 
-      papers
-        .map(
-          paper => `
-            <option value="${esc(paper.id)}">
-              ${esc(paper.name)}
-            </option>
-          `
-        )
-        .join('')
-
-      :
-
-      `
-        <option value="">
-          No papers yet
-        </option>
-      `;
+      : `
+          <option value="">
+            No papers available
+          </option>
+        `;
 
 
-  if(
-    papers[0]
-  ){
+  if(papers[0]){
 
     await loadSyllabus(
       papers[0].id
@@ -3262,92 +3182,48 @@ async function loadPapers(
   }else{
 
     renderEmptySyllabus();
-
   }
-
 }
+
 
 
 /* =========================================================
    LOAD SYLLABUS
 ========================================================= */
 
-async function loadSyllabus(
-  paperId
-){
+async function loadSyllabus(paperId){
 
   if(!paperId){
 
     renderEmptySyllabus();
 
     return;
-
   }
 
 
-  $('syllabus').innerHTML = `
-
-    <div class="skelbox">
-
-      <div
-        class="skeleton"
-        style="width:70%"
-      ></div>
-
-      <br>
-
-      <div
-        class="skeleton"
-        style="width:90%"
-      ></div>
-
-      <br>
-
-      <div
-        class="skeleton"
-        style="width:55%"
-      ></div>
-
-    </div>
-
-  `;
+  syllabusLoading();
 
 
-  /*
-    Load sections and topics together.
+  currentTopic = null;
 
-    Topics are loaded globally for the selected paper
-    through section IDs.
-  */
+  currentQuestions = [];
+
+  openSections =
+    new Set();
+
 
   const sectionResult =
     await sb
-
       .from('study_sections')
-
       .select('*')
-
-      .eq(
-        'paper_id',
-        paperId
-      )
-
-      .eq(
-        'is_active',
-        true
-      )
-
-      .order(
-        'display_order'
-      );
+      .eq('paper_id',paperId)
+      .eq('is_active',true)
+      .order('display_order');
 
 
-  if(
-    sectionResult.error
-  ){
+  if(sectionResult.error){
 
     throw sectionResult.error;
-
   }
 
 
@@ -3355,92 +3231,192 @@ async function loadSyllabus(
     sectionResult.data || [];
 
 
-  if(
-    !sections.length
-  ){
+  /*
+    IMPORTANT PERFORMANCE FIX:
+    Instead of downloading every published topic
+    from the entire database, only load topics belonging
+    to the current paper's sections.
+  */
+
+  if(!sections.length){
 
     topics = [];
 
-    currentTopic = null;
-
-    currentQuestions = [];
-
     renderEmptySyllabus();
 
-    return;
+    updateStats();
 
+    return;
   }
 
 
   const sectionIds =
     sections.map(
-      section =>
-        section.id
+      section => section.id
     );
 
 
   const topicResult =
     await sb
-
       .from('study_topics')
-
       .select('*')
-
-      .in(
-        'section_id',
-        sectionIds
-      )
-
-      .eq(
-        'is_published',
-        true
-      )
-
-      .order(
-        'display_order'
-      );
+      .in('section_id',sectionIds)
+      .eq('is_published',true)
+      .order('display_order');
 
 
-  if(
-    topicResult.error
-  ){
+  if(topicResult.error){
 
     throw topicResult.error;
-
   }
 
 
   topics =
-    topicResult.data || [];
+    dedupeTopics(
+      topicResult.data || []
+    );
 
 
-  currentTopic = null;
+  /*
+    Open first section by default.
+  */
 
-  currentQuestions = [];
+  if(sections[0]){
+
+    openSections.add(
+      sections[0].id
+    );
+  }
 
 
   renderSyllabus();
 
-
   await refreshUserState();
-
 }
+
 
 
 /* =========================================================
    EMPTY SYLLABUS
 ========================================================= */
 
+/* =========================================================
+   TOPIC DEDUPLICATION
+   ---------------------------------------------------------
+   Admin/database ma accidental duplicate topic row bhaye
+   frontend ma एउटै topic दुई पटक नदेखाउने।
+   Same section bhitra same normalized title ko first topic
+   मात्र render हुन्छ। Empty/meaningful data भएको row लाई
+   प्राथमिकता दिन्छ।
+========================================================= */
+
+function normalizeTopicTitle(value){
+
+  return String(value ?? '')
+    .normalize('NFKC')
+    .replace(/\u200b/g,'')
+    .replace(/[\u00a0\u202f]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim()
+    .toLocaleLowerCase('ne-NP');
+}
+
+function topicQuality(topic){
+
+  let score = 0;
+
+  if(String(topic?.title ?? '').trim()) score += 2;
+  if(String(topic?.description ?? '').trim()) score += 2;
+  if(String(topic?.notes ?? '').trim()) score += 5;
+  if(String(topic?.content ?? '').trim()) score += 5;
+  if(topic?.parent_id) score += 1;
+
+  return score;
+}
+
+function dedupeTopics(list){
+
+  const byKey = new Map();
+
+  for(const topic of (list || [])){
+
+    const sectionKey =
+      String(topic?.section_id ?? '');
+
+    const titleKey =
+      normalizeTopicTitle(topic?.title);
+
+    /*
+      Never merge rows with empty titles.
+      Those are kept so admin data is not silently lost.
+    */
+    if(!titleKey){
+      byKey.set(
+        `__empty__:${topic.id}`,
+        topic
+      );
+      continue;
+    }
+
+    const key =
+      `${sectionKey}::${titleKey}`;
+
+    const existing =
+      byKey.get(key);
+
+    if(!existing){
+
+      byKey.set(key,topic);
+      continue;
+    }
+
+    /*
+      If accidental duplicates exist, keep the richer row.
+      If quality is equal, keep the earlier display order,
+      then the existing row for deterministic rendering.
+    */
+    const currentScore =
+      topicQuality(topic);
+
+    const existingScore =
+      topicQuality(existing);
+
+    if(currentScore > existingScore){
+
+      byKey.set(key,topic);
+
+    }else if(
+      currentScore === existingScore &&
+      Number(topic.display_order ?? 0) <
+      Number(existing.display_order ?? 0)
+    ){
+
+      byKey.set(key,topic);
+    }
+  }
+
+  return Array.from(byKey.values())
+    .sort((a,b) => {
+
+      const ao = Number(a.display_order ?? 0);
+      const bo = Number(b.display_order ?? 0);
+
+      if(ao !== bo) return ao - bo;
+
+      return String(a.title ?? '')
+        .localeCompare(
+          String(b.title ?? ''),
+          'ne'
+        );
+    });
+}
+
+
 function renderEmptySyllabus(){
 
   sections = [];
 
   topics = [];
-
-  currentTopic = null;
-
-  currentQuestions = [];
-
 
   $('syllabusHint').textContent =
     'No published material';
@@ -3453,182 +3429,21 @@ function renderEmptySyllabus(){
       <i class="fa-solid fa-layer-group"></i>
 
       <h3>
-        No syllabus yet
+        No material yet
       </h3>
 
       <p>
-        Administrators haven’t published material
+        Administrators haven't published study material
         for this paper yet.
       </p>
 
     </div>
-
-  `;
-
-
-  $('readerPanel').innerHTML = `
-
-    <div class="empty">
-
-      <i class="fa-solid fa-book-open"></i>
-
-      <h3>
-        Study material coming soon
-      </h3>
-
-      <p>
-        Choose another paper or wait for
-        new material to be published.
-      </p>
-
-    </div>
-
   `;
 
 
   updateStats();
-
 }
 
-
-/* =========================================================
-   CREATE TOPIC TREE
-========================================================= */
-
-function createTopicTree(
-  topicList,
-  level = 0
-){
-
-  return topicList
-    .map(topic => {
-
-      const children =
-        getChildren(
-          topic.id
-        );
-
-
-      const hasChildren =
-        children.length > 0;
-
-
-      const completed =
-        progress.get(
-          topic.id
-        )?.completed;
-
-
-      const active =
-        currentTopic?.id ===
-        topic.id;
-
-
-      const indent =
-        level * 22;
-
-
-      const descendantCount =
-        hasChildren
-          ? countDescendants(topic.id)
-          : 0;
-
-
-      return `
-
-        <div
-          class="topic-node ${active ? 'active-node' : ''}"
-          data-level="${level}"
-          data-topic-node="${esc(topic.id)}"
-        >
-
-          <div
-            class="topic-row"
-            style="padding-left:${indent}px"
-          >
-
-            ${
-              hasChildren
-
-              ?
-
-              `
-                <button
-                  type="button"
-                  class="topic-toggle"
-                  data-toggle-topic="${esc(topic.id)}"
-                  aria-label="Expand or collapse"
-                >
-                  <i class="fa-solid fa-chevron-down"></i>
-                </button>
-              `
-
-              :
-
-              `
-                <span
-                  class="topic-toggle empty"
-                >
-                  <i class="fa-solid fa-chevron-down"></i>
-                </span>
-              `
-            }
-
-
-            <button
-              type="button"
-              class="topic-btn
-                ${completed ? 'done' : ''}
-                ${active ? 'active' : ''}
-              "
-              data-topic="${esc(topic.id)}"
-            >
-
-              <span class="topic-dot"></span>
-
-              <span class="topic-title">
-
-                ${esc(topic.title)}
-
-              </span>
-
-            </button>
-
-          </div>
-
-
-          ${
-            hasChildren
-
-            ?
-
-            `
-              <div
-                class="children"
-                data-children="${esc(topic.id)}"
-              >
-
-                ${createTopicTree(
-                  children,
-                  level + 1
-                )}
-
-              </div>
-            `
-
-            :
-
-            ''
-          }
-
-        </div>
-
-      `;
-
-    })
-    .join('');
-
-}
 
 
 /* =========================================================
@@ -3637,64 +3452,54 @@ function createTopicTree(
 
 function renderSyllabus(){
 
-  if(
-    !sections.length
-  ){
+  if(!sections.length){
 
     renderEmptySyllabus();
 
     return;
-
   }
 
 
-  const totalTopics =
-    topics.length;
-
-
   $('syllabusHint').textContent =
-    `${sections.length} sections • ${totalTopics} topics`;
+    `${sections.length} sections • ${topics.length} topics`;
 
 
   $('syllabus').innerHTML =
-
     sections
       .map(
-        (section,index) => {
+        section => {
 
           const sectionTopics =
-            getRootTopics(
-              section.id
-            );
-
-
-          const sectionTopicCount =
             topics.filter(
               topic =>
                 topic.section_id ===
                 section.id
-            ).length;
+            );
+
+
+          const isOpen =
+            openSections.has(
+              section.id
+            );
 
 
           return `
 
-            <div
-              class="section-row"
-              data-section-row="${esc(section.id)}"
-            >
+            <div class="section-row">
 
               <button
                 type="button"
-                class="section-btn"
+                class="section-btn ${
+                  isOpen ? '' : 'collapsed'
+                }"
                 data-section="${esc(section.id)}"
               >
 
-                <span class="section-icon">
+                <span class="folder">
 
-                  <i class="fa-solid fa-folder-open"></i>
+                  <i class="fa-solid fa-folder"></i>
 
                 </span>
-
 
                 <span class="section-name">
 
@@ -3702,80 +3507,77 @@ function renderSyllabus(){
 
                 </span>
 
-
-                <span class="section-count">
-
-                  ${sectionTopicCount}
-
-                </span>
-
-
-                <span class="section-chevron">
-
-                  <i class="fa-solid fa-chevron-down"></i>
-
-                </span>
+                <i
+                  class="fa-solid fa-chevron-down chevron"
+                ></i>
 
               </button>
 
 
               <div
-                class="section-content"
-                data-section-content="${esc(section.id)}"
+                class="topic-list ${
+                  isOpen ? '' : 'hidden'
+                }"
+                id="sec-${esc(section.id)}"
               >
 
                 ${
                   sectionTopics.length
 
-                  ?
+                    ?
 
-                  `
-                    <div class="topic-tree">
+                    sectionTopics
+                      .map(
+                        topic => `
 
-                      ${createTopicTree(
-                        sectionTopics,
-                        0
-                      )}
+                          <button
+                            type="button"
+                            class="topic-btn ${
+                              progress.get(topic.id)?.completed
+                                ? 'done'
+                                : ''
+                            } ${
+                              currentTopic?.id === topic.id
+                                ? 'active'
+                                : ''
+                            }"
+                            data-topic="${esc(topic.id)}"
+                          >
 
-                    </div>
-                  `
+                            <span class="dot"></span>
 
-                  :
+                            <span>
+                              ${esc(topic.title)}
+                            </span>
 
-                  `
-                    <div
-                      class="empty"
-                      style="padding:18px 10px"
-                    >
-                      No topics published yet.
-                    </div>
-                  `
+                          </button>
+                        `
+                      )
+                      .join('')
+
+                    :
+
+                    `
+                      <div
+                        class="empty"
+                        style="padding:14px"
+                      >
+                        No topics published yet.
+                      </div>
+                    `
                 }
 
               </div>
 
             </div>
-
           `;
-
         }
       )
       .join('');
 
 
-  bindSyllabusEvents();
-
-}
-
-
-/* =========================================================
-   BIND SYLLABUS EVENTS
-========================================================= */
-
-function bindSyllabusEvents(){
-
   /*
-    Section collapse
+    Section events
   */
 
   document
@@ -3785,98 +3587,30 @@ function bindSyllabusEvents(){
 
         button.onclick = () => {
 
-          const sectionId =
+          const id =
             button.dataset.section;
 
 
-          const row =
-            button.closest(
-              '.section-row'
-            );
+          if(
+            openSections.has(id)
+          ){
 
+            openSections.delete(id);
 
-          const content =
-            row?.querySelector(
-              `[data-section-content="${CSS.escape(sectionId)}"]`
-            );
+          }else{
 
-
-          if(!row || !content){
-
-            return;
-
+            openSections.add(id);
           }
 
 
-          row.classList.toggle(
-            'collapsed'
-          );
-
-
-          content.classList.toggle(
-            'hidden'
-          );
-
+          renderSyllabus();
         };
-
       }
     );
 
 
   /*
-    Topic expand/collapse
-  */
-
-  document
-    .querySelectorAll('[data-toggle-topic]')
-    .forEach(
-      button => {
-
-        button.onclick = event => {
-
-          event.stopPropagation();
-
-
-          const topicId =
-            button.dataset.toggleTopic;
-
-
-          const node =
-            document.querySelector(
-              `[data-topic-node="${CSS.escape(topicId)}"]`
-            );
-
-
-          const children =
-            node?.querySelector(
-              `:scope > [data-children="${CSS.escape(topicId)}"]`
-            );
-
-
-          if(!node || !children){
-
-            return;
-
-          }
-
-
-          node.classList.toggle(
-            'collapsed'
-          );
-
-
-          children.classList.toggle(
-            'hidden'
-          );
-
-        };
-
-      }
-    );
-
-
-  /*
-    Topic open
+    Topic events
   */
 
   document
@@ -3891,113 +3625,10 @@ function bindSyllabusEvents(){
           );
 
         };
-
       }
     );
-
 }
 
-
-/* =========================================================
-   EXPAND PARENT CHAIN
-========================================================= */
-
-function expandTopicParents(
-  topicId
-){
-
-  let topic =
-    topics.find(
-      x => x.id === topicId
-    );
-
-
-  const visited =
-    new Set();
-
-
-  while(
-    topic &&
-    topic.parent_id &&
-    !visited.has(topic.parent_id)
-  ){
-
-    visited.add(
-      topic.parent_id
-    );
-
-
-    const parentId =
-      topic.parent_id;
-
-
-    const parentNode =
-      document.querySelector(
-        `[data-topic-node="${CSS.escape(parentId)}"]`
-      );
-
-
-    if(parentNode){
-
-      parentNode.classList.remove(
-        'collapsed'
-      );
-
-
-      const childContainer =
-        parentNode.querySelector(
-          `:scope > [data-children="${CSS.escape(parentId)}"]`
-        );
-
-
-      if(childContainer){
-
-        childContainer.classList.remove(
-          'hidden'
-        );
-
-      }
-
-    }
-
-
-    topic =
-      topics.find(
-        x => x.id === parentId
-      );
-
-  }
-
-}
-
-
-/* =========================================================
-   HIGHLIGHT ACTIVE TOPIC
-========================================================= */
-
-function highlightActiveTopic(){
-
-  document
-    .querySelectorAll('[data-topic]')
-    .forEach(
-      button => {
-
-        button.classList.toggle(
-          'active',
-          button.dataset.topic ===
-          currentTopic?.id
-        );
-
-      }
-    );
-
-
-  /*
-    ScrollIntoView is intentionally NOT used.
-    This avoids mobile page jumping/stuck behaviour.
-  */
-
-}
 
 
 /* =========================================================
@@ -4019,7 +3650,6 @@ async function refreshUserState(){
     renderSyllabus();
 
     return;
-
   }
 
 
@@ -4030,22 +3660,16 @@ async function refreshUserState(){
     await Promise.all([
 
       sb
-
         .from('study_progress')
-
         .select('*')
-
         .eq(
           'user_uid',
           user.uid
         ),
 
       sb
-
         .from('study_bookmarks')
-
         .select('*')
-
         .eq(
           'user_uid',
           user.uid
@@ -4054,25 +3678,19 @@ async function refreshUserState(){
     ]);
 
 
-  if(
-    progressResult.error
-  ){
+  if(progressResult.error){
 
     console.warn(
       progressResult.error
     );
-
   }
 
 
-  if(
-    bookmarkResult.error
-  ){
+  if(bookmarkResult.error){
 
     console.warn(
       bookmarkResult.error
     );
-
   }
 
 
@@ -4080,11 +3698,10 @@ async function refreshUserState(){
     new Map(
       (progressResult.data || [])
         .map(
-          item =>
-            [
-              item.topic_id,
-              item
-            ]
+          item => [
+            item.topic_id,
+            item
+          ]
         )
     );
 
@@ -4102,8 +3719,8 @@ async function refreshUserState(){
   updateStats();
 
   renderSyllabus();
-
 }
+
 
 
 /* =========================================================
@@ -4119,24 +3736,16 @@ function updateStats(){
   const done =
     topics.filter(
       topic =>
-        progress.get(
-          topic.id
-        )?.completed
+        progress.get(topic.id)?.completed
     ).length;
 
 
   const percentage =
     total
-
-      ?
-
-      Math.round(
-        done / total * 100
-      )
-
-      :
-
-      0;
+      ? Math.round(
+          done / total * 100
+        )
+      : 0;
 
 
   $('progressText').textContent =
@@ -4155,17 +3764,15 @@ function updateStats(){
     String(
       bookmarks.size
     );
-
 }
+
 
 
 /* =========================================================
    OPEN TOPIC
 ========================================================= */
 
-async function openTopic(
-  id
-){
+async function openTopic(id){
 
   const topic =
     topics.find(
@@ -4175,9 +3782,7 @@ async function openTopic(
 
 
   if(!topic){
-
     return;
-
   }
 
 
@@ -4185,41 +3790,25 @@ async function openTopic(
     topic;
 
 
-  highlightActiveTopic();
+  /*
+    Automatically open its section.
+  */
 
-  expandTopicParents(id);
+  if(topic.section_id){
+
+    openSections.add(
+      topic.section_id
+    );
+  }
+
+
+  renderSyllabus();
 
 
   /*
-    Find section and keep it open.
+    Keep scroll position stable.
+    Do not force jump to top.
   */
-
-  const sectionRow =
-    document.querySelector(
-      `[data-section-row="${CSS.escape(topic.section_id)}"]`
-    );
-
-
-  if(sectionRow){
-
-    sectionRow.classList.remove(
-      'collapsed'
-    );
-
-    const content =
-      sectionRow.querySelector(
-        `[data-section-content="${CSS.escape(topic.section_id)}"]`
-      );
-
-    if(content){
-
-      content.classList.remove(
-        'hidden'
-      );
-
-    }
-
-  }
 
 
   $('readerPanel').innerHTML = `
@@ -4228,14 +3817,28 @@ async function openTopic(
 
       <div
         class="skeleton"
-        style="width:35%"
+        style="width:32%"
       ></div>
 
       <br>
 
       <div
         class="skeleton"
-        style="width:80%;height:25px"
+        style="width:75%;height:27px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:92%;height:15px"
+      ></div>
+
+      <br>
+
+      <div
+        class="skeleton"
+        style="width:87%;height:15px"
       ></div>
 
       <br>
@@ -4246,7 +3849,6 @@ async function openTopic(
       ></div>
 
     </div>
-
   `;
 
 
@@ -4255,21 +3857,16 @@ async function openTopic(
     error
   } =
     await sb
-
       .from('study_questions')
-
       .select('*')
-
       .eq(
         'topic_id',
         id
       )
-
       .eq(
         'is_published',
         true
       )
-
       .order(
         'created_at'
       );
@@ -4288,13 +3885,12 @@ async function openTopic(
 
     currentQuestions =
       data || [];
-
   }
 
 
   renderTopic();
-
 }
+
 
 
 /* =========================================================
@@ -4303,15 +3899,13 @@ async function openTopic(
 
 function renderTopic(){
 
+  if(!currentTopic){
+    return;
+  }
+
+
   const topic =
     currentTopic;
-
-
-  if(!topic){
-
-    return;
-
-  }
 
 
   const questions =
@@ -4319,9 +3913,7 @@ function renderTopic(){
 
 
   const completed =
-    progress.get(
-      topic.id
-    )?.completed;
+    progress.get(topic.id)?.completed;
 
 
   const marked =
@@ -4330,90 +3922,48 @@ function renderTopic(){
     );
 
 
-  let important =
-    [];
-
-
-  if(
+  const important =
     Array.isArray(
       topic.important_points
     )
-  ){
 
-    important =
-      topic.important_points;
+      ? topic.important_points
 
-  }
-
-  else if(
-    topic.important_points
-  ){
-
-    try{
-
-      const parsed =
-        JSON.parse(
+      : (
           topic.important_points
+            ? String(
+                topic.important_points
+              )
+              .split('\n')
+              .map(x => x.trim())
+              .filter(Boolean)
+            : []
         );
-
-
-      if(
-        Array.isArray(parsed)
-      ){
-
-        important = parsed;
-
-      }else{
-
-        important =
-          String(
-            topic.important_points
-          )
-          .split('\n')
-          .filter(Boolean);
-
-      }
-
-    }catch{
-
-      important =
-        String(
-          topic.important_points
-        )
-        .split('\n')
-        .filter(Boolean);
-
-    }
-
-  }
-
-
-  /*
-    Breadcrumb
-  */
-
-  const breadcrumb =
-    getBreadcrumb(topic);
 
 
   $('readerPanel').innerHTML = `
 
     <article class="reader">
 
+
       <div class="crumb">
 
         Study Hub
 
-        /
+        <i
+          class="fa-solid fa-chevron-right"
+          style="font-size:8px;margin:0 4px"
+        ></i>
 
-        ${breadcrumb}
+        ${esc(topic.title)}
 
       </div>
 
 
       <div class="reader-top">
 
-        <div>
+
+        <div class="reader-title-area">
 
           <h2>
             ${esc(topic.title)}
@@ -4424,11 +3974,9 @@ function renderTopic(){
 
               ?
 
-              `
-                <div class="reader-sub">
-                  ${esc(topic.description)}
-                </div>
-              `
+              `<div class="reader-sub">
+                ${esc(topic.description)}
+              </div>`
 
               :
 
@@ -4441,24 +3989,40 @@ function renderTopic(){
         <div class="actions">
 
           <button
-            class="btn ${marked ? 'bookmarked' : ''}"
-            id="topicBookmark"
             type="button"
+            class="btn ${
+              marked
+                ? 'bookmarked'
+                : ''
+            }"
+            id="topicBookmark"
           >
 
             <i
-              class="fa-${marked ? 'solid' : 'regular'} fa-bookmark"
+              class="fa-${
+                marked
+                  ? 'solid'
+                  : 'regular'
+              } fa-bookmark"
             ></i>
 
-            ${marked ? 'Saved' : 'Bookmark'}
+            ${
+              marked
+                ? 'Saved'
+                : 'Bookmark'
+            }
 
           </button>
 
 
           <button
-            class="btn ${completed ? 'success' : ''}"
-            id="completeBtn"
             type="button"
+            class="btn ${
+              completed
+                ? 'success'
+                : ''
+            }"
+            id="completeBtn"
           >
 
             <i class="fa-solid fa-check"></i>
@@ -4466,7 +4030,7 @@ function renderTopic(){
             ${
               completed
                 ? 'Completed'
-                : 'Mark as Completed'
+                : 'Mark Completed'
             }
 
           </button>
@@ -4493,6 +4057,8 @@ function renderTopic(){
 
         <span class="pill">
 
+          <i class="fa-regular fa-circle-question"></i>
+
           ${questions.length}
 
           questions
@@ -4502,8 +4068,11 @@ function renderTopic(){
 
         <span class="pill">
 
+          <i class="fa-solid fa-signal"></i>
+
           ${esc(
-            topic.difficulty || 'General'
+            topic.difficulty ||
+            'General'
           )}
 
         </span>
@@ -4524,6 +4093,7 @@ function renderTopic(){
           ?
 
           `
+
             <div class="important">
 
               <h3>
@@ -4536,16 +4106,19 @@ function renderTopic(){
 
               <ul>
 
-                ${important
-                  .map(
-                    point =>
-                      `<li>${esc(point)}</li>`
-                  )
-                  .join('')}
+                ${
+                  important
+                    .map(
+                      point =>
+                        `<li>${esc(point)}</li>`
+                    )
+                    .join('')
+                }
 
               </ul>
 
             </div>
+
           `
 
           :
@@ -4556,41 +4129,65 @@ function renderTopic(){
 
       <div class="qa-head">
 
-        <h3>
-          Questions & Answers
-        </h3>
+        <div class="qa-title">
+
+          <h3>
+            Questions & Answers
+          </h3>
+
+          <p>
+            Practice questions from this topic
+          </p>
+
+        </div>
 
 
         <div class="filters">
 
           <button
-            class="filter active"
-            data-qfilter="all"
             type="button"
+            class="filter ${
+              currentFilter === 'all'
+                ? 'active'
+                : ''
+            }"
+            data-qfilter="all"
           >
             All
           </button>
 
           <button
-            class="filter"
-            data-qfilter="important"
             type="button"
+            class="filter ${
+              currentFilter === 'important'
+                ? 'active'
+                : ''
+            }"
+            data-qfilter="important"
           >
             Important
           </button>
 
           <button
-            class="filter"
-            data-qfilter="mcq"
             type="button"
+            class="filter ${
+              currentFilter === 'mcq'
+                ? 'active'
+                : ''
+            }"
+            data-qfilter="mcq"
           >
             MCQ
           </button>
 
           <button
-            class="filter"
-            data-qfilter="short"
             type="button"
+            class="filter ${
+              currentFilter === 'short'
+                ? 'active'
+                : ''
+            }"
+            data-qfilter="short"
           >
             Short
           </button>
@@ -4605,13 +4202,13 @@ function renderTopic(){
 
       <div
         class="actions"
-        style="margin-top:16px"
+        style="margin-top:17px"
       >
 
         <button
+          type="button"
           class="btn primary"
           id="practiceBtn"
-          type="button"
         >
 
           <i class="fa-solid fa-bolt"></i>
@@ -4626,9 +4223,9 @@ function renderTopic(){
       <div class="bottom-topics">
 
         <button
+          type="button"
           class="btn"
           id="prevTopic"
-          type="button"
         >
 
           <i class="fa-solid fa-arrow-left"></i>
@@ -4639,9 +4236,9 @@ function renderTopic(){
 
 
         <button
+          type="button"
           class="btn"
           id="nextTopic"
-          type="button"
         >
 
           Next Topic
@@ -4653,7 +4250,6 @@ function renderTopic(){
       </div>
 
     </article>
-
   `;
 
 
@@ -4673,106 +4269,27 @@ function renderTopic(){
 
 
   $('practiceBtn').onclick =
-    () =>
-      openPractice();
+    openPractice;
 
 
   renderQuestions(
-    questions
+    getFilteredQuestions()
   );
 
 
   document
-    .querySelectorAll(
-      '[data-qfilter]'
-    )
+    .querySelectorAll('[data-qfilter]')
     .forEach(
       button => {
 
         button.onclick = () => {
 
-          document
-            .querySelectorAll(
-              '[data-qfilter]'
-            )
-            .forEach(
-              b =>
-                b.classList.remove(
-                  'active'
-                )
-            );
-
-
-          button.classList.add(
-            'active'
-          );
-
-
-          const filter =
+          currentFilter =
             button.dataset.qfilter;
 
 
-          if(
-            filter === 'all'
-          ){
-
-            renderQuestions(
-              questions
-            );
-
-            return;
-
-          }
-
-
-          if(
-            filter === 'important'
-          ){
-
-            renderQuestions(
-              questions.filter(
-                q => q.is_important
-              )
-            );
-
-            return;
-
-          }
-
-
-          if(
-            filter === 'mcq'
-          ){
-
-            renderQuestions(
-              questions.filter(
-                q =>
-                  q.question_type ===
-                  'mcq'
-              )
-            );
-
-            return;
-
-          }
-
-
-          if(
-            filter === 'short'
-          ){
-
-            renderQuestions(
-              questions.filter(
-                q =>
-                  q.question_type ===
-                  'short'
-              )
-            );
-
-          }
-
+          renderTopic();
         };
-
       }
     );
 
@@ -4785,70 +4302,93 @@ function renderTopic(){
   $('nextTopic').onclick =
     () =>
       moveTopic(1);
-
 }
+
 
 
 /* =========================================================
-   BREADCRUMB
+   QUESTION FILTER
 ========================================================= */
 
-function getBreadcrumb(
-  topic
-){
+function getFilteredQuestions(){
 
-  const parts = [];
+  switch(currentFilter){
 
-  let current =
-    topic;
+    case 'important':
 
-  const visited =
-    new Set();
-
-
-  while(
-    current &&
-    !visited.has(current.id)
-  ){
-
-    visited.add(
-      current.id
-    );
-
-
-    parts.unshift(
-      current.title
-    );
-
-
-    if(
-      !current.parent_id
-    ){
-
-      break;
-
-    }
-
-
-    current =
-      topics.find(
-        x =>
-          x.id ===
-          current.parent_id
+      return currentQuestions.filter(
+        question =>
+          question.is_important
       );
 
+
+    case 'mcq':
+
+      return currentQuestions.filter(
+        question =>
+          question.question_type ===
+          'mcq'
+      );
+
+
+    case 'short':
+
+      return currentQuestions.filter(
+        question =>
+          question.question_type ===
+          'short'
+      );
+
+
+    default:
+
+      return currentQuestions;
+  }
+}
+
+
+
+/* =========================================================
+   QUESTION OPTIONS
+========================================================= */
+
+function parseOptions(value){
+
+  if(Array.isArray(value)){
+
+    return value;
   }
 
 
-  return parts
-    .map(
-      x => esc(x)
-    )
-    .join(
-      ' / '
-    );
+  if(typeof value === 'string'){
 
+    try{
+
+      const parsed =
+        JSON.parse(value);
+
+
+      if(Array.isArray(parsed)){
+
+        return parsed;
+      }
+
+    }catch{}
+
+
+    return value
+      .split(',')
+      .map(
+        item =>
+          item.trim()
+      )
+      .filter(Boolean);
+  }
+
+
+  return [];
 }
+
 
 
 /* =========================================================
@@ -4864,15 +4404,11 @@ function renderQuestions(
 
 
   if(!box){
-
     return;
-
   }
 
 
-  if(
-    !questions.length
-  ){
+  if(!questions.length){
 
     box.innerHTML = `
 
@@ -4880,62 +4416,36 @@ function renderQuestions(
 
         <i class="fa-regular fa-circle-question"></i>
 
+        <h3>
+          No questions found
+        </h3>
+
         <p>
-          No questions have been added to this topic yet.
+          No questions are available for this filter.
         </p>
 
       </div>
-
     `;
 
     return;
-
   }
 
 
   box.innerHTML =
-
     questions
       .map(
         (question,index) => {
 
-          let options =
-            question.options || [];
+          const options =
+            parseOptions(
+              question.options
+            );
 
 
-          if(
-            typeof options ===
-            'string'
-          ){
-
-            try{
-
-              options =
-                JSON.parse(
-                  options
-                );
-
-            }catch{
-
-              options =
-                options
-                  .split(',')
-                  .map(
-                    x => x.trim()
-                  );
-
-            }
-
-          }
-
-
-          if(
-            !Array.isArray(options)
-          ){
-
-            options = [];
-
-          }
+          const saved =
+            bookmarks.has(
+              `question:${question.id}`
+            );
 
 
           return `
@@ -4944,6 +4454,7 @@ function renderQuestions(
               class="question"
               data-qid="${esc(question.id)}"
             >
+
 
               <div class="qtop">
 
@@ -4972,17 +4483,10 @@ function renderQuestions(
 
                     ?
 
-                    `
-                      <span class="badge">
-
-                        ${esc(
-                          question.marks
-                        )}
-
-                        marks
-
-                      </span>
-                    `
+                    `<span class="badge">
+                      ${esc(question.marks)}
+                      marks
+                    </span>`
 
                     :
 
@@ -4995,11 +4499,10 @@ function renderQuestions(
 
                     ?
 
-                    `
-                      <span class="badge imp">
-                        Important
-                      </span>
-                    `
+                    `<span class="badge imp">
+                      <i class="fa-solid fa-star"></i>
+                      &nbsp;Important
+                    </span>`
 
                     :
 
@@ -5011,7 +4514,7 @@ function renderQuestions(
 
               <h4>
 
-                Q${index + 1}.
+                Q${index+1}.
 
                 ${esc(
                   question.question
@@ -5021,33 +4524,38 @@ function renderQuestions(
 
 
               ${
-                question.question_type === 'mcq' &&
+                question.question_type === 'mcq'
+                &&
                 options.length
 
                   ?
 
                   `
+
                     <div class="options">
 
-                      ${options
-                        .map(
-                          (option,i) => `
+                      ${
+                        options
+                          .map(
+                            (option,i) => `
 
-                            <div class="option">
+                              <div class="option">
 
-                              <b>
-                                ${String.fromCharCode(65+i)}.
-                              </b>
+                                <b>
+                                  ${String.fromCharCode(65+i)}.
+                                </b>
 
-                              ${esc(option)}
+                                ${esc(option)}
 
-                            </div>
+                              </div>
 
-                          `
-                        )
-                        .join('')}
+                            `
+                          )
+                          .join('')
+                      }
 
                     </div>
+
                   `
 
                   :
@@ -5059,30 +4567,32 @@ function renderQuestions(
               <div class="question-actions">
 
                 <button
-                  class="text-btn reveal"
                   type="button"
+                  class="text-btn reveal"
                 >
+
+                  <i class="fa-regular fa-eye"></i>
+
                   Show Answer
+
                 </button>
 
 
                 <button
-                  class="text-btn bookmark-q"
                   type="button"
+                  class="text-btn bookmark-q"
                 >
 
-                  <i class="fa-${
-                    bookmarks.has(
-                      `question:${question.id}`
-                    )
-                      ? 'solid'
-                      : 'regular'
-                  } fa-bookmark"></i>
+                  <i
+                    class="fa-${
+                      saved
+                        ? 'solid'
+                        : 'regular'
+                    } fa-bookmark"
+                  ></i>
 
                   ${
-                    bookmarks.has(
-                      `question:${question.id}`
-                    )
+                    saved
                       ? 'Saved'
                       : 'Save'
                   }
@@ -5098,12 +4608,10 @@ function renderQuestions(
                   Answer
                 </strong>
 
-                ${
-                  safeHTML(
-                    question.answer ||
-                    'No answer added yet.'
-                  )
-                }
+                ${safeHtml(
+                  question.answer ||
+                  'No answer added yet.'
+                )}
 
 
                 ${
@@ -5112,15 +4620,17 @@ function renderQuestions(
                     ?
 
                     `
+
                       <br><br>
 
                       <strong>
                         Explanation
                       </strong>
 
-                      ${safeHTML(
+                      ${safeHtml(
                         question.explanation
                       )}
+
                     `
 
                     :
@@ -5131,16 +4641,14 @@ function renderQuestions(
               </div>
 
             </div>
-
           `;
-
         }
       )
       .join('');
 
 
   /*
-    Reveal answer
+    Reveal buttons
   */
 
   box
@@ -5152,43 +4660,39 @@ function renderQuestions(
 
           const answer =
             button
-              .parentElement
-              .nextElementSibling;
+              .closest('.question')
+              .querySelector('.answer');
 
 
-          if(!answer){
-
-            return;
-
-          }
-
-
-          answer.classList.toggle(
-            'hidden'
-          );
-
-
-          button.textContent =
-            answer.classList.contains(
+          const hidden =
+            answer.classList.toggle(
               'hidden'
-            )
+            );
+
+
+          button.innerHTML =
+            hidden
 
               ?
 
-              'Show Answer'
+              `
+                <i class="fa-regular fa-eye"></i>
+                Show Answer
+              `
 
               :
 
-              'Hide Answer';
-
+              `
+                <i class="fa-regular fa-eye-slash"></i>
+                Hide Answer
+              `;
         };
-
       }
     );
 
 
   /*
-    Bookmark question
+    Bookmark buttons
   */
 
   box
@@ -5198,19 +4702,26 @@ function renderQuestions(
 
         button.onclick = () => {
 
+          const question =
+            button.closest(
+              '.question'
+            );
+
+
+          if(!question){
+            return;
+          }
+
+
           toggleBookmark(
             'question',
-            button
-              .closest('.question')
-              .dataset.qid
+            question.dataset.qid
           );
-
         };
-
       }
     );
-
 }
+
 
 
 /* =========================================================
@@ -5229,7 +4740,6 @@ async function toggleBookmark(
     );
 
     return;
-
   }
 
 
@@ -5239,29 +4749,22 @@ async function toggleBookmark(
 
   try{
 
-    if(
-      bookmarks.has(key)
-    ){
+    if(bookmarks.has(key)){
 
       const {
         error
       } =
         await sb
-
           .from('study_bookmarks')
-
           .delete()
-
           .eq(
             'user_uid',
             user.uid
           )
-
           .eq(
             'content_type',
             type
           )
-
           .eq(
             'content_id',
             id
@@ -5269,32 +4772,23 @@ async function toggleBookmark(
 
 
       if(error){
-
         throw error;
-
       }
 
 
-      bookmarks.delete(
-        key
-      );
-
+      bookmarks.delete(key);
 
       toast(
         'Bookmark removed'
       );
 
-    }
-
-    else{
+    }else{
 
       const {
         error
       } =
         await sb
-
           .from('study_bookmarks')
-
           .insert({
 
             user_uid:
@@ -5310,25 +4804,21 @@ async function toggleBookmark(
 
 
       if(error){
-
         throw error;
-
       }
 
 
-      bookmarks.add(
-        key
-      );
-
+      bookmarks.add(key);
 
       toast(
         'Bookmarked'
       );
-
     }
 
 
     updateStats();
+
+    renderSyllabus();
 
     renderTopic();
 
@@ -5338,19 +4828,16 @@ async function toggleBookmark(
       'Bookmark could not be saved.',
       error
     );
-
   }
-
 }
 
 
+
 /* =========================================================
-   COMPLETE
+   COMPLETE TOPIC
 ========================================================= */
 
-async function toggleComplete(
-  id
-){
+async function toggleComplete(id){
 
   if(!user){
 
@@ -5359,7 +4846,6 @@ async function toggleComplete(
     );
 
     return;
-
   }
 
 
@@ -5369,17 +4855,13 @@ async function toggleComplete(
 
   try{
 
-    if(
-      existing?.completed
-    ){
+    if(existing?.completed){
 
       const {
         error
       } =
         await sb
-
           .from('study_progress')
-
           .update({
 
             completed:
@@ -5389,12 +4871,10 @@ async function toggleComplete(
               null
 
           })
-
           .eq(
             'user_uid',
             user.uid
           )
-
           .eq(
             'topic_id',
             id
@@ -5402,9 +4882,7 @@ async function toggleComplete(
 
 
       if(error){
-
         throw error;
-
       }
 
 
@@ -5421,48 +4899,36 @@ async function toggleComplete(
         'Marked as incomplete'
       );
 
-    }
-
-    else{
+    }else{
 
       const {
         error
       } =
         await sb
-
           .from('study_progress')
+          .upsert({
 
-          .upsert(
+            user_uid:
+              user.uid,
 
-            {
+            topic_id:
+              id,
 
-              user_uid:
-                user.uid,
+            completed:
+              true,
 
-              topic_id:
-                id,
+            completed_at:
+              new Date()
+                .toISOString()
 
-              completed:
-                true,
-
-              completed_at:
-                new Date()
-                  .toISOString()
-
-            },
-
-            {
-              onConflict:
-                'user_uid,topic_id'
-            }
-
-          );
+          },{
+            onConflict:
+              'user_uid,topic_id'
+          });
 
 
       if(error){
-
         throw error;
-
       }
 
 
@@ -5484,9 +4950,8 @@ async function toggleComplete(
 
 
       toast(
-        'Progress saved'
+        'Topic completed ✓'
       );
-
     }
 
 
@@ -5496,52 +4961,38 @@ async function toggleComplete(
 
     renderTopic();
 
-
   }catch(error){
 
     err(
       'Progress could not be saved.',
       error
     );
-
   }
-
 }
+
 
 
 /* =========================================================
    MOVE TOPIC
 ========================================================= */
 
-function moveTopic(
-  delta
-){
+function moveTopic(delta){
 
-  const ordered =
-    getOrderedTopics();
-
-
-  const index =
-    ordered.findIndex(
-      topic =>
-        topic.id ===
-        currentTopic?.id
-    );
-
-
-  if(
-    index < 0
-  ){
-
+  if(!currentTopic){
     return;
-
   }
 
 
+  const index =
+    topics.findIndex(
+      topic =>
+        topic.id ===
+        currentTopic.id
+    );
+
+
   const next =
-    ordered[
-      index + delta
-    ];
+    topics[index + delta];
 
 
   if(next){
@@ -5550,9 +5001,30 @@ function moveTopic(
       next.id
     );
 
-  }
 
+    /*
+      On mobile, move reader into view.
+    */
+
+    if(
+      window.innerWidth <= 700
+    ){
+
+      requestAnimationFrame(
+        () => {
+
+          $('readerPanel')
+            ?.scrollIntoView({
+              behavior:'smooth',
+              block:'start'
+            });
+
+        }
+      );
+    }
+  }
 }
+
 
 
 /* =========================================================
@@ -5569,22 +5041,21 @@ function openPractice(){
       );
 
 
-  if(
-    !questions.length
-  ){
+  if(!questions.length){
 
     toast(
       'No questions available.'
     );
 
     return;
-
   }
 
 
   let index = 0;
 
   let score = 0;
+
+  let answered = false;
 
 
   const render = () => {
@@ -5593,44 +5064,13 @@ function openPractice(){
       questions[index];
 
 
-    let options =
-      question.options || [];
+    answered = false;
 
 
-    if(
-      typeof options ===
-      'string'
-    ){
-
-      try{
-
-        options =
-          JSON.parse(
-            options
-          );
-
-      }catch{
-
-        options =
-          options
-            .split(',')
-            .map(
-              x =>
-                x.trim()
-            );
-
-      }
-
-    }
-
-
-    if(
-      !Array.isArray(options)
-    ){
-
-      options = [];
-
-    }
+    const options =
+      parseOptions(
+        question.options
+      );
 
 
     $('practiceBody').innerHTML = `
@@ -5638,7 +5078,7 @@ function openPractice(){
       <div class="pill">
 
         Question
-        ${index + 1}
+        ${index+1}
         of
         ${questions.length}
 
@@ -5655,48 +5095,56 @@ function openPractice(){
 
 
       ${
-        question.question_type === 'mcq' &&
+        question.question_type === 'mcq'
+        &&
         options.length
 
           ?
 
           `
+
             <div class="practice-options">
 
-              ${options
-                .map(
-                  (option,i) => `
+              ${
+                options
+                  .map(
+                    (option,i) => `
 
-                    <button
-                      type="button"
-                      data-i="${i}"
-                    >
+                      <button
+                        type="button"
+                        data-i="${i}"
+                      >
 
-                      ${String.fromCharCode(65+i)}.
+                        <b>
+                          ${String.fromCharCode(65+i)}.
+                        </b>
 
-                      ${esc(option)}
+                        ${esc(option)}
 
-                    </button>
-
-                  `
-                )
-                .join('')}
+                      </button>
+                    `
+                  )
+                  .join('')
+              }
 
             </div>
+
           `
 
           :
 
           `
+
             <button
+              type="button"
               class="btn primary"
               id="showPracticeAnswer"
-              type="button"
             >
 
               Show Answer
 
             </button>
+
           `
       }
 
@@ -5709,182 +5157,189 @@ function openPractice(){
     `;
 
 
-    /*
-      MCQ
-    */
-
     if(
       question.question_type ===
       'mcq'
+      &&
+      options.length
     ){
 
       $('practiceBody')
-        .querySelectorAll(
-          '[data-i]'
-        )
+        .querySelectorAll('[data-i]')
         .forEach(
           button => {
 
-            button.onclick = () => {
+            button.onclick =
+              () => {
 
-              /*
-                Prevent multiple clicks.
-              */
+                if(answered){
+                  return;
+                }
 
-              $('practiceBody')
-                .querySelectorAll(
-                  '[data-i]'
-                )
-                .forEach(
-                  b =>
-                    b.disabled = true
+
+                answered = true;
+
+
+                const selected =
+                  Number(
+                    button.dataset.i
+                  );
+
+
+                const correct =
+                  String(
+                    question.correct_option ??
+                    ''
+                  )
+                  .trim()
+                  .toUpperCase();
+
+
+                const letter =
+                  String.fromCharCode(
+                    65 + selected
+                  );
+
+
+                const answerText =
+                  String(
+                    question.answer ||
+                    ''
+                  )
+                  .trim();
+
+
+                const isCorrect =
+                  correct === letter
+                  ||
+                  correct ===
+                    String(selected)
+                  ||
+                  answerText ===
+                    String(
+                      options[selected]
+                    ).trim();
+
+
+                /*
+                  Highlight selected
+                */
+
+                button.classList.add(
+                  isCorrect
+                    ? 'correct'
+                    : 'wrong'
                 );
 
 
-              const selected =
-                Number(
-                  button.dataset.i
-                );
+                if(isCorrect){
+
+                  score++;
+                }
 
 
-              const correct =
-                String(
-                  question.correct_option ??
-                  ''
-                )
-                .trim()
-                .toUpperCase();
+                $('practiceFeedback')
+                  .innerHTML = `
 
+                    <div class="answer">
 
-              const letter =
-                String.fromCharCode(
-                  65 + selected
-                );
+                      <strong>
 
+                        ${
+                          isCorrect
+                            ? '✓ Correct'
+                            : '✗ Incorrect'
+                        }
 
-              const selectedText =
-                String(
-                  options[selected] ??
-                  ''
-                )
-                .trim();
+                      </strong>
 
-
-              const answerText =
-                String(
-                  question.answer ??
-                  ''
-                )
-                .trim();
-
-
-              const isCorrect =
-                correct === letter ||
-
-                correct ===
-                  String(selected) ||
-
-                answerText ===
-                  selectedText;
-
-
-              button.classList.add(
-                isCorrect
-                  ? 'correct'
-                  : 'wrong'
-              );
-
-
-              if(isCorrect){
-
-                score++;
-
-              }
-
-
-              $('practiceFeedback')
-                .innerHTML = `
-
-                  <div class="answer">
-
-                    <strong>
-
-                      ${
-                        isCorrect
-                          ? '✓ Correct'
-                          : '✗ Incorrect'
-                      }
-
-                    </strong>
-
-                    ${
-                      safeHTML(
+                      ${safeHtml(
                         question.explanation ||
                         question.answer ||
                         ''
-                      )
+                      )}
+
+                      <br>
+
+                      <button
+                        type="button"
+                        class="btn primary"
+                        id="nextPractice"
+                        style="margin-top:10px"
+                      >
+
+                        ${
+                          index + 1 <
+                          questions.length
+
+                            ? 'Next Question'
+                            : 'Finish'
+                        }
+
+                      </button>
+
+                    </div>
+                  `;
+
+
+                /*
+                  Show correct answer if wrong
+                */
+
+                if(!isCorrect){
+
+                  const correctIndex =
+                    options.findIndex(
+                      option =>
+                        String(option)
+                          .trim()
+                          === answerText
+                    );
+
+
+                  if(correctIndex >= 0){
+
+                    const correctButton =
+                      $('practiceBody')
+                        .querySelector(
+                          `[data-i="${correctIndex}"]`
+                        );
+
+
+                    correctButton
+                      ?.classList
+                      .add('correct');
+                  }
+                }
+
+
+                $('nextPractice')
+                  .onclick = () => {
+
+                    index++;
+
+
+                    if(
+                      index <
+                      questions.length
+                    ){
+
+                      render();
+
+                    }else{
+
+                      finishPractice();
                     }
+                  };
 
-
-                    <br>
-
-
-                    <button
-                      class="btn primary"
-                      id="nextPractice"
-                      type="button"
-                      style="margin-top:10px"
-                    >
-
-                      ${
-                        index + 1 <
-                        questions.length
-
-                          ? 'Next Question'
-                          : 'Finish'
-                      }
-
-                    </button>
-
-                  </div>
-
-                `;
-
-
-              $('nextPractice').onclick =
-                () => {
-
-                  index++;
-
-
-                  if(
-                    index <
-                    questions.length
-                  ){
-
-                    render();
-
-                  }
-
-                  else{
-
-                    showPracticeResult();
-
-                  }
-
-                };
-
-            };
-
+              };
           }
         );
 
-    }
+    }else{
 
-    else{
-
-      $('showPracticeAnswer').onclick =
-        () => {
+      $('showPracticeAnswer')
+        .onclick = () => {
 
           $('practiceFeedback')
             .innerHTML = `
@@ -5895,12 +5350,10 @@ function openPractice(){
                   Answer
                 </strong>
 
-                ${
-                  safeHTML(
-                    question.answer ||
-                    'Not available'
-                  )
-                }
+                ${safeHtml(
+                  question.answer ||
+                  'Not available'
+                )}
 
 
                 ${
@@ -5909,17 +5362,17 @@ function openPractice(){
                     ?
 
                     `
+
                       <br><br>
 
                       <strong>
                         Explanation
                       </strong>
 
-                      ${
-                        safeHTML(
-                          question.explanation
-                        )
-                      }
+                      ${safeHtml(
+                        question.explanation
+                      )}
+
                     `
 
                     :
@@ -5927,18 +5380,54 @@ function openPractice(){
                     ''
                 }
 
-              </div>
 
+                <br>
+
+                <button
+                  type="button"
+                  class="btn primary"
+                  id="nextPractice"
+                  style="margin-top:10px"
+                >
+
+                  ${
+                    index + 1 <
+                    questions.length
+
+                      ? 'Next Question'
+                      : 'Finish'
+                  }
+
+                </button>
+
+              </div>
             `;
 
+
+          $('nextPractice')
+            .onclick = () => {
+
+              index++;
+
+
+              if(
+                index <
+                questions.length
+              ){
+
+                render();
+
+              }else{
+
+                finishPractice();
+              }
+            };
         };
-
     }
-
   };
 
 
-  function showPracticeResult(){
+  const finishPractice = () => {
 
     $('practiceBody').innerHTML = `
 
@@ -5947,7 +5436,7 @@ function openPractice(){
         <i class="fa-solid fa-trophy"></i>
 
         <h3>
-          Practice complete
+          Practice Complete
         </h3>
 
         <p>
@@ -5956,18 +5445,37 @@ function openPractice(){
 
           <strong>
             ${score}
+            /
+            ${questions.length}
           </strong>
-
-          /
-
-          ${questions.length}.
 
         </p>
 
+        <div
+          class="progress"
+          style="max-width:300px;margin:15px auto"
+        >
+
+          <i
+            style="
+              width:${Math.round(
+                score /
+                questions.length *
+                100
+              )}%;
+            "
+          ></i>
+
+        </div>
+
         <button
-          class="btn primary"
-          id="closePracticeResult"
           type="button"
+          class="btn primary"
+          onclick="
+            document
+              .getElementById('practiceModal')
+              .classList.remove('open')
+          "
         >
 
           Done
@@ -5975,73 +5483,31 @@ function openPractice(){
         </button>
 
       </div>
-
     `;
-
-
-    /*
-      Update local counter only.
-    */
-
-    const current =
-      Number(
-        $('questionCount')
-          .textContent || 0
-      );
-
-
-    $('questionCount').textContent =
-      String(
-        current + score
-      );
-
-
-    $('closePracticeResult').onclick =
-      () => {
-
-        closePractice();
-
-      };
-
-  }
+  };
 
 
   $('practiceModal')
-    .classList
-    .add('open');
-
-
-  document.body.classList.add(
-    'modal-open'
-  );
+    .classList.add('open');
 
 
   render();
-
 }
+
 
 
 /* =========================================================
-   CLOSE PRACTICE
+   MODAL
 ========================================================= */
 
-function closePractice(){
-
-  $('practiceModal')
-    .classList
-    .remove('open');
-
-
-  document.body.classList.remove(
-    'modal-open'
-  );
-
-}
-
-
 $('closePractice').onclick =
-  () =>
-    closePractice();
+  () => {
+
+    $('practiceModal')
+      .classList
+      .remove('open');
+
+  };
 
 
 $('practiceModal').onclick =
@@ -6052,15 +5518,15 @@ $('practiceModal').onclick =
       'practiceModal'
     ){
 
-      closePractice();
-
+      $('practiceModal')
+        .classList
+        .remove('open');
     }
-
   };
 
 
 /*
-  ESC key
+  ESC closes modal
 */
 
 document.addEventListener(
@@ -6071,58 +5537,61 @@ document.addEventListener(
       event.key === 'Escape'
     ){
 
-      closePractice();
-
+      $('practiceModal')
+        .classList
+        .remove('open');
     }
-
   }
 );
 
 
+
 /* =========================================================
-   SELECT EVENTS
+   EXAM SELECT
 ========================================================= */
 
 $('examSelect').onchange =
-  () => {
+  async () => {
 
-    $('searchInput').value =
-      '';
+    try{
 
+      await loadPapers(
+        $('examSelect').value
+      );
 
-    loadPapers(
-      $('examSelect').value
-    )
-    .catch(
-      error =>
-        err(
-          'Unable to load papers.',
-          error
-        )
-    );
+    }catch(error){
 
+      err(
+        'Unable to load papers.',
+        error
+      );
+    }
   };
 
+
+
+/* =========================================================
+   PAPER SELECT
+========================================================= */
 
 $('paperSelect').onchange =
-  () => {
+  async () => {
 
-    $('searchInput').value =
-      '';
+    try{
 
+      await loadSyllabus(
+        $('paperSelect').value
+      );
 
-    loadSyllabus(
-      $('paperSelect').value
-    )
-    .catch(
-      error =>
-        err(
-          'Unable to load syllabus.',
-          error
-        )
-    );
+    }catch(error){
 
+      err(
+        'Unable to load syllabus.',
+        error
+      );
+    }
   };
+
 
 
 /* =========================================================
@@ -6140,10 +5609,10 @@ $('searchInput').oninput =
     searchTimer =
       setTimeout(
         search,
-        350
+        300
       );
-
   };
+
 
 
 async function search(){
@@ -6159,8 +5628,11 @@ async function search(){
     renderSyllabus();
 
     return;
-
   }
+
+
+  const requestId =
+    ++searchRequestId;
 
 
   const lowerTerm =
@@ -6168,14 +5640,14 @@ async function search(){
 
 
   /*
-    Local topic search first.
+    First search currently loaded topics locally.
   */
 
   const topicHits =
     topics.filter(
       topic => {
 
-        const text =
+        const haystack =
           `
             ${topic.title || ''}
             ${topic.description || ''}
@@ -6184,46 +5656,47 @@ async function search(){
           .toLowerCase();
 
 
-        return text.includes(
+        return haystack.includes(
           lowerTerm
         );
-
       }
     );
 
 
   /*
-    Question search.
+    Search questions.
   */
-
-  const safeTerm =
-    term
-      .replace(/,/g,' ')
-      .replace(/[()]/g,' ');
-
 
   const {
     data,
     error
   } =
     await sb
-
       .from('study_questions')
-
       .select(
         'id,topic_id,question,answer,question_type,is_published'
       )
-
       .eq(
         'is_published',
         true
       )
-
       .or(
-        `question.ilike.%${safeTerm}%,answer.ilike.%${safeTerm}%`
+        `question.ilike.%${term.replace(/[,%()]/g,' ')}%,answer.ilike.%${term.replace(/[,%()]/g,' ')}%`
       )
-
       .limit(40);
+
+
+  /*
+    Ignore outdated search response.
+  */
+
+  if(
+    requestId !==
+    searchRequestId
+  ){
+
+    return;
+  }
 
 
   if(error){
@@ -6234,7 +5707,6 @@ async function search(){
     );
 
     return;
-
   }
 
 
@@ -6245,8 +5717,8 @@ async function search(){
   const questionTopicIds =
     new Set(
       hits.map(
-        x =>
-          x.topic_id
+        item =>
+          item.topic_id
       )
     );
 
@@ -6254,152 +5726,132 @@ async function search(){
   const combined =
     topics.filter(
       topic =>
-        topicHits.some(
-          x =>
-            x.id === topic.id
-        )
-        ||
         questionTopicIds.has(
           topic.id
+        )
+        ||
+        topicHits.some(
+          item =>
+            item.id === topic.id
         )
     );
 
 
   $('syllabus').innerHTML = `
 
-    <div class="search-results">
+    <div
+      class="panel-head"
+      style="
+        border:0;
+        padding:12px 8px;
+      "
+    >
 
-      <div class="search-result-info">
+      <div>
 
-        <strong>
+        <h3>
           Search Results
-        </strong>
+        </h3>
 
-        <span>
-
+        <p>
           ${combined.length}
           topics •
-
           ${hits.length}
           questions
-
-        </span>
+        </p>
 
       </div>
 
-
-      ${
-        combined.length
-
-          ?
-
-          combined
-            .map(
-              topic => {
-
-                const hasChildren =
-                  getChildren(
-                    topic.id
-                  ).length > 0;
-
-
-                const done =
-                  progress.get(
-                    topic.id
-                  )?.completed;
-
-
-                return `
-
-                  <div class="topic-row">
-
-                    <span
-                      class="topic-toggle empty"
-                    >
-                      <i class="fa-solid fa-circle"></i>
-                    </span>
-
-
-                    <button
-                      type="button"
-                      class="topic-btn ${done ? 'done' : ''}"
-                      data-topic="${esc(topic.id)}"
-                    >
-
-                      <span class="topic-dot"></span>
-
-                      <span class="topic-title">
-
-                        ${esc(
-                          topic.title
-                        )}
-
-                      </span>
-
-                    </button>
-
-                  </div>
-
-                `;
-
-              }
-            )
-            .join('')
-
-          :
-
-          `
-            <div class="empty">
-
-              <i class="fa-solid fa-magnifying-glass"></i>
-
-              <h3>
-                No study material found
-              </h3>
-
-              <p>
-                Try another keyword.
-              </p>
-
-            </div>
-          `
-      }
-
     </div>
 
+
+    ${
+      combined.length
+
+        ?
+
+        combined
+          .map(
+            topic => `
+
+              <button
+                type="button"
+                class="topic-btn ${
+                  progress.get(topic.id)?.completed
+                    ? 'done'
+                    : ''
+                }"
+                data-search-topic="${esc(topic.id)}"
+              >
+
+                <span class="dot"></span>
+
+                <span>
+                  ${esc(topic.title)}
+                </span>
+
+              </button>
+            `
+          )
+          .join('')
+
+        :
+
+        `
+
+          <div class="empty">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <h3>
+              Nothing found
+            </h3>
+
+            <p>
+              Try another topic or question keyword.
+            </p>
+
+          </div>
+        `
+    }
   `;
 
 
   document
     .querySelectorAll(
-      '[data-topic]'
+      '[data-search-topic]'
     )
     .forEach(
       button => {
 
         button.onclick =
-          () =>
-            openTopic(
-              button.dataset.topic
-            );
+          () => {
 
+            openTopic(
+              button.dataset.searchTopic
+            );
+          };
       }
     );
-
 }
 
 
+
 /* =========================================================
-   NETWORK
+   OFFLINE
 ========================================================= */
 
 window.addEventListener(
   'online',
   () => {
 
-    $('offline').style.display =
-      'none';
+    $('offline')
+      .style
+      .display = 'none';
 
+    toast(
+      'Back online'
+    );
   }
 );
 
@@ -6408,25 +5860,55 @@ window.addEventListener(
   'offline',
   () => {
 
-    $('offline').style.display =
-      'block';
+    $('offline')
+      .style
+      .display = 'block';
 
   }
 );
 
 
-/*
-  Initial offline state
-*/
 
-if(
-  !navigator.onLine
-){
+/* =========================================================
+   FILTER BUTTON
+========================================================= */
 
-  $('offline').style.display =
-    'block';
+$('filterBtn').onclick =
+  () => {
 
-}
+    /*
+      Small utility:
+      collapse/expand all sections.
+    */
+
+    const allOpen =
+      sections.length &&
+      sections.every(
+        section =>
+          openSections.has(
+            section.id
+          )
+      );
+
+
+    if(allOpen){
+
+      openSections.clear();
+
+    }else{
+
+      sections.forEach(
+        section =>
+          openSections.add(
+            section.id
+          )
+      );
+    }
+
+
+    renderSyllabus();
+  };
+
 
 
 /* =========================================================
@@ -6459,7 +5941,7 @@ onAuthStateChanged(
           <i class="fa-solid fa-triangle-exclamation"></i>
 
           <h3>
-            Unable to load study material.
+            Unable to load study material
           </h3>
 
           <p>
@@ -6467,24 +5949,20 @@ onAuthStateChanged(
           </p>
 
           <button
-            class="btn primary"
-            id="retryBtn"
             type="button"
+            class="btn primary"
+            style="margin-top:14px"
+            onclick="location.reload()"
           >
+
+            <i class="fa-solid fa-rotate-right"></i>
 
             Try Again
 
           </button>
 
         </div>
-
       `;
-
-
-      $('retryBtn').onclick =
-        () =>
-          location.reload();
-
     }
 
   }
@@ -6493,4 +5971,4 @@ onAuthStateChanged(
 </script>
 
 </body>
-  </html>
+   </html>
