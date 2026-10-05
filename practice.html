@@ -1,540 +1,1318 @@
 <!DOCTYPE html>
 <html lang="ne">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LoksewaQuest - Practice Topics</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- सही theme.css यहाँ लिंक गरिएको छ -->
-  <link rel="stylesheet" href="css/lq-theme.css">
-  
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#09152e">
+<title>LoksewaQuest — Practice</title>
 
-    body {
-      background-color: #f8fafc;
-      color: #1e293b;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding-bottom: 70px;
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    .top-nav {
-      background: #ffffff;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+<!-- Distinct Devanagari typography -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&family=Noto+Serif+Devanagari:wght@600;700;800;900&display=swap" rel="stylesheet">
 
-    .back-btn {
-      font-size: 18px;
-      color: #0f172a;
-      text-decoration: none;
-      cursor: pointer;
-    }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    .nav-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #0f172a;
-    }
+<style>
+:root{
+  --ink:#101b35;
+  --navy:#08152f;
+  --navy2:#102750;
+  --blue:#2459d8;
+  --blue2:#386eea;
+  --cream:#f7f5ef;
+  --paper:#fffefa;
+  --muted:#6b7280;
+  --line:#e4e6ea;
+  --green:#087d61;
+  --orange:#c66b0b;
+  --purple:#6d35c9;
+  --red:#c93645;
+  --pink:#c92b76;
+  --teal:#087d78;
 
-    .container {
-      max-width: 600px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 20px 16px;
-      flex: 1;
-    }
+  --sans:"Noto Sans Devanagari",sans-serif;
+  --serif:"Noto Serif Devanagari",serif;
+}
 
-    .exam-info-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-    .exam-icon-box {
-      width: 50px;
-      height: 50px;
-      background: #2563eb;
-      color: white;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-    }
+html{
+  scroll-behavior:smooth;
+}
 
-    .exam-details h2 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #0f172a;
-    }
+body{
+  min-height:100vh;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 100% 0,#dce7ff 0,transparent 25%),
+    radial-gradient(circle at 0 35%,#eee9df 0,transparent 22%),
+    var(--cream);
+  font-family:var(--sans);
+  padding-bottom:95px;
+  -webkit-font-smoothing:antialiased;
+}
 
-    .exam-details span {
-      font-size: 13px;
-      color: #64748b;
-    }
+button,
+input,
+select{
+  font:inherit;
+}
 
-    /* Tabs */
-    .tabs-container {
-      display: flex;
-      background: #e2e8f0;
-      padding: 4px;
-      border-radius: 30px;
-      margin-bottom: 24px;
-    }
+button,
+a{
+  -webkit-tap-highlight-color:transparent;
+}
 
-    .tab-btn {
-      flex: 1;
-      text-align: center;
-      padding: 10px 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #64748b;
-      background: transparent;
-      border: none;
-      border-radius: 26px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+a{
+  color:inherit;
+  text-decoration:none;
+}
 
-    .tab-btn.active {
-      background: #2563eb;
-      color: white;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-    }
+/* ---------------- NAV ---------------- */
 
-    .topic-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  height:70px;
+  background:rgba(255,254,250,.91);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(20,32,58,.08);
+}
 
-    .topic-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-      cursor: pointer;
-    }
+.topbar-inner{
+  width:min(820px,100%);
+  height:70px;
+  margin:auto;
+  padding:0 16px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
 
-    .topic-card:hover {
-      border-color: #2563eb;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(37, 99, 235, 0.08);
-    }
+.icon-button{
+  width:43px;
+  height:43px;
+  border:1px solid #dfe2e7;
+  border-radius:13px;
+  background:#fff;
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  flex-shrink:0;
+  transition:.2s;
+}
 
-    .topic-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+.icon-button:active{
+  transform:scale(.94);
+}
 
-    .topic-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: white;
-    }
+.nav-heading{
+  flex:1;
+  text-align:center;
+  font-family:var(--serif);
+  font-size:20px;
+  font-weight:900;
+  letter-spacing:-.4px;
+}
 
-    .bg-blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-    .bg-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    .bg-green { background: linear-gradient(135deg, #10b981, #059669); }
-    .bg-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-    .bg-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
-    .bg-teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
-    .bg-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+/* ---------------- MAIN ---------------- */
 
-    .topic-info h3 {
-      font-size: 15px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 3px;
-    }
+.page{
+  width:min(820px,100%);
+  margin:auto;
+  padding:18px 16px 30px;
+}
 
-    .topic-info p {
-      font-size: 12px;
-      color: #64748b;
-    }
+/* ---------------- HERO ---------------- */
 
-    .arrow-icon {
-      color: #94a3b8;
-      font-size: 14px;
-    }
+.hero{
+  position:relative;
+  min-height:245px;
+  overflow:hidden;
+  border-radius:30px;
+  padding:28px 24px;
+  color:white;
 
-    .breadcrumb {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #2563eb;
-      margin-bottom: 16px;
-      cursor: pointer;
-    }
-  </style>
+  background:
+    radial-gradient(
+      circle at 90% 8%,
+      rgba(104,148,255,.42),
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 76% 100%,
+      rgba(43,91,190,.55),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      #07142d 0%,
+      #0d234d 52%,
+      #1c4ba9 100%
+    );
+
+  box-shadow:
+    0 20px 55px rgba(10,28,68,.19);
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  right:-90px;
+  top:-125px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  width:140px;
+  height:140px;
+  right:30px;
+  bottom:-105px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:50%;
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+}
+
+.hero-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:11px;
+  background:rgba(255,255,255,.08);
+  color:#d8e4ff;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.7px;
+}
+
+.hero-kicker i{
+  color:#8db0ff;
+}
+
+.hero h1{
+  max-width:620px;
+  margin-top:18px;
+
+  font-family:var(--serif);
+  font-size:clamp(32px,7vw,50px);
+  line-height:1.15;
+  font-weight:900;
+  letter-spacing:-1.2px;
+}
+
+.hero-description{
+  max-width:580px;
+  margin-top:12px;
+  color:#cbd7ef;
+  font-size:14px;
+  line-height:1.75;
+  font-weight:500;
+}
+
+.hero-bottom{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex-wrap:wrap;
+  margin-top:21px;
+}
+
+.hero-pill{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 11px;
+  border-radius:10px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.11);
+  color:#e1e9fa;
+  font-size:11px;
+  font-weight:700;
+}
+
+/* ---------------- TABS ---------------- */
+
+.tabs{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+  padding:5px;
+  margin:18px 0 24px;
+
+  border:1px solid #dddeda;
+  border-radius:17px;
+  background:#eae8e1;
+}
+
+.tab{
+  min-height:48px;
+  border:0;
+  border-radius:13px;
+  background:transparent;
+  color:#74777d;
+  font-size:12px;
+  font-weight:800;
+  transition:.2s;
+}
+
+.tab i{
+  margin-right:5px;
+}
+
+.tab.active{
+  color:#fff;
+  background:var(--navy);
+  box-shadow:0 7px 18px rgba(9,22,48,.18);
+}
+
+/* ---------------- SECTION HEAD ---------------- */
+
+.section-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:15px;
+  margin:0 2px 13px;
+}
+
+.section-head h2{
+  font-family:var(--serif);
+  font-size:25px;
+  line-height:1.25;
+  font-weight:900;
+  letter-spacing:-.5px;
+}
+
+.section-head p{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:600;
+}
+
+.count{
+  flex-shrink:0;
+  color:#647086;
+  font-size:11px;
+  font-weight:800;
+}
+
+/* ---------------- BREADCRUMB ---------------- */
+
+.breadcrumb{
+  display:none;
+  width:max-content;
+  align-items:center;
+  gap:8px;
+  margin-bottom:13px;
+  padding:9px 13px;
+  border:1px solid #dfe2e8;
+  border-radius:11px;
+  background:#fff;
+  color:var(--blue);
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+/* ---------------- CARDS ---------------- */
+
+.topic-list{
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+}
+
+.topic-card{
+  position:relative;
+  min-height:94px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+
+  padding:15px 16px;
+
+  border:1px solid #e0e2e5;
+  border-radius:21px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.98),
+      rgba(255,254,250,.96)
+    );
+
+  box-shadow:
+    0 7px 22px rgba(24,34,55,.055);
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease;
+}
+
+.topic-card:hover{
+  transform:translateY(-3px);
+  border-color:#cbd5e8;
+  box-shadow:0 15px 35px rgba(24,34,55,.10);
+}
+
+.topic-card:active{
+  transform:scale(.985);
+}
+
+.topic-left{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.topic-icon{
+  width:56px;
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:17px;
+  color:#fff;
+  flex-shrink:0;
+  font-size:19px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.25),
+    0 7px 15px rgba(30,40,70,.12);
+}
+
+.bg-blue{
+  background:linear-gradient(145deg,#4f80ec,#204db6);
+}
+
+.bg-orange{
+  background:linear-gradient(145deg,#efaa43,#b85d00);
+}
+
+.bg-green{
+  background:linear-gradient(145deg,#16ae87,#047258);
+}
+
+.bg-purple{
+  background:linear-gradient(145deg,#9669e9,#602ab7);
+}
+
+.bg-pink{
+  background:linear-gradient(145deg,#e45d9c,#bd1e68);
+}
+
+.bg-teal{
+  background:linear-gradient(145deg,#20b6ad,#06736e);
+}
+
+.bg-red{
+  background:linear-gradient(145deg,#eb6572,#bd2938);
+}
+
+.topic-info{
+  min-width:0;
+}
+
+.topic-info h3{
+  font-family:var(--serif);
+  font-size:18px;
+  line-height:1.4;
+  font-weight:900;
+  letter-spacing:-.25px;
+}
+
+.topic-info p{
+  margin-top:3px;
+  color:#707a8d;
+  font-size:11px;
+  line-height:1.5;
+  font-weight:600;
+}
+
+.arrow{
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+
+  border-radius:11px;
+  background:#f0f2f5;
+  color:#748096;
+  font-size:11px;
+
+  transition:.2s;
+}
+
+.topic-card:hover .arrow{
+  background:#e8efff;
+  color:var(--blue);
+}
+
+/* ---------------- EMPTY ---------------- */
+
+.empty{
+  padding:55px 20px;
+  text-align:center;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:600;
+}
+
+.empty i{
+  display:block;
+  margin-bottom:13px;
+  font-size:30px;
+  opacity:.35;
+}
+
+/* ---------------- BOTTOM NAV ---------------- */
+
+#bottomNav{
+  position:fixed;
+  z-index:1100;
+  left:0;
+  right:0;
+  bottom:0;
+}
+
+/* ---------------- MOBILE ---------------- */
+
+@media(max-width:560px){
+
+  .page{
+    padding:13px 12px 25px;
+  }
+
+  .hero{
+    min-height:245px;
+    padding:23px 19px;
+    border-radius:25px;
+  }
+
+  .hero h1{
+    font-size:31px;
+    letter-spacing:-.8px;
+  }
+
+  .hero-description{
+    font-size:13px;
+    line-height:1.7;
+  }
+
+  .hero-pill{
+    font-size:10px;
+  }
+
+  .section-head h2{
+    font-size:22px;
+  }
+
+  .topic-card{
+    min-height:91px;
+    padding:13px;
+    border-radius:18px;
+  }
+
+  .topic-icon{
+    width:51px;
+    height:51px;
+    border-radius:15px;
+    font-size:17px;
+  }
+
+  .topic-left{
+    gap:12px;
+  }
+
+  .topic-info h3{
+    font-size:16px;
+  }
+
+  .topic-info p{
+    font-size:10px;
+  }
+
+  .arrow{
+    width:31px;
+    height:31px;
+  }
+}
+
+@media(max-width:370px){
+
+  .hero h1{
+    font-size:28px;
+  }
+
+  .topic-info h3{
+    font-size:15px;
+  }
+
+  .topic-icon{
+    width:47px;
+    height:47px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{
+    animation-duration:.01ms!important;
+    transition-duration:.01ms!important;
+  }
+}
+</style>
 </head>
+
 <body>
 
-  <!-- Top Header -->
-  <div class="top-nav">
-    <a href="dashboard.html" class="back-btn" id="mainBackBtn"><i class="fa-solid fa-chevron-left"></i></a>
-    <span class="nav-title" id="headerTitle">Practice Topics</span>
-    <div style="width: 18px;"></div>
+<header class="topbar">
+  <div class="topbar-inner">
+
+    <a
+      href="dashboard.html"
+      class="icon-button"
+      aria-label="ड्यासबोर्डमा फर्कनुहोस्"
+    >
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+
+    <div class="nav-heading" id="headerTitle">
+      अभ्यास
+    </div>
+
+    <button
+      class="icon-button"
+      id="themeToggle"
+      type="button"
+      aria-label="थिम परिवर्तन"
+    >
+      <i class="fa-solid fa-moon"></i>
+    </button>
+
+  </div>
+</header>
+
+
+<main class="page">
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="hero-content">
+
+      <div class="hero-kicker">
+        <i class="fa-solid fa-bolt"></i>
+        LOKSEWAQUEST PRACTICE
+      </div>
+
+      <h1>
+        पढौँ होइन,<br>
+        अभ्यास गरेर सिकौँ।
+      </h1>
+
+      <p class="hero-description">
+        लोकसेवा तयारीका महत्त्वपूर्ण विषयहरूबाट प्रश्न अभ्यास गर्नुहोस्।
+        आफ्नो कमजोर क्षेत्र पहिचान गर्नुहोस् र हरेक दिन अलि राम्रो बन्नुहोस्।
+      </p>
+
+      <div class="hero-bottom">
+
+        <div class="hero-pill">
+          <i class="fa-solid fa-layer-group"></i>
+          विषयगत अभ्यास
+        </div>
+
+        <div class="hero-pill">
+          <i class="fa-solid fa-chart-line"></i>
+          आफ्नो प्रगति
+        </div>
+
+        <div class="hero-pill">
+          <i class="fa-solid fa-clock"></i>
+          आफ्नै गति
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- TABS -->
+
+  <div class="tabs">
+
+    <button
+      class="tab active"
+      type="button"
+      onclick="switchTab('topics',this)"
+    >
+      <i class="fa-solid fa-book-open"></i>
+      विषयहरू
+    </button>
+
+    <button
+      class="tab"
+      type="button"
+      onclick="switchTab('current',this)"
+    >
+      <i class="fa-solid fa-calendar-days"></i>
+      समसामयिक
+    </button>
+
+    <button
+      class="tab"
+      type="button"
+      onclick="switchTab('gorkha',this)"
+    >
+      <i class="fa-solid fa-newspaper"></i>
+      गोर्खापत्र
+    </button>
+
   </div>
 
-  <div class="container">
-    
-    <!-- Top Info Card -->
-    <div class="exam-info-card">
-      <div class="exam-icon-box">
-        <i class="fa-solid fa-pen-to-square"></i>
-      </div>
-      <div class="exam-details">
-        <h2>Chapter-wise Practice</h2>
-        <span>लोकसेवा तयारी • विषयगत अभ्यास</span>
-      </div>
-    </div>
 
-    <!-- Tabs -->
-    <div class="tabs-container">
-      <button class="tab-btn active" onclick="switchMainTab('topics', this)">Topics</button>
-      <button class="tab-btn" onclick="switchMainTab('samasamayik', this)">समसामयिक</button>
-      <button class="tab-btn" onclick="switchMainTab('gorkhapatra', this)">गोर्खापत्र</button>
-    </div>
+  <!-- BREADCRUMB -->
 
-    <!-- Breadcrumb -->
-    <div class="breadcrumb" id="breadcrumb" onclick="goBackLevel()">
-      <i class="fa-solid fa-arrow-left"></i> पछाडि फर्कनुहोस्
-    </div>
-
-    <!-- Content Container -->
-    <div class="topic-list" id="topicListContainer">
-      <!-- Default view -->
-    </div>
+  <div
+    id="breadcrumb"
+    class="breadcrumb"
+    onclick="goBack()"
+  >
+    <i class="fa-solid fa-arrow-left"></i>
+    पछाडि फर्कनुहोस्
   </div>
 
-  <script src="components.js"></script>
-  <script>
-    loadBottomNav('practice');
 
-    const topicsContent = `
-      <a href="quiz.html?set=Nepal Geography" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-blue"><i class="fa-solid fa-mountain-sun"></i></div>
-          <div class="topic-info">
-            <h3>नेपालको भूगोल</h3>
-            <p>12 topics • 250+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+  <!-- SECTION -->
 
-      <a href="quiz.html?set=World_geography" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-orange"><i class="fa-solid fa-globe"></i></div>
-          <div class="topic-info">
-            <h3>विश्वको भूगोल</h3>
-            <p>10 topics • 180+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+  <div class="section-head">
 
-      <a href="quiz.html?set=nepal_history" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-green"><i class="fa-solid fa-monument"></i></div>
-          <div class="topic-info">
-            <h3>नेपालको इतिहास</h3>
-            <p>15 topics • 300+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+    <div>
+      <h2 id="sectionTitle">
+        विषय छान्नुहोस्
+      </h2>
 
-      <a href="quiz.html?set=world_history" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-purple"><i class="fa-solid fa-landmark-dome"></i></div>
-          <div class="topic-info">
-            <h3>विश्व इतिहास</h3>
-            <p>8 topics • 150+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+      <p id="sectionSubtitle">
+        आफ्नो तयारी अनुसार अभ्यास सुरु गर्नुहोस्
+      </p>
+    </div>
 
-      <a href="quiz.html?set=social_culture" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-pink"><i class="fa-solid fa-users-rectangle"></i></div>
-          <div class="topic-info">
-            <h3>सामाजिक र सांस्कृतिक</h3>
-            <p>10 topics • 200+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+    <span
+      class="count"
+      id="count"
+    >
+      ८ विषय
+    </span>
 
-      <a href="quiz.html?set=economic" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-teal"><i class="fa-solid fa-chart-line"></i></div>
-          <div class="topic-info">
-            <h3>आर्थिक अवस्था</h3>
-            <p>9 topics • 170+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+  </div>
 
-      <a href="quiz.html?set=iq" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-blue"><i class="fa-solid fa-brain"></i></div>
-          <div class="topic-info">
-            <h3>बौद्धिक परीक्षण (IQ)</h3>
-            <p>14 topics • 280+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
 
-      <a href="quiz.html?set=sciencetech" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-orange"><i class="fa-solid fa-flask"></i></div>
-          <div class="topic-info">
-            <h3>विज्ञान तथा प्रविधि</h3>
-            <p>10 topics • 200+ questions</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
+  <!-- CONTENT -->
+
+  <section
+    class="topic-list"
+    id="topicList"
+    aria-live="polite"
+  ></section>
+
+</main>
+
+
+<div id="bottomNav"></div>
+
+
+<script>
+
+const topics = [
+
+  {
+    title:"नेपालको भूगोल",
+    desc:"१२ topics • २५०+ प्रश्न",
+    set:"Nepal Geography",
+    icon:"fa-mountain-sun",
+    color:"bg-blue"
+  },
+
+  {
+    title:"विश्वको भूगोल",
+    desc:"१० topics • १८०+ प्रश्न",
+    set:"World_geography",
+    icon:"fa-globe",
+    color:"bg-orange"
+  },
+
+  {
+    title:"नेपालको इतिहास",
+    desc:"१५ topics • ३००+ प्रश्न",
+    set:"nepal_history",
+    icon:"fa-monument",
+    color:"bg-green"
+  },
+
+  {
+    title:"विश्व इतिहास",
+    desc:"८ topics • १५०+ प्रश्न",
+    set:"world_history",
+    icon:"fa-landmark-dome",
+    color:"bg-purple"
+  },
+
+  {
+    title:"सामाजिक तथा सांस्कृतिक",
+    desc:"१० topics • २००+ प्रश्न",
+    set:"social_culture",
+    icon:"fa-users",
+    color:"bg-pink"
+  },
+
+  {
+    title:"आर्थिक अवस्था",
+    desc:"९ topics • १७०+ प्रश्न",
+    set:"economic",
+    icon:"fa-chart-line",
+    color:"bg-teal"
+  },
+
+  {
+    title:"बौद्धिक परीक्षण (IQ)",
+    desc:"१४ topics • २८०+ प्रश्न",
+    set:"iq",
+    icon:"fa-brain",
+    color:"bg-blue"
+  },
+
+  {
+    title:"विज्ञान तथा प्रविधि",
+    desc:"१० topics • २००+ प्रश्न",
+    set:"sciencetech",
+    icon:"fa-flask",
+    color:"bg-orange"
+  }
+
+];
+
+
+const currentAffairs = [
+
+  {
+    title:"समसामयिक २०८३",
+    desc:"२०८३ का महत्त्वपूर्ण समसामयिक घटनाहरू",
+    set:"samasamayik2083",
+    icon:"fa-calendar-days",
+    color:"bg-red"
+  },
+
+  {
+    title:"बजेट २०८३/८४",
+    desc:"आर्थिक वर्ष २०८३/८४ को बजेट विशेष",
+    set:"budget2083-84",
+    icon:"fa-file-invoice-dollar",
+    color:"bg-blue"
+  },
+
+  {
+    title:"१६औँ योजना",
+    desc:"सोह्रौँ आवधिक योजनासम्बन्धी अभ्यास",
+    set:"16thYojana",
+    icon:"fa-chart-pie",
+    color:"bg-green"
+  },
+
+  {
+    title:"दीर्घकालीन सोच २१००/०१",
+    desc:"राष्ट्रिय लक्ष्य तथा दीर्घकालीन सोच",
+    set:"soch2100-01",
+    icon:"fa-bullseye",
+    color:"bg-purple"
+  }
+
+];
+
+
+const months = [
+
+  ["वैशाख","01",["02","09","16","23","30"],"bg-blue"],
+  ["जेठ","02",["06","13","20","27"],"bg-orange"],
+  ["आषाढ","03",["03","10","17","24","31"],"bg-green"],
+  ["श्रावण","04",["07","14","21","28"],"bg-purple"],
+  ["भाद्र","05",["03","10","17","24","31"],"bg-pink"],
+  ["आश्विन","06",["07","14","21","28"],"bg-teal"],
+  ["कार्तिक","07",["04","11","18","25"],"bg-blue"],
+  ["मंसिर","08",["02","09","16","23"],"bg-orange"],
+  ["पुष","09",["01","08","15","22","29"],"bg-green"],
+  ["माघ","10",["06","13","20","27"],"bg-purple"],
+  ["फागुन","11",["04","11","18","25"],"bg-pink"],
+  ["चैत","12",["02","09","16","23","30"],"bg-teal"]
+
+];
+
+
+let activeTab="topics";
+let stack=[];
+
+
+const list=document.getElementById("topicList");
+const sectionTitle=document.getElementById("sectionTitle");
+const sectionSubtitle=document.getElementById("sectionSubtitle");
+const count=document.getElementById("count");
+const breadcrumb=document.getElementById("breadcrumb");
+const headerTitle=document.getElementById("headerTitle");
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function render(items){
+
+  if(!items.length){
+
+    list.innerHTML=`
+      <div class="empty">
+        <i class="fa-regular fa-folder-open"></i>
+        अहिले यहाँ कुनै अभ्यास उपलब्ध छैन।
+      </div>
     `;
 
-    const samasamayikContent = `
-      <a href="quiz.html?set=samasamayik2083" class="topic-card">
+    count.textContent="० विषय";
+    return;
+  }
+
+
+  count.textContent=
+    `${toNepaliNumber(items.length)} विषय`;
+
+
+  list.innerHTML=items.map(item=>{
+
+    const url=
+      `quiz.html?set=${encodeURIComponent(item.set)}`;
+
+    return`
+
+      <a
+        href="${url}"
+        class="topic-card"
+      >
+
         <div class="topic-left">
-          <div class="topic-icon bg-red"><i class="fa-solid fa-calendar-days"></i></div>
-          <div class="topic-info">
-            <h3>समसामयिक २०८३</h3>
-            <p>वर्ष २०८३ का महत्त्वपूर्ण घटनाहरू</p>
+
+          <div class="topic-icon ${item.color}">
+            <i class="fa-solid ${item.icon}"></i>
           </div>
+
+          <div class="topic-info">
+
+            <h3>
+              ${escapeHTML(item.title)}
+            </h3>
+
+            <p>
+              ${escapeHTML(item.desc)}
+            </p>
+
+          </div>
+
         </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+
+        <span class="arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </span>
+
       </a>
 
-      <a href="quiz.html?set=budget2083-84" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-blue"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-          <div class="topic-info">
-            <h3>बजेट ८३/८४</h3>
-            <p>आर्थिक वर्ष २०८३/८४ को बजेट विशेष</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
-
-      <a href="quiz.html?set=16thYojana" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-green"><i class="fa-solid fa-chart-pie"></i></div>
-          <div class="topic-info">
-            <h3>१६औँ योजना</h3>
-            <p>सोह्रौं आवधिक योजनासम्बन्धी प्रश्नहरू</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
-
-      <a href="quiz.html?set=soch2100-01" class="topic-card">
-        <div class="topic-left">
-          <div class="topic-icon bg-purple"><i class="fa-solid fa-bullseye"></i></div>
-          <div class="topic-info">
-            <h3>दीर्घकालीन सोच २१००/०१</h3>
-            <p>दीर्घकालीन राष्ट्रिय लक्ष्य तथा सोच</p>
-          </div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </a>
     `;
 
-    const gorkhapatraContent = `
-      <div class="topic-card" onclick="openGorkhapatraYears()">
+  }).join("");
+
+}
+
+
+function switchTab(tab,button){
+
+  activeTab=tab;
+  stack=[];
+
+  breadcrumb.style.display="none";
+
+  document
+    .querySelectorAll(".tab")
+    .forEach(x=>x.classList.remove("active"));
+
+  button.classList.add("active");
+
+
+  if(tab==="topics"){
+
+    headerTitle.textContent="अभ्यास";
+    sectionTitle.textContent="विषय छान्नुहोस्";
+    sectionSubtitle.textContent=
+      "आफ्नो तयारी अनुसार अभ्यास सुरु गर्नुहोस्";
+
+    render(topics);
+    return;
+  }
+
+
+  if(tab==="current"){
+
+    headerTitle.textContent="समसामयिक";
+    sectionTitle.textContent="समसामयिक तयारी";
+    sectionSubtitle.textContent=
+      "हालका महत्त्वपूर्ण विषयहरू अभ्यास गर्नुहोस्";
+
+    render(currentAffairs);
+    return;
+  }
+
+
+  if(tab==="gorkha"){
+
+    headerTitle.textContent="गोर्खापत्र";
+    sectionTitle.textContent="गोर्खापत्र ज्ञानसागर";
+    sectionSubtitle.textContent=
+      "महिना छानेर बुधवारका अभ्यास सेट खोल्नुहोस्";
+
+    count.textContent="१२ महिना";
+
+
+    list.innerHTML=`
+
+      <div
+        class="topic-card"
+        role="button"
+        tabindex="0"
+        onclick="openMonths()"
+        onkeydown="if(event.key==='Enter')openMonths()"
+      >
+
         <div class="topic-left">
-          <div class="topic-icon bg-green"><i class="fa-solid fa-folder-open"></i></div>
+
+          <div class="topic-icon bg-green">
+            <i class="fa-solid fa-newspaper"></i>
+          </div>
+
           <div class="topic-info">
+
             <h3>गोर्खापत्र ज्ञानसागर २०८३</h3>
-            <p>वैशाखदेखि चैतसम्मका बुधवार विशेष सेटहरू</p>
+
+            <p>
+              वैशाखदेखि चैतसम्मका बुधवार विशेष सेटहरू
+            </p>
+
           </div>
+
         </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+
+        <span class="arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </span>
+
       </div>
+
     `;
 
-    let activeTab = 'topics';
-    let navigationStack = [];
+  }
 
-    function switchMainTab(tabName, btnElement) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      btnElement.classList.add('active');
+}
 
-      activeTab = tabName;
-      navigationStack = [];
-      document.getElementById('breadcrumb').style.display = 'none';
 
-      const container = document.getElementById('topicListContainer');
-      const headerTitle = document.getElementById('headerTitle');
+function openMonths(){
 
-      if (tabName === 'topics') {
-        headerTitle.innerText = 'Practice Topics';
-        container.innerHTML = topicsContent;
-      } else if (tabName === 'samasamayik') {
-        headerTitle.innerText = 'समसामयिक';
-        container.innerHTML = samasamayikContent;
-      } else if (tabName === 'gorkhapatra') {
-        headerTitle.innerText = 'गोर्खापत्र ज्ञानसागर';
-        container.innerHTML = gorkhapatraContent;
-      }
+  stack.push({
+    title:headerTitle.textContent,
+    section:sectionTitle.textContent,
+    subtitle:sectionSubtitle.textContent,
+    html:list.innerHTML
+  });
+
+  breadcrumb.style.display="flex";
+
+  headerTitle.textContent="गोर्खापत्र २०८३";
+  sectionTitle.textContent="महिना छान्नुहोस्";
+  sectionSubtitle.textContent=
+    "बुधवार प्रकाशित ज्ञानसागर अभ्यास";
+
+  count.textContent="१२ महिना";
+
+
+  list.innerHTML=months.map(month=>{
+
+    return`
+
+      <div
+        class="topic-card"
+        role="button"
+        tabindex="0"
+        onclick='openDays(
+          ${JSON.stringify(month[0])},
+          ${JSON.stringify(month[1])},
+          ${JSON.stringify(month[2])}
+        )'
+      >
+
+        <div class="topic-left">
+
+          <div class="topic-icon ${month[3]}">
+            <i class="fa-solid fa-calendar"></i>
+          </div>
+
+          <div class="topic-info">
+
+            <h3>${escapeHTML(month[0])} २०८३</h3>
+
+            <p>
+              ${toNepaliNumber(month[2].length)}
+              वटा बुधवार सेट
+            </p>
+
+          </div>
+
+        </div>
+
+        <span class="arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </span>
+
+      </div>
+
+    `;
+
+  }).join("");
+
+}
+
+
+function openDays(monthName,monthCode,days){
+
+  stack.push({
+    title:headerTitle.textContent,
+    section:sectionTitle.textContent,
+    subtitle:sectionSubtitle.textContent,
+    html:list.innerHTML
+  });
+
+
+  headerTitle.textContent=
+    `${monthName} २०८३`;
+
+  sectionTitle.textContent=
+    "बुधवारका सेटहरू";
+
+  sectionSubtitle.textContent=
+    `${monthName} महिनाका ज्ञानसागर अभ्यास`;
+
+  count.textContent=
+    `${toNepaliNumber(days.length)} सेट`;
+
+
+  list.innerHTML=days.map(day=>{
+
+    const set=
+      `gorkhapatra2083-${monthCode}-${day}`;
+
+    return`
+
+      <a
+        class="topic-card"
+        href="quiz.html?set=${encodeURIComponent(set)}"
+      >
+
+        <div class="topic-left">
+
+          <div class="topic-icon bg-blue">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+
+          <div class="topic-info">
+
+            <h3>
+              ${monthName} ${day}
+            </h3>
+
+            <p>
+              गोर्खापत्र ज्ञानसागर • बुधवार विशेष
+            </p>
+
+          </div>
+
+        </div>
+
+        <span class="arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </span>
+
+      </a>
+
+    `;
+
+  }).join("");
+
+}
+
+
+function goBack(){
+
+  if(!stack.length){
+
+    breadcrumb.style.display="none";
+    return;
+
+  }
+
+
+  const previous=stack.pop();
+
+  headerTitle.textContent=previous.title;
+  sectionTitle.textContent=previous.section;
+  sectionSubtitle.textContent=previous.subtitle;
+  list.innerHTML=previous.html;
+
+
+  if(!stack.length){
+
+    breadcrumb.style.display="none";
+
+    if(activeTab==="gorkha"){
+
+      sectionTitle.textContent=
+        "गोर्खापत्र ज्ञानसागर";
+
+      sectionSubtitle.textContent=
+        "महिना छानेर बुधवारका अभ्यास सेट खोल्नुहोस्";
+
+      count.textContent="१२ महिना";
+
     }
 
-    function openGorkhapatraYears() {
-      navigationStack.push({title: 'गोर्खापत्र ज्ञानसागर', content: gorkhapatraContent});
-      document.getElementById('breadcrumb').style.display = 'flex';
-      document.getElementById('headerTitle').innerText = 'गोर्खापत्र २०८३ (महिनाहरू)';
-      
-      const container = document.getElementById('topicListContainer');
-      container.innerHTML = `
-        <div class="topic-card" onclick="openMonthWednesdays('वैशाख २०८३', '01', ['02', '09', '16', '23', '30'])">
-          <div class="topic-left"><div class="topic-icon bg-blue"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>वैशाख महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('जेठ २०८३', '02', ['06', '13', '20', '27'])">
-          <div class="topic-left"><div class="topic-icon bg-orange"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>जेठ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('आषाढ २०८३', '03', ['03', '10', '17', '24', '31'])">
-          <div class="topic-left"><div class="topic-icon bg-green"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>आषाढ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('श्रावण २०८३', '04', ['07', '14', '21', '28'])">
-          <div class="topic-left"><div class="topic-icon bg-purple"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>श्रावण महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('भाद्र २०८३', '05', ['03', '10', '17', '24', '31'])">
-          <div class="topic-left"><div class="topic-icon bg-pink"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>भाद्र महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('आश्विन २०८३', '06', ['07', '14', '21', '28'])">
-          <div class="topic-left"><div class="topic-icon bg-teal"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>आश्विन महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('कार्तिक २०८३', '07', ['04', '11', '18', '25'])">
-          <div class="topic-left"><div class="topic-icon bg-blue"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>कार्तिक महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('मंसिर २०८३', '08', ['02', '09', '16', '23'])">
-          <div class="topic-left"><div class="topic-icon bg-orange"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>मंसिर महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('पुष २०८३', '09', ['01', '08', '15', '22', '29'])">
-          <div class="topic-left"><div class="topic-icon bg-green"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>पुष महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('माघ २०८३', '10', ['06', '13', '20', '27'])">
-          <div class="topic-left"><div class="topic-icon bg-purple"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>माघ महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('फागुन २०८३', '11', ['04', '11', '18', '25'])">
-          <div class="topic-left"><div class="topic-icon bg-pink"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>फागुन महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-        <div class="topic-card" onclick="openMonthWednesdays('चैत २०८३', '12', ['02', '09', '16', '23', '30'])">
-          <div class="topic-left"><div class="topic-icon bg-teal"><i class="fa-solid fa-calendar"></i></div>
-          <div class="topic-info"><h3>चैत महिना</h3><p>बुधवार प्रकाशित सेटहरू</p></div></div>
-          <i class="fa-solid fa-chevron-right arrow-icon"></i>
-        </div>
-      `;
-    }
+  }
 
-    function openMonthWednesdays(monthName, monthCode, daysArray) {
-      const currentHTML = document.getElementById('topicListContainer').innerHTML;
-      navigationStack.push({title: document.getElementById('headerTitle').innerText, content: currentHTML});
-      
-      document.getElementById('headerTitle').innerText = monthName + ' (गोर्खापत्र)';
-      const container = document.getElementById('topicListContainer');
-      
-      let htmlContent = '';
-      daysArray.forEach(day => {
-        let fullDateStr = `2083-${monthCode}-${day}`;
-        htmlContent += `
-          <a href="quiz.html?set=gorkhapatra${fullDateStr}" class="topic-card">
-            <div class="topic-left">
-              <div class="topic-icon bg-blue"><i class="fa-solid fa-file-lines"></i></div>
-              <div class="topic-info">
-                <h3>2083-${monthCode}-${day}</h3>
-                <p>${monthName} ${parseInt(day)} गते • बुधवार</p>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-right arrow-icon"></i>
-          </a>
-        `;
-      });
-      container.innerHTML = htmlContent;
-    }
+}
 
-    function goBackLevel() {
-      if (navigationStack.length > 0) {
-        let prev = navigationStack.pop();
-        document.getElementById('headerTitle').innerText = prev.title;
-        document.getElementById('topicListContainer').innerHTML = prev.content;
-        if (navigationStack.length === 0) {
-          document.getElementById('breadcrumb').style.display = 'none';
-        }
-      } else {
-        document.getElementById('breadcrumb').style.display = 'none';
-      }
-    }
 
-    // Initialize default view
-    document.getElementById('topicListContainer').innerHTML = topicsContent;
-  </script><script src="translator.js"></script>
+function toNepaliNumber(value){
+
+  const map={
+    "0":"०",
+    "1":"१",
+    "2":"२",
+    "3":"३",
+    "4":"४",
+    "5":"५",
+    "6":"६",
+    "7":"७",
+    "8":"८",
+    "9":"९"
+  };
+
+  return String(value)
+    .replace(/[0-9]/g,n=>map[n]);
+
+}
+
+
+/* ---------------- THEME ---------------- */
+
+const themeToggle=
+  document.getElementById("themeToggle");
+
+
+function updateThemeIcon(){
+
+  const dark=
+    localStorage.getItem("loksewa_theme")==="dark";
+
+  themeToggle.innerHTML=
+    dark
+      ? '<i class="fa-solid fa-sun"></i>'
+      : '<i class="fa-solid fa-moon"></i>';
+
+}
+
+
+themeToggle.addEventListener("click",()=>{
+
+  const dark=
+    localStorage.getItem("loksewa_theme")==="dark";
+
+  localStorage.setItem(
+    "loksewa_theme",
+    dark ? "light" : "dark"
+  );
+
+  updateThemeIcon();
+
+});
+
+
+updateThemeIcon();
+
+
+/* ---------------- EXISTING NAV ---------------- */
+
+try{
+
+  if(typeof loadBottomNav==="function"){
+    loadBottomNav("practice");
+  }
+
+}catch(error){
+
+  console.warn(
+    "Bottom navigation unavailable:",
+    error
+  );
+
+}
+
+
+/* ---------------- INITIAL ---------------- */
+
+render(topics);
+
+</script>
+
+<script src="components.js"></script>
+<script src="translator.js"></script>
 
 </body>
 </html>
