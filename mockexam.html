@@ -1518,13 +1518,12 @@ const question=examQuestions[reportQuestionIndex];
 
 try{
 const {error}=await supabaseClient
-.from('question_reports')
+.from('reported_questions')
 .insert([{
-question:question?.question||'',
 question_id:question?.id??null,
-report:text,
-username:firestoreUserName||userEmail||null,
-topic:activeSet
+question_text:question?.question||'Unknown Question',
+reason:text,
+status:'Pending'
 }]);
 
 if(error){
