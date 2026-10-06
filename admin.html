@@ -3179,15 +3179,45 @@ VALUES
       return `<div class="form-group"><label>${label}</label><${tag} ${attrs} class="form-control" name="${key}" ${required?'required':''}>${tag==='textarea'?studyEsc(value||''):''}</${tag}>${key==='options'?'<div class="help">Example: ["Option A","Option B","Option C","Option D"]</div>':''}</div>`;
     }
     function renderStudyForm() {
-      const schema=studySchemas[studyState.tab], editing=(studyState.data[studyState.tab]||[]).find(x=>x.id===studyState.editingId)||{};
-      studyForm.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;font-size:16px">${studyState.editingId?'Edit':'Add'} ${schema.title}</h3>${studyState.editingId?'<button type="button" class="mini" id="studyCancel">Cancel</button>':''}</div><div style="margin-top:12px">${schema.fields.map(f=>studyFieldHtml(f,editing[f[0]])).join('')}</div><button class="submit-btn" type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> ${studyState.editingId?'Update':'Save'} ${schema.title}</button>`;
-      if(studyState.tab==='exams'){const slugInput=studyForm.querySelector('[name="slug"]'),nameInput=studyForm.querySelector('[name="name"]');nameInput?.addEventListener('input',()=>{if(!studyState.editingId)slugInput.value=studySlug(nameInput.value)})}
-      if(studyState.tab==='papers'){const slugInput=studyForm.querySelector('[name="slug"]'),nameInput=studyForm.querySelector('[name="name"]');nameInput?.addEventListener('input',()=>{if(!studyState.editingId)slugInput.value=studySlug(nameInput.value)})}
-      if(studyState.tab==='sections'){const slugInput=studyForm.querySelector('[name="slug"]'),nameInput=studyForm.querySelector('[name="name"]');nameInput?.addEventListener('input',()=>{if(!studyState.editingId)slugInput.value=studySlug(nameInput.value)})}
-      if(studyState.tab==='topics'){const slugInput=studyForm.querySelector('[name="slug"]'),nameInput=studyForm.querySelector('[name="title"]');nameInput?.addEventListener('input',()=>{if(!studyState.editingId)slugInput.value=studySlug(nameInput.value)})}
-      studyForm.querySelector('#studyCancel')?.addEventListener('click',()=>{studyState.editingId=null;renderStudyForm()});
-      studyForm.onsubmit=saveStudyItem;
-    }
+  const schema = studySchemas[studyState.tab];
+  const editing = (studyState.data[studyState.tab] || []).find(x => x.id === studyState.editingId) || {};
+  
+  studyForm.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <h3 style="margin:0;font-size:16px">${studyState.editingId ? 'Edit' : 'Add'} ${schema.title}</h3>
+      ${studyState.editingId ? '<button type="button" class="mini" id="studyCancel">Cancel</button>' : ''}
+    </div>
+    <div style="margin-top:12px">
+      ${schema.fields.map(f => studyFieldHtml(f, editing[f[0]])).join('')}
+    </div>
+    <button class="submit-btn" type="submit">
+      <i class="fa-solid fa-cloud-arrow-up"></i> ${studyState.editingId ? 'Update' : 'Save'} ${schema.title}
+    </button>
+  `;
+
+  // Attach slug generation listeners
+  const slugInput = studyForm.querySelector('[name="slug"]');
+  const titleOrNameInput = studyForm.querySelector('[name="name"]') || studyForm.querySelector('[name="title"]');
+  
+  if (slugInput && titleOrNameInput) {
+    titleOrNameInput.addEventListener('input', () => {
+      if (!studyState.editingId) {
+        slugInput.value = studySlug(titleOrNameInput.value);
+      }
+    });
+  }
+
+  // Handle cancel button click
+  const cancelBtn = studyForm.querySelector('#studyCancel');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      studyState.editingId = null;
+      renderStudyForm();
+    });
+  }
+}
+
+    
     function renderStudyList() {
       const tab=studyState.tab, arr=studyState.data[tab]||[];
       studyList.innerHTML=arr.length?arr.map(x=>{let meta='';if(tab==='papers')meta=(studyState.data.exams.find(e=>e.id===x.exam_id)||{}).name||'';if(tab==='sections')meta=(studyState.data.papers.find(e=>e.id===x.paper_id)||{}).name||'';if(tab==='topics')meta=(studyState.data.sections.find(e=>e.id===x.section_id)||{}).name||'';if(tab==='questions')meta=(studyState.data.topics.find(e=>e.id===x.topic_id)||{}).title||'';return `<div class="study-item"><div><strong>${studyEsc(x.name||x.title||x.question||'Untitled')}</strong><small>${studyEsc(meta)} ${x.is_published===false||x.is_active===false?'• Unpublished':''}</small></div><div class="study-actions"><button class="mini" data-edit-study="${studyEsc(x.id)}"><i class="fa-solid fa-pen"></i></button><button class="mini danger" data-delete-study="${studyEsc(x.id)}"><i class="fa-solid fa-trash"></i></button></div></div>`}).join(''):'<div class="empty-state" style="padding:30px">No study content yet.</div>';
