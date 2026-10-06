@@ -1,0 +1,3520 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1730">
+  <meta name="description" content="LoksewaQuest Admin Dashboard">
+  <title>LoksewaQuest — Admin Hub</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600;700;800&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --navy:#0b1730;
+      --navy-2:#10244a;
+      --blue:#2563eb;
+      --blue-2:#4f7ff0;
+      --blue-soft:#edf3ff;
+      --green:#059669;
+      --green-soft:#eafaf4;
+      --orange:#d97706;
+      --orange-soft:#fff6e7;
+      --red:#dc3d4d;
+      --red-soft:#fff0f2;
+      --purple:#7c3aed;
+      --purple-soft:#f3edff;
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#17233d;
+      --muted:#68758c;
+      --line:#e5e9f1;
+      --shadow:0 10px 30px rgba(15,31,61,.06);
+      --shadow-lg:0 20px 55px rgba(15,31,61,.13);
+      --radius:18px;
+      --font-head:'Bricolage Grotesque','Mukta',sans-serif;
+      --font-body:'Figtree','Mukta',sans-serif;
+    }
+
+    body.dark {
+      --bg:#09111f;
+      --card:#111c31;
+      --text:#edf2fb;
+      --muted:#9ba8bd;
+      --line:#24324c;
+      --blue-soft:#172a50;
+      --green-soft:#102d26;
+      --orange-soft:#302511;
+      --red-soft:#321a20;
+      --purple-soft:#281b43;
+      --shadow:0 10px 30px rgba(0,0,0,.18);
+      --shadow-lg:0 20px 55px rgba(0,0,0,.3);
+    }
+
+    * {
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html {
+      scroll-behavior:smooth;
+    }
+
+    body {
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 85% -10%,rgba(37,99,235,.10),transparent 30%),
+        var(--bg);
+      color:var(--text);
+      font-family:var(--font-body);
+      padding-bottom:40px;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    button,input,textarea,select {
+      font:inherit;
+    }
+
+    button {
+      cursor:pointer;
+    }
+
+    a {
+      color:inherit;
+      text-decoration:none;
+    }
+
+    :focus-visible {
+      outline:3px solid rgba(37,99,235,.28);
+      outline-offset:2px;
+    }
+
+    /* LOADING */
+
+    #loadingScreen {
+      position:fixed;
+      inset:0;
+      z-index:10000;
+      background:var(--navy);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:16px;
+      padding:30px;
+      text-align:center;
+    }
+
+    .loading-logo {
+      width:62px;
+      height:62px;
+      border-radius:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      font-size:25px;
+      color:#9dbaff;
+      margin-bottom:3px;
+    }
+
+    .spinner {
+      width:30px;
+      height:30px;
+      border:3px solid rgba(255,255,255,.18);
+      border-top-color:#8eb0ff;
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+
+    .loading-title {
+      font-family:var(--font-head);
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .loading-sub {
+      font-size:12px;
+      color:#aab8d0;
+    }
+
+    @keyframes spin {
+      to { transform:rotate(360deg); }
+    }
+
+    /* HEADER */
+
+    .admin-header {
+      position:relative;
+      overflow:hidden;
+      color:#fff;
+      background:
+        radial-gradient(circle at 90% 0%,rgba(116,151,255,.25),transparent 32%),
+        linear-gradient(135deg,#09152d 0%,#102a59 58%,#1e4aa3 100%);
+      padding:
+        calc(16px + env(safe-area-inset-top))
+        max(18px,calc((100vw - 980px)/2))
+        24px;
+      border-radius:0 0 30px 30px;
+      box-shadow:0 12px 35px rgba(9,23,48,.15);
+    }
+
+    .header-glow {
+      position:absolute;
+      width:180px;
+      height:180px;
+      right:-60px;
+      bottom:-110px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 0 0 30px rgba(255,255,255,.02);
+    }
+
+    .header-inner {
+      position:relative;
+      z-index:1;
+      max-width:980px;
+      margin:auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+    }
+
+    .header-brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .back-btn,
+    .header-action {
+      width:42px;
+      height:42px;
+      border-radius:13px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.13);
+      flex-shrink:0;
+      transition:.2s;
+    }
+
+    .back-btn:hover,
+    .header-action:hover {
+      background:rgba(255,255,255,.17);
+    }
+
+    .brand-icon {
+      width:43px;
+      height:43px;
+      border-radius:14px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#9eb9ff;
+      font-size:17px;
+      flex-shrink:0;
+    }
+
+    .header-copy {
+      min-width:0;
+    }
+
+    .header-copy small {
+      display:block;
+      color:#9db1d3;
+      font-size:10px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:1.3px;
+      margin-bottom:2px;
+    }
+
+    .header-copy h1 {
+      font-family:var(--font-head);
+      font-size:21px;
+      line-height:1.1;
+      letter-spacing:-.4px;
+      white-space:nowrap;
+    }
+
+    .header-copy p {
+      color:#b9c7dd;
+      font-size:11px;
+      margin-top:4px;
+    }
+
+    /* LAYOUT */
+
+    .container {
+      width:min(980px,100%);
+      margin:0 auto;
+      padding:22px 18px 0;
+    }
+
+    /* ALERT */
+
+    #alertBox {
+      display:none;
+      position:sticky;
+      top:12px;
+      z-index:100;
+      padding:13px 15px;
+      border-radius:14px;
+      margin-bottom:16px;
+      font-size:13px;
+      font-weight:700;
+      box-shadow:var(--shadow);
+      border:1px solid transparent;
+    }
+
+    .alert-success {
+      display:block!important;
+      background:var(--green-soft);
+      color:var(--green);
+      border-color:rgba(5,150,105,.15)!important;
+    }
+
+    .alert-error {
+      display:block!important;
+      background:var(--red-soft);
+      color:var(--red);
+      border-color:rgba(220,61,77,.15)!important;
+    }
+
+    /* WELCOME */
+
+    .welcome-card {
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      padding:22px;
+      margin-bottom:18px;
+      color:#fff;
+      border-radius:var(--radius);
+      background:
+        radial-gradient(circle at 100% 0%,rgba(119,153,255,.25),transparent 35%),
+        linear-gradient(135deg,#10244a,#1b418f);
+      box-shadow:var(--shadow);
+    }
+
+    .welcome-card::after {
+      content:"";
+      position:absolute;
+      width:150px;
+      height:150px;
+      right:-75px;
+      bottom:-85px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:50%;
+    }
+
+    .welcome-copy {
+      position:relative;
+      z-index:1;
+    }
+
+    .welcome-copy .eyebrow {
+      color:#a9c0ef;
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      margin-bottom:6px;
+    }
+
+    .welcome-copy h2 {
+      font-family:var(--font-head);
+      font-size:23px;
+      letter-spacing:-.5px;
+    }
+
+    .welcome-copy p {
+      color:#c3d0e8;
+      font-size:12px;
+      margin-top:5px;
+      line-height:1.5;
+    }
+
+    .admin-status {
+      position:relative;
+      z-index:1;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:9px 12px;
+      background:rgba(255,255,255,.09);
+      border:1px solid rgba(255,255,255,.13);
+      border-radius:11px;
+      color:#fff;
+      font-size:11px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    .status-dot {
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:#55d99f;
+      box-shadow:0 0 0 4px rgba(85,217,159,.12);
+    }
+
+    /* STATS */
+
+    .section-heading {
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+      margin:24px 2px 11px;
+    }
+
+    .section-heading h2 {
+      font-family:var(--font-head);
+      font-size:17px;
+      letter-spacing:-.25px;
+    }
+
+    .section-heading p {
+      color:var(--muted);
+      font-size:11px;
+      margin-top:3px;
+    }
+
+    .refresh-btn {
+      height:34px;
+      padding:0 11px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:var(--card);
+      color:var(--muted);
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .refresh-btn:hover {
+      color:var(--blue);
+      border-color:rgba(37,99,235,.25);
+    }
+
+    .stats-grid {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+    }
+
+    .stat-card {
+      position:relative;
+      overflow:hidden;
+      min-height:125px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:17px;
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+
+    .stat-card::after {
+      content:"";
+      position:absolute;
+      width:65px;
+      height:65px;
+      right:-25px;
+      bottom:-28px;
+      border-radius:50%;
+      background:var(--blue-soft);
+    }
+
+    .stat-icon {
+      width:37px;
+      height:37px;
+      border-radius:11px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:12px;
+      font-size:14px;
+    }
+
+    .stat-icon.blue {
+      background:var(--blue-soft);
+      color:var(--blue);
+    }
+
+    .stat-icon.red {
+      background:var(--red-soft);
+      color:var(--red);
+    }
+
+    .stat-icon.green {
+      background:var(--green-soft);
+      color:var(--green);
+    }
+
+    .stat-icon.orange {
+      background:var(--orange-soft);
+      color:var(--orange);
+    }
+
+    .stat-card small {
+      display:block;
+      color:var(--muted);
+      font-size:10px;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+
+    .stat-card strong {
+      font-family:var(--font-head);
+      font-size:23px;
+      letter-spacing:-.5px;
+    }
+
+    .stat-card .stat-caption {
+      color:var(--muted);
+      font-size:9px;
+      margin-top:3px;
+    }
+
+    /* TOOL GRID */
+
+    .tool-grid {
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+
+    .tool-card {
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:19px;
+      box-shadow:var(--shadow);
+    }
+
+    .tool-card.wide {
+      grid-column:1/-1;
+    }
+
+    .tool-title {
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:17px;
+    }
+
+    .tool-icon {
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+      font-size:15px;
+    }
+
+    .tool-icon.red {
+      background:var(--red-soft);
+      color:var(--red);
+    }
+
+    .tool-icon.green {
+      background:var(--green-soft);
+      color:var(--green);
+    }
+
+    .tool-icon.orange {
+      background:var(--orange-soft);
+      color:var(--orange);
+    }
+
+    .tool-icon.blue {
+      background:var(--blue-soft);
+      color:var(--blue);
+    }
+
+    .tool-icon.purple {
+      background:var(--purple-soft);
+      color:var(--purple);
+    }
+
+    .tool-title h3 {
+      font-family:var(--font-head);
+      font-size:15px;
+      line-height:1.25;
+    }
+
+    .tool-title p {
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.45;
+      margin-top:4px;
+    }
+
+    /* FORMS */
+
+    .form-group {
+      margin-bottom:13px;
+    }
+
+    .form-group label {
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .form-control {
+      width:100%;
+      min-height:45px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      outline:none;
+      padding:10px 13px;
+      background:var(--bg);
+      color:var(--text);
+      font-size:13px;
+      transition:.2s;
+    }
+
+    .form-control:focus {
+      border-color:var(--blue);
+      background:var(--card);
+      box-shadow:0 0 0 3px rgba(37,99,235,.08);
+    }
+
+    textarea.form-control {
+      min-height:125px;
+      resize:vertical;
+      line-height:1.55;
+    }
+
+    select.form-control {
+      appearance:auto;
+    }
+
+    .submit-btn {
+      width:100%;
+      min-height:46px;
+      border:0;
+      border-radius:12px;
+      color:#fff;
+      background:var(--blue);
+      font-size:13px;
+      font-weight:800;
+      transition:.2s;
+    }
+
+    .submit-btn:hover {
+      filter:brightness(.95);
+    }
+
+    .submit-btn:disabled {
+      opacity:.6;
+      cursor:not-allowed;
+    }
+
+    .btn-orange {
+      background:var(--orange);
+    }
+
+    .help-text {
+      margin-top:7px;
+      color:var(--muted);
+      font-size:10px;
+      line-height:1.5;
+    }
+
+    /* REPORTED */
+
+    .report-toolbar {
+      display:flex;
+      gap:8px;
+      margin-bottom:12px;
+    }
+
+    .search-wrap {
+      position:relative;
+      flex:1;
+    }
+
+    .search-wrap i {
+      position:absolute;
+      left:13px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .search-wrap input {
+      width:100%;
+      height:40px;
+      padding:0 12px 0 35px;
+      border:1px solid var(--line);
+      border-radius:11px;
+      outline:none;
+      background:var(--bg);
+      color:var(--text);
+      font-size:12px;
+    }
+
+    .filter-select {
+      height:40px;
+      border:1px solid var(--line);
+      border-radius:11px;
+      background:var(--bg);
+      color:var(--text);
+      padding:0 9px;
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .reported-card {
+      background:var(--red-soft);
+      border:1px solid rgba(220,61,77,.14);
+      border-radius:14px;
+      padding:14px;
+      margin-bottom:9px;
+    }
+
+    .reported-question {
+      color:var(--text);
+      font-size:13px;
+      font-weight:800;
+      line-height:1.5;
+      margin-bottom:6px;
+    }
+
+    .reported-reason {
+      color:var(--red);
+      font-size:11px;
+      font-weight:700;
+      line-height:1.45;
+    }
+
+    .reported-footer {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-top:12px;
+      padding-top:10px;
+      border-top:1px solid rgba(220,61,77,.10);
+    }
+
+    .report-status {
+      color:var(--muted);
+      font-size:10px;
+    }
+
+    .report-actions {
+      display:flex;
+      gap:6px;
+    }
+
+    .mini-btn {
+      min-height:31px;
+      padding:0 9px;
+      border:0;
+      border-radius:8px;
+      color:#fff;
+      font-size:10px;
+      font-weight:800;
+    }
+
+    .mini-btn.edit {
+      background:var(--blue);
+    }
+
+    .mini-btn.delete {
+      background:var(--red);
+    }
+
+    .empty-state {
+      padding:30px 12px;
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .empty-state i {
+      display:block;
+      font-size:25px;
+      margin-bottom:9px;
+      opacity:.5;
+    }
+
+    /* QUESTIONS */
+
+    .question-list {
+      max-height:600px;
+      overflow-y:auto;
+      padding-right:2px;
+    }
+
+    .q-item {
+      background:var(--bg);
+      border:1px solid var(--line);
+      border-radius:13px;
+      padding:13px;
+      margin-bottom:8px;
+      cursor:pointer;
+      transition:.18s;
+    }
+
+    .q-item:hover {
+      border-color:rgba(37,99,235,.28);
+      transform:translateY(-1px);
+    }
+
+    .q-top {
+      display:flex;
+      align-items:flex-start;
+      gap:9px;
+    }
+
+    .q-number {
+      width:28px;
+      height:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:9px;
+      background:var(--blue-soft);
+      color:var(--blue);
+      font-size:10px;
+      font-weight:800;
+      flex-shrink:0;
+    }
+
+    .q-text {
+      flex:1;
+      color:var(--text);
+      font-size:12px;
+      font-weight:800;
+      line-height:1.5;
+    }
+
+    .q-answer {
+      margin:8px 0 0 37px;
+      color:var(--green);
+      font-size:10px;
+      font-weight:800;
+    }
+
+    .options-container {
+      display:none;
+      margin-top:12px;
+      padding-top:11px;
+      border-top:1px solid var(--line);
+    }
+
+    .options-container.active {
+      display:block;
+    }
+
+    .options-title {
+      color:var(--muted);
+      font-size:10px;
+      font-weight:800;
+      margin-bottom:7px;
+    }
+
+    .opt-btn {
+      width:100%;
+      min-height:38px;
+      padding:8px 10px;
+      margin-bottom:5px;
+      text-align:left;
+      border:1px solid var(--line);
+      border-radius:9px;
+      background:var(--card);
+      color:var(--text);
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .opt-btn.correct-ans {
+      background:var(--green-soft);
+      border-color:rgba(5,150,105,.3);
+      color:var(--green);
+    }
+
+    /* MODALS */
+
+    .modal-overlay {
+      position:fixed;
+      inset:0;
+      z-index:9000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:rgba(5,13,29,.70);
+      backdrop-filter:blur(7px);
+      opacity:0;
+      visibility:hidden;
+      transition:.2s;
+    }
+
+    .modal-overlay.active {
+      opacity:1;
+      visibility:visible;
+    }
+
+    .modal-card {
+      width:min(480px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:21px;
+      padding:21px;
+      box-shadow:var(--shadow-lg);
+      transform:translateY(10px) scale(.97);
+      transition:.22s;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform:translateY(0) scale(1);
+    }
+
+    .modal-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:17px;
+    }
+
+    .modal-header h3 {
+      font-family:var(--font-head);
+      font-size:16px;
+    }
+
+    .modal-close {
+      width:34px;
+      height:34px;
+      border:0;
+      border-radius:9px;
+      background:var(--bg);
+      color:var(--muted);
+    }
+
+    .modal-actions {
+      display:flex;
+      gap:8px;
+      margin-top:15px;
+    }
+
+    .modal-action {
+      flex:1;
+      min-height:44px;
+      border:0;
+      border-radius:11px;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .modal-action.primary {
+      background:var(--green);
+      color:#fff;
+    }
+
+    .modal-action.danger {
+      background:var(--red);
+      color:#fff;
+    }
+
+    .modal-action.secondary {
+      background:var(--bg);
+      color:var(--muted);
+      border:1px solid var(--line);
+    }
+
+    .danger-icon {
+      width:58px;
+      height:58px;
+      border-radius:17px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 auto 15px;
+      background:var(--red-soft);
+      color:var(--red);
+      font-size:22px;
+    }
+
+    .delete-modal {
+      text-align:center;
+    }
+
+    .delete-modal h3 {
+      font-family:var(--font-head);
+      font-size:18px;
+    }
+
+    .delete-modal p {
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+      margin:8px 0 19px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width:760px) {
+      .stats-grid {
+        grid-template-columns:1fr 1fr;
+      }
+
+      .tool-grid {
+        grid-template-columns:1fr;
+      }
+
+      .tool-card.wide {
+        grid-column:auto;
+      }
+    }
+
+    @media (max-width:500px) {
+      .admin-header {
+        padding-left:14px;
+        padding-right:14px;
+      }
+
+      .container {
+        padding-left:13px;
+        padding-right:13px;
+      }
+
+      .welcome-card {
+        align-items:flex-start;
+        flex-direction:column;
+        padding:18px;
+      }
+
+      .welcome-copy h2 {
+        font-size:20px;
+      }
+
+      .stats-grid {
+        gap:8px;
+      }
+
+      .stat-card {
+        min-height:112px;
+        padding:13px;
+      }
+
+      .stat-card strong {
+        font-size:20px;
+      }
+
+      .tool-card {
+        padding:15px;
+      }
+
+      .report-toolbar {
+        flex-direction:column;
+      }
+
+      .filter-select {
+        width:100%;
+      }
+
+      .reported-footer {
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .report-actions {
+        width:100%;
+      }
+
+      .mini-btn {
+        flex:1;
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      * {
+        animation-duration:.01ms!important;
+        transition-duration:.01ms!important;
+      }
+    }
+  </style>
+
+<style id="study-admin-css">
+.study-manager{margin-top:18px}.study-manager .manager-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}.study-manager .manager-tabs button{border:1px solid var(--line);background:var(--card);color:var(--text);padding:9px 11px;border-radius:10px;font-weight:800;font-size:12px}.study-manager .manager-tabs button.active{background:var(--blue);border-color:var(--blue);color:#fff}.study-manager .study-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}.study-manager .study-form{border:1px solid var(--line);border-radius:16px;padding:15px;background:var(--bg)}.study-manager .study-list{border:1px solid var(--line);border-radius:16px;overflow:auto;max-height:520px;background:var(--card)}.study-manager .study-item{padding:13px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.study-manager .study-item:last-child{border-bottom:0}.study-manager .study-item strong{display:block;font-size:13px}.study-manager .study-item small{display:block;color:var(--muted);margin-top:3px}.study-manager .study-actions{display:flex;gap:5px;flex-shrink:0}.study-manager .mini{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:7px 8px;font-size:11px}.study-manager .mini.danger{color:var(--red)}.study-manager textarea{min-height:110px;resize:vertical}.study-manager .two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.study-manager .help{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}.study-manager .manager-title{display:flex;align-items:center;gap:12px}.study-manager .manager-title .tool-icon{flex:none}@media(max-width:760px){.study-manager .study-grid{grid-template-columns:1fr}.study-manager .two{grid-template-columns:1fr}}
+</style>
+<style id="qs-css">
+#studio .qs-ctx{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:14px 0 10px}
+#studio .qs-ctx label,#studio .qs-l{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+#studio select,#studio input[type=text],#studio input[type=number],#studio textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);font:inherit;font-size:14px;outline:none}
+#studio select:focus,#studio input:focus,#studio textarea:focus{border-color:var(--blue);background:var(--card)}
+#studio textarea{min-height:96px;resize:vertical;line-height:1.6}
+#studio .qs-path{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:2px 0 12px}
+#studio .qs-tabs{display:flex;gap:6px;padding:4px;background:var(--bg);border-radius:13px;margin:6px 0 14px;border:1px solid var(--line)}
+#studio .qs-tabs button{flex:1;min-height:42px;border-radius:10px;font-weight:800;font-size:13px;color:var(--muted);border:0;background:none;cursor:pointer}
+#studio .qs-tabs button.on{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(15,31,61,.08)}
+#studio .qs-chips{display:flex;gap:7px;flex-wrap:wrap}
+#studio .qs-chip{min-height:38px;padding:0 13px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--text);font-weight:700;font-size:12.5px;cursor:pointer}
+#studio .qs-chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+#studio .qs-row{margin:14px 0}
+#studio .qs-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#studio .qs-opt{display:flex;gap:9px;align-items:center;margin:7px 0}
+#studio .qs-opt b{width:30px;height:30px;border-radius:9px;background:var(--bg);display:grid;place-items:center;font-size:12px;flex:none;border:1px solid var(--line)}
+#studio .qs-opt input[type=radio]{width:22px;height:22px;accent-color:var(--green);flex:none}
+#studio .qs-sw{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0}
+#studio .qs-sw label{display:flex;gap:8px;align-items:center;font-weight:700;font-size:13px;cursor:pointer}
+#studio .qs-sw input{width:20px;height:20px;accent-color:var(--blue)}
+#studio .qs-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+#studio .qs-btn{min-height:46px;padding:0 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--text);font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+#studio .qs-btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+#studio .qs-btn.ok{background:var(--green);border-color:var(--green);color:#fff}
+#studio .qs-btn.sm{min-height:36px;padding:0 11px;font-size:12px}
+#studio .qs-btn:disabled{opacity:.55;cursor:not-allowed}
+#studio .qs-help{font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px}
+#studio pre.qs-ex{background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:12px;font-size:12px;line-height:1.6;white-space:pre-wrap;color:var(--muted);margin:8px 0}
+#studio .qs-list{margin-top:18px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+#studio .qs-lh{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg);font-weight:800;font-size:13px;border-bottom:1px solid var(--line)}
+#studio .qs-item{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:12px 14px;border-bottom:1px solid var(--line)}
+#studio .qs-item:last-child{border-bottom:0}
+#studio .qs-item p{font-size:13.5px;line-height:1.6;margin:4px 0 0;overflow-wrap:anywhere;white-space:pre-line}
+#studio .qs-badge{display:inline-block;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--blue-soft);color:var(--blue);margin-right:5px}
+#studio .qs-badge.off{background:var(--bg);color:var(--muted)}
+#studio .qs-badge.imp{background:#fff3d6;color:#92620a}
+#studio .qs-acts{display:flex;gap:5px;flex:none}
+#studio .qs-empty{padding:26px 16px;text-align:center;color:var(--muted);font-size:13px}
+#studio .qs-prev{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0;background:var(--bg);font-size:13px;line-height:1.55}
+#studio .qs-prev.warn{border-color:#f0c56a}#studio .qs-prev.bad{border-color:#e27985}
+#studio .qs-new{display:none;gap:8px;align-items:flex-end;margin:0 0 12px;flex-wrap:wrap}
+#studio .qs-new.on{display:flex}#studio .qs-new>div{flex:1;min-width:160px}
+@media(max-width:820px){#studio .qs-ctx{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){#studio .qs-ctx{grid-template-columns:1fr}#studio .qs-two{grid-template-columns:1fr}#studio .qs-btn{flex:1;justify-content:center}}
+</style>
+
+</head>
+
+<body id="adminBody">
+
+  <!-- LOADING -->
+  <div id="loadingScreen">
+    <div class="loading-logo">
+      <i class="fa-solid fa-shield-halved"></i>
+    </div>
+    <div class="spinner"></div>
+    <div class="loading-title">Admin अधिकार प्रमाणीकरण हुँदैछ...</div>
+    <div class="loading-sub">LoksewaQuest सुरक्षित Admin Hub</div>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <div id="editReportedModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>प्रश्न सम्पादन गर्नुहोस्</h3>
+        <button class="modal-close" onclick="closeEditModal()" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <input type="hidden" id="edit-q-id">
+
+      <div class="form-group">
+        <label>प्रश्न</label>
+        <textarea id="edit-q-text" class="form-control"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Options — comma ले छुट्याउनुहोस्</label>
+        <input type="text" id="edit-q-options" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>सही उत्तर</label>
+        <input type="text" id="edit-q-answer" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>Explanation</label>
+        <textarea id="edit-q-explanation" class="form-control"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-action primary" onclick="saveEditedQuestion()">
+          <i class="fa-solid fa-check"></i> अपडेट गर्नुहोस्
+        </button>
+        <button class="modal-action secondary" onclick="closeEditModal()">
+          रद्द गर्नुहोस्
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div id="deleteConfirmModal" class="modal-overlay">
+    <div class="modal-card delete-modal">
+      <div class="danger-icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+
+      <h3>प्रश्न हटाउने?</h3>
+
+      <p>
+        यसले रिपोर्ट मात्र होइन, मुख्य quiz database बाट पनि
+        प्रश्न हटाउनेछ। यो कार्य फिर्ता गर्न सकिँदैन।
+      </p>
+
+      <input type="hidden" id="del-report-id">
+      <input type="hidden" id="del-question-id">
+
+      <div class="modal-actions">
+        <button class="modal-action danger" onclick="confirmDeleteQuestion()">
+          <i class="fa-solid fa-trash"></i> हो, हटाउनुहोस्
+        </button>
+        <button class="modal-action secondary" onclick="closeDeleteModal()">
+          रद्द गर्नुहोस्
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="admin-header">
+    <div class="header-glow"></div>
+
+    <div class="header-inner">
+
+      <div class="header-brand">
+
+        <a href="dashboard.html" class="back-btn" aria-label="Back">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+
+        <div class="brand-icon">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <div class="header-copy">
+          <small>LoksewaQuest</small>
+          <h1>Admin Hub</h1>
+          <p>Manage your quiz platform</p>
+        </div>
+
+      </div>
+
+      <button class="header-action" id="themeBtn" aria-label="Toggle dark mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div id="alertBox"></div>
+
+    <!-- WELCOME -->
+    <section class="welcome-card">
+      <div class="welcome-copy">
+        <div class="eyebrow">Control Center</div>
+        <h2>Good to see you, Admin 👋</h2>
+        <p>
+          Questions, reports, notifications र quiz content एउटै ठाउँबाट manage गर्नुहोस्।
+        </p>
+      </div>
+
+      <div class="admin-status">
+        <span class="status-dot"></span>
+        Admin Verified
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="section-heading">
+      <div>
+        <h2>Platform Overview</h2>
+        <p>तपाईंको quiz database को live स्थिति</p>
+      </div>
+
+      <button class="refresh-btn" id="refreshAllBtn">
+        <i class="fa-solid fa-rotate"></i> Refresh
+      </button>
+    </div>
+
+    <section class="stats-grid">
+
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <small>कुल प्रश्नहरू</small>
+        <strong id="totalQuizCount">—</strong>
+        <div class="stat-caption">Quiz database</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon red">
+          <i class="fa-solid fa-flag"></i>
+        </div>
+        <small>Reported Questions</small>
+        <strong id="totalReportCount">—</strong>
+        <div class="stat-caption">Review आवश्यक</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <small>System Status</small>
+        <strong id="systemStatus">Live</strong>
+        <div class="stat-caption">Supabase connection</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <i class="fa-solid fa-clock"></i>
+        </div>
+        <small>Last Refresh</small>
+        <strong id="lastRefresh">Now</strong>
+        <div class="stat-caption">Live dashboard</div>
+      </div>
+
+    </section>
+
+    <!-- TOOLS -->
+    <div class="section-heading">
+      <div>
+        <h2>Admin Tools</h2>
+        <p>Frequently used management tools</p>
+      </div>
+    </div>
+
+    <section class="tool-grid">
+
+      <!-- REPORTS -->
+      <div class="tool-card wide">
+
+        <div class="tool-title">
+          <div class="tool-icon red">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+
+          <div>
+            <h3>Reported Questions</h3>
+            <p>
+              प्रयोगकर्ताले गलत वा समस्या भएको भनेर report गरेका प्रश्नहरू review गर्नुहोस्।
+            </p>
+          </div>
+        </div>
+
+        <div class="report-toolbar">
+
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+              type="search"
+              id="reportSearch"
+              placeholder="प्रश्न वा समस्या खोज्नुहोस्..."
+              autocomplete="off"
+            >
+          </div>
+
+          <select id="reportFilter" class="filter-select">
+            <option value="all">सबै</option>
+            <option value="pending">Pending</option>
+            <option value="resolved">Resolved</option>
+          </select>
+
+        </div>
+
+        <div id="reported-questions-list">
+          <div class="empty-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Reports लोड हुँदैछ...
+          </div>
+        </div>
+
+      </div>
+
+      <!-- QUESTION CORRECTION -->
+      <div class="tool-card wide">
+
+        <div class="tool-title">
+          <div class="tool-icon green">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </div>
+
+          <div>
+            <h3>Question Correction</h3>
+            <p>
+              Set चयन गरेर प्रश्नको सही उत्तर तुरुन्तै परिवर्तन गर्नुहोस्।
+            </p>
+          </div>
+        </div>
+
+        <div class="form-group">
+
+          <label>परीक्षण Set छान्नुहोस्</label>
+
+          <select
+            id="admin-set-selector"
+            class="form-control"
+            onchange="loadAdminQuestionsBySet()"
+          >
+            <option value="">-- Set छान्नुहोस् --</option>
+            <option value="Set-1">Set 1</option>
+            <option value="Set-2">Set 2</option>
+            <option value="Set-3">Set 3</option>
+          </select>
+
+        </div>
+
+        <div id="admin-questions-list" class="question-list">
+          <div class="empty-state">
+            <i class="fa-solid fa-list-check"></i>
+            माथिबाट एउटा Set छान्नुहोस्।
+          </div>
+        </div>
+
+      </div>
+
+      <!-- NOTIFICATION -->
+      <div class="tool-card">
+
+        <div class="tool-title">
+          <div class="tool-icon orange">
+            <i class="fa-solid fa-bullhorn"></i>
+          </div>
+
+          <div>
+            <h3>Live Notification</h3>
+            <p>
+              Dashboard मा देखिने ticker message update गर्नुहोस्।
+            </p>
+          </div>
+        </div>
+
+        <form id="notificationForm">
+
+          <div class="form-group">
+
+            <label>नयाँ सूचना</label>
+
+            <input
+              type="text"
+              id="notificationInput"
+              class="form-control"
+              maxlength="180"
+              placeholder="उदा: नयाँ सेटहरू अपलोड गरिएको छ!"
+              required
+            >
+
+          </div>
+
+          <button
+            type="submit"
+            class="submit-btn btn-orange"
+            id="notifBtn"
+          >
+            <i class="fa-solid fa-paper-plane"></i>
+            सूचना Live गर्नुहोस्
+          </button>
+
+        </form>
+
+      </div>
+
+      <!-- SQL IMPORT -->
+      <div class="tool-card">
+
+        <div class="tool-title">
+          <div class="tool-icon blue">
+            <i class="fa-solid fa-database"></i>
+          </div>
+
+          <div>
+            <h3>Bulk Question Import</h3>
+            <p>
+              धेरै प्रश्नहरू एकैपटक database मा add/update गर्नुहोस्।
+            </p>
+          </div>
+        </div>
+
+        <form id="sqlForm">
+
+          <div class="form-group">
+
+            <label>INSERT INTO SQL</label>
+
+            <textarea
+              id="sqlInput"
+              class="form-control"
+              placeholder="INSERT INTO public.quizzes (topic, question, options, answer, explanation)
+VALUES
+('Set-1', 'प्रश्न १?', '[&quot;अ&quot;, &quot;ब&quot;, &quot;स&quot;, &quot;द&quot;]', 'अ', 'स्पष्टीकरण');"
+              required
+            ></textarea>
+
+            <div class="help-text">
+              <i class="fa-solid fa-circle-info"></i>
+              एउटै question पहिले database मा भएमा
+              <b>upsert</b> मार्फत update हुनेछ।
+            </div>
+
+          </div>
+
+          <button
+            type="submit"
+            class="submit-btn"
+            id="sqlSaveBtn"
+          >
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            Questions Save गर्नुहोस्
+          </button>
+
+        </form>
+
+      </div>
+
+    </section>
+
+<!-- QUESTION STUDIO (easy question entry) -->
+<section class="tool-card wide" id="studio">
+  <div class="manager-title">
+    <div class="tool-icon purple"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+    <div><h3>Question Studio</h3><p>Choose where it belongs, type the question, press save. Many at once? Use Bulk paste.</p></div>
+  </div>
+  <div class="qs-ctx">
+    <div><label for="qsE">Exam</label><select id="qsE"></select></div>
+    <div><label for="qsP">Paper</label><select id="qsP"></select></div>
+    <div><label for="qsS">Section</label><select id="qsS"></select></div>
+    <div><label for="qsT">Topic</label><select id="qsT"></select></div>
+  </div>
+  <div class="qs-path"><span id="qsPath">Pick an exam to begin.</span><button type="button" class="qs-btn sm" id="qsNewTopicBtn"><i class="fa-solid fa-plus"></i> New topic</button></div>
+  <div class="qs-new" id="qsNew">
+    <div><span class="qs-l">New topic title</span><input type="text" id="qsNewTitle" placeholder="e.g. १.३.५ अभिलेख संरक्षण"></div>
+    <div><span class="qs-l">Parent (optional)</span><select id="qsNewParent"></select></div>
+    <button type="button" class="qs-btn pri" id="qsNewSave">Create topic</button>
+  </div>
+  <div class="qs-tabs" id="qsTabs">
+    <button type="button" data-qsm="single" class="on">One question</button>
+    <button type="button" data-qsm="bulk">Bulk paste</button>
+    <button type="button" data-qsm="topic">Topic notes</button>
+  </div>
+  <div id="qsBody"></div>
+  <div class="qs-list" id="qsList"></div>
+</section>
+
+<!-- STUDY CONTENT MANAGEMENT (advanced editor for exams, papers, sections and topic structure) -->
+<section class="tool-card wide study-manager">
+  <div class="manager-title">
+    <div class="tool-icon purple"><i class="fa-solid fa-book-open-reader"></i></div>
+    <div><h3>Study Content Management</h3><p>Exams, papers, sections, topics and questions for Study Hub.</p></div>
+  </div>
+  <div class="manager-tabs" id="studyTabs">
+    <button class="active" data-study-tab="exams">Exams</button><button data-study-tab="papers">Papers</button><button data-study-tab="sections">Sections</button><button data-study-tab="topics">Topics</button><button data-study-tab="questions">Questions</button>
+  </div>
+  <div class="study-grid">
+    <form id="studyForm" class="study-form"></form>
+    <div id="studyList" class="study-list"><div class="empty-state">Loading study content…</div></div>
+  </div>
+</section>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="module">
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+
+    /* =========================
+       FIREBASE
+    ========================= */
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkKCU1re5b9MtdsAF1F4xI6rGxmxhGZak",
+      authDomain: "loksewaquest-227b6.firebaseapp.com",
+      projectId: "loksewaquest-227b6",
+      storageBucket: "loksewaquest-227b6.firebasestorage.app",
+      messagingSenderId: "779234903809",
+      appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+
+    /* =========================
+       SUPABASE
+    ========================= */
+
+    const SUPABASE_URL =
+      "https://edyirdedkiarguvurpxq.supabase.co";
+
+    const SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkeWlyZGVka2lhcmd1dnVycHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwMTg2NjIsImV4cCI6MjEwNDU5NDY2Mn0.yhNn3YKmFSkxRdefk2F22qxTFhuKS90NH5fa3zzKSaY";
+
+    const supabase =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    /* =========================
+       ADMIN ACCESS
+    ========================= */
+
+    const adminEmails = [
+      "pgprajwal11@gmail.com"
+    ];
+
+
+    /* =========================
+       ELEMENTS
+    ========================= */
+
+    const loadingScreen =
+      document.getElementById("loadingScreen");
+
+    const adminBody =
+      document.getElementById("adminBody");
+
+    const alertBox =
+      document.getElementById("alertBox");
+
+
+    /* =========================
+       SAFE HTML
+    ========================= */
+
+    function escapeHTML(value) {
+
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =========================
+       ALERT
+    ========================= */
+
+    let alertTimer;
+
+    window.showAlert = function(message, type) {
+
+      clearTimeout(alertTimer);
+
+      alertBox.textContent = message;
+
+      alertBox.className =
+        type === "success"
+          ? "alert-success"
+          : "alert-error";
+
+      alertBox.style.display = "block";
+
+      alertTimer = setTimeout(() => {
+        alertBox.style.display = "none";
+      }, 5000);
+
+    };
+
+
+    /* =========================
+       AUTH
+    ========================= */
+
+    onAuthStateChanged(
+      auth,
+      async (user) => {
+
+        if (
+          !user ||
+          !user.email ||
+          !adminEmails.includes(
+            user.email.toLowerCase()
+          )
+        ) {
+
+          alert(
+            "तपाईंलाई यो Admin Panel पहुँच गर्ने अनुमति छैन!"
+          );
+
+          window.location.href =
+            "dashboard.html";
+
+          return;
+
+        }
+
+
+        loadingScreen.style.display =
+          "none";
+
+        adminBody.style.display =
+          "block";
+
+
+        await refreshDashboard();
+
+      }
+    );
+
+
+    /* =========================
+       REFRESH DASHBOARD
+    ========================= */
+
+    async function refreshDashboard() {
+
+      await Promise.all([
+        fetchDatabaseStats(),
+        fetchReportedQuestions()
+      ]);
+
+      updateRefreshTime();
+
+    }
+
+
+    function updateRefreshTime() {
+
+      const el =
+        document.getElementById(
+          "lastRefresh"
+        );
+
+      if (!el) return;
+
+      el.textContent =
+        new Intl.DateTimeFormat(
+          "en-US",
+          {
+            hour:"numeric",
+            minute:"2-digit"
+          }
+        ).format(new Date());
+
+    }
+
+
+    /* =========================
+       DATABASE STATS
+    ========================= */
+
+    async function fetchDatabaseStats() {
+
+      try {
+
+        const {
+          count,
+          error
+        } = await supabase
+          .from("quizzes")
+          .select("*", {
+            count:"exact",
+            head:true
+          });
+
+
+        if (error) throw error;
+
+
+        document.getElementById(
+          "totalQuizCount"
+        ).textContent =
+          Number(count || 0).toLocaleString();
+
+
+        const {
+          count:reportCount,
+          error:reportErr
+        } = await supabase
+          .from("reported_questions")
+          .select("*", {
+            count:"exact",
+            head:true
+          });
+
+
+        if (!reportErr) {
+
+          document.getElementById(
+            "totalReportCount"
+          ).textContent =
+            Number(
+              reportCount || 0
+            ).toLocaleString();
+
+        }
+
+
+        document.getElementById(
+          "systemStatus"
+        ).textContent =
+          "Live";
+
+
+      } catch (err) {
+
+        console.error(
+          "Stats error:",
+          err
+        );
+
+        document.getElementById(
+          "systemStatus"
+        ).textContent =
+          "Error";
+
+      }
+
+    }
+
+
+    /* =========================
+       REPORTED QUESTIONS
+    ========================= */
+
+    let reportedQuestions = [];
+
+
+    async function fetchReportedQuestions() {
+
+      const container =
+        document.getElementById(
+          "reported-questions-list"
+        );
+
+
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          Reports लोड हुँदैछ...
+        </div>
+      `;
+
+
+      const {
+        data,
+        error
+      } = await supabase
+        .from("reported_questions")
+        .select("*")
+        .order("id", {
+          ascending:false
+        });
+
+
+      if (error) {
+
+        console.error(
+          "Reports error:",
+          error
+        );
+
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            Report data लोड गर्न सकिएन।
+          </div>
+        `;
+
+        return;
+
+      }
+
+
+      reportedQuestions =
+        data || [];
+
+
+      renderReportedQuestions();
+
+    }
+
+
+    function renderReportedQuestions() {
+
+      const container =
+        document.getElementById(
+          "reported-questions-list"
+        );
+
+
+      const search =
+        (
+          document.getElementById(
+            "reportSearch"
+          )?.value || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+      const filter =
+        document.getElementById(
+          "reportFilter"
+        )?.value || "all";
+
+
+      const filtered =
+        reportedQuestions.filter(
+          item => {
+
+            const question =
+              String(
+                item.question_text || ""
+              ).toLowerCase();
+
+            const reason =
+              String(
+                item.reason || ""
+              ).toLowerCase();
+
+            const status =
+              String(
+                item.status || "Pending"
+              ).toLowerCase();
+
+
+            const matchesSearch =
+              !search ||
+              question.includes(search) ||
+              reason.includes(search);
+
+
+            const matchesFilter =
+              filter === "all" ||
+              status === filter;
+
+
+            return (
+              matchesSearch &&
+              matchesFilter
+            );
+
+          }
+        );
+
+
+      if (!filtered.length) {
+
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-regular fa-circle-check"></i>
+            ${
+              reportedQuestions.length
+                ? "तपाईंको filter अनुसार कुनै report भेटिएन।"
+                : "हाल कुनै प्रश्न report गरिएको छैन।"
+            }
+          </div>
+        `;
+
+        return;
+
+      }
+
+
+      container.innerHTML =
+        filtered.map(
+          item => {
+
+            const question =
+              escapeHTML(
+                item.question_text ||
+                "N/A"
+              );
+
+            const reason =
+              escapeHTML(
+                item.reason ||
+                "No reason"
+              );
+
+            const status =
+              escapeHTML(
+                item.status ||
+                "Pending"
+              );
+
+
+            const questionId =
+              item.question_id || "";
+
+
+            return `
+
+              <div
+                class="reported-card"
+                data-search="${question} ${reason}"
+              >
+
+                <div class="reported-question">
+                  ${question}
+                </div>
+
+                <div class="reported-reason">
+                  <i class="fa-solid fa-flag"></i>
+                  ${reason}
+                </div>
+
+                <div class="reported-footer">
+
+                  <span class="report-status">
+                    Status:
+                    <b>${status}</b>
+                  </span>
+
+                  <div class="report-actions">
+
+                    ${
+                      questionId
+                      ?
+                      `
+                        <button
+                          class="mini-btn edit"
+                          onclick="openEditModal('${escapeHTML(questionId)}')"
+                        >
+                          <i class="fa-solid fa-pen"></i>
+                          Edit
+                        </button>
+                      `
+                      :
+                      ""
+                    }
+
+                    <button
+                      class="mini-btn delete"
+                      onclick="openDeleteModal(
+                        '${escapeHTML(item.id)}',
+                        '${escapeHTML(questionId)}'
+                      )"
+                    >
+                      <i class="fa-solid fa-trash"></i>
+                      Delete
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            `;
+
+          }
+        ).join("");
+
+    }
+
+
+    document
+      .getElementById("reportSearch")
+      .addEventListener(
+        "input",
+        renderReportedQuestions
+      );
+
+
+    document
+      .getElementById("reportFilter")
+      .addEventListener(
+        "change",
+        renderReportedQuestions
+      );
+
+
+    /* =========================
+       EDIT QUESTION
+    ========================= */
+
+    window.openEditModal =
+      async function(questionId) {
+
+        const {
+          data,
+          error
+        } = await supabase
+          .from("quizzes")
+          .select("*")
+          .eq("id", questionId)
+          .single();
+
+
+        if (
+          error ||
+          !data
+        ) {
+
+          showAlert(
+            "मुख्य quiz database मा प्रश्न भेटिएन!",
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        document.getElementById(
+          "edit-q-id"
+        ).value =
+          data.id;
+
+
+        document.getElementById(
+          "edit-q-text"
+        ).value =
+          data.question || "";
+
+
+        document.getElementById(
+          "edit-q-options"
+        ).value =
+          Array.isArray(data.options)
+            ? data.options.join(", ")
+            : data.options || "";
+
+
+        document.getElementById(
+          "edit-q-answer"
+        ).value =
+          data.answer || "";
+
+
+        document.getElementById(
+          "edit-q-explanation"
+        ).value =
+          data.explanation || "";
+
+
+        document
+          .getElementById(
+            "editReportedModal"
+          )
+          .classList.add("active");
+
+      };
+
+
+    window.closeEditModal =
+      function() {
+
+        document
+          .getElementById(
+            "editReportedModal"
+          )
+          .classList.remove("active");
+
+      };
+
+
+    window.saveEditedQuestion =
+      async function() {
+
+        const qId =
+          document.getElementById(
+            "edit-q-id"
+          ).value;
+
+
+        const newQuestion =
+          document.getElementById(
+            "edit-q-text"
+          ).value.trim();
+
+
+        const rawOptions =
+          document.getElementById(
+            "edit-q-options"
+          ).value;
+
+
+        const newAnswer =
+          document.getElementById(
+            "edit-q-answer"
+          ).value.trim();
+
+
+        const newExplanation =
+          document.getElementById(
+            "edit-q-explanation"
+          ).value.trim();
+
+
+        const newOptionsArray =
+          rawOptions
+            .split(",")
+            .map(
+              opt => opt.trim()
+            )
+            .filter(Boolean);
+
+
+        if (
+          !qId ||
+          !newQuestion ||
+          newOptionsArray.length < 2 ||
+          !newAnswer
+        ) {
+
+          showAlert(
+            "कृपया सबै आवश्यक fields सही रूपमा भर्नुहोस्।",
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        const {
+          error
+        } = await supabase
+          .from("quizzes")
+          .update({
+            question:newQuestion,
+            options:newOptionsArray,
+            answer:newAnswer,
+            explanation:newExplanation
+          })
+          .eq("id", qId);
+
+
+        if (error) {
+
+          showAlert(
+            "अपडेट गर्न असफल भयो: " +
+            error.message,
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        await supabase
+          .from("reported_questions")
+          .delete()
+          .eq(
+            "question_id",
+            qId
+          );
+
+
+        showAlert(
+          "प्रश्न सफलतापूर्वक अपडेट भयो! 🎉",
+          "success"
+        );
+
+
+        closeEditModal();
+
+        await refreshDashboard();
+
+      };
+
+
+    /* =========================
+       DELETE QUESTION
+    ========================= */
+
+    window.openDeleteModal =
+      function(
+        reportId,
+        questionId
+      ) {
+
+        document.getElementById(
+          "del-report-id"
+        ).value =
+          reportId;
+
+
+        document.getElementById(
+          "del-question-id"
+        ).value =
+          questionId;
+
+
+        document
+          .getElementById(
+            "deleteConfirmModal"
+          )
+          .classList.add(
+            "active"
+          );
+
+      };
+
+
+    window.closeDeleteModal =
+      function() {
+
+        document
+          .getElementById(
+            "deleteConfirmModal"
+          )
+          .classList.remove(
+            "active"
+          );
+
+      };
+
+
+    window.confirmDeleteQuestion =
+      async function() {
+
+        const reportId =
+          document.getElementById(
+            "del-report-id"
+          ).value;
+
+
+        const questionId =
+          document.getElementById(
+            "del-question-id"
+          ).value;
+
+
+        closeDeleteModal();
+
+
+        try {
+
+          if (
+            questionId &&
+            questionId !== "null"
+          ) {
+
+            const {
+              error:quizErr
+            } = await supabase
+              .from("quizzes")
+              .delete()
+              .eq(
+                "id",
+                questionId
+              );
+
+
+            if (quizErr) {
+              throw quizErr;
+            }
+
+          }
+
+
+          const {
+            error:reportErr
+          } = await supabase
+            .from("reported_questions")
+            .delete()
+            .eq(
+              "id",
+              reportId
+            );
+
+
+          if (reportErr) {
+            throw reportErr;
+          }
+
+
+          showAlert(
+            "प्रश्न र report सफलतापूर्वक हटाइयो।",
+            "success"
+          );
+
+
+          await refreshDashboard();
+
+
+        } catch (err) {
+
+          showAlert(
+            "हटाउन असफल भयो: " +
+            err.message,
+            "error"
+          );
+
+        }
+
+      };
+
+
+    /* =========================
+       QUESTIONS BY SET
+    ========================= */
+
+    window.loadAdminQuestionsBySet =
+      async function() {
+
+        const selectedSet =
+          document.getElementById(
+            "admin-set-selector"
+          ).value;
+
+
+        const listContainer =
+          document.getElementById(
+            "admin-questions-list"
+          );
+
+
+        if (!selectedSet) {
+
+          listContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fa-solid fa-list-check"></i>
+              माथिबाट एउटा Set छान्नुहोस्।
+            </div>
+          `;
+
+          return;
+
+        }
+
+
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            प्रश्नहरू लोड हुँदैछ...
+          </div>
+        `;
+
+
+        const {
+          data,
+          error
+        } = await supabase
+          .from("quizzes")
+          .select("*")
+          .ilike(
+            "topic",
+            selectedSet
+          );
+
+
+        if (
+          error ||
+          !data ||
+          !data.length
+        ) {
+
+          listContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fa-regular fa-folder-open"></i>
+              यो Set मा कुनै प्रश्न भेटिएन।
+            </div>
+          `;
+
+          return;
+
+        }
+
+
+        listContainer.innerHTML =
+          data.map(
+            (q,index) => {
+
+              let optionsHTML = "";
+
+
+              if (
+                q.options &&
+                Array.isArray(q.options)
+              ) {
+
+                optionsHTML =
+                  q.options.map(
+                    opt => {
+
+                      const isCorrect =
+                        String(opt).trim() ===
+                        String(q.answer || "").trim();
+
+
+                      return `
+
+                        <button
+                          type="button"
+                          class="opt-btn ${
+                            isCorrect
+                              ? "correct-ans"
+                              : ""
+                          }"
+                          onclick="updateCorrectAnswer(
+                            '${escapeHTML(q.id)}',
+                            '${encodeURIComponent(opt)}',
+                            '${escapeHTML(selectedSet)}'
+                          )"
+                        >
+
+                          ${escapeHTML(opt)}
+
+                          ${
+                            isCorrect
+                              ? " ⭐ Current Answer"
+                              : ""
+                          }
+
+                        </button>
+
+                      `;
+
+                    }
+                  ).join("");
+
+              }
+
+
+              return `
+
+                <div
+                  class="q-item"
+                  onclick="toggleAdminOptions('${escapeHTML(q.id)}')"
+                >
+
+                  <div class="q-top">
+
+                    <div class="q-number">
+                      ${index + 1}
+                    </div>
+
+                    <div class="q-text">
+                      ${escapeHTML(q.question)}
+                    </div>
+
+                  </div>
+
+                  <div class="q-answer">
+                    <i class="fa-solid fa-check"></i>
+                    सही उत्तर:
+                    ${escapeHTML(q.answer)}
+                  </div>
+
+                  <div
+                    id="admin-opt-box-${escapeHTML(q.id)}"
+                    class="options-container"
+                    onclick="event.stopPropagation()"
+                  >
+
+                    <div class="options-title">
+                      नयाँ सही उत्तर छान्नुहोस्
+                    </div>
+
+                    ${optionsHTML}
+
+                  </div>
+
+                </div>
+
+              `;
+
+            }
+          ).join("");
+
+      };
+
+
+    window.toggleAdminOptions =
+      function(qId) {
+
+        const box =
+          document.getElementById(
+            `admin-opt-box-${qId}`
+          );
+
+
+        if (box) {
+          box.classList.toggle(
+            "active"
+          );
+        }
+
+      };
+
+
+    window.updateCorrectAnswer =
+      async function(
+        qId,
+        encodedOpt,
+        currentSet
+      ) {
+
+        const selectedOption =
+          decodeURIComponent(
+            encodedOpt
+          );
+
+
+        if (
+          !confirm(
+            `के तपाईं "${selectedOption}" लाई सही उत्तर बनाउन चाहनुहुन्छ?`
+          )
+        ) {
+
+          return;
+
+        }
+
+
+        const {
+          error
+        } = await supabase
+          .from("quizzes")
+          .update({
+            answer:selectedOption
+          })
+          .eq("id",qId);
+
+
+        if (error) {
+
+          showAlert(
+            "उत्तर अपडेट गर्न असफल भयो: " +
+            error.message,
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        showAlert(
+          "नयाँ सही उत्तर सफलतापूर्वक अपडेट भयो! 🎉",
+          "success"
+        );
+
+
+        document.getElementById(
+          "admin-set-selector"
+        ).value =
+          currentSet;
+
+
+        await loadAdminQuestionsBySet();
+
+      };
+
+
+    /* =========================
+       NOTIFICATION
+    ========================= */
+
+    document
+      .getElementById(
+        "notificationForm"
+      )
+      .addEventListener(
+        "submit",
+        async event => {
+
+          event.preventDefault();
+
+
+          const button =
+            document.getElementById(
+              "notifBtn"
+            );
+
+
+          const input =
+            document.getElementById(
+              "notificationInput"
+            );
+
+
+          const message =
+            input.value.trim();
+
+
+          if (!message) {
+
+            showAlert(
+              "कृपया सूचना लेख्नुहोस्।",
+              "error"
+            );
+
+            return;
+
+          }
+
+
+          button.disabled = true;
+
+          button.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Publishing...';
+
+
+          try {
+
+            const {
+              error
+            } = await supabase
+              .from("notifications")
+              .insert([
+                {
+                  message
+                }
+              ]);
+
+
+            if (error) {
+              throw error;
+            }
+
+
+            showAlert(
+              "सूचना सफलतापूर्वक Live गरियो! 📢",
+              "success"
+            );
+
+
+            input.value = "";
+
+
+          } catch (err) {
+
+            showAlert(
+              "सूचना publish गर्न असफल भयो: " +
+              err.message,
+              "error"
+            );
+
+
+          } finally {
+
+            button.disabled = false;
+
+            button.innerHTML =
+              '<i class="fa-solid fa-paper-plane"></i> सूचना Live गर्नुहोस्';
+
+          }
+
+        }
+      );
+
+
+    /* =========================
+       SQL IMPORT
+    ========================= */
+
+    document
+      .getElementById(
+        "sqlForm"
+      )
+      .addEventListener(
+        "submit",
+        async event => {
+
+          event.preventDefault();
+
+
+          const sqlText =
+            document.getElementById(
+              "sqlInput"
+            ).value.trim();
+
+
+          const saveButton =
+            document.getElementById(
+              "sqlSaveBtn"
+            );
+
+
+          if (!sqlText) {
+
+            showAlert(
+              "कृपया SQL Query लेख्नुहोस्!",
+              "error"
+            );
+
+            return;
+
+          }
+
+
+          saveButton.disabled =
+            true;
+
+
+          saveButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Import हुँदैछ...';
+
+
+          try {
+
+            const valuesMatch =
+              sqlText.match(
+                /VALUES\s*([\s\S]*);?/i
+              );
+
+
+            if (!valuesMatch) {
+
+              throw new Error(
+                "मान्य INSERT INTO ... VALUES format भेटिएन।"
+              );
+
+            }
+
+
+            let valuesString =
+              valuesMatch[1].trim();
+
+
+            if (
+              valuesString.endsWith(";")
+            ) {
+
+              valuesString =
+                valuesString.slice(
+                  0,
+                  -1
+                );
+
+            }
+
+
+            const regex =
+              /\(\s*'([^']*)'\s*,\s*'([^']*)'\s*,\s*'(\[.*?\])'\s*,\s*'([^']*)'\s*,\s*'([^']*)'\s*\)/gs;
+
+
+            let match;
+
+            const rowsToInsert =
+              [];
+
+
+            while (
+              (match =
+                regex.exec(
+                  valuesString
+                )) !== null
+            ) {
+
+              const topic =
+                match[1];
+
+              const question =
+                match[2];
+
+              const optionsStr =
+                match[3];
+
+              const answer =
+                match[4];
+
+              const explanation =
+                match[5];
+
+
+              let optionsArray;
+
+
+              try {
+
+                optionsArray =
+                  JSON.parse(
+                    optionsStr
+                      .replace(
+                        /\\"/g,
+                        '"'
+                      )
+                  );
+
+              } catch {
+
+                optionsArray =
+                  optionsStr
+                    .replace(
+                      /[\[\]]/g,
+                      ""
+                    )
+                    .split(",")
+                    .map(
+                      option =>
+                        option
+                          .trim()
+                          .replace(
+                            /^["']|["']$/g,
+                            ""
+                          )
+                    );
+
+              }
+
+
+              rowsToInsert.push({
+                topic,
+                question,
+                options:
+                  optionsArray,
+                answer,
+                explanation
+              });
+
+            }
+
+
+            if (
+              !rowsToInsert.length
+            ) {
+
+              throw new Error(
+                "कुनै वैध प्रश्न data भेटिएन।"
+              );
+
+            }
+
+
+            const {
+              error
+            } = await supabase
+              .from("quizzes")
+              .upsert(
+                rowsToInsert,
+                {
+                  onConflict:"question"
+                }
+              );
+
+
+            if (error) {
+              throw error;
+            }
+
+
+            showAlert(
+              `${rowsToInsert.length} वटा प्रश्न सफलतापूर्वक save/update भए! 🎉`,
+              "success"
+            );
+
+
+            document
+              .getElementById(
+                "sqlForm"
+              )
+              .reset();
+
+
+            await fetchDatabaseStats();
+
+
+          } catch (err) {
+
+            showAlert(
+              "Import error: " +
+              err.message,
+              "error"
+            );
+
+
+          } finally {
+
+            saveButton.disabled =
+              false;
+
+            saveButton.innerHTML =
+              '<i class="fa-solid fa-cloud-arrow-up"></i> Questions Save गर्नुहोस्';
+
+          }
+
+        }
+      );
+
+
+    /* =========================
+       REFRESH
+    ========================= */
+
+    document
+      .getElementById(
+        "refreshAllBtn"
+      )
+      .addEventListener(
+        "click",
+        async () => {
+
+          const button =
+            document.getElementById(
+              "refreshAllBtn"
+            );
+
+
+          button.disabled =
+            true;
+
+
+          button.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+
+          try {
+
+            await refreshDashboard();
+
+            showAlert(
+              "Dashboard सफलतापूर्वक refresh भयो।",
+              "success"
+            );
+
+          } finally {
+
+            button.disabled =
+              false;
+
+            button.innerHTML =
+              '<i class="fa-solid fa-rotate"></i> Refresh';
+
+          }
+
+        }
+      );
+
+
+    /* =========================
+       DARK MODE
+    ========================= */
+
+    const themeBtn =
+      document.getElementById(
+        "themeBtn"
+      );
+
+
+    function updateThemeIcon() {
+
+      const dark =
+        document.body.classList.contains(
+          "dark"
+        );
+
+
+      themeBtn.innerHTML =
+        dark
+          ? '<i class="fa-solid fa-sun"></i>'
+          : '<i class="fa-solid fa-moon"></i>';
+
+    }
+
+
+    if (
+      localStorage.getItem(
+        "loksewa_admin_theme"
+      ) === "dark"
+    ) {
+
+      document.body.classList.add(
+        "dark"
+      );
+
+    }
+
+
+    updateThemeIcon();
+
+
+    themeBtn.addEventListener(
+      "click",
+      () => {
+
+        document.body.classList.toggle(
+          "dark"
+        );
+
+
+        localStorage.setItem(
+          "loksewa_admin_theme",
+          document.body.classList.contains(
+            "dark"
+          )
+            ? "dark"
+            : "light"
+        );
+
+
+        updateThemeIcon();
+
+      }
+    );
+
+
+    /* =========================
+       MODAL ESCAPE / BACKDROP
+    ========================= */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key !== "Escape"
+        ) {
+          return;
+        }
+
+
+        closeEditModal();
+        closeDeleteModal();
+
+      }
+    );
+
+
+    document
+      .querySelectorAll(
+        ".modal-overlay"
+      )
+      .forEach(
+        overlay => {
+
+          overlay.addEventListener(
+            "click",
+            event => {
+
+              if (
+                event.target ===
+                overlay
+              ) {
+
+                overlay.classList.remove(
+                  "active"
+                );
+
+              }
+
+            }
+          );
+
+        }
+      );
+
+  
+    /* =====================================================
+       STUDY HUB CONTENT MANAGER
+       Uses the same Firebase admin gate + Supabase client.
+    ===================================================== */
+    const studyState = { tab: 'exams', editingId: null, data: { exams: [], papers: [], sections: [], topics: [], questions: [] } };
+    const studyForm = document.getElementById('studyForm');
+    const studyList = document.getElementById('studyList');
+
+    const studyEsc = value => String(value ?? '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+
+    const studySlug = value => String(value || '').toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+    const studySchemas = {
+      exams: { table:'study_exams', title:'Exam', fields:[
+        ['name','Name','text',true],['slug','Slug','text',false],['description','Description','textarea',false],['icon','Icon','text',false],['display_order','Display order','number',false],['is_active','Active','checkbox',false]
+      ]},
+      papers: { table:'study_papers', title:'Paper', fields:[
+        ['exam_id','Exam','select:exams',true],['name','Name','text',true],['slug','Slug','text',false],['display_order','Display order','number',false],['is_active','Active','checkbox',false]
+      ]},
+      sections: { table:'study_sections', title:'Section', fields:[
+        ['paper_id','Paper','select:papers',true],['name','Name','text',true],['slug','Slug','text',false],['marks','Marks','number',false],['display_order','Display order','number',false],['is_active','Active','checkbox',false]
+      ]},
+      topics: { table:'study_topics', title:'Topic', fields:[
+        ['section_id','Section','select:sections',true],['parent_id','Parent topic','select:topics',false],['title','Title','text',true],['slug','Slug','text',false],['description','Description','textarea',false],['notes','Study notes (HTML)','textarea',false],['important_points','Important points (one per line)','textarea',false],['difficulty','Difficulty','selectopt:Easy,Medium,Hard',false],['reading_minutes','Reading minutes','number',false],['display_order','Display order','number',false],['is_published','Published','checkbox',false]
+      ]},
+      questions: { table:'study_questions', title:'Question', fields:[
+        ['topic_id','Topic','select:topics',true],['question_type','Question type','selectopt:short,long,mcq,true_false,fill_blank,definition,difference,descriptive_5,descriptive_10',true],['difficulty','Difficulty','selectopt:Easy,Medium,Hard',false],['marks','Marks','number',false],['question','Question','textarea',true],['answer','Answer','textarea',true],['explanation','Explanation','textarea',false],['options','MCQ options (JSON array)','textarea',false],['correct_option','Correct option (A/B/C/D)','text',false],['is_important','Important','checkbox',false],['is_published','Published','checkbox',false]
+      ]}
+    };
+
+    function studyOptions(kind, selected='') {
+      const arr = studyState.data[kind] || [];
+      return '<option value="">— Select —</option>' + arr.map(x => `<option value="${studyEsc(x.id)}" ${String(selected)===String(x.id)?'selected':''}>${studyEsc(x.name || x.title)}</option>`).join('');
+    }
+    function studyFieldHtml(field, value) {
+      const [key,label,type,required] = field;
+      if (type === 'checkbox') return `<label style="display:flex;align-items:center;gap:8px;margin:11px 0;font-weight:700"><input type="checkbox" name="${key}" ${value ? 'checked':''}> ${label}</label>`;
+      if (type.startsWith('select:')) return `<div class="form-group"><label>${label}</label><select class="form-control" name="${key}" ${required?'required':''}>${studyOptions(type.split(':')[1],value)}</select></div>`;
+      if (type.startsWith('selectopt:')) return `<div class="form-group"><label>${label}</label><select class="form-control" name="${key}" ${required?'required':''}><option value="">— Select —</option>${type.split(':')[1].split(',').map(v=>`<option value="${v}" ${String(value)===v?'selected':''}>${v.replace(/_/g,' ')}</option>`).join('')}</select></div>`;
+      const tag = type === 'textarea' ? 'textarea' : 'input';
+      const attrs = tag === 'textarea' ? '' : `type="${type}"`;
+      return `<div class="form-group"><label>${label}</label><${tag} ${attrs} class="form-control" name="${key}" ${required?'required':''}>${tag==='textarea'?studyEsc(value||''):''}</${tag}>${key==='options'?'<div class="help">Example: ["Option A","Option B","Option C","Option D"]</div>':''}</div>`;
+    }
+    function renderStudyForm() {
+      const schema=studySchemas[studyState.tab], editing=(studyState.data[studyState.tab]||[]).find(x=>x.id===studyState.editingId)||{};
+      studyForm.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;font-size:16px">${studyState.editingId?'Edit':'Add'} ${schema.title}</h3>${studyState.editingId?'<button type="button" class="mini" id="studyCancel">Cancel</button>':''}</div><div style="margin-top:12px">${schema.fields.map(f=>studyFieldHtml(f,editing[f[0]])).join('')}</div><button class="submit-btn" type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> ${studyState.editingId?'Update':'Save'} ${schema.title}</button>`;
+      if(studyState.tab==='exams'){const slugInput=studyForm.querySelector('[name="slug"]'),nameInput=studyForm.querySelector('[name="name"]');nameInput?.addEventListener('input',()=>{if(!studyState.editingId)slugInput.value=studySlug(nameInput.value)})}
+      if(studyState.tab==='papers'){const slugInput=studyForm.querySelector('[name="slug"]'),nameInput=studyForm.querySelector('[name="name"]');nameInput?.addEventListener('input',()=>{if(!studyState.editingId)slugInput.value=studySlug(nameInput.value)})}
+      if(studyState.tab==='sections'){const slugInput=studyForm.querySelector('[name="slug"]'),nameInput=studyForm.querySelector('[name="name"]');nameInput?.addEventListener('input',()=>{if(!studyState.editingId)slugInput.value=studySlug(nameInput.value)})}
+      if(studyState.tab==='topics'){const slugInput=studyForm.querySelector('[name="slug"]'),nameInput=studyForm.querySelector('[name="title"]');nameInput?.addEventListener('input',()=>{if(!studyState.editingId)slugInput.value=studySlug(nameInput.value)})}
+      studyForm.querySelector('#studyCancel')?.addEventListener('click',()=>{studyState.editingId=null;renderStudyForm()});
+      studyForm.onsubmit=saveStudyItem;
+    }
+    function renderStudyList() {
+      const tab=studyState.tab, arr=studyState.data[tab]||[];
+      studyList.innerHTML=arr.length?arr.map(x=>{let meta='';if(tab==='papers')meta=(studyState.data.exams.find(e=>e.id===x.exam_id)||{}).name||'';if(tab==='sections')meta=(studyState.data.papers.find(e=>e.id===x.paper_id)||{}).name||'';if(tab==='topics')meta=(studyState.data.sections.find(e=>e.id===x.section_id)||{}).name||'';if(tab==='questions')meta=(studyState.data.topics.find(e=>e.id===x.topic_id)||{}).title||'';return `<div class="study-item"><div><strong>${studyEsc(x.name||x.title||x.question||'Untitled')}</strong><small>${studyEsc(meta)} ${x.is_published===false||x.is_active===false?'• Unpublished':''}</small></div><div class="study-actions"><button class="mini" data-edit-study="${studyEsc(x.id)}"><i class="fa-solid fa-pen"></i></button><button class="mini danger" data-delete-study="${studyEsc(x.id)}"><i class="fa-solid fa-trash"></i></button></div></div>`}).join(''):'<div class="empty-state" style="padding:30px">No study content yet.</div>';
+      studyList.querySelectorAll('[data-edit-study]').forEach(b=>b.onclick=()=>{studyState.editingId=b.dataset.editStudy;renderStudyForm();studyForm.scrollIntoView({behavior:'smooth',block:'start'})});
+      studyList.querySelectorAll('[data-delete-study]').forEach(b=>b.onclick=()=>deleteStudyItem(b.dataset.deleteStudy));
+    }
+    async function loadStudyData(){
+      const tables=['exams','papers','sections','topics','questions'];
+      for(const key of tables){const {data,error}=await supabase.from(studySchemas[key].table).select('*').order('display_order',{ascending:true,nullsFirst:false});if(error){console.warn('Study',key,error);studyState.data[key]=[]}else studyState.data[key]=data||[];}
+      renderStudyForm();renderStudyList();
+    }
+    async function saveStudyItem(e){e.preventDefault();const schema=studySchemas[studyState.tab];const fd=new FormData(studyForm);const payload={};schema.fields.forEach(f=>{const k=f[0],type=f[2];if(type==='checkbox')payload[k]=fd.get(k)==='on';else{let v=fd.get(k);if(type==='number')v=v===''?null:Number(v);payload[k]=v===''?null:v}});if(['exams','papers','sections','topics'].includes(studyState.tab)&&!payload.slug)payload.slug=studySlug(payload.name||payload.title);if(studyState.tab==='questions'&&payload.options){try{payload.options=JSON.parse(payload.options)}catch{showAlert('MCQ options must be valid JSON.','error');return}}
+      try{let res;if(studyState.editingId){res=await supabase.from(schema.table).update(payload).eq('id',studyState.editingId)}else{res=await supabase.from(schema.table).insert(payload)}if(res.error)throw res.error;showAlert(`${schema.title} saved successfully.`,'success');studyState.editingId=null;await loadStudyData()}catch(error){console.error(error);showAlert(`Could not save ${schema.title}: ${error.message||error}`,'error')}
+    }
+    async function deleteStudyItem(id){const schema=studySchemas[studyState.tab];if(!confirm(`Delete this ${schema.title}?`))return;try{const {error}=await supabase.from(schema.table).delete().eq('id',id);if(error)throw error;showAlert(`${schema.title} deleted.`,'success');await loadStudyData()}catch(error){console.error(error);showAlert(`Delete failed: ${error.message||error}`,'error')}}
+    document.querySelectorAll('[data-study-tab]').forEach(btn=>btn.addEventListener('click',async()=>{document.querySelectorAll('[data-study-tab]').forEach(x=>x.classList.remove('active'));btn.classList.add('active');studyState.tab=btn.dataset.studyTab;studyState.editingId=null;renderStudyForm();renderStudyList()}));
+    // Load study manager after the existing admin authentication has passed.
+    const originalRefreshDashboard = refreshDashboard;
+    refreshDashboard = async function(){ await originalRefreshDashboard(); try{await loadStudyData()}catch(e){console.error('Study manager failed',e)} };
+
+
+    /* ==========================================================================
+       QUESTION STUDIO — easy entry for study questions, bulk paste, topic notes
+       (uses the existing `supabase` client, `showAlert`, `studyEsc`, `studySlug`)
+    ========================================================================== */
+    const QS = { exams:[], papers:[], sections:[], topics:[], qs:[], topicRow:null, ctx:{e:'',p:'',s:'',t:''}, mode:'single', edit:null,
+      f:{ type:'short', marks:5, diff:'Medium' }, impArr:true, busy:false, bulkItems:[] };
+    const QS_TYPES = [['short','Short'],['long','Long'],['mcq','MCQ'],['true_false','True / False'],['fill_blank','Fill blank'],['definition','Definition'],['difference','Difference'],['descriptive_5','5-mark'],['descriptive_10','10-mark']];
+    const QS_DEFMARKS = { short:5, long:10, mcq:1, true_false:1, fill_blank:1, definition:2, difference:5, descriptive_5:5, descriptive_10:10 };
+    const qsEl = id => document.getElementById(id);
+    const qe = studyEsc;
+
+    const qsChips = (id, items, val) => `<div class="qs-chips" id="${id}">${items.map(([v,l]) => `<button type="button" class="qs-chip ${String(v)===String(val)?'on':''}" data-v="${qe(v)}">${qe(l)}</button>`).join('')}</div>`;
+    const qsOpts = (list, sel, label, placeholder) => (placeholder ? `<option value="">${qe(placeholder)}</option>` : '') + list.map(x => `<option value="${qe(x.id)}" ${x.id===sel?'selected':''}>${qe(label(x))}</option>`).join('');
+
+    function qsTopicsOfSection(sid){
+      const list = QS.topics.filter(t => t.section_id === sid), ids = new Set(list.map(t => t.id)), out = [];
+      const kids = p => list.filter(t => (p ? t.parent_id === p : (!t.parent_id || !ids.has(t.parent_id)))).sort((a,b) => (a.display_order||0)-(b.display_order||0));
+      const walk = (t,d) => { out.push({ t, d }); kids(t.id).forEach(c => walk(c, d+1)); };
+      kids(null).forEach(t => walk(t, 0));
+      return out;
+    }
+
+    async function qsLoadStructure(){
+      const [a,b,c,d] = await Promise.all([
+        supabase.from('study_exams').select('id,name,display_order').order('display_order'),
+        supabase.from('study_papers').select('id,name,exam_id,display_order').order('display_order'),
+        supabase.from('study_sections').select('id,name,paper_id,display_order,is_active').order('display_order'),
+        supabase.from('study_topics').select('id,title,section_id,parent_id,display_order,is_published,is_active,important_points').order('display_order')
+      ]);
+      for (const r of [a,b,c,d]) if (r.error) throw r.error;
+      QS.exams = a.data||[]; QS.papers = b.data||[]; QS.sections = c.data||[]; QS.topics = d.data||[];
+      const sample = QS.topics.find(t => t.important_points != null);
+      QS.impArr = sample ? Array.isArray(sample.important_points) : true;   // jsonb (array) or text (JSON string)
+    }
+
+    function qsFixCtx(){
+      const C = QS.ctx;
+      if (!QS.exams.find(x => x.id===C.e)) C.e = (QS.exams[0]||{}).id || '';
+      const ps = QS.papers.filter(x => x.exam_id===C.e);
+      if (!ps.find(x => x.id===C.p)) C.p = (ps[0]||{}).id || '';
+      const ss = QS.sections.filter(x => x.paper_id===C.p);
+      if (!ss.find(x => x.id===C.s)) C.s = (ss[0]||{}).id || '';
+      if (!QS.topics.find(x => x.id===C.t && x.section_id===C.s)) C.t = '';
+    }
+
+    function qsRenderCtx(){
+      qsFixCtx(); const C = QS.ctx;
+      qsEl('qsE').innerHTML = qsOpts(QS.exams, C.e, x => x.name);
+      qsEl('qsP').innerHTML = qsOpts(QS.papers.filter(x => x.exam_id===C.e), C.p, x => x.name);
+      qsEl('qsS').innerHTML = qsOpts(QS.sections.filter(x => x.paper_id===C.p), C.s, x => x.name + (x.is_active===false?' (hidden)':''));
+      const tl = qsTopicsOfSection(C.s);
+      qsEl('qsT').innerHTML = '<option value="">— choose topic —</option>' + tl.map(({t,d}) => `<option value="${qe(t.id)}" ${t.id===C.t?'selected':''}>${'\u00A0\u00A0'.repeat(d)}${d?'↳ ':''}${qe(t.title)}${(t.is_published===false||t.is_active===false)?'  (draft)':''}</option>`).join('');
+      qsEl('qsNewParent').innerHTML = '<option value="">— top level —</option>' + tl.map(({t,d}) => `<option value="${qe(t.id)}">${'\u00A0\u00A0'.repeat(d)}${qe(t.title)}</option>`).join('');
+      const nm = (list,id,k) => ((list.find(x => x.id===id)||{})[k]||'');
+      qsEl('qsPath').textContent = [nm(QS.exams,C.e,'name'), nm(QS.papers,C.p,'name'), nm(QS.sections,C.s,'name'), nm(QS.topics,C.t,'title')].filter(Boolean).join('  ›  ') || 'Pick an exam to begin.';
+    }
+
+    async function qsLoadTopicData(){
+      QS.qs = []; QS.topicRow = null; QS.edit = null;
+      if (!QS.ctx.t) return;
+      const [q,t] = await Promise.all([
+        supabase.from('study_questions').select('*').eq('topic_id', QS.ctx.t).order('display_order').order('created_at'),
+        supabase.from('study_topics').select('*').eq('id', QS.ctx.t).single()
+      ]);
+      if (q.error) showAlert('Could not load questions: ' + q.error.message, 'error'); else QS.qs = q.data||[];
+      if (!t.error) QS.topicRow = t.data;
+    }
+
+    function qsRenderBody(){
+      const box = qsEl('qsBody'); document.querySelectorAll('#qsTabs button').forEach(b => b.classList.toggle('on', b.dataset.qsm === QS.mode));
+      if (!QS.ctx.t) { box.innerHTML = '<div class="qs-empty">Choose (or create) a topic above to add questions or notes.</div>'; qsEl('qsList').style.display = 'none'; return; }
+      qsEl('qsList').style.display = QS.mode==='topic' ? 'none' : '';
+      if (QS.mode==='single') box.innerHTML = qsSingleHtml();
+      else if (QS.mode==='bulk') box.innerHTML = qsBulkHtml();
+      else box.innerHTML = qsTopicHtml();
+      if (QS.mode==='single') { qsApplyType(); if (QS.edit) qsFillForm(QS.qs.find(x => x.id===QS.edit)); }
+    }
+
+    /* ---------- one question ---------- */
+    function qsSingleHtml(){
+      return `<div class="qs-row"><span class="qs-l">Question type</span>${qsChips('qsType', QS_TYPES, QS.f.type)}</div>
+      <div class="qs-row qs-two"><div><span class="qs-l">Marks</span>${qsChips('qsMarks', [[1,'1'],[2,'2'],[5,'5'],[10,'10']], QS.f.marks)}</div><div><span class="qs-l">Difficulty</span>${qsChips('qsDiff', [['Easy','Easy'],['Medium','Medium'],['Hard','Hard']], QS.f.diff)}</div></div>
+      <div class="qs-row"><label class="qs-l" for="qsQ">Question</label><textarea id="qsQ" rows="3" placeholder="Type the question…"></textarea></div>
+      <div class="qs-row" id="qsMcq"><span class="qs-l">Options — tap the circle next to the correct one</span>
+        ${[0,1,2,3].map(i => `<div class="qs-opt"><b>${'ABCD'[i]}</b><input type="text" class="qsOptIn" placeholder="Option ${'ABCD'[i]}"><input type="radio" name="qsCorrect" value="${i}" aria-label="Option ${'ABCD'[i]} is correct"></div>`).join('')}</div>
+      <div class="qs-row" id="qsTf"><span class="qs-l">Correct answer</span><div class="qs-chips"><label class="qs-chip"><input type="radio" name="qsTfv" value="1"> True</label><label class="qs-chip"><input type="radio" name="qsTfv" value="0"> False</label></div></div>
+      <div class="qs-row" id="qsAnsRow"><label class="qs-l" for="qsA">Answer</label><textarea id="qsA" rows="5" placeholder="Write the model answer. Start lines with • for bullet points."></textarea></div>
+      <div class="qs-row"><label class="qs-l" for="qsX">Explanation (optional)</label><textarea id="qsX" rows="2"></textarea></div>
+      <div class="qs-sw"><label><input type="checkbox" id="qsImp"> ⭐ Important question</label><label><input type="checkbox" id="qsPub" checked> Published</label></div>
+      <div class="qs-actions">
+        <button type="button" class="qs-btn ok" id="qsSaveNext"><i class="fa-solid fa-plus"></i> ${QS.edit?'Update':'Save'} &amp; ${QS.edit?'close':'add next'}</button>
+        ${QS.edit?'<button type="button" class="qs-btn" id="qsCancelEdit">Cancel edit</button>':''}</div>`;
+    }
+    function qsApplyType(){
+      const t = QS.f.type;
+      qsEl('qsMcq').style.display = t==='mcq' ? '' : 'none';
+      qsEl('qsTf').style.display = t==='true_false' ? '' : 'none';
+      qsEl('qsAnsRow').style.display = (t==='mcq'||t==='true_false') ? 'none' : '';
+    }
+    function qsOptionsOf(q){
+      let o = q.options; if (typeof o==='string'){ try { o = JSON.parse(o); } catch { o = []; } }
+      return Array.isArray(o) ? o.map(String) : [];
+    }
+    function qsFillForm(q){
+      if (!q) return;
+      QS.f = { type:q.question_type||'short', marks:q.marks||QS_DEFMARKS[q.question_type]||5, diff:q.difficulty||'Medium' };
+      qsEl('qsType').outerHTML = qsChips('qsType', QS_TYPES, QS.f.type); qsEl('qsMarks').outerHTML = qsChips('qsMarks', [[1,'1'],[2,'2'],[5,'5'],[10,'10']], QS.f.marks); qsEl('qsDiff').outerHTML = qsChips('qsDiff', [['Easy','Easy'],['Medium','Medium'],['Hard','Hard']], QS.f.diff);
+      qsEl('qsQ').value = q.question||''; qsEl('qsA').value = q.answer||''; qsEl('qsX').value = q.explanation||'';
+      qsEl('qsImp').checked = !!q.is_important; qsEl('qsPub').checked = q.is_published!==false;
+      const o = qsOptionsOf(q); document.querySelectorAll('.qsOptIn').forEach((i,k) => i.value = o[k]||'');
+      const ci = (String(q.correct_option||'').toUpperCase().charCodeAt(0)-65); const r = document.querySelector(`input[name=qsCorrect][value="${ci}"]`); if (r) r.checked = true;
+      if (q.question_type==='true_false'){ const r2 = document.querySelector(`input[name=qsTfv][value="${/^(true|t\b|सत्य|सही)/i.test(q.answer||'')?1:0}"]`); if (r2) r2.checked = true; }
+      qsApplyType();
+    }
+    function qsErr(msg){ showAlert(msg, 'error'); return null; }
+    async function qsWrite(rows, editId){
+      const run = r => editId ? supabase.from('study_questions').update(r[0]).eq('id', editId) : supabase.from('study_questions').insert(r);
+      let res = await run(rows);
+      if (res.error && rows.some(r => r.options) && /json|syntax|cast|malformed|type/i.test(res.error.message||''))
+        res = await run(rows.map(r => ({ ...r, options: r.options ? JSON.stringify(r.options) : null })));
+      return res;
+    }
+    async function qsSaveOne(){
+      if (QS.busy) return;
+      const type = QS.f.type, question = qsEl('qsQ').value.trim(); if (!question) return qsErr('Please type the question.');
+      let answer = qsEl('qsA').value.trim(), options = null, correct = null;
+      if (type==='mcq'){
+        const vals = [...document.querySelectorAll('.qsOptIn')].map(i => i.value.trim()), idx = vals.map((v,i) => v ? i : -1).filter(i => i >= 0);
+        if (idx.length < 2) return qsErr('Enter at least two options.');
+        const r = document.querySelector('input[name=qsCorrect]:checked'); if (!r || !vals[+r.value]) return qsErr('Tap the circle next to the correct option.');
+        options = idx.map(i => vals[i]); correct = String.fromCharCode(65 + idx.indexOf(+r.value)); answer = vals[+r.value];
+      } else if (type==='true_false'){
+        const r = document.querySelector('input[name=qsTfv]:checked'); if (!r) return qsErr('Choose True or False.'); answer = r.value==='1' ? 'True' : 'False';
+      } else if (!answer) return qsErr('Please write the answer.');
+      const row = { topic_id:QS.ctx.t, question_type:type, question, answer, explanation:qsEl('qsX').value.trim()||null, difficulty:QS.f.diff, marks:QS.f.marks, options, correct_option:correct,
+        is_important:qsEl('qsImp').checked, is_published:qsEl('qsPub').checked };
+      if (!QS.edit) row.display_order = (QS.qs.reduce((m,x) => Math.max(m, x.display_order||0), 0)) + 10;
+      QS.busy = true; qsEl('qsSaveNext').disabled = true;
+      try {
+        const res = await qsWrite([row], QS.edit); if (res.error) throw res.error;
+        showAlert(QS.edit ? 'Question updated ✓' : 'Question saved ✓', 'success');
+        const keep = !QS.edit; QS.edit = null; await qsLoadTopicData(); qsRenderBody(); qsRenderList();
+        if (keep) qsEl('qsQ').focus();
+      } catch (e) { console.error(e); showAlert('Could not save: ' + (e.message||e), 'error'); }
+      finally { QS.busy = false; const b = qsEl('qsSaveNext'); if (b) b.disabled = false; }
+    }
+
+    /* ---------- bulk paste ---------- */
+    function qsBulkHtml(){
+      return `<div class="qs-row"><span class="qs-l">Defaults (a #tag on a question overrides them)</span>
+        <div class="qs-two"><div>${qsChips('qsBType', QS_TYPES.filter(x => x[0]!=='mcq'), QS.f.type==='mcq'?'short':QS.f.type)}</div><div>${qsChips('qsBMarks', [[1,'1'],[2,'2'],[5,'5'],[10,'10']], QS.f.marks)}${qsChips('qsBDiff', [['Easy','Easy'],['Medium','Medium'],['Hard','Hard']], QS.f.diff)}</div></div></div>
+      <div class="qs-row"><label class="qs-l" for="qsBulk">Paste your questions</label>
+        <pre class="qs-ex">Q: कार्यालय भनेको के हो ?
+A: कार्यालय भनेको ... (answer can run over many lines)
+E: optional explanation
+#5 #long #hard #imp
+
+Q: नेपालको राजधानी कुन हो ?
+a) पोखरा  b) काठमाडौं   (or one option per line)
+c) लुम्बिनी
+Ans: B</pre>
+        <textarea id="qsBulk" rows="12" placeholder="Q: …&#10;A: …"></textarea>
+        <div class="qs-help">Tags: <b>#5</b> marks (1/2/5/10) · <b>#long #short #definition #difference #tf #fill</b> · <b>#easy #medium #hard</b> · <b>#imp</b>. Options (a, b, c, d) make it an MCQ automatically.</div></div>
+      <div class="qs-sw"><label><input type="checkbox" id="qsBPub" checked> Publish immediately</label></div>
+      <div class="qs-actions"><button type="button" class="qs-btn" id="qsBPrev"><i class="fa-solid fa-eye"></i> Preview</button><button type="button" class="qs-btn ok" id="qsBSave" disabled><i class="fa-solid fa-cloud-arrow-up"></i> Save all</button></div>
+      <div id="qsBOut"></div>`;
+    }
+    function qsParseBulk(text, def){
+      const items = [], START=/^\s*(?:Q|प्र|प्रश्न)\s*\d*\s*[:.)]\s*(.*)$/i, ANS=/^\s*(?:Ans|Answer|A|उ|उत्तर)\s*[:：]\s*(.*)$/i, EXP=/^\s*(?:E|Exp|Explanation|व्याख्या)\s*[:：]\s*(.*)$/i, OPT=/\(?\b([a-dA-D])\s*[).]\s+/g;
+      let cur = null, field = null;
+      const push = () => { if (cur) items.push(cur); };
+      for (const raw of text.replace(/\r/g,'').split('\n')) {
+        const line = raw.trimEnd(); let m;
+        if ((m = line.match(START))) { push(); cur = { q:m[1], a:'', x:'', opts:[], correct:'', tags:[] }; field = 'q'; continue; }
+        if (!cur) continue;
+        if (/^\s*#/.test(line)) { cur.tags.push(...line.trim().split(/\s+/).filter(t => t[0]==='#').map(t => t.slice(1).toLowerCase())); continue; }
+        if ((m = line.match(ANS))) { field = 'a'; const v = m[1].trim(); if (cur.opts.length && /^[a-dA-D]$/.test(v)) { cur.correct = v.toUpperCase(); field = 'a0'; } else cur.a = v; continue; }
+        if ((m = line.match(EXP))) { field = 'x'; cur.x = m[1].trim(); continue; }
+        if ((field==='q' || field==='opt') && /^\s*\(?[a-dA-D]\s*[).]\s+/.test(line)) {
+          const parts = line.split(/(?=\(?\b[a-dA-D]\s*[).]\s+)/).map(s => s.trim()).filter(Boolean);
+          parts.forEach(p => { let t = p.replace(/^\(?[a-dA-D]\s*[).]\s+/, '').trim(), star = /\s\*$/.test(t); if (star) t = t.replace(/\s\*$/, ''); cur.opts.push(t); if (star) cur.correct = String.fromCharCode(64 + cur.opts.length); });
+          field = 'opt'; continue;
+        }
+        if (field==='q') cur.q += '\n' + line; else if (field==='a') cur.a += (cur.a ? '\n' : '') + line; else if (field==='x') cur.x += '\n' + line;
+        else if (field==='opt' && cur.opts.length) cur.opts[cur.opts.length-1] += ' ' + line.trim();
+      }
+      push();
+      const TYPEMAP = { long:'long', short:'short', definition:'definition', difference:'difference', comparison:'difference', tf:'true_false', truefalse:'true_false', fill:'fill_blank', mcq:'mcq' };
+      return items.map(it => {
+        let type = def.type, marks = def.marks, diff = def.diff, imp = false;
+        it.tags.forEach(t => { if (TYPEMAP[t]) type = TYPEMAP[t]; else if (/^(1|2|5|10)m?(arks?)?$/.test(t)) marks = +t.replace(/\D/g,''); else if (['easy','medium','hard'].includes(t)) diff = t[0].toUpperCase()+t.slice(1); else if (t==='imp'||t==='important') imp = true; });
+        if (it.opts.length >= 2) type = 'mcq';
+        const q = it.q.trim(), a = it.a.trim(), problems = [], warns = [];
+        if (!q) problems.push('missing question');
+        let answer = a, correct = it.correct;
+        if (type==='mcq') { if (it.opts.length < 2) problems.push('MCQ needs at least 2 options'); if (!correct) problems.push('no correct option (add "Ans: B")'); else if (it.opts.length && correct.charCodeAt(0)-65 >= it.opts.length) problems.push('correct option out of range'); else answer = it.opts[correct.charCodeAt(0)-65]; }
+        else if (type==='true_false') { if (!/^(true|false|सत्य|असत्य|सही|गलत)/i.test(a)) problems.push('answer must start with True or False'); }
+        else if (!a) problems.push('missing answer');
+        if (q && QS.qs.some(x => x.question.trim() === q)) warns.push('already exists in this topic');
+        return { q, answer, explanation:it.x.trim(), opts:it.opts, correct, type, marks, diff, imp, problems, warns };
+      });
+    }
+    function qsBulkPreview(){
+      const def = { type:qsEl('qsBType').querySelector('.on')?.dataset.v || 'short', marks:+(qsEl('qsBMarks').querySelector('.on')?.dataset.v || 5), diff:qsEl('qsBDiff').querySelector('.on')?.dataset.v || 'Medium' };
+      QS.bulkItems = qsParseBulk(qsEl('qsBulk').value, def);
+      const ok = QS.bulkItems.filter(i => !i.problems.length).length;
+      qsEl('qsBOut').innerHTML = QS.bulkItems.length ? `<div class="qs-help"><b>${ok}</b> of ${QS.bulkItems.length} ready to save.</div>` + QS.bulkItems.map((i,n) => `<div class="qs-prev ${i.problems.length?'bad':i.warns.length?'warn':''}"><span class="qs-badge">${qe(i.type)}</span><span class="qs-badge">${i.marks}m</span><span class="qs-badge">${qe(i.diff)}</span>${i.imp?'<span class="qs-badge imp">⭐</span>':''}<br><b>${n+1}.</b> ${qe(i.q).slice(0,160)}${i.opts.length?'<br>'+i.opts.map((o,k) => `${'ABCD'[k]}) ${qe(o)}${i.correct==='ABCD'[k]?' ✓':''}`).join(' · '):''}${i.problems.length?`<br>❌ ${qe(i.problems.join('; '))}`:''}${i.warns.length?`<br>⚠️ ${qe(i.warns.join('; '))}`:''}</div>`).join('') : '<div class="qs-empty">No questions found. Each one must start with “Q:”.</div>';
+      qsEl('qsBSave').disabled = !ok; qsEl('qsBSave').innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Save ${ok} question${ok===1?'':'s'}`;
+    }
+    async function qsBulkSave(){
+      const good = QS.bulkItems.filter(i => !i.problems.length); if (!good.length || QS.busy) return;
+      let order = QS.qs.reduce((m,x) => Math.max(m, x.display_order||0), 0); const pub = qsEl('qsBPub').checked;
+      const rows = good.map(i => ({ topic_id:QS.ctx.t, question_type:i.type, question:i.q, answer:i.answer, explanation:i.explanation||null, difficulty:i.diff, marks:i.marks,
+        options:i.type==='mcq' ? i.opts : null, correct_option:i.type==='mcq' ? i.correct : null, is_important:i.imp, is_published:pub, display_order:(order += 10) }));
+      QS.busy = true; qsEl('qsBSave').disabled = true;
+      try { const res = await qsWrite(rows); if (res.error) throw res.error; showAlert(`${rows.length} questions saved ✓`, 'success'); QS.bulkItems = []; await qsLoadTopicData(); qsRenderBody(); qsRenderList(); }
+      catch (e) { console.error(e); showAlert('Bulk save failed: ' + (e.message||e), 'error'); qsEl('qsBSave').disabled = false; }
+      finally { QS.busy = false; }
+    }
+
+    /* ---------- topic notes ---------- */
+    function qsPointsToLines(v){
+      if (v == null || v === '') return ''; if (Array.isArray(v)) return v.join('\n');
+      const s = String(v).trim(); if (s[0]==='[') { try { const a = JSON.parse(s); if (Array.isArray(a)) return a.join('\n'); } catch {} } return s;
+    }
+    function qsTopicHtml(){
+      const t = QS.topicRow; if (!t) return '<div class="qs-empty">Loading topic…</div>';
+      return `<div class="qs-row"><label class="qs-l" for="qtTitle">Title</label><input type="text" id="qtTitle" value="${qe(t.title)}"></div>
+      <div class="qs-row"><label class="qs-l" for="qtDesc">Short description (optional)</label><input type="text" id="qtDesc" value="${qe(t.description||'')}"></div>
+      <div class="qs-row"><label class="qs-l" for="qtNotes">Study notes</label><textarea id="qtNotes" rows="14" placeholder="Write notes. Blank line = new paragraph. Start lines with • for bullets; a short line ending with : becomes a heading. HTML also works.">${qe(t.notes||'')}</textarea></div>
+      <div class="qs-row"><label class="qs-l" for="qtPts">Important points (one per line)</label><textarea id="qtPts" rows="5">${qe(qsPointsToLines(t.important_points))}</textarea></div>
+      <div class="qs-row qs-two"><div><label class="qs-l" for="qtMin">Reading minutes</label><input type="number" id="qtMin" min="1" value="${qe(t.reading_minutes||'')}"></div>
+        <div><span class="qs-l">Difficulty</span>${qsChips('qtDiff', [['Easy','Easy'],['Medium','Medium'],['Hard','Hard']], t.difficulty||'Medium')}</div></div>
+      <div class="qs-sw"><label><input type="checkbox" id="qtPub" ${t.is_published?'checked':''}> Published (visible to students)</label></div>
+      <div class="qs-actions"><button type="button" class="qs-btn ok" id="qtSave"><i class="fa-solid fa-floppy-disk"></i> Save topic</button></div>`;
+    }
+    async function qsSaveTopic(){
+      const lines = qsEl('qtPts').value.split('\n').map(s => s.replace(/^[•\-*]\s*/, '').trim()).filter(Boolean);
+      const row = { title:qsEl('qtTitle').value.trim(), description:qsEl('qtDesc').value.trim()||null, notes:qsEl('qtNotes').value, reading_minutes:qsEl('qtMin').value ? +qsEl('qtMin').value : null,
+        difficulty:qsEl('qtDiff').querySelector('.on')?.dataset.v || 'Medium', is_published:qsEl('qtPub').checked, is_active:true, important_points: QS.impArr ? lines : JSON.stringify(lines) };
+      if (!row.title) return qsErr('Title cannot be empty.');
+      let res = await supabase.from('study_topics').update(row).eq('id', QS.ctx.t);
+      if (res.error && QS.impArr) res = await supabase.from('study_topics').update({ ...row, important_points: JSON.stringify(lines) }).eq('id', QS.ctx.t);
+      if (res.error) return showAlert('Could not save topic: ' + res.error.message, 'error');
+      showAlert('Topic saved ✓', 'success'); await qsLoadStructure(); await qsLoadTopicData(); qsRenderCtx(); qsRenderBody();
+    }
+
+    /* ---------- question list ---------- */
+    function qsRenderList(){
+      const box = qsEl('qsList'); if (!QS.ctx.t || QS.mode==='topic') { box.style.display = 'none'; return; } box.style.display = '';
+      box.innerHTML = `<div class="qs-lh"><span>${QS.qs.length} question${QS.qs.length===1?'':'s'} in this topic</span><span class="qs-help" style="margin:0">${QS.qs.filter(x => x.is_published).length} published</span></div>` +
+        (QS.qs.length ? QS.qs.map(q => `<div class="qs-item"><div style="min-width:0"><span class="qs-badge">${qe(q.question_type)}</span>${q.marks?`<span class="qs-badge">${q.marks}m</span>`:''}${q.difficulty?`<span class="qs-badge">${qe(q.difficulty)}</span>`:''}${q.is_important?'<span class="qs-badge imp">⭐ Important</span>':''}${q.is_published?'':'<span class="qs-badge off">Draft</span>'}<p>${qe(q.question).slice(0,220)}</p></div>
+          <div class="qs-acts"><button type="button" class="qs-btn sm" data-qsedit="${qe(q.id)}" aria-label="Edit"><i class="fa-solid fa-pen"></i></button><button type="button" class="qs-btn sm" data-qspub="${qe(q.id)}" aria-label="${q.is_published?'Unpublish':'Publish'}"><i class="fa-solid fa-eye${q.is_published?'':'-slash'}"></i></button><button type="button" class="qs-btn sm" data-qsdel="${qe(q.id)}" aria-label="Delete" style="color:var(--red)"><i class="fa-solid fa-trash"></i></button></div></div>`).join('')
+          : '<div class="qs-empty">No questions yet — add the first one above.</div>');
+    }
+
+    /* ---------- events ---------- */
+    async function qsCtxChange(level, val){
+      const C = QS.ctx; C[level] = val;
+      if (level==='e') { C.p = ''; C.s = ''; C.t = ''; } if (level==='p') { C.s = ''; C.t = ''; } if (level==='s') C.t = '';
+      qsRenderCtx(); try { localStorage.setItem('qsCtx', JSON.stringify(C)); } catch {}
+      await qsLoadTopicData(); qsRenderBody(); qsRenderList();
+    }
+    qsEl('qsE').onchange = e => qsCtxChange('e', e.target.value);
+    qsEl('qsP').onchange = e => qsCtxChange('p', e.target.value);
+    qsEl('qsS').onchange = e => qsCtxChange('s', e.target.value);
+    qsEl('qsT').onchange = e => qsCtxChange('t', e.target.value);
+    qsEl('qsNewTopicBtn').onclick = () => { if (!QS.ctx.s) return qsErr('Choose a section first.'); qsEl('qsNew').classList.toggle('on'); qsEl('qsNewTitle').focus(); };
+    qsEl('qsNewSave').onclick = async () => {
+      const title = qsEl('qsNewTitle').value.trim(); if (!title) return qsErr('Type the topic title.');
+      const sibs = QS.topics.filter(t => t.section_id===QS.ctx.s), order = sibs.reduce((m,t) => Math.max(m, t.display_order||0), 0) + 10;
+      const row = { section_id:QS.ctx.s, parent_id:qsEl('qsNewParent').value || null, title, slug:(studySlug(title) || 'topic') + '-' + Date.now().toString(36), difficulty:'Medium', display_order:order, is_published:true, is_active:true, important_points: QS.impArr ? [] : '[]' };
+      let res = await supabase.from('study_topics').insert(row).select('id').single();
+      if (res.error && QS.impArr) res = await supabase.from('study_topics').insert({ ...row, important_points:'[]' }).select('id').single();
+      if (res.error) return showAlert('Could not create topic: ' + res.error.message, 'error');
+      showAlert('Topic created ✓', 'success'); qsEl('qsNewTitle').value = ''; qsEl('qsNew').classList.remove('on');
+      await qsLoadStructure(); QS.ctx.t = res.data.id; qsRenderCtx(); await qsLoadTopicData(); qsRenderBody(); qsRenderList();
+    };
+    qsEl('qsTabs').onclick = async e => { const b = e.target.closest('[data-qsm]'); if (!b) return; QS.mode = b.dataset.qsm; QS.edit = null; if (QS.mode==='topic') await qsLoadTopicData(); qsRenderBody(); qsRenderList(); };
+    qsEl('studio').addEventListener('click', async e => {
+      const chip = e.target.closest('.qs-chip[data-v]');
+      if (chip) {
+        const grp = chip.parentElement; grp.querySelectorAll('.qs-chip').forEach(c => c.classList.toggle('on', c===chip));
+        if (grp.id==='qsType') { QS.f.type = chip.dataset.v; const m = QS_DEFMARKS[QS.f.type]; if (m && !QS.edit) { QS.f.marks = m; qsEl('qsMarks').querySelectorAll('.qs-chip').forEach(c => c.classList.toggle('on', +c.dataset.v===m)); } qsApplyType(); }
+        else if (grp.id==='qsMarks') QS.f.marks = +chip.dataset.v; else if (grp.id==='qsDiff') QS.f.diff = chip.dataset.v;
+        return;
+      }
+      if (e.target.closest('#qsSaveNext')) return qsSaveOne();
+      if (e.target.closest('#qsCancelEdit')) { QS.edit = null; qsRenderBody(); return; }
+      if (e.target.closest('#qsBPrev')) return qsBulkPreview();
+      if (e.target.closest('#qsBSave')) return qsBulkSave();
+      if (e.target.closest('#qtSave')) return qsSaveTopic();
+      const ed = e.target.closest('[data-qsedit]'), pb = e.target.closest('[data-qspub]'), dl = e.target.closest('[data-qsdel]');
+      if (ed) { QS.mode = 'single'; QS.edit = ed.dataset.qsedit; qsRenderBody(); qsEl('studio').scrollIntoView({ behavior:'smooth', block:'start' }); return; }
+      if (pb) { const q = QS.qs.find(x => x.id===pb.dataset.qspub); const { error } = await supabase.from('study_questions').update({ is_published:!q.is_published }).eq('id', q.id); if (error) return showAlert(error.message, 'error'); q.is_published = !q.is_published; qsRenderList(); return; }
+      if (dl) { if (!confirm('Delete this question permanently?')) return; const { error } = await supabase.from('study_questions').delete().eq('id', dl.dataset.qsdel); if (error) return showAlert(error.message, 'error'); showAlert('Question deleted.', 'success'); await qsLoadTopicData(); qsRenderBody(); qsRenderList(); }
+    });
+
+    async function qsInit(){
+      try { Object.assign(QS.ctx, JSON.parse(localStorage.getItem('qsCtx') || '{}')); } catch {}
+      await qsLoadStructure(); qsRenderCtx(); await qsLoadTopicData(); qsRenderBody(); qsRenderList();
+    }
+    const __prevRefreshForStudio = refreshDashboard;
+    refreshDashboard = async function(){ await __prevRefreshForStudio(); try { await qsInit(); } catch (e) { console.error('Question Studio failed', e); qsEl('qsBody').innerHTML = '<div class="qs-empty">Question Studio could not load: ' + qe(e.message || e) + '</div>'; } };
+
+  </script>
+
+</body>
+</html>
