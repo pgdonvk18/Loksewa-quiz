@@ -208,7 +208,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, browserSessionPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, arrayUnion, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     
     // यदि अन्य वस्तुका लागि coinHelper प्रयोग भइरहेको छ भने त्यसलाई कायम राखिएको छ
     import { buyShopItem } from './coinHelper.js';
@@ -302,6 +302,23 @@
           await updateDoc(userDocRef, {
             coins: newCoins,
             purchasedBadges: arrayUnion(itemKey)
+          });
+
+          // Save badge purchase in the same coin history used by coins.html.
+          const historyRef = collection(
+            db,
+            "users",
+            currentUserId,
+            "coin_history"
+          );
+
+          await addDoc(historyRef, {
+            amount: -cost,
+            source_topic: `Shop: ${itemName}`,
+            type: "spent_shop",
+            description: `${itemName} खरिद गरियो`,
+            item_key: itemKey,
+            created_at: serverTimestamp()
           });
 
           userCoins = newCoins;
