@@ -60,6 +60,8 @@ button{
   outline-offset:2px;
 }
 
+/* ===== Header ===== */
+
 .hero{
   background:var(--navy);
   color:#fff;
@@ -167,6 +169,8 @@ button{
 .tabs.hide{
   display:none;
 }
+
+/* ===== Body ===== */
 
 .wrap{
   max-width:640px;
@@ -486,6 +490,7 @@ button{
     <div style="width:44px" aria-hidden="true"></div>
   </div>
 
+
   <div
     class="seg"
     role="tablist"
@@ -511,6 +516,7 @@ button{
     </button>
 
   </div>
+
 
   <div
     class="tabs"
@@ -547,6 +553,7 @@ button{
 
 </header>
 
+
 <main class="wrap">
 
   <div
@@ -567,11 +574,13 @@ button{
 
 </main>
 
+
 <div
   class="mebar"
   id="currentUserCard"
   style="display:none"
 ></div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -611,14 +620,11 @@ const firebaseConfig = {
   appId: "1:779234903809:web:dd0dd0ffb742e1c218bd00"
 };
 
-const firebaseApp =
-  initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const auth =
-  getAuth(firebaseApp);
+const auth = getAuth(app);
 
-const db =
-  getFirestore(firebaseApp);
+const db = getFirestore(app);
 
 
 /* =========================================================
@@ -660,6 +666,7 @@ const esc = s =>
 
 
 const LIMIT = 100;
+
 
 let currentCategory = "questions";
 
@@ -793,9 +800,8 @@ const isMe = u => {
 
   return Boolean(
     currentUid &&
-    u &&
-    u.uid &&
-    String(u.uid) === String(currentUid)
+    u.user_uid &&
+    String(u.user_uid) === String(currentUid)
   );
 
 };
@@ -818,42 +824,42 @@ const dataFor = u =>
     String(
       u.display_name || ""
     )
-    .trim()
-    .toLowerCase()
-  ] || null;
+      .trim()
+      .toLowerCase()
+  ] || u;
 
 
 /* =========================================================
    STATE
 ========================================================= */
 
-function state(
-  icon,
-  message,
-  retry = false
-){
+function state(icon,msg,retry){
 
   $("podiumSection").innerHTML = "";
+
+  $("currentUserCard").style.display =
+    "none";
+
 
   $("leaderboardList").innerHTML = `
     <div class="state">
 
-      <div class="ic">
-        ${icon}
-      </div>
+      <div
+        class="ic"
+        aria-hidden="true"
+      >${icon}</div>
 
-      <div>
-        ${esc(message)}
-      </div>
+      ${esc(msg)}
 
       ${
         retry
           ? `
+            <br>
             <button
               type="button"
               id="retryBtn"
             >
-              पुनः प्रयास गर्नुहोस्
+              फेरि प्रयास गर्नुहोस्
             </button>
           `
           : ""
@@ -865,13 +871,13 @@ function state(
 
   if(retry){
 
-    const btn =
+    const retryButton =
       $("retryBtn");
 
-    if(btn){
+    if(retryButton){
 
-      btn.onclick =
-        () => loadCurrent();
+      retryButton.onclick =
+        loadCurrent;
 
     }
 
@@ -884,11 +890,7 @@ function state(
    RENDER
 ========================================================= */
 
-function render(
-  rows,
-  key,
-  unit
-){
+function render(rows,key,unit){
 
   lastRender = {
     rows,
@@ -898,224 +900,198 @@ function render(
 
 
   const ranked =
-    withRanks(
-      rows,
-      key
-    );
+    withRanks(rows,key);
 
 
   const top =
-    ranked.slice(
-      0,
-      3
-    );
+    ranked.slice(0,3);
 
 
-  const rest =
-    ranked.slice(
-      3
-    );
+  /*
+   * Keep podium order:
+   * 2nd - 1st - 3rd
+   */
+
+  const order = [
+
+    top[1] &&
+      ["second",top[1]],
+
+    top[0] &&
+      ["first",top[0]],
+
+    top[2] &&
+      ["third",top[2]]
+
+  ].filter(Boolean);
 
 
   $("podiumSection").innerHTML =
-    top
-      .map(
-        (u,index)=>{
+    order.map(([cls,u])=>`
 
-          const rank =
-            index + 1;
+      <div class="pc ${cls}">
 
-          const me =
-            isMe(u);
+        <span class="rk">
+          ${u._rank}
+        </span>
 
-          const badgeData =
-            dataFor(u);
+        ${
+          cls === "first"
+            ? `
+              <i
+                class="fa-solid fa-crown crown"
+                aria-hidden="true"
+              ></i>
+            `
+            : ""
+        }
 
-          return `
-            <div
-              class="pc ${
-                rank === 1
-                  ? "first"
-                  : rank === 3
-                    ? "third"
-                    : ""
-              } ${me ? "me" : ""}"
-            >
+        <div
+          class="av"
+          aria-hidden="true"
+        >
+          ${esc(initial(u.display_name))}
+        </div>
+
+        <div class="nm">
+          ${nameWithBadge(
+            u.display_name,
+            dataFor(u)
+          )}
+        </div>
+
+        <div class="sc">
+          ${fmt(u._score)}
+          <small>${unit}</small>
+        </div>
+
+      </div>
+
+    `).join("");
+
+
+  /*
+   * Remaining users
+   */
+
+  const rest =
+    ranked.slice(3);
+
+
+  $("leaderboardList").innerHTML =
+    rest.length
+
+      ? rest.map(u=>`
+
+        <div class="row${isMe(u) ? " me" : ""}">
+
+          <div class="r">
+            #${u._rank}
+          </div>
+
+          <div
+            class="av"
+            aria-hidden="true"
+          >
+            ${esc(
+              initial(u.display_name)
+            )}
+          </div>
+
+          <div class="in">
+
+            <div class="nm">
+
+              ${nameWithBadge(
+                u.display_name,
+                dataFor(u)
+              )}
 
               ${
-                rank === 1
+                isMe(u)
                   ? `
-                    <span class="crown">
-                      <i
-                        class="fa-solid fa-crown"
-                        aria-hidden="true"
-                      ></i>
+                    <span class="you">
+                      तपाईं
                     </span>
                   `
                   : ""
               }
 
-              <span class="rk">
-                ${rank}
-              </span>
-
-              <div class="av">
-                ${esc(initial(u.display_name))}
-              </div>
-
-              <div class="nm">
-                ${nameWithBadge(
-                  u.display_name,
-                  badgeData
-                )}
-
-                ${
-                  me
-                    ? `
-                      <span class="you">
-                        तपाईं
-                      </span>
-                    `
-                    : ""
-                }
-              </div>
-
-              <div class="sc">
-                ${fmt(u[key])}
-                <small>${esc(unit)}</small>
-              </div>
-
             </div>
-          `;
 
-        }
-      )
-      .join("");
+            <div class="sub">
+              Loksewa Aspirant
+            </div>
 
+          </div>
 
-  $("leaderboardList").innerHTML =
-    rest.length
-      ? rest
-          .map(
-            u=>{
+          <div class="sc">
+            ${fmt(u._score)}
+            <small>${unit}</small>
+          </div>
 
-              const me =
-                isMe(u);
+        </div>
 
-              const badgeData =
-                dataFor(u);
+      `).join("")
 
-              return `
-                <div
-                  class="row ${
-                    me ? "me" : ""
-                  }"
-                >
-
-                  <div class="r">
-                    ${u._rank}
-                  </div>
-
-                  <div class="av">
-                    ${esc(
-                      initial(
-                        u.display_name
-                      )
-                    )}
-                  </div>
-
-                  <div class="in">
-
-                    <div class="nm">
-
-                      ${nameWithBadge(
-                        u.display_name,
-                        badgeData
-                      )}
-
-                      ${
-                        me
-                          ? `
-                            <span class="you">
-                              तपाईं
-                            </span>
-                          `
-                          : ""
-                      }
-
-                    </div>
-
-                    <div class="sub">
-                      ${
-                        key === "coins"
-                          ? "कोइन"
-                          : `
-                            सही ${fmt(
-                              u.correct_count
-                            )}
-                            · गलत ${fmt(
-                              u.wrong_count
-                            )}
-                          `
-                      }
-                    </div>
-
-                  </div>
-
-                  <div class="sc">
-                    ${fmt(u[key])}
-                    <small>${esc(unit)}</small>
-                  </div>
-
-                </div>
-              `;
-
-            }
-          )
-          .join("")
       : `
         <div class="state">
-          शीर्ष ३ मा देखाइएको छ।
+          अन्य सहभागीहरू छैनन्
         </div>
       `;
 
 
-  const me =
-    ranked.find(
-      u => isMe(u)
-    );
+  /*
+   * Current user card
+   */
+
+  const mine =
+    ranked.find(isMe);
 
 
-  if(me){
+  const bar =
+    $("currentUserCard");
 
-    const badgeData =
-      dataFor(me);
 
-    $("currentUserCard").style.display =
+  if(mine){
+
+    bar.style.display =
       "block";
 
-    $("currentUserCard").innerHTML = `
-      <div class="row me">
 
-        <div class="r">
-          ${me._rank}
+    bar.innerHTML = `
+
+      <div class="row">
+
+        <div
+          class="r"
+          style="
+            color:var(--blue-d);
+            font-size:15px
+          "
+        >
+          #${mine._rank}
         </div>
 
-        <div class="av">
+
+        <div
+          class="av"
+          style="background:var(--blue)"
+          aria-hidden="true"
+        >
           ${esc(
-            initial(
-              me.display_name
-            )
+            initial(mine.display_name)
           )}
         </div>
+
 
         <div class="in">
 
           <div class="nm">
 
             ${nameWithBadge(
-              me.display_name,
-              badgeData
+              mine.display_name,
+              dataFor(mine)
             )}
 
             <span class="you">
@@ -1130,17 +1106,22 @@ function render(
 
         </div>
 
-        <div class="sc">
-          ${fmt(me[key])}
-          <small>${esc(unit)}</small>
+
+        <div
+          class="sc"
+          style="color:var(--blue-d)"
+        >
+          ${fmt(mine._score)}
+          <small>${unit}</small>
         </div>
 
       </div>
+
     `;
 
   }else{
 
-    $("currentUserCard").style.display =
+    bar.style.display =
       "none";
 
   }
@@ -1166,39 +1147,75 @@ async function fetchLeaderboardData(period){
   `;
 
 
-  $("podiumSection").innerHTML =
-    "";
+  $("podiumSection").innerHTML = "";
 
 
-  $("currentUserCard").style.display =
-    "none";
+  $("currentUserCard").style.display = "none";
 
 
   try{
+
+    /*
+     * QUESTIONS LEADERBOARD
+     *
+     * Source is the already-aggregated Supabase view.
+     * Firebase UID is the permanent identity.
+     * Username/display_name is display data only.
+     *
+     * Periods:
+     *   daily  -> daily_score
+     *   weekly -> weekly_score
+     *   total  -> total_score
+     *
+     * Monthly is intentionally not used.
+     */
+
+    const scoreField =
+      period === "daily"
+        ? "daily_score"
+        : period === "weekly"
+          ? "weekly_score"
+          : "total_score";
+
 
     const {
       data,
       error
     } =
       await supabaseClient
-        .from("exam_leaderboard")
+        .from("v_exam_leaderboard_summary")
         .select(`
           user_uid,
-          username,
-          score,
-          correct_count,
-          wrong_count,
-          skipped_count,
-          total_questions,
-          created_at
+          display_name,
+          total_score,
+          total_correct,
+          total_q,
+          daily_score,
+          weekly_score
         `)
+        .gt(
+          scoreField,
+          0
+        )
         .order(
-          "created_at",
+          scoreField,
           {
             ascending:false
           }
         )
-        .limit(5000);
+        .order(
+          "total_correct",
+          {
+            ascending:false
+          }
+        )
+        .order(
+          "total_q",
+          {
+            ascending:false
+          }
+        )
+        .limit(LIMIT);
 
 
     if(id !== requestId)
@@ -1222,225 +1239,46 @@ async function fetchLeaderboardData(period){
     }
 
 
-    const now =
-      new Date();
+    const rows =
+      (data || [])
+        .filter(item =>
+          item.user_uid &&
+          Number(item[scoreField] || 0) > 0
+        )
+        .map(item => ({
 
+          ...item,
 
-    let startDate =
-      null;
-
-
-    if(period === "daily"){
-
-      startDate =
-        new Date(now);
-
-      startDate.setHours(
-        0,0,0,0
-      );
-
-    }
-
-
-    else if(period === "weekly"){
-
-      startDate =
-        new Date(now);
-
-      startDate.setHours(
-        0,0,0,0
-      );
-
-
-      const day =
-        startDate.getDay();
-
-
-      const difference =
-        day === 0
-          ? 6
-          : day - 1;
-
-
-      startDate.setDate(
-        startDate.getDate() -
-        difference
-      );
-
-    }
-
-
-    /*
-     * Firebase UID is the permanent identity.
-     * Username is display data only.
-     */
-
-    const users = {};
-
-
-    (data || []).forEach(item=>{
-
-      if(!item.user_uid)
-        return;
-
-
-      if(startDate){
-
-        const createdAt =
-          item.created_at
-            ? new Date(
-                item.created_at
-              )
-            : null;
-
-
-        if(
-          !createdAt ||
-          isNaN(
-            createdAt.getTime()
-          )
-        ){
-
-          return;
-
-        }
-
-
-        if(
-          createdAt.getTime() <
-          startDate.getTime()
-        ){
-
-          return;
-
-        }
-
-      }
-
-
-      const uid =
-        String(
-          item.user_uid
-        ).trim();
-
-
-      if(!uid)
-        return;
-
-
-      const username =
-        String(
-          item.username || ""
-        ).trim();
-
-
-      if(!users[uid]){
-
-        users[uid] = {
-
-          uid:uid,
+          /*
+           * Keep uid as well for the existing
+           * renderer, while user_uid remains the
+           * canonical identity field.
+           */
+          uid:
+            item.user_uid,
 
           display_name:
-            username ||
-            "Loksewa Aspirant",
+            String(
+              item.display_name ||
+              "Aspirant"
+            ).trim() || "Aspirant",
 
-          score:0,
+          score:
+            Number(
+              item[scoreField] || 0
+            ),
 
-          correct_count:0,
+          correct_count:
+            Number(
+              item.total_correct || 0
+            ),
 
-          wrong_count:0,
+          total_questions:
+            Number(
+              item.total_q || 0
+            )
 
-          skipped_count:0,
-
-          total_questions:0
-
-        };
-
-      }
-      else if(username){
-
-        users[uid].display_name =
-          username;
-
-      }
-
-
-      users[uid].score +=
-        Number(
-          item.score || 0
-        );
-
-
-      users[uid].correct_count +=
-        Number(
-          item.correct_count || 0
-        );
-
-
-      users[uid].wrong_count +=
-        Number(
-          item.wrong_count || 0
-        );
-
-
-      users[uid].skipped_count +=
-        Number(
-          item.skipped_count || 0
-        );
-
-
-      users[uid].total_questions +=
-        Number(
-          item.total_questions || 0
-        );
-
-    });
-
-
-    const rows =
-      Object.values(users)
-        .filter(
-          user =>
-            Number(user.score) > 0
-        )
-        .sort((a,b)=>{
-
-          if(
-            b.score !==
-            a.score
-          ){
-
-            return (
-              b.score -
-              a.score
-            );
-
-          }
-
-
-          if(
-            b.correct_count !==
-            a.correct_count
-          ){
-
-            return (
-              b.correct_count -
-              a.correct_count
-            );
-
-          }
-
-
-          return (
-            a.wrong_count -
-            b.wrong_count
-          );
-
-        })
-        .slice(
-          0,
-          LIMIT
-        );
+        }));
 
 
     if(!rows.length){
@@ -1481,7 +1319,6 @@ async function fetchLeaderboardData(period){
   }
 
 }
-
 
 /* =========================================================
    COINS LEADERBOARD
@@ -1775,6 +1612,11 @@ onAuthStateChanged(
         );
 
 
+      /*
+       * Get the actual display name
+       * from Firestore when available.
+       */
+
       try{
 
         const s =
@@ -1806,17 +1648,19 @@ onAuthStateChanged(
 
       }
 
-    }else{
-
-      currentUid = null;
-
-      currentUserName = null;
-
     }
 
 
+    /*
+     * Load leaderboard immediately.
+     */
+
     loadCurrent();
 
+
+    /*
+     * Load badges in background.
+     */
 
     getDocs(
       collection(
@@ -1860,6 +1704,10 @@ onAuthStateChanged(
       });
 
 
+      /*
+       * Re-render with badges.
+       */
+
       if(lastRender){
 
         render(
@@ -1886,4 +1734,4 @@ onAuthStateChanged(
 </script>
 
 </body>
-  </html>
+</html>
